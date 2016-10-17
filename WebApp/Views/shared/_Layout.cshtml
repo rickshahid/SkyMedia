@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0" />
+        <title>@ViewData["appTitle"] (@ViewData["appRegion"])</title>
+        <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-multiselect/jquery.multiselect.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/qtip2/jquery.qtip.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/css/site.css" />
+        @Html.ApplicationInsightsJavaScript(telemetryConfig)
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-ui-multiselect/src/jquery.multiselect.min.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
+        <script type="text/javascript" src="~/lib/qtip2/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="~/js/site.js"></script>
+        @RenderSection("head", false)
+    </head>
+    <body onload="SetLayout('@ViewData["mediaAccount"]')">
+        @if (ViewData.ContainsKey("minimalView"))
+        {
+            <div class="layout minimal">
+                @RenderBody()
+            </div>
+        }
+        else
+        {
+            <table class="banner">
+                <tr>
+                    <td class="bannerLeft">
+                        @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
+                        @if (ViewData.ContainsKey("userAccount"))
+                        {
+                            @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
+                        }
+                    </td>
+                    <td class="bannerCenter">
+                        <div class="viewTitle">
+                            @RenderSection("title", false)
+                        </div>
+                        @if (ViewData.ContainsKey("accountAuth"))
+                        {
+                            <div id="accountContext" class="accountContext">
+                                @if (ViewData.ContainsKey("mediaAccount"))
+                                {
+                                    @ViewData["mediaAccount"]
+                                }
+                                else if (ViewData.ContainsKey("userAccount"))
+                                {
+                                    @ViewData["userAccount"]
+                                }
+                            </div>
+                        }
+                    </td>
+                    <td class="bannerRight">
+                        @if (ViewData.ContainsKey("mediaAccount"))
+                        {
+                            @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
+                        }
+                        else if (ViewData.ContainsKey("userAccount"))
+                        {
+                            @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '/account/profileedit'" })
+                            @Html.Partial("SiteButton", new string[] { "userSignOut", "UserSignOut.png", "SignOut('" + ViewData["authTokenCookie"] + "')" })
+                        }
+                        else
+                        {
+                            @Html.Partial("SiteButton", new string[] { "userSignIn", "UserSignIn.png", "window.location.href = '/account/signin'" })
+                        }
+                    </td>
+                </tr>
+            </table>
+            <table class="layout">
+                <tr>
+                    <td class="layoutSide">
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "amsPlatform", "MediaServices.png", "window.open('http://amslabs.azurewebsites.net/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "amsPlayer", "MediaPlayer.png", "window.open('http://aka.ms/azuremediaplayer/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "channelIngest", "ChannelIngest.png", "window.open('http://azure.microsoft.com/en-us/documentation/articles/media-services-manage-channels-overview/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "mediaAnalytics", "MediaAnalytics.png", "window.open('http://aka.ms/amademos/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "mediaEditor", "MediaEditor.png", "window.open('http://aka.ms/videoeditordemo/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "contentNetwork", "ContentNetwork.png", "window.open('http://azure.microsoft.com/en-us/documentation/articles/cdn-overview/')" })
+                        </div>
+                    </td>
+                    <td>
+                        @RenderBody()
+                    </td>
+                    <td class="layoutSide">
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "appServiceWeb", "AppServiceWeb.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/web/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "appServiceMobile", "AppServiceMobile.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/mobile/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "appServiceApi", "AppServiceAPI.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/api/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "appServiceApiManagement", "AppServiceAPIManagement.png", "window.open('http://azure.microsoft.com/en-us/services/api-management/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "appServiceLogic", "AppServiceLogic.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/logic/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "appServiceFunctions", "AppServiceFunctions.png", "window.open('http://azure.microsoft.com/en-us/services/functions/')" })
+                        </div>
+                    </td>
+                </tr>                            
+            </table>
+        }
+        @RenderSection("foot", false)
+        <div id="messageDialog"></div>
+    </body>
+</html>

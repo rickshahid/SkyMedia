@@ -1,0 +1,157 @@
+﻿@using SkyMedia.WebApp.Models;
+
+@{
+    MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
+    string authToken = ViewData["authToken"] as string;
+    string autoPlay = ViewData["autoPlay"] as string;
+}
+
+@section head {
+    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/amp-default/azuremediaplayer.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/lib/jstree/dist/themes/default/style.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
+    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
+    <script type="text/javascript" src="~/lib/jstree/dist/jstree.min.js"></script>
+    <script type="text/javascript" src="~/js/amve.min.js"></script>
+    <script type="text/javascript">
+        function SetPlayerContent(currentStream, autoPlay) {
+            var mediaPlayer = amp("mediaPlayer");
+            mediaPlayer.autoplay(autoPlay);
+            mediaPlayer.src(
+                [{
+                    src: currentStream.sourceUrl,
+                    type: GetSourceType(currentStream.sourceUrl),
+                    protectionInfo: GetProtectionInfo(currentStream.protectionTypes, "@authToken")
+                }],
+                currentStream.textTracks
+            );
+            var languageCode = "@ViewData["languageCode"]".toLowerCase();
+            if (languageCode != "") {
+                for (var i = 0; i < mediaPlayer.textTracks_.length; i++) {
+                    if (mediaPlayer.textTracks_.tracks_[i].language.toLowerCase() == languageCode) {
+                        mediaPlayer.textTracks_.tracks_[i].mode = "showing";
+                    }
+                }
+            }
+        }
+        function SetStreamNumber(mediaStreams, streamNumber, sliderValue) {
+            var streamNumberCell = document.getElementById("streamNumber");
+            streamNumberCell.innerText = streamNumber;
+            streamNumberCell.style.paddingLeft = (sliderValue - 2) + "px";
+            if (streamNumber == 1 || streamNumber == mediaStreams.length) {
+                streamNumberCell.className = "streamNumber hide";
+            } else {
+                streamNumberCell.className = "streamNumber";
+            }
+        }
+        function SetStreamName(currentStream) {
+            var streamName = currentStream.name.replace("<br /><br />", " ");
+            if (currentStream.protectionTypes.length > 0) {
+                streamName = streamName + " + " + currentStream.protectionTypes.join(" + ");
+            }
+            $("#streamName").html(streamName);
+        }
+        function ToggleAnalytics(span) {
+            if (span.innerText.trim() == "+") {
+                span.innerText = "-";
+                $("#analyticsView").show();
+            } else {
+                span.innerText = "+";
+                $("#analyticsView").hide();
+            }
+        }
+        function SetAnalytics(timeSeconds) {
+            $.get("/analytics/metadata",
+                {
+                    mediaProcessor: null,
+                    documentId: null,
+                    timeSeconds: timeSeconds
+                },
+                function (result) {
+                    // TBD
+                }
+            );
+        }
+        $(function () {
+            var mediaStreams = @Html.Raw(Json.Serialize(ViewData["mediaStreams"]));
+            var streamNumber = @int.Parse(ViewData["streamNumber"].ToString());
+            var currentStream = (mediaStreams.length == 0) ? null : mediaStreams[streamNumber - 1];
+            var sliderWidth = $("#streamCatcher").width();
+            var sliderStep = (mediaStreams.length < 2) ? sliderWidth : Math.floor(sliderWidth / (mediaStreams.length - 1));
+            var sliderValue = (streamNumber - 1) * sliderStep;
+            $("#streamCatcher").slider({
+                min: 0,
+                max: sliderWidth,
+                step: sliderStep,
+                value: sliderValue,
+                slide: function (event, ui) {
+                    if (mediaStreams.length > 0) {
+                        var streamNumber = (mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
+                        var currentStream = mediaStreams[streamNumber - 1];
+                        var streamName = currentStream.name;
+                        var protectionTypes = currentStream.protectionTypes;
+                        if (protectionTypes.length > 0) {
+                            streamName = streamName + "<br /><br />" + protectionTypes.join(", ");
+                        }
+                        CreateTipTopLeft("streamCatcher", streamName, ui.value + 2, -10);
+                        SetTipVisible("streamCatcher", true);
+                        SetStreamNumber(mediaStreams, streamNumber, ui.value);
+                    }
+                },
+                stop: function (event, ui) {
+                    if (mediaStreams.length > 0) {
+                        var streamNumber = (mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
+                        var currentStream = mediaStreams[streamNumber - 1];
+                        SetPlayerContent(currentStream, true);
+                        SetStreamName(currentStream);
+                        $("#streamUrl").html("");
+                    }
+                }
+            });
+            var editVideo = window.location.href.indexOf("amve") > -1;
+            var mediaPlayer = GetMediaPlayer(editVideo);
+            mediaPlayer.addEventListener(amp.eventName.play, function () {
+                var streamUrl = mediaPlayer.currentSrc();
+                streamUrl = streamUrl.split("/");
+                streamUrl[streamUrl.length - 1] = streamUrl[streamUrl.length - 1] + "<br />";
+                streamUrl[streamUrl.length - 2] = streamUrl[streamUrl.length - 2] + "<br />";
+                streamUrl[streamUrl.length - 3] = streamUrl[streamUrl.length - 3] + "<br />";
+                streamUrl[streamUrl.length - 4] = streamUrl[streamUrl.length - 4] + "<br />";
+                streamUrl = streamUrl.join("/");
+                $("#streamUrl").html(streamUrl);
+            });
+            mediaPlayer.addEventListener(amp.eventName.pause, function () {
+                var timeSeconds = mediaPlayer.currentTime();
+                SetAnalytics(timeSeconds);
+            });
+            if (currentStream == null) {
+                SetPlayerSpinner(false);
+            } else {
+                SetPlayerContent(currentStream, @autoPlay);
+                SetStreamNumber(mediaStreams, streamNumber, sliderValue);
+                SetStreamName(currentStream);
+            }
+        })
+    </script>
+}
+
+@section title {
+    Azure Sky Media
+}
+
+<div id="videoEditor" class="mediaPlayer">
+    @Html.Partial("MediaPlayer")
+</div>
+
+@Html.Partial("MediaBar", mediaStreams)
+
+@section foot {
+    <div class="streamInfo">
+        <div id="streamName" class="streamName"></div>
+        <div id="streamUrl" class="streamUrl"></div>
+    </div>
+    @if (ViewData.ContainsKey("accountAuth"))
+    {
+        @Html.Partial("MediaAnalytics")
+    }
+}

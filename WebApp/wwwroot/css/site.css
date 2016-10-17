@@ -1,0 +1,654 @@
+﻿@viewport {
+    zoom: 1.0;
+}
+
+@media all and (max-width: 320px) {
+    #siteCode, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+        display: none !important;
+    }
+
+    .banner {
+        width: 300px !important;
+    }
+
+    .viewTitle {
+        font-size: medium !important;
+    }
+
+    .accountContext {
+        font-size: small !important;
+    }
+
+    .mediaPlayer {
+        height: 200px !important;
+        width: 300px !important;
+    }
+
+    .streamCatcher {
+        width: 150px !important;
+    }
+
+    .streamInfo {
+        font-size: small !important;
+    }
+
+    .liveCountdown {
+        font-weight: normal !important;
+        font-size: small !important;
+    }
+}
+
+@media all and (min-width: 321px) and (max-width: 480px) {
+    #siteCode, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+        display: none !important;
+    }
+
+    .banner {
+        width: 450px !important;
+    }
+
+    .mediaPlayer {
+        height: 300px !important;
+        width: 450px !important;
+    }
+
+    .streamInfo {
+        font-size: medium !important;
+    }
+
+    .liveCountdown {
+        font-size: medium !important;
+    }
+}
+
+@media all and (min-width: 481px) and (max-width: 768px) {
+    .layoutSide {
+        display: none !important;
+    }
+
+    .streamInfo {
+        font-size: large !important;
+    }
+
+    .liveCountdown {
+        font-size: large !important;
+    }
+}
+
+body {
+    background-color: black;
+}
+
+.layout {
+    margin: 0px auto;
+}
+
+.layout.minimal {
+    display: table;
+}
+
+.layoutSide {
+    vertical-align: top;
+}
+
+.banner {
+    margin: 0px auto;
+    width: 720px;
+}
+
+.bannerLeft {
+    vertical-align: bottom;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.bannerCenter {
+    text-align: center;
+    width: 100%;
+}
+
+.bannerRight {
+    vertical-align: bottom;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.accountContext {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: deepskyblue;
+    font-weight: bold;
+    font-size: large;
+}
+
+.siteButton {
+    background: none;
+    border: none;
+}
+
+.siteButton:hover {
+    cursor: pointer;
+}
+
+.amp-logo:hover {
+    cursor: pointer;
+}
+
+.siteLink {
+    text-decoration: none;
+    color: deepskyblue;
+}
+
+.siteLink:hover {
+    cursor: pointer;
+}
+
+.qtip {
+    border-radius: 20px;
+    max-width: 720px;
+    padding: 5px;
+}
+
+.qtip-content {
+    text-align: center;
+    font-style: italic;
+    font-weight: bold;
+    font-size: large;
+}
+
+.mediaPlayer {
+    border: 1px solid deepskyblue;
+    padding: 0px 3px 3px 0px;
+    height: 405px;
+    width: 720px;
+}
+
+.mediaBar {
+    margin: 10px auto;
+}
+
+.streamCatcher {
+    width: 280px;
+}
+
+.streamNumber {
+    color: deepskyblue;
+    font-size: x-large;
+}
+
+.streamNumber.side {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.streamNumber.hide {
+    display: none;
+}
+
+.streamInfo {
+    color: deepskyblue;
+    text-align: center;
+    font-size: x-large;
+}
+
+.streamName {
+    font-weight: bold;
+}
+
+.streamUrl {
+    font-style: italic;
+    margin-top: 20px;
+}
+
+.viewTitle {
+    margin: 10px 0px 10px 0px;
+    color: deepskyblue;
+    text-align: center;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.viewButtons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.liveCountdown {
+    margin: 30px 0px 30px 0px;
+    color: deepskyblue;
+    text-align: center;
+    font-size: x-large;
+    font-style: italic;
+    font-weight: bold;
+}
+
+#liveCountdownValue {
+    color: azure;
+}
+
+.jobPriority {
+    display: inline-block;
+    margin-left: 15px;
+    width: 105px;
+}
+
+.jobPriorityValue {
+    font-weight: bold;
+    margin-left: 5px;
+    color: azure;
+}
+
+.ui-slider {
+    background: deepskyblue;
+    height: 5px;
+}
+
+.ui-slider-handle {
+    background: deepskyblue !important;
+    height: 15px !important;
+}
+
+.ui-dialog-title {
+    float: none !important;
+}
+
+.ui-dialog-titlebar {
+    text-align: center;
+}
+
+.ui-dialog-titlebar-close {
+    display: none;
+}
+
+.ui-dialog-content {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    border-top: 1px solid deepskyblue;
+    text-align: center;
+    padding-right: 0px;
+    padding-top: 15px;
+}
+
+.ui-dialog .ui-dialog-buttonpane button {
+    border-radius: 20px;
+    width: 175px;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { 
+    float: none;
+}
+
+.plupload_container {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    margin-top: 10px;
+    width: 720px;
+}
+
+.plupload_header {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.plupload_filelist_footer {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.plupload_file_status {
+    text-align: left !important;
+}
+
+.plupload_upload_status {
+    margin-top: 10px;
+}
+
+.plupload_total_status {
+    display: inline-block;
+    text-align: right;
+    width: 20px;
+}
+
+.plupload_total_file_size {
+    margin-right: 10px;
+    display: block;
+    width: 60px;
+}
+
+.plupload_file_size {
+    white-space: nowrap;
+}
+
+.plupload_progress_container {
+    margin-top: 10px;    
+    height: 25px;
+    width: 130px;
+}
+
+.plupload_progress {
+    margin-right: 238px;
+}
+
+.inputGroup {
+    border: 1px dashed deepskyblue;
+    font-weight: bold;
+    width: 590px;
+}
+
+.inputGroup.workflowTask {
+    padding-left: 5px;
+}
+
+.inputGroup.contentProtection {
+    padding-left: 30px;
+}
+
+.inputLabel {
+    padding-right: 0px !important;
+    white-space: nowrap;
+    color: deepskyblue;
+    font-weight: bold;
+    text-align: right;
+    width: 0px;
+}
+
+.signiantUploader {
+    position: relative;
+    bottom: 20px;
+}
+
+.asperaUploader {
+    margin-top: 20px;
+}
+
+#transferProgress {
+    position: relative;
+    height: 20px;
+    width: 140px;
+    top: 278px;
+    left: 280px;
+    z-index: 1;
+}
+
+.transferMessage {
+    position: relative;
+    color: deepskyblue;
+    bottom: 52px;
+    left: 430px;
+}
+
+.transferMessage.fileUploader {
+    bottom: 32px;
+}
+
+.msapi_progressbar {
+    background-color: black !important;
+    border: 1px solid deepskyblue !important;
+}
+
+.msapi_transferProgress span {
+    font-size: medium !important;
+    color: azure !important;
+    font-weight: bold;
+    left: 100px;
+}
+
+.mediaUpload {
+    margin: 0px auto;
+}
+
+.mediaUpload td {
+    padding: 5px;
+}
+
+.mediaUploadLeft {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.mediaUploadRight {
+    margin-left: 20px;
+    margin-right: 0px;
+}
+
+.mediaStorage {
+    font-weight: bold;
+    width: 590px;
+}
+
+.mediaWorkflow {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    padding-left: 10px;
+    padding-top: 10px;
+    width: 720px;
+}
+
+.mediaWorkflow td {
+    padding: 5px;
+}
+
+.mediaWorkflowJob td {
+    padding-bottom: 10px;
+}
+
+.mediaWorkflowTask > td {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.mediaWorkflowTaskLink td {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.mediaWorkflowTaskLink hr {
+    border: 1px dashed deepskyblue;
+    margin: 0px;
+    height: 15px;
+    width: 1px;
+}
+
+.mediaWorkflowTaskButtons td {
+    white-space: nowrap;
+    padding: 0px;
+}
+
+.mediaWorkflowContentProtection {
+    font-weight: bold;
+    margin-top: 5px;
+    display: block;
+    width: 200px;
+}
+
+#mediaWorkflowTaskAdd {
+    margin-left: 75px;
+}
+
+.mediaWorkflowStart {
+    text-align: right;
+    width: 100%;
+}
+
+.mediaAssets {
+    background-color: deepskyblue;
+    border-radius: 20px;
+    padding-top: 5px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.mediaAssets.libraryView {
+    height: 400px;
+    width: 720px;
+}
+
+.mediaAssets.workflowView {
+    height: 250px;
+    width: 590px;
+}
+
+.mediaFile > .jstree-checkbox {
+    display: none !important;
+}
+
+.jstree-node {
+    font-weight: bold;
+    font-size: large;
+}
+
+.mediaProcessor {
+    font-weight: bold;
+    width: 200px !important;
+}
+
+.mediaProcessorConfig {
+    font-weight: bold;
+    width: 440px;
+}
+
+.jobTaskParent {
+    width: 35px;
+}
+
+.inputAssetName {
+    font-weight: bold;
+    width: 160px;
+}
+
+.outputAssetName {
+    font-weight: bold;
+    width: 196px;
+}
+
+.jobName {
+    font-weight: bold;
+    width: 335px;
+}
+
+.multiSelect {
+    font-size: small;
+}
+
+.jobTaskOptions {
+    width: 225px !important;
+    max-height: 85px;
+}
+
+.contentProtectionRow {
+    display: none;
+}
+
+.contentProtectionRow > td {
+    padding-bottom: 10px;
+}
+
+.contentProtectionLabel {
+    text-align: center;
+}
+
+.contentAuthTypeAddress {
+    margin-left: 8px;
+}
+
+.contentAuthAddressRange {
+    margin-left: 5px;
+    width: 145px;
+}
+
+.ui-jqgrid {
+    border: none !important;
+}
+
+.ui-jqgrid-hbox {
+    background: background;
+}
+
+.ui-jqgrid-hdiv {
+    border: none !important;
+}
+
+.ui-jqgrid-htable th {
+    border-radius: 20px;
+}
+
+.ui-jqgrid-htable div {
+    height: 20px !important;
+}
+
+.ui-jqgrid-view {
+    font-size: medium !important;
+}
+
+.jqgrow td {
+    font-weight: bold !important;
+    height: 30px !important;
+    border: none !important;
+    background: background;
+}
+
+.jqgrow:hover td {
+    color: deepskyblue;
+    cursor: pointer;
+}
+
+.analyticsInfo {
+    text-align: center;
+    margin-left: -20px;
+    margin-top: 30px;
+}
+
+.analyticsToggle {
+    display: inline-table;
+    vertical-align: top;
+    font-size: x-large;
+    margin-top: -15px;
+    width: 15px;
+}
+
+.videoAnalytics {
+    border: 5px inset deepskyblue;
+    display: inline-table;
+    vertical-align: top;
+    width: 640px;
+}
+
+.analyticsView {
+    margin-top: 10px;
+}
+
+.analyticsView select {
+    font-weight: bold;
+}
+
+.analyticsData {
+    margin-bottom: 10px;
+    display: none;
+    height: 300px;
+    width: 620px;
+}
+
+.dashboard {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+}
+
+.entityCounts {
+    color: deepskyblue;
+    font-style: italic;
+    font-weight: bold;
+    font-size: large;
+    margin: 10px;
+}
+
+.entityCounts td {
+    text-align: right;
+    padding: 5px;
+}
+
+.entityCount {
+    color: azure;
+}

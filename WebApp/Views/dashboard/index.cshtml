@@ -1,0 +1,115 @@
+﻿@using System.Diagnostics;
+
+@section head {
+    <script type="text/javascript">
+        function DispatchCommand(command, parameterFlag) {
+            $.post("/home/dispatch",
+                {
+                    command: command,
+                    parameterId: "@ViewData["id"]",
+                    parameterName: "@ViewData["name"]",
+                    parameterFlag: parameterFlag
+                },
+                function (entityCounts) {
+                    SetDashboard(entityCounts);
+                }
+            );
+        }
+        function ConfirmCommand(command) {
+            var title, message;
+            var buttons = {
+                Yes: function () {
+                    DispatchCommand(command, false);
+                    $(this).dialog("close");
+                },
+                No: function () {
+                    $(this).dialog("close");
+                }
+            };
+            switch (command) {
+                case "channelCreate":
+                    title = "Confirm Live Channel Creation";
+                    message = "Are you sure you want to create a new live channel in your media account?";
+                    break;
+                case "channelSignal":
+                    title = "Confirm Live Channel Advertisement Insertion";
+                    message = "Are you sure you want to insert an advertisement signal into your live channel?";
+                    break;
+                case "accountClear":
+                    title = "Confirm Media Account Clear (Permanently Delete Assets)";
+                    message = "Do you want to delete all assets or child assets only in your media account?";
+                    var buttons = {
+                        "All Assets": function () {
+                            DispatchCommand(command, true);
+                            $(this).dialog("close");
+                        },
+                        "Child Assets": function () {
+                            DispatchCommand(command, false);
+                            $(this).dialog("close");
+                        },
+                        Cancel: function () {
+                            $(this).dialog("close");
+                        }
+                    };
+                    break;
+            }
+            DisplayMessage(title, message, buttons, null, null);
+        }
+        function SetEntity(innerHtml, entityCount) {
+            innerHtml = innerHtml + "<tr><td>";
+            if (entityCount.length > 2) {
+                innerHtml = innerHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
+            } else {
+                innerHtml = innerHtml + entityCount[0]
+            }
+            return innerHtml + ":</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
+        }
+        function SetDashboard(entityCounts) {
+            var innerHtml = "";
+            for (var i = 0; i < 11; i++) {
+                innerHtml = SetEntity(innerHtml, entityCounts[i]);
+            }
+            $("#dashboard1").html(innerHtml);
+            innerHtml = "";
+            for (var i = 11; i < entityCounts.length; i++) {
+                innerHtml = SetEntity(innerHtml, entityCounts[i]);
+            }
+            $("#dashboard2").html(innerHtml);
+        }
+        $(function () {
+            var entityCounts = @Html.Raw(Json.Serialize(ViewData["entityCounts"]));
+            SetDashboard(entityCounts);
+            CreateTipTop("mediaProcessors", "Azure Media Services<br /><br />Processors");
+            CreateTipTop("siteApi", "Azure Sky Media<br /><br />Web API");
+            CreateTipTop("channelCreate", "Create Live Channel");
+            CreateTipTop("channelSignal", "Signal Ad Insertion");
+            CreateTipTop("accountClear", "Clear Media Account");
+        })
+    </script>
+}
+
+@section title {
+   Azure Media Services<br />Account Dashboard
+}
+
+<table class="dashboard">
+    <tr>
+        <td>
+            <table id="dashboard1" class="entityCounts"></table>
+        </td>
+        <td>
+            <table id="dashboard2" class="entityCounts"></table>
+        </td>
+    </tr>
+</table>
+
+<div class="viewButtons">
+    @Html.Partial("SiteButton", new string[] { "mediaProcessors", "MediaProcessors.png", "window.location.href = '/dashboard/processors'" })
+    @Html.Partial("SiteButton", new string[] { "siteApi", "SiteAPI.png", "window.open('/swagger/ui/')" })
+    @Html.Partial("SiteButton", new string[] { "channelCreate", "ChannelCreate.png", "ConfirmCommand('channelCreate')" })
+    @Html.Partial("SiteButton", new string[] { "channelSignal", "ChannelSignal.png", "ConfirmCommand('channelSignal')" })
+    @if (Debugger.IsAttached)
+    {
+        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmCommand('accountClear')" })
+    }
+</div>

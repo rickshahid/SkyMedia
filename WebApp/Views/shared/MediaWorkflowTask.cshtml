@@ -1,0 +1,96 @@
+﻿@{
+    int taskNumber = 1;
+    string taskId = "mediaWorkflowTask" + taskNumber;
+    string mediaProcessorId = "mediaProcessor" + taskNumber;
+    string taskParentId = "taskParent" + taskNumber;
+    string processorConfigRowId = "processorConfigRow" + taskNumber;
+    string processorConfigId = "processorConfig" + taskNumber;
+    string processorConfigFileRowId = "processorConfigFileRow" + taskNumber;
+    string processorConfigFileId = "processorConfigFile" + taskNumber;
+    string indexerConfigRowId = "indexerConfigRow" + taskNumber;
+    string spokenLanguagesId = "spokenLanguages" + taskNumber;
+    string captionFormatWebVttId = "captionFormatWebVtt" + taskNumber;
+    string captionFormatTtmlId = "captionFormatWebTtml" + taskNumber;
+    string outputAssetNameId = "outputAssetName" + taskNumber;
+    string taskOptionsId = "taskOptions" + taskNumber;
+}
+
+<tr id="@taskId" class="mediaWorkflowTask">
+    <td class="inputLabel">
+        Job Task #@taskNumber:
+    </td>
+    <td>
+        <table class="inputGroup workflowTask">
+            <tr>
+                <td class="inputLabel">
+                    Media Processor:
+                </td>
+                <td>
+                    @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this)" })
+                    &nbsp;
+                    <span class="inputLabel">
+                        Input Asset: Task #
+                    </span>
+                    <select id="@taskParentId" class="jobTaskParent" disabled></select>
+                    <span class="inputLabel">
+                        Output
+                    </span>
+                </td>
+            </tr>
+            <tr id="@processorConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://msdn.microsoft.com/en-us/library/azure/mt269960.aspx')">
+                        Configuration:
+                    </span>
+                </td>
+                <td>
+                    @Html.DropDownList(processorConfigId, null, new { @class = "mediaProcessorConfig", onchange = "SetProcessorConfigFile(this)" })
+                </td>
+            </tr>
+            <tr id="@processorConfigFileRowId" style="display: none">
+                <td class="inputLabel">
+                    Custom Config:
+                </td>
+                <td>
+                    @Html.TextBox(processorConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file" })
+                </td>
+            </tr>
+            <tr id="@indexerConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    Indexer Config:
+                </td>
+                <td>
+                    @Html.DropDownList(spokenLanguagesId, null, new { multiple = "multiple" })
+                    &nbsp;
+                    <span class="inputLabel">
+                        Captions:
+                    </span>
+                    &nbsp;
+                    @Html.CheckBox(captionFormatWebVttId, true)
+                    <span class="inputLabel">
+                        VTT
+                    </span>
+                    &nbsp;
+                    @Html.CheckBox(captionFormatTtmlId, false)
+                    <span class="inputLabel">
+                        TTML
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="inputLabel">
+                    Output Asset:
+                </td>
+                <td>
+                    @Html.TextBox(outputAssetNameId, null, new { @class = "outputAssetName", placeholder = "[Output Asset Name]" })
+                    &nbsp;
+                    <select id="@taskOptionsId" multiple="multiple">
+                        <option value="1">Encrypt Task Configuration</option>
+                        <option value="2">Do Not Delete Output On Failure</option>
+                        <option value="4">Do Not Cancel Job On Failure</option>
+                    </select>
+                </td>
+            </tr>
+       </table>
+    </td>
+</tr>

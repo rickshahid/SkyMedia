@@ -1,0 +1,34 @@
+﻿@section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/plupload/js/jquery.ui.plupload/css/jquery.ui.plupload.css" />
+    <script type="text/javascript" src="~/lib/plupload/js/moxie.min.js"></script>
+    <script type="text/javascript" src="~/lib/plupload/js/plupload.min.js"></script>
+    <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
+    <script type="text/javascript" src="~/js/uploader.js"></script>
+    <script type="text/javascript" src="~/js/workflow.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var signiantAccountKey = "@ViewData["signiantAccountKey"]";
+            var asperaAccountKey = "@ViewData["asperaAccountKey"]";
+            var storageContainer = "@ViewData["storageContainer"]";
+            var blockChunkSize = "@ViewData["blockChunkSize"]";
+            var maxFileSize = "@ViewData["maxFileSize"]";
+            var maxRetryCount = "@ViewData["maxRetryCount"]";
+            var appUrl = "@ViewData["appUrl"]";
+            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
+            CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount, appUrl);
+        })
+    </script>
+}
+
+@section title {
+    Azure Media File Uploader
+}
+
+@Html.Partial("MediaUpload", new bool[] { false, false })
+
+<div id="fileUploader"></div>
+
+<div id="transferMessage" class="transferMessage fileUploader">Elapsed Time</div>
+
+@Html.Partial("MediaWorkflow", new string[] { "true", "" })

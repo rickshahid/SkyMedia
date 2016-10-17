@@ -1,0 +1,58 @@
+﻿@{
+    bool[] model = Model;
+    bool signiantFlight = model[0];
+    bool asperaFasp = model[1];
+}
+
+<table class="mediaUpload">
+    <tr>
+        <td class="inputLabel">
+            Upload Service:
+        </td>
+        <td>
+            @Html.RadioButton("uploadService", "azureStorage", true, new { @class = "mediaUploadLeft", onchange = "SetUploadService(this)" })
+            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/storage/')">
+                Azure Storage (HTTP / TCP)
+            </span>
+            @Html.RadioButton("uploadService", "signiantFlight", signiantFlight, new { @class = "mediaUploadRight", onchange = "SetUploadService(this)", disabled = "disabled" })
+            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/marketplace/partners/signiant/flight/')">
+                Signiant Flight (UDP)
+            </span>
+            @Html.RadioButton("uploadService", "asperaFasp", asperaFasp, new { @class = "mediaUploadRight", onchange = "SetUploadService(this)", disabled = "disabled" })
+            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/marketplace/partners/aspera/sod/')">
+                Aspera FASP (UDP)
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Azure Storage:
+        </td>
+        <td>
+            @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage", onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')" })
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Media Asset:
+        </td>
+        <td>
+            @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Asset Name]" })
+            &nbsp;
+            @Html.CheckBox("multipleFileAsset")
+            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/documentation/articles/media-services-dotnet-upload-files/')">
+                Multi-File Asset
+            </span>
+            &nbsp;
+            @Html.CheckBox("publishInputAsset")
+            <span class="inputLabel siteLink" onclick="window.open('https://azure.microsoft.com/en-us/documentation/articles/media-services-deliver-streaming-content/')">
+                Publish Asset
+            </span>
+            &nbsp;
+            @Html.CheckBox("uploadFileWatcher", null, new { onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')" })
+            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/documentation/articles/media-services-dotnet-upload-files/#ingest_in_bulk')">
+                Upload Watcher
+            </span>
+        </td>
+    </tr>
+</table>

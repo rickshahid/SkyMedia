@@ -1,0 +1,62 @@
+﻿@using SkyMedia.ServiceBroker;
+
+@using Microsoft.AspNetCore.Http;
+
+@{
+    HttpRequest request = this.Context.Request;
+    HttpResponse response = this.Context.Response;
+    string authToken = AuthToken.GetValue(request, response);
+    ViewData["authTokenCookie"] = Constants.HttpCookies.UserAuthToken;
+    ViewData["authToken"] = authToken;
+
+    string settingKey = Constants.ConnectionStrings.AzureMedia;
+    string mediaAccount = AppSetting.GetValue(settingKey);
+
+    if (!string.IsNullOrEmpty(mediaAccount))
+    {
+        ViewData["mediaAccount"] = AppSetting.ParseConnection(mediaAccount)[0];
+        ViewData["accountAuth"] = ViewData["mediaAccount"];
+    }
+    else if (!string.IsNullOrEmpty(authToken))
+    {
+        string attributeName = Constants.UserAttribute.UserId;
+        string userId = AuthToken.GetClaimValue(authToken, attributeName);
+
+        attributeName = Constants.UserAttribute.MediaAccountName;
+        string accountName = AuthToken.GetClaimValue(authToken, attributeName);
+
+        ViewData["userAccount"] = string.Concat(userId, " - ", accountName);
+        ViewData["accountAuth"] = ViewData["userAccount"];
+    }
+
+    settingKey = Constants.AppSettings.AppUrl;
+    ViewData["appUrl"] = AppSetting.GetValue(settingKey);
+
+    settingKey = Constants.AppSettings.AppTitle;
+    ViewData["appTitle"] = AppSetting.GetValue(settingKey);
+
+    settingKey = Constants.AppSettings.AppRegion;
+    ViewData["appRegion"] = AppSetting.GetValue(settingKey);
+
+    settingKey = Constants.AppSettings.AppSourceCode;
+    ViewData["appSourceCode"] = AppSetting.GetValue(settingKey);
+
+    string ampVersion = this.Context.Request.Query["amp"];
+    if (string.IsNullOrEmpty(ampVersion))
+    {
+        settingKey = Constants.AppSettings.MediaPlayerVersion;
+        ampVersion = AppSetting.GetValue(settingKey);
+    }
+    ViewData["mediaPlayerVersion"] = ampVersion;
+
+    settingKey = Constants.AppSettings.StorageCdnUrl;
+    ViewData["storageCdnUrl"] = AppSetting.GetValue(settingKey);
+
+    string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
+    if (requestUrl.Contains("account") || requestUrl.Contains("live"))
+    {
+        ViewData["minimalView"] = true;
+    }
+    ViewData["preview"] = requestUrl.Contains("preview");
+    Layout = "_Layout";
+}

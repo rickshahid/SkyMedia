@@ -1,0 +1,66 @@
+﻿@{
+    bool preview = (bool)ViewData["preview"];
+    string viewTitle = "Azure Sky Media Live";
+    if (preview)
+    {
+        viewTitle = string.Concat(viewTitle, " (Preview)");
+    }
+}
+
+@section head {
+    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/amp-default/azuremediaplayer.min.css" />
+    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery.countdown/dist/jquery.countdown.min.js"></script>
+    <script type="text/javascript">
+        var countdownLabel = "Next Flight:";
+        function SetCountdown(e) {
+            var countdown = e.strftime("%-D day%!D %-H hour%!H %-M minute%!M %-S second%!S");
+            $("#liveCountdownLabel").text(countdownLabel);
+            $("#liveCountdownValue").text(countdown);
+            if (e.offset.totalMinutes < 1) {
+                $("#buckleUpImage").show();
+            }
+        }
+        function StartLive(e) {
+            var mediaPlayer = GetMediaPlayer(false);
+            var sourceUrl = "@ViewData["liveSourceUrl"]";
+            $("#liveCountdownLabel").text("");
+            $("#liveCountdownValue").text("");
+            $("#buckleUpImage").hide();
+            SetPlayerSpinner(true);
+            mediaPlayer.src([{
+                src: sourceUrl,
+                type: GetSourceType(sourceUrl)
+            }]);
+        }
+        $(function () {
+            var mediaPlayer = GetMediaPlayer(false);
+            var startDateTime = "@ViewData["startDateTime"]";
+            SetPlayerSpinner(false);
+            if (startDateTime == "") {
+                $("#liveCountdownLabel").text(countdownLabel);
+                $("#liveCountdownValue").text("TBD");
+            } else {
+                $("#liveCountdownValue").countdown(startDateTime)
+                    .on("update.countdown", SetCountdown)
+                    .on("finish.countdown", StartLive)
+                    .countdown("start");
+            }
+        })
+    </script>
+}
+
+<div class="viewTitle">
+    <a class="siteLink" href="http://azure.microsoft.com/en-us/documentation/articles/media-services-manage-channels-overview/" target="_blank">@viewTitle</a>
+</div>
+
+<div id="videoEditor" class="mediaPlayer">
+    @Html.Partial("MediaPlayer")
+</div>
+
+<div class="liveCountdown">
+    <span id="liveCountdownLabel"></span>
+    <span id="liveCountdownValue"></span>
+    <br /><br />
+    <img id="buckleUpImage" src="@ViewData["buckleUpUrl"]" style="display: none" />
+</div>

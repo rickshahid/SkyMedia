@@ -1,0 +1,60 @@
+﻿@using SkyMedia.WebApp.Models;
+
+@{
+    string mediaCatcher = "display: none";
+    MediaStream[] mediaStreams = new MediaStream[] { };
+    if (Model != null)
+    {
+        mediaCatcher = "";
+        mediaStreams = Model;
+    }
+}
+
+<table class="mediaBar">
+    <tr>
+        <td id="userButtonLeft1">
+        @if (ViewData.ContainsKey("accountAuth"))
+        {
+            @Html.Partial("SiteButton", new string[] { "mediaFileUpload", "MediaUpload.png", "window.location.href = '/upload'" })
+        }
+        </td>
+        <td id="userButtonLeft2">
+        @if (ViewData.ContainsKey("accountAuth"))
+        {
+            @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'" })
+        }
+        </td>
+        <td style="@mediaCatcher">
+            <table>
+                <tr>
+                    <td class="streamNumber side">
+                        <span>@(mediaStreams.Length == 0 ? 0 : 1)</span>
+                    </td>
+                    <td>
+                        <div id="streamCatcher" class="streamCatcher"></div>
+                    </td>
+                    <td class="streamNumber side">
+                        @mediaStreams.Length
+                    </td>
+                </tr>
+                <tr>
+                    <td />
+                    <td id="streamNumber" class="streamNumber"></td>
+                    <td />
+                </tr>
+            </table>
+        </td>
+        <td id="userButtonRight1">
+        @if (ViewData.ContainsKey("accountAuth"))
+        {
+            @Html.Partial("SiteButton", new string[] { "mediaAssetLibrary", "MediaLibrary.png", "window.location.href = '/asset'" })
+        }
+        </td>
+        <td id="userButtonRight2">
+        @if (ViewData.ContainsKey("accountAuth"))
+        {
+            @Html.Partial("SiteButton", new string[] { "mediaAccountDashboard", "AccountDashboard.png", "window.location.href = '/dashboard'" })
+        }
+        </td>
+    </tr>
+</table>
