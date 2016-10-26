@@ -14,9 +14,8 @@
             var blockChunkSize = "@ViewData["blockChunkSize"]";
             var maxFileSize = "@ViewData["maxFileSize"]";
             var maxRetryCount = "@ViewData["maxRetryCount"]";
-            var appUrl = "@ViewData["appUrl"]";
             SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
-            CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount, appUrl);
+            CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount);
         })
     </script>
 }
@@ -29,6 +28,8 @@
 
 <div id="fileUploader"></div>
 
-<div id="transferMessage" class="transferMessage fileUploader">Elapsed Time</div>
+<div id="transferMessage" class="transferMessage httpTransfer">
+    <br />
+</div>
 
 @Html.Partial("MediaWorkflow", new string[] { "true", "" })

@@ -48,6 +48,14 @@ function MapElapsedTime(elapsedTime) {
     var elapsedMinutes = elapsedSeconds / 60;
     return elapsedMinutes.toFixed(2) + " Minutes";
 }
+function GetUploaderFiles() {
+    var files = new Array();
+    for (var i = 0; i < _fileUploader.files.length; i++) {
+        var file = _fileUploader.files[i].name;
+        files.push(file);
+    }
+    return files;
+}
 function GetUploaderFile(fileName) {
     var file = null;
     var files = _fileUploader.files;
@@ -93,11 +101,14 @@ function AsperaEnabled() {
 function WatcherEnabled() {
     return $("#uploadFileWatcher").prop("checked");
 }
-function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount, appUrl) {
+function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount) {
     _storageContainer = storageContainer;
     var eventHandlers = {
         PostInit: function (uploader) {
             _fileUploader = uploader;
+            //if (AsperaEnabled()) {
+            //    $("#uploadFileWatcher").click();
+            //}
         },
         Browse: function (uploader) {
             if (SigniantEnabled() || AsperaEnabled()) {
@@ -121,7 +132,7 @@ function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryC
             if (uploader.state == plupload.STARTED) {
                 if (SigniantEnabled() || AsperaEnabled()) {
                     uploader.stop();
-                    StartUpload(appUrl);
+                    StartUpload();
                 } else {
                     _fileUploaderStartTime = new Date();
                 }
@@ -131,7 +142,7 @@ function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryC
             if (uploader.total.failed == 0) {
                 if (!SigniantEnabled() && !AsperaEnabled()) {
                     var elapsedTime = GetElapsedTime();
-                    $("#transferMessage").text(elapsedTime);
+                    $("#transferMessage").text("Elapsed Upload Time: " + elapsedTime);
                 }
                 if (!WatcherEnabled()) {
                     StartWorkflow(files);
@@ -148,7 +159,7 @@ function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryC
                 SetUploadManifest(storageContainer);
             }
             if (!SigniantEnabled() && !AsperaEnabled()) {
-                $("#transferMessage").text("Elapsed Time");
+                $("#transferMessage").html("<br />");
             }
         },
         Error: function (uploader, error) {

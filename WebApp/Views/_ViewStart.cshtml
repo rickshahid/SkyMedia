@@ -29,9 +29,6 @@
         ViewData["accountAuth"] = ViewData["userAccount"];
     }
 
-    settingKey = Constants.AppSettings.AppUrl;
-    ViewData["appUrl"] = AppSetting.GetValue(settingKey);
-
     settingKey = Constants.AppSettings.AppTitle;
     ViewData["appTitle"] = AppSetting.GetValue(settingKey);
 

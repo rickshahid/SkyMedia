@@ -17,6 +17,5 @@
 /// <reference path="lib/jquery-cookie/jquery.cookie.js" />
 /// <reference path="lib/jquery-ui/jquery-ui.js" />
 /// <reference path="lib/jstree/dist/jstree.js" />
-/// <reference path="lib/node-uuid/uuid.js" />
 /// <reference path="lib/qtip2/basic/jquery.qtip.js" />
 /// <reference path="lib/qtip2/jquery.qtip.js" />

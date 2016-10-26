@@ -9,7 +9,6 @@
     "jquery-cookie": "1.4.1",
     "jquery-ui": "1.12.1",
     "jstree": "3.3.2",
-    "node-uuid": "1.4.7",
     "plupload": "2.1.9",
     "qtip2": "2.2.1"
   }

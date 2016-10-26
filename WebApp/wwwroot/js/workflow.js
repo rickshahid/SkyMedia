@@ -101,8 +101,9 @@ function GetInputAssets() {
     if ($("#mediaAssets").children.length > 0) {
         var mediaAssets = $("#mediaAssets").jstree(true).get_checked();
         for (var i = 0; i < mediaAssets.length; i++) {
-            var inputAsset = {};
-            inputAsset.AssetId = mediaAssets[i];
+            var inputAsset = {
+                AssetId: mediaAssets[i]
+            };
             inputAssets.push(inputAsset);
         }
     }
@@ -118,14 +119,15 @@ function ShowContentProtection(checkbox) {
 function GetContentProtection() {
     var contentProtection = null;
     if ($("#contentProtection").prop("checked")) {
-        contentProtection = {};
-        contentProtection.AES = $("#aes").prop("checked");
-        contentProtection.DRMPlayReady = $("#drmPlayReady").prop("checked");
-        contentProtection.DRMWidevine = $("#drmWidevine").prop("checked");
-        contentProtection.DRMFairPlay = $("#drmFairPlay").prop("checked");
-        contentProtection.ContentAuthTypeToken = $("#contentAuthTypeToken").prop("checked");
-        contentProtection.ContentAuthTypeAddress = $("#contentAuthTypeAddress").prop("checked"),
-        contentProtection.ContentAuthAddressRange = $("#contentAuthAddressRange").val()
+        contentProtection = {
+            AES: $("#aes").prop("checked"),
+            DRMPlayReady: $("#drmPlayReady").prop("checked"),
+            DRMWidevine: $("#drmWidevine").prop("checked"),
+            DRMFairPlay: $("#drmFairPlay").prop("checked"),
+            ContentAuthTypeToken: $("#contentAuthTypeToken").prop("checked"),
+            ContentAuthTypeAddress: $("#contentAuthTypeAddress").prop("checked"),
+            ContentAuthAddressRange: $("#contentAuthAddressRange").val()
+        };
     }
     return contentProtection;
 }

@@ -1,57 +1,43 @@
-﻿using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace SkyMedia.WebApp.Models
 {
-    [DataContract]
-    public class AsperaRequest
+    public struct AsperaRequest
     {
-        [DataMember(Name = "transfer_requests")]
+        [JsonProperty(PropertyName = "transfer_requests")]
         public TransferRequestItem[] TransferRequests { get; set; }
     }
 
-    [DataContract]
-    public class TransferRequestItem
+    public struct TransferRequestItem
     {
-        [DataMember(Name = "transfer_request")]
+        [JsonProperty(PropertyName = "transfer_request")]
         public TransferRequest TransferRequest { get; set; }
     }
 
-    [DataContract]
-    public class TransferRequest
+    public struct TransferRequest
     {
-        [DataMember(Name = "source_root")]
+        [JsonProperty(PropertyName = "source_root")]
         public string SourceRoot { get; set; }
 
-        [DataMember(Name = "destination_root")]
+        [JsonProperty(PropertyName = "destination_root")]
         public string DestinationRoot { get; set; }
 
-        [DataMember(Name = "cipher")]
-        public string Cipher { get; set; }
-
-        [DataMember(Name = "rate_policy")]
+        [JsonProperty(PropertyName = "rate_policy")]
         public string RatePolicy { get; set; }
 
-        [DataMember(Name = "target_rate_kbps")]
+        [JsonProperty(PropertyName = "target_rate_kbps")]
         public string TargetRateKbps { get; set; }
 
-        [DataMember(Name = "paths")]
+        [JsonProperty(PropertyName = "paths")]
         public TransferPath[] Paths { get; set; }
     }
 
-    [DataContract]
-    public class TransferPath
+    public struct TransferPath
     {
-        public TransferPath() { }
-
-        public TransferPath(string source, string destination) {
-            Source = source;
-            Destination = destination;
-        }
-
-        [DataMember(Name = "source")]
+        [JsonProperty(PropertyName = "source")]
         public string Source { get; set; }
 
-        [DataMember(Name = "destination")]
+        [JsonProperty(PropertyName = "destination")]
         public string Destination { get; set; }
     }
 }

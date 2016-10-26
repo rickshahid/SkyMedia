@@ -12,8 +12,8 @@ namespace SkyMedia.ServiceBroker
 
         public struct AppSettings
         {
-            public const string AppUrl = "App.Url";
             public const string AppTitle = "App.Title";
+            public const string AppDomain = "App.Domain";
             public const string AppRegion = "App.Region";
 
             public const string AppLocalData = "App.LocalData";
@@ -111,9 +111,13 @@ namespace SkyMedia.ServiceBroker
             public const string MediaLiveStartDateTime = "Media.Live.StartDateTime";
 
             public const string SigniantTransferApi = "Signiant.TransferApi";
-            public const string AsperaTransferApi = "Aspera.TransferApi";
 
-            public const string TwilioMessagesApi = "Twilio.MessagesApi";
+            public const string AsperaTransferApi = "Aspera.TransferApi";
+            public const string AsperaTransferInfo = "Aspera.TransferInfo";
+            public const string AsperaUploadSetup = "Aspera.UploadSetup";
+            public const string AsperaDownloadSetup = "Aspera.DownloadSetup";
+
+            public const string TwilioMessageApi = "Twilio.MessageApi";
             public const string TwilioMessageFrom = "Twilio.MessageFrom";
         }
 
@@ -136,9 +140,9 @@ namespace SkyMedia.ServiceBroker
 
         public struct HttpHeaders
         {
-            public const string TokenPrefix = "Bearer=";
-            public const string Authorization = "Authorization";
-            public const string ServiceVersion = "x-ms-version";
+            public const string ApiVersion = "x-ms-version";
+            public const string AuthHeader = "Authorization";
+            public const string AuthPrefix = "Bearer=";
         }
 
         public struct HttpForm
@@ -175,7 +179,8 @@ namespace SkyMedia.ServiceBroker
         public struct Storage
         {
             public const string SigniantContainer = " \"account-name\": \"{0}\", \"access-key\": \"{1}\", \"container\": \"{2}\" ";
-            public const string AsperaContainer = "azu://{0}:{1}@blob.core.windows.net/{2}";
+            public const string AsperaContainer = "azu://{0}:{1}@blob.core.windows.net";
+            public const string AsperaWorker = "-worker";
 
             public struct Account
             {

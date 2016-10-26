@@ -27,7 +27,7 @@ namespace SkyMedia.WebApp
                 configBuilder.AddUserSecrets();
                 AppSetting.ConfigRoot = configBuilder.Build();
             }
-            else if (env.IsProduction())
+            else
             {
                 AppSetting.ConfigRoot = configBuilder.Build();
                 string settingKey = Constants.AppSettings.AppInsightsInstrumentationKey;

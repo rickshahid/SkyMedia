@@ -76,9 +76,9 @@ namespace SkyMedia.ServiceBroker
             string accountName = accountCredentials[0];
             string accountKey = accountCredentials[1];
 
-            settingKey = Constants.AppSettings.TwilioMessagesApi;
-            string messagesApi = string.Format(AppSetting.GetValue(settingKey), accountName);
-            HttpWebRequest httpRequest = WebRequest.CreateHttp(messagesApi);
+            settingKey = Constants.AppSettings.TwilioMessageApi;
+            string messageApi = string.Format(AppSetting.GetValue(settingKey), accountName);
+            HttpWebRequest httpRequest = WebRequest.CreateHttp(messageApi);
             httpRequest.Method = "POST";
             httpRequest.ContentType = Constants.ContentType.Url;
 

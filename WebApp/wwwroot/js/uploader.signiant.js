@@ -7,8 +7,8 @@ function InitializeUploader(serviceGateway, accountKey) {
     detectPlugin({
         success: InitializeSuccess(serviceGateway, accountKey),
         error: function () {
-            var title = "Error Message";
-            var message = "An error occurred initializing the upload service.";
+            var title = "Signiant Transfer Error";
+            var message = "Transfer service initialization error.";
             DisplayMessage(title, message);
         }
     });
@@ -24,7 +24,7 @@ function InitializeSuccess(serviceGateway, accountKey) {
     transferProgress.showPercent(true);
     transferProgress.render();
 }
-function StartUpload(appUrl) {
+function StartUpload() {
     $.post("/upload/storage",
         {
             transferService: "SigniantFlight",

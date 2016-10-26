@@ -121,8 +121,8 @@ namespace SkyMedia.ServiceBroker
             return asset;
         }
 
-        public IIngestManifest CreateManifest(string manifestId, string assetName, string storageAccount, bool storageEncryption,
-                                              bool multipleFileAsset, bool uploadFileWatcher, string[] fileNames)
+        public IIngestManifest SetManifest(string manifestId, string assetName, string storageAccount, bool storageEncryption,
+                                           bool multipleFileAsset, bool uploadFileWatcher, string[] fileNames)
         {
             IIngestManifest manifest = null;
             if (!string.IsNullOrEmpty(manifestId))

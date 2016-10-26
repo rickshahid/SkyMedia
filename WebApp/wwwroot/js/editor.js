@@ -22,14 +22,16 @@ function CreateSubclip(clipData) {
     if (clipData == null) {
         $(".amve-rendered-btn")[0].click();
     } else {
-        var inputAsset = {};
-        inputAsset.AssetId = _mediaAsset.id;
-        inputAsset.MarkIn = clipData.markIn;
-        inputAsset.MarkOut = clipData.markOut;
-        var jobTask = {};
-        jobTask.MediaProcessor = "EncoderStandard";
-        jobTask.ProcessorDocument = _mediaAsset.data.processorDocument;
-        jobTask.OutputAssetName = clipData.title;
+        var inputAsset = {
+            AssetId: _mediaAsset.id,
+            MarkIn: clipData.markIn,
+            MarkOut: clipData.markOut
+        };
+        var jobTask = {
+            MediaProcessor: "EncoderStandard",
+            ProcessorDocument: _mediaAsset.data.processorDocument,
+            OutputAssetName: clipData.title
+        };
         var jobTasks = [jobTask];
         $.post("/workflow/start",
             {

@@ -171,12 +171,13 @@ function GetJobTask(taskNumber) {
     var jobTask = null;
     var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
     if (mediaProcessor != null && mediaProcessor != "None") {
-        jobTask = {};
         var taskParent = $("#taskParent" + taskNumber).val();
-        jobTask.ParentIndex = (taskParent == null) ? null : taskParent - 1;
-        jobTask.OutputAssetName = $("#outputAssetName" + taskNumber).val();
-        jobTask.Options = GetJobTaskOptions(taskNumber);
-        jobTask.MediaProcessor = mediaProcessor;
+        jobTask = {
+            ParentIndex: (taskParent == null) ? null : taskParent - 1,
+            OutputAssetName: $("#outputAssetName" + taskNumber).val(),
+            Options: GetJobTaskOptions(taskNumber),
+            MediaProcessor: mediaProcessor
+        };
         switch (jobTask.MediaProcessor) {
             case "EncoderStandard":
             case "EncoderPremium":

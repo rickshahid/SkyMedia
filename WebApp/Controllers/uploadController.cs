@@ -1,10 +1,13 @@
 ﻿using System.IO;
+using System.Net;
 using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.WindowsAzure.MediaServices.Client;
+
+using Newtonsoft.Json.Linq;
 
 using SkyMedia.ServiceBroker;
 
@@ -21,28 +24,30 @@ namespace SkyMedia.WebApp.Controllers
             {
                 inputAssetName = fileNames[0];
             }
-            IIngestManifest manifest = mediaClient.CreateManifest(manifestId, inputAssetName, storageAccount, storageEncryption, multipleFileAsset, uploadFileWatcher, fileNames);
+            IIngestManifest manifest = mediaClient.SetManifest(manifestId, inputAssetName, storageAccount, storageEncryption, multipleFileAsset, uploadFileWatcher, fileNames);
             return Json(manifest);
         }
 
-        public JsonResult storage(TransferService transferService, string storageAccount, string containerName)
+        public JsonResult storage(TransferService transferService, string[] filePaths, string storageAccount, string containerName)
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);
             string accountKey = Storage.GetAccountKey(authToken, storageAccount);
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             blobClient.GetContainer(containerName); // CreateIfNotExists
-            string storageContainer = string.Empty;
+            object result = null;
             switch (transferService)
             {
                 case TransferService.SigniantFlight:
-                    storageContainer = string.Format(Constants.Storage.SigniantContainer, storageAccount, accountKey, containerName);
-                    storageContainer = string.Concat("{", storageContainer, "}");
+                    string storageContainer = string.Format(Constants.Storage.SigniantContainer, storageAccount, accountKey, containerName);
+                    result = string.Concat("{", storageContainer, "}");
                     break;
                 case TransferService.AsperaFasp:
-                    storageContainer = string.Format(Constants.Storage.AsperaContainer, storageAccount, accountKey, containerName);
+                    AsperaClient asperaClient = new AsperaClient(authToken);
+                    storageContainer = string.Format(Constants.Storage.AsperaContainer, storageAccount, WebUtility.UrlEncode(accountKey));
+                    result = asperaClient.GetTransferSpecs(storageContainer, containerName, filePaths, false);
                     break;
             } 
-            return Json(storageContainer);
+            return Json(result);
         }
 
         public JsonResult file(string name, int chunk, int chunks, string storageAccount, string storageContainer)

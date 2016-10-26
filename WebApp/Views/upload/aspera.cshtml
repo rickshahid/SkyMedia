@@ -19,20 +19,23 @@
             var blockChunkSize = "@ViewData["blockChunkSize"]";
             var maxFileSize = "@ViewData["maxFileSize"]";
             var maxRetryCount = "@ViewData["maxRetryCount"]";
-            var appUrl = "@ViewData["appUrl"]";
             SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
             InitializeUploader("@ViewData["asperaTransferApi"]");
-            CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount, appUrl);
+            CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount);
         })
     </script>
 }
 
 @section title {
-    Azure Media File Uploader (Aspera FASP)
+    Azure Media File Uploader<br />(Aspera FASP)
 }
 
 @Html.Partial("MediaUpload", new bool[] { false, true })
 
 <div id="fileUploader"></div>
 
-@Html.Partial("MediaWorkflow", new string[] { "true", "asperaUploader" })
+<div id="transferProgress" class="asperaProgress"></div>
+
+<div id="transferMessage" class="transferMessage udpTransfer">Status:</div>
+
+@Html.Partial("MediaWorkflow", new string[] { "true", "udpUploader" })
