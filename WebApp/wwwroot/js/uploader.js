@@ -1,4 +1,4 @@
-﻿var _fileUploader, _fileUploaderStartTime, _manifestId, _storageContainer;
+﻿var _fileUploader, _fileUploaderStartTime, _manifestId, _storageContainer, _statusLabel = "Status: ";
 function SetUploadService(transferService) {
     switch (transferService.value) {
         case "signiantFlight":
@@ -48,10 +48,13 @@ function MapElapsedTime(elapsedTime) {
     var elapsedMinutes = elapsedSeconds / 60;
     return elapsedMinutes.toFixed(2) + " Minutes";
 }
-function GetUploaderFiles() {
+function GetUploaderFiles(excludePath) {
     var files = new Array();
     for (var i = 0; i < _fileUploader.files.length; i++) {
         var file = _fileUploader.files[i].name;
+        if (excludePath) {
+            file = file.split("\\").pop();
+        }
         files.push(file);
     }
     return files;
@@ -106,9 +109,6 @@ function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryC
     var eventHandlers = {
         PostInit: function (uploader) {
             _fileUploader = uploader;
-            //if (AsperaEnabled()) {
-            //    $("#uploadFileWatcher").click();
-            //}
         },
         Browse: function (uploader) {
             if (SigniantEnabled() || AsperaEnabled()) {

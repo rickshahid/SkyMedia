@@ -36,6 +36,12 @@
 
 <div id="transferProgress" class="asperaProgress"></div>
 
-<div id="transferMessage" class="transferMessage udpTransfer">Status:</div>
+<div id="transferProgressLabel" class="asperaProgressLabel">
+    <br />
+</div>
 
-@Html.Partial("MediaWorkflow", new string[] { "true", "udpUploader" })
+<div id="transferMessage" class="transferMessage asperaTransfer">
+    <br />
+</div>
+
+@Html.Partial("MediaWorkflow", new string[] { "true", "asperaUploader" })

@@ -355,9 +355,14 @@ body {
     width: 0px;
 }
 
-.udpUploader {
+.signiantUploader {
     position: relative;
     bottom: 20px;
+}
+
+.asperaUploader {
+    position: relative;
+    bottom: 40px;
 }
 
 #transferProgress {
@@ -373,19 +378,34 @@ body {
     border: 1px solid deepskyblue !important;
 }
 
+.asperaProgressLabel {
+    position: relative;
+    text-align: center;
+    font-weight: bold;
+    width: 140px;
+    color: azure;
+    bottom: 55px;
+    left: 280px;
+    z-index: 1;
+}
+
 .transferMessage {
     position: relative;
     color: deepskyblue;
     left: 430px;
 }
 
-.transferMessage.httpTransfer {
+.transferMessage.storageTransfer {
     bottom: 32px;
     left: 275px;
 }
 
-.transferMessage.udpTransfer {
+.transferMessage.signiantTransfer {
     bottom: 54px;
+}
+
+.transferMessage.asperaTransfer {
+    bottom: 74px;
 }
 
 .msapi_progressbar {
@@ -396,8 +416,9 @@ body {
 .msapi_transferProgress span {
     font-size: medium !important;
     color: azure !important;
+    text-align: center;
     font-weight: bold;
-    left: 100px;
+    width: 140px;
 }
 
 .mediaUpload {

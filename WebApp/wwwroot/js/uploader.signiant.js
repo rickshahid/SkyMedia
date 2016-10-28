@@ -43,13 +43,13 @@ function StopUpload() {
 }
 function UploadEvent(uploader, eventCode, eventMessage, eventData) {
     if (eventCode != "TRANSFER_PRE_FILE_EVENT") {
-        $("#transferMessage").text("Status: " + eventMessage);
+        $("#transferMessage").text(_statusLabel + eventMessage);
     }
     if (eventCode == "TRANSFER_COMPLETED") {
         var elapsedTime = GetElapsedTime();
-        var files = uploader.getFiles();
-        $("#transferMessage").text("Status: " + eventMessage + " (" + elapsedTime + ")");
-        StartWorkflow(files);
+        var uploaderFiles = GetUploaderFiles(true);
+        $("#transferMessage").text(_statusLabel + eventMessage + " (" + elapsedTime + ")");
+        StartWorkflow(uploaderFiles);
     }
 }
 function UploadError(uploader, eventCode, eventMessage, eventData) {
