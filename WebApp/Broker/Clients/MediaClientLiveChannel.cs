@@ -8,11 +8,11 @@ namespace SkyMedia.ServiceBroker
 {
     internal partial class MediaClient
     {
-        public IChannel CreateChannel(string channelName, ChannelEncodingType encodingType, StreamingProtocol ingestProtocol)
+        public IChannel CreateChannel(string channelName, ChannelEncodingType channelType, StreamingProtocol ingestProtocol)
         {
             ChannelCreationOptions creationOptions = new ChannelCreationOptions();
             creationOptions.Name = channelName;
-            creationOptions.EncodingType = encodingType;
+            creationOptions.EncodingType = channelType;
 
             IPRange allAddresses = new IPRange();
             allAddresses.Address = new IPAddress(0);

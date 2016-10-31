@@ -5,6 +5,15 @@ function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
     CreateTipLeft("mediaWorkflowStart", "Start Workflow");
     $("#mediaWorkflowTaskRemove").hide();
     if (uploadView) {
+        var currentUrl = window.location.href;
+        if (currentUrl.indexOf("signiant") > -1) {
+            $("#uploadSigniantFlight").show();
+        } else if (currentUrl.indexOf("aspera") > -1) {
+            $("#uploadAsperaFasp").show();
+        } else {
+            $("#uploadSigniantFlight").show();
+            $("#uploadAsperaFasp").show();
+        }
         if (signiantAccountKey != "") {
             $("#uploadService[value='signiantFlight']").prop("disabled", false);
         }

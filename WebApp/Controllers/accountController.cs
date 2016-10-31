@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +23,13 @@ namespace SkyMedia.WebApp.Controllers
                 channelName = AppSetting.GetValue(settingKey);
             }
             MediaClient mediaClient = new MediaClient(authToken);
-            ChannelEncodingType encodingType = ChannelEncodingType.None;
+            ChannelEncodingType channelType = ChannelEncodingType.None;
             StreamingProtocol ingestProtocol = StreamingProtocol.RTMP;
-            IChannel channel = mediaClient.CreateChannel(channelName, encodingType, ingestProtocol);
-            IAsset asset = channel.Programs.First().Asset;
-            mediaClient.CreateLocator(null, LocatorType.OnDemandOrigin, asset, null);
+            IChannel channel = mediaClient.CreateChannel(channelName, channelType, ingestProtocol);
+            foreach (IProgram program in channel.Programs)
+            {
+                mediaClient.CreateLocator(null, LocatorType.OnDemandOrigin, program.Asset, null);
+            }
         }
 
         internal static void StartAdvertisement(string authToken, string channelName, int cueId)
