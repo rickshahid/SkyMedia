@@ -54,15 +54,17 @@
     {
         ViewData["minimalView"] = true;
     }
+    ViewData["accountSignIn"] = "/account/signin";
+    ViewData["accountProfileEdit"] = "/account/profileEdit";
     if (requestUrl.Contains("signiant"))
     {
-        ViewData["accountSignIn"] = "/account/signin?subdomain=signiant";
-        ViewData["accountProfileEdit"] = "/account/profileEdit?subdomain=signiant";
+        ViewData["accountSignIn"] = string.Concat(ViewData["accountSignIn"], "?subdomain=signiant");
+        ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=signiant");
     }
-    if (requestUrl.Contains("aspera"))
+    else if (requestUrl.Contains("aspera"))
     {
-        ViewData["accountSignIn"] = "/account/signin?subdomain=aspera";
-        ViewData["accountProfileEdit"] = "/account/profileEdit?subdomain=aspera";
+        ViewData["accountSignIn"] = string.Concat(ViewData["accountSignIn"], "?subdomain=aspera");
+        ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=aspera");
     }
     ViewData["preview"] = requestUrl.Contains("preview");
     Layout = "_Layout";
