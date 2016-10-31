@@ -60,12 +60,12 @@
                         }
                         else if (ViewData.ContainsKey("userAccount"))
                         {
-                            @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '/account/profileedit'" })
+                            @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '" + ViewData["accountProfileEdit"] + "'" })
                             @Html.Partial("SiteButton", new string[] { "userSignOut", "UserSignOut.png", "SignOut('" + ViewData["authTokenCookie"] + "')" })
                         }
                         else
                         {
-                            @Html.Partial("SiteButton", new string[] { "userSignIn", "UserSignIn.png", "window.location.href = '/account/signin'" })
+                            @Html.Partial("SiteButton", new string[] { "userSignIn", "UserSignIn.png", "window.location.href = '" + ViewData["accountSignIn"] + "'" })
                         }
                     </td>
                 </tr>

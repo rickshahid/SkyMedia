@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -198,14 +199,20 @@ namespace SkyMedia.WebApp.Controllers
             return entityCounts.ToArray();
         }
 
-        public void signin()
+        public void signin(string subdomain)
         {
-            HttpContext.Authentication.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme).Wait();
+            string authScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            AuthenticationProperties authProperties = new AuthenticationProperties();
+            authProperties.Items.Add("SubDomain", subdomain);
+            HttpContext.Authentication.ChallengeAsync(authScheme, authProperties).Wait();
         }
 
-        public void profileedit()
+        public void profileedit(string subdomain)
         {
-            HttpContext.Authentication.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme).Wait();
+            string authScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            AuthenticationProperties authProperties = new AuthenticationProperties();
+            authProperties.Items.Add("SubDomain", subdomain);
+            HttpContext.Authentication.ChallengeAsync(authScheme, authProperties).Wait();
         }
 
         public IActionResult signout()

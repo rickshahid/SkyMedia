@@ -76,7 +76,17 @@ namespace SkyMedia.WebApp
             if (!string.IsNullOrEmpty(settingKey))
             {
                 policyId = AppSetting.GetValue(settingKey);
+                if (context.Properties.Items.ContainsKey("SubDomain"))
+                {
+                    string subDomain = context.Properties.Items["SubDomain"];
+                    if (!string.IsNullOrEmpty(subDomain))
+                    {
+                        subDomain = char.ToUpper(subDomain[0]) + subDomain.Substring(1);
+                        policyId = string.Concat(policyId, subDomain);
+                    }
+                }
             }
+
             return policyId;
         }
 
@@ -104,9 +114,6 @@ namespace SkyMedia.WebApp
             OpenIdConnectOptions openIdOptions = new OpenIdConnectOptions();
             string settingKey = Constants.AppSettings.DirectoryIssuerUrl;
             openIdOptions.Authority = AppSetting.ConfigRoot[settingKey];
-
-            settingKey = Constants.AppSettings.DirectoryAudienceUrl;
-            openIdOptions.PostLogoutRedirectUri = AppSetting.ConfigRoot[settingKey];
 
             settingKey = Constants.AppSettings.DirectoryClientId;
             openIdOptions.ClientId = AppSetting.ConfigRoot[settingKey];

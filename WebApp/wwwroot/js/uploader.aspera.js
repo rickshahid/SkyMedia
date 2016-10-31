@@ -13,6 +13,7 @@ function GetCurrentTransfer(data) {
     return transfer;
 }
 function InitializeUploader(transferApi) {
+    _transferApi = transferApi;
     $("#transferProgress").progressbar({
         change: function (event, data) {
             var progressValue = $("#transferProgress").progressbar("value");
@@ -25,7 +26,6 @@ function InitializeUploader(transferApi) {
     _asperaUploader.addEventListener(AW4.Connect.EVENT.STATUS, ConnectHandler);
     _asperaUploader.addEventListener(AW4.Connect.EVENT.TRANSFER, TransferHandler);
     _asperaUploader.initSession();
-    _transferApi = transferApi;
 }
 function ConnectHandler(event, data) {
     if (event == AW4.Connect.EVENT.STATUS) {

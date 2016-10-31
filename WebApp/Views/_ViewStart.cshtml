@@ -54,6 +54,16 @@
     {
         ViewData["minimalView"] = true;
     }
+    if (requestUrl.Contains("signiant"))
+    {
+        ViewData["accountSignIn"] = "/account/signin?subdomain=signiant";
+        ViewData["accountProfileEdit"] = "/account/profileEdit?subdomain=signiant";
+    }
+    if (requestUrl.Contains("aspera"))
+    {
+        ViewData["accountSignIn"] = "/account/signin?subdomain=aspera";
+        ViewData["accountProfileEdit"] = "/account/profileEdit?subdomain=aspera";
+    }
     ViewData["preview"] = requestUrl.Contains("preview");
     Layout = "_Layout";
 }

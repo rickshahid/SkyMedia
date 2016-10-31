@@ -28,7 +28,6 @@ namespace SkyMedia.ServiceBroker
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
 
-            public const string DirectoryAudienceUrl = "Directory.AudienceUrl";
             public const string DirectoryClientId = "Directory.ClientId";
             public const string DirectoryClientSecret = "Directory.ClientSecret";
 
