@@ -33,22 +33,15 @@ namespace SkyMedia.WebApp.Controllers
                     {
                         tableName = Constants.Storage.TableNames.AssetProtection;
                         ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, partitionKey, rowKey);
-                        string[] mediaAccount = new string[] { contentPublish.PartitionKey, contentPublish.MediaAccountKey };
-                        MediaClient mediaClient = new MediaClient(mediaAccount);
+                        MediaClient mediaClient = new MediaClient(contentPublish);
                         IJob job = mediaClient.GetEntityById(EntityType.Job, jobEvent.Properties.JobId) as IJob;
                         if (job != null)
                         {
-                            publishNotification.MessageText = MediaClient.GetNotificationMessage(mediaAccount[0], job);
+                            publishNotification.MessageText = MediaClient.GetNotificationMessage(partitionKey, job);
                             publishNotification.MobileNumber = contentPublish.MobileNumber;
                             if (jobEvent.Properties.NewState == JobState.Finished)
                             {
-                                string settingKey = Constants.AppSettings.MediaProcessorEncoderStandardId;
-                                string processorId = AppSetting.GetValue(settingKey);
-                                IAsset outputAsset = MediaClient.GetTaskOutput(job, processorId);
-                                if (outputAsset != null)
-                                {
-                                    MediaClient.PublishAsset(mediaClient, outputAsset, contentProtection);
-                                }
+                                MediaClient.PublishJob(mediaClient, job, contentPublish, contentProtection);
                             }
                         }
                         if (contentProtection != null)

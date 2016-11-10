@@ -34,11 +34,12 @@ function AddJobTask(taskButton) {
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "captionFormatTtml" + lastTaskNumber, "captionFormatTtml" + newTaskNumber);
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "outputAssetName" + lastTaskNumber, "outputAssetName" + newTaskNumber);
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "taskOptions" + lastTaskNumber, "taskOptions" + newTaskNumber);
+    newTaskRowHtml = ReplaceAll(newTaskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
     newTaskRow.outerHTML = newTaskRowHtml;
     AddJobTaskLink(workflowTable, taskRowIndex);
     SetJobTaskParents(newTaskNumber);
-    SetJobTaskOptions(newTaskNumber);
-    SetJobTaskOptions(lastTaskNumber);
+    SetJobTaskOptions(newTaskNumber, false);
+    SetJobTaskOptions(lastTaskNumber, false);
     $("#mediaWorkflowTaskRemove").show();
     if (lastTaskNumber == 8) {
         var marginLeft = $("#mediaWorkflowTaskAdd").css("margin-left");
@@ -71,26 +72,31 @@ function EncoderSelected() {
     } while (mediaProcessor != null)
     return encoderSelected;
 }
-function ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId) {
+function ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId, indexerLanguageOptions) {
     $("#" + processorConfigFileId).val("");
     $("#" + processorConfigFileRowId).hide();
     if (processorConfigOptions != null) {
         processorConfigOptions.length = 0;
     }
     $("#" + processorConfigRowId).hide();
+    if (indexerLanguageOptions != null) {
+        indexerLanguageOptions.length = 0;
+    }
     $("#" + indexerConfigRowId).hide();
     if (!EncoderSelected()) {
         $("#mediaWorkflowContentProtection").hide();
     }
 }
-function SetProcessorConfig(mediaProcessor) {
+function SetProcessorConfig(mediaProcessor, taskNumber) {
     var processorConfigRowId = mediaProcessor.id.replace("mediaProcessor", "processorConfigRow");
     var processorConfigId = mediaProcessor.id.replace("mediaProcessor", "processorConfig");
     var processorConfigFileRowId = mediaProcessor.id.replace("mediaProcessor", "processorConfigFileRow");
     var processorConfigFileId = mediaProcessor.id.replace("mediaProcessor", "processorConfigFile");
     var processorConfigOptions = $("#" + processorConfigId)[0].options;
     var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
-    ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId);
+    var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "spokenLanguages");
+    var indexerLanguageOptions = $("#" + indexerLanguagesId)[0].options;
+    ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId, indexerLanguageOptions);
     if (mediaProcessor.value != "None") {
         switch (mediaProcessor.value) {
             case "EncoderStandard":
@@ -112,7 +118,26 @@ function SetProcessorConfig(mediaProcessor) {
                 processorConfigOptions[processorConfigOptions.length] = new Option("None - No Custom Media Processor Configuration File", "None");
                 processorConfigOptions[processorConfigOptions.length] = new Option("Custom - Media Processor Configuration File (XML)", "Custom");
                 break;
+            case "IndexerV1":
+                $("#spokenLanguages" + taskNumber).multiselect("destroy");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
+                indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Spanish", "EsEs");
+                SetJobTaskOptions(taskNumber, true);
+                $("#" + indexerConfigRowId).show();
+                break;
             case "IndexerV2":
+                $("#spokenLanguages" + taskNumber).multiselect("destroy");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
+                indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Spanish", "EsEs");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Arabic (Egyptian)", "ArEg");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Chinese", "ZhCn");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("French", "FrFr");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("German", "DeDe");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Italian", "ItIt");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Portuguese", "PtBr");
+                SetJobTaskOptions(taskNumber, false);
                 $("#" + indexerConfigRowId).show();
                 break;
         }
@@ -144,12 +169,12 @@ function SetJobTaskParents(taskNumber) {
         taskParent.disabled = false;
     }
 }
-function SetJobTaskOptions(taskNumber) {
-    var languageCount = $("#spokenLanguages1 option").length;
+function SetJobTaskOptions(taskNumber, indexerV1) {
+    var languageCount = $("#spokenLanguages" + taskNumber + " option").length;
     $("#spokenLanguages" + taskNumber).multiselect({
         noneSelectedText: "0 of " + languageCount + " Languages Enabled",
         selectedText: "# of " + languageCount + " Languages Enabled",
-        classes: "multiSelect mediaProcessor",
+        classes: "multiSelect mediaProcessor" + (indexerV1 ? " indexerLanguages" : ""),
         header: false
     });
     $("#taskOptions" + taskNumber).multiselect({
@@ -194,6 +219,14 @@ function GetJobTask(taskNumber) {
                     jobTask.ProcessorConfig = $("#processorConfig" + taskNumber).val();
                 }
                 break;
+            case "IndexerV1":
+                jobTask.SpokenLanguages = new Array();
+                $("#spokenLanguages" + taskNumber + " :selected").each(function (i, o) {
+                    jobTask.SpokenLanguages[i] = $(o).text();
+                });
+                jobTask.CaptionFormatWebVtt = $("#captionFormatWebVtt" + taskNumber).prop("checked");
+                jobTask.CaptionFormatTtml = $("#captionFormatTtml" + taskNumber).prop("checked");
+                break
             case "IndexerV2":
                 jobTask.SpokenLanguages = $("#spokenLanguages" + taskNumber).val();
                 jobTask.CaptionFormatWebVtt = $("#captionFormatWebVtt" + taskNumber).prop("checked");

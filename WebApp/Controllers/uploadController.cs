@@ -92,7 +92,6 @@ namespace SkyMedia.WebApp.Controllers
             viewData["storageAccount"] = Selections.GetStorageAccounts(authToken);
             viewData["mediaProcessor1"] = Selections.GetMediaProcessors(false);
             viewData["processorConfig1"] = new List<SelectListItem>();
-            viewData["spokenLanguages1"] = Selections.GetSpokenLanguages();
         }
 
         public IActionResult index()

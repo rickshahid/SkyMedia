@@ -16,7 +16,7 @@ namespace SkyMedia.ServiceBroker
 
             IPRange allAddresses = new IPRange();
             allAddresses.Address = new IPAddress(0);
-            allAddresses.Name = Constants.Media.AllAddresses;
+            allAddresses.Name = Constants.Media.AddressesAll;
                                         
             creationOptions.Input = new ChannelInput();
             creationOptions.Input.AccessControl = new ChannelAccessControl();

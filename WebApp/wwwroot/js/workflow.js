@@ -32,7 +32,7 @@ function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
             $("#jobPriorityValue").text(ui.value);
         }
     });
-    SetJobTaskOptions(1);
+    SetJobTaskOptions(1, false);
 }
 function ValidWorkflowInput(uploadView) {
     var validInput = true;

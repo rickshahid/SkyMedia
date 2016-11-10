@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -16,13 +17,6 @@ namespace SkyMedia.ServiceBroker
         private CloudBlobClient _storage;
         private EntityClient _tracker;
 
-        public BlobClient(ContentPublish contentPublish)
-        {
-            StorageCredentials storageCredentials = new StorageCredentials(contentPublish.StorageAccountName, contentPublish.StorageAccountKey);
-            CloudStorageAccount storageAccount = new CloudStorageAccount(storageCredentials, true);
-            BindContext(storageAccount);
-        }
-
         public BlobClient(string authToken)
         {
             CloudStorageAccount storageAccount = Storage.GetAccount(authToken, null);
@@ -35,6 +29,13 @@ namespace SkyMedia.ServiceBroker
             CloudStorageAccount storageAccount = Storage.GetAccount(authToken, accountName);
             BindContext(storageAccount);
             _tracker = new EntityClient(authToken, accountName);
+        }
+
+        public BlobClient(ContentPublish contentPublish)
+        {
+            StorageCredentials storageCredentials = new StorageCredentials(contentPublish.StorageAccountName, contentPublish.StorageAccountKey);
+            CloudStorageAccount storageAccount = new CloudStorageAccount(storageCredentials, true);
+            BindContext(storageAccount);
         }
 
         private void BindContext(CloudStorageAccount storageAccount)
@@ -128,6 +129,7 @@ namespace SkyMedia.ServiceBroker
         public CloudBlockBlob GetBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
         {
             CloudBlockBlob blob;
+            fileName = WebUtility.UrlEncode(fileName);
             CloudBlobContainer container = GetContainer(containerName);
             if (string.IsNullOrEmpty(directoryPath))
             {

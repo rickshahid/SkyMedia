@@ -89,7 +89,7 @@ namespace SkyMedia.ServiceBroker
             {
                 foreach (IAssetFile assetFile in asset.AssetFiles)
                 {
-                    if (assetFile.Name.EndsWith(Constants.Media.AssetMetadata.ManifestFileExtension, StringComparison.InvariantCultureIgnoreCase))
+                    if (assetFile.Name.EndsWith(Constants.Media.AssetManifest.FileExtension, StringComparison.InvariantCultureIgnoreCase))
                     {
                         assetFile.IsPrimary = true;
                         assetFile.Update();
@@ -114,9 +114,9 @@ namespace SkyMedia.ServiceBroker
                 case LocatorType.OnDemandOrigin:
                     primaryUrl = string.Concat(primaryUrl, "/", locator.ContentAccessComponent);
                     primaryUrl = string.Concat(primaryUrl, "/", fileName);
-                    if (fileName.EndsWith(Constants.Media.AssetMetadata.ManifestFileExtension, StringComparison.InvariantCultureIgnoreCase))
+                    if (fileName.EndsWith(Constants.Media.AssetManifest.FileExtension, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        primaryUrl = string.Concat(primaryUrl, Constants.Media.AssetMetadata.ManifestLocatorSuffix);
+                        primaryUrl = string.Concat(primaryUrl, Constants.Media.AssetManifest.LocatorSuffix);
                     }
                     break;
             }

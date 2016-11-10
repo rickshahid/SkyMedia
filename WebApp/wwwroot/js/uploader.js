@@ -142,7 +142,7 @@ function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryC
             if (uploader.total.failed == 0) {
                 if (!SigniantEnabled() && !AsperaEnabled()) {
                     var elapsedTime = GetElapsedTime();
-                    $("#transferMessage").text("Elapsed Upload Time: " + elapsedTime);
+                    $("#transferMessage").text("Elapsed Time: " + elapsedTime);
                 }
                 if (!WatcherEnabled()) {
                     StartWorkflow(files);

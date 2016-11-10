@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Xml;
+using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
@@ -8,8 +9,51 @@ namespace SkyMedia.ServiceBroker
 {
     internal partial class MediaClient
     {
-        private static MediaJobTask[] GetIndexerTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets,
-                                                      ContentProtection contentProtection)
+        private static MediaJobTask[] GetIndexerV1Tasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, ContentProtection contentProtection)
+        {
+            List<MediaJobTask> indexerTasks = new List<MediaJobTask>();
+            string taskName = Constants.Media.Task.IndexerV1;
+            MediaProcessor mediaProcessor = MediaProcessor.IndexerV1;
+            string settingKey = Constants.AppSettings.MediaProcessorIndexerV1Id;
+            string processorId = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettings.MediaProcessorIndexerV1DocumentId;
+            string documentId = AppSetting.GetValue(settingKey);
+            DatabaseClient databaseClient = new DatabaseClient();
+            JObject processorConfig = databaseClient.GetDocument(documentId);
+            XmlDocument processorConfigXml = new XmlDocument();
+            processorConfigXml.LoadXml(processorConfig["xml"].ToString());
+            XmlNodeList configSettings = processorConfigXml.SelectNodes(Constants.Media.ProcessorConfig.IndexerV1XPath);
+            List<string> captionFormats = new List<string>();
+            if (jobTask.CaptionFormatWebVtt)
+            {
+                captionFormats.Add("WebVTT");
+            }
+            if (jobTask.CaptionFormatTtml)
+            {
+                captionFormats.Add("TTML");
+            }
+            if (captionFormats.Count > 0)
+            {
+                configSettings[0].Attributes[1].Value = string.Join(";", captionFormats);
+            }
+            if (jobTask.SpokenLanguages == null)
+            {
+                MediaJobTask indexerTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
+                indexerTasks.Add(indexerTask);
+            }
+            else
+            {
+                foreach (string spokenLanguage in jobTask.SpokenLanguages)
+                {
+                    configSettings[1].Attributes[1].Value = spokenLanguage;
+                    MediaJobTask indexerTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
+                    indexerTasks.Add(indexerTask);
+                }
+            }
+            return indexerTasks.ToArray();
+        }
+
+        private static MediaJobTask[] GetIndexerV2Tasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, ContentProtection contentProtection)
         {
             List<MediaJobTask> indexerTasks = new List<MediaJobTask>();
             string taskName = Constants.Media.Task.IndexerV2;
@@ -30,8 +74,11 @@ namespace SkyMedia.ServiceBroker
             {
                 captionFormats.Add("TTML");
             }
-            processorOptions["Formats"] = captionFormats;
-            if (jobTask.SpokenLanguages == null || jobTask.SpokenLanguages.Length == 0)
+            if (captionFormats.Count > 0)
+            {
+                processorOptions["Formats"] = captionFormats;
+            }
+            if (jobTask.SpokenLanguages == null)
             {
                 MediaJobTask indexerTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
                 indexerTasks.Add(indexerTask);

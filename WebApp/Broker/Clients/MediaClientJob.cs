@@ -29,18 +29,6 @@ namespace SkyMedia.ServiceBroker
                     settingKey = Constants.AppSettings.MediaProcessorIndexerV2Id;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
-                case MediaProcessor.VideoSummarization:
-                    settingKey = Constants.AppSettings.MediaProcessorVideoSummarizationId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.CharacterRecognition:
-                    settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.ObjectDetection:
-                    settingKey = Constants.AppSettings.MediaProcessorObjectDetectionId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
                 case MediaProcessor.FaceDetection:
                     settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
                     processorId = AppSetting.GetValue(settingKey);
@@ -59,6 +47,14 @@ namespace SkyMedia.ServiceBroker
                     break;
                 case MediaProcessor.MotionStabilization:
                     settingKey = Constants.AppSettings.MediaProcessorMotionStabilizationId;
+                    processorId = AppSetting.GetValue(settingKey);
+                    break;
+                case MediaProcessor.CharacterRecognition:
+                    settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
+                    processorId = AppSetting.GetValue(settingKey);
+                    break;
+                case MediaProcessor.VideoSummarization:
+                    settingKey = Constants.AppSettings.MediaProcessorVideoSummarizationId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
             }
@@ -93,7 +89,6 @@ namespace SkyMedia.ServiceBroker
             MediaJob mediaJob = new MediaJob();
             mediaJob.Name = jobName;
             mediaJob.Priority = jobPriority;
-
             List<MediaJobTask> taskList = new List<MediaJobTask>();
             foreach (MediaJobTask jobTask in jobTasks)
             {
@@ -104,8 +99,11 @@ namespace SkyMedia.ServiceBroker
                     case MediaProcessor.EncoderPremium:
                         tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets, contentProtection);
                         break;
+                    case MediaProcessor.IndexerV1:
+                        tasks = GetIndexerV1Tasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        break;
                     case MediaProcessor.IndexerV2:
-                        tasks = GetIndexerTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetIndexerV2Tasks(mediaClient, jobTask, inputAssets, contentProtection);
                         break;
                 }
                 if (tasks != null)
@@ -144,11 +142,9 @@ namespace SkyMedia.ServiceBroker
                 }
                 currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption);
             }
-
             INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
-            NotificationJobState notificationState = NotificationJobState.FinalStatesOnly;
-            job.JobNotificationSubscriptions.AddNew(notificationState, notificationEndpoint);
-
+            NotificationJobState jobStates = NotificationJobState.FinalStatesOnly;
+            job.JobNotificationSubscriptions.AddNew(jobStates, notificationEndpoint);
             job.Submit();
             return job;
         }

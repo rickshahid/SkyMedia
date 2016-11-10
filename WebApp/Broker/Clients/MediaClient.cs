@@ -5,6 +5,8 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
 using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
 
+using SkyMedia.WebApp.Models;
+
 namespace SkyMedia.ServiceBroker
 {
     internal partial class MediaClient
@@ -22,10 +24,17 @@ namespace SkyMedia.ServiceBroker
             BindContext(accountName, accountKey);
         }
 
-        internal MediaClient(string[] mediaAccount)
+        public MediaClient(string[] mediaAccount)
         {
             string accountName = mediaAccount[0];
             string accountKey = mediaAccount[1];
+            BindContext(accountName, accountKey);
+        }
+
+        public MediaClient(ContentPublish contentPublish)
+        {
+            string accountName = contentPublish.PartitionKey;
+            string accountKey = contentPublish.MediaAccountKey;
             BindContext(accountName, accountKey);
         }
 

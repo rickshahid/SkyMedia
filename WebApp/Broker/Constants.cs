@@ -81,20 +81,21 @@ namespace SkyMedia.ServiceBroker
             public const string MediaProcessorEncoderPremiumId = "Media.Processor.EncoderPremiumId";
 
             public const string MediaProcessorIndexerV1Id = "Media.Processor.IndexerV1Id";
+            public const string MediaProcessorIndexerV1DocumentId = "Media.Processor.IndexerV1DocumentId";
             public const string MediaProcessorIndexerV2Id = "Media.Processor.IndexerV2Id";
             public const string MediaProcessorIndexerV2DocumentId = "Media.Processor.IndexerV2DocumentId";
 
-            public const string MediaProcessorVideoSummarizationId = "Media.Processor.VideoSummarizationId";
-
-            public const string MediaProcessorCharacterRecognitionId = "Media.Processor.CharacterRecognitionId";
-            public const string MediaProcessorObjectDetectionId = "Media.Processor.ObjectDetectionId";
-
             public const string MediaProcessorFaceDetectionId = "Media.Processor.FaceDetectionId";
+            public const string MediaProcessorFaceDetectionDocumentId = "Media.Processor.FaceDetectionDocumentId";
             public const string MediaProcessorFaceRedactionId = "Media.Processor.FaceRedactionId";
+            public const string MediaProcessorFaceRedactionDocumentId = "Media.Processor.FaceRedactionDocumentId";
 
             public const string MediaProcessorMotionDetectionId = "Media.Processor.MotionDetectionId";
             public const string MediaProcessorMotionHyperlapseId = "Media.Processor.MotionHyperlapseId";
             public const string MediaProcessorMotionStabilizationId = "Media.Processor.MotionStabilizationId";
+
+            public const string MediaProcessorCharacterRecognitionId = "Media.Processor.CharacterRecognitionId";
+            public const string MediaProcessorVideoSummarizationId = "Media.Processor.VideoSummarizationId";
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
@@ -223,7 +224,13 @@ namespace SkyMedia.ServiceBroker
 
         public struct Media
         {
-            public const string AllAddresses = "All Addresses";
+            public const string TrackSubtitles = "subtitles";
+            public const string AddressesAll = "All Addresses";
+
+            public struct ProcessorConfig
+            {
+                public const string IndexerV1XPath = "/configuration/features/feature/settings/add";
+            }
 
             public struct ContentProtection
             {
@@ -310,12 +317,15 @@ namespace SkyMedia.ServiceBroker
                 public const string MediaFile = "/MediaFile.png";
             }
 
+            public struct AssetManifest
+            {
+                public const string FileExtension = ".ism";
+                public const string LocatorSuffix = "/manifest";
+            }
+
             public struct AssetMetadata
             {
-                public const string ManifestFileExtension = ".ism";
-                public const string ManifestLocatorSuffix = "/manifest";
-                public const string WebVttFileExtension = ".vtt";
-
+                public const string WebVttExtension = ".vtt";
                 public const string DocumentCollection = "Metadata";
             }
         }

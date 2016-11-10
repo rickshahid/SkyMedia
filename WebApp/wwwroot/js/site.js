@@ -128,6 +128,36 @@ function SetPlayerSpinner(visible) {
 function GetSourceType(sourceUrl) {
     return (sourceUrl.toLowerCase().indexOf(".mp4") > -1) ? "video/mp4" : "application/vnd.ms-sstr+xml";
 }
+function GetLanguageLabel(languageCode) {
+    var languageLabel;
+    switch (languageCode.substr(0, 2).toLowerCase()) {
+        case "en":
+            languageLabel = "English";
+            break;
+        case "es":
+            languageLabel = "Spanish";
+            break;
+        case "ar":
+            languageLabel = "Arabic";
+            break;
+        case "zh":
+            languageLabel = "Chinese";
+            break;
+        case "fr":
+            languageLabel = "French";
+            break;
+        case "de":
+            languageLabel = "German";
+            break;
+        case "it":
+            languageLabel = "Italian";
+            break;
+        case "pt":
+            languageLabel = "Portuguese";
+            break;
+    }
+    return languageLabel;
+}
 function GetProtectionInfo(protectionTypes, authToken) {
     var protectionInfo = null;
     if (protectionTypes.length > 0) {

@@ -26,7 +26,7 @@
                     Media Processor:
                 </td>
                 <td>
-                    @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this)" })
+                    @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1)" })
                     &nbsp;
                     <span class="inputLabel">
                         Input Asset: Task #
@@ -60,13 +60,13 @@
                     Indexer Config:
                 </td>
                 <td>
-                    @Html.DropDownList(spokenLanguagesId, null, new { multiple = "multiple" })
+                    <select id="@spokenLanguagesId" multiple="multiple"></select>
                     &nbsp;
                     <span class="inputLabel">
                         Captions:
                     </span>
                     &nbsp;
-                    @Html.CheckBox(captionFormatWebVttId, true)
+                    @Html.CheckBox(captionFormatWebVttId, true, new { disabled = "disabled" } )
                     <span class="inputLabel">
                         VTT
                     </span>

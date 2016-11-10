@@ -2,10 +2,10 @@
 
 @section head {
     <script type="text/javascript">
-        function DispatchCommand(command, parameterFlag) {
-            $.post("/home/dispatch",
+        function DispatchCommand(commandId, parameterFlag) {
+            $.post("/home/command",
                 {
-                    command: command,
+                    commandId: commandId,
                     parameterId: "@ViewData["id"]",
                     parameterName: "@ViewData["name"]",
                     parameterFlag: parameterFlag
@@ -15,18 +15,18 @@
                 }
             );
         }
-        function ConfirmCommand(command) {
+        function ConfirmCommand(commandId) {
             var title, message;
             var buttons = {
                 Yes: function () {
-                    DispatchCommand(command, false);
+                    DispatchCommand(commandId, false);
                     $(this).dialog("close");
                 },
                 No: function () {
                     $(this).dialog("close");
                 }
             };
-            switch (command) {
+            switch (commandId) {
                 case "channelCreate":
                     title = "Confirm Live Channel Creation";
                     message = "Are you sure you want to create a new live channel in your media account?";
@@ -40,11 +40,11 @@
                     message = "Do you want to delete all assets or child assets only in your media account?";
                     var buttons = {
                         "All Assets": function () {
-                            DispatchCommand(command, true);
+                            DispatchCommand(commandId, true);
                             $(this).dialog("close");
                         },
                         "Child Assets": function () {
-                            DispatchCommand(command, false);
+                            DispatchCommand(commandId, false);
                             $(this).dialog("close");
                         },
                         Cancel: function () {

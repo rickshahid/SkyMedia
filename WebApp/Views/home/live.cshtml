@@ -1,7 +1,7 @@
 ﻿@{
-    bool preview = (bool)ViewData["preview"];
+    bool livePreview = (bool)ViewData["livePreview"];
     string viewTitle = "Azure Sky Media Live";
-    if (preview)
+    if (livePreview)
     {
         viewTitle = string.Concat(viewTitle, " (Preview)");
     }
@@ -14,38 +14,41 @@
     <script type="text/javascript">
         var countdownLabel = "Next Flight:";
         function SetCountdown(e) {
-            var countdown = e.strftime("%-D day%!D %-H hour%!H %-M minute%!M %-S second%!S");
+            var countdownHtml = "<span class='liveCountdownValue'>%-D</span> Day%!D";
+            countdownHtml = countdownHtml + " <span class='liveCountdownValue'>%-H</span> Hour%!H";
+            countdownHtml = countdownHtml + " <span class='liveCountdownValue'>%-M</span> Minute%!M";
+            countdownHtml = countdownHtml + " <span class='liveCountdownValue'>%-S</span> Second%!S";
             $("#liveCountdownLabel").text(countdownLabel);
-            $("#liveCountdownValue").text(countdown);
+            $("#liveCountdownValue").html(e.strftime(countdownHtml));
             if (e.offset.totalMinutes < 1) {
-                $("#buckleUpImage").show();
+                $("#liveCountdownImage").show();
             }
         }
-        function StartLive(e) {
-            var mediaPlayer = GetMediaPlayer(false);
+        function StartBroadcast(e) {
             var sourceUrl = "@ViewData["liveSourceUrl"]";
-            $("#liveCountdownLabel").text("");
-            $("#liveCountdownValue").text("");
-            $("#buckleUpImage").hide();
-            SetPlayerSpinner(true);
-            mediaPlayer.src([{
-                src: sourceUrl,
-                type: GetSourceType(sourceUrl)
-            }]);
+            if (sourceUrl == "") {
+                $("#liveCountdownLabel").text(countdownLabel);
+                $("#liveCountdownValue").html("<span class='liveCountdownValue'>TBD</span>");
+            } else {
+                SetPlayerSpinner(true);
+                $("#liveCountdownLabel").text("");
+                $("#liveCountdownValue").html("");
+                var mediaPlayer = GetMediaPlayer(false);
+                mediaPlayer.src([{
+                    src: sourceUrl,
+                    type: GetSourceType(sourceUrl)
+                }]);
+            }
+            $("#liveCountdownImage").hide();
         }
         $(function () {
             var mediaPlayer = GetMediaPlayer(false);
             var startDateTime = "@ViewData["startDateTime"]";
             SetPlayerSpinner(false);
-            if (startDateTime == "") {
-                $("#liveCountdownLabel").text(countdownLabel);
-                $("#liveCountdownValue").text("TBD");
-            } else {
-                $("#liveCountdownValue").countdown(startDateTime)
-                    .on("update.countdown", SetCountdown)
-                    .on("finish.countdown", StartLive)
-                    .countdown("start");
-            }
+            $("#liveCountdownValue").countdown(startDateTime)
+                .on("update.countdown", SetCountdown)
+                .on("finish.countdown", StartBroadcast)
+                .countdown("start");
         })
     </script>
 }
@@ -61,6 +64,7 @@
 <div class="liveCountdown">
     <span id="liveCountdownLabel"></span>
     <span id="liveCountdownValue"></span>
-    <br /><br />
-    <img id="buckleUpImage" src="@ViewData["buckleUpUrl"]" style="display: none" />
+    <div id="liveCountdownImage" class="liveCountdownImage">
+        <img src="@ViewData["liveCountdownImageUrl"]" />
+    </div>
 </div>

@@ -32,7 +32,7 @@ namespace SkyMedia.WebApp.Controllers
             }
         }
 
-        internal static void StartAdvertisement(string authToken, string channelName, int cueId)
+        internal static void SignalChannel(string authToken, string channelName, int cueId)
         {
             string settingKey = Constants.AppSettings.MediaChannelAdvertisementSeconds;
             string timeSeconds = AppSetting.GetValue(settingKey);
@@ -83,8 +83,8 @@ namespace SkyMedia.WebApp.Controllers
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
         {
-            if (!mediaClient.LiveAsset(asset))
-            {
+            //if (!mediaClient.LiveAsset(asset))
+            //{
                 foreach (ILocator locator in asset.Locators)
                 {
                     locator.Delete();
@@ -94,13 +94,26 @@ namespace SkyMedia.WebApp.Controllers
                     asset.DeliveryPolicies.RemoveAt(i);
                 }
                 asset.Delete();
-            }
+            //}
         }
 
         internal static void DeleteEntities(string authToken, bool allAssets)
         {
             MediaClient mediaClient = new MediaClient(authToken);
             IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
+            if (allAssets)
+            {
+                IProgram[] programs = mediaClient.GetEntities(EntityType.Program) as IProgram[];
+                foreach (IProgram program in programs)
+                {
+                    program.Delete();
+                }
+                IChannel[] channels = mediaClient.GetEntities(EntityType.Channel) as IChannel[];
+                foreach (IChannel channel in channels)
+                {
+                    channel.Delete();
+                }
+            }
             foreach (IAsset asset in assets)
             {
                 if (asset.ParentAssets.Count > 0 || allAssets)

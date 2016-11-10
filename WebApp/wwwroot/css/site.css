@@ -222,8 +222,13 @@ body {
     font-weight: bold;
 }
 
-#liveCountdownValue {
+.liveCountdownValue {
     color: azure;
+}
+
+.liveCountdownImage {
+    padding-top: 20px;
+    display: none;
 }
 
 .jobPriority {
@@ -525,6 +530,14 @@ body {
     font-size: large;
 }
 
+.multiSelect {
+    font-size: small;
+}
+
+.indexerLanguages {
+    max-height: 85px;
+}
+
 .mediaProcessor {
     font-weight: bold;
     width: 200px !important;
@@ -533,10 +546,6 @@ body {
 .mediaProcessorConfig {
     font-weight: bold;
     width: 440px;
-}
-
-.jobTaskParent {
-    width: 35px;
 }
 
 .inputAssetName {
@@ -554,8 +563,8 @@ body {
     width: 335px;
 }
 
-.multiSelect {
-    font-size: small;
+.jobTaskParent {
+    width: 35px;
 }
 
 .jobTaskOptions {

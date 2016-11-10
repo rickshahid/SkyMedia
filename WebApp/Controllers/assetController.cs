@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.WindowsAzure.MediaServices.Client;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using SkyMedia.ServiceBroker;
 using SkyMedia.WebApp.Models;
@@ -11,19 +7,6 @@ namespace SkyMedia.WebApp.Controllers
 {
     public class assetController : Controller
     {
-        internal static string[] GetFileNames(IAsset asset, string fileExtension)
-        {
-            List<string> fileNames = new List<string>();
-            foreach (IAssetFile assetFile in asset.AssetFiles)
-            {
-                if (assetFile.Name.EndsWith(fileExtension, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    fileNames.Add(assetFile.Name);
-                }
-            }
-            return fileNames.ToArray();
-        }
-
         public JsonResult roots()
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);

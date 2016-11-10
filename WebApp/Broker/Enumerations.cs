@@ -32,14 +32,13 @@
         EncoderPremium,
         IndexerV1,
         IndexerV2,
-        VideoSummarization,
-        CharacterRecognition,
-        ObjectDetection,
         FaceDetection,
         FaceRedaction,
         MotionDetection,
         MotionHyperlapse,
-        MotionStabilization
+        MotionStabilization,
+        CharacterRecognition,
+        VideoSummarization
     }
 
     public enum ProtectionType

@@ -7,9 +7,6 @@ namespace SkyMedia.WebApp.Models
         [JsonProperty(PropertyName = "kind")]
         public string Type { get; set; }
 
-        [JsonProperty(PropertyName = "label")]
-        public string Label { get; set; }
-
         [JsonProperty(PropertyName = "src")]
         public string Source { get; set; }
 

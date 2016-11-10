@@ -8,14 +8,11 @@
 
 @section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/amp-default/azuremediaplayer.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/jstree/dist/themes/default/style.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
-    <script type="text/javascript" src="~/lib/jstree/dist/jstree.min.js"></script>
-    <script type="text/javascript" src="~/js/amve.min.js"></script>
+    <script type="text/javascript" src="~/js/analytics.js"></script>
     <script type="text/javascript">
         function SetPlayerContent(currentStream, autoPlay) {
-            var mediaPlayer = amp("mediaPlayer");
+            var mediaPlayer = GetMediaPlayer(false);
             mediaPlayer.autoplay(autoPlay);
             mediaPlayer.src(
                 [{
@@ -51,29 +48,18 @@
             }
             $("#streamName").html(streamName);
         }
-        function ToggleAnalytics(span) {
-            if (span.innerText.trim() == "+") {
-                span.innerText = "-";
-                $("#analyticsView").show();
-            } else {
-                span.innerText = "+";
-                $("#analyticsView").hide();
-            }
-        }
-        function SetAnalytics(timeSeconds) {
-            $.get("/analytics/metadata",
-                {
-                    mediaProcessor: null,
-                    documentId: null,
-                    timeSeconds: timeSeconds
-                },
-                function (result) {
-                    // TBD
+        function GetMediaStreams() {
+            var mediaStreams = @Html.Raw(Json.Serialize(ViewData["mediaStreams"]));
+            for (var i = 0; i < mediaStreams.length; i++) {
+                for (var t = 0; t < mediaStreams[i].textTracks.length; t++) {
+                    var languageCode = mediaStreams[i].textTracks[t].srclang;
+                    mediaStreams[i].textTracks[t].label = GetLanguageLabel(languageCode);
                 }
-            );
+            }
+            return mediaStreams;
         }
         $(function () {
-            var mediaStreams = @Html.Raw(Json.Serialize(ViewData["mediaStreams"]));
+            var mediaStreams = GetMediaStreams();
             var streamNumber = @int.Parse(ViewData["streamNumber"].ToString());
             var currentStream = (mediaStreams.length == 0) ? null : mediaStreams[streamNumber - 1];
             var sliderWidth = $("#streamCatcher").width();
@@ -108,8 +94,7 @@
                     }
                 }
             });
-            var editVideo = window.location.href.indexOf("amve") > -1;
-            var mediaPlayer = GetMediaPlayer(editVideo);
+            var mediaPlayer = GetMediaPlayer(false);
             mediaPlayer.addEventListener(amp.eventName.play, function () {
                 var streamUrl = mediaPlayer.currentSrc();
                 streamUrl = streamUrl.split("/");
@@ -139,7 +124,7 @@
     Azure Sky Media
 }
 
-<div id="videoEditor" class="mediaPlayer">
+<div class="mediaPlayer">
     @Html.Partial("MediaPlayer")
 </div>
 
@@ -150,8 +135,4 @@
         <div id="streamName" class="streamName"></div>
         <div id="streamUrl" class="streamUrl"></div>
     </div>
-    @if (ViewData.ContainsKey("accountAuth"))
-    {
-        @Html.Partial("MediaAnalytics")
-    }
 }
