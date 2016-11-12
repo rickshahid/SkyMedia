@@ -32,11 +32,11 @@ namespace SkyMedia.ServiceBroker
                                                       ContentProtection contentProtection)
         {
             bool taskPerInputAsset = true;
-            string taskName = Constants.Media.Task.EncoderStandard;
+            string taskName = Selections.GetProcessorName(MediaProcessor.EncoderStandard);
             if (jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
             {
                 taskPerInputAsset = false;
-                taskName = Constants.Media.Task.EncoderPremium;
+                taskName = Selections.GetProcessorName(MediaProcessor.EncoderPremium);
                 List<MediaAssetInput> assets = new List<MediaAssetInput>(inputAssets);
                 assets.Sort(OrderByWorkflow);
                 inputAssets = assets.ToArray();

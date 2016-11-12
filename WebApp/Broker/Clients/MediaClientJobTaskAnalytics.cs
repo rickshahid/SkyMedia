@@ -12,7 +12,7 @@ namespace SkyMedia.ServiceBroker
         private static MediaJobTask[] GetIndexerV1Tasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, ContentProtection contentProtection)
         {
             List<MediaJobTask> indexerTasks = new List<MediaJobTask>();
-            string taskName = Constants.Media.Task.IndexerV1;
+            string taskName = Selections.GetProcessorName(MediaProcessor.IndexerV1);
             MediaProcessor mediaProcessor = MediaProcessor.IndexerV1;
             string settingKey = Constants.AppSettings.MediaProcessorIndexerV1Id;
             string processorId = AppSetting.GetValue(settingKey);
@@ -21,7 +21,7 @@ namespace SkyMedia.ServiceBroker
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
             XmlDocument processorConfigXml = new XmlDocument();
-            processorConfigXml.LoadXml(processorConfig["xml"].ToString());
+            processorConfigXml.LoadXml(processorConfig["Xml"].ToString());
             XmlNodeList configSettings = processorConfigXml.SelectNodes(Constants.Media.ProcessorConfig.IndexerV1XPath);
             List<string> captionFormats = new List<string>();
             if (jobTask.CaptionFormatWebVtt)
@@ -34,19 +34,19 @@ namespace SkyMedia.ServiceBroker
             }
             if (captionFormats.Count > 0)
             {
-                configSettings[0].Attributes[1].Value = string.Join(";", captionFormats);
+                configSettings[1].Attributes[1].Value = string.Join(";", captionFormats);
             }
             if (jobTask.SpokenLanguages == null)
             {
-                MediaJobTask indexerTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
+                MediaJobTask indexerTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.OuterXml, inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
                 indexerTasks.Add(indexerTask);
             }
             else
             {
                 foreach (string spokenLanguage in jobTask.SpokenLanguages)
                 {
-                    configSettings[1].Attributes[1].Value = spokenLanguage;
-                    MediaJobTask indexerTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
+                    configSettings[0].Attributes[1].Value = spokenLanguage;
+                    MediaJobTask indexerTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.OuterXml, inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
                     indexerTasks.Add(indexerTask);
                 }
             }
@@ -56,7 +56,7 @@ namespace SkyMedia.ServiceBroker
         private static MediaJobTask[] GetIndexerV2Tasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, ContentProtection contentProtection)
         {
             List<MediaJobTask> indexerTasks = new List<MediaJobTask>();
-            string taskName = Constants.Media.Task.IndexerV2;
+            string taskName = Selections.GetProcessorName(MediaProcessor.IndexerV2);
             MediaProcessor mediaProcessor = MediaProcessor.IndexerV2;
             string settingKey = Constants.AppSettings.MediaProcessorIndexerV2Id;
             string processorId = AppSetting.GetValue(settingKey);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -109,6 +110,20 @@ namespace SkyMedia.ServiceBroker
             }
 
             return mediaProcessors.ToArray();
+        }
+
+        public static string GetProcessorName(MediaProcessor mediaProcessor)
+        {
+            string processorName = string.Empty;
+            SelectListItem[] processors = GetMediaProcessors(false);
+            foreach (SelectListItem processor in processors)
+            {
+                if (string.Equals(processor.Value, mediaProcessor.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                {
+                    processorName = processor.Text;
+                }
+            }
+            return processorName;
         }
     }
 }

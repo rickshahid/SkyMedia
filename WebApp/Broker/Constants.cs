@@ -290,22 +290,6 @@ namespace SkyMedia.ServiceBroker
                 public const string NotificationEndpointName = "Job Notification Queue";
             }
 
-            public struct Task
-            {
-                public const string EncoderStandard = "Encoder Standard";
-                public const string EncoderPremium = "Encoder Premium";
-                public const string IndexerV1 = "Indexer v1";
-                public const string IndexerV2 = "Indexer v2";
-                public const string CharacterRecognition = "Character Recognition";
-                public const string VideoSummarization = "Video Summarization";
-                public const string ObjectDetection = "Object Detection";
-                public const string FaceDetection = "Face Detection";
-                public const string FaceRedaction = "FaceRedaction";
-                public const string MotionDetection = "Motion Detection";
-                public const string MotionHyperlapse = "Motion Hyperlapse";
-                public const string MotionStabilization = "Motion Stabilization";
-            }
-
             public struct Streaming
             {
                 public const string DefaultEndpointName = "default";

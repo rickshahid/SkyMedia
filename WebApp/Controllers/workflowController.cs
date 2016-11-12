@@ -100,6 +100,11 @@ namespace SkyMedia.WebApp.Controllers
             {
                 MediaJob mediaJob = MediaClient.CreateJob(mediaClient, jobName, jobPriority, jobTasks, inputAssets, contentProtection);
                 job = mediaClient.CreateJob(mediaJob);
+                if (string.IsNullOrEmpty(storageAccount))
+                {
+                    IAsset encoderAsset = MediaClient.GetEncoderAsset(job);
+                    storageAccount = encoderAsset.StorageAccountName;
+                }
                 MediaClient.TrackJob(authToken, job, storageAccount, contentProtection);
             }
             return job;
