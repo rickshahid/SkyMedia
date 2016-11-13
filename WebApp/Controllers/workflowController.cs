@@ -110,31 +110,33 @@ namespace SkyMedia.WebApp.Controllers
             return job;
         }
 
-        public JsonResult start(string[] fileNames, string storageAccount, bool storageEncryption, string inputAssetName,
-                                bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, string jobName,
-                                int jobPriority, MediaJobTask[] jobTasks, ContentProtection contentProtection)
+        public JsonResult upload(string[] fileNames, string storageAccount, bool storageEncryption, string inputAssetName,
+                                 bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, string jobName,
+                                 int jobPriority, MediaJobTask[] jobTasks, ContentProtection contentProtection)
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            if (fileNames.Length > 0)
+            inputAssets = CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, publishInputAsset, fileNames, contentProtection);
+            IJob job = SubmitJob(authToken, mediaClient, storageAccount, inputAssets, jobName, jobPriority, jobTasks, contentProtection);
+            return (job != null) ? Json(job) : Json(inputAssets);
+        }
+
+        public JsonResult start(MediaAssetInput[] inputAssets, string jobName, int jobPriority, MediaJobTask[] jobTasks, ContentProtection contentProtection)
+        {
+            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
+            inputAssets = MapInputAssets(mediaClient, inputAssets);
+            SetInputClips(mediaClient, inputAssets);
+            DatabaseClient databaseClient = new DatabaseClient();
+            foreach (MediaJobTask jobTask in jobTasks)
             {
-                inputAssets = CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, publishInputAsset, fileNames, contentProtection);
-            }
-            else
-            {
-                inputAssets = MapInputAssets(mediaClient, inputAssets);
-                SetInputClips(mediaClient, inputAssets);
-                DatabaseClient databaseClient = new DatabaseClient();
-                foreach (MediaJobTask jobTask in jobTasks)
+                if (!string.IsNullOrEmpty(jobTask.ProcessorDocument))
                 {
-                    if (!string.IsNullOrEmpty(jobTask.ProcessorDocument))
-                    {
-                        JObject processorConfig = databaseClient.GetDocument(jobTask.ProcessorDocument);
-                        jobTask.ProcessorConfig = processorConfig.ToString();
-                    }
+                    JObject processorConfig = databaseClient.GetDocument(jobTask.ProcessorDocument);
+                    jobTask.ProcessorConfig = processorConfig.ToString();
                 }
             }
-            IJob job = SubmitJob(authToken, mediaClient, storageAccount, inputAssets, jobName, jobPriority, jobTasks, contentProtection);
+            IJob job = SubmitJob(authToken, mediaClient, null, inputAssets, jobName, jobPriority, jobTasks, contentProtection);
             return (job != null) ? Json(job) : Json(inputAssets);
         }
 

@@ -49,7 +49,7 @@ function UploadEvent(uploader, eventCode, eventMessage, eventData) {
         var elapsedTime = GetElapsedTime();
         var uploaderFiles = GetUploaderFiles(true);
         $("#transferMessage").text(_statusLabel + eventMessage + " (" + elapsedTime + ")");
-        StartWorkflow(uploaderFiles);
+        UploadWorkflow(uploaderFiles);
     }
 }
 function UploadError(uploader, eventCode, eventMessage, eventData) {

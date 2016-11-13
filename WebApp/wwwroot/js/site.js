@@ -68,6 +68,9 @@ function SetLayout(mediaAccount) {
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
     CreateTipTop("mediaAssetLibrary", "Azure Media Services<br /><br />Asset Library");
     CreateTipTop("mediaAccountDashboard", "Azure Media Services<br /><br />Account Dashboard");
+    $(document).ajaxError(function (event, xhr, settings, error) {
+        DisplayMessage("Error Message", error);
+    });
 }
 function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
     if (buttons == null) {

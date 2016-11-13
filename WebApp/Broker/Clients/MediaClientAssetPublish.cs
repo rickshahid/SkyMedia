@@ -133,13 +133,16 @@ namespace SkyMedia.ServiceBroker
 
                         string sourceContainerName = indexerAsset.Uri.Segments[1];
                         string sourceFileName = fileNames[0];
-                        CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, false);
+                        CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, true);
 
                         string destinationContainerName = encoderAsset.Uri.Segments[1];
                         string destinationFileName = sourceFileName.Replace(fileExtension, string.Concat("-", languageCode, fileExtension));
                         CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, string.Empty, destinationFileName, false);
                         blobClient.CopyBlob(sourceBlob, destinationBlob, false);
-                        encoderAsset.AssetFiles.Create(destinationFileName);
+                        IAssetFile indexerFile = encoderAsset.AssetFiles.Create(destinationFileName);
+                        indexerFile.ContentFileSize = sourceBlob.Properties.Length;
+                        indexerFile.MimeType = sourceBlob.Properties.ContentType;
+                        indexerFile.Update();
                     }
                 }
                 encoderAsset.Update();

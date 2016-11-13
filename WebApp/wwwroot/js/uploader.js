@@ -145,7 +145,7 @@ function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryC
                     $("#transferMessage").text("Elapsed Time: " + elapsedTime);
                 }
                 if (!WatcherEnabled()) {
-                    StartWorkflow(files);
+                    UploadWorkflow(files);
                 }
             }
         },

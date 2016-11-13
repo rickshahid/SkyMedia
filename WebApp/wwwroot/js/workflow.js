@@ -84,7 +84,7 @@ function ValidateWorkflow(uploadView) {
         if (uploadView) {
             _fileUploader.start();
         } else {
-            StartWorkflow(null);
+            StartWorkflow();
         }
     }
 }
@@ -192,9 +192,9 @@ function DisplayWorkflow(jobTasks, result) {
     }
     DisplayMessage(title, message);
 }
-function StartWorkflow(files) {
+function UploadWorkflow(files) {
     var jobTasks = GetJobTasks();
-    $.post("/workflow/start",
+    $.post("/workflow/upload",
         {
             fileNames: GetFileNames(files),
             storageAccount: $("#storageAccount").val(),
@@ -202,6 +202,21 @@ function StartWorkflow(files) {
             inputAssetName: $("#inputAssetName").val(),
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             publishInputAsset: $("#publishInputAsset").prop("checked"),
+            inputAssets: _inputAssets,
+            jobName: $("#jobName").val(),
+            jobPriority: $("#jobPriorityValue").text(),
+            jobTasks: jobTasks,
+            contentProtection: GetContentProtection()
+        },
+        function (result) {
+            DisplayWorkflow(jobTasks, result);
+        }
+    );
+}
+function StartWorkflow() {
+    var jobTasks = GetJobTasks();
+    $.post("/workflow/start",
+        {
             inputAssets: _inputAssets,
             jobName: $("#jobName").val(),
             jobPriority: $("#jobPriorityValue").text(),

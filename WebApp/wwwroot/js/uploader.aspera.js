@@ -66,7 +66,7 @@ function TransferHandler(event, data) {
                     var uploaderFiles = GetUploaderFiles(true);
                     $("#transferProgress").progressbar("value", 100);
                     $("#transferMessage").text(_statusLabel + "Transfer Completed (" + elapsedTime + ")");
-                    StartWorkflow(uploaderFiles);
+                    UploadWorkflow(uploaderFiles);
                     break;
             }
         }
