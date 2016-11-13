@@ -36,9 +36,8 @@
         FaceRedaction,
         MotionDetection,
         MotionHyperlapse,
-        MotionStabilization,
-        CharacterRecognition,
-        VideoSummarization
+        VideoSummarization,
+        CharacterRecognition
     }
 
     public enum ProtectionType

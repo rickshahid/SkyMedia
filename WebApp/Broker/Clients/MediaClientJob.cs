@@ -45,16 +45,12 @@ namespace SkyMedia.ServiceBroker
                     settingKey = Constants.AppSettings.MediaProcessorMotionHyperlapseId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
-                case MediaProcessor.MotionStabilization:
-                    settingKey = Constants.AppSettings.MediaProcessorMotionStabilizationId;
+                case MediaProcessor.VideoSummarization:
+                    settingKey = Constants.AppSettings.MediaProcessorVideoSummarizationId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.CharacterRecognition:
                     settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.VideoSummarization:
-                    settingKey = Constants.AppSettings.MediaProcessorVideoSummarizationId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
             }
@@ -104,6 +100,24 @@ namespace SkyMedia.ServiceBroker
                         break;
                     case MediaProcessor.IndexerV2:
                         tasks = GetIndexerV2Tasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        break;
+                    case MediaProcessor.FaceDetection:
+                        tasks = GetFaceDetectionTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        break;
+                    case MediaProcessor.FaceRedaction:
+                        tasks = GetFaceRedactionTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        break;
+                    case MediaProcessor.MotionDetection:
+                        tasks = GetMotionDetectionTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        break;
+                    case MediaProcessor.MotionHyperlapse:
+                        tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        break;
+                    case MediaProcessor.VideoSummarization:
+                        tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        break;
+                    case MediaProcessor.CharacterRecognition:
+                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets, contentProtection);
                         break;
                 }
                 if (tasks != null)

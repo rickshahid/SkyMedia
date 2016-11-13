@@ -91,11 +91,14 @@ namespace SkyMedia.ServiceBroker
             public const string MediaProcessorFaceRedactionDocumentId = "Media.Processor.FaceRedactionDocumentId";
 
             public const string MediaProcessorMotionDetectionId = "Media.Processor.MotionDetectionId";
+            public const string MediaProcessorMotionDetectionDocumentId = "Media.Processor.MotionDetectionDocumentId";
             public const string MediaProcessorMotionHyperlapseId = "Media.Processor.MotionHyperlapseId";
-            public const string MediaProcessorMotionStabilizationId = "Media.Processor.MotionStabilizationId";
+            public const string MediaProcessorMotionHyperlapseDocumentId = "Media.Processor.MotionHyperlapseDocumentId";
 
-            public const string MediaProcessorCharacterRecognitionId = "Media.Processor.CharacterRecognitionId";
             public const string MediaProcessorVideoSummarizationId = "Media.Processor.VideoSummarizationId";
+            public const string MediaProcessorVideoSummarizationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
+            public const string MediaProcessorCharacterRecognitionId = "Media.Processor.CharacterRecognitionId";
+            public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";

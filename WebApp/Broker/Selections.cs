@@ -70,13 +70,11 @@ namespace SkyMedia.ServiceBroker
             mediaProcessor.Value = MediaProcessor.FaceDetection.ToString();
             mediaProcessors.Add(mediaProcessor);
 
-            if (!analyticsView)
-            {
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Face Redaction";
-                mediaProcessor.Value = MediaProcessor.FaceRedaction.ToString();
-                mediaProcessors.Add(mediaProcessor);
-            }
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Face Redaction";
+            mediaProcessor.Value = MediaProcessor.FaceRedaction.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
 
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Motion Detection";
@@ -91,8 +89,8 @@ namespace SkyMedia.ServiceBroker
                 mediaProcessors.Add(mediaProcessor);
 
                 mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Motion Stabilization";
-                mediaProcessor.Value = MediaProcessor.MotionStabilization.ToString();
+                mediaProcessor.Text = "Video Summarization";
+                mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
                 mediaProcessors.Add(mediaProcessor);
             }
 
@@ -100,14 +98,6 @@ namespace SkyMedia.ServiceBroker
             mediaProcessor.Text = "Character Recognition";
             mediaProcessor.Value = MediaProcessor.CharacterRecognition.ToString();
             mediaProcessors.Add(mediaProcessor);
-
-            if (!analyticsView)
-            {
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Video Summarization";
-                mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
-                mediaProcessors.Add(mediaProcessor);
-            }
 
             return mediaProcessors.ToArray();
         }
