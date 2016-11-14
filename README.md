@@ -23,9 +23,15 @@ The following Azure platform services are incorporated within this sample ASP.NE
  * Web Apps - http://azure.microsoft.com/en-us/services/app-service/web/
 
  * API Apps - http://azure.microsoft.com/en-us/services/app-service/api/
+ 
+ * Mobile Apps - http://azure.microsoft.com/en-us/services/app-service/mobile/
+ 
+ * Functions - http://azure.microsoft.com/en-us/services/functions/
 
 * Logic Apps - http://azure.microsoft.com/en-us/services/logic-apps/
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
 * Content Delivery Network (CDN) - http://azure.microsoft.com/en-us/services/cdn/
+
+* Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
