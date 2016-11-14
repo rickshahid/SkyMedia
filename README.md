@@ -1,8 +1,8 @@
 # SkyMedia
 
-Welcome! This repository contains the sample solution that is deployed at http://www.skymedia.io
+Welcome! This repository contains the sample Azure solution that is deployed at http://www.skymedia.io
 
-The following Azure services are incorporated within this sample ASP.NET Core MVC web app:
+The following Azure platform services are incorporated within this sample ASP.NET Core MVC web app:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
@@ -15,6 +15,12 @@ The following Azure services are incorporated within this sample ASP.NET Core MV
 * Search - http://azure.microsoft.com/en-us/services/search/
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
+
+  * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
+
+  * API App - http://azure.microsoft.com/en-us/services/app-service/api/
+
+* Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
