@@ -12,15 +12,19 @@ The following Azure platform services are incorporated within this sample ASP.NE
 
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
+ * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
+ 
+ * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
+
 * Search - http://azure.microsoft.com/en-us/services/search/
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
- * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
+ * Web Apps - http://azure.microsoft.com/en-us/services/app-service/web/
 
- * API App - http://azure.microsoft.com/en-us/services/app-service/api/
+ * API Apps - http://azure.microsoft.com/en-us/services/app-service/api/
 
-* Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
+* Logic Apps - http://azure.microsoft.com/en-us/services/logic-apps/
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
