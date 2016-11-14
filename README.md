@@ -16,9 +16,9 @@ The following Azure platform services are incorporated within this sample ASP.NE
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
-  * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
+ * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
 
-  * API App - http://azure.microsoft.com/en-us/services/app-service/api/
+ * API App - http://azure.microsoft.com/en-us/services/app-service/api/
 
 * Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
 
