@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the sample solution that is deployed at http://www.skymedia.io
 
-The following Azure services are incorporated within this ASP.NET MVC web app:
+The following Azure services are incorporated within this sample ASP.NET Core MVC web app:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
@@ -10,9 +10,9 @@ The following Azure services are incorporated within this ASP.NET MVC web app:
 
 * Document DB - http://azure.microsoft.com/en-us/services/documentdb/
 
-* Media Services - https://azure.microsoft.com/en-us/services/media-services/
+* Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
-* Search - https://azure.microsoft.com/en-us/services/search/
+* Search - http://azure.microsoft.com/en-us/services/search/
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
