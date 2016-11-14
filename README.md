@@ -20,11 +20,11 @@ The following Azure platform services are incorporated within this sample ASP.NE
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
- * Web Apps - http://azure.microsoft.com/en-us/services/app-service/web/
+ * Web - http://azure.microsoft.com/en-us/services/app-service/web/
 
- * API Apps - http://azure.microsoft.com/en-us/services/app-service/api/
+ * API - http://azure.microsoft.com/en-us/services/app-service/api/
  
- * Mobile Apps - http://azure.microsoft.com/en-us/services/app-service/mobile/
+ * Mobile - http://azure.microsoft.com/en-us/services/app-service/mobile/
  
  * Functions - http://azure.microsoft.com/en-us/services/functions/
 
