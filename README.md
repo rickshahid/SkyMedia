@@ -4,10 +4,18 @@ Welcome! This repository contains the sample solution that is deployed at http:/
 
 The following Azure services are incorporated within this ASP.NET MVC web app:
 
-* Azure Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
+* Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
-* Azure Storage - http://azure.microsoft.com/en-us/services/storage/
+* Storage - http://azure.microsoft.com/en-us/services/storage/
 
-* Azure Document DB - http://azure.microsoft.com/en-us/services/documentdb/
+* Document DB - http://azure.microsoft.com/en-us/services/documentdb/
 
-* Azure App Service - http://azure.microsoft.com/en-us/services/app-service/
+* Media Services - https://azure.microsoft.com/en-us/services/media-services/
+
+* Search - https://azure.microsoft.com/en-us/services/search/
+
+* App Service - http://azure.microsoft.com/en-us/services/app-service/
+
+* Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
+
+* Content Delivery Network (CDN) - http://azure.microsoft.com/en-us/services/cdn/
