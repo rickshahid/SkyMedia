@@ -312,7 +312,8 @@ namespace SkyMedia.ServiceBroker
 
             public struct AssetMetadata
             {
-                public const string WebVttExtension = ".vtt";
+                public const string VttExtension = ".vtt";
+                public const string JsonExtension = ".json";
                 public const string DocumentCollection = "Metadata";
             }
         }

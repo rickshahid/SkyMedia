@@ -1,6 +1,5 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="js/amve.min.js" />
-/// <reference path="js/analytics.js" />
 /// <reference path="js/editor.js" />
 /// <reference path="js/site.js" />
 /// <reference path="js/uploader.aspera.js" />

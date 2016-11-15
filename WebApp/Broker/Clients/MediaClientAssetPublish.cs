@@ -35,6 +35,16 @@ namespace SkyMedia.ServiceBroker
             return (taskOutputs.Length == 0) ? null : taskOutputs[0];
         }
 
+        private static IAsset GetEncoderAsset(IJob job)
+        {
+            string settingKey = Constants.AppSettings.MediaProcessorEncoderStandardId;
+            string processorIdStandard = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettings.MediaProcessorEncoderPremiumId;
+            string processorIdPremium = AppSetting.GetValue(settingKey);
+            string[] processorIds = new string[] { processorIdStandard, processorIdPremium };
+            return GetTaskOutput(job, processorIds);
+        }
+
         private static ITask[] GetJobTasks(IJob job, string[] processorIds)
         {
             List<ITask> jobTasks = new List<ITask>();
@@ -72,14 +82,17 @@ namespace SkyMedia.ServiceBroker
             return languageCode;
         }
 
-        public static IAsset GetEncoderAsset(IJob job)
+        private static void CopyOutputFile(BlobClient blobClient, IAsset sourceAsset, IAsset destinationAsset, string sourceFileName, string destinationFileName)
         {
-            string settingKey = Constants.AppSettings.MediaProcessorEncoderStandardId;
-            string processorIdStandard = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorEncoderPremiumId;
-            string processorIdPremium = AppSetting.GetValue(settingKey);
-            string[] processorIds = new string[] { processorIdStandard, processorIdPremium };
-            return GetTaskOutput(job, processorIds);
+            string sourceContainerName = sourceAsset.Uri.Segments[1];
+            CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, true);
+            string destinationContainerName = destinationAsset.Uri.Segments[1];
+            CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, string.Empty, destinationFileName, false);
+            blobClient.CopyBlob(sourceBlob, destinationBlob, false);
+            IAssetFile indexerFile = destinationAsset.AssetFiles.Create(destinationFileName);
+            indexerFile.ContentFileSize = sourceBlob.Properties.Length;
+            indexerFile.MimeType = sourceBlob.Properties.ContentType;
+            indexerFile.Update();
         }
 
         public static string[] GetFileNames(IAsset asset, string fileExtension)
@@ -114,38 +127,59 @@ namespace SkyMedia.ServiceBroker
         private static void PublishIndex(IJob job, IAsset encoderAsset, ContentPublish contentPublish)
         {
             string settingKey = Constants.AppSettings.MediaProcessorIndexerV1Id;
-            string processorIdV1 = AppSetting.GetValue(settingKey);
+            string processorId1 = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorIndexerV2Id;
-            string processorIdV2 = AppSetting.GetValue(settingKey);
-            string[] processorIds = new string[] { processorIdV1, processorIdV2 };
-            ITask[] indexerTasks = GetJobTasks(job, processorIds);
-            if (indexerTasks.Length > 0)
+            string processorId2 = AppSetting.GetValue(settingKey);
+            string[] processorIds = new string[] { processorId1, processorId2 };
+            ITask[] jobTasks = GetJobTasks(job, processorIds);
+            if (jobTasks.Length > 0)
             {
                 BlobClient blobClient = new BlobClient(contentPublish);
-                foreach (ITask indexerTask in indexerTasks)
+                foreach (ITask jobTask in jobTasks)
                 {
-                    IAsset indexerAsset = indexerTask.OutputAssets[0];
-                    string fileExtension = Constants.Media.AssetMetadata.WebVttExtension;
-                    string[] fileNames = GetFileNames(indexerAsset, fileExtension);
+                    IAsset outputAsset = jobTask.OutputAssets[0];
+                    string fileExtension = Constants.Media.AssetMetadata.VttExtension;
+                    string[] fileNames = GetFileNames(outputAsset, fileExtension);
                     if (fileNames.Length > 0)
                     {
-                        string languageCode = GetLanguageCode(indexerTask, processorIdV1);
-
-                        string sourceContainerName = indexerAsset.Uri.Segments[1];
                         string sourceFileName = fileNames[0];
-                        CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, true);
-
-                        string destinationContainerName = encoderAsset.Uri.Segments[1];
+                        string languageCode = GetLanguageCode(jobTask, processorId1);
                         string destinationFileName = sourceFileName.Replace(fileExtension, string.Concat("-", languageCode, fileExtension));
-                        CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, string.Empty, destinationFileName, false);
-                        blobClient.CopyBlob(sourceBlob, destinationBlob, false);
-                        IAssetFile indexerFile = encoderAsset.AssetFiles.Create(destinationFileName);
-                        indexerFile.ContentFileSize = sourceBlob.Properties.Length;
-                        indexerFile.MimeType = sourceBlob.Properties.ContentType;
-                        indexerFile.Update();
+                        CopyOutputFile(blobClient, outputAsset, encoderAsset, sourceFileName, destinationFileName);
                     }
                 }
                 encoderAsset.Update();
+            }
+        }
+
+        private static void PublishAnalytics(IJob job, IAsset encoderAsset, ContentPublish contentPublish)
+        {
+            string settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
+            string processorId1 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettings.MediaProcessorFaceRedactionId;
+            string processorId2 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettings.MediaProcessorMotionDetectionId;
+            string processorId3 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
+            string processorId4 = AppSetting.GetValue(settingKey);
+            string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4 };
+            ITask[] jobTasks = GetJobTasks(job, processorIds);
+            if (jobTasks.Length > 0)
+            {
+                BlobClient blobClient = new BlobClient(contentPublish);
+                foreach (ITask jobTask in jobTasks)
+                {
+                    IAsset outputAsset = jobTask.OutputAssets[0];
+                    string fileExtension = Constants.Media.AssetMetadata.JsonExtension;
+                    string[] fileNames = GetFileNames(outputAsset, fileExtension);
+                    if (fileNames.Length > 0)
+                    {
+                        string sourceFileName = fileNames[0];
+                        string processorName = jobTask.Name.Replace(" ", "");
+                        string destinationFileName = sourceFileName.Replace(fileExtension, string.Concat("-", processorName, fileExtension));
+                        CopyOutputFile(blobClient, outputAsset, encoderAsset, sourceFileName, destinationFileName);
+                    }
+                }
             }
         }
 
@@ -158,6 +192,7 @@ namespace SkyMedia.ServiceBroker
                 if (asset.IsStreamable)
                 {
                     PublishIndex(job, asset, contentPublish);
+                    PublishAnalytics(job, asset, contentPublish);
                 }
             }
         }

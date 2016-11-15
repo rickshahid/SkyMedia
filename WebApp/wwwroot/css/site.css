@@ -231,13 +231,20 @@ body {
     display: none;
 }
 
-.jobPriority {
+.slider {
     display: inline-block;
     margin-left: 15px;
+}
+
+.slider.jobPriority {
     width: 105px;
 }
 
-.jobPriorityValue {
+.slider.durationSeconds {
+    width: 205px;
+}
+
+.sliderLabel {
     font-weight: bold;
     margin-left: 5px;
     color: azure;
@@ -629,40 +636,10 @@ body {
     cursor: pointer;
 }
 
-.analyticsInfo {
-    text-align: center;
-    margin-left: -20px;
-    margin-top: 30px;
-}
-
-.analyticsToggle {
-    display: inline-table;
-    vertical-align: top;
-    font-size: x-large;
-    margin-top: -15px;
-    width: 15px;
-}
-
-.videoAnalytics {
-    border: 5px inset deepskyblue;
-    display: inline-table;
-    vertical-align: top;
-    width: 640px;
-}
-
-.analyticsView {
-    margin-top: 10px;
-}
-
-.analyticsView select {
-    font-weight: bold;
-}
-
-.analyticsData {
-    margin-bottom: 10px;
+.mediaMetadata {
+    border: 1px solid deepskyblue;
     display: none;
-    height: 300px;
-    width: 620px;
+    height: 150px
 }
 
 .dashboard {

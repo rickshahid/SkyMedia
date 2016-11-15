@@ -35,6 +35,8 @@ namespace SkyMedia.WebApp.Models
 
         public bool CaptionFormatTtml { get; set; }
 
+        public int DurationSeconds { get; set; }
+
         public string OutputAssetName { get; set; }
 
         public AssetCreationOptions OutputAssetEncryption { get; set; }

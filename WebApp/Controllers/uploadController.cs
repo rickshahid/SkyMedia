@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
-using Newtonsoft.Json.Linq;
-
 using SkyMedia.ServiceBroker;
 
 namespace SkyMedia.WebApp.Controllers
@@ -90,7 +88,7 @@ namespace SkyMedia.WebApp.Controllers
             viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
 
             viewData["storageAccount"] = Selections.GetStorageAccounts(authToken);
-            viewData["mediaProcessor1"] = Selections.GetMediaProcessors(false);
+            viewData["mediaProcessor1"] = Selections.GetMediaProcessors();
             viewData["processorConfig1"] = new List<SelectListItem>();
         }
 

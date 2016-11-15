@@ -29,7 +29,7 @@ function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
         max: 9,
         step: 1,
         slide: function (event, ui) {
-            $("#jobPriorityValue").text(ui.value);
+            $("#jobPriorityLabel").text(ui.value);
         }
     });
     SetJobTaskOptions(1, false);
@@ -204,7 +204,7 @@ function UploadWorkflow(files) {
             publishInputAsset: $("#publishInputAsset").prop("checked"),
             inputAssets: _inputAssets,
             jobName: $("#jobName").val(),
-            jobPriority: $("#jobPriorityValue").text(),
+            jobPriority: $("#jobPriorityLabel").text(),
             jobTasks: jobTasks,
             contentProtection: GetContentProtection()
         },
@@ -219,7 +219,7 @@ function StartWorkflow() {
         {
             inputAssets: _inputAssets,
             jobName: $("#jobName").val(),
-            jobPriority: $("#jobPriorityValue").text(),
+            jobPriority: $("#jobPriorityLabel").text(),
             jobTasks: jobTasks,
             contentProtection: GetContentProtection()
         },

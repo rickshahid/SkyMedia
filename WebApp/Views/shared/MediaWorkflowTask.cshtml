@@ -11,6 +11,9 @@
     string spokenLanguagesId = "spokenLanguages" + taskNumber;
     string captionFormatWebVttId = "captionFormatWebVtt" + taskNumber;
     string captionFormatTtmlId = "captionFormatWebTtml" + taskNumber;
+    string summaryConfigRowId = "summaryConfigRow" + taskNumber;
+    string durationSecondsLabelId = "durationSecondsLabel" + taskNumber;
+    string durationSecondsId = "durationSeconds" + taskNumber;
     string outputAssetNameId = "outputAssetName" + taskNumber;
     string taskOptionsId = "taskOptions" + taskNumber;
 }
@@ -75,6 +78,18 @@
                     <span class="inputLabel">
                         TTML
                     </span>
+                </td>
+            </tr>
+            <tr id="@summaryConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    Summary Config:
+                </td>
+                <td>
+                    <span class="inputLabel">
+                        Output Video Duration
+                        <span id="@durationSecondsLabelId" class="sliderLabel">0:15</span>
+                    </span>
+                    <div id="@durationSecondsId" class="slider durationSeconds"></div>
                 </td>
             </tr>
             <tr>

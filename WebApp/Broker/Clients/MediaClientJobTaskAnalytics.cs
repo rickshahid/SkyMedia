@@ -170,6 +170,8 @@ namespace SkyMedia.ServiceBroker
             string documentId = AppSetting.GetValue(settingKey);
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
+            JToken processorOptions = processorConfig["options"];
+            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.DurationSeconds.ToString();
             jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
             jobTasks.Add(jobTask);
             return jobTasks.ToArray();

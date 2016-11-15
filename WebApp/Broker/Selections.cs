@@ -33,7 +33,7 @@ namespace SkyMedia.ServiceBroker
             return storageAccounts.ToArray();
         }
 
-        public static SelectListItem[] GetMediaProcessors(bool analyticsView)
+        public static SelectListItem[] GetMediaProcessors()
         {
             List<SelectListItem> mediaProcessors = new List<SelectListItem>();
 
@@ -42,18 +42,15 @@ namespace SkyMedia.ServiceBroker
             mediaProcessor.Value = MediaProcessor.None.ToString();
             mediaProcessors.Add(mediaProcessor);
 
-            if (!analyticsView)
-            {
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Encoder Standard";
-                mediaProcessor.Value = MediaProcessor.EncoderStandard.ToString();
-                mediaProcessors.Add(mediaProcessor);
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Encoder Standard";
+            mediaProcessor.Value = MediaProcessor.EncoderStandard.ToString();
+            mediaProcessors.Add(mediaProcessor);
 
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Encoder Premium";
-                mediaProcessor.Value = MediaProcessor.EncoderPremium.ToString();
-                mediaProcessors.Add(mediaProcessor);
-            }
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Encoder Premium";
+            mediaProcessor.Value = MediaProcessor.EncoderPremium.ToString();
+            mediaProcessors.Add(mediaProcessor);
 
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Indexer v1";
@@ -81,18 +78,15 @@ namespace SkyMedia.ServiceBroker
             mediaProcessor.Value = MediaProcessor.MotionDetection.ToString();
             mediaProcessors.Add(mediaProcessor);
 
-            if (!analyticsView)
-            {
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Motion Hyperlapse";
-                mediaProcessor.Value = MediaProcessor.MotionHyperlapse.ToString();
-                mediaProcessors.Add(mediaProcessor);
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Motion Hyperlapse";
+            mediaProcessor.Value = MediaProcessor.MotionHyperlapse.ToString();
+            mediaProcessors.Add(mediaProcessor);
 
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Video Summarization";
-                mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
-                mediaProcessors.Add(mediaProcessor);
-            }
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Video Summarization";
+            mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
+            mediaProcessors.Add(mediaProcessor);
 
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Character Recognition";
@@ -105,7 +99,7 @@ namespace SkyMedia.ServiceBroker
         public static string GetProcessorName(MediaProcessor mediaProcessor)
         {
             string processorName = string.Empty;
-            SelectListItem[] processors = GetMediaProcessors(false);
+            SelectListItem[] processors = GetMediaProcessors();
             foreach (SelectListItem processor in processors)
             {
                 if (string.Equals(processor.Value, mediaProcessor.ToString(), StringComparison.InvariantCultureIgnoreCase))

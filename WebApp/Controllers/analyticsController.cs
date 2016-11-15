@@ -33,7 +33,7 @@ namespace SkyMedia.WebApp.Controllers
             return null;
         }
 
-        public JsonResult metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
+        public JsonResult metadata(MediaProcessor mediaProcessor, double timeSeconds)
         {
             JArray metadata = null;
             //switch (mediaProcessor)

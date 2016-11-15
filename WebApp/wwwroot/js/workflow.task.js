@@ -32,6 +32,8 @@ function AddJobTask(taskButton) {
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "spokenLanguages" + lastTaskNumber, "spokenLanguages" + newTaskNumber);
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "captionFormatWebVtt" + lastTaskNumber, "captionFormatWebVtt" + newTaskNumber);
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "captionFormatTtml" + lastTaskNumber, "captionFormatTtml" + newTaskNumber);
+    newTaskRowHtml = ReplaceAll(newTaskRowHtml, "summaryConfigRow" + lastTaskNumber, "summaryConfigRow" + newTaskNumber);
+    newTaskRowHtml = ReplaceAll(newTaskRowHtml, "durationSeconds" + lastTaskNumber, "durationSeconds" + newTaskNumber);
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "outputAssetName" + lastTaskNumber, "outputAssetName" + newTaskNumber);
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "taskOptions" + lastTaskNumber, "taskOptions" + newTaskNumber);
     newTaskRowHtml = ReplaceAll(newTaskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
@@ -72,7 +74,7 @@ function EncoderSelected() {
     } while (mediaProcessor != null)
     return encoderSelected;
 }
-function ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId, indexerLanguageOptions) {
+function ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId, indexerLanguageOptions, summaryConfigRowId) {
     $("#" + processorConfigFileId).val("");
     $("#" + processorConfigFileRowId).hide();
     if (processorConfigOptions != null) {
@@ -83,6 +85,7 @@ function ResetProcessorConfig(processorConfigRowId, processorConfigOptions, proc
         indexerLanguageOptions.length = 0;
     }
     $("#" + indexerConfigRowId).hide();
+    $("#" + summaryConfigRowId).hide();
     if (!EncoderSelected()) {
         $("#mediaWorkflowContentProtection").hide();
     }
@@ -96,7 +99,8 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
     var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "spokenLanguages");
     var indexerLanguageOptions = $("#" + indexerLanguagesId)[0].options;
-    ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId, indexerLanguageOptions);
+    var summaryConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summaryConfigRow");
+    ResetProcessorConfig(processorConfigRowId, processorConfigOptions, processorConfigFileRowId, processorConfigFileId, indexerConfigRowId, indexerLanguageOptions, summaryConfigRowId);
     if (mediaProcessor.value != "None") {
         switch (mediaProcessor.value) {
             case "EncoderStandard":
@@ -140,6 +144,9 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 SetJobTaskOptions(taskNumber, false);
                 $("#" + indexerConfigRowId).show();
                 break;
+            case "VideoSummarization":
+                $("#" + summaryConfigRowId).show();
+                break;
         }
         if (processorConfigOptions.length > 0) {
             $("#" + processorConfigRowId).show();
@@ -176,6 +183,21 @@ function SetJobTaskOptions(taskNumber, indexerV1) {
         selectedText: "# of " + languageCount + " Languages Enabled",
         classes: "multiSelect mediaProcessor" + (indexerV1 ? " indexerLanguages" : ""),
         header: false
+    });
+    $("#durationSeconds" + taskNumber).slider({
+        min: 15,
+        max: 180,
+        step: 1,
+        slide: function (event, ui) {
+            var dateTime = new Date(null);
+            dateTime.setSeconds(ui.value);
+            var seconds = dateTime.getSeconds();
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            var duration = dateTime.getMinutes() + ":" + seconds;
+            $("#durationSecondsLabel" + taskNumber).text(duration);
+        }
     });
     $("#taskOptions" + taskNumber).multiselect({
         noneSelectedText: "0 of 3 Task Options Enabled",
@@ -231,6 +253,12 @@ function GetJobTask(taskNumber) {
                 jobTask.SpokenLanguages = $("#spokenLanguages" + taskNumber).val();
                 jobTask.CaptionFormatWebVtt = $("#captionFormatWebVtt" + taskNumber).prop("checked");
                 jobTask.CaptionFormatTtml = $("#captionFormatTtml" + taskNumber).prop("checked");
+                break;
+            case "VideoSummarization":
+                var durationLabel = $("#durationSecondsLabel" + taskNumber).text();
+                var durationInfo = durationLabel.split(":");
+                var durationSeconds = (parseInt(durationInfo[0]) * 60) + parseInt(durationInfo[1]);
+                jobTask.DurationSeconds = durationSeconds;
                 break;
         }
     }
