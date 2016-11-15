@@ -16,10 +16,6 @@ The following Azure platform services are incorporated within this sample ASP.NE
  
  * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
-* Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
-
-* Search - http://azure.microsoft.com/en-us/services/search/
-
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
  * Web - http://azure.microsoft.com/en-us/services/app-service/web/
