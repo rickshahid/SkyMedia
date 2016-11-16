@@ -40,7 +40,7 @@ To enable these core solution capabilities in addition to others, the following 
 
 * Content Delivery Network (CDN) - http://azure.microsoft.com/en-us/services/cdn/
 
-In addition to these native Azure services, the following partner services are also incorporated into the solution:
+In addition to the native Azure services listed above, the following partner services have also been incorporated:
 
 * Signiant Flight - http://azure.microsoft.com/en-us/marketplace/partners/signiant/flight/
 
