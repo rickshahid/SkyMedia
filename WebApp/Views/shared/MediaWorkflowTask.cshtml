@@ -3,14 +3,21 @@
     string taskId = "mediaWorkflowTask" + taskNumber;
     string mediaProcessorId = "mediaProcessor" + taskNumber;
     string taskParentId = "taskParent" + taskNumber;
-    string processorConfigRowId = "processorConfigRow" + taskNumber;
-    string processorConfigId = "processorConfig" + taskNumber;
-    string processorConfigFileRowId = "processorConfigFileRow" + taskNumber;
-    string processorConfigFileId = "processorConfigFile" + taskNumber;
+    string encoderConfigRowId = "encoderConfigRow" + taskNumber;
+    string encoderConfigId = "encoderConfig" + taskNumber;
+    string encoderConfigFileRowId = "encoderConfigFileRow" + taskNumber;
+    string encoderConfigFileId = "encoderConfigFile" + taskNumber;
     string indexerConfigRowId = "indexerConfigRow" + taskNumber;
     string spokenLanguagesId = "spokenLanguages" + taskNumber;
     string captionFormatWebVttId = "captionFormatWebVtt" + taskNumber;
-    string captionFormatTtmlId = "captionFormatWebTtml" + taskNumber;
+    string captionFormatTtmlId = "captionFormatTtml" + taskNumber;
+    string motionConfigRowId = "motionConfigRow" + taskNumber;
+    string motionSensitivityLevelId = "motionSensitivityLevel" + taskNumber;
+    string motionDetectLightChangeId = "motionDetectLightChange" + taskNumber;
+    string hyperlapseConfigRowId = "hyperlapseConfigRow" + taskNumber;
+    string hyperlapseStartFrameId = "hyperlapseStartFrame" + taskNumber;
+    string hyperlapseFrameCountId = "hyperlapseFrameCount" + taskNumber;
+    string hyperlapseSpeedId = "hyperlapseSpeed" + taskNumber;
     string summaryConfigRowId = "summaryConfigRow" + taskNumber;
     string durationSecondsLabelId = "durationSecondsLabel" + taskNumber;
     string durationSecondsId = "durationSeconds" + taskNumber;
@@ -40,27 +47,27 @@
                     </span>
                 </td>
             </tr>
-            <tr id="@processorConfigRowId" style="display: none">
+            <tr id="@encoderConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://msdn.microsoft.com/en-us/library/azure/mt269960.aspx')">
-                        Configuration:
+                        Encoder Config:
                     </span>
                 </td>
                 <td>
-                    @Html.DropDownList(processorConfigId, null, new { @class = "mediaProcessorConfig", onchange = "SetProcessorConfigFile(this)" })
+                    @Html.DropDownList(encoderConfigId, null, new { @class = "mediaProcessorConfig", onchange = "SetEncoderConfigFile(this)" })
                 </td>
             </tr>
-            <tr id="@processorConfigFileRowId" style="display: none">
+            <tr id="@encoderConfigFileRowId" style="display: none">
                 <td class="inputLabel">
                     Custom Config:
                 </td>
                 <td>
-                    @Html.TextBox(processorConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file" })
+                    @Html.TextBox(encoderConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file" })
                 </td>
             </tr>
             <tr id="@indexerConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Indexer Config:
+                    Audio Indexer:
                 </td>
                 <td>
                     <select id="@spokenLanguagesId" multiple="multiple"></select>
@@ -80,9 +87,57 @@
                     </span>
                 </td>
             </tr>
+            <tr id="@motionConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    Motion:
+                </td>
+                <td>
+                    <span class="inputLabel">
+                        Sensitivity Level
+                    </span>
+                    <select id="@motionSensitivityLevelId" class="motionSensitivityLevel">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    @Html.CheckBox(motionDetectLightChangeId, false, new { @class = "motionDetectLightChange" })
+                    <span class="inputLabel">
+                        Detect Light Change
+                    </span>
+                </td>
+            </tr>
+            <tr id="@hyperlapseConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    Hyperlapse:
+                </td>
+                <td>
+                    <table class="hyperlapseConfig">
+                        <tr>
+                            <td class="inputLabel">
+                                Start Frame
+                            </td>
+                            <td>
+                                <input id="@hyperlapseStartFrameId" value="0" class="spinner d4" />
+                            </td>
+                            <td class="inputLabel">
+                                Frames
+                            </td>
+                            <td>
+                                <input id="@hyperlapseFrameCountId" value="10000" class="spinner d5" />
+                            </td>
+                            <td class="inputLabel">
+                                Speed
+                            </td>
+                            <td>
+                                <input id="@hyperlapseSpeedId" value="3" class="spinner d1" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
             <tr id="@summaryConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Summary Config:
+                    Summarization:
                 </td>
                 <td>
                     <span class="inputLabel">

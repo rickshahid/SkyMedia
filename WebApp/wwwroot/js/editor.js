@@ -29,7 +29,7 @@ function CreateSubclip(clipData) {
         };
         var jobTask = {
             MediaProcessor: "EncoderStandard",
-            ProcessorDocument: _mediaAsset.data.processorDocument,
+            ProcessorDocumentId: _mediaAsset.data.processorDocumentId,
             OutputAssetName: clipData.title
         };
         var jobTasks = [jobTask];

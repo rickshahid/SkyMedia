@@ -35,16 +35,6 @@ namespace SkyMedia.ServiceBroker
             return (taskOutputs.Length == 0) ? null : taskOutputs[0];
         }
 
-        private static IAsset GetEncoderAsset(IJob job)
-        {
-            string settingKey = Constants.AppSettings.MediaProcessorEncoderStandardId;
-            string processorIdStandard = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorEncoderPremiumId;
-            string processorIdPremium = AppSetting.GetValue(settingKey);
-            string[] processorIds = new string[] { processorIdStandard, processorIdPremium };
-            return GetTaskOutput(job, processorIds);
-        }
-
         private static ITask[] GetJobTasks(IJob job, string[] processorIds)
         {
             List<ITask> jobTasks = new List<ITask>();
@@ -185,15 +175,11 @@ namespace SkyMedia.ServiceBroker
 
         public static void PublishJob(MediaClient mediaClient, IJob job, ContentPublish contentPublish, ContentProtection contentProtection)
         {
-            IAsset asset = GetEncoderAsset(job);
-            if (asset != null)
+            foreach (IAsset outputAsset in job.OutputMediaAssets)
             {
-                PublishAsset(mediaClient, asset, contentProtection);
-                if (asset.IsStreamable)
-                {
-                    PublishIndex(job, asset, contentPublish);
-                    PublishAnalytics(job, asset, contentPublish);
-                }
+                PublishAsset(mediaClient, outputAsset, contentProtection);
+                PublishIndex(job, outputAsset, contentPublish);
+                PublishAnalytics(job, outputAsset, contentPublish);
             }
         }
     }

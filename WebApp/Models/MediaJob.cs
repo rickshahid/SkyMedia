@@ -27,7 +27,13 @@ namespace SkyMedia.WebApp.Models
 
         public string ProcessorConfig { get; set; }
 
-        public string ProcessorDocument { get; set; }
+        public string ProcessorDocumentId { get; set; }
+
+        public string OutputAssetName { get; set; }
+
+        public AssetCreationOptions OutputAssetEncryption { get; set; }
+
+        public TaskOptions Options { get; set; }
 
         public string[] SpokenLanguages { get; set; }
 
@@ -35,13 +41,17 @@ namespace SkyMedia.WebApp.Models
 
         public bool CaptionFormatTtml { get; set; }
 
+        public string SensitivityLevel { get; set; }
+
+        public bool DetectLightChange { get; set; }
+
+        public int StartFrame { get; set; }
+
+        public int FrameCount { get; set; }
+
+        public int SpeedMultiplier { get; set; }
+
         public int DurationSeconds { get; set; }
-
-        public string OutputAssetName { get; set; }
-
-        public AssetCreationOptions OutputAssetEncryption { get; set; }
-
-        public TaskOptions Options { get; set; }
     }
 
     internal struct MediaJobEventProperties

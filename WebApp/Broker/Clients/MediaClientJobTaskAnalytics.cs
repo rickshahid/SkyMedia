@@ -154,6 +154,11 @@ namespace SkyMedia.ServiceBroker
             string documentId = AppSetting.GetValue(settingKey);
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
+            JToken processorSources = processorConfig["Sources"][0];
+            processorSources["StartFrame"] = jobTask.StartFrame;
+            processorSources["NumFrames"] = jobTask.FrameCount;
+            JToken processorOptions = processorConfig["Options"];
+            processorOptions["Speed"] = jobTask.SpeedMultiplier;
             jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
             jobTasks.Add(jobTask);
             return jobTasks.ToArray();

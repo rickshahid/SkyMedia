@@ -129,9 +129,9 @@ namespace SkyMedia.WebApp.Controllers
             DatabaseClient databaseClient = new DatabaseClient();
             foreach (MediaJobTask jobTask in jobTasks)
             {
-                if (!string.IsNullOrEmpty(jobTask.ProcessorDocument))
+                if (!string.IsNullOrEmpty(jobTask.ProcessorDocumentId))
                 {
-                    JObject processorConfig = databaseClient.GetDocument(jobTask.ProcessorDocument);
+                    JObject processorConfig = databaseClient.GetDocument(jobTask.ProcessorDocumentId);
                     jobTask.ProcessorConfig = processorConfig.ToString();
                 }
             }

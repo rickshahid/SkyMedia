@@ -138,11 +138,12 @@
             var mediaPlayer = GetMediaPlayer(false);
             mediaPlayer.addEventListener(amp.eventName.play, function () {
                 var streamUrl = mediaPlayer.currentSrc();
+                streamUrl = streamUrl.replace("https:", "");
+                streamUrl = streamUrl.replace("http:", "");
                 streamUrl = streamUrl.split("/");
-                streamUrl[streamUrl.length - 1] = streamUrl[streamUrl.length - 1] + "<br />";
-                streamUrl[streamUrl.length - 2] = streamUrl[streamUrl.length - 2] + "<br />";
-                streamUrl[streamUrl.length - 3] = streamUrl[streamUrl.length - 3] + "<br />";
-                streamUrl[streamUrl.length - 4] = streamUrl[streamUrl.length - 4] + "<br />";
+                for (var i = streamUrl.length - 2; i > 1; i--) {
+                    streamUrl[i] = streamUrl[i] + "<br />";
+                }
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
             });
@@ -169,7 +170,7 @@
     @Html.Partial("MediaPlayer")
 </div>
 
-<div id="mediaMetadata" class="mediaMetadata"></div>
+@*<div id="mediaMetadata" class="mediaMetadata"></div>*@
 
 @Html.Partial("MediaBar", mediaStreams)
 

@@ -32,7 +32,7 @@ function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
             $("#jobPriorityLabel").text(ui.value);
         }
     });
-    SetJobTaskOptions(1, false);
+    SetJobTaskWidgets(1, false);
 }
 function ValidWorkflowInput(uploadView) {
     var validInput = true;
@@ -65,12 +65,12 @@ function ValidWorkflowInput(uploadView) {
                 SetTipVisible("mediaProcessor" + taskNumber, true);
                 validInput = false;
             }
-            var processorConfig = $("#processorConfig" + taskNumber).val();
-            if (processorConfig == "Custom") {
-                var processorConfigFile = $("#processorConfigFile" + taskNumber).val();
-                if (processorConfigFile == "") {
-                    CreateTipTop("processorConfigFile" + taskNumber, "Select Custom Configuration File");
-                    SetTipVisible("processorConfigFile" + taskNumber, true);
+            var encoderConfig = $("#encoderConfig" + taskNumber).val();
+            if (encoderConfig == "Custom") {
+                var encoderConfigFile = $("#encoderConfigFile" + taskNumber).val();
+                if (encoderConfigFile == "") {
+                    CreateTipTop("encoderConfigFile" + taskNumber, "Select Custom Configuration File");
+                    SetTipVisible("encoderConfigFile" + taskNumber, true);
                     validInput = false;
                 }
             }
