@@ -44,17 +44,17 @@
             @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Asset Name]" })
             &nbsp;
             @Html.CheckBox("multipleFileAsset")
-            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/documentation/articles/media-services-dotnet-upload-files/')">
+            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files')">
                 Multi-File Asset
             </span>
             &nbsp;
             @Html.CheckBox("publishInputAsset")
-            <span class="inputLabel siteLink" onclick="window.open('https://azure.microsoft.com/en-us/documentation/articles/media-services-deliver-streaming-content/')">
+            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-deliver-streaming-content')">
                 Publish Asset
             </span>
             &nbsp;
             @Html.CheckBox("uploadFileWatcher", null, new { onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')", disabled = "disabled" })
-            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/documentation/articles/media-services-dotnet-upload-files/#ingest_in_bulk')">
+            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files#ingest_in_bulk')">
                 Upload Watcher
             </span>
         </td>

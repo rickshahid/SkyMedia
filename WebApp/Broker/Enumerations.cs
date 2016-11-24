@@ -44,8 +44,7 @@
     {
         AES,
         PlayReady,
-        Widevine,
-        FairPlay
+        Widevine
     }
 
     public enum TransferService

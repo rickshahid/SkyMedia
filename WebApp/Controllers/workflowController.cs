@@ -111,7 +111,7 @@ namespace SkyMedia.WebApp.Controllers
 
         public JsonResult upload(string[] fileNames, string storageAccount, bool storageEncryption, string inputAssetName,
                                  bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, string jobName,
-                                 int jobPriority, MediaJobTask[] jobTasks, ContentProtection contentProtection)
+                                 int jobPriority, MediaJobTask[] jobTasks, ContentProtection contentProtection, bool archiveInput)
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
@@ -120,7 +120,8 @@ namespace SkyMedia.WebApp.Controllers
             return (job != null) ? Json(job) : Json(inputAssets);
         }
 
-        public JsonResult start(MediaAssetInput[] inputAssets, string jobName, int jobPriority, MediaJobTask[] jobTasks, ContentProtection contentProtection)
+        public JsonResult start(MediaAssetInput[] inputAssets, string jobName, int jobPriority, MediaJobTask[] jobTasks,
+                                ContentProtection contentProtection, bool archiveInput)
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);

@@ -215,14 +215,6 @@ namespace SkyMedia.WebApp.Controllers
                     {
                         comparison = 1;
                     }
-                    else if (string.Equals(leftType, ProtectionType.FairPlay.ToString(), stringComparison))
-                    {
-                        comparison = -1;
-                    }
-                    else if (string.Equals(rightType, ProtectionType.FairPlay.ToString(), stringComparison))
-                    {
-                        comparison = 1;
-                    }
                 }
             }
             return comparison;
@@ -239,7 +231,7 @@ namespace SkyMedia.WebApp.Controllers
                 string channelName = AppSetting.GetValue(settingKey);
                 MediaClient mediaClient = new MediaClient(liveAccount);
                 IChannel channel = mediaClient.GetEntityByName(EntityType.Channel, channelName, true) as IChannel;
-                if (channel != null)
+                if (channel != null && channel.State == ChannelState.Running)
                 {
                     if (livePreview)
                     {
@@ -272,26 +264,27 @@ namespace SkyMedia.WebApp.Controllers
             ViewData["liveSourceUrl"] = GetLiveSourceUrl(livePreview);
             settingKey = Constants.AppSettings.StorageCdnUrl;
             string cdnUrl = AppSetting.GetValue(settingKey);
-            ViewData["liveCountdownImageUrl"] = string.Concat(cdnUrl, "/BuckleUp.jpg");
+            ViewData["liveCountdownUrl"] = string.Concat(cdnUrl, "/BuckleUp.jpg");
             return View("live");
         }
 
         public JsonResult command(string commandId, int parameterId, string parameterName, bool parameterFlag)
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
             switch (commandId)
             {
                 case "channelCreate":
-                    accountController.CreateChannel(authToken, parameterName);
+                    mediaClient.CreateChannel(parameterName);
                     break;
                 case "channelSignal":
-                    accountController.SignalChannel(authToken, parameterName, parameterId);
+                    mediaClient.SignalChannel(parameterName, parameterId);
                     break;
                 case "accountClear":
-                    accountController.DeleteEntities(authToken, parameterFlag);
+                    accountController.ClearAccount(mediaClient, parameterFlag);
                     break;
             }
-            string[][] entityCounts = accountController.GetEntityCounts(authToken);
+            string[][] entityCounts = accountController.GetEntityCounts(mediaClient);
             return Json(entityCounts);
         }
 

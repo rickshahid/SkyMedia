@@ -244,7 +244,6 @@ namespace SkyMedia.ServiceBroker
                 public const string ContentKeyNameDRMPlayReady = "DRM (PlayReady) Key";
                 public const string ContentKeyNameDRMWidevine = "DRM (Widevine) Key";
                 public const string ContentKeyNameDRMPlayReadyWidevine = "DRM (PlayReady & Widevine) Key";
-                public const string ContentKeyNameDRMFairPlay = "DRM (FairPlay) Key";
 
                 public const string AuthPolicyName = " Auth Policy";
                 public const string AuthPolicyOpenRestrictionName = " Open Restriction";
@@ -253,7 +252,6 @@ namespace SkyMedia.ServiceBroker
                 public const string AuthPolicyOptionNameAES = " Option";
                 public const string AuthPolicyOptionNameDRMPlayReady = " Option PlayReady";
                 public const string AuthPolicyOptionNameDRMWidevine = " Option Widevine";
-                public const string AuthPolicyOptionNameDRMFairPlay = " Option FairPlay";
 
                 public const string AuthAddressRangeXML = "<Allowed addressType=\"IPv4\"><AddressRange start=\"{0}\" end=\"{1}\" /></Allowed>";
             }
@@ -267,8 +265,6 @@ namespace SkyMedia.ServiceBroker
                     AssetDeliveryProtocol.SmoothStreaming;
 
                 public const AssetDeliveryProtocol DRMWidevine = AssetDeliveryProtocol.Dash;
-
-                public const AssetDeliveryProtocol DRMFairPlay = AssetDeliveryProtocol.HLS;
             }
 
             public struct DeliveryPolicy
@@ -278,7 +274,6 @@ namespace SkyMedia.ServiceBroker
                 public const string EncryptionDRMPlayReady = "Dynamic DRM (PlayReady) Encryption";
                 public const string EncryptionDRMWidevine = "Dynamic DRM (Widevine) Encryption";
                 public const string EncryptionDRMPlayReadyWidevine = "Dynamic DRM (PlayReady & Widevine) Encryption";
-                public const string EncryptionDRMFairPlay = "Dynamic DRM (FairPlay) Encryption";
             }
 
             public struct AccessPolicy

@@ -155,6 +155,9 @@ function GetLanguageLabel(languageCode) {
         case "it":
             languageLabel = "Italian";
             break;
+        case "ja":
+            languageLabel = "Japanese";
+            break;
         case "pt":
             languageLabel = "Portuguese";
             break;

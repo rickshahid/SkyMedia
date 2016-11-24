@@ -97,7 +97,8 @@ function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexer
         $("#" + hideRowIds[i]).hide();
     }
     if (!EncoderSelected()) {
-        $("#mediaWorkflowContentProtection").hide();
+        $("#mediaWorkflowProtectContent").hide();
+        $("#mediaWorkflowArchiveInput").hide();
     }
 }
 function SetProcessorConfig(mediaProcessor, taskNumber) {
@@ -153,6 +154,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("French", "FrFr");
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("German", "DeDe");
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Italian", "ItIt");
+                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Japanese", "JaJp");
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Portuguese", "PtBr");
                 SetJobTaskWidgets(taskNumber, false);
                 $("#" + indexerConfigRowId).show();
@@ -173,7 +175,8 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
         }
     }
     if (EncoderSelected()) {
-        $("#mediaWorkflowContentProtection").show();
+        $("#mediaWorkflowProtectContent").show();
+        $("#mediaWorkflowArchiveInput").show();
     }
 }
 function SetEncoderConfigFile(encoderConfig) {

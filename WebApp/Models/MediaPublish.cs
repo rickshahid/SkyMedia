@@ -8,8 +8,6 @@
 
         public bool DRMWidevine { get; set; }
 
-        public bool DRMFairPlay { get; set; }
-
         public bool ContentAuthTypeToken { get; set; }
 
         public bool ContentAuthTypeAddress { get; set; }

@@ -21,7 +21,7 @@ namespace SkyMedia.ServiceBroker
         private static AssetCreationOptions GetOutputAssetEncryption(ContentProtection contentProtection)
         {
             AssetCreationOptions assetEncryption = AssetCreationOptions.None;
-            if (contentProtection.AES || contentProtection.DRMPlayReady || contentProtection.DRMWidevine || contentProtection.DRMFairPlay)
+            if (contentProtection.AES || contentProtection.DRMPlayReady || contentProtection.DRMWidevine)
             {
                 assetEncryption = AssetCreationOptions.StorageEncrypted;
             }

@@ -25,14 +25,14 @@ namespace SkyMedia.WebApp
             if (env.IsDevelopment())
             {
                 configBuilder.AddUserSecrets();
-                AppSetting.ConfigRoot = configBuilder.Build();
             }
-            else
+            AppSetting.ConfigRoot = configBuilder.Build();
+            string settingKey = Constants.AppSettings.AppInsightsInstrumentationKey;
+            string appInsightsKey = AppSetting.GetValue(settingKey);
+            if (!string.IsNullOrEmpty(appInsightsKey))
             {
+                configBuilder.AddApplicationInsightsSettings(instrumentationKey: appInsightsKey);
                 AppSetting.ConfigRoot = configBuilder.Build();
-                string settingKey = Constants.AppSettings.AppInsightsInstrumentationKey;
-                string instrumentationKey = AppSetting.GetValue(settingKey);
-                configBuilder.AddApplicationInsightsSettings(instrumentationKey: instrumentationKey);
             }
         }
 
@@ -131,11 +131,11 @@ namespace SkyMedia.WebApp
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseApplicationInsightsExceptionTelemetry();
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
             }
-            app.UseApplicationInsightsExceptionTelemetry();
             app.UseStaticFiles();
             app.UseCookieAuthentication();
             app.UseOpenIdConnectAuthentication(openIdOptions);

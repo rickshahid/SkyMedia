@@ -2,11 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-//using System.Security.Cryptography.X509Certificates;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.MediaServices.Client.Widevine;
-//using Microsoft.WindowsAzure.MediaServices.Client.FairPlay;
 using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
 using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
 
@@ -18,44 +16,6 @@ namespace SkyMedia.ServiceBroker
 {
     internal partial class MediaClient
     {
-        internal string[] GetProtectionTypes(IAsset asset)
-        {
-            List<string> protectionTypes = new List<string>();
-            IAssetDeliveryPolicy deliveryPolicy = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicEnvelopeEncryption).SingleOrDefault();
-            if (deliveryPolicy != null)
-            {
-                protectionTypes.Add(ProtectionType.AES.ToString());
-            }
-            deliveryPolicy = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicCommonEncryption).SingleOrDefault();
-            if (deliveryPolicy != null)
-            {
-                IContentKey contentKey = asset.ContentKeys.Where(k => k.ContentKeyType == ContentKeyType.CommonEncryption).SingleOrDefault();
-                if (contentKey != null)
-                {
-                    IContentKeyAuthorizationPolicy authPolicy = GetEntityById(EntityType.ContentKeyAuthPolicy, contentKey.AuthorizationPolicyId) as IContentKeyAuthorizationPolicy;
-                    if (authPolicy != null)
-                    {
-                        IContentKeyAuthorizationPolicyOption policyOption = authPolicy.Options.Where(o => o.KeyDeliveryType == ContentKeyDeliveryType.PlayReadyLicense).SingleOrDefault();
-                        if (policyOption != null)
-                        {
-                            protectionTypes.Add(ProtectionType.PlayReady.ToString());
-                        }
-                        policyOption = authPolicy.Options.Where(o => o.KeyDeliveryType == ContentKeyDeliveryType.Widevine).SingleOrDefault();
-                        if (policyOption != null)
-                        {
-                            protectionTypes.Add(ProtectionType.Widevine.ToString());
-                        }
-                    }
-                }
-            }
-            deliveryPolicy = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicCommonEncryptionCbcs).SingleOrDefault();
-            if (deliveryPolicy != null)
-            {
-                protectionTypes.Add(ProtectionType.FairPlay.ToString());
-            }
-            return protectionTypes.ToArray();
-        }
-
         private byte[] CreateEncryptionKey()
         {
             byte[] encryptionKey = new byte[Constants.Media.ContentProtection.EncryptionKeyByteCount];
@@ -72,25 +32,9 @@ namespace SkyMedia.ServiceBroker
             if (contentKey == null)
             {
                 Guid keyId = Guid.NewGuid();
-                switch (keyType)
-                {
-                    case ContentKeyType.FairPlayASk:
-                        byte[] askBytes = Guid.NewGuid().ToByteArray();
-                        contentKey = _media.ContentKeys.Create(keyId, askBytes, keyName, keyType);
-                        break;
-
-                    case ContentKeyType.FairPlayPfxPassword:
-                        //string pfxPassword = contentProtection.CertificatePassword;
-                        //byte[] pfxPasswordBytes = Encoding.UTF8.GetBytes(pfxPassword);
-                        //contentKey = _media.ContentKeys.Create(keyId, pfxPasswordBytes, keyName, keyType);
-                        break;
-
-                    default:
-                        byte[] encryptionKey = CreateEncryptionKey();
-                        contentKey = _media.ContentKeys.Create(keyId, encryptionKey, keyName, keyType);
-                        SetContentKeyAuthPolicy(contentKey, contentProtection);
-                        break;
-                }
+                byte[] encryptionKey = CreateEncryptionKey();
+                contentKey = _media.ContentKeys.Create(keyId, encryptionKey, keyName, keyType);
+                SetContentKeyAuthPolicy(contentKey, contentProtection);
             }
             return contentKey;
         }
@@ -123,13 +67,6 @@ namespace SkyMedia.ServiceBroker
             {
                 ContentKeyType keyType = ContentKeyType.CommonEncryption;
                 string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMWidevine;
-                IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
-                contentKeys.Add(contentKey);
-            }
-            if (contentProtection.DRMFairPlay)
-            {
-                ContentKeyType keyType = ContentKeyType.CommonEncryptionCbcs;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMFairPlay;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 contentKeys.Add(contentKey);
             }
@@ -259,31 +196,6 @@ namespace SkyMedia.ServiceBroker
                         authPolicy.Options.Add(policyOption);
                     }
                     break;
-
-                case ContentKeyType.CommonEncryptionCbcs:
-                    policyOptionName = string.Concat(policyName, Constants.Media.ContentProtection.AuthPolicyOptionNameDRMFairPlay);
-                    policyOption = GetEntityByName(EntityType.ContentKeyAuthPolicyOption, policyOptionName, true) as IContentKeyAuthorizationPolicyOption;
-                    if (policyOption == null)
-                    {
-                        //ContentKeyType keyType = ContentKeyType.FairPlayASk;
-                        //string keyName = Constants.Media.ContentProtection.ContentKeyNameASK;
-                        //IContentKey askKey = GetContentKey(keyType, keyName, null);
-
-                        //keyType = ContentKeyType.FairPlayPfxPassword;
-                        //ContentProtection keyProtection = new ContentProtection();
-                        //IContentKey pfxKey = GetContentKey(keyType, keyName, keyProtection);
-
-                        //X509Certificate2 appCertificate = null;
-                        //string pfxPassword = keyProtection.CertificatePassword;
-                        //Guid pfxPasswordKeyId = Guid.NewGuid();
-                        //Guid askId = Guid.Parse(askKey.Id);
-                        //byte[] contentIV = Guid.NewGuid().ToByteArray();
-
-                        //ContentKeyDeliveryType deliveryType = ContentKeyDeliveryType.FairPlay;
-                        //string deliveryConfig = FairPlayConfiguration.CreateSerializedFairPlayOptionConfiguration(appCertificate, pfxPassword, pfxPasswordKeyId, askId, contentIV);
-                        //policyOption = _media.ContentKeyAuthorizationPolicyOptions.Create(policyOptionName, deliveryType, policyRestrictions, deliveryConfig);
-                    }
-                    break;
             }
             return authPolicy;
         }
@@ -316,9 +228,6 @@ namespace SkyMedia.ServiceBroker
                     break;
                 case ContentKeyDeliveryType.Widevine:
                     deliveryProtocols = Constants.Media.DeliveryProtocol.DRMWidevine;
-                    break;
-                case ContentKeyDeliveryType.FairPlay:
-                    deliveryProtocols = Constants.Media.DeliveryProtocol.DRMFairPlay;
                     break;
             }
             return deliveryProtocols;
@@ -400,19 +309,6 @@ namespace SkyMedia.ServiceBroker
                 IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(policyType, policyConfig, policyName, ContentKeyDeliveryType.Widevine);
                 deliveryPolicies.Add(deliveryPolicy);
             }
-            if (contentProtection.DRMFairPlay)
-            {
-                policyType = AssetDeliveryPolicyType.DynamicCommonEncryptionCbcs;
-                policyName = Constants.Media.DeliveryPolicy.EncryptionDRMFairPlay;
-                ContentKeyType keyType = ContentKeyType.CommonEncryptionCbcs;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMFairPlay;
-                IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
-                Uri keyDeliveryUrl = contentKey.GetKeyDeliveryUrl(ContentKeyDeliveryType.FairPlay);
-                policyConfig = new Dictionary<AssetDeliveryPolicyConfigurationKey, string>();
-                policyConfig.Add(AssetDeliveryPolicyConfigurationKey.FairPlayLicenseAcquisitionUrl, keyDeliveryUrl.ToString());
-                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(policyType, policyConfig, policyName, ContentKeyDeliveryType.FairPlay);
-                deliveryPolicies.Add(deliveryPolicy);
-            }
             return deliveryPolicies.ToArray();
         }
 
@@ -431,6 +327,39 @@ namespace SkyMedia.ServiceBroker
                     asset.DeliveryPolicies.Add(deliveryPolicy);
                 }
             }
+        }
+
+        public string[] GetProtectionTypes(IAsset asset)
+        {
+            List<string> protectionTypes = new List<string>();
+            IAssetDeliveryPolicy deliveryPolicy = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicEnvelopeEncryption).SingleOrDefault();
+            if (deliveryPolicy != null)
+            {
+                protectionTypes.Add(ProtectionType.AES.ToString());
+            }
+            deliveryPolicy = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicCommonEncryption).SingleOrDefault();
+            if (deliveryPolicy != null)
+            {
+                IContentKey contentKey = asset.ContentKeys.Where(k => k.ContentKeyType == ContentKeyType.CommonEncryption).SingleOrDefault();
+                if (contentKey != null)
+                {
+                    IContentKeyAuthorizationPolicy authPolicy = GetEntityById(EntityType.ContentKeyAuthPolicy, contentKey.AuthorizationPolicyId) as IContentKeyAuthorizationPolicy;
+                    if (authPolicy != null)
+                    {
+                        IContentKeyAuthorizationPolicyOption policyOption = authPolicy.Options.Where(o => o.KeyDeliveryType == ContentKeyDeliveryType.PlayReadyLicense).SingleOrDefault();
+                        if (policyOption != null)
+                        {
+                            protectionTypes.Add(ProtectionType.PlayReady.ToString());
+                        }
+                        policyOption = authPolicy.Options.Where(o => o.KeyDeliveryType == ContentKeyDeliveryType.Widevine).SingleOrDefault();
+                        if (policyOption != null)
+                        {
+                            protectionTypes.Add(ProtectionType.Widevine.ToString());
+                        }
+                    }
+                }
+            }
+            return protectionTypes.ToArray();
         }
     }
 }

@@ -497,12 +497,7 @@ body {
 }
 
 .mediaWorkflowJob td {
-    padding-bottom: 10px;
-}
-
-.mediaWorkflowTask > td {
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding-bottom: 5px;
 }
 
 .mediaWorkflowTaskLink td {
@@ -513,29 +508,29 @@ body {
 .mediaWorkflowTaskLink hr {
     border: 1px dashed deepskyblue;
     margin: 0px;
-    height: 15px;
+    height: 10px;
     width: 1px;
 }
 
-.mediaWorkflowTaskButtons td {
+#mediaWorkflowTaskAdd {
+    margin-left: 80px;
+}
+
+.mediaWorkflowControls td {
     white-space: nowrap;
     padding: 0px;
-}
-
-.mediaWorkflowContentProtection {
-    font-weight: bold;
-    margin-top: 5px;
-    display: block;
-    width: 200px;
-}
-
-#mediaWorkflowTaskAdd {
-    margin-left: 75px;
 }
 
 .mediaWorkflowStart {
     text-align: right;
     width: 100%;
+}
+
+.mediaWorkflowEncodeOptions {
+    font-weight: bold;
+    margin-top: 5px;
+    display: block;
+    width: 200px;
 }
 
 .mediaAssets {

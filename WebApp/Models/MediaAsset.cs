@@ -81,9 +81,6 @@ namespace SkyMedia.WebApp.Models
                                 case "Widevine":
                                     protectionLabel = string.Concat(protectionLabel, " & DRM (Widevine)");
                                     break;
-                                case "FairPlay":
-                                    protectionLabel = string.Concat(protectionLabel, " & DRM (FairPlay)");
-                                    break;
                             }
                         }
                         protectionLabel = string.Concat(protectionLabel, " Encryption");

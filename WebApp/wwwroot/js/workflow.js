@@ -127,12 +127,11 @@ function ShowContentProtection(checkbox) {
 }
 function GetContentProtection() {
     var contentProtection = null;
-    if ($("#contentProtection").prop("checked")) {
+    if ($("#protectContent").prop("checked")) {
         contentProtection = {
             AES: $("#aes").prop("checked"),
             DRMPlayReady: $("#drmPlayReady").prop("checked"),
             DRMWidevine: $("#drmWidevine").prop("checked"),
-            DRMFairPlay: $("#drmFairPlay").prop("checked"),
             ContentAuthTypeToken: $("#contentAuthTypeToken").prop("checked"),
             ContentAuthTypeAddress: $("#contentAuthTypeAddress").prop("checked"),
             ContentAuthAddressRange: $("#contentAuthAddressRange").val()
@@ -146,12 +145,10 @@ function SetContentProtection(checkbox) {
             if (checkbox.checked) {
                 $("#drmPlayReady").prop("checked", false);
                 $("#drmWidevine").prop("checked", false);
-                $("#drmFairPlay").prop("checked", false);
             }
             break;
         case "drmPlayReady":
         case "drmWidevine":
-        case "drmFairPlay":
             if (checkbox.checked) {
                 $("#aes").prop("checked", false);
             }
@@ -206,7 +203,8 @@ function UploadWorkflow(files) {
             jobName: $("#jobName").val(),
             jobPriority: $("#jobPriorityLabel").text(),
             jobTasks: jobTasks,
-            contentProtection: GetContentProtection()
+            contentProtection: GetContentProtection(),
+            archiveInput: $("#archiveInput").prop("checked")
         },
         function (result) {
             DisplayWorkflow(jobTasks, result);
@@ -221,7 +219,8 @@ function StartWorkflow() {
             jobName: $("#jobName").val(),
             jobPriority: $("#jobPriorityLabel").text(),
             jobTasks: jobTasks,
-            contentProtection: GetContentProtection()
+            contentProtection: GetContentProtection(),
+            archiveInput: $("#archiveInput").prop("checked")
         },
         function (result) {
             DisplayWorkflow(jobTasks, result);

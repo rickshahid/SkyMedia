@@ -14,6 +14,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
+    <ApplicationInsightsResourceId>/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/resourcegroups/SkyMedia-USCentral-App/providers/microsoft.insights/components/skyweb-uscentral</ApplicationInsightsResourceId>
   </PropertyGroup>
   <ItemGroup>
     <DnxInvisibleContent Include="bower.json" />

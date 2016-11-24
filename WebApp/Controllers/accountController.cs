@@ -15,49 +15,6 @@ namespace SkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
-        internal static void CreateChannel(string authToken, string channelName)
-        {
-            if (string.IsNullOrEmpty(channelName))
-            {
-                string settingKey = Constants.AppSettings.MediaLiveChannelName;
-                channelName = AppSetting.GetValue(settingKey);
-            }
-            MediaClient mediaClient = new MediaClient(authToken);
-            ChannelEncodingType channelType = ChannelEncodingType.None;
-            StreamingProtocol ingestProtocol = StreamingProtocol.RTMP;
-            IChannel channel = mediaClient.CreateChannel(channelName, channelType, ingestProtocol);
-            foreach (IProgram program in channel.Programs)
-            {
-                mediaClient.CreateLocator(null, LocatorType.OnDemandOrigin, program.Asset, null);
-            }
-        }
-
-        internal static void SignalChannel(string authToken, string channelName, int cueId)
-        {
-            string settingKey = Constants.AppSettings.MediaChannelAdvertisementSeconds;
-            string timeSeconds = AppSetting.GetValue(settingKey);
-            TimeSpan timeSpan = new TimeSpan(0, 0, int.Parse(timeSeconds));
-
-            IChannel[] channels;
-            MediaClient mediaClient = new MediaClient(authToken);
-            if (string.IsNullOrEmpty(channelName))
-            {
-                IChannel channel = mediaClient.GetEntityByName(EntityType.Channel, channelName, false) as IChannel;
-                channels = new IChannel[] { channel };
-            }
-            else
-            {
-                channels = mediaClient.GetEntities(EntityType.Channel) as IChannel[];
-            }
-            foreach (IChannel channel in channels)
-            {
-                if (channel.EncodingType != ChannelEncodingType.None)
-                {
-                    channel.StartAdvertisement(timeSpan, cueId, true);
-                }
-            }
-        }
-
         private static string GetReservedEncodingUnits(IEncodingReservedUnit[] encodingReservedUnits)
         {
             int encodingUnits = 0;
@@ -83,25 +40,20 @@ namespace SkyMedia.WebApp.Controllers
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
         {
-            //if (!mediaClient.LiveAsset(asset))
-            //{
-                foreach (ILocator locator in asset.Locators)
-                {
-                    locator.Delete();
-                }
-                for (int i = asset.DeliveryPolicies.Count - 1; i > -1; i--)
-                {
-                    asset.DeliveryPolicies.RemoveAt(i);
-                }
-                asset.Delete();
-            //}
+            foreach (ILocator locator in asset.Locators)
+            {
+                locator.Delete();
+            }
+            for (int i = asset.DeliveryPolicies.Count - 1; i > -1; i--)
+            {
+                asset.DeliveryPolicies.RemoveAt(i);
+            }
+            asset.Delete();
         }
 
-        internal static void DeleteEntities(string authToken, bool allAssets)
+        internal static void ClearAccount(MediaClient mediaClient, bool allEntities)
         {
-            MediaClient mediaClient = new MediaClient(authToken);
-            IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
-            if (allAssets)
+            if (allEntities)
             {
                 IProgram[] programs = mediaClient.GetEntities(EntityType.Program) as IProgram[];
                 foreach (IProgram program in programs)
@@ -113,21 +65,27 @@ namespace SkyMedia.WebApp.Controllers
                 {
                     channel.Delete();
                 }
-            }
-            foreach (IAsset asset in assets)
-            {
-                if (asset.ParentAssets.Count > 0 || allAssets)
-                {
-                    DeleteAsset(mediaClient, asset);
-                }
-            }
-            if (allAssets)
-            {
                 IIngestManifest[] manifests = mediaClient.GetEntities(EntityType.Manifest) as IIngestManifest[];
                 foreach (IIngestManifest manifest in manifests)
                 {
                     manifest.Delete();
                 }
+                IJob[] jobs = mediaClient.GetEntities(EntityType.Job) as IJob[];
+                foreach (IJob job in jobs)
+                {
+                    job.Delete();
+                }
+            }
+            IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
+            foreach (IAsset asset in assets)
+            {
+                if (asset.ParentAssets.Count > 0 || allEntities)
+                {
+                    DeleteAsset(mediaClient, asset);
+                }
+            }
+            if (allEntities)
+            {
                 IAccessPolicy[] accessPolicies = mediaClient.GetEntities(EntityType.AccessPolicy) as IAccessPolicy[];
                 foreach (IAccessPolicy accessPolicy in accessPolicies)
                 {
@@ -149,22 +107,10 @@ namespace SkyMedia.WebApp.Controllers
                     contentKeyAuthPolicyOption.Delete();
                 }
             }
-            //IJob[] jobs = mediaClient.GetEntities(EntityType.Job) as IJob[];
-            //foreach (IJob job in jobs)
-            //{
-            //    job.Delete();
-            //}
-            //INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(EntityType.NotificationEndpoint) as INotificationEndPoint[];
-            //foreach (INotificationEndPoint notificationEndpoint in notificationEndpoints)
-            //{
-            //    notificationEndpoint.Delete();
-            //}
         }
 
-        internal static string[][] GetEntityCounts(string authToken)
+        internal static string[][] GetEntityCounts(MediaClient mediaClient)
         {
-            MediaClient mediaClient = new MediaClient(authToken);
-
             IStorageAccount[] storageAccounts = mediaClient.GetEntities(EntityType.StorageAccount) as IStorageAccount[];
             IContentKey[] contentKeys = mediaClient.GetEntities(EntityType.ContentKey) as IContentKey[];
             IContentKeyAuthorizationPolicy[] contentKeyAuthZPolicies = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
@@ -234,11 +180,6 @@ namespace SkyMedia.WebApp.Controllers
             HttpContext.Authentication.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme).Wait();
             HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).Wait();
             return RedirectToAction("index", "home");
-        }
-
-        public IActionResult index()
-        {
-            return View();
         }
     }
 }

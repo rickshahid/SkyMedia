@@ -36,10 +36,10 @@
                     message = "Are you sure you want to insert an advertisement signal into your live channel?";
                     break;
                 case "accountClear":
-                    title = "Confirm Media Account Clear (Permanently Delete Assets)";
-                    message = "Do you want to delete all assets or child assets only in your media account?";
+                    title = "Confirm Media Account Clear (Permanent Media Entity Deletion)";
+                    message = "Do you want to delete all entities or only child assets in your media account?";
                     var buttons = {
-                        "All Assets": function () {
+                        "All Entities": function () {
                             DispatchCommand(commandId, true);
                             $(this).dialog("close");
                         },

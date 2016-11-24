@@ -19,7 +19,8 @@ namespace SkyMedia.WebApp.Controllers
         public IActionResult index()
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);
-            ViewData["entityCounts"] = accountController.GetEntityCounts(authToken);
+            MediaClient mediaClient = new MediaClient(authToken);
+            ViewData["entityCounts"] = accountController.GetEntityCounts(mediaClient);
             ViewData["id"] = this.Request.Query["id"];
             ViewData["name"] = this.Request.Query["name"];
             return View();

@@ -13,6 +13,20 @@
     <script type="text/javascript" src="~/lib/jquery.countdown/dist/jquery.countdown.min.js"></script>
     <script type="text/javascript">
         var countdownLabel = "Next Flight:";
+        function SetPlayerContent() {
+            var mediaPlayer = GetMediaPlayer(false);
+            var sourceUrl = "@ViewData["liveSourceUrl"]";
+            if (sourceUrl == "") {
+                SetPlayerSpinner(false);
+                DisplayMessage("Live Media Channel", "No content source detected");
+            } else {
+                mediaPlayer.autoplay(true);
+                mediaPlayer.src([{
+                    src: sourceUrl,
+                    type: GetSourceType(sourceUrl)
+                }]);
+            }
+        }
         function SetCountdown(e) {
             var countdownHtml = "<span class='liveCountdownValue'>%-D</span> Day%!D";
             countdownHtml = countdownHtml + " <span class='liveCountdownValue'>%-H</span> Hour%!H";
@@ -25,36 +39,31 @@
             }
         }
         function StartBroadcast(e) {
-            var sourceUrl = "@ViewData["liveSourceUrl"]";
-            if (sourceUrl == "") {
-                $("#liveCountdownLabel").text(countdownLabel);
-                $("#liveCountdownValue").html("<span class='liveCountdownValue'>TBD</span>");
-            } else {
-                SetPlayerSpinner(true);
-                $("#liveCountdownLabel").text("");
-                $("#liveCountdownValue").html("");
-                var mediaPlayer = GetMediaPlayer(false);
-                mediaPlayer.src([{
-                    src: sourceUrl,
-                    type: GetSourceType(sourceUrl)
-                }]);
-            }
+            $("#liveCountdownLabel").text("");
+            $("#liveCountdownValue").html("");
             $("#liveCountdownImage").hide();
+            SetPlayerSpinner(true);
+            SetPlayerContent();
         }
         $(function () {
-            var mediaPlayer = GetMediaPlayer(false);
-            var startDateTime = "@ViewData["startDateTime"]";
-            SetPlayerSpinner(false);
-            $("#liveCountdownValue").countdown(startDateTime)
-                .on("update.countdown", SetCountdown)
-                .on("finish.countdown", StartBroadcast)
-                .countdown("start");
+            var livePreview = "@livePreview".toLowerCase()
+            if ("@livePreview".toLowerCase() == "true") {
+                SetPlayerContent();
+            } else {
+                var mediaPlayer = GetMediaPlayer(false);
+                var startDateTime = "@ViewData["startDateTime"]";
+                SetPlayerSpinner(false);
+                $("#liveCountdownValue").countdown(startDateTime)
+                    .on("update.countdown", SetCountdown)
+                    .on("finish.countdown", StartBroadcast)
+                    .countdown("start");
+            }
         })
     </script>
 }
 
 <div class="viewTitle">
-    <a class="siteLink" href="http://azure.microsoft.com/en-us/documentation/articles/media-services-manage-channels-overview/" target="_blank">@viewTitle</a>
+    <a class="siteLink" href="https://docs.microsoft.com/en-us/azure/media-services/media-services-manage-channels-overview" target="_blank">@viewTitle</a>
 </div>
 
 <div id="videoEditor" class="mediaPlayer">
@@ -65,6 +74,6 @@
     <span id="liveCountdownLabel"></span>
     <span id="liveCountdownValue"></span>
     <div id="liveCountdownImage" class="liveCountdownImage">
-        <img src="@ViewData["liveCountdownImageUrl"]" />
+        <img src="@ViewData["liveCountdownUrl"]" />
     </div>
 </div>
