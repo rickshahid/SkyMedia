@@ -41,25 +41,25 @@ namespace SkyMedia.ServiceBroker
             IEnumerable<Document> documents = query.AsEnumerable<Document>();
             Document document = documents.FirstOrDefault();
 
-            JObject jDocument = null;
+            JObject jsonDoc = null;
             if (document != null)
             {
-                jDocument = JObject.Parse(document.ToString());
+                jsonDoc = JObject.Parse(document.ToString());
                 string settingKey = Constants.AppSettings.NoSqlDocumentProperties;
                 string[] documentProperties = AppSetting.GetValue(settingKey).Split(Constants.MultiItemSeparator);
                 foreach (string documentProperty in documentProperties)
                 {
-                    jDocument.Remove(documentProperty);
+                    jsonDoc.Remove(documentProperty);
                 }
             }
-            return (jDocument == null) ? new JObject() : jDocument;
+            return (jsonDoc == null) ? new JObject() : jsonDoc;
         }
 
         public string CreateDocument(string collectionId, string jsonData)
         {
-            JObject jDocument = JObject.Parse(jsonData);
+            JObject jsonDoc = JObject.Parse(jsonData);
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            Task<ResourceResponse<Document>> createTask = _database.CreateDocumentAsync(collectionUri, jDocument);
+            Task<ResourceResponse<Document>> createTask = _database.CreateDocumentAsync(collectionUri, jsonDoc);
             createTask.Wait();
             ResourceResponse<Document> responseDocument = createTask.Result;
             return responseDocument.Resource.Id;

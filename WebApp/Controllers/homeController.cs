@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
 using SkyMedia.ServiceBroker;
@@ -78,8 +79,33 @@ namespace SkyMedia.WebApp.Controllers
                 mediaStream.SourceUrl = sourceUrl;
                 mediaStream.TextTracks = MapTextTracks(textTracks);
                 mediaStream.ProtectionTypes = MapProtectionTypes(protectionTypes);
+                mediaStream.AnalyticsProcessors = new SelectListItem[] { };
                 mediaStreams.Add(mediaStream);
             }
+        }
+
+        private SelectListItem[] GetAnalyticsProcessors(IAsset asset)
+        {
+            List<SelectListItem> analyticsProcessors = new List<SelectListItem>();
+            if (asset.IsStreamable)
+            {
+                foreach (IAssetFile assetFile in asset.AssetFiles)
+                {
+                    if (assetFile.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        string[] fileNameInfo = assetFile.Name.Split('_');
+                        string processorType = fileNameInfo[fileNameInfo.Length - 1].Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
+                        MediaProcessor mediaProcessor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), processorType);
+                        string processorName = Selections.GetProcessorName(mediaProcessor);
+
+                        SelectListItem analyticsProcessor = new SelectListItem();
+                        analyticsProcessor.Text = processorName;
+                        analyticsProcessor.Value = assetFile.Name;
+                        analyticsProcessors.Add(analyticsProcessor);
+                    }
+                }
+            }
+            return analyticsProcessors.ToArray();
         }
 
         private List<MediaStream> GetMediaStreams()
@@ -136,41 +162,13 @@ namespace SkyMedia.WebApp.Controllers
                         mediaStream.SourceUrl = locatorUrl;
                         mediaStream.TextTracks = GetTextTracks(mediaClient, asset, locatorType);
                         mediaStream.ProtectionTypes = mediaClient.GetProtectionTypes(asset);
+                        mediaStream.AnalyticsProcessors = GetAnalyticsProcessors(asset);
                         mediaStreams.Add(mediaStream);
                     }
                 }
             }
             mediaStreams.Sort(CompareStreams);
             return mediaStreams;
-        }
-
-        private MediaMetadata[] GetMediaMetadata(MediaClient mediaClient)
-        {
-            List<MediaMetadata> mediaMetadataList = new List<MediaMetadata>();
-            IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
-            foreach (IAsset asset in assets)
-            {
-                if (asset.IsStreamable)
-                {
-                    LocatorType locatorType = LocatorType.OnDemandOrigin;
-                    string locatorUrl = mediaClient.GetLocatorUrl(asset, locatorType, null);
-                    foreach (IAssetFile assetFile in asset.AssetFiles)
-                    {
-                        if (assetFile.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            string[] fileNameInfo = assetFile.Name.Split('-');
-                            string mediaProcessor = fileNameInfo[fileNameInfo.Length - 1].Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
-
-                            MediaMetadata mediaMetadata = new MediaMetadata();
-                            mediaMetadata.SourceUrl = locatorUrl;
-                            mediaMetadata.MediaProcesssor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), mediaProcessor, true);
-                            mediaMetadata.MetadataUrl = mediaClient.GetLocatorUrl(asset, locatorType, assetFile.Name);
-                            mediaMetadataList.Add(mediaMetadata);
-                        }
-                    }
-                }
-            }
-            return mediaMetadataList.ToArray();
         }
 
         private int CompareStreams(MediaStream leftSide, MediaStream rightSide)
@@ -326,7 +324,6 @@ namespace SkyMedia.WebApp.Controllers
             else
             {
                 mediaStreams = GetMediaStreams(mediaClient);
-                ViewData["mediaMetadata"] = GetMediaMetadata(mediaClient);
             }
             ViewData["mediaStreams"] = mediaStreams.ToArray();
 

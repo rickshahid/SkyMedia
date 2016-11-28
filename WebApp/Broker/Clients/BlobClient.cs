@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.MediaServices.Client;
 
 using SkyMedia.WebApp.Models;
 
@@ -129,7 +129,6 @@ namespace SkyMedia.ServiceBroker
         public CloudBlockBlob GetBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
         {
             CloudBlockBlob blob;
-            fileName = WebUtility.UrlEncode(fileName);
             CloudBlobContainer container = GetContainer(containerName);
             if (string.IsNullOrEmpty(directoryPath))
             {
@@ -173,6 +172,20 @@ namespace SkyMedia.ServiceBroker
         {
             string operationId = CopyBlob(sourceBlob, destinationBlob, false);
             sourceBlob.Delete();
+            return operationId;
+        }
+
+        public string CopyFile(IAsset sourceAsset, IAsset destinationAsset, string sourceFileName, string destinationFileName)
+        {
+            string sourceContainerName = sourceAsset.Uri.Segments[1];
+            CloudBlockBlob sourceBlob = GetBlob(sourceContainerName, string.Empty, sourceFileName, true);
+            string destinationContainerName = destinationAsset.Uri.Segments[1];
+            CloudBlockBlob destinationBlob = GetBlob(destinationContainerName, string.Empty, destinationFileName, false);
+            string operationId = CopyBlob(sourceBlob, destinationBlob, false);
+            IAssetFile assetFile = destinationAsset.AssetFiles.Create(destinationFileName);
+            assetFile.ContentFileSize = sourceBlob.Properties.Length;
+            assetFile.MimeType = sourceBlob.Properties.ContentType;
+            assetFile.Update();
             return operationId;
         }
 

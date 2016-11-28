@@ -40,14 +40,10 @@ function CreateTipRight(targetId, tipText) {
 function SetTipVisible(targetId, tipVisible) {
     $("#" + targetId).qtip("toggle", tipVisible);
 }
-function SetLayout(mediaAccount) {
+function SetLayout() {
     CreateTipRight("siteHome", "Azure Sky Media<br /><br />Site Home");
-    var siteCode = "Azure Sky Media<br /><br />Site Code";
-    if (mediaAccount != "") {
-        CreateTipLeft("siteCode", siteCode);
-    } else {
-        CreateTipRight("siteCode", siteCode);
-    }
+    CreateTipRight("siteCode", "Azure Sky Media<br /><br />Open Source");
+    CreateTipRight("accountDashboard", "Azure Media Services<br /><br />Account Dashboard");
     CreateTipRight("accountContext", "Azure Media Services<br /><br />Account Name");
     CreateTipLeft("userProfileEdit", "Azure Active Directory<br /><br />User Profile Edit");
     CreateTipLeft("userSignIn", "Azure Active Directory<br /><br />User Sign Up & In");
@@ -67,7 +63,7 @@ function SetLayout(mediaAccount) {
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
     CreateTipTop("mediaAssetLibrary", "Azure Media Services<br /><br />Asset Library");
-    CreateTipTop("mediaAccountDashboard", "Azure Media Services<br /><br />Account Dashboard");
+    CreateTipTop("mediaAssetAnalytics", "Azure Media Services<br /><br />Media Analytics")
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });
@@ -219,4 +215,14 @@ function LoadTreeAssets(authToken, cdnUrl, libraryView) {
             }
         }
     });
+}
+function ToggleMediaAnalytics(button) {
+    var buttonImage = button.children[0];
+    if (buttonImage.src.indexOf("MediaAnalyticsOpen") > -1) {
+        buttonImage.src = buttonImage.src.replace("Open", "Close");
+        $("#analyticsPanel").show();
+    } else {
+        buttonImage.src = buttonImage.src.replace("Close", "Open");
+        $("#analyticsPanel").hide();
+    }
 }

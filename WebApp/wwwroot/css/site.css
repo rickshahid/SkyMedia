@@ -156,11 +156,24 @@ body {
     font-size: large;
 }
 
-.mediaPlayer {
-    border: 1px solid deepskyblue;
-    padding: 0px 3px 3px 0px;
-    height: 405px;
-    width: 720px;
+.analyticsPanel {
+    text-align: center;
+    display: none;
+}
+
+.analyticsProcessors {
+    margin-top: 10px;
+    width: 165px;
+}
+
+.mediaMetadata {
+    background: azure;
+    margin-top: 10px;
+    padding: 5px 5px;
+    text-align: left;
+    overflow: auto;
+    height: 346px;
+    width: 400px;
 }
 
 .mediaBar {
@@ -657,12 +670,6 @@ body {
 .jqgrow:hover td {
     color: deepskyblue;
     cursor: pointer;
-}
-
-.mediaMetadata {
-    border: 1px solid deepskyblue;
-    display: none;
-    height: 150px
 }
 
 .dashboard {

@@ -2,22 +2,18 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-using SkyMedia.ServiceBroker;
-
 using Newtonsoft.Json.Linq;
+
+using SkyMedia.ServiceBroker;
 
 namespace SkyMedia.WebApp.Controllers
 {
     public class analyticsController : Controller
     {
-        private JToken GetFragment(string documentId, double timeSeconds)
+        private JToken GetFragment(JObject mediaMetadata, double timeSeconds)
         {
-            DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constants.Media.AssetMetadata.DocumentCollection;
-            documentId = string.Concat(collectionId, Constants.MultiItemSeparator, documentId);
-            JObject document = databaseClient.GetDocument(documentId);
-            int timescale = int.Parse(document["timescale"].ToString());
-            JToken fragments = document["fragments"];
+            int timescale = int.Parse(mediaMetadata["timescale"].ToString());
+            JToken fragments = mediaMetadata["fragments"];
             for (int i = 0; i < fragments.Count(); i++)
             {
                 JToken fragment = fragments[i];
@@ -33,31 +29,18 @@ namespace SkyMedia.WebApp.Controllers
             return null;
         }
 
-        public JsonResult metadata(MediaProcessor mediaProcessor, double timeSeconds)
+        public JsonResult metadata(string fileName, double timeSeconds)
         {
-            JArray metadata = null;
-            //switch (mediaProcessor)
-            //{
-            //    case MediaProcessor.FaceDetection:
-            //        JToken fragment = GetFragment(documentId, timeSeconds);
-            //        if (fragment != null)
-            //        {
-            //            metadata = MapFragment(fragment);
-            //        }
-            //        break;
-            //}
-            return Json(timeSeconds);
-        }
+            string[] fileNameInfo = fileName.Split('_');
+            string documentId = fileNameInfo[0];
 
-        private JArray MapFragment(JToken fragment)
-        {
-            JArray metadata = new JArray();
-            foreach (JToken child in fragment.Children())
-            {
-                string json = string.Concat("{ 'text': '" + child.ToString() + "' }");
-                metadata.Add(JObject.Parse(json));
-            }
-            return metadata;
+            DatabaseClient databaseClient = new DatabaseClient();
+            string collectionId = Constants.Media.AssetMetadata.DocumentCollection;
+            documentId = string.Concat(collectionId, Constants.MultiItemSeparator, documentId);
+            JObject jsonDoc = databaseClient.GetDocument(documentId);
+
+            JToken metadata = GetFragment(jsonDoc, timeSeconds);
+            return Json(metadata);
         }
     }
 }

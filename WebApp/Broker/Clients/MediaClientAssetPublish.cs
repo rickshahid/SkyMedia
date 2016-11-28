@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 
@@ -72,19 +73,6 @@ namespace SkyMedia.ServiceBroker
             return languageCode;
         }
 
-        private static void CopyOutputFile(BlobClient blobClient, IAsset sourceAsset, IAsset destinationAsset, string sourceFileName, string destinationFileName)
-        {
-            string sourceContainerName = sourceAsset.Uri.Segments[1];
-            CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, true);
-            string destinationContainerName = destinationAsset.Uri.Segments[1];
-            CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, string.Empty, destinationFileName, false);
-            blobClient.CopyBlob(sourceBlob, destinationBlob, false);
-            IAssetFile indexerFile = destinationAsset.AssetFiles.Create(destinationFileName);
-            indexerFile.ContentFileSize = sourceBlob.Properties.Length;
-            indexerFile.MimeType = sourceBlob.Properties.ContentType;
-            indexerFile.Update();
-        }
-
         public static string[] GetFileNames(IAsset asset, string fileExtension)
         {
             List<string> fileNames = new List<string>();
@@ -135,7 +123,7 @@ namespace SkyMedia.ServiceBroker
                         string sourceFileName = fileNames[0];
                         string languageCode = GetLanguageCode(jobTask, processorId1);
                         string destinationFileName = sourceFileName.Replace(fileExtension, string.Concat("-", languageCode, fileExtension));
-                        CopyOutputFile(blobClient, outputAsset, encoderAsset, sourceFileName, destinationFileName);
+                        blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName);
                     }
                 }
                 encoderAsset.Update();
@@ -157,6 +145,8 @@ namespace SkyMedia.ServiceBroker
             if (jobTasks.Length > 0)
             {
                 BlobClient blobClient = new BlobClient(contentPublish);
+                DatabaseClient databaseClient = new DatabaseClient(true);
+                string collectionId = Constants.Media.AssetMetadata.DocumentCollection;
                 foreach (ITask jobTask in jobTasks)
                 {
                     IAsset outputAsset = jobTask.OutputAssets[0];
@@ -164,10 +154,22 @@ namespace SkyMedia.ServiceBroker
                     string[] fileNames = GetFileNames(outputAsset, fileExtension);
                     if (fileNames.Length > 0)
                     {
+                        string sourceContainerName = outputAsset.Uri.Segments[1];
                         string sourceFileName = fileNames[0];
-                        string processorName = jobTask.Name.Replace(" ", "");
-                        string destinationFileName = sourceFileName.Replace(fileExtension, string.Concat("-", processorName, fileExtension));
-                        CopyOutputFile(blobClient, outputAsset, encoderAsset, sourceFileName, destinationFileName);
+                        CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, false);
+                        string jsonData = string.Empty;
+                        using (Stream sourceStream = sourceBlob.OpenRead())
+                        {
+                            StreamReader streamReader = new StreamReader(sourceStream);
+                            jsonData = streamReader.ReadToEnd();
+                        }
+                        if (!string.IsNullOrEmpty(jsonData))
+                        {
+                            string documentId = databaseClient.CreateDocument(collectionId, jsonData);
+                            string processorName = jobTask.Name.Replace(" ", "");
+                            string destinationFileName = string.Concat(documentId, "_", processorName, fileExtension);
+                            blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName);
+                        }
                     }
                 }
             }
@@ -178,8 +180,10 @@ namespace SkyMedia.ServiceBroker
             foreach (IAsset outputAsset in job.OutputMediaAssets)
             {
                 PublishAsset(mediaClient, outputAsset, contentProtection);
-                PublishIndex(job, outputAsset, contentPublish);
-                PublishAnalytics(job, outputAsset, contentPublish);
+                if (outputAsset.IsStreamable) {
+                    PublishIndex(job, outputAsset, contentPublish);
+                    PublishAnalytics(job, outputAsset, contentPublish);
+                }
             }
         }
     }

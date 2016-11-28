@@ -1,4 +1,4 @@
-﻿using SkyMedia.ServiceBroker;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 using Newtonsoft.Json;
     
@@ -25,14 +25,7 @@ namespace SkyMedia.WebApp.Models
         public MediaTrack[] TextTracks { get; set; }
 
         public string[] ProtectionTypes { get; set; }
-    }
 
-    public struct MediaMetadata
-    {
-        public string SourceUrl { get; set; }
-
-        public MediaProcessor MediaProcesssor { get; set; }
-
-        public string MetadataUrl { get; set; }
+        public SelectListItem[] AnalyticsProcessors { get; set; }
     }
 }

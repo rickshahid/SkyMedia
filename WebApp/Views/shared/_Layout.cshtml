@@ -6,18 +6,20 @@
         <title>@ViewData["appTitle"] (@ViewData["appRegion"])</title>
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-multiselect/jquery.multiselect.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/qtip2/jquery.qtip.min.css" />
         <link type="text/css" rel="stylesheet" href="~/css/site.css" />
         @Html.ApplicationInsightsJavaScript(telemetryConfig)
         <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-ui-multiselect/src/jquery.multiselect.min.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
         <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
         <script type="text/javascript" src="~/lib/qtip2/jquery.qtip.min.js"></script>
         <script type="text/javascript" src="~/js/site.js"></script>
         @RenderSection("head", false)
     </head>
-    <body onload="SetLayout('@ViewData["mediaAccount"]')">
+    <body onload="SetLayout()">
         @if (ViewData.ContainsKey("minimalView"))
         {
             <div class="layout minimal">
@@ -29,8 +31,12 @@
             <table class="banner">
                 <tr>
                     <td class="bannerLeft">
-                        @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                         @if (ViewData.ContainsKey("userAccount"))
+                        {
+                            @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
+                            @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.location.href = '/dashboard'" })
+                        }
+                        else
                         {
                             @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
                         }
