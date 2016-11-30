@@ -8,9 +8,13 @@
     string encoderConfigFileRowId = "encoderConfigFileRow" + taskNumber;
     string encoderConfigFileId = "encoderConfigFile" + taskNumber;
     string indexerConfigRowId = "indexerConfigRow" + taskNumber;
-    string spokenLanguagesId = "spokenLanguages" + taskNumber;
-    string captionFormatWebVttId = "captionFormatWebVtt" + taskNumber;
-    string captionFormatTtmlId = "captionFormatTtml" + taskNumber;
+    string indexerSpokenLanguagesId = "indexerSpokenLanguages" + taskNumber;
+    string indexerCaptionWebVttId = "indexerCaptionWebVtt" + taskNumber;
+    string indexerCaptionTtmlId = "indexerCaptionTtml" + taskNumber;
+    string faceConfigRowId = "faceConfigRow" + taskNumber;
+    string faceEmotionDetectId = "faceEmotionDetect" + taskNumber;
+    string faceEmotionWindowMillisecondsId = "faceEmotionWindowMilliseconds" + taskNumber;
+    string faceEmotionIntervalMillisecondsId = "faceEmotionIntervalMilliseconds" + taskNumber;
     string motionConfigRowId = "motionConfigRow" + taskNumber;
     string motionSensitivityLevelId = "motionSensitivityLevel" + taskNumber;
     string motionDetectLightChangeId = "motionDetectLightChange" + taskNumber;
@@ -19,8 +23,8 @@
     string hyperlapseFrameCountId = "hyperlapseFrameCount" + taskNumber;
     string hyperlapseSpeedId = "hyperlapseSpeed" + taskNumber;
     string summaryConfigRowId = "summaryConfigRow" + taskNumber;
-    string durationSecondsLabelId = "durationSecondsLabel" + taskNumber;
-    string durationSecondsId = "durationSeconds" + taskNumber;
+    string summaryDurationSecondsLabelId = "summaryDurationSecondsLabel" + taskNumber;
+    string summaryDurationSecondsId = "summaryDurationSeconds" + taskNumber;
     string outputAssetNameId = "outputAssetName" + taskNumber;
     string taskOptionsId = "taskOptions" + taskNumber;
 }
@@ -70,26 +74,59 @@
                     Audio Indexer:
                 </td>
                 <td>
-                    <select id="@spokenLanguagesId" multiple="multiple"></select>
+                    <select id="@indexerSpokenLanguagesId" multiple="multiple"></select>
                     &nbsp;
                     <span class="inputLabel">
                         Captions:
                     </span>
                     &nbsp;
-                    @Html.CheckBox(captionFormatWebVttId, true, new { disabled = "disabled" } )
+                    @Html.CheckBox(indexerCaptionWebVttId, true, new { disabled = "disabled" } )
                     <span class="inputLabel">
                         VTT
                     </span>
                     &nbsp;
-                    @Html.CheckBox(captionFormatTtmlId, false)
+                    @Html.CheckBox(indexerCaptionTtmlId, false)
                     <span class="inputLabel">
                         TTML
                     </span>
                 </td>
             </tr>
+            <tr id="@faceConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    Face Detection:
+                </td>
+                <td>
+                    <table class="workflowTaskConfig1">
+                        <tr>
+                            <td>
+                                @Html.CheckBox(faceEmotionDetectId, false)
+                            </td>
+                            <td class="inputLabel">
+                                Emotion
+                            </td>
+                            <td class="inputLabel">
+                                <span class="workflowTaskConfig1Option">
+                                    Window (ms)
+                                </span>
+                            </td>
+                            <td>
+                                <input id="@faceEmotionWindowMillisecondsId" value="500" class="spinner d4" />
+                            </td>
+                            <td class="inputLabel">
+                                <span class="workflowTaskConfig1Option">
+                                    Interval (ms)
+                                </span>
+                            </td>
+                            <td>
+                                <input id="@faceEmotionIntervalMillisecondsId" value="500" class="spinner d4" />
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
             <tr id="@motionConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Motion:
+                    Motion Detect:
                 </td>
                 <td>
                     <span class="inputLabel">
@@ -111,7 +148,7 @@
                     Hyperlapse:
                 </td>
                 <td>
-                    <table class="hyperlapseConfig">
+                    <table class="workflowTaskConfig2">
                         <tr>
                             <td class="inputLabel">
                                 Start Frame
@@ -142,9 +179,9 @@
                 <td>
                     <span class="inputLabel">
                         Output Video Duration
-                        <span id="@durationSecondsLabelId" class="sliderLabel">0:15</span>
+                        <span id="@summaryDurationSecondsLabelId" class="sliderLabel">0:15</span>
                     </span>
-                    <div id="@durationSecondsId" class="slider durationSeconds"></div>
+                    <div id="@summaryDurationSecondsId" class="slider durationSeconds"></div>
                 </td>
             </tr>
             <tr>

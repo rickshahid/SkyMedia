@@ -164,7 +164,7 @@ function SetContentAuthAddressRange(checkBox) {
     }
 }
 function GetAssetInfo(result, i) {
-    var assetInfo = result[i].assetName + "<br />"
+    var assetInfo = result[i].assetName + "<br />";
     if (result.length == 1) {
         assetInfo = assetInfo + "<br />";
     }

@@ -24,11 +24,11 @@ namespace SkyMedia.ServiceBroker
             processorConfigXml.LoadXml(processorConfig["Xml"].ToString());
             XmlNodeList configSettings = processorConfigXml.SelectNodes(Constants.Media.ProcessorConfig.IndexerV1XPath);
             List<string> captionFormats = new List<string>();
-            if (jobTask.CaptionFormatWebVtt)
+            if (jobTask.IndexerCaptionWebVtt)
             {
                 captionFormats.Add("WebVTT");
             }
-            if (jobTask.CaptionFormatTtml)
+            if (jobTask.IndexerCaptionTtml)
             {
                 captionFormats.Add("TTML");
             }
@@ -36,14 +36,14 @@ namespace SkyMedia.ServiceBroker
             {
                 configSettings[1].Attributes[1].Value = string.Join(";", captionFormats);
             }
-            if (jobTask.SpokenLanguages == null)
+            if (jobTask.IndexerSpokenLanguages == null)
             {
                 jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.OuterXml, inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
                 jobTasks.Add(jobTask);
             }
             else
             {
-                foreach (string spokenLanguage in jobTask.SpokenLanguages)
+                foreach (string spokenLanguage in jobTask.IndexerSpokenLanguages)
                 {
                     configSettings[0].Attributes[1].Value = spokenLanguage;
                     jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfigXml.OuterXml, inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
@@ -66,11 +66,11 @@ namespace SkyMedia.ServiceBroker
             JObject processorConfig = databaseClient.GetDocument(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];
             JArray captionFormats = new JArray();
-            if (jobTask.CaptionFormatWebVtt)
+            if (jobTask.IndexerCaptionWebVtt)
             {
                 captionFormats.Add("WebVTT");
             }
-            if (jobTask.CaptionFormatTtml)
+            if (jobTask.IndexerCaptionTtml)
             {
                 captionFormats.Add("TTML");
             }
@@ -78,14 +78,14 @@ namespace SkyMedia.ServiceBroker
             {
                 processorOptions["Formats"] = captionFormats;
             }
-            if (jobTask.SpokenLanguages == null)
+            if (jobTask.IndexerSpokenLanguages == null)
             {
                 jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
                 jobTasks.Add(jobTask);
             }
             else
             {
-                foreach (string spokenLanguage in jobTask.SpokenLanguages)
+                foreach (string spokenLanguage in jobTask.IndexerSpokenLanguages)
                 {
                     processorOptions["Language"] = spokenLanguage;
                     jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
@@ -106,6 +106,10 @@ namespace SkyMedia.ServiceBroker
             string documentId = AppSetting.GetValue(settingKey);
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
+            JToken processorOptions = processorConfig["options"];
+            processorOptions["mode"] = jobTask.FaceEmotionDetect ? "aggregateEmotion" : "faces";
+            processorOptions["aggregateEmotionWindowMs"] = jobTask.FaceEmotionWindowMilliseconds;
+            processorOptions["aggregateEmotionIntervalMs"] = jobTask.FaceEmotionIntervalMilliseconds;
             jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
             jobTasks.Add(jobTask);
             return jobTasks.ToArray();
@@ -155,10 +159,10 @@ namespace SkyMedia.ServiceBroker
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
             JToken processorSources = processorConfig["Sources"][0];
-            processorSources["StartFrame"] = jobTask.StartFrame;
-            processorSources["NumFrames"] = jobTask.FrameCount;
+            processorSources["StartFrame"] = jobTask.HyperlapseStartFrame;
+            processorSources["NumFrames"] = jobTask.HyperlapseFrameCount;
             JToken processorOptions = processorConfig["Options"];
-            processorOptions["Speed"] = jobTask.SpeedMultiplier;
+            processorOptions["Speed"] = jobTask.HyperlapseSpeed;
             jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
             jobTasks.Add(jobTask);
             return jobTasks.ToArray();
@@ -176,7 +180,7 @@ namespace SkyMedia.ServiceBroker
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
             JToken processorOptions = processorConfig["options"];
-            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.DurationSeconds.ToString();
+            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.SummaryDurationSeconds;
             jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig.ToString(), inputAssets, jobTask.OutputAssetName, contentProtection, jobTask.Options);
             jobTasks.Add(jobTask);
             return jobTasks.ToArray();

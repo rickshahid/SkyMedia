@@ -35,23 +35,29 @@ namespace SkyMedia.WebApp.Models
 
         public TaskOptions Options { get; set; }
 
-        public string[] SpokenLanguages { get; set; }
+        public string[] IndexerSpokenLanguages { get; set; }
 
-        public bool CaptionFormatWebVtt { get; set; }
+        public bool IndexerCaptionWebVtt { get; set; }
 
-        public bool CaptionFormatTtml { get; set; }
+        public bool IndexerCaptionTtml { get; set; }
 
-        public string SensitivityLevel { get; set; }
+        public bool FaceEmotionDetect { get; set; }
 
-        public bool DetectLightChange { get; set; }
+        public int FaceEmotionWindowMilliseconds { get; set; }
 
-        public int StartFrame { get; set; }
+        public int FaceEmotionIntervalMilliseconds { get; set; }
 
-        public int FrameCount { get; set; }
+        public string MotionSensitivityLevel { get; set; }
 
-        public int SpeedMultiplier { get; set; }
+        public bool MotionDetectLightChange { get; set; }
 
-        public int DurationSeconds { get; set; }
+        public int HyperlapseStartFrame { get; set; }
+
+        public int HyperlapseFrameCount { get; set; }
+
+        public int HyperlapseSpeed { get; set; }
+
+        public int SummaryDurationSeconds { get; set; }
     }
 
     internal struct MediaJobEventProperties

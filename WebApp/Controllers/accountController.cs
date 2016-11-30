@@ -70,11 +70,11 @@ namespace SkyMedia.WebApp.Controllers
                 {
                     manifest.Delete();
                 }
-                IJob[] jobs = mediaClient.GetEntities(EntityType.Job) as IJob[];
-                foreach (IJob job in jobs)
-                {
-                    job.Delete();
-                }
+            }
+            IJob[] jobs = mediaClient.GetEntities(EntityType.Job) as IJob[];
+            foreach (IJob job in jobs)
+            {
+                job.Delete();
             }
             IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
             foreach (IAsset asset in assets)

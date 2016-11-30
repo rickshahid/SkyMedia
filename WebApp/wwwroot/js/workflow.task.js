@@ -14,9 +14,13 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfigFileRow" + lastTaskNumber, "encoderConfigFileRow" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfigFile" + lastTaskNumber, "encoderConfigFile" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "spokenLanguages" + lastTaskNumber, "spokenLanguages" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "captionFormatWebVtt" + lastTaskNumber, "captionFormatWebVtt" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "captionFormatTtml" + lastTaskNumber, "captionFormatTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "indexerSpokenLanguages" + lastTaskNumber, "indexerSpokenLanguages" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceConfigRow" + lastTaskNumber, "faceConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionDetect" + lastTaskNumber, "faceEmotionDetect" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionWindowMilliseconds" + lastTaskNumber, "faceEmotionWindowMilliseconds" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionIntervalMilliseconds" + lastTaskNumber, "faceEmotionIntervalMilliseconds" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "motionConfigRow" + lastTaskNumber, "motionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "motionSensitivityLevel" + lastTaskNumber, "motionSensitivityLevel" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "motionDetectLightChange" + lastTaskNumber, "motionDetectLightChange" + newTaskNumber);
@@ -25,7 +29,7 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAll(taskRowHtml, "hyperlapseFrameCount" + lastTaskNumber, "hyperlapseFrameCount" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "hyperlapseSpeed" + lastTaskNumber, "hyperlapseSpeed" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "summaryConfigRow" + lastTaskNumber, "summaryConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "durationSeconds" + lastTaskNumber, "durationSeconds" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "summaryDurationSeconds" + lastTaskNumber, "summaryDurationSeconds" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "outputAssetName" + lastTaskNumber, "outputAssetName" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "taskOptions" + lastTaskNumber, "taskOptions" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
@@ -108,12 +112,13 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var encoderConfigFileId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFile");
     var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
     var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
-    var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "spokenLanguages");
+    var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "indexerSpokenLanguages");
     var indexerLanguageOptions = $("#" + indexerLanguagesId)[0].options;
+    var faceConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceConfigRow");
     var motionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionConfigRow");
     var hyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "hyperlapseConfigRow");
     var summaryConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summaryConfigRow");
-    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, indexerConfigRowId, motionConfigRowId, hyperlapseConfigRowId, summaryConfigRowId];
+    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, indexerConfigRowId, faceConfigRowId, motionConfigRowId, hyperlapseConfigRowId, summaryConfigRowId];
     ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds);
     if (mediaProcessor.value != "None") {
         switch (mediaProcessor.value) {
@@ -137,7 +142,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (XML)", "Custom");
                 break;
             case "IndexerV1":
-                $("#spokenLanguages" + taskNumber).multiselect("destroy");
+                $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
                 indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Spanish", "EsEs");
@@ -145,7 +150,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 $("#" + indexerConfigRowId).show();
                 break;
             case "IndexerV2":
-                $("#spokenLanguages" + taskNumber).multiselect("destroy");
+                $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
                 indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Spanish", "EsEs");
@@ -158,6 +163,9 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Portuguese", "PtBr");
                 SetJobTaskWidgets(taskNumber, false);
                 $("#" + indexerConfigRowId).show();
+                break;
+            case "FaceDetection":
+                $("#" + faceConfigRowId).show();
                 break;
             case "MotionDetection":
                 $("#" + motionConfigRowId).show();
@@ -199,12 +207,20 @@ function SetJobTaskParents(taskNumber) {
     }
 }
 function SetJobTaskWidgets(taskNumber, indexerV1) {
-    var languageCount = $("#spokenLanguages" + taskNumber + " option").length;
-    $("#spokenLanguages" + taskNumber).multiselect({
+    var languageCount = $("#indexerSpokenLanguages" + taskNumber + " option").length;
+    $("#indexerSpokenLanguages" + taskNumber).multiselect({
         noneSelectedText: "0 of " + languageCount + " Languages Enabled",
         selectedText: "# of " + languageCount + " Languages Enabled",
         classes: "multiSelect mediaProcessor" + (indexerV1 ? " indexerLanguages" : ""),
         header: false
+    });
+    $("#faceEmotionWindowMilliseconds" + taskNumber).spinner({
+        min: 250,
+        max: 2000
+    });
+    $("#faceEmotionIntervalMilliseconds" + taskNumber).spinner({
+        min: 250,
+        max: 1000
     });
     $("#hyperlapseStartFrame" + taskNumber).spinner({
         min: 0,
@@ -226,7 +242,7 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
         min: 1,
         max: 9
     });
-    $("#durationSeconds" + taskNumber).slider({
+    $("#summaryDurationSeconds" + taskNumber).slider({
         min: 15,
         max: 180,
         step: 1,
@@ -238,7 +254,7 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
                 seconds = "0" + seconds;
             }
             var duration = dateTime.getMinutes() + ":" + seconds;
-            $("#durationSecondsLabel" + taskNumber).text(duration);
+            $("#summaryDurationSecondsLabel" + taskNumber).text(duration);
         }
     });
     $("#taskOptions" + taskNumber).multiselect({
@@ -249,7 +265,9 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
     });
 }
 function ClearJobTaskWidgets(lastTaskNumber) {
-    $("#spokenLanguages" + lastTaskNumber).multiselect("destroy");
+    $("#indexerSpokenLanguages" + lastTaskNumber).multiselect("destroy");
+    $("#faceEmotionWindowMilliseconds" + lastTaskNumber).spinner("destroy");
+    $("#faceEmotionIntervalMilliseconds" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseStartFrame" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseFrameCount" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseSpeed" + lastTaskNumber).spinnerEx("destroy");
@@ -291,32 +309,37 @@ function GetJobTask(taskNumber) {
                 }
                 break;
             case "IndexerV1":
-                jobTask.SpokenLanguages = new Array();
-                $("#spokenLanguages" + taskNumber + " :selected").each(function (i, o) {
-                    jobTask.SpokenLanguages[i] = $(o).text();
+                jobTask.IndexerSpokenLanguages = new Array();
+                $("#indexerSpokenLanguages" + taskNumber + " :selected").each(function (i, o) {
+                    jobTask.IndexerSpokenLanguages[i] = $(o).text();
                 });
-                jobTask.CaptionFormatWebVtt = $("#captionFormatWebVtt" + taskNumber).prop("checked");
-                jobTask.CaptionFormatTtml = $("#captionFormatTtml" + taskNumber).prop("checked");
+                jobTask.IndexerCaptionWebVtt = $("#indexerCaptionWebVtt" + taskNumber).prop("checked");
+                jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
                 break
             case "IndexerV2":
-                jobTask.SpokenLanguages = $("#spokenLanguages" + taskNumber).val();
-                jobTask.CaptionFormatWebVtt = $("#captionFormatWebVtt" + taskNumber).prop("checked");
-                jobTask.CaptionFormatTtml = $("#captionFormatTtml" + taskNumber).prop("checked");
+                jobTask.IndexerSpokenLanguages = $("#indexerSpokenLanguages" + taskNumber).val();
+                jobTask.IndexerCaptionWebVtt = $("#indexerCaptionWebVtt" + taskNumber).prop("checked");
+                jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
+                break;
+            case "FaceDetection":
+                jobTask.FaceEmotionDetect = $("#faceEmotionDetect" + taskNumber).prop("checked");
+                jobTask.FaceEmotionWindowMilliseconds = $("#faceEmotionWindowMilliseconds" +taskNumber).val();
+                jobTask.FaceEmotionIntervalMilliseconds = $("#faceEmotionIntervalMilliseconds" + taskNumber).val();
                 break;
             case "MotionDetection":
-                jobTask.SensitivityLevel = $("#motionSensitivityLevel" + taskNumber).val();
-                jobTask.DetectLightChange = $("#motionDetectLightChange" + taskNumber).prop("checked");
+                jobTask.MotionSensitivityLevel = $("#motionSensitivityLevel" + taskNumber).val();
+                jobTask.MotionDetectLightChange = $("#motionDetectLightChange" + taskNumber).prop("checked");
                 break;
             case "MotionHyperlapse":
-                jobTask.StartFrame = $("#hyperlapseStartFrame" + taskNumber).val();
-                jobTask.FrameCount = $("#hyperlapseFrameCount" + taskNumber).val();
-                jobTask.SpeedMultiplier = $("#hyperlapseSpeed" + taskNumber).val().substr(0, 1);
+                jobTask.HyperlapseStartFrame = $("#hyperlapseStartFrame" + taskNumber).val();
+                jobTask.HyperlapseFrameCount = $("#hyperlapseFrameCount" + taskNumber).val();
+                jobTask.HyperlapseSpeed = $("#hyperlapseSpeed" + taskNumber).val().substr(0, 1);
                 break;
             case "VideoSummarization":
-                var durationLabel = $("#durationSecondsLabel" + taskNumber).text();
+                var durationLabel = $("#summaryDurationSecondsLabel" + taskNumber).text();
                 var durationInfo = durationLabel.split(":");
                 var durationSeconds = (parseInt(durationInfo[0]) * 60) + parseInt(durationInfo[1]);
-                jobTask.DurationSeconds = durationSeconds;
+                jobTask.SummaryDurationSeconds = durationSeconds;
                 break;
         }
     }
