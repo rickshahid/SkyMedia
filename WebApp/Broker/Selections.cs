@@ -33,7 +33,7 @@ namespace SkyMedia.ServiceBroker
             return storageAccounts.ToArray();
         }
 
-        public static SelectListItem[] GetMediaProcessors()
+        public static SelectListItem[] GetMediaProcessors(bool jobTaskView)
         {
             List<SelectListItem> mediaProcessors = new List<SelectListItem>();
 
@@ -67,11 +67,18 @@ namespace SkyMedia.ServiceBroker
             mediaProcessor.Value = MediaProcessor.FaceDetection.ToString();
             mediaProcessors.Add(mediaProcessor);
 
+            if (!jobTaskView)
+            {
+                mediaProcessor = new SelectListItem();
+                mediaProcessor.Text = "Emotion Detection";
+                mediaProcessor.Value = MediaProcessor.FaceDetectionEmotion.ToString();
+                mediaProcessors.Add(mediaProcessor);
+            }
+
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Face Redaction";
             mediaProcessor.Value = MediaProcessor.FaceRedaction.ToString();
             mediaProcessors.Add(mediaProcessor);
-
 
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Motion Detection";
@@ -99,7 +106,7 @@ namespace SkyMedia.ServiceBroker
         public static string GetProcessorName(MediaProcessor mediaProcessor)
         {
             string processorName = string.Empty;
-            SelectListItem[] processors = GetMediaProcessors();
+            SelectListItem[] processors = GetMediaProcessors(false);
             foreach (SelectListItem processor in processors)
             {
                 if (string.Equals(processor.Value, mediaProcessor.ToString(), StringComparison.InvariantCultureIgnoreCase))

@@ -94,9 +94,9 @@ namespace SkyMedia.WebApp.Controllers
                     if (assetFile.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
                     {
                         string[] fileNameInfo = assetFile.Name.Split('_');
-                        string processorType = fileNameInfo[fileNameInfo.Length - 1].Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
-                        MediaProcessor mediaProcessor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), processorType);
-                        string processorName = Selections.GetProcessorName(mediaProcessor);
+                        string processorName = fileNameInfo[fileNameInfo.Length - 1];
+                        processorName = processorName.Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
+                        processorName = processorName.Replace("-", " ");
 
                         SelectListItem analyticsProcessor = new SelectListItem();
                         analyticsProcessor.Text = processorName;

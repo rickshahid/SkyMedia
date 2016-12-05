@@ -11,7 +11,7 @@
     "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
     "Microsoft.AspNetCore.StaticFiles": "1.1.0",
     "Microsoft.Azure.DocumentDB": "1.10.0",
-    "Microsoft.Azure.Search": "2.0.6-preview",
+    "Microsoft.Azure.Search": "3.0.1",
     "Microsoft.Extensions.Configuration.Abstractions": "1.1.0",
     "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
     "Microsoft.Extensions.Configuration.Json": "1.1.0",

@@ -166,7 +166,7 @@ namespace SkyMedia.ServiceBroker
                         if (!string.IsNullOrEmpty(jsonData))
                         {
                             string documentId = databaseClient.CreateDocument(collectionId, jsonData);
-                            string processorName = jobTask.Name.Replace(" ", "");
+                            string processorName = jobTask.Name.Replace(" ", "-");
                             string destinationFileName = string.Concat(documentId, "_", processorName, fileExtension);
                             blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName);
                         }

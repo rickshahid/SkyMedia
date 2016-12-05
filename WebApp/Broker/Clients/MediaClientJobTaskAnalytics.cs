@@ -98,7 +98,8 @@ namespace SkyMedia.ServiceBroker
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, ContentProtection contentProtection)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            string taskName = Selections.GetProcessorName(MediaProcessor.FaceDetection);
+            MediaProcessor taskProcessor = jobTask.FaceEmotionDetect ? MediaProcessor.FaceDetectionEmotion : MediaProcessor.FaceDetection;
+            string taskName = Selections.GetProcessorName(taskProcessor);
             MediaProcessor mediaProcessor = MediaProcessor.FaceDetection;
             string settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
             string processorId = AppSetting.GetValue(settingKey);
