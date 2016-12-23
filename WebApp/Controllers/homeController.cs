@@ -96,7 +96,7 @@ namespace SkyMedia.WebApp.Controllers
                         string[] fileNameInfo = assetFile.Name.Split('_');
                         string processorName = fileNameInfo[fileNameInfo.Length - 1];
                         processorName = processorName.Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
-                        processorName = processorName.Replace("-", " ");
+                        processorName = processorName.Replace(Constants.NamedItemSeparator, ' ');
 
                         SelectListItem analyticsProcessor = new SelectListItem();
                         analyticsProcessor.Text = processorName;

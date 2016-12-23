@@ -1,11 +1,35 @@
-﻿function GetTaskRowIndex(taskButton) {
+﻿function ValidWorkflowTasks(validInput) {
+    var taskNumber = 1;
+    do {
+        var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
+        if (mediaProcessor != null) {
+            if (mediaProcessor == "None") {
+                CreateTipTop("mediaProcessor" + taskNumber, "Select Media Processor");
+                SetTipVisible("mediaProcessor" + taskNumber, true);
+                validInput = false;
+            }
+            var encoderConfig = $("#encoderConfig" + taskNumber).val();
+            if (encoderConfig == "Custom") {
+                var encoderConfigFile = $("#encoderConfigFile" + taskNumber).val();
+                if (encoderConfigFile == "") {
+                    CreateTipTop("encoderConfigFile" + taskNumber, "Select Custom Configuration File");
+                    SetTipVisible("encoderConfigFile" + taskNumber, true);
+                    validInput = false;
+                }
+            }
+            taskNumber = taskNumber + 1;
+        }
+    } while (mediaProcessor != null);
+    return validInput
+}
+function GetTaskRowIndex(taskButton) {
     return $(taskButton).parents("tr")[1].rowIndex;
 }
 function GetLastTaskNumber(lastTaskRow) {
-    return parseInt(lastTaskRow.id.replace("mediaWorkflowTask", ""));
+    return parseInt(lastTaskRow.id.replace("mediaWorkflowTaskRow", ""));
 }
 function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
-    var taskRowHtml = ReplaceAll(lastTaskRow.outerHTML, "mediaWorkflowTask" + lastTaskNumber, "mediaWorkflowTask" + newTaskNumber);
+    var taskRowHtml = ReplaceAll(lastTaskRow.outerHTML, "mediaWorkflowTaskRow" + lastTaskNumber, "mediaWorkflowTaskRow" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "Job Task #" + lastTaskNumber, "Job Task #" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "mediaProcessor" + lastTaskNumber, "mediaProcessor" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "taskParent" + lastTaskNumber, "taskParent" + newTaskNumber);
@@ -13,7 +37,18 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfig" + lastTaskNumber, "encoderConfig" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfigFileRow" + lastTaskNumber, "encoderConfigFileRow" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfigFile" + lastTaskNumber, "encoderConfigFile" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderOptionsRow" + lastTaskNumber, "encoderOptionsRow" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderProtectContent" + lastTaskNumber, "encoderProtectContent" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderFragmentOutput" + lastTaskNumber, "encoderFragmentOutput" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionRow" + lastTaskNumber, "encoderContentProtectionRow" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionStorage" + lastTaskNumber, "encoderContentProtectionStorage" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAes" + lastTaskNumber, "encoderContentProtectionAes" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionDrmPlayReady" + lastTaskNumber, "encoderContentProtectionDrmPlayReady" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionDrmWidevine" + lastTaskNumber, "encoderContentProtectionDrmWidevine" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAuthTypeToken" + lastTaskNumber, "encoderContentProtectionAuthTypeToken" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "indexerConfigRow" +lastTaskNumber, "indexerConfigRow" +newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerSpokenLanguages" + lastTaskNumber, "indexerSpokenLanguages" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
@@ -77,18 +112,6 @@ function RemoveJobTask(taskButton) {
         $("#mediaWorkflowTaskRemove").hide();
     }
 }
-function EncoderSelected() {
-    var taskNumber = 1;
-    var encoderSelected = false;
-    do {
-        var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
-        if (mediaProcessor == "EncoderStandard" || mediaProcessor == "EncoderPremium") {
-            encoderSelected = true;
-        }
-        taskNumber = taskNumber + 1;
-    } while (mediaProcessor != null)
-    return encoderSelected;
-}
 function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds) {
     $("#" + encoderConfigFileId).val("");
     if (encoderConfigOptions != null) {
@@ -100,17 +123,15 @@ function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexer
     for (var i = 0; i < hideRowIds.length; i++) {
         $("#" + hideRowIds[i]).hide();
     }
-    if (!EncoderSelected()) {
-        $("#mediaWorkflowProtectContent").hide();
-        $("#mediaWorkflowArchiveInput").hide();
-    }
 }
 function SetProcessorConfig(mediaProcessor, taskNumber) {
     var encoderConfigRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigRow");
     var encoderConfigId = mediaProcessor.id.replace("mediaProcessor", "encoderConfig");
+    var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
     var encoderConfigFileRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFileRow");
     var encoderConfigFileId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFile");
-    var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
+    var encoderOptionsRowId = mediaProcessor.id.replace("mediaProcessor", "encoderOptionsRow");
+    var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
     var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
     var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "indexerSpokenLanguages");
     var indexerLanguageOptions = $("#" + indexerLanguagesId)[0].options;
@@ -118,7 +139,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var motionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionConfigRow");
     var hyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "hyperlapseConfigRow");
     var summaryConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summaryConfigRow");
-    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, indexerConfigRowId, faceConfigRowId, motionConfigRowId, hyperlapseConfigRowId, summaryConfigRowId];
+    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, faceConfigRowId, motionConfigRowId, hyperlapseConfigRowId, summaryConfigRowId];
     ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds);
     if (mediaProcessor.value != "None") {
         switch (mediaProcessor.value) {
@@ -136,10 +157,12 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 MBR 720p (6 MP4s, 400 to 3400 kbps) AAC 5.1", "H264 Multiple Bitrate 720p Audio 5.1");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 MBR 720p (6 MP4s, 400 to 3400 kbps) AAC", "H264 Multiple Bitrate 720p");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (JSON)", "Custom");
+                $("#" + encoderOptionsRowId).show();
                 break;
             case "EncoderPremium":
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("None - No Custom Media Processor Configuration File", "None");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (XML)", "Custom");
+                $("#" + encoderOptionsRowId).show();
                 break;
             case "IndexerV1":
                 $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
@@ -181,10 +204,6 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
             $("#" + encoderConfigRowId).show();
             $("#" + encoderConfigId).change();
         }
-    }
-    if (EncoderSelected()) {
-        $("#mediaWorkflowProtectContent").show();
-        $("#mediaWorkflowArchiveInput").show();
     }
 }
 function SetEncoderConfigFile(encoderConfig) {
@@ -246,6 +265,9 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
         min: 15,
         max: 180,
         step: 1,
+        classes: {
+            "ui-slider-handle": "sliderHandle"
+        },
         slide: function (event, ui) {
             var dateTime = new Date(null);
             dateTime.setSeconds(ui.value);
@@ -273,6 +295,52 @@ function ClearJobTaskWidgets(lastTaskNumber) {
     $("#hyperlapseSpeed" + lastTaskNumber).spinnerEx("destroy");
     $("#taskOptions" + lastTaskNumber).multiselect("destroy");
 }
+function ShowContentProtection(checkbox) {
+    var encoderContentProtectionRowId = checkbox.id.replace("encoderProtectContent", "encoderContentProtectionRow");
+    if (checkbox.checked) {
+        $("#" + encoderContentProtectionRowId).show();
+    } else {
+        $("#" + encoderContentProtectionRowId).hide();
+    }
+}
+function GetContentProtection(taskNumber) {
+    var contentProtection = null;
+    if ($("#protectContent" + taskNumber).prop("checked")) {
+        contentProtection = {
+            AES: $("#aes" + taskNumber).prop("checked"),
+            DRMPlayReady: $("#drmPlayReady" + taskNumber).prop("checked"),
+            DRMWidevine: $("#drmWidevine" + taskNumber).prop("checked"),
+            ContentAuthTypeToken: $("#contentAuthTypeToken" + taskNumber).prop("checked"),
+            ContentAuthTypeAddress: $("#contentAuthTypeAddress" + taskNumber).prop("checked"),
+            ContentAuthAddressRange: $("#contentAuthAddressRange" + taskNumber).val()
+        };
+    }
+    return contentProtection;
+}
+function SetContentProtection(checkbox) {
+    switch (checkbox.id) {
+        case "aes":
+            if (checkbox.checked) {
+                $("#drmPlayReady").prop("checked", false);
+                $("#drmWidevine").prop("checked", false);
+            }
+            break;
+        case "drmPlayReady":
+        case "drmWidevine":
+            if (checkbox.checked) {
+                $("#aes").prop("checked", false);
+            }
+            break;
+    }
+}
+function SetContentAuthAddressRange(checkBox) {
+    if (checkBox.checked) {
+        $("#contentAuthAddressRange").prop("disabled", false);
+        $("#contentAuthAddressRange").focus();
+    } else {
+        $("#contentAuthAddressRange").prop("disabled", true);
+    }
+}
 function GetJobTaskOptions(taskNumber) {
     var taskOptions = 0;
     var selectedOptions = $("#taskOptions" + taskNumber).val();
@@ -287,7 +355,7 @@ function GetJobTask(taskNumber) {
     if (mediaProcessor != null && mediaProcessor != "None") {
         var taskParent = $("#taskParent" + taskNumber).val();
         jobTask = {
-            ParentIndex: (taskParent == null) ? null : taskParent - 1,
+            ParentIndex: (taskParent == "") ? null : taskParent - 1,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
             Options: GetJobTaskOptions(taskNumber),
             MediaProcessor: mediaProcessor
@@ -307,6 +375,10 @@ function GetJobTask(taskNumber) {
                 } else {
                     jobTask.ProcessorConfig = $("#encoderConfig" + taskNumber).val();
                 }
+                if ($("#encoderFragmentOutput" + taskNumber).prop("checked")) {
+                    jobTask.OutputAssetFormat = 1; // AssetFormatOption.AdaptiveStreaming
+                }
+                jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "IndexerV1":
                 jobTask.IndexerSpokenLanguages = new Array();

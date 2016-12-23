@@ -46,7 +46,6 @@
             SetPlayerContent();
         }
         $(function () {
-            var livePreview = "@livePreview".toLowerCase()
             if ("@livePreview".toLowerCase() == "true") {
                 SetPlayerContent();
             } else {
@@ -66,9 +65,7 @@
     <a class="siteLink" href="https://docs.microsoft.com/en-us/azure/media-services/media-services-manage-channels-overview" target="_blank">@viewTitle</a>
 </div>
 
-<div id="videoEditor">
-    @Html.Partial("MediaPlayer")
-</div>
+@Html.Partial("MediaPlayer")
 
 <div class="liveCountdown">
     <span id="liveCountdownLabel"></span>

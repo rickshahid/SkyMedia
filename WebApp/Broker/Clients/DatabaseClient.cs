@@ -30,6 +30,16 @@ namespace SkyMedia.ServiceBroker
             _databaseId = AppSetting.GetValue(settingKey);
         }
 
+        public string CreateDocument(string collectionId, string jsonData)
+        {
+            JObject jsonDoc = JObject.Parse(jsonData);
+            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
+            Task<ResourceResponse<Document>> createTask = _database.CreateDocumentAsync(collectionUri, jsonDoc);
+            createTask.Wait();
+            ResourceResponse<Document> responseDocument = createTask.Result;
+            return responseDocument.Resource.Id;
+        }
+
         public JObject GetDocument(string documentId)
         {
             string[] documentInfo = documentId.Split(Constants.MultiItemSeparator);
@@ -55,14 +65,14 @@ namespace SkyMedia.ServiceBroker
             return (jsonDoc == null) ? new JObject() : jsonDoc;
         }
 
-        public string CreateDocument(string collectionId, string jsonData)
+        public JObject ExecuteProcedure(string collectionId, string procedureId, params dynamic[] procedureParameters)
         {
-            JObject jsonDoc = JObject.Parse(jsonData);
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            Task<ResourceResponse<Document>> createTask = _database.CreateDocumentAsync(collectionUri, jsonDoc);
-            createTask.Wait();
-            ResourceResponse<Document> responseDocument = createTask.Result;
-            return responseDocument.Resource.Id;
+            Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
+            Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
+            procedureTask.Wait();
+            StoredProcedureResponse<JValue> procedureResult = procedureTask.Result;
+            return JObject.Parse(procedureResult.Response.ToString());
         }
     }
 }

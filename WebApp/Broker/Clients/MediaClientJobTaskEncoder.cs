@@ -28,18 +28,19 @@ namespace SkyMedia.ServiceBroker
             return comparison;
         }
 
-        private static MediaJobTask[] GetEncoderTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets,
-                                                      ContentProtection contentProtection)
+        private static MediaJobTask[] GetEncoderTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
-            bool taskPerInputAsset = true;
-            string taskName = Selections.GetProcessorName(MediaProcessor.EncoderStandard);
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             if (jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
             {
-                taskPerInputAsset = false;
-                taskName = Selections.GetProcessorName(MediaProcessor.EncoderPremium);
+                jobTask.Name = Selections.GetProcessorName(MediaProcessor.EncoderPremium);
                 List<MediaAssetInput> assets = new List<MediaAssetInput>(inputAssets);
                 assets.Sort(OrderByWorkflow);
                 inputAssets = assets.ToArray();
+            }
+            else
+            {
+                jobTask.Name = Selections.GetProcessorName(MediaProcessor.EncoderStandard);
             }
             string processorConfig = jobTask.ProcessorConfig;
             if (processorConfig != null)
@@ -75,8 +76,9 @@ namespace SkyMedia.ServiceBroker
                     }
                 }
             }
-            string[] outputAssetNames = new string[] { jobTask.OutputAssetName };
-            return GetJobTasks(mediaClient, taskName, jobTask.MediaProcessor, processorConfig, inputAssets, outputAssetNames, contentProtection, jobTask.Options, taskPerInputAsset);
+            jobTask = SetJobTask(mediaClient, jobTask, processorConfig, inputAssets);
+            jobTasks.Add(jobTask);
+            return jobTasks.ToArray();
         }
     }
 }

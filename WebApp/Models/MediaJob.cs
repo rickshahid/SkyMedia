@@ -33,7 +33,11 @@ namespace SkyMedia.WebApp.Models
 
         public AssetCreationOptions OutputAssetEncryption { get; set; }
 
+        public AssetFormatOption OutputAssetFormat { get; set; }
+
         public TaskOptions Options { get; set; }
+
+        public ContentProtection ContentProtection { get; set; }
 
         public string[] IndexerSpokenLanguages { get; set; }
 

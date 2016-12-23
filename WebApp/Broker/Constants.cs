@@ -7,15 +7,15 @@ namespace SkyMedia.ServiceBroker
         public const char MultiItemSeparator = ',';
         public const char MultiItemsSeparator = ';';
 
+        public const char NamedItemSeparator = '-';
+        public const char NamedItemsSeparator = '_';
+
         public const string FormatNumber = "N2";
         public const string FormatTime = "hh':'mm':'ss";
 
         public struct AppSettings
         {
-            public const string AppTitle = "App.Title";
-            public const string AppDomain = "App.Domain";
             public const string AppRegion = "App.Region";
-
             public const string AppLocalData = "App.LocalData";
             public const string AppSourceCode = "App.SourceCode";
 
@@ -40,7 +40,6 @@ namespace SkyMedia.ServiceBroker
             public const string StorageParallelOperationThreadCount = "Storage.ParallelOperationThreadCount";
 
             public const string StorageBlockChunkSize = "Storage.BlockChunkSize";
-            public const string StorageMaxFileSize = "Storage.MaxFileSize";
             public const string StorageMaxRetryCount = "Storage.MaxRetryCount";
 
             public const string StorageCdnUrl = "Storage.CdnUrl";

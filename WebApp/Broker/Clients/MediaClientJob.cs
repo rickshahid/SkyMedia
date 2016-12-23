@@ -30,6 +30,7 @@ namespace SkyMedia.ServiceBroker
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.FaceDetection:
+                case MediaProcessor.FaceDetectionEmotion:
                     settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
@@ -80,7 +81,7 @@ namespace SkyMedia.ServiceBroker
         }
 
         public static MediaJob CreateJob(MediaClient mediaClient, string jobName, int jobPriority, MediaJobTask[] jobTasks,
-                                         MediaAssetInput[] inputAssets, ContentProtection contentProtection)
+                                         MediaAssetInput[] inputAssets)
         {
             MediaJob mediaJob = new MediaJob();
             mediaJob.Name = jobName;
@@ -93,31 +94,31 @@ namespace SkyMedia.ServiceBroker
                 {
                     case MediaProcessor.EncoderStandard:
                     case MediaProcessor.EncoderPremium:
-                        tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.IndexerV1:
-                        tasks = GetIndexerV1Tasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetIndexerV1Tasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.IndexerV2:
-                        tasks = GetIndexerV2Tasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetIndexerV2Tasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.FaceDetection:
-                        tasks = GetFaceDetectionTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetFaceDetectionTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.FaceRedaction:
-                        tasks = GetFaceRedactionTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetFaceRedactionTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.MotionDetection:
-                        tasks = GetMotionDetectionTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetMotionDetectionTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.MotionHyperlapse:
-                        tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.VideoSummarization:
-                        tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.CharacterRecognition:
-                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets, contentProtection);
+                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets);
                         break;
                 }
                 if (tasks != null)
@@ -154,7 +155,7 @@ namespace SkyMedia.ServiceBroker
                     IAsset[] assets = GetAssets(jobTask.InputAssetIds);
                     currentTask.InputAssets.AddRange(assets);
                 }
-                currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption);
+                currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
             }
             INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
             NotificationJobState jobStates = NotificationJobState.FinalStatesOnly;
@@ -163,7 +164,7 @@ namespace SkyMedia.ServiceBroker
             return job;
         }
 
-        public static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection contentProtection)
+        public static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection[] contentProtections)
         {
             string attributeName = Constants.UserAttribute.MediaAccountName;
             string accountName = AuthToken.GetClaimValue(authToken, attributeName);
@@ -174,12 +175,9 @@ namespace SkyMedia.ServiceBroker
             attributeName = Constants.UserAttribute.MobileNumber;
             string mobileNumber = AuthToken.GetClaimValue(authToken, attributeName);
 
-            contentProtection.PartitionKey = accountName;
-            contentProtection.RowKey = job.Id;
-
             ContentPublish contentPublish = new ContentPublish();
-            contentPublish.PartitionKey = contentProtection.PartitionKey;
-            contentPublish.RowKey = contentProtection.RowKey;
+            contentPublish.PartitionKey = accountName;
+            contentPublish.RowKey = job.Id;
 
             contentPublish.MediaAccountKey = accountKey;
             contentPublish.StorageAccountName = storageAccount;
@@ -191,9 +189,11 @@ namespace SkyMedia.ServiceBroker
             string tableName = Constants.Storage.TableNames.AssetPublish;
             entityClient.InsertEntity(tableName, contentPublish);
 
-            if (contentProtection!= null)
+            tableName = Constants.Storage.TableNames.AssetProtection;
+            foreach (ContentProtection contentProtection in contentProtections)
             {
-                tableName = Constants.Storage.TableNames.AssetProtection;
+                contentProtection.PartitionKey = contentPublish.PartitionKey;
+                contentProtection.RowKey = contentPublish.RowKey;
                 entityClient.InsertEntity(tableName, contentProtection);
             }
         }

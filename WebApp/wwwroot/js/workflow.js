@@ -28,6 +28,9 @@ function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
         min: 0,
         max: 9,
         step: 1,
+        classes: {
+            "ui-slider-handle": "sliderHandle"
+        },
         slide: function (event, ui) {
             $("#jobPriorityLabel").text(ui.value);
         }
@@ -38,12 +41,12 @@ function ValidWorkflowInput(uploadView) {
     var validInput = true;
     if (uploadView) {
         if (_fileUploader.files.length == 0) {
-            CreateTipTop("fileUploader_browse", "Select Media");
+            CreateTipTop("fileUploader_browse", "Select Source Media");
             SetTipVisible("fileUploader_browse", true);
             validInput = false;
         }
         if ($("#multipleFileAsset").prop("checked") && $("#inputAssetName").val() == "") {
-            CreateTipBottom("inputAssetName", "Set Multiple File Asset Name");
+            CreateTipTop("inputAssetName", "Set Multiple File Asset Name");
             SetTipVisible("inputAssetName", true);
             $("#inputAssetName").focus();
             validInput = false;
@@ -51,35 +54,14 @@ function ValidWorkflowInput(uploadView) {
     } else {
         _inputAssets = GetInputAssets();
         if (_inputAssets.length == 0) {
-            CreateTipTop("mediaAssets", "Check At Least 1 Media Asset");
+            CreateTipTopLeft("mediaAssets", "Check Media Asset(s)", 48, 10);
             SetTipVisible("mediaAssets", true);
             validInput = false;
         }
     }
-    var taskNumber = 1;
-    do {
-        var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
-        if (mediaProcessor != null) {
-            if (mediaProcessor == "None") {
-                CreateTipTop("mediaProcessor" + taskNumber, "Select Media Processor");
-                SetTipVisible("mediaProcessor" + taskNumber, true);
-                validInput = false;
-            }
-            var encoderConfig = $("#encoderConfig" + taskNumber).val();
-            if (encoderConfig == "Custom") {
-                var encoderConfigFile = $("#encoderConfigFile" + taskNumber).val();
-                if (encoderConfigFile == "") {
-                    CreateTipTop("encoderConfigFile" + taskNumber, "Select Custom Configuration File");
-                    SetTipVisible("encoderConfigFile" + taskNumber, true);
-                    validInput = false;
-                }
-            }
-            taskNumber = taskNumber + 1;
-        }
-    } while (mediaProcessor != null);
-    return validInput;
+    return ValidWorkflowTasks(validInput);
 }
-function ValidateWorkflow(uploadView) {
+function ValidWorkflow(uploadView) {
     if (ValidWorkflowInput(uploadView)) {
         if (uploadView) {
             _fileUploader.start();
@@ -117,51 +99,6 @@ function GetInputAssets() {
         }
     }
     return inputAssets;
-}
-function ShowContentProtection(checkbox) {
-    if (checkbox.checked) {
-        $("#contentProtectionRow").show();
-    } else {
-        $("#contentProtectionRow").hide();
-    }
-}
-function GetContentProtection() {
-    var contentProtection = null;
-    if ($("#protectContent").prop("checked")) {
-        contentProtection = {
-            AES: $("#aes").prop("checked"),
-            DRMPlayReady: $("#drmPlayReady").prop("checked"),
-            DRMWidevine: $("#drmWidevine").prop("checked"),
-            ContentAuthTypeToken: $("#contentAuthTypeToken").prop("checked"),
-            ContentAuthTypeAddress: $("#contentAuthTypeAddress").prop("checked"),
-            ContentAuthAddressRange: $("#contentAuthAddressRange").val()
-        };
-    }
-    return contentProtection;
-}
-function SetContentProtection(checkbox) {
-    switch (checkbox.id) {
-        case "aes":
-            if (checkbox.checked) {
-                $("#drmPlayReady").prop("checked", false);
-                $("#drmWidevine").prop("checked", false);
-            }
-            break;
-        case "drmPlayReady":
-        case "drmWidevine":
-            if (checkbox.checked) {
-                $("#aes").prop("checked", false);
-            }
-            break;
-    }
-}
-function SetContentAuthAddressRange(checkBox) {
-    if (checkBox.checked) {
-        $("#contentAuthAddressRange").prop("disabled", false);
-        $("#contentAuthAddressRange").focus();
-    } else {
-        $("#contentAuthAddressRange").prop("disabled", true);
-    }
 }
 function GetAssetInfo(result, i) {
     var assetInfo = result[i].assetName + "<br />";
@@ -202,9 +139,7 @@ function UploadWorkflow(files) {
             inputAssets: _inputAssets,
             jobName: $("#jobName").val(),
             jobPriority: $("#jobPriorityLabel").text(),
-            jobTasks: jobTasks,
-            contentProtection: GetContentProtection(),
-            archiveInput: $("#archiveInput").prop("checked")
+            jobTasks: jobTasks
         },
         function (result) {
             DisplayWorkflow(jobTasks, result);
@@ -218,9 +153,7 @@ function StartWorkflow() {
             inputAssets: _inputAssets,
             jobName: $("#jobName").val(),
             jobPriority: $("#jobPriorityLabel").text(),
-            jobTasks: jobTasks,
-            contentProtection: GetContentProtection(),
-            archiveInput: $("#archiveInput").prop("checked")
+            jobTasks: jobTasks
         },
         function (result) {
             DisplayWorkflow(jobTasks, result);

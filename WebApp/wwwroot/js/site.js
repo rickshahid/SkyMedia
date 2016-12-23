@@ -13,28 +13,28 @@ function CreateTip(targetId, tipText, tipPosition) {
         show: { delay: 2000 }
     });
 }
-function CreateTipTop(targetId, tipText) {
-    var tipPosition = { my: "bottom center", at: "top center" };
+function CreateTipTop(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "bottom center", at: "top center", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition);
 }
 function CreateTipTopLeft(targetId, tipText, adjustX, adjustY) {
     var tipPosition = { my: "bottom center", at: "top left", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition);
 }
-function CreateTipBottom(targetId, tipText) {
-    var tipPosition = { my: "top center", at: "bottom center" };
+function CreateTipBottom(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "top center", at: "bottom center", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition);
 }
 function CreateTipBottomLeft(targetId, tipText, adjustX, adjustY) {
     var tipPosition = { my: "top center", at: "bottom left", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition);
 }
-function CreateTipLeft(targetId, tipText) {
-    var tipPosition = { my: "right center", at: "left center" };
+function CreateTipLeft(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "right center", at: "left center", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition);
 }
-function CreateTipRight(targetId, tipText) {
-    var tipPosition = { my: "left center", at: "right center" };
+function CreateTipRight(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "left center", at: "right center", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition);
 }
 function SetTipVisible(targetId, tipVisible) {
@@ -44,10 +44,9 @@ function SetLayout() {
     CreateTipRight("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipRight("siteCode", "Azure Sky Media<br /><br />Open Source");
     CreateTipRight("accountDashboard", "Azure Media Services<br /><br />Account Dashboard");
-    CreateTipRight("accountContext", "Azure Media Services<br /><br />Account Name");
-    CreateTipLeft("userProfileEdit", "Azure Active Directory<br /><br />User Profile Edit");
-    CreateTipLeft("userSignIn", "Azure Active Directory<br /><br />User Sign Up & In");
-    CreateTipLeft("userSignOut", "Azure Active Directory<br /><br />User Sign Out");
+    CreateTipLeft("userProfileEdit", "Azure Sky Media<br /><br />User Profile Edit");
+    CreateTipLeft("userSignIn", "Azure Sky Media<br /><br />User Identity");
+    CreateTipLeft("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
     CreateTipRight("amsPlatform", "Azure Media Services");
     CreateTipRight("amsPlayer", "Azure Media Player");
     CreateTipRight("channelIngest", "Azure Media Services<br /><br />Live Channel");
@@ -220,6 +219,9 @@ function ToggleMediaAnalytics(button) {
     var buttonImage = button.children[0];
     if (buttonImage.src.indexOf("MediaAnalyticsOpen") > -1) {
         buttonImage.src = buttonImage.src.replace("Open", "Close");
+        var mediaPlayer = GetMediaPlayer(false);
+        var playerHeight = mediaPlayer.height();
+        $("#mediaMetadata").height(playerHeight);
         $("#analyticsPanel").show();
     } else {
         buttonImage.src = buttonImage.src.replace("Close", "Open");

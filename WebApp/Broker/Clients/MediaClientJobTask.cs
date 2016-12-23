@@ -18,60 +18,23 @@ namespace SkyMedia.ServiceBroker
             return assetIds.ToArray();
         }
 
-        private static AssetCreationOptions GetOutputAssetEncryption(ContentProtection contentProtection)
+        private static bool HasProtectionEnabled(ContentProtection contentProtection)
         {
-            AssetCreationOptions assetEncryption = AssetCreationOptions.None;
-            if (contentProtection.AES || contentProtection.DRMPlayReady || contentProtection.DRMWidevine)
-            {
-                assetEncryption = AssetCreationOptions.StorageEncrypted;
-            }
-            return assetEncryption;
+            return contentProtection != null && (contentProtection.AES || contentProtection.DRMPlayReady || contentProtection.DRMWidevine);
         }
 
-        private static MediaJobTask GetJobTask(MediaClient mediaClient, string taskName, MediaProcessor mediaProcessor, string processorConfig,
-                                               MediaAssetInput[] inputAssets, string outputAssetName, ContentProtection contentProtection,
-                                               TaskOptions taskOptions)
+        private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, string processorConfig, MediaAssetInput[] inputAssets)
         {
-            MediaJobTask jobTask = new MediaJobTask();
-            jobTask.Name = taskName;
-            jobTask.MediaProcessor = mediaProcessor;
             jobTask.ProcessorConfig = (processorConfig == null) ? string.Empty : processorConfig;
             jobTask.InputAssetIds = GetInputAssetIds(inputAssets);
-            jobTask.OutputAssetName = outputAssetName;
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {
                 string assetId = jobTask.InputAssetIds[0];
                 IAsset asset = mediaClient.GetEntityById(EntityType.Asset, assetId) as IAsset;
                 jobTask.OutputAssetName = string.Concat(asset.Name, " (", jobTask.Name, ")");
             }
-            if (mediaProcessor == MediaProcessor.EncoderStandard || mediaProcessor == MediaProcessor.EncoderPremium)
-            {
-                jobTask.OutputAssetEncryption = GetOutputAssetEncryption(contentProtection);
-            }
-            jobTask.Options = taskOptions;
+            jobTask.OutputAssetEncryption = HasProtectionEnabled(jobTask.ContentProtection) ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
             return jobTask;
-        }
-
-        private static MediaJobTask[] GetJobTasks(MediaClient mediaClient, string taskName, MediaProcessor mediaProcessor, string processorConfig,
-                                                  MediaAssetInput[] inputAssets, string[] outputAssetNames, ContentProtection contentProtection,
-                                                  TaskOptions taskOptions, bool taskPerInputAsset)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            if (taskPerInputAsset)
-            {
-                for (int i = 0; i < inputAssets.Length; i++)
-                {
-                    MediaJobTask jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig, new MediaAssetInput[] { inputAssets[i] }, outputAssetNames[i], contentProtection, taskOptions);
-                    jobTasks.Add(jobTask);
-                }
-            }
-            else
-            {
-                string outputAssetName = (outputAssetNames == null || outputAssetNames.Length == 0) ? string.Empty : outputAssetNames[0];
-                MediaJobTask jobTask = GetJobTask(mediaClient, taskName, mediaProcessor, processorConfig, inputAssets, outputAssetName, contentProtection, taskOptions);
-                jobTasks.Add(jobTask);
-            }
-            return jobTasks.ToArray();
         }
     }
 }

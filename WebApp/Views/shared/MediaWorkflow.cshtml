@@ -37,95 +37,12 @@
         <td>
             <table>
                 <tr>
-                    <td class="mediaWorkflowEncodeOptions">
-                        <table>
-                            <tr>
-                                <td>
-                                    <div id="mediaWorkflowProtectContent" style="display: none">
-                                        @Html.CheckBox("protectContent", false, new { onclick = "ShowContentProtection(this)" })
-                                        <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
-                                            Protect Content
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div id="mediaWorkflowArchiveInput" style="display: none">
-                                        &nbsp;
-                                        @Html.CheckBox("archiveInput", false, new { disabled = "disabled" })
-                                        <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/storage/storage-blob-storage-tiers')">
-                                            Archive Input
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
                     <td>
                         @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)" })
                         @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskRemove", "MediaWorkflowTaskRemove.png", "RemoveJobTask(this)" })
                     </td>
                     <td class="mediaWorkflowStart">
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowStart", "MediaWorkflowStart.png", "ValidateWorkflow(" + uploadView + ")" })
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr id="contentProtectionRow" class="contentProtectionRow">
-        <td class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
-            <div class="contentProtectionLabel">
-                Content<br />Protection
-            </div>
-        </td>
-        <td>
-            <table class="inputGroup contentProtection">
-                <tr id="inputProtectionRow" style="display: none">
-                    <td class="inputLabel">
-                        Input Asset:
-                    </td>
-                    <td>
-                        @Html.CheckBox("storageEncryption", false)
-                        <span class="inputLabel">
-                            Media Asset Content Storage Encryption (AES 256 Bit)
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="inputLabel">
-                        Output Asset:
-                    </td>
-                    <td>
-                        @Html.CheckBox("aes", false, new { onchange = "SetContentProtection(this)" })
-                        <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-aes128')">
-                            AES 128 Bit
-                        </span>
-                        &nbsp;
-                        @Html.CheckBox("drmPlayReady", false, new { onchange = "SetContentProtection(this)" })
-                        <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
-                            PlayReady DRM
-                        </span>
-                        &nbsp;
-                        @Html.CheckBox("drmWidevine", false, new { onchange = "SetContentProtection(this)" })
-                        <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
-                            Widevine DRM
-                        </span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="inputLabel">
-                        Authorization:
-                    </td>
-                    <td>
-                        @Html.CheckBox("contentAuthTypeToken", true)
-                        <span class="inputLabel">
-                            Web Token
-                        </span>
-                        &nbsp;
-                        @Html.CheckBox("contentAuthTypeAddress", false, new { @class = "contentAuthTypeAddress", onchange = "SetContentAuthAddressRange(this)" })
-                        <span class="inputLabel">
-                            Address Range
-                        </span>
-                        @Html.TextBox("contentAuthAddressRange", null, new { @class = "contentAuthAddressRange", placeholder = "Start IPv4, End IPv4", disabled = "disabled" })
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowStart", "MediaWorkflowStart.png", "ValidWorkflow(" + uploadView + ")" })
                     </td>
                 </tr>
             </table>

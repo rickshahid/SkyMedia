@@ -17,11 +17,10 @@
             var serviceGateway = "@ViewData["asperaServiceGateway"]";
             var storageContainer = "@ViewData["storageContainer"]";
             var blockChunkSize = "@ViewData["blockChunkSize"]";
-            var maxFileSize = "@ViewData["maxFileSize"]";
             var maxRetryCount = "@ViewData["maxRetryCount"]";
             SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
             InitializeUploader("@ViewData["asperaTransferApi"]");
-            CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount);
+            CreateUploader(storageContainer, blockChunkSize, maxRetryCount);
         })
     </script>
 }

@@ -81,9 +81,6 @@ namespace SkyMedia.WebApp.Controllers
             string settingKey = Constants.AppSettings.StorageBlockChunkSize;
             viewData["blockChunkSize"] = AppSetting.GetValue(settingKey);
 
-            settingKey = Constants.AppSettings.StorageMaxFileSize;
-            viewData["maxFileSize"] = AppSetting.GetValue(settingKey);
-
             settingKey = Constants.AppSettings.StorageMaxRetryCount;
             viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
 

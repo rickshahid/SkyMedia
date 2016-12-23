@@ -156,24 +156,37 @@ body {
     font-size: large;
 }
 
+.mediaPanel td {
+    vertical-align: bottom;
+}
+
+
 .analyticsPanel {
-    text-align: center;
+    padding-bottom: 3px;
     display: none;
 }
 
 .analyticsProcessors {
-    margin-top: 10px;
-    width: 165px;
+    margin-bottom: 5px;
+    width: 189px;
+}
+
+/*.mediaPlayer {
+    height: auto;
+    width: 700px;
+}*/
+
+.mediaOverlay {
+    border: 1px dashed yellow;
+    position: absolute;
+    display: none;
+    z-index: 100;
 }
 
 .mediaMetadata {
     background: azure;
-    margin-top: 10px;
-    padding: 5px 5px;
-    text-align: left;
     overflow: auto;
-    height: 346px;
-    width: 400px;
+    width: 350px;
 }
 
 .mediaBar {
@@ -184,18 +197,22 @@ body {
     width: 280px;
 }
 
+.streamCatcherHandle {
+    height: 25px !important;
+    color: azure !important;
+    top: -12px !important;
+    text-align: center;
+}
+
 .streamNumber {
-    color: deepskyblue;
     font-size: x-large;
+    font-weight: bold;
+    color: azure;
 }
 
 .streamNumber.side {
     padding-left: 15px;
     padding-right: 15px;
-}
-
-.streamNumber.hide {
-    display: none;
 }
 
 .streamInfo {
@@ -264,6 +281,11 @@ body {
     padding: 0px 5px 0px 0px !important;
 }
 
+.ui-spinner-input {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 .spinner {
     font-size: small !important;
 }
@@ -299,6 +321,10 @@ body {
     color: azure;
 }
 
+.sliderHandle {
+    height: 15px !important;
+}
+
 .ui-slider {
     background: deepskyblue;
     height: 5px;
@@ -306,7 +332,7 @@ body {
 
 .ui-slider-handle {
     background: deepskyblue !important;
-    height: 15px !important;
+    border-radius: 10px;
 }
 
 .ui-dialog-title {
@@ -393,20 +419,6 @@ body {
     margin-right: 238px;
 }
 
-.inputGroup {
-    border: 1px dashed deepskyblue;
-    font-weight: bold;
-    width: 590px;
-}
-
-.inputGroup.workflowTask {
-    padding-left: 5px;
-}
-
-.inputGroup.contentProtection {
-    padding-left: 30px;
-}
-
 .inputLabel {
     padding-right: 0px !important;
     white-space: nowrap;
@@ -432,7 +444,7 @@ body {
     width: 140px;
     bottom: 35px;
     left: 280px;
-    z-index: 1;
+    z-index: 10;
 }
 
 .asperaProgress {
@@ -447,7 +459,7 @@ body {
     color: azure;
     bottom: 55px;
     left: 280px;
-    z-index: 1;
+    z-index: 10;
 }
 
 .transferMessage {
@@ -522,19 +534,18 @@ body {
 }
 
 .mediaWorkflowTaskLink td {
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding: 0px;
 }
 
 .mediaWorkflowTaskLink hr {
     border: 1px dashed deepskyblue;
+    height: 15px;
     margin: 0px;
-    height: 10px;
     width: 1px;
 }
 
 #mediaWorkflowTaskAdd {
-    margin-left: 80px;
+    margin-left: 275px;
 }
 
 .mediaWorkflowControls td {
@@ -545,13 +556,6 @@ body {
 .mediaWorkflowStart {
     text-align: right;
     width: 100%;
-}
-
-.mediaWorkflowEncodeOptions {
-    font-weight: bold;
-    margin-top: 5px;
-    display: block;
-    width: 200px;
 }
 
 .mediaAssets {
@@ -614,6 +618,13 @@ body {
     width: 335px;
 }
 
+.jobTask {
+    border: 1px dashed deepskyblue;
+    font-weight: bold;
+    padding-left: 5px;
+    width: 590px;
+}
+
 .jobTaskParent {
     width: 35px;
 }
@@ -623,25 +634,25 @@ body {
     max-height: 85px;
 }
 
-.contentProtectionRow {
-    display: none;
+.contentProtectionRow > td {
+    padding-bottom: 0px;
+    padding-top: 0px;
 }
 
-.contentProtectionRow > td {
-    padding-bottom: 10px;
+.contentProtectionRow > td > table td {
+    padding-top: 0px;
 }
 
 .contentProtectionLabel {
     text-align: center;
 }
 
-.contentAuthTypeAddress {
-    margin-left: 8px;
+.contentProtectionOptions {
+    border: 1px dotted deepskyblue;
 }
 
 .contentAuthAddressRange {
-    margin-left: 5px;
-    width: 145px;
+    width: 125px;
 }
 
 .ui-jqgrid {

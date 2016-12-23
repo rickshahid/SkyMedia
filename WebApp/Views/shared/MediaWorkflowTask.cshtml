@@ -1,12 +1,23 @@
 ﻿@{
     int taskNumber = 1;
-    string taskId = "mediaWorkflowTask" + taskNumber;
+    string taskRowId = "mediaWorkflowTaskRow" + taskNumber;
     string mediaProcessorId = "mediaProcessor" + taskNumber;
     string taskParentId = "taskParent" + taskNumber;
     string encoderConfigRowId = "encoderConfigRow" + taskNumber;
     string encoderConfigId = "encoderConfig" + taskNumber;
     string encoderConfigFileRowId = "encoderConfigFileRow" + taskNumber;
     string encoderConfigFileId = "encoderConfigFile" + taskNumber;
+    string encoderOptionsRowId = "encoderOptionsRow" + taskNumber;
+    string encoderProtectContentId = "encoderProtectContent" + taskNumber;
+    string encoderFragmentOutputId = "encoderFragmentOutput" + taskNumber;
+    string encoderContentProtectionRowId = "encoderContentProtectionRow" + taskNumber;
+    string encoderContentProtectionStorageId = "encoderContentProtectionStorage" + taskNumber;
+    string encoderContentProtectionAesId = "encoderContentProtectionAes" + taskNumber;
+    string encoderContentProtectionDrmPlayReadyId = "encoderContentProtectionDrmPlayReady" + taskNumber;
+    string encoderContentProtectionDrmWidevineId = "encoderContentProtectionDrmWidevine" + taskNumber;
+    string encoderContentProtectionAuthTypeTokenId = "encoderContentProtectionAuthTypeToken" + taskNumber;
+    string encoderContentProtectionAuthTypeAddressId = "encoderContentProtectionAuthTypeAddress" + taskNumber;
+    string encoderContentProtectionAuthAddressRangeId = "encoderContentProtectionAuthAddressRange" + taskNumber;
     string indexerConfigRowId = "indexerConfigRow" + taskNumber;
     string indexerSpokenLanguagesId = "indexerSpokenLanguages" + taskNumber;
     string indexerCaptionWebVttId = "indexerCaptionWebVtt" + taskNumber;
@@ -29,12 +40,12 @@
     string taskOptionsId = "taskOptions" + taskNumber;
 }
 
-<tr id="@taskId" class="mediaWorkflowTask">
+<tr id="@taskRowId">
     <td class="inputLabel">
         Job Task #@taskNumber:
     </td>
     <td>
-        <table class="inputGroup workflowTask">
+        <table class="jobTask">
             <tr>
                 <td class="inputLabel">
                     Media Processor:
@@ -43,17 +54,19 @@
                     @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1)" })
                     &nbsp;
                     <span class="inputLabel">
-                        Input Asset: Task #
+                        Parent Task #
                     </span>
-                    <select id="@taskParentId" class="jobTaskParent" disabled></select>
+                    <select id="@taskParentId" class="jobTaskParent" disabled>
+                        <option value=""></option>
+                    </select>
                     <span class="inputLabel">
-                        Output
+                        Dependency
                     </span>
                 </td>
             </tr>
             <tr id="@encoderConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://msdn.microsoft.com/en-us/library/azure/mt269960.aspx')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-presets-overview')">
                         Encoder Config:
                     </span>
                 </td>
@@ -63,12 +76,17 @@
             </tr>
             <tr id="@encoderConfigFileRowId" style="display: none">
                 <td class="inputLabel">
-                    Custom Config:
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-schema')">
+                        Custom Config:
+                    </span>
                 </td>
                 <td>
                     @Html.TextBox(encoderConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file" })
                 </td>
             </tr>
+
+
+
             <tr id="@indexerConfigRowId" style="display: none">
                 <td class="inputLabel">
                     Audio Indexer:
@@ -196,6 +214,86 @@
                         <option value="2">Do Not Delete Output On Failure</option>
                         <option value="4">Do Not Cancel Job On Failure</option>
                     </select>
+                </td>
+            </tr>
+            <tr id="@encoderOptionsRowId" style="display: none">
+                <td />
+                <td>
+                    @Html.CheckBox(encoderProtectContentId, false, new { onclick = "ShowContentProtection(this)" })
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
+                        Content Protection
+                    </span>
+                    &nbsp;
+                    @Html.CheckBox(encoderFragmentOutputId, false)
+                    <span class="inputLabel">
+                        Content (Output) Fragmentation
+                    </span>
+                </td>
+            </tr>
+            <tr id="@encoderContentProtectionRowId" class="contentProtectionRow" style="display: none">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td class="contentProtectionLabel">
+                                <div class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
+                                    Content<br />Protection
+                                </div>
+                            </td>
+                            <td>
+                                <table class="contentProtectionOptions">
+                                    <tr id="inputProtectionRow" style="display: none">
+                                        <td class="inputLabel">
+                                            Storage:
+                                        </td>
+                                        <td>
+                                            @Html.CheckBox(encoderContentProtectionStorageId, false)
+                                            <span class="inputLabel">
+                                                Media Asset Content Storage Encryption (AES 256)
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="inputLabel">
+                                            Delivery:
+                                        </td>
+                                        <td>
+                                            @Html.CheckBox(encoderContentProtectionAesId, false, new { onchange = "SetContentProtection(this)" })
+                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-aes128')">
+                                                AES 128
+                                            </span>
+                                            &nbsp;
+                                            @Html.CheckBox(encoderContentProtectionDrmPlayReadyId, false, new { onchange = "SetContentProtection(this)" })
+                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                PlayReady DRM
+                                            </span>
+                                            &nbsp;
+                                            @Html.CheckBox(encoderContentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)" })
+                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                Widevine DRM
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="inputLabel">
+                                            AuthZ:
+                                        </td>
+                                        <td>
+                                            @Html.CheckBox(encoderContentProtectionAuthTypeTokenId, true)
+                                            <span class="inputLabel">
+                                                Web Token
+                                            </span>
+                                            &nbsp;
+                                            @Html.CheckBox(encoderContentProtectionAuthTypeAddressId, false, new { onchange = "SetContentAuthAddressRange(this)" })
+                                            <span class="inputLabel">
+                                                Address Range
+                                            </span>
+                                            @Html.TextBox(encoderContentProtectionAuthAddressRangeId, null, new { @class = "contentAuthAddressRange", placeholder = "Start IPv4, End IPv4", disabled = "disabled" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
        </table>

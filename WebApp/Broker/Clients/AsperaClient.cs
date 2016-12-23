@@ -102,12 +102,8 @@ namespace SkyMedia.ServiceBroker
             transferSpec["remote_user"] = _accountId;
             transferSpec["remote_password"] = _accountKey;
 
-            settingKey = Constants.AppSettings.AppDomain;
-            string appDomain = AppSetting.GetValue(settingKey);
-
             JObject connectSpec = new JObject();
             connectSpec.Add("allow_dialogs", true);
-            connectSpec.Add("back_link", appDomain);
             connectSpec.Add("return_paths", true);
             connectSpec.Add("use_absolute_destination_path", true);
 

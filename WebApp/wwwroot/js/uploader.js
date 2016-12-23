@@ -104,7 +104,7 @@ function AsperaEnabled() {
 function WatcherEnabled() {
     return $("#uploadFileWatcher").prop("checked");
 }
-function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryCount) {
+function CreateUploader(storageContainer, blockChunkSize, maxRetryCount) {
     _storageContainer = storageContainer;
     var eventHandlers = {
         PostInit: function (uploader) {
@@ -175,7 +175,6 @@ function CreateUploader(storageContainer, blockChunkSize, maxFileSize, maxRetryC
         url: "/upload/file",
         runtimes: "html5",
         chunk_size: blockChunkSize,
-        max_file_size: maxFileSize,
         max_retries: maxRetryCount,
         multipart: true,
         dragdrop: false,

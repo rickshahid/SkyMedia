@@ -102,6 +102,11 @@ namespace SkyMedia.ServiceBroker
             }
         }
 
+        public static void PublishAsset(MediaClient mediaClient, IAsset asset)
+        {
+            PublishAsset(mediaClient, asset, null);
+        }
+
         private static void PublishIndex(IJob job, IAsset encoderAsset, ContentPublish contentPublish)
         {
             string settingKey = Constants.AppSettings.MediaProcessorIndexerV1Id;
@@ -166,8 +171,8 @@ namespace SkyMedia.ServiceBroker
                         if (!string.IsNullOrEmpty(jsonData))
                         {
                             string documentId = databaseClient.CreateDocument(collectionId, jsonData);
-                            string processorName = jobTask.Name.Replace(" ", "-");
-                            string destinationFileName = string.Concat(documentId, "_", processorName, fileExtension);
+                            string processorName = jobTask.Name.Replace(' ', Constants.NamedItemSeparator);
+                            string destinationFileName = string.Concat(documentId, Constants.NamedItemsSeparator, processorName, fileExtension);
                             blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName);
                         }
                     }
