@@ -152,7 +152,7 @@
                 width: faceMetadata.width + "px"
             });
             $("#videoOverlay" + faceMetadata.id).show();
-            CreateTipTop("videoOverlay" + faceMetadata.id, "Face " + faceMetadata.id, 0, -10);
+            CreateTipTop("videoOverlay" + faceMetadata.id, "Face " + faceMetadata.id, 0, -10, false);
             SetTipVisible("videoOverlay" + faceMetadata.id, true);
         }
         function ClearVideoOverlay() {
