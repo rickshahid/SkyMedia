@@ -36,10 +36,7 @@
                             @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                             @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.location.href = '/dashboard'" })
                         }
-                        else
-                        {
-                            @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
-                        }
+                        @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
                     </td>
                     <td class="bannerCenter">
                         <div class="viewTitle">

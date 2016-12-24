@@ -143,7 +143,7 @@
             return analyticsProcessor;
         }
         function SetVideoOverlay(faceMetadata) {
-            $("<div id='videoOverlay" + faceMetadata.id + "' class='mediaOverlay'></div>").insertBefore(".mediaPlayer");
+            $("<div id='videoOverlay" + faceMetadata.id + "' class='mediaOverlay'></div>").insertBefore("#mediaPlayer");
             var playerPosition = $("#mediaPlayer").position();
             $("#videoOverlay" + faceMetadata.id).css({
                 top: (playerPosition.top + faceMetadata.y) + "px",

@@ -3,7 +3,7 @@
 }
 
 @media all and (max-width: 320px) {
-    #siteCode, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #accountDashboard, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
@@ -12,7 +12,7 @@
     }
 
     .viewTitle {
-        font-size: medium !important;
+        font-size: small !important;
     }
 
     .accountContext {
@@ -20,12 +20,11 @@
     }
 
     .mediaPlayer {
-        height: 200px !important;
         width: 300px !important;
     }
 
     .streamCatcher {
-        width: 150px !important;
+        width: 100px !important;
     }
 
     .streamInfo {
@@ -39,17 +38,24 @@
 }
 
 @media all and (min-width: 321px) and (max-width: 480px) {
-    #siteCode, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #accountDashboard, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
     .banner {
-        width: 450px !important;
+        width: 300px !important;
+    }
+
+    .viewTitle {
+        font-size: medium !important;
     }
 
     .mediaPlayer {
-        height: 300px !important;
-        width: 450px !important;
+        width: 300px !important;
+    }
+
+    .streamCatcher {
+        width: 180px !important;
     }
 
     .streamInfo {
@@ -160,7 +166,6 @@ body {
     vertical-align: bottom;
 }
 
-
 .analyticsPanel {
     padding-bottom: 3px;
     display: none;
@@ -171,10 +176,9 @@ body {
     width: 189px;
 }
 
-/*.mediaPlayer {
-    height: auto;
+.mediaPlayer {
     width: 700px;
-}*/
+}
 
 .mediaOverlay {
     border: 1px dashed yellow;
@@ -194,7 +198,7 @@ body {
 }
 
 .streamCatcher {
-    width: 280px;
+    width: 200px;
 }
 
 .streamCatcherHandle {
