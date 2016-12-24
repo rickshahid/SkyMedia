@@ -7,33 +7,16 @@
         display: none !important;
     }
 
-    .banner {
-        width: 300px !important;
+    .banner, .mediaPlayer {
+        width: 280px !important;
     }
 
-    .viewTitle {
+    .viewTitle, .accountContext, .streamInfo, .liveCountdown {
         font-size: small !important;
-    }
-
-    .accountContext {
-        font-size: small !important;
-    }
-
-    .mediaPlayer {
-        width: 300px !important;
     }
 
     .streamCatcher {
         width: 100px !important;
-    }
-
-    .streamInfo {
-        font-size: small !important;
-    }
-
-    .liveCountdown {
-        font-weight: normal !important;
-        font-size: small !important;
     }
 }
 
@@ -42,28 +25,16 @@
         display: none !important;
     }
 
-    .banner {
+    .banner, .mediaPlayer {
         width: 300px !important;
     }
 
-    .viewTitle {
+    .viewTitle, .accountContext, .streamInfo, .liveCountdown {
         font-size: medium !important;
-    }
-
-    .mediaPlayer {
-        width: 300px !important;
     }
 
     .streamCatcher {
-        width: 180px !important;
-    }
-
-    .streamInfo {
-        font-size: medium !important;
-    }
-
-    .liveCountdown {
-        font-size: medium !important;
+        width: 100px !important;
     }
 }
 
@@ -72,12 +43,16 @@
         display: none !important;
     }
 
-    .streamInfo {
+    .banner, .mediaPlayer {
+        width: 450px !important;
+    }
+
+    .viewTitle, .accountContext, .streamInfo, .liveCountdown {
         font-size: large !important;
     }
 
-    .liveCountdown {
-        font-size: large !important;
+    .streamCatcher {
+        width: 150px !important;
     }
 }
 

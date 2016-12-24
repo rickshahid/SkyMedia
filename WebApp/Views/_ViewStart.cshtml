@@ -25,7 +25,7 @@
         attributeName = Constants.UserAttribute.MediaAccountName;
         string accountName = AuthToken.GetClaimValue(authToken, attributeName);
 
-        ViewData["userAccount"] = string.Concat(userId, " - ", accountName);
+        ViewData["userAccount"] = string.Concat(userId, " (", accountName, ")");
         ViewData["accountAuth"] = ViewData["userAccount"];
     }
 
