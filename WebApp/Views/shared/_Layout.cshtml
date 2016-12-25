@@ -20,7 +20,7 @@
         @RenderSection("head", false)
     </head>
     <body onload="SetLayout()">
-        @if (ViewData.ContainsKey("minimalView"))
+        @if (ViewData.ContainsKey("minimalLayout"))
         {
             <div class="layout minimal">
                 @RenderBody()
@@ -36,7 +36,10 @@
                             @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                             @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.location.href = '/dashboard'" })
                         }
-                        @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
+                        else
+                        {
+                            @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
+                        }
                     </td>
                     <td class="bannerCenter">
                         <div class="viewTitle">

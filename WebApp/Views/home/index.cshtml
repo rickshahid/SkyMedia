@@ -108,7 +108,7 @@
             var analyticsProcessor;
             var mediaPlayer = GetMediaPlayer(false);
             var fileName = $("#analyticsProcessors").val();
-            if (fileName != "") {
+            if (fileName != null && fileName != "") {
                 analyticsProcessor = GetAnalyticsProcessor(fileName);
                 var playerHeight = mediaPlayer.height();
                 var playerWidth = mediaPlayer.width();
@@ -162,6 +162,10 @@
                 SetTipVisible(videoOverlay.id, false);
                 $("#" + videoOverlay.id).remove();
             }
+        }
+        function ResetMediaMetadata() {
+            ClearVideoOverlay();
+            SetMediaMetadata(); 
         }
         $(function () {
             var streamNumber = @streamNumber;
@@ -221,6 +225,8 @@
                     SetMediaMetadata();
                 }
             });
+            window.onresize = ResetMediaMetadata;
+            window.onorientationchange = ResetMediaMetadata;
             if (currentStream == null) {
                 SetPlayerSpinner(false);
             } else {
