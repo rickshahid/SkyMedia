@@ -249,11 +249,23 @@
             @Html.Partial("MediaPlayer")
         </td>
         <td id="analyticsPanel" class="analyticsPanel">
-            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-analytics-overview')">
-                Azure Media Analytics
-            </span>
-            <select id="analyticsProcessors" class="analyticsProcessors" onchange="SetMediaMetadata()"></select>
-            <div id="mediaMetadata" class="mediaMetadata"></div>
+            <table>
+                <tr>
+                    <td class="inputLabel">
+                        <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-analytics-overview')">
+                            Azure Media Analytics
+                        </span>
+                    </td>
+                    <td>
+                        <select id="analyticsProcessors" class="analyticsProcessors" onchange="SetMediaMetadata()"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="mediaMetadata" class="mediaMetadata"></div>
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
 </table>

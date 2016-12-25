@@ -45,6 +45,7 @@ function SetLayout() {
     CreateTipRight("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipRight("siteCode", "Azure Sky Media<br /><br />Open Source");
     CreateTipRight("accountDashboard", "Azure Media Services<br /><br />Account Dashboard");
+    CreateTipLeft("userDirectory", "Azure Active Directory<br /><br />B2C");
     CreateTipLeft("userProfileEdit", "Azure Sky Media<br /><br />User Profile Edit");
     CreateTipLeft("userSignIn", "Azure Sky Media<br /><br />User Identity");
     CreateTipLeft("userSignOut", "Azure Sky Media<br /><br />User Sign Out");

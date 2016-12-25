@@ -31,15 +31,12 @@
             <table class="banner">
                 <tr>
                     <td class="bannerLeft">
+                        @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                         @if (ViewData.ContainsKey("userAccount"))
                         {
-                            @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                             @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.location.href = '/dashboard'" })
                         }
-                        else
-                        {
-                            @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
-                        }
+                        @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
                     </td>
                     <td class="bannerCenter">
                         <div class="viewTitle">
@@ -60,11 +57,8 @@
                         }
                     </td>
                     <td class="bannerRight">
-                        @if (ViewData.ContainsKey("mediaAccount"))
-                        {
-                            @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('" + ViewData["appSourceCode"] + "')" })
-                        }
-                        else if (ViewData.ContainsKey("userAccount"))
+                        @Html.Partial("SiteButton", new string[] { "userDirectory", "UserDirectory.png", "window.open('http://azure.microsoft.com/en-us/services/active-directory-b2c/')" })
+                        @if (ViewData.ContainsKey("userAccount"))
                         {
                             @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '" + ViewData["accountProfileEdit"] + "'" })
                             @Html.Partial("SiteButton", new string[] { "userSignOut", "UserSignOut.png", "SignOut('" + ViewData["authTokenCookie"] + "')" })
