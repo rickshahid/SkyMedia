@@ -30,7 +30,7 @@ namespace SkyMedia.ServiceBroker
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.FaceDetection:
-                case MediaProcessor.FaceDetectionEmotion:
+                case MediaProcessor.FaceEmotion:
                     settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;

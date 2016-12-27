@@ -71,7 +71,7 @@ namespace SkyMedia.ServiceBroker
             {
                 mediaProcessor = new SelectListItem();
                 mediaProcessor.Text = "Emotion Detection";
-                mediaProcessor.Value = MediaProcessor.FaceDetectionEmotion.ToString();
+                mediaProcessor.Value = MediaProcessor.FaceEmotion.ToString();
                 mediaProcessors.Add(mediaProcessor);
             }
 

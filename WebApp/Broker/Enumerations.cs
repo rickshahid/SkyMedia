@@ -33,7 +33,7 @@
         IndexerV1,
         IndexerV2,
         FaceDetection,
-        FaceDetectionEmotion,
+        FaceEmotion,
         FaceRedaction,
         MotionDetection,
         MotionHyperlapse,

@@ -52,10 +52,12 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerSpokenLanguages" + lastTaskNumber, "indexerSpokenLanguages" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceConfigRow" + lastTaskNumber, "faceConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionDetect" + lastTaskNumber, "faceEmotionDetect" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionWindowMilliseconds" + lastTaskNumber, "faceEmotionWindowMilliseconds" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionIntervalMilliseconds" + lastTaskNumber, "faceEmotionIntervalMilliseconds" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceRedactionMode" + lastTaskNumber, "faceRedactionMode" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "motionConfigRow" + lastTaskNumber, "motionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "motionSensitivityLevel" + lastTaskNumber, "motionSensitivityLevel" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "motionDetectLightChange" + lastTaskNumber, "motionDetectLightChange" + newTaskNumber);
@@ -135,11 +137,12 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
     var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "indexerSpokenLanguages");
     var indexerLanguageOptions = $("#" + indexerLanguagesId)[0].options;
-    var faceConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceConfigRow");
+    var faceDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionConfigRow");
+    var faceRedactionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceRedactionConfigRow");
     var motionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionConfigRow");
     var hyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "hyperlapseConfigRow");
     var summaryConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summaryConfigRow");
-    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, faceConfigRowId, motionConfigRowId, hyperlapseConfigRowId, summaryConfigRowId];
+    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, motionConfigRowId, hyperlapseConfigRowId, summaryConfigRowId];
     ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds);
     if (mediaProcessor.value != "None") {
         switch (mediaProcessor.value) {
@@ -188,7 +191,10 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 $("#" + indexerConfigRowId).show();
                 break;
             case "FaceDetection":
-                $("#" + faceConfigRowId).show();
+                $("#" + faceDetectionConfigRowId).show();
+                break;
+            case "FaceRedaction":
+                $("#" + faceRedactionConfigRowId).show();
                 break;
             case "MotionDetection":
                 $("#" + motionConfigRowId).show();
@@ -397,6 +403,9 @@ function GetJobTask(taskNumber) {
                 jobTask.FaceEmotionDetect = $("#faceEmotionDetect" + taskNumber).prop("checked");
                 jobTask.FaceEmotionWindowMilliseconds = $("#faceEmotionWindowMilliseconds" +taskNumber).val();
                 jobTask.FaceEmotionIntervalMilliseconds = $("#faceEmotionIntervalMilliseconds" + taskNumber).val();
+                break;
+            case "FaceRedaction":
+                jobTask.FaceRedactionMode = $("#faceRedactionMode" + taskNumber).val();
                 break;
             case "MotionDetection":
                 jobTask.MotionSensitivityLevel = $("#motionSensitivityLevel" + taskNumber).val();

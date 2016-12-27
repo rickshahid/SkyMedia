@@ -1,4 +1,5 @@
 ﻿using System.Xml;
+using System.Globalization;
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
@@ -98,7 +99,7 @@ namespace SkyMedia.ServiceBroker
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = jobTask.FaceEmotionDetect ? MediaProcessor.FaceDetectionEmotion : MediaProcessor.FaceDetection;
+            jobTask.MediaProcessor = jobTask.FaceEmotionDetect ? MediaProcessor.FaceEmotion : MediaProcessor.FaceDetection;
             jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
             string processorId = AppSetting.GetValue(settingKey);
@@ -120,12 +121,15 @@ namespace SkyMedia.ServiceBroker
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceRedaction;
             jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
+            jobTask.Name = string.Concat(jobTask.Name, " ", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jobTask.FaceRedactionMode));
             string settingKey = Constants.AppSettings.MediaProcessorFaceRedactionId;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorFaceRedactionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
+            JToken processorOptions = processorConfig["options"];
+            processorOptions["mode"] = jobTask.FaceRedactionMode;
             jobTask = SetJobTask(mediaClient, jobTask, processorConfig.ToString(), inputAssets);
             jobTasks.Add(jobTask);
             return jobTasks.ToArray();

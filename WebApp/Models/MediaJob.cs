@@ -51,6 +51,8 @@ namespace SkyMedia.WebApp.Models
 
         public int FaceEmotionIntervalMilliseconds { get; set; }
 
+        public string FaceRedactionMode { get; set; }
+
         public string MotionSensitivityLevel { get; set; }
 
         public bool MotionDetectLightChange { get; set; }

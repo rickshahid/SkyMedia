@@ -22,10 +22,12 @@
     string indexerSpokenLanguagesId = "indexerSpokenLanguages" + taskNumber;
     string indexerCaptionWebVttId = "indexerCaptionWebVtt" + taskNumber;
     string indexerCaptionTtmlId = "indexerCaptionTtml" + taskNumber;
-    string faceConfigRowId = "faceConfigRow" + taskNumber;
+    string faceDetectionConfigRowId = "faceDetectionConfigRow" + taskNumber;
     string faceEmotionDetectId = "faceEmotionDetect" + taskNumber;
     string faceEmotionWindowMillisecondsId = "faceEmotionWindowMilliseconds" + taskNumber;
     string faceEmotionIntervalMillisecondsId = "faceEmotionIntervalMilliseconds" + taskNumber;
+    string faceRedactionConfigRowId = "faceRedactionConfigRow" + taskNumber;
+    string faceRedactionModeId = "faceRedactionMode" + taskNumber;
     string motionConfigRowId = "motionConfigRow" + taskNumber;
     string motionSensitivityLevelId = "motionSensitivityLevel" + taskNumber;
     string motionDetectLightChangeId = "motionDetectLightChange" + taskNumber;
@@ -84,12 +86,11 @@
                     @Html.TextBox(encoderConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file" })
                 </td>
             </tr>
-
-
-
             <tr id="@indexerConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Audio Indexer:
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
+                        Audio Indexer:
+                    </span>
                 </td>
                 <td>
                     <select id="@indexerSpokenLanguagesId" multiple="multiple"></select>
@@ -109,9 +110,11 @@
                     </span>
                 </td>
             </tr>
-            <tr id="@faceConfigRowId" style="display: none">
+            <tr id="@faceDetectionConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Face Detection:
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection')">
+                        Face Detection:
+                    </span>
                 </td>
                 <td>
                     <table class="workflowTaskConfig1">
@@ -142,9 +145,35 @@
                     </table>
                 </td>
             </tr>
+            <tr id="@faceRedactionConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction')">
+                        Face Redaction:
+                    </span>
+                </td>
+                <td>
+                    <span class="inputLabel">
+                        Media Processor Mode
+                    </span>
+                    @Html.RadioButton(faceRedactionModeId, "analyze", true, new { @class = "faceRedactionMode" })
+                    <span class="inputLabel">
+                        Analyze
+                    </span>
+                    @Html.RadioButton(faceRedactionModeId, "redact", false, new { @class = "faceRedactionMode" })
+                    <span class="inputLabel">
+                        Redact
+                    </span>
+                    @Html.RadioButton(faceRedactionModeId, "combined", false, new { @class = "faceRedactionMode" })
+                    <span class="inputLabel">
+                        Combined
+                    </span>
+                </td>
+            </tr>
             <tr id="@motionConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Motion Detect:
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection')">
+                        Motion Detection:
+                    </span>
                 </td>
                 <td>
                     <span class="inputLabel">
@@ -163,7 +192,9 @@
             </tr>
             <tr id="@hyperlapseConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Hyperlapse:
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content')">
+                        Hyperlapse:
+                    </span>
                 </td>
                 <td>
                     <table class="workflowTaskConfig2">
@@ -192,7 +223,9 @@
             </tr>
             <tr id="@summaryConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    Summarization:
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization')">
+                        Summarization:
+                    </span>
                 </td>
                 <td>
                     <span class="inputLabel">
