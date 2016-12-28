@@ -128,7 +128,7 @@ namespace SkyMedia.ServiceBroker
                         string sourceFileName = fileNames[0];
                         string languageCode = GetLanguageCode(jobTask, processorId1);
                         string destinationFileName = sourceFileName.Replace(fileExtension, string.Concat("-", languageCode, fileExtension));
-                        blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName);
+                        blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName, false);
                     }
                 }
                 encoderAsset.Update();
@@ -138,14 +138,14 @@ namespace SkyMedia.ServiceBroker
         private static void PublishAnalytics(IJob job, IAsset encoderAsset, ContentPublish contentPublish)
         {
             string settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
-            string processorId1 = AppSetting.GetValue(settingKey);
+            string faceDetectorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorFaceRedactionId;
-            string processorId2 = AppSetting.GetValue(settingKey);
+            string faceRedactorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorMotionDetectionId;
-            string processorId3 = AppSetting.GetValue(settingKey);
+            string motionDetectorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
-            string processorId4 = AppSetting.GetValue(settingKey);
-            string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4 };
+            string characterRecognizerId = AppSetting.GetValue(settingKey);
+            string[] processorIds = new string[] { faceDetectorId, faceRedactorId, motionDetectorId, characterRecognizerId };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             if (jobTasks.Length > 0)
             {
@@ -173,8 +173,15 @@ namespace SkyMedia.ServiceBroker
                             string documentId = databaseClient.CreateDocument(collectionId, jsonData);
                             string processorName = jobTask.Name.Replace(' ', Constants.NamedItemSeparator);
                             string destinationFileName = string.Concat(documentId, Constants.NamedItemsSeparator, processorName, fileExtension);
-                            blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName);
+                            blobClient.CopyFile(outputAsset, encoderAsset, sourceFileName, destinationFileName, false);
                         }
+                    }
+                    if (string.Equals(jobTask.MediaProcessorId, faceRedactorId, StringComparison.InvariantCultureIgnoreCase) &&
+                        jobTask.Configuration.Contains("analyze"))
+                    {
+                        IAsset inputAsset = jobTask.InputAssets[0];
+                        string sourceFileName = GetPrimaryFile(inputAsset);
+                        blobClient.CopyFile(inputAsset, outputAsset, sourceFileName, sourceFileName, true);
                     }
                 }
             }

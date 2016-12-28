@@ -175,7 +175,7 @@ namespace SkyMedia.ServiceBroker
             return operationId;
         }
 
-        public string CopyFile(IAsset sourceAsset, IAsset destinationAsset, string sourceFileName, string destinationFileName)
+        public string CopyFile(IAsset sourceAsset, IAsset destinationAsset, string sourceFileName, string destinationFileName, bool primaryFile)
         {
             string sourceContainerName = sourceAsset.Uri.Segments[1];
             CloudBlockBlob sourceBlob = GetBlob(sourceContainerName, string.Empty, sourceFileName, true);
@@ -185,6 +185,7 @@ namespace SkyMedia.ServiceBroker
             IAssetFile assetFile = destinationAsset.AssetFiles.Create(destinationFileName);
             assetFile.ContentFileSize = sourceBlob.Properties.Length;
             assetFile.MimeType = sourceBlob.Properties.ContentType;
+            assetFile.IsPrimary = primaryFile;
             assetFile.Update();
             return operationId;
         }

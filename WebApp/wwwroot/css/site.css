@@ -546,8 +546,11 @@ body {
 }
 
 .jstree-checkbox {
-    background-position-x: -170px !important;
-    width: 15px !important;
+    width: 28px !important;
+}
+
+.jstree-anchor {
+    padding: 0px !important;
 }
 
 .jstree-node {
