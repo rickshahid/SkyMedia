@@ -232,7 +232,7 @@ body {
 }
 
 .faceRedactionMode {
-    margin-left: 10px;
+    margin-right: 6px;
 }
 
 .workflowTaskConfig1 td {
@@ -527,7 +527,6 @@ body {
 .mediaAssets {
     background-color: deepskyblue;
     border-radius: 20px;
-    padding-top: 5px;
     overflow-x: auto;
     overflow-y: auto;
 }
@@ -544,6 +543,11 @@ body {
 
 .mediaFile > .jstree-checkbox {
     display: none !important;
+}
+
+.jstree-checkbox {
+    background-position-x: -170px !important;
+    width: 15px !important;
 }
 
 .jstree-node {

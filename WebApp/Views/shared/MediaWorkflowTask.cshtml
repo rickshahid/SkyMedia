@@ -152,20 +152,17 @@
                     </span>
                 </td>
                 <td>
-                    <span class="inputLabel">
-                        Media Processor Mode
+                    @Html.RadioButton(faceRedactionModeId, "analyze", true)
+                    <span class="inputLabel faceRedactionMode">
+                        Analyze Only Mode
                     </span>
-                    @Html.RadioButton(faceRedactionModeId, "analyze", true, new { @class = "faceRedactionMode" })
-                    <span class="inputLabel">
-                        Analyze
+                    @Html.RadioButton(faceRedactionModeId, "redact", false)
+                    <span class="inputLabel faceRedactionMode">
+                        Redact Mode
                     </span>
-                    @Html.RadioButton(faceRedactionModeId, "redact", false, new { @class = "faceRedactionMode" })
+                    @Html.RadioButton(faceRedactionModeId, "combined", false)
                     <span class="inputLabel">
-                        Redact
-                    </span>
-                    @Html.RadioButton(faceRedactionModeId, "combined", false, new { @class = "faceRedactionMode" })
-                    <span class="inputLabel">
-                        Combined
+                        Combined Mode
                     </span>
                 </td>
             </tr>
