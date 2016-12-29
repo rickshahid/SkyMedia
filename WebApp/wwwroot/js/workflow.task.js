@@ -236,7 +236,7 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
     $("#indexerSpokenLanguages" + taskNumber).multiselect({
         noneSelectedText: "0 of " + languageCount + " Languages Enabled",
         selectedText: "# of " + languageCount + " Languages Enabled",
-        classes: "multiSelect mediaProcessor" + (indexerV1 ? " indexerLanguages" : ""),
+        classes: "multiSelectOptions mediaProcessor" + (indexerV1 ? " mediaIndexerLanguages" : ""),
         header: false
     });
     $("#faceEmotionWindowMilliseconds" + taskNumber).spinner({
@@ -288,7 +288,7 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
     $("#taskOptions" + taskNumber).multiselect({
         noneSelectedText: "0 of 3 Task Options Enabled",
         selectedText: "# of 3 Task Options Enabled",
-        classes: "multiSelect jobTaskOptions",
+        classes: "multiSelectOptions jobTaskOptions",
         header: false
     });
 }

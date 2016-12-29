@@ -231,19 +231,19 @@ body {
     margin-left: 8px;
 }
 
+.faceDetectionConfig td {
+    padding: 0px !important;
+}
+
+.faceEmotionConfig {
+    margin-left: 6px;
+}
+
 .faceRedactionMode {
     margin-right: 6px;
 }
 
-.workflowTaskConfig1 td {
-    padding: 0px !important;
-}
-
-.workflowTaskConfig1Option {
-    margin-left: 6px;
-}
-
-.workflowTaskConfig2 td {
+.motionHyperlapseConfig td {
     padding: 0px 5px 0px 0px !important;
 }
 
@@ -268,6 +268,16 @@ body {
     width: 50px;
 }
 
+.ui-slider {
+    background: deepskyblue;
+    height: 5px;
+}
+
+.ui-slider-handle {
+    background: deepskyblue !important;
+    border-radius: 10px;
+}
+
 .slider {
     display: inline-block;
     margin-left: 15px;
@@ -289,16 +299,6 @@ body {
 
 .sliderHandle {
     height: 15px !important;
-}
-
-.ui-slider {
-    background: deepskyblue;
-    height: 5px;
-}
-
-.ui-slider-handle {
-    background: deepskyblue !important;
-    border-radius: 10px;
 }
 
 .ui-dialog-title {
@@ -383,15 +383,6 @@ body {
 
 .plupload_progress {
     margin-right: 238px;
-}
-
-.inputLabel {
-    padding-right: 0px !important;
-    white-space: nowrap;
-    color: deepskyblue;
-    font-weight: bold;
-    text-align: right;
-    width: 0px;
 }
 
 .signiantUploader {
@@ -487,7 +478,7 @@ body {
     border: 1px solid deepskyblue;
     border-radius: 20px;
     padding-left: 10px;
-    padding-top: 10px;
+    padding-top: 5px;
     width: 720px;
 }
 
@@ -527,8 +518,7 @@ body {
 .mediaAssets {
     background-color: deepskyblue;
     border-radius: 20px;
-    overflow-x: auto;
-    overflow-y: auto;
+    overflow: auto;
 }
 
 .mediaAssets.libraryView {
@@ -558,14 +548,6 @@ body {
     font-size: large;
 }
 
-.multiSelect {
-    font-size: small;
-}
-
-.indexerLanguages {
-    max-height: 85px;
-}
-
 .mediaProcessor {
     font-weight: bold;
     width: 200px !important;
@@ -574,6 +556,15 @@ body {
 .mediaProcessorConfig {
     font-weight: bold;
     width: 440px;
+}
+
+.inputLabel {
+    padding-right: 0px !important;
+    white-space: nowrap;
+    color: deepskyblue;
+    font-weight: bold;
+    text-align: right;
+    width: 0px;
 }
 
 .inputAssetName {
@@ -604,6 +595,14 @@ body {
 
 .jobTaskOptions {
     width: 225px !important;
+    max-height: 85px;
+}
+
+.multiSelectOptions {
+    font-size: small;
+}
+
+.mediaIndexerLanguages {
     max-height: 85px;
 }
 

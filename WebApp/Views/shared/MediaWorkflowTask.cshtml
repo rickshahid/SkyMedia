@@ -117,7 +117,7 @@
                     </span>
                 </td>
                 <td>
-                    <table class="workflowTaskConfig1">
+                    <table class="faceDetectionConfig">
                         <tr>
                             <td>
                                 @Html.CheckBox(faceEmotionDetectId, false)
@@ -126,7 +126,7 @@
                                 Emotion
                             </td>
                             <td class="inputLabel">
-                                <span class="workflowTaskConfig1Option">
+                                <span class="faceEmotionConfig">
                                     Window (ms)
                                 </span>
                             </td>
@@ -134,7 +134,7 @@
                                 <input id="@faceEmotionWindowMillisecondsId" value="500" class="spinner d4" />
                             </td>
                             <td class="inputLabel">
-                                <span class="workflowTaskConfig1Option">
+                                <span class="faceEmotionConfig">
                                     Interval (ms)
                                 </span>
                             </td>
@@ -194,7 +194,7 @@
                     </span>
                 </td>
                 <td>
-                    <table class="workflowTaskConfig2">
+                    <table class="motionHyperlapseConfig">
                         <tr>
                             <td class="inputLabel">
                                 Start Frame
@@ -254,7 +254,7 @@
                         Content Protection
                     </span>
                     &nbsp;
-                    @Html.CheckBox(encoderFragmentOutputId, false)
+                    @Html.CheckBox(encoderFragmentOutputId, true)
                     <span class="inputLabel">
                         Content (Output) Fragmentation
                     </span>

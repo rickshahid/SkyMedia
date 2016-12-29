@@ -129,9 +129,7 @@ namespace SkyMedia.WebApp.Models
         {
             get
             {
-                string settingKey = Constants.AppSettings.MediaProcessorEncoderStandardDocumentId;
-                string processorDocumentId = AppSetting.GetValue(settingKey);
-                return new { processorDocumentId = processorDocumentId, protectionTypes = _protectionTypes };
+                return new { protectionTypes = _protectionTypes };
             }
         }
     }

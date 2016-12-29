@@ -1,17 +1,13 @@
 ﻿@section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/amp-default/azuremediaplayer.min.css" />
     <link type="text/css" rel="stylesheet" href="~/lib/jstree/dist/themes/default/style.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="~/lib/jstree/dist/jstree.min.js"></script>
-    <script type="text/javascript" src="~/js/amve.min.js"></script>
-    <script type="text/javascript" src="~/js/workflow.js"></script>
-    <script type="text/javascript" src="~/js/editor.js"></script>
-   <script type="text/javascript">
+    <script type="text/javascript">
         $(function () {
             var authToken = "@ViewData["authToken"]";
             var cdnUrl = "@ViewData["storageCdnUrl"]";
-            LoadTreeAssets(authToken, cdnUrl, true);
+            LoadTreeAssets(authToken, cdnUrl, false);
         })
     </script>
 }
@@ -23,7 +19,3 @@
 <div id="mediaAssets" class="mediaAssets libraryView"></div>
 
 @Html.Partial("MediaBar", null)
-
-<div id="editorDialog" style="display: none">
-    @Html.Partial("MediaPlayer")
-</div>

@@ -110,7 +110,7 @@ function GetMediaPlayer(editVideo) {
     if (editVideo) {
         mediaPlayer.AMVE({
             containerId: "videoEditor",
-            clipdataCallback: CreateSubclip
+            clipdataCallback: SetVideoMarks
         });
     }
     $(".amp-logo").click(function () {
@@ -175,10 +175,26 @@ function GetProtectionInfo(protectionTypes, authToken) {
     }
     return protectionInfo;
 }
-function LoadTreeAssets(authToken, cdnUrl, libraryView) {
-    var plugins = libraryView ? ["contextmenu"] : ["checkbox"];
+function ToggleMediaAnalytics(button) {
+    var buttonImage = button.children[0];
+    if (buttonImage.src.indexOf("MediaAnalyticsOpen") > -1) {
+        buttonImage.src = buttonImage.src.replace("Open", "Close");
+        var mediaPlayer = GetMediaPlayer(false);
+        var playerHeight = mediaPlayer.height();
+        $("#mediaMetadata").height(playerHeight);
+        $("#analyticsPanel").show();
+    } else {
+        buttonImage.src = buttonImage.src.replace("Close", "Open");
+        $("#analyticsPanel").hide();
+    }
+}
+function LoadTreeAssets(authToken, cdnUrl, workflowView) {
+    var plugins = workflowView ? ["contextmenu", "checkbox"] : [];
     $("#mediaAssets").jstree({
         "core": {
+            "check_callback": function (operation, node, node_parent, node_position, more) {
+                return operation == "rename_node";
+            },
             "themes": {
                 "variant": "large"
             },
@@ -203,11 +219,18 @@ function LoadTreeAssets(authToken, cdnUrl, libraryView) {
                 var menuItems = {};
                 if (treeNode.a_attr.isStreamable) {
                     menuItems = {
-                        "Edit": {
-                            "label": "Create Subclip",
-                            "icon": cdnUrl + "/MediaAssetEdit.png",
+                        "Set": {
+                            "label": "Set Video Marks",
+                            "icon": cdnUrl + "/MediaAssetEditSet.png",
                             "action": function (treeNode) {
-                                DisplayEditor(treeNode, authToken);
+                                DisplayVideoEditor(treeNode, authToken);
+                            }
+                        },
+                        "Clear": {
+                            "label": "Clear Video Marks",
+                            "icon": cdnUrl + "/MediaAssetEditClear.png",
+                            "action": function (treeNode) {
+                                ClearVideoMarks(treeNode);
                             }
                         }
                     };
@@ -217,16 +240,83 @@ function LoadTreeAssets(authToken, cdnUrl, libraryView) {
         }
     });
 }
-function ToggleMediaAnalytics(button) {
-    var buttonImage = button.children[0];
-    if (buttonImage.src.indexOf("MediaAnalyticsOpen") > -1) {
-        buttonImage.src = buttonImage.src.replace("Open", "Close");
-        var mediaPlayer = GetMediaPlayer(false);
-        var playerHeight = mediaPlayer.height();
-        $("#mediaMetadata").height(playerHeight);
-        $("#analyticsPanel").show();
+function DisplayVideoEditor(treeNode, authToken) {
+    var nodeRef = $.jstree.reference(treeNode.reference);
+    _mediaAsset = nodeRef.get_node(treeNode.reference);
+    var mediaPlayer = GetMediaPlayer(true);
+    var sourceUrl = _mediaAsset.original.url;
+    var protectionTypes = _mediaAsset.data.protectionTypes;
+    mediaPlayer.src([{
+        src: sourceUrl,
+        type: GetSourceType(sourceUrl),
+        protectionInfo: GetProtectionInfo(protectionTypes, authToken)
+    }]);
+    var dialogId = "editorDialog";
+    var title = "Azure Media Video Editor";
+    var buttons = {};
+    var onClose = function () {
+        if (AssetEdited(_mediaAsset.id)) {
+            SetAssetText(true);
+        }
+        $("#videoEditor").empty();
+    };
+    DisplayDialog(dialogId, title, null, buttons, null, null, onClose);
+}
+function SetVideoMarks(clipData) {
+    if (clipData == null) {
+        $(".amve-rendered-btn")[0].click();
+        _editedAssets = new Array();
     } else {
-        buttonImage.src = buttonImage.src.replace("Close", "Open");
-        $("#analyticsPanel").hide();
+        var editedAsset;
+        var markIn = Math.floor(clipData.markIn);
+        var markOut = Math.floor(clipData.markOut);
+        for (var i = 0; i < _editedAssets.length; i++) {
+            if (_editedAssets[i].AssetId == _mediaAsset.id) {
+                _editedAssets[i].MarkId = markIn;
+                _editedAssets[i].MarkOut = markOut;
+                editedAsset = _editedAssets[i];
+            }
+        }
+        if (editedAsset == null) {
+            editedAsset = {
+                AssetId: _mediaAsset.id,
+                MarkIn: markIn,
+                MarkOut: markOut
+            };
+            _editedAssets.push(editedAsset);
+            _mediaAsset.Edited = true;
+        }
+        $("#editorDialog").dialog("close");
     }
+}
+function ClearVideoMarks(treeNode) {
+    SetAssetText(false);
+    for (var i = 0; i < _editedAssets.length; i++) {
+        if (_editedAssets[i].AssetId == _mediaAsset.id) {
+            _editedAssets.splice(i, 1);
+        }
+    }
+}
+function AssetEdited(assetId) {
+    var assetEdited = false;
+    if (_editedAssets != null) {
+        for (var i = 0; i < _editedAssets.length; i++) {
+            if (_editedAssets[i].AssetId == assetId) {
+                assetEdited = true;
+            }
+        }
+    }
+    return assetEdited;
+}
+function SetAssetText(editActive) {
+    var editedText = "(<i>Edited</i>) ";
+    var assetsTree = $.jstree.reference("#mediaAssets");
+    var assetNode = assetsTree.get_node(_mediaAsset.id);
+    var nodeText = assetsTree.get_text(assetNode);
+    if (editActive) {
+        nodeText = editedText + nodeText;
+    } else {
+        nodeText = nodeText.replace(editedText, "");
+    }
+    assetsTree.rename_node(assetNode, nodeText);
 }

@@ -76,7 +76,6 @@ namespace SkyMedia.ServiceBroker
             public const string MediaStream5ProtectionTypes = "Media.Stream5.ProtectionTypes";
 
             public const string MediaProcessorEncoderStandardId = "Media.Processor.EncoderStandardId";
-            public const string MediaProcessorEncoderStandardDocumentId = "Media.Processor.EncoderStandardDocumentId";
             public const string MediaProcessorEncoderPremiumId = "Media.Processor.EncoderPremiumId";
 
             public const string MediaProcessorIndexerV1Id = "Media.Processor.IndexerV1Id";

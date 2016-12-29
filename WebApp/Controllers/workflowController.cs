@@ -80,8 +80,8 @@ namespace SkyMedia.WebApp.Controllers
                 inputAssets[i].PrimaryFile = MediaClient.GetPrimaryFile(asset);
                 if (!string.IsNullOrEmpty(inputAssets[i].MarkIn) && !string.IsNullOrEmpty(inputAssets[i].MarkOut))
                 {
-                    int markIn = Convert.ToInt32(Math.Floor(Convert.ToDecimal(inputAssets[i].MarkIn)));
-                    int markOut = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(inputAssets[i].MarkOut)));
+                    int markIn = Convert.ToInt32(inputAssets[i].MarkIn);
+                    int markOut = Convert.ToInt32(inputAssets[i].MarkOut);
                     int clipDuration = markOut - markIn;
                     TimeSpan markInTime = new TimeSpan(0, 0, markIn);
                     TimeSpan clipDurationTime = new TimeSpan(0, 0, clipDuration);

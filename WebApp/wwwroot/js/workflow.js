@@ -1,4 +1,4 @@
-﻿var _inputAssets;
+﻿var _mediaAsset, _editedAssets, _inputAssets;
 function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
     CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
     CreateTipRight("mediaWorkflowTaskRemove", "Remove Job Task");
@@ -95,6 +95,14 @@ function GetInputAssets() {
             var inputAsset = {
                 AssetId: mediaAssets[i]
             };
+            if (_editedAssets != null) {
+                for (var x = 0; x < _editedAssets.length; x++) {
+                    if (inputAsset.AssetId == _editedAssets[x].AssetId) {
+                        inputAsset.MarkIn = _editedAssets[x].MarkIn;
+                        inputAsset.MarkOut = _editedAssets[x].MarkOut;
+                    }
+                }
+            }
             inputAssets.push(inputAsset);
         }
     }
