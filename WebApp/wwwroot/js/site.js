@@ -1,4 +1,5 @@
-﻿function SignOut(cookieName) {
+﻿var _mediaAsset, _editedAssets, _inputAssets;
+function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signout";
 }
@@ -110,7 +111,6 @@ function GetMediaPlayer(editVideo) {
     if (editVideo) {
         mediaPlayer.AMVE({
             containerId: "videoEditor",
-            //customMetadataContainerId: "",
             clipdataCallback: SetVideoEdit
         });
     }

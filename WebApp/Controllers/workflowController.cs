@@ -18,7 +18,6 @@ namespace SkyMedia.WebApp.Controllers
         {
             MediaAssetInput inputAsset = new MediaAssetInput();
             inputAsset.AssetId = asset.Id;
-            inputAsset.AssetName = asset.Name;
             inputAsset.PrimaryFile = MediaClient.GetPrimaryFile(asset);
             return inputAsset;
         }
@@ -29,10 +28,7 @@ namespace SkyMedia.WebApp.Controllers
             foreach (MediaAssetInput asset in assets)
             {
                 IAsset mediaAsset = mediaClient.GetEntityById(EntityType.Asset, asset.AssetId) as IAsset;
-                MediaAssetInput inputAsset = new MediaAssetInput();
-                inputAsset.AssetId = asset.AssetId;
-                inputAsset.AssetName = mediaAsset.Name;
-                inputAsset.PrimaryFile = MediaClient.GetPrimaryFile(mediaAsset);
+                MediaAssetInput inputAsset = MapInputAsset(mediaAsset);
                 inputAsset.MarkIn = asset.MarkIn;
                 inputAsset.MarkOut = asset.MarkOut;
                 inputAssets.Add(inputAsset);

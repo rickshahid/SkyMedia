@@ -548,6 +548,10 @@ body {
     font-size: large;
 }
 
+.treeNodeEdited {
+    font-style: italic;
+}
+
 .mediaProcessor {
     font-weight: bold;
     width: 200px !important;

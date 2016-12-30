@@ -1,5 +1,4 @@
-﻿var _mediaAsset, _editedAssets, _inputAssets;
-function LoadTreeAssets(authToken, cdnUrl, workflowView) {
+﻿function LoadTreeAssets(authToken, cdnUrl, workflowView) {
     var plugins = workflowView ? ["contextmenu", "checkbox"] : ["contextmenu"];
     if (_editedAssets == null) {
         _editedAssets = new Array();
@@ -128,10 +127,10 @@ function GetEditedAsset(assetId) {
     return editedAsset;
 }
 function SetAssetText(editActive) {
-    var editedText = "(<i>Edited</i>) ";
     var assetsTree = $.jstree.reference("#mediaAssets");
     var assetNode = assetsTree.get_node(_mediaAsset.id);
     var nodeText = assetsTree.get_text(assetNode);
+    var editedText = "<span class='treeNodeEdited'>(Edited)</span> ";
     if (editActive) {
         if (nodeText.indexOf(editedText) == -1) {
             nodeText = editedText + nodeText;
