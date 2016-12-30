@@ -1,5 +1,4 @@
-﻿var _mediaAsset, _editedAssets, _inputAssets;
-function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
+﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
     CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
     CreateTipRight("mediaWorkflowTaskRemove", "Remove Job Task");
     CreateTipLeft("mediaWorkflowStart", "Start Workflow");
@@ -54,7 +53,7 @@ function ValidWorkflowInput(uploadView) {
     } else {
         _inputAssets = GetInputAssets();
         if (_inputAssets.length == 0) {
-            CreateTipTopLeft("mediaAssets", "Check Media Asset(s)", 48, 10);
+            CreateTipTopLeft("mediaAssets", "Check Media Asset(s)", 48, 5);
             SetTipVisible("mediaAssets", true);
             validInput = false;
         }

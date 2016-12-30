@@ -110,7 +110,8 @@ function GetMediaPlayer(editVideo) {
     if (editVideo) {
         mediaPlayer.AMVE({
             containerId: "videoEditor",
-            clipdataCallback: SetVideoMarks
+            //customMetadataContainerId: "",
+            clipdataCallback: SetVideoEdit
         });
     }
     $(".amp-logo").click(function () {

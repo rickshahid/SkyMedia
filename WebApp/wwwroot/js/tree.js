@@ -1,5 +1,9 @@
-﻿function LoadTreeAssets(authToken, cdnUrl, workflowView) {
-    var plugins = workflowView ? ["contextmenu", "checkbox"] : [];
+﻿var _mediaAsset, _editedAssets, _inputAssets;
+function LoadTreeAssets(authToken, cdnUrl, workflowView) {
+    var plugins = workflowView ? ["contextmenu", "checkbox"] : ["contextmenu"];
+    if (_editedAssets == null) {
+        _editedAssets = new Array();
+    }
     $("#mediaAssets").jstree({
         "core": {
             "check_callback": function (operation, node, node_parent, node_position, more) {
@@ -30,17 +34,17 @@
                 if (treeNode.a_attr.isStreamable) {
                     menuItems = {
                         "Set": {
-                            "label": "Set Video Marks",
+                            "label": "Set Video Edit",
                             "icon": cdnUrl + "/MediaAssetEditSet.png",
                             "action": function (treeNode) {
                                 DisplayVideoEditor(treeNode, authToken);
                             }
                         },
                         "Clear": {
-                            "label": "Clear Video Marks",
+                            "label": "Clear Video Edit",
                             "icon": cdnUrl + "/MediaAssetEditClear.png",
                             "action": function (treeNode) {
-                                ClearVideoMarks(treeNode);
+                                ClearVideoEdit(treeNode);
                             }
                         }
                     };
@@ -65,17 +69,25 @@ function DisplayVideoEditor(treeNode, authToken) {
     var title = "Azure Media Video Editor";
     var buttons = {};
     var onClose = function () {
-        if (AssetEdited(_mediaAsset.id)) {
+        var editedAsset = GetEditedAsset(_mediaAsset.id);
+        if (editedAsset != null) {
             SetAssetText(true);
         }
         $("#videoEditor").empty();
     };
     DisplayDialog(dialogId, title, null, buttons, null, null, onClose);
 }
-function SetVideoMarks(clipData) {
+function SetVideoEdit(clipData) {
     if (clipData == null) {
         $(".amve-rendered-btn")[0].click();
-        _editedAssets = new Array();
+        var editedAsset = GetEditedAsset(_mediaAsset.id);
+        if (editedAsset != null) {
+            var mediaPlayer = GetMediaPlayer(false);
+            mediaPlayer.currentTime(editedAsset.MarkIn);
+            $(".amve-setmarkin-btn")[0].click();
+            mediaPlayer.currentTime(editedAsset.MarkOut);
+            $(".amve-setmarkout-btn")[0].click();
+        }
     } else {
         var editedAsset;
         var markIn = Math.floor(clipData.markIn);
@@ -94,12 +106,11 @@ function SetVideoMarks(clipData) {
                 MarkOut: markOut
             };
             _editedAssets.push(editedAsset);
-            _mediaAsset.Edited = true;
         }
         $("#editorDialog").dialog("close");
     }
 }
-function ClearVideoMarks(treeNode) {
+function ClearVideoEdit(treeNode) {
     SetAssetText(false);
     for (var i = 0; i < _editedAssets.length; i++) {
         if (_editedAssets[i].AssetId == _mediaAsset.id) {
@@ -107,16 +118,14 @@ function ClearVideoMarks(treeNode) {
         }
     }
 }
-function AssetEdited(assetId) {
-    var assetEdited = false;
-    if (_editedAssets != null) {
-        for (var i = 0; i < _editedAssets.length; i++) {
-            if (_editedAssets[i].AssetId == assetId) {
-                assetEdited = true;
-            }
+function GetEditedAsset(assetId) {
+    var editedAsset;
+    for (var i = 0; i < _editedAssets.length; i++) {
+        if (_editedAssets[i].AssetId == assetId) {
+            editedAsset = _editedAssets[i];
         }
     }
-    return assetEdited;
+    return editedAsset;
 }
 function SetAssetText(editActive) {
     var editedText = "(<i>Edited</i>) ";
@@ -124,7 +133,9 @@ function SetAssetText(editActive) {
     var assetNode = assetsTree.get_node(_mediaAsset.id);
     var nodeText = assetsTree.get_text(assetNode);
     if (editActive) {
-        nodeText = editedText + nodeText;
+        if (nodeText.indexOf(editedText) == -1) {
+            nodeText = editedText + nodeText;
+        }
     } else {
         nodeText = nodeText.replace(editedText, "");
     }
