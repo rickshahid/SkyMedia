@@ -73,7 +73,7 @@
                     </span>
                 </td>
                 <td>
-                    @Html.DropDownList(encoderConfigId, null, new { @class = "mediaProcessorConfig", onchange = "SetEncoderConfigFile(this)" })
+                    @Html.DropDownList(encoderConfigId, null, new { @class = "mediaProcessorConfig", onchange = "SetEncoderConfigOptions(this)" })
                 </td>
             </tr>
             <tr id="@encoderConfigFileRowId" style="display: none">
@@ -212,7 +212,7 @@
                                 Speed
                             </td>
                             <td>
-                                <input id="@hyperlapseSpeedId" value="3" class="spinner d1" />
+                                <input id="@hyperlapseSpeedId" value="3" class="spinner d2" />
                             </td>
                         </tr>
                     </table>
@@ -254,7 +254,7 @@
                         Content Protection
                     </span>
                     &nbsp;
-                    @Html.CheckBox(encoderFragmentOutputId, true)
+                    @Html.CheckBox(encoderFragmentOutputId, false)
                     <span class="inputLabel">
                         Content (Output) Fragmentation
                     </span>
@@ -326,6 +326,6 @@
                     </table>
                 </td>
             </tr>
-       </table>
+        </table>
     </td>
 </tr>

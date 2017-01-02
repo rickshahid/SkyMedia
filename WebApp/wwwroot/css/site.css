@@ -256,7 +256,7 @@ body {
     font-size: small !important;
 }
 
-.spinner.d1 {
+.spinner.d2 {
     width: 28px;
 }
 
@@ -628,7 +628,15 @@ body {
 }
 
 .contentAuthAddressRange {
-    width: 125px;
+    width: 128px;
+}
+
+.subclipTimes td {
+    padding: 5px;
+}
+
+.subclipTime {
+    padding-right: 10px !important;
 }
 
 .ui-jqgrid {

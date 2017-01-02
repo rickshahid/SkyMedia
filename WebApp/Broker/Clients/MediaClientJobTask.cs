@@ -23,9 +23,8 @@ namespace SkyMedia.ServiceBroker
             return contentProtection != null && (contentProtection.AES || contentProtection.DRMPlayReady || contentProtection.DRMWidevine);
         }
 
-        private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, string processorConfig, MediaAssetInput[] inputAssets)
+        private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
-            jobTask.ProcessorConfig = (processorConfig == null) ? string.Empty : processorConfig;
             jobTask.InputAssetIds = GetInputAssetIds(inputAssets);
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {

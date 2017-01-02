@@ -223,6 +223,15 @@ namespace SkyMedia.ServiceBroker
             }
         }
 
+        public struct Database
+        {
+            public struct CollectionName
+            {
+                public const string Encoding = "Encoding";
+                public const string Metadata = "Metadata";
+            }
+        }
+
         public struct Media
         {
             public const string TrackSubtitles = "subtitles";
@@ -307,7 +316,6 @@ namespace SkyMedia.ServiceBroker
             {
                 public const string VttExtension = ".vtt";
                 public const string JsonExtension = ".json";
-                public const string DocumentCollection = "Metadata";
             }
         }
     }

@@ -151,7 +151,7 @@ namespace SkyMedia.ServiceBroker
             {
                 BlobClient blobClient = new BlobClient(contentPublish);
                 DatabaseClient databaseClient = new DatabaseClient(true);
-                string collectionId = Constants.Media.AssetMetadata.DocumentCollection;
+                string collectionId = Constants.Database.CollectionName.Metadata;
                 foreach (ITask jobTask in jobTasks)
                 {
                     IAsset outputAsset = jobTask.OutputAssets[0];

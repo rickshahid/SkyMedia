@@ -13,7 +13,7 @@
             SetWorkflowInputs(false, null, null);
             var authToken = "@ViewData["authToken"]";
             var cdnUrl = "@ViewData["storageCdnUrl"]";
-            LoadTreeAssets(authToken, cdnUrl, true);
+            LoadTreeNodes(authToken, cdnUrl, true);
         })
     </script>
 }
@@ -23,6 +23,8 @@
 }
 
 @Html.Partial("MediaWorkflow", new string[] { "false", "" })
+
+@Html.Partial("MediaSubclip")
 
 <div id="editorDialog" style="display: none">
     @Html.Partial("MediaPlayer")

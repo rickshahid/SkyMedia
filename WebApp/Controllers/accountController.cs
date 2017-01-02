@@ -40,6 +40,17 @@ namespace SkyMedia.WebApp.Controllers
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
         {
+            DatabaseClient databaseClient = new DatabaseClient();
+            string collectionId = Constants.Database.CollectionName.Metadata;
+            foreach (IAssetFile file in asset.AssetFiles)
+            {
+                if (file.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension))
+                {
+                    string[] fileNameInfo = file.Name.Split(Constants.NamedItemsSeparator);
+                    string documentId = fileNameInfo[0];
+                    databaseClient.DeleteDocument(collectionId, documentId);
+                }
+            }
             foreach (ILocator locator in asset.Locators)
             {
                 locator.Delete();

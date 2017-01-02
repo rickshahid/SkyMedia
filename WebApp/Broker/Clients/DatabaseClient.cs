@@ -30,6 +30,34 @@ namespace SkyMedia.ServiceBroker
             _databaseId = AppSetting.GetValue(settingKey);
         }
 
+        private JObject GetResult(string document)
+        {
+            JObject jsonDoc = null;
+            if (document != null)
+            {
+                jsonDoc = JObject.Parse(document.ToString());
+                string settingKey = Constants.AppSettings.NoSqlDocumentProperties;
+                string[] properties = AppSetting.GetValue(settingKey).Split(Constants.MultiItemSeparator);
+                foreach (string property in properties)
+                {
+                    jsonDoc.Remove(property);
+                }
+            }
+            return jsonDoc;
+        }
+
+        public JObject GetDocument(string documentId)
+        {
+            string[] documentInfo = documentId.Split(Constants.MultiItemSeparator);
+            string collectionId = documentInfo[0];
+            documentId = documentInfo[1];
+            IQueryable<Document> query = _database.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId)
+                .Where(d => d.Id == documentId);
+            IEnumerable<Document> documents = query.AsEnumerable<Document>();
+            Document document = documents.FirstOrDefault();
+            return GetResult(document.ToString());
+        }
+
         public string CreateDocument(string collectionId, string jsonData)
         {
             JObject jsonDoc = JObject.Parse(jsonData);
@@ -40,29 +68,13 @@ namespace SkyMedia.ServiceBroker
             return responseDocument.Resource.Id;
         }
 
-        public JObject GetDocument(string documentId)
+        public string DeleteDocument(string collectionId, string documentId)
         {
-            string[] documentInfo = documentId.Split(Constants.MultiItemSeparator);
-            string collectionId = documentInfo[0];
-            documentId = documentInfo[1];
-
-            IQueryable<Document> query = _database.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId)
-                .Where(d => d.Id == documentId);
-            IEnumerable<Document> documents = query.AsEnumerable<Document>();
-            Document document = documents.FirstOrDefault();
-
-            JObject jsonDoc = null;
-            if (document != null)
-            {
-                jsonDoc = JObject.Parse(document.ToString());
-                string settingKey = Constants.AppSettings.NoSqlDocumentProperties;
-                string[] documentProperties = AppSetting.GetValue(settingKey).Split(Constants.MultiItemSeparator);
-                foreach (string documentProperty in documentProperties)
-                {
-                    jsonDoc.Remove(documentProperty);
-                }
-            }
-            return (jsonDoc == null) ? new JObject() : jsonDoc;
+            Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
+            Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri);
+            deleteTask.Wait();
+            ResourceResponse<Document> responseDocument = deleteTask.Result;
+            return responseDocument.Resource.Id;
         }
 
         public JObject ExecuteProcedure(string collectionId, string procedureId, params dynamic[] procedureParameters)
@@ -72,7 +84,7 @@ namespace SkyMedia.ServiceBroker
             Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
             procedureTask.Wait();
             StoredProcedureResponse<JValue> procedureResult = procedureTask.Result;
-            return JObject.Parse(procedureResult.Response.ToString());
+            return GetResult(procedureResult.Response.ToString());
         }
     }
 }

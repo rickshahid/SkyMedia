@@ -82,7 +82,7 @@ namespace SkyMedia.WebApp.Controllers
                     TimeSpan markInTime = new TimeSpan(0, 0, markIn);
                     TimeSpan clipDurationTime = new TimeSpan(0, 0, clipDuration);
                     inputAssets[i].MarkIn = markInTime.ToString(Constants.FormatTime);
-                    inputAssets[i].MarkOut = clipDurationTime.ToString(Constants.FormatTime);
+                    inputAssets[i].ClipDuration = clipDurationTime.ToString(Constants.FormatTime);
                 }
             }
         }
@@ -118,6 +118,21 @@ namespace SkyMedia.WebApp.Controllers
             return job;
         }
 
+        private JsonResult GetResult(MediaClient mediaClient, IJob job, MediaAssetInput[] inputAssets)
+        {
+            object result = job;
+            if (job == null)
+            {
+                foreach (MediaAssetInput inputAsset in inputAssets)
+                {
+                    IAsset asset = mediaClient.GetEntityById(EntityType.Asset, inputAsset.AssetId) as IAsset;
+                    inputAsset.AssetName = asset.Name;
+                }
+                result = inputAssets;
+            }
+            return Json(result);
+        }
+
         public JsonResult upload(string[] fileNames, string storageAccount, bool storageEncryption, string inputAssetName,
                                  bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, string jobName,
                                  int jobPriority, MediaJobTask[] jobTasks)
@@ -126,7 +141,7 @@ namespace SkyMedia.WebApp.Controllers
             MediaClient mediaClient = new MediaClient(authToken);
             inputAssets = CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, publishInputAsset, fileNames);
             IJob job = SubmitJob(authToken, mediaClient, storageAccount, inputAssets, jobName, jobPriority, jobTasks);
-            return (job != null) ? Json(job) : Json(inputAssets);
+            return GetResult(mediaClient, job, inputAssets);
         }
 
         public JsonResult start(MediaAssetInput[] inputAssets, string jobName, int jobPriority, MediaJobTask[] jobTasks)
@@ -145,7 +160,7 @@ namespace SkyMedia.WebApp.Controllers
                 }
             }
             IJob job = SubmitJob(authToken, mediaClient, null, inputAssets, jobName, jobPriority, jobTasks);
-            return (job != null) ? Json(job) : Json(inputAssets);
+            return GetResult(mediaClient, job, inputAssets);
         }
 
         public IActionResult index()

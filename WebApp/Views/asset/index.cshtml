@@ -10,7 +10,7 @@
         $(function () {
             var authToken = "@ViewData["authToken"]";
             var cdnUrl = "@ViewData["storageCdnUrl"]";
-            LoadTreeAssets(authToken, cdnUrl, false);
+            LoadTreeNodes(authToken, cdnUrl, false);
         })
     </script>
 }
@@ -22,6 +22,8 @@
 <div id="mediaAssets" class="mediaAssets libraryView"></div>
 
 @Html.Partial("MediaBar", null)
+
+@Html.Partial("MediaSubclip")
 
 <div id="editorDialog" style="display: none">
     @Html.Partial("MediaPlayer")

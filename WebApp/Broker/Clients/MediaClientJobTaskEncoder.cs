@@ -41,42 +41,50 @@ namespace SkyMedia.ServiceBroker
             else
             {
                 jobTask.Name = Selections.GetProcessorName(MediaProcessor.EncoderStandard);
-            }
-            string processorConfig = jobTask.ProcessorConfig;
-            if (processorConfig != null)
-            {
-                processorConfig = processorConfig.Trim();
-                if (processorConfig.StartsWith("{"))
+                bool inputSubclipped = false;
+                foreach (MediaAssetInput inputAsset in inputAssets)
                 {
-                    JArray inputSources = new JArray();
-                    foreach (MediaAssetInput inputAsset in inputAssets)
+                    if (!string.IsNullOrEmpty(inputAsset.MarkIn))
                     {
-                        if (!string.IsNullOrEmpty(inputAsset.MarkIn))
-                        {
-                            JObject inputSource = new JObject();
-                            inputSource.Add("StartTime", inputAsset.MarkIn);
-                            inputSource.Add("Duration", inputAsset.MarkOut);
-                            inputSources.Add(inputSource);
-                        }
-                    }
-                    if (inputSources.Count > 0)
-                    {
-                        JObject oldConfig = JObject.Parse(processorConfig);
-                        oldConfig.Remove("Sources");
-                        JObject newConfig = new JObject();
-                        newConfig.Add(oldConfig.First);
-                        newConfig.Add("Sources", inputSources);
-                        oldConfig.First.Remove();
-                        JEnumerable<JToken> children = oldConfig.Children();
-                        foreach (JToken child in children)
-                        {
-                            newConfig.Add(child);
-                        }
-                        processorConfig = newConfig.ToString();
+                        inputSubclipped = true;
                     }
                 }
+                if (inputSubclipped && !jobTask.ProcessorConfig.StartsWith("{"))
+                {
+                    DatabaseClient databaseClient = new DatabaseClient(true);
+                    string collectionId = Constants.Database.CollectionName.Encoding;
+                    string procedureId = "getEncoderConfig";
+                    JObject encoderConfig = databaseClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
+                    jobTask.ProcessorConfig = encoderConfig.ToString();
+                }
             }
-            jobTask = SetJobTask(mediaClient, jobTask, processorConfig, inputAssets);
+            JArray inputSources = new JArray();
+            foreach (MediaAssetInput inputAsset in inputAssets)
+            {
+                if (!string.IsNullOrEmpty(inputAsset.MarkIn))
+                {
+                    JObject inputSource = new JObject();
+                    inputSource.Add("StartTime", inputAsset.MarkIn);
+                    inputSource.Add("Duration", inputAsset.ClipDuration);
+                    inputSources.Add(inputSource);
+                }
+            }
+            if (inputSources.Count > 0)
+            {
+                JObject oldConfig = JObject.Parse(jobTask.ProcessorConfig);
+                oldConfig.Remove("Sources");
+                JObject newConfig = new JObject();
+                newConfig.Add(oldConfig.First);
+                newConfig.Add("Sources", inputSources);
+                oldConfig.First.Remove();
+                JEnumerable<JToken> children = oldConfig.Children();
+                foreach (JToken child in children)
+                {
+                    newConfig.Add(child);
+                }
+                jobTask.ProcessorConfig = newConfig.ToString();
+            }
+            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
             jobTasks.Add(jobTask);
             return jobTasks.ToArray();
         }

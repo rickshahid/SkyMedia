@@ -11,7 +11,7 @@ namespace SkyMedia.WebApp.Controllers
         private JObject GetFragment(string documentId, double timeSeconds)
         {
             DatabaseClient databaseClient = new DatabaseClient(true);
-            string collectionId = Constants.Media.AssetMetadata.DocumentCollection;
+            string collectionId = Constants.Database.CollectionName.Metadata;
             return databaseClient.ExecuteProcedure(collectionId, "getTimecodeFragment", documentId, timeSeconds);
         }
 
