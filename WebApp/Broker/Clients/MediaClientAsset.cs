@@ -116,8 +116,8 @@ namespace SkyMedia.ServiceBroker
                 }
             }
 
-            asset.Update();
             SetPrimaryFile(asset);
+            asset.Update();
             return asset;
         }
 

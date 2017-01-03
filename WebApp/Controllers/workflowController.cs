@@ -45,7 +45,7 @@ namespace SkyMedia.WebApp.Controllers
                 IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
                 if (publishInputAsset)
                 {
-                    MediaClient.PublishAsset(mediaClient, asset);
+                    MediaClient.PublishContent(mediaClient, asset);
                 }
                 MediaAssetInput inputAsset = MapInputAsset(asset);
                 inputAssets.Add(inputAsset);
@@ -59,7 +59,7 @@ namespace SkyMedia.WebApp.Controllers
                     IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
                     if (publishInputAsset)
                     {
-                        MediaClient.PublishAsset(mediaClient, asset);
+                        MediaClient.PublishContent(mediaClient, asset);
                     }
                     MediaAssetInput inputAsset = MapInputAsset(asset);
                     inputAssets.Add(inputAsset);

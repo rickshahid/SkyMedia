@@ -187,6 +187,7 @@ namespace SkyMedia.ServiceBroker
             assetFile.MimeType = sourceBlob.Properties.ContentType;
             assetFile.IsPrimary = primaryFile;
             assetFile.Update();
+            destinationAsset.Update();
             return operationId;
         }
 
