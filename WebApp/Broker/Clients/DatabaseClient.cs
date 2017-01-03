@@ -55,7 +55,7 @@ namespace SkyMedia.ServiceBroker
                 .Where(d => d.Id == documentId);
             IEnumerable<Document> documents = query.AsEnumerable<Document>();
             Document document = documents.FirstOrDefault();
-            return GetResult(document.ToString());
+            return (document == null) ? null : GetResult(document.ToString());
         }
 
         public string CreateDocument(string collectionId, string jsonData)
@@ -68,13 +68,16 @@ namespace SkyMedia.ServiceBroker
             return responseDocument.Resource.Id;
         }
 
-        public string DeleteDocument(string collectionId, string documentId)
+        public void DeleteDocument(string collectionId, string documentId)
         {
-            Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-            Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri);
-            deleteTask.Wait();
-            ResourceResponse<Document> responseDocument = deleteTask.Result;
-            return responseDocument.Resource.Id;
+            string docId = string.Concat(collectionId, Constants.MultiItemSeparator, documentId);
+            JObject jsonDoc = GetDocument(docId);
+            if (jsonDoc != null)
+            {
+                Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
+                Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri);
+                deleteTask.Wait();
+            }
         }
 
         public JObject ExecuteProcedure(string collectionId, string procedureId, params dynamic[] procedureParameters)
@@ -83,8 +86,8 @@ namespace SkyMedia.ServiceBroker
             Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
             Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
             procedureTask.Wait();
-            StoredProcedureResponse<JValue> procedureResult = procedureTask.Result;
-            return GetResult(procedureResult.Response.ToString());
+            JValue procesureResponse = procedureTask.Result.Response;
+            return (procesureResponse == null) ? null : GetResult(procesureResponse.ToString());
         }
     }
 }

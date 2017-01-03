@@ -212,6 +212,7 @@ body {
 
 .viewTitle {
     margin: 10px 5px 10px 5px;
+    white-space: nowrap;
     color: deepskyblue;
     text-align: center;
     font-size: x-large;

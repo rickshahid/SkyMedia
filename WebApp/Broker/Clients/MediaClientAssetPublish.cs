@@ -30,12 +30,6 @@ namespace SkyMedia.ServiceBroker
             return taskOutputs.ToArray();
         }
 
-        private static IAsset GetTaskOutput(IJob job, string[] processorIds)
-        {
-            IAsset[] taskOutputs = GetTaskOutputs(job, processorIds);
-            return (taskOutputs.Length == 0) ? null : taskOutputs[0];
-        }
-
         private static ITask[] GetJobTasks(IJob job, string[] processorIds)
         {
             List<ITask> jobTasks = new List<ITask>();
@@ -192,10 +186,8 @@ namespace SkyMedia.ServiceBroker
             foreach (IAsset outputAsset in job.OutputMediaAssets)
             {
                 PublishAsset(mediaClient, outputAsset, contentProtection);
-                if (outputAsset.IsStreamable) {
-                    PublishIndex(job, outputAsset, contentPublish);
-                    PublishAnalytics(job, outputAsset, contentPublish);
-                }
+                PublishIndex(job, outputAsset, contentPublish);
+                PublishAnalytics(job, outputAsset, contentPublish);
             }
         }
     }

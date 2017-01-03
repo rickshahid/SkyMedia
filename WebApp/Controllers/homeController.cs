@@ -87,22 +87,19 @@ namespace SkyMedia.WebApp.Controllers
         private SelectListItem[] GetAnalyticsProcessors(IAsset asset)
         {
             List<SelectListItem> analyticsProcessors = new List<SelectListItem>();
-            if (asset.IsStreamable)
+            foreach (IAssetFile assetFile in asset.AssetFiles)
             {
-                foreach (IAssetFile assetFile in asset.AssetFiles)
+                if (assetFile.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (assetFile.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        string[] fileNameInfo = assetFile.Name.Split('_');
-                        string processorName = fileNameInfo[fileNameInfo.Length - 1];
-                        processorName = processorName.Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
-                        processorName = processorName.Replace(Constants.NamedItemSeparator, ' ');
+                    string[] fileNameInfo = assetFile.Name.Split('_');
+                    string processorName = fileNameInfo[fileNameInfo.Length - 1];
+                    processorName = processorName.Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
+                    processorName = processorName.Replace(Constants.NamedItemSeparator, ' ');
 
-                        SelectListItem analyticsProcessor = new SelectListItem();
-                        analyticsProcessor.Text = processorName;
-                        analyticsProcessor.Value = assetFile.Name;
-                        analyticsProcessors.Add(analyticsProcessor);
-                    }
+                    SelectListItem analyticsProcessor = new SelectListItem();
+                    analyticsProcessor.Text = processorName;
+                    analyticsProcessor.Value = assetFile.Name;
+                    analyticsProcessors.Add(analyticsProcessor);
                 }
             }
             return analyticsProcessors.ToArray();

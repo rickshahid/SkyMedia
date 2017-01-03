@@ -40,7 +40,7 @@ namespace SkyMedia.WebApp.Controllers
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
         {
-            DatabaseClient databaseClient = new DatabaseClient();
+            DatabaseClient databaseClient = new DatabaseClient(true);
             string collectionId = Constants.Database.CollectionName.Metadata;
             foreach (IAssetFile file in asset.AssetFiles)
             {
