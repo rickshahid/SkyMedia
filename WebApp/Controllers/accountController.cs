@@ -15,27 +15,27 @@ namespace SkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
-        private static string GetReservedEncodingUnits(IEncodingReservedUnit[] encodingReservedUnits)
+        private static string GetReservedUnitCount(IEncodingReservedUnit[] reservedUnits)
         {
-            int encodingUnits = 0;
-            foreach (IEncodingReservedUnit encodingReservedUnit in encodingReservedUnits)
+            int unitCount = 0;
+            foreach (IEncodingReservedUnit reservedUnit in reservedUnits)
             {
-                encodingUnits = encodingUnits + encodingReservedUnit.CurrentReservedUnits;
+                unitCount = unitCount + reservedUnit.CurrentReservedUnits;
             }
-            return encodingUnits.ToString();
+            return unitCount.ToString();
         }
 
-        private static string GetDefaultStreamingUnits(IStreamingEndpoint[] streamingEndpoints)
+        private static string GetStreamingUnitCount(IStreamingEndpoint[] streamingEndpoints, string endpointName)
         {
-            int streamingUnits = 0;
+            int unitCount = 0;
             foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
             {
-                if (string.Equals(streamingEndpoint.Name, Constants.Media.Streaming.DefaultEndpointName, StringComparison.InvariantCultureIgnoreCase) && streamingEndpoint.ScaleUnits.HasValue)
+                if (string.Equals(streamingEndpoint.Name, endpointName, StringComparison.InvariantCultureIgnoreCase) && streamingEndpoint.ScaleUnits.HasValue)
                 {
-                    streamingUnits = streamingEndpoint.ScaleUnits.Value;
+                    unitCount = streamingEndpoint.ScaleUnits.Value;
                 }
             }
-            return streamingUnits.ToString();
+            return unitCount.ToString();
         }
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
@@ -163,9 +163,9 @@ namespace SkyMedia.WebApp.Controllers
             entityCounts.Add(new string[] { "Access Policies", accessPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
-            entityCounts.Add(new string[] { "Streaming Units (Default Endpoint)", GetDefaultStreamingUnits(streamingEndpoints) });
+            entityCounts.Add(new string[] { "Streaming Units (Default Endpoint)", GetStreamingUnitCount(streamingEndpoints, Constants.Media.Streaming.DefaultEndpointName) });
             entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString() });
-            entityCounts.Add(new string[] { "Encoding Reserved Units", GetReservedEncodingUnits(encodingUnits) });
+            entityCounts.Add(new string[] { "Reserved Units", GetReservedUnitCount(encodingUnits) });
             entityCounts.Add(new string[] { "Locators", locators.Length.ToString() });
             return entityCounts.ToArray();
         }

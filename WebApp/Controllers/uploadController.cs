@@ -14,7 +14,7 @@ namespace SkyMedia.WebApp.Controllers
     public class uploadController : Controller
     {
         public JsonResult manifest(string manifestId, string inputAssetName, string storageAccount, bool storageEncryption,
-                                   bool multipleFileAsset, bool uploadFileWatcher, string[] fileNames)
+                                   bool multipleFileAsset, bool uploadBulkIngest, string[] fileNames)
         {
             string authToken = AuthToken.GetValue(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
@@ -22,7 +22,7 @@ namespace SkyMedia.WebApp.Controllers
             {
                 inputAssetName = fileNames[0];
             }
-            IIngestManifest manifest = mediaClient.SetManifest(manifestId, inputAssetName, storageAccount, storageEncryption, multipleFileAsset, uploadFileWatcher, fileNames);
+            IIngestManifest manifest = mediaClient.SetManifest(manifestId, inputAssetName, storageAccount, storageEncryption, multipleFileAsset, uploadBulkIngest, fileNames);
             return Json(manifest);
         }
 
@@ -85,7 +85,7 @@ namespace SkyMedia.WebApp.Controllers
             viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
 
             viewData["storageAccount"] = Selections.GetStorageAccounts(authToken);
-            viewData["mediaProcessor1"] = Selections.GetMediaProcessors(true);
+            viewData["mediaProcessor1"] = Selections.GetMediaProcessors();
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }
 

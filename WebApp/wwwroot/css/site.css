@@ -232,12 +232,8 @@ body {
     margin-left: 8px;
 }
 
-.faceDetectionConfig td {
-    padding: 0px !important;
-}
-
-.faceEmotionConfig {
-    margin-left: 6px;
+.faceDetectionMode {
+    margin-right: 10px;
 }
 
 .faceRedactionMode {
@@ -472,7 +468,7 @@ body {
 
 .mediaStorage {
     font-weight: bold;
-    width: 590px;
+    width: 350px;
 }
 
 .mediaWorkflow {
@@ -574,7 +570,7 @@ body {
 
 .inputAssetName {
     font-weight: bold;
-    width: 160px;
+    width: 120px;
 }
 
 .outputAssetName {
@@ -626,6 +622,7 @@ body {
 
 .contentProtectionOptions {
     border: 1px dotted deepskyblue;
+    padding-top: 5px;
 }
 
 .contentAuthAddressRange {

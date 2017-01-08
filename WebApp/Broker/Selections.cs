@@ -16,24 +16,20 @@ namespace SkyMedia.ServiceBroker
             foreach (IStorageAccount account in accounts)
             {
                 SelectListItem storageAccount = new SelectListItem();
-                storageAccount.Text = string.Concat("Account Name: ", account.Name);
+                storageAccount.Text = string.Concat("Account: ", account.Name);
                 storageAccount.Value = account.Name;
                 storageAccount.Selected = account.IsDefault;
                 string storageUsed = Storage.GetCapacityUsed(authToken, account.Name);
                 if (storageUsed != null)
                 {
                     storageAccount.Text = string.Concat(storageAccount.Text, ", Storage Used: ", storageUsed, ")");
-                    if (account.IsDefault)
-                    {
-                        storageAccount.Text = string.Concat(storageAccount.Text, Constants.Storage.Account.DefaultSuffix);
-                    }
                     storageAccounts.Add(storageAccount);
                 }
             }
             return storageAccounts.ToArray();
         }
 
-        public static SelectListItem[] GetMediaProcessors(bool jobTaskView)
+        public static SelectListItem[] GetMediaProcessors()
         {
             List<SelectListItem> mediaProcessors = new List<SelectListItem>();
 
@@ -67,14 +63,6 @@ namespace SkyMedia.ServiceBroker
             mediaProcessor.Value = MediaProcessor.FaceDetection.ToString();
             mediaProcessors.Add(mediaProcessor);
 
-            if (!jobTaskView)
-            {
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = "Emotion Detection";
-                mediaProcessor.Value = MediaProcessor.FaceEmotion.ToString();
-                mediaProcessors.Add(mediaProcessor);
-            }
-
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Face Redaction";
             mediaProcessor.Value = MediaProcessor.FaceRedaction.ToString();
@@ -106,7 +94,7 @@ namespace SkyMedia.ServiceBroker
         public static string GetProcessorName(MediaProcessor mediaProcessor)
         {
             string processorName = string.Empty;
-            SelectListItem[] processors = GetMediaProcessors(false);
+            SelectListItem[] processors = GetMediaProcessors();
             foreach (SelectListItem processor in processors)
             {
                 if (string.Equals(processor.Value, mediaProcessor.ToString(), StringComparison.InvariantCultureIgnoreCase))

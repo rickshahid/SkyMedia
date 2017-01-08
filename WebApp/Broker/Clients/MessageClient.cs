@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
+//using System.IO;
 using System.Net;
-using System.Text;
+//using System.Text;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
@@ -69,48 +69,48 @@ namespace SkyMedia.ServiceBroker
             return string.Join("&", encodedParameters);
         }
 
-        public static HttpWebResponse SendText(string messageText, string mobileNumber)
-        {
-            string settingKey = Constants.ConnectionStrings.Twilio;
-            string[] accountCredentials = AppSetting.GetValue(settingKey, true);
-            string accountName = accountCredentials[0];
-            string accountKey = accountCredentials[1];
+        //public static HttpWebResponse SendText(string messageText, string mobileNumber)
+        //{
+        //    string settingKey = Constants.ConnectionStrings.Twilio;
+        //    string[] accountCredentials = AppSetting.GetValue(settingKey, true);
+        //    string accountName = accountCredentials[0];
+        //    string accountKey = accountCredentials[1];
 
-            settingKey = Constants.AppSettings.TwilioMessageApi;
-            string messageApi = string.Format(AppSetting.GetValue(settingKey), accountName);
-            HttpWebRequest httpRequest = WebRequest.CreateHttp(messageApi);
-            httpRequest.Method = "POST";
-            httpRequest.ContentType = Constants.ContentType.Url;
+        //    settingKey = Constants.AppSettings.TwilioMessageApi;
+        //    string messageApi = string.Format(AppSetting.GetValue(settingKey), accountName);
+        //    HttpWebRequest httpRequest = WebRequest.CreateHttp(messageApi);
+        //    httpRequest.Method = "POST";
+        //    httpRequest.ContentType = Constants.ContentType.Url;
 
-            string authToken = string.Concat(accountName, ":", accountKey);
-            byte[] authBytes = Encoding.UTF8.GetBytes(authToken);
-            authToken = string.Concat("Basic ", Convert.ToBase64String(authBytes));
-            httpRequest.Headers.Add("Authorization", authToken);
+        //    string authToken = string.Concat(accountName, ":", accountKey);
+        //    byte[] authBytes = Encoding.UTF8.GetBytes(authToken);
+        //    authToken = string.Concat("Basic ", Convert.ToBase64String(authBytes));
+        //    httpRequest.Headers.Add("Authorization", authToken);
 
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
+        //    Dictionary<string, string> parameters = new Dictionary<string, string>();
 
-            string parameterName = "From";
-            settingKey = Constants.AppSettings.TwilioMessageFrom;
-            string parameterValue = AppSetting.GetValue(settingKey);
-            parameters.Add(parameterName, parameterValue);
+        //    string parameterName = "From";
+        //    settingKey = Constants.AppSettings.TwilioMessageFrom;
+        //    string parameterValue = AppSetting.GetValue(settingKey);
+        //    parameters.Add(parameterName, parameterValue);
 
-            parameterName = "To";
-            parameterValue = mobileNumber;
-            parameters.Add(parameterName, parameterValue);
+        //    parameterName = "To";
+        //    parameterValue = mobileNumber;
+        //    parameters.Add(parameterName, parameterValue);
 
-            parameterName = "Body";
-            parameterValue = messageText;
-            parameters.Add(parameterName, parameterValue);
+        //    parameterName = "Body";
+        //    parameterValue = messageText;
+        //    parameters.Add(parameterName, parameterValue);
 
-            string requestParams = EncodeParameters(parameters);
-            httpRequest.ContentLength = Encoding.UTF8.GetByteCount(requestParams);
-            using (StreamWriter requestWriter = new StreamWriter(httpRequest.GetRequestStream()))
-            {
-                requestWriter.Write(requestParams);
-            }
+        //    string requestParams = EncodeParameters(parameters);
+        //    httpRequest.ContentLength = Encoding.UTF8.GetByteCount(requestParams);
+        //    using (StreamWriter requestWriter = new StreamWriter(httpRequest.GetRequestStream()))
+        //    {
+        //        requestWriter.Write(requestParams);
+        //    }
 
-            return (HttpWebResponse)httpRequest.GetResponse();
-        }
+        //    return (HttpWebResponse)httpRequest.GetResponse();
+        //}
 
         public CloudQueue GetQueue(string queueName, bool enableCreate)
         {

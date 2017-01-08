@@ -1,5 +1,16 @@
-﻿namespace SkyMedia.WebApp.Models
+﻿using Microsoft.WindowsAzure.MediaServices.Client;
+
+namespace SkyMedia.WebApp.Models
 {
+    public class MediaJobPublish
+    {
+        public string AccountName { get; set; }
+
+        public string JobId { get; set; }
+
+        public JobState NewState { get; set; }
+    }
+
     public class ContentProtection : StorageEntity
     {
         public bool AES { get; set; }

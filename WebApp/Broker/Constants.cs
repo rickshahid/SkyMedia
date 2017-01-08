@@ -186,7 +186,6 @@ namespace SkyMedia.ServiceBroker
             public struct Account
             {
                 public const string Connection = "DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}";
-                public const string DefaultSuffix = " - Default Account";
             }
 
             public struct Analytics

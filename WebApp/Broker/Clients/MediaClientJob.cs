@@ -30,7 +30,6 @@ namespace SkyMedia.ServiceBroker
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.FaceDetection:
-                case MediaProcessor.FaceEmotion:
                     settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
@@ -78,6 +77,22 @@ namespace SkyMedia.ServiceBroker
             messageText = string.Concat(messageText, ", Job Name: ", job.Name);
             messageText = string.Concat(messageText, ", Job ID: ", job.Id);
             return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constants.FormatTime));
+        }
+
+        internal void SetReservedUnits(IJob job)
+        {
+            IEncodingReservedUnit[] reservedUnits = GetEntities(EntityType.ReservedUnit) as IEncodingReservedUnit[];
+            if (job.State == JobState.Queued)
+            {
+                reservedUnits[0].ReservedUnitType = ReservedUnitType.Premium;
+                reservedUnits[0].CurrentReservedUnits = job.Tasks.Count;
+            }
+            else
+            {
+                reservedUnits[0].ReservedUnitType = ReservedUnitType.Basic;
+                reservedUnits[0].CurrentReservedUnits = 0;
+            }
+            reservedUnits[0].Update();
         }
 
         public static MediaJob CreateJob(MediaClient mediaClient, string jobName, int jobPriority, MediaJobTask[] jobTasks,
@@ -160,6 +175,7 @@ namespace SkyMedia.ServiceBroker
             INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
             NotificationJobState jobStates = NotificationJobState.FinalStatesOnly;
             job.JobNotificationSubscriptions.AddNew(jobStates, notificationEndpoint);
+            SetReservedUnits(job);
             job.Submit();
             return job;
         }

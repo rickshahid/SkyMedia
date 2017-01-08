@@ -19,7 +19,6 @@
         if (asperaAccountKey != "") {
             $("#uploadService[value='asperaFasp']").prop("disabled", false);
         }
-        $("#inputProtectionRow").show();
     } else {
         $("#mediaAssetsRow").show();
     }

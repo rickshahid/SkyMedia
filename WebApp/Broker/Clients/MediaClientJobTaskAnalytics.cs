@@ -103,7 +103,7 @@ namespace SkyMedia.ServiceBroker
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = jobTask.FaceEmotionDetect ? MediaProcessor.FaceEmotion : MediaProcessor.FaceDetection;
+            jobTask.MediaProcessor = MediaProcessor.FaceDetection;
             jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
             string processorId = AppSetting.GetValue(settingKey);
@@ -112,9 +112,7 @@ namespace SkyMedia.ServiceBroker
             DatabaseClient databaseClient = new DatabaseClient();
             JObject processorConfig = databaseClient.GetDocument(documentId);
             JToken processorOptions = processorConfig["options"];
-            processorOptions["mode"] = jobTask.FaceEmotionDetect ? "aggregateEmotion" : "faces";
-            processorOptions["aggregateEmotionWindowMs"] = jobTask.FaceEmotionWindowMilliseconds;
-            processorOptions["aggregateEmotionIntervalMs"] = jobTask.FaceEmotionIntervalMilliseconds;
+            processorOptions["mode"] = jobTask.FaceDetectionMode;
             jobTask.ProcessorConfig = processorConfig.ToString();
             jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
             jobTasks.Add(jobTask);

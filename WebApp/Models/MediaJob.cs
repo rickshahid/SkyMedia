@@ -45,11 +45,7 @@ namespace SkyMedia.WebApp.Models
 
         public bool IndexerCaptionTtml { get; set; }
 
-        public bool FaceEmotionDetect { get; set; }
-
-        public int FaceEmotionWindowMilliseconds { get; set; }
-
-        public int FaceEmotionIntervalMilliseconds { get; set; }
+        public string FaceDetectionMode { get; set; }
 
         public string FaceRedactionMode { get; set; }
 
@@ -66,20 +62,7 @@ namespace SkyMedia.WebApp.Models
         public int SummaryDurationSeconds { get; set; }
     }
 
-    internal struct MediaJobEventProperties
-    {
-        public string AccountName { get; set; }
-
-        public string JobId { get; set; }
-
-        public string JobName { get; set; }
-
-        public JobState OldState { get; set; }
-
-        public JobState NewState { get; set; }
-    }
-
-    internal class MediaJobEvent
+    public class MediaJobEvent
     {
         public string MessageVersion { get; set; }
 
@@ -90,5 +73,18 @@ namespace SkyMedia.WebApp.Models
         public string ETag { get; set; }
 
         public MediaJobEventProperties Properties { get; set; }
+    }
+
+    public struct MediaJobEventProperties
+    {
+        public string AccountName { get; set; }
+
+        public string JobId { get; set; }
+
+        public string JobName { get; set; }
+
+        public JobState OldState { get; set; }
+
+        public JobState NewState { get; set; }
     }
 }

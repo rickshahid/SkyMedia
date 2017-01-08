@@ -11,7 +11,6 @@
     string encoderProtectContentId = "encoderProtectContent" + taskNumber;
     string encoderFragmentOutputId = "encoderFragmentOutput" + taskNumber;
     string encoderContentProtectionRowId = "encoderContentProtectionRow" + taskNumber;
-    string encoderContentProtectionStorageId = "encoderContentProtectionStorage" + taskNumber;
     string encoderContentProtectionAesId = "encoderContentProtectionAes" + taskNumber;
     string encoderContentProtectionDrmPlayReadyId = "encoderContentProtectionDrmPlayReady" + taskNumber;
     string encoderContentProtectionDrmWidevineId = "encoderContentProtectionDrmWidevine" + taskNumber;
@@ -23,9 +22,7 @@
     string indexerCaptionWebVttId = "indexerCaptionWebVtt" + taskNumber;
     string indexerCaptionTtmlId = "indexerCaptionTtml" + taskNumber;
     string faceDetectionConfigRowId = "faceDetectionConfigRow" + taskNumber;
-    string faceEmotionDetectId = "faceEmotionDetect" + taskNumber;
-    string faceEmotionWindowMillisecondsId = "faceEmotionWindowMilliseconds" + taskNumber;
-    string faceEmotionIntervalMillisecondsId = "faceEmotionIntervalMilliseconds" + taskNumber;
+    string faceDetectionModeId = "faceDetectionMode" + taskNumber;
     string faceRedactionConfigRowId = "faceRedactionConfigRow" + taskNumber;
     string faceRedactionModeId = "faceRedactionMode" + taskNumber;
     string motionConfigRowId = "motionConfigRow" + taskNumber;
@@ -117,32 +114,18 @@
                     </span>
                 </td>
                 <td>
-                    <table class="faceDetectionConfig">
-                        <tr>
-                            <td>
-                                @Html.CheckBox(faceEmotionDetectId, false)
-                            </td>
-                            <td class="inputLabel">
-                                Emotion
-                            </td>
-                            <td class="inputLabel">
-                                <span class="faceEmotionConfig">
-                                    Window (ms)
-                                </span>
-                            </td>
-                            <td>
-                                <input id="@faceEmotionWindowMillisecondsId" value="500" class="spinner d4" />
-                            </td>
-                            <td class="inputLabel">
-                                <span class="faceEmotionConfig">
-                                    Interval (ms)
-                                </span>
-                            </td>
-                            <td>
-                                <input id="@faceEmotionIntervalMillisecondsId" value="500" class="spinner d4" />
-                            </td>
-                        </tr>
-                    </table>
+                    @Html.RadioButton(faceDetectionModeId, "faces", true)
+                    <span class="inputLabel faceDetectionMode">
+                        Faces Only
+                    </span>
+                    @Html.RadioButton(faceDetectionModeId, "aggregateEmotion", false)
+                    <span class="inputLabel faceDetectionMode">
+                        Aggregate Emotion
+                    </span>
+                    @Html.RadioButton(faceDetectionModeId, "perFaceEmotion", false)
+                    <span class="inputLabel">
+                        Per Face Emotion
+                    </span>
                 </td>
             </tr>
             <tr id="@faceRedactionConfigRowId" style="display: none">
@@ -271,17 +254,6 @@
                             </td>
                             <td>
                                 <table class="contentProtectionOptions">
-                                    <tr id="inputProtectionRow" style="display: none">
-                                        <td class="inputLabel">
-                                            Storage:
-                                        </td>
-                                        <td>
-                                            @Html.CheckBox(encoderContentProtectionStorageId, false)
-                                            <span class="inputLabel">
-                                                Media Asset Content Storage Encryption (AES 256)
-                                            </span>
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td class="inputLabel">
                                             Delivery:

@@ -122,14 +122,14 @@ namespace SkyMedia.ServiceBroker
         }
 
         public IIngestManifest SetManifest(string manifestId, string assetName, string storageAccount, bool storageEncryption,
-                                           bool multipleFileAsset, bool uploadFileWatcher, string[] fileNames)
+                                           bool multipleFileAsset, bool uploadBulkIngest, string[] fileNames)
         {
             IIngestManifest manifest = null;
             if (!string.IsNullOrEmpty(manifestId))
             {
                 manifest = GetEntityById(EntityType.Manifest, manifestId) as IIngestManifest;
             }
-            if (manifest == null && uploadFileWatcher)
+            if (manifest == null && uploadBulkIngest)
             {
                 string manifestName = Guid.NewGuid().ToString();
                 manifest = _media.IngestManifests.Create(manifestName, storageAccount);

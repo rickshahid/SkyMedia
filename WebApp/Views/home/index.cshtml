@@ -79,6 +79,20 @@
             var eventIndex = Math.floor(millisecondsOffset / millisecondsPerInterval);
             return fragment["events"][eventIndex];
         }
+        function GetFaceEmotion(faceScores) {
+            var faceScore = 0, faceEmotion;
+            if (faceScores != null) {
+                var keys = Object.keys(faceScores);
+                for (var i = 0; i < keys.length; i++) {
+                    var key = keys[i];
+                    if (faceScores[key] > faceScore) {
+                        faceScore = faceScores[key];
+                        faceEmotion = key[0].toUpperCase() + key.slice(1);
+                    }
+                }
+            }
+            return faceEmotion;
+        }
         function GetFacesMetadata(playerHeight, playerWidth, timeSeconds, result) {
             var facesMetadata = new Array();
             var fragment = result.fragment
@@ -99,6 +113,7 @@
                     faceMetadata.height = faceMetadata.height * scaleHeight;
                     faceMetadata.width = fragmentEvent[i].width * frameWidth;
                     faceMetadata.width = faceMetadata.width * scaleWidth;
+                    faceMetadata.emotion = GetFaceEmotion(fragmentEvent[i]["scores"]);
                     facesMetadata.push(faceMetadata);
                 }
             }
@@ -152,7 +167,11 @@
                 width: faceMetadata.width + "px"
             });
             $("#videoOverlay" + faceMetadata.id).show();
-            CreateTipTop("videoOverlay" + faceMetadata.id, "Face " + faceMetadata.id, 0, -10, false);
+            var faceLabel = "Face " + faceMetadata.id;
+            if (faceMetadata.emotion != null) {
+                faceLabel = faceLabel + "<br /><br />(" + faceMetadata.emotion + ")";
+            }
+            CreateTipTop("videoOverlay" + faceMetadata.id, faceLabel, 0, -10, false);
             SetTipVisible("videoOverlay" + faceMetadata.id, true);
         }
         function ClearVideoOverlay() {

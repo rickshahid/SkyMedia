@@ -41,7 +41,6 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderProtectContent" + lastTaskNumber, "encoderProtectContent" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderFragmentOutput" + lastTaskNumber, "encoderFragmentOutput" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionRow" + lastTaskNumber, "encoderContentProtectionRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionStorage" + lastTaskNumber, "encoderContentProtectionStorage" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAes" + lastTaskNumber, "encoderContentProtectionAes" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionDrmPlayReady" + lastTaskNumber, "encoderContentProtectionDrmPlayReady" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionDrmWidevine" + lastTaskNumber, "encoderContentProtectionDrmWidevine" + newTaskNumber);
@@ -53,9 +52,7 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionDetect" + lastTaskNumber, "faceEmotionDetect" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionWindowMilliseconds" + lastTaskNumber, "faceEmotionWindowMilliseconds" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceEmotionIntervalMilliseconds" + lastTaskNumber, "faceEmotionIntervalMilliseconds" + newTaskNumber);
+    taskRowHtml = ReplaceAll(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "faceRedactionMode" + lastTaskNumber, "faceRedactionMode" + newTaskNumber);
     taskRowHtml = ReplaceAll(taskRowHtml, "motionConfigRow" + lastTaskNumber, "motionConfigRow" + newTaskNumber);
@@ -253,14 +250,6 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
         classes: "multiSelectOptions mediaProcessor" + (indexerV1 ? " mediaIndexerLanguages" : ""),
         header: false
     });
-    $("#faceEmotionWindowMilliseconds" + taskNumber).spinner({
-        min: 250,
-        max: 2000
-    });
-    $("#faceEmotionIntervalMilliseconds" + taskNumber).spinner({
-        min: 250,
-        max: 1000
-    });
     $("#hyperlapseStartFrame" + taskNumber).spinner({
         min: 0,
         max: 9999
@@ -308,8 +297,6 @@ function SetJobTaskWidgets(taskNumber, indexerV1) {
 }
 function ClearJobTaskWidgets(lastTaskNumber) {
     $("#indexerSpokenLanguages" + lastTaskNumber).multiselect("destroy");
-    $("#faceEmotionWindowMilliseconds" + lastTaskNumber).spinner("destroy");
-    $("#faceEmotionIntervalMilliseconds" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseStartFrame" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseFrameCount" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseSpeed" + lastTaskNumber).spinnerEx("destroy");
@@ -325,14 +312,14 @@ function ShowContentProtection(checkbox) {
 }
 function GetContentProtection(taskNumber) {
     var contentProtection = null;
-    if ($("#protectContent" + taskNumber).prop("checked")) {
+    if ($("#encoderProtectContent" + taskNumber).prop("checked")) {
         contentProtection = {
-            AES: $("#aes" + taskNumber).prop("checked"),
-            DRMPlayReady: $("#drmPlayReady" + taskNumber).prop("checked"),
-            DRMWidevine: $("#drmWidevine" + taskNumber).prop("checked"),
-            ContentAuthTypeToken: $("#contentAuthTypeToken" + taskNumber).prop("checked"),
-            ContentAuthTypeAddress: $("#contentAuthTypeAddress" + taskNumber).prop("checked"),
-            ContentAuthAddressRange: $("#contentAuthAddressRange" + taskNumber).val()
+            AES: $("#encoderContentProtectionAes" + taskNumber).prop("checked"),
+            DRMPlayReady: $("#encoderContentProtectionDrmPlayReady" + taskNumber).prop("checked"),
+            DRMWidevine: $("#encoderContentProtectionDrmWidevine" + taskNumber).prop("checked"),
+            ContentAuthTypeToken: $("#encoderContentProtectionAuthTypeToken" + taskNumber).prop("checked"),
+            ContentAuthTypeAddress: $("#encoderContentProtectionAuthTypeAddress" + taskNumber).prop("checked"),
+            ContentAuthAddressRange: $("#encoderContentProtectionAuthAddressRange" + taskNumber).val()
         };
     }
     return contentProtection;
@@ -414,12 +401,10 @@ function GetJobTask(taskNumber) {
                 jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
                 break;
             case "FaceDetection":
-                jobTask.FaceEmotionDetect = $("#faceEmotionDetect" + taskNumber).prop("checked");
-                jobTask.FaceEmotionWindowMilliseconds = $("#faceEmotionWindowMilliseconds" +taskNumber).val();
-                jobTask.FaceEmotionIntervalMilliseconds = $("#faceEmotionIntervalMilliseconds" + taskNumber).val();
+                jobTask.FaceDetectionMode = $("#faceDetectionMode" + taskNumber + ":checked").val();
                 break;
             case "FaceRedaction":
-                jobTask.FaceRedactionMode = $("#faceRedactionMode" + taskNumber).val();
+                jobTask.FaceRedactionMode = $("#faceRedactionMode" + taskNumber + ":checked").val();
                 break;
             case "MotionDetection":
                 jobTask.MotionSensitivityLevel = $("#motionSensitivityLevel" + taskNumber).val();

@@ -34,6 +34,10 @@
         </td>
         <td>
             @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage", onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')" })
+            @Html.CheckBox("storageEncryption")
+            <span class="inputLabel">
+                Storage Encryption (AES 256)
+            </span>
         </td>
     </tr>
     <tr>
@@ -45,17 +49,17 @@
             &nbsp;
             @Html.CheckBox("multipleFileAsset")
             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files')">
-                Multi-File Asset
+                Multiple File Asset
             </span>
             &nbsp;
             @Html.CheckBox("publishInputAsset")
             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-deliver-streaming-content')">
-                Publish Asset
+                Publish Input Asset
             </span>
             &nbsp;
-            @Html.CheckBox("uploadFileWatcher", null, new { onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')", disabled = "disabled" })
+            @Html.CheckBox("uploadBulkIngest", null, new { onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')", disabled = "disabled" })
             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files#ingest_in_bulk')">
-                Upload Watcher
+                Bulk Upload
             </span>
         </td>
     </tr>

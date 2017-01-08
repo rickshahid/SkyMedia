@@ -20,7 +20,7 @@ function SetUploadManifest(storageContainer) {
             storageAccount: $("#storageAccount").val(),
             storageEncryption: $("#storageEncryption").prop("checked"),
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
-            uploadFileWatcher: $("#uploadFileWatcher").prop("checked"),
+            uploadBulkIngest: $("#uploadBulkIngest").prop("checked"),
             fileNames: GetFileNames(_fileUploader.files)
         },
         function (result) {
@@ -101,8 +101,8 @@ function SigniantEnabled() {
 function AsperaEnabled() {
     return $("#uploadService[value='asperaFasp']").prop("checked");
 }
-function WatcherEnabled() {
-    return $("#uploadFileWatcher").prop("checked");
+function UploadBulkEnabled() {
+    return $("#uploadBulkIngest").prop("checked");
 }
 function CreateUploader(storageContainer, blockChunkSize, maxRetryCount) {
     _storageContainer = storageContainer;
@@ -144,18 +144,18 @@ function CreateUploader(storageContainer, blockChunkSize, maxRetryCount) {
                     var elapsedTime = GetElapsedTime();
                     $("#transferMessage").text("Elapsed Time: " + elapsedTime);
                 }
-                if (!WatcherEnabled()) {
+                if (!UploadBulkEnabled()) {
                     UploadWorkflow(files);
                 }
             }
         },
         FilesAdded: function (uploader, files) {
-            if (WatcherEnabled()) {
+            if (UploadBulkEnabled()) {
                 SetUploadManifest(storageContainer);
             }
         },
         FilesRemoved: function (uploader, files) {
-            if (WatcherEnabled()) {
+            if (UploadBulkEnabled()) {
                 SetUploadManifest(storageContainer);
             }
             if (!SigniantEnabled() && !AsperaEnabled()) {
