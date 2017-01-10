@@ -64,6 +64,13 @@ namespace SkyMedia.WebApp.Models
 
     public class MediaJobEvent
     {
+        public MediaJobEvent()
+        {
+            MediaJobEventProperties jobEventProperties = new MediaJobEventProperties();
+            jobEventProperties.JobId = string.Empty;
+            this.Properties = jobEventProperties;
+        }
+
         public string MessageVersion { get; set; }
 
         public string EventType { get; set; }

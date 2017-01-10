@@ -37,8 +37,14 @@ namespace SkyMedia.WebApp.Models
         public string MobileNumber { get; set; }
     }
 
-    public struct PublishNotification
+    public class PublishNotification
     {
+        public PublishNotification()
+        {
+            this.MessageText = string.Empty;
+            this.MobileNumber = string.Empty;
+        }
+
         public string MessageText { get; set; }
 
         public string MobileNumber { get; set; }

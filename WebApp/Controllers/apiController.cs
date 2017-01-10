@@ -19,19 +19,11 @@ namespace SkyMedia.WebApp.Controllers
             MediaJobEvent jobEvent = messageClient.GetMessage<MediaJobEvent>(queueName, out queueMessage);
             if (queueMessage == null)
             {
-                MediaJobEventProperties jobEventProperties = new MediaJobEventProperties();
-                jobEventProperties.JobId = string.Empty;
                 jobEvent = new MediaJobEvent();
-                jobEvent.Properties = jobEventProperties;
             }
-            else
+            else if (string.IsNullOrEmpty(jobEvent.Properties.JobId))
             {
-                string accountName = jobEvent.Properties.AccountName;
-                string jobId = jobEvent.Properties.JobId;
-                if (string.IsNullOrEmpty(accountName) || string.IsNullOrEmpty(jobId))
-                {
-                    messageClient.DeleteMessage(queueName, queueMessage);
-                }
+                messageClient.DeleteMessage(queueName, queueMessage);
             }
             return jobEvent;
         }
@@ -41,15 +33,15 @@ namespace SkyMedia.WebApp.Controllers
         public PublishNotification PublishJob([FromBody] MediaJobPublish jobPublish)
         {
             PublishNotification notification = new PublishNotification();
-            notification.MessageText = string.Empty;
-            notification.MobileNumber = string.Empty;
             EntityClient entityClient = new EntityClient();
             string tableName = Constants.Storage.TableNames.AssetPublish;
-            ContentPublish contentPublish = entityClient.GetEntity<ContentPublish>(tableName, jobPublish.AccountName, jobPublish.JobId);
+            string partitionKey = jobPublish.AccountName;
+            string rowKey = jobPublish.JobId;
+            ContentPublish contentPublish = entityClient.GetEntity<ContentPublish>(tableName, partitionKey, rowKey);
             if (contentPublish != null)
             {
                 tableName = Constants.Storage.TableNames.AssetProtection;
-                ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, jobPublish.AccountName, jobPublish.JobId);
+                ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, partitionKey, rowKey);
                 MediaClient mediaClient = new MediaClient(contentPublish);
                 IJob job = mediaClient.GetEntityById(EntityType.Job, jobPublish.JobId) as IJob;
                 if (job != null)
@@ -64,7 +56,6 @@ namespace SkyMedia.WebApp.Controllers
                 }
                 if (contentProtection != null)
                 {
-                    tableName = Constants.Storage.TableNames.AssetProtection;
                     entityClient.DeleteEntity(tableName, contentProtection);
                 }
                 tableName = Constants.Storage.TableNames.AssetPublish;
