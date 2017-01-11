@@ -1,4 +1,4 @@
-# SkyMedia
+# Azure Sky Media
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
@@ -6,9 +6,11 @@ Here are just a few of the integrated capabilities that are provided within this
 
 * Self-service user and account registration across Azure Media Services, Azure Storage, Signiant Flight & Aspera FASP
 
-* Upload and processing of media for encoding, adaptive streaming, content protection, metadata generation and syncing
+* Upload and processing of media files for encoding, content protection, metadata generation, adaptive streaming, etc.
 
-* Define media jobs with multiple tasks across various media processors with text notification of job completion status
+* Define media workflow with multiple job tasks (executing parallelly or sequentially) across various media processors
+
+* Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
 To enable these core solution capabilities in addition to others, the following Azure platform services are leveraged:
 
@@ -45,3 +47,33 @@ In addition to the native Azure services listed above, the following Azure partn
 * Signiant Flight - http://azure.microsoft.com/en-us/marketplace/partners/signiant/flight/
 
 * Aspera FASP - http://azure.microsoft.com/en-us/marketplace/partners/aspera/sod/
+
+The set of Azure media processors that are intergrated include:
+
+* Encoder Standard - https://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-standard-formats
+
+* Encoder Premium - https://docs.microsoft.com/en-us/azure/media-services/media-services-premium-workflow-encoder-formats
+
+* Indexer v1 - https://docs.microsoft.com/en-us/azure/media-services/media-services-index-content
+
+* Indexer v2 - https://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
+
+* Face Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection
+
+* Face Redaction - https://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction
+
+* Motion Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection
+
+* Motion Hyperlapse - https://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
+
+* Video Summarization - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization
+
+* Character Recognition - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
+
+For screenshots of some of the key modules, check out the Wiki page at https://github.com/RickShahid/SkyMedia/wiki
+
+If you run into an issue, please let me know. As always, feedback and/or suggestions is encouraged and appreciated.
+
+Thanks.
+
+Rick
