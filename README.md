@@ -10,7 +10,7 @@ Here are just a few of the integrated capabilities that are provided within this
 
 * Define media workflow with multiple job tasks (executing parallelly or sequentially) across various media processors
 
-* Background processing job to automatically publish media workflow output based upon parameters captured at submission
+* Background processing to automatically publish media workflow output based upon parameters captured at submission
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
