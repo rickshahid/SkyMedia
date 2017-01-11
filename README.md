@@ -6,9 +6,11 @@ Here are just a few of the integrated capabilities that are provided within this
 
 * Self-service user and account registration across Azure Media Services, Azure Storage, Signiant Flight & Aspera FASP
 
-* Upload and processing of media files for encoding, content protection, metadata generation, adaptive streaming, etc.
+* Upload and processing of media files for encoding, content protection, metadata generation, adaptive streaming, etc
 
 * Define media workflow with multiple job tasks (executing parallelly or sequentially) across various media processors
+
+* Background processing job to automatically publish media workflow output based upon parameters captured at submission
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
@@ -48,7 +50,7 @@ In addition to the native Azure services listed above, the following Azure partn
 
 * Aspera FASP - http://azure.microsoft.com/en-us/marketplace/partners/aspera/sod/
 
-The set of Azure media processors that are intergrated include:
+The set of Azure Media Services processors that are integrated within the app include the following (more are on the way):
 
 * Encoder Standard - https://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-standard-formats
 
