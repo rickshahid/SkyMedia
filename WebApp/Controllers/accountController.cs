@@ -124,14 +124,15 @@ namespace SkyMedia.WebApp.Controllers
         {
             IStorageAccount[] storageAccounts = mediaClient.GetEntities(EntityType.StorageAccount) as IStorageAccount[];
             IContentKey[] contentKeys = mediaClient.GetEntities(EntityType.ContentKey) as IContentKey[];
-            IContentKeyAuthorizationPolicy[] contentKeyAuthZPolicies = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
-            IContentKeyAuthorizationPolicyOption[] contentKeyAuthPolicyOptions = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
+            IContentKeyAuthorizationPolicy[] contentKeyPolicies = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
+            IContentKeyAuthorizationPolicyOption[] contentKeyPolicyOptions = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
             IChannel[] channels = mediaClient.GetEntities(EntityType.Channel) as IChannel[];
             IIngestManifest[] manifests = mediaClient.GetEntities(EntityType.Manifest) as IIngestManifest[];
             IIngestManifestAsset[] manifestAssets = mediaClient.GetEntities(EntityType.ManifestAsset) as IIngestManifestAsset[];
             IIngestManifestFile[] manifestFiles = mediaClient.GetEntities(EntityType.ManifestFile) as IIngestManifestFile[];
             IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
             IAssetFile[] files = mediaClient.GetEntities(EntityType.File) as IAssetFile[];
+            IEncodingReservedUnit[] encodingUnits = mediaClient.GetEntities(EntityType.ReservedUnit) as IEncodingReservedUnit[];
             IMediaProcessor[] processors = mediaClient.GetEntities(EntityType.Processor) as IMediaProcessor[];
             IProgram[] programs = mediaClient.GetEntities(EntityType.Program) as IProgram[];
             IJobTemplate[] jobTemplates = mediaClient.GetEntities(EntityType.JobTemplate) as IJobTemplate[];
@@ -141,21 +142,21 @@ namespace SkyMedia.WebApp.Controllers
             IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(EntityType.DeliveryPolicy) as IAssetDeliveryPolicy[];
             IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(EntityType.StreamingEndpoint) as IStreamingEndpoint[];
             IStreamingFilter[] streamingFilters = mediaClient.GetEntities(EntityType.StreamingFilter) as IStreamingFilter[];
-            IEncodingReservedUnit[] encodingUnits = mediaClient.GetEntities(EntityType.ReservedUnit) as IEncodingReservedUnit[];
             ILocator[] locators = mediaClient.GetEntities(EntityType.Locator) as ILocator[];
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", storageAccounts.Length.ToString() });
             entityCounts.Add(new string[] { "Content Keys", contentKeys.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Key AuthZ Policies", contentKeyAuthZPolicies.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Key AuthZ Policy Options", contentKeyAuthPolicyOptions.Length.ToString() });
+            entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicies.Length.ToString() });
+            entityCounts.Add(new string[] { "Content Key Policy Options", contentKeyPolicyOptions.Length.ToString() });
             entityCounts.Add(new string[] { "Channels", channels.Length.ToString() });
             entityCounts.Add(new string[] { "Manifests", manifests.Length.ToString() });
             entityCounts.Add(new string[] { "Manifest Assets", manifestAssets.Length.ToString() });
             entityCounts.Add(new string[] { "Manifest Files", manifestFiles.Length.ToString() });
             entityCounts.Add(new string[] { "Assets", assets.Length.ToString() });
-            entityCounts.Add(new string[] { "Files", files.Length.ToString() });
-            entityCounts.Add(new string[] { "Processors", processors.Length.ToString(), "/dashboard/processors" });
+            entityCounts.Add(new string[] { "Asset Files", files.Length.ToString() });
+            entityCounts.Add(new string[] { "Reserved Units", GetReservedUnitCount(encodingUnits) });
+            entityCounts.Add(new string[] { "Media Processors", processors.Length.ToString(), "/dashboard/processors" });
             entityCounts.Add(new string[] { "Programs", programs.Length.ToString() });
             entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
             entityCounts.Add(new string[] { "Jobs", jobs.Length.ToString() });
@@ -163,9 +164,8 @@ namespace SkyMedia.WebApp.Controllers
             entityCounts.Add(new string[] { "Access Policies", accessPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
-            entityCounts.Add(new string[] { "Streaming Units (Default Endpoint)", GetStreamingUnitCount(streamingEndpoints, Constants.Media.Streaming.DefaultEndpointName) });
+            entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints, Constants.Media.Streaming.DefaultEndpointName) });
             entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString() });
-            entityCounts.Add(new string[] { "Reserved Units", GetReservedUnitCount(encodingUnits) });
             entityCounts.Add(new string[] { "Locators", locators.Length.ToString() });
             return entityCounts.ToArray();
         }

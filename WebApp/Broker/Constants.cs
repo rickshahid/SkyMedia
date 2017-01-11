@@ -16,8 +16,6 @@ namespace SkyMedia.ServiceBroker
         public struct AppSettings
         {
             public const string AppRegion = "App.Region";
-            public const string AppLocalData = "App.LocalData";
-            public const string AppSourceCode = "App.SourceCode";
 
             public const string AppApiTitle = "App.Api.Title";
             public const string AppApiDescription = "App.Api.Description";
@@ -118,8 +116,8 @@ namespace SkyMedia.ServiceBroker
             public const string AsperaUploadSetup = "Aspera.UploadSetup";
             public const string AsperaDownloadSetup = "Aspera.DownloadSetup";
 
-            public const string TwilioMessageApi = "Twilio.MessageApi";
-            public const string TwilioMessageFrom = "Twilio.MessageFrom";
+            //public const string TwilioMessageApi = "Twilio.MessageApi";
+            //public const string TwilioMessageFrom = "Twilio.MessageFrom";
         }
 
         public struct ConnectionStrings

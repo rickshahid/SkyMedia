@@ -86,19 +86,13 @@ namespace SkyMedia.ServiceBroker
 
             if (storageEncryption)
             {
-                string settingKey = Constants.AppSettings.AppLocalData;
-                string localData = AppSetting.GetValue(settingKey);
-
-                Directory.CreateDirectory(localData);
                 foreach (string fileName in fileNames)
                 {
-                    string filePath = string.Concat(localData, fileName);
-
                     CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, null, fileName, false);
-                    sourceBlob.DownloadToFile(filePath, FileMode.Create);
+                    Stream sourceStream = sourceBlob.OpenRead();
 
                     IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-                    assetFile.Upload(filePath);
+                    assetFile.Upload(sourceStream);
                 }
             }
             else

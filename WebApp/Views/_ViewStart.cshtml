@@ -32,9 +32,6 @@
     settingKey = Constants.AppSettings.AppRegion;
     ViewData["appRegion"] = AppSetting.GetValue(settingKey);
 
-    settingKey = Constants.AppSettings.AppSourceCode;
-    ViewData["appSourceCode"] = AppSetting.GetValue(settingKey);
-
     string ampVersion = this.Context.Request.Query["amp"];
     if (string.IsNullOrEmpty(ampVersion))
     {

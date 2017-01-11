@@ -99,9 +99,8 @@ namespace SkyMedia.ServiceBroker
                                 select x).ToArray();
                     break;
                 case EntityType.File:
-                    entities = new IAssetFile[] { };
-                    //entities = (from x in _media.Files
-                    //            select x).ToArray();
+                    entities = (from x in _media.Files
+                                select x).ToArray();
                     break;
                 case EntityType.Channel:
                     entities = (from x in _media.Channels

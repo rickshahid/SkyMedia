@@ -333,6 +333,8 @@ body {
 
 .plupload_container {
     border: 1px solid deepskyblue;
+    min-height: 200px !important;
+    height: 200px !important;
     border-radius: 20px;
     margin-top: 10px;
     width: 720px;
