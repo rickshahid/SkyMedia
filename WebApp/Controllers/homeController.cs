@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
@@ -289,6 +290,20 @@ namespace SkyMedia.WebApp.Controllers
             if (this.Request.Host.Value.Contains("live") || queryString.Contains("live"))
             {
                 return GetLiveView(queryString);
+            }
+
+            if (Debugger.IsAttached)
+            {
+                apiController publishApi = new apiController();
+                MediaJobEvent jobEvent = publishApi.GetJobEvent();
+                MediaJobPublish jobPublish = new MediaJobPublish();
+                jobPublish.AccountName = jobEvent.Properties.AccountName;
+                jobPublish.JobId = jobEvent.Properties.JobId;
+                jobPublish.NewState = jobEvent.Properties.NewState;
+                if (!string.IsNullOrEmpty(jobPublish.JobId))
+                {
+                    publishApi.PublishJob(jobPublish);
+                }
             }
 
             string settingKey = Constants.ConnectionStrings.AzureMedia;
