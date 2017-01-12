@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-Here are just a few of the integrated solution capabilities that are provided within this sample ASP.NET Core MVC web app:
+Here is a breakdown of the integrated capabilities that are provided within this sample ASP.NET Core MVC web application:
 
 * Self-service user and account registration across Azure Media Services, Azure Storage, Signiant Flight & Aspera FASP
 
@@ -14,7 +14,7 @@ Here are just a few of the integrated solution capabilities that are provided wi
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
-To enable these core solution capabilities in addition to others, the following Azure platform services are leveraged:
+To enable these core capabilities in addition to others, the following Azure platform services are leveraged:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
