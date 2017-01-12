@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-Here is a breakdown of the integrated capabilities that are provided within this sample ASP.NET Core MVC web application:
+Here is a breakdown of the integrated capabilities that are provided within this ASP.NET Core MVC web application:
 
 * Self-service user and account registration across Azure Media Services, Azure Storage, Signiant Flight & Aspera FASP
 
@@ -14,7 +14,9 @@ Here is a breakdown of the integrated capabilities that are provided within this
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
-To enable these core capabilities in addition to others, the following Azure platform services are leveraged:
+For screenshot examples of key modules, check out the Wiki page at https://github.com/RickShahid/SkyMedia/wiki
+
+To enable the range of capabilities that are listed above, the following Azure platform services are leveraged:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
@@ -72,9 +74,7 @@ The set of Azure Media Services processors that are integrated within the app in
 
 * Character Recognition - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
 
-For screenshots of some of the key modules, check out the Wiki page at https://github.com/RickShahid/SkyMedia/wiki
-
-If you run into an issue, please let me know. As always, feedback and/or suggestions is encouraged and appreciated.
+If you run into an issue, please let me know. As always, feedback and/or suggestions is highly encouraged and appreciated.
 
 Thanks.
 
