@@ -8,13 +8,13 @@ Here is a breakdown of the integrated capabilities that are provided within this
 
 * Define media workflows with multiple job tasks (executed parallelly and/or sequentially) across various media processors
 
-* Upload and process media files for encoding, indexing, content protection, metadata generation, adaptive streaming, etc
+* Upload and process media files with encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
 * Background process that tracks and publishes media workflow outputs via parameters specified at job submission time
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
-For screenshot examples of key modules, check out the Wiki page at https://github.com/RickShahid/SkyMedia/wiki
+For screenshots of key modules in action, check out the wiki page at https://github.com/RickShahid/SkyMedia/wiki
 
 To enable the range of capabilities that are listed above, the following Azure platform services are leveraged:
 
