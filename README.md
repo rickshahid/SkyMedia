@@ -10,7 +10,7 @@ Here is a breakdown of the integrated capabilities that are provided within this
 
 * Upload and process media files for encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
-* Background process that tracks and publishes media workflow outputs based upon parameters specified at submission time
+* Background process that tracks and publishes media workflow outputs via parameters specified at job submission time
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
