@@ -2,13 +2,13 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-Here is a breakdown of the integrated capabilities that are provided within this ASP.NET Core MVC web application:
+Here is a breakdown of the integrated capabilities that are provided within this sample ASP.NET Core MVC web application:
 
 * Self-service user and account registration across Azure Media Services, Azure Storage, Signiant Flight & Aspera FASP
 
 * Upload and processing of media files for encoding, content protection, metadata generation, adaptive streaming, etc
 
-* Define media workflow with multiple job tasks (executing parallelly or sequentially) across various media processors
+* Define media workflows with multiple job tasks (executed parallelly or sequentially) across various media processors
 
 * Background processing to automatically publish media workflow output based upon parameters captured at submission
 
