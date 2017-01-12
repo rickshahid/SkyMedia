@@ -115,7 +115,7 @@ function GetMediaPlayer(editVideo) {
         });
     }
     $(".amp-logo").click(function () {
-        window.open("http://azure.microsoft.com/en-us/services/media-services/");
+        window.open("http://amslabs.azurewebsites.net/");
     });
     return mediaPlayer;
 }
