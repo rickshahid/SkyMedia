@@ -6,7 +6,7 @@ Here is a breakdown of the integrated capabilities that are provided within this
 
 * Self-service user and account registration across Azure Media Services, Azure Storage, Signiant Flight & Aspera FASP
 
-* Upload and processing of media files for encoding, content protection, metadata generation, adaptive streaming, etc
+* Upload and process media files for encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
 * Define media workflows with multiple job tasks (executed parallelly and/or sequentially) across various media processors
 
