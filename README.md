@@ -10,7 +10,7 @@ Here is a breakdown of the integrated capabilities that are provided within this
 
 * Upload and process media files for encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
-* Background processing to automatically publish media workflow output based upon parameters captured at submission
+* Background process that automatically publishes media workflow outputs based upon input parameters at submission time
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
@@ -46,7 +46,7 @@ To enable the range of capabilities that are listed above, the following Azure p
 
 * Content Delivery Network (CDN) - http://azure.microsoft.com/en-us/services/cdn/
 
-In addition to the native Azure services listed above, the following Azure partner services have also been incorporated:
+In addition to the Azure platform services listed above, the following Azure partner services have also been incorporated:
 
 * Signiant Flight - http://azure.microsoft.com/en-us/marketplace/partners/signiant/flight/
 
