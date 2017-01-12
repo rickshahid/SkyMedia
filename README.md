@@ -8,7 +8,7 @@ Here is a breakdown of the integrated capabilities that are provided within this
 
 * Define media workflows with multiple job tasks (executed parallelly and/or sequentially) across various media processors
 
-* Upload and process media files with encoding, indexing, content protection, metadata generation, adaptive streaming, etc
+* Upload and process media files via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
 * Background process that tracks and publishes media workflow outputs via parameters specified at job submission time
 
