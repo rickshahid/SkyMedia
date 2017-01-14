@@ -167,8 +167,8 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 SBR 16x9 SD (2200 kbps) AAC", "H264 Single Bitrate 16x9 SD");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 SBR 4x3 SD (1600 kbps) AAC 5.1", "H264 Single Bitrate 4x3 SD Audio 5.1");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 SBR 4x3 SD (1600 kbps) AAC", "H264 Single Bitrate 4x3 SD");
-                //encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 SBR High Quality SD for Android (500 kbps) AAC", "H264 Single Bitrate High Quality SD for Android");
-                //encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 SBR Low Quality SD for Android (56 kbps) AAC", "H264 Single Bitrate Low Quality SD for Android");
+                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 SBR High Quality SD for Android (500 kbps) AAC", "H264 Single Bitrate High Quality SD for Android");
+                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H264 SBR Low Quality SD for Android (56 kbps) AAC", "H264 Single Bitrate Low Quality SD for Android");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (JSON)", "Custom");
                 encoderConfigOptions.selectedIndex = 2;
                 $("#" + encoderOptionsRowId).show();

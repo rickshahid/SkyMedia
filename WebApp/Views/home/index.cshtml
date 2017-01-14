@@ -2,6 +2,7 @@
 @using SkyMedia.WebApp.Models;
 
 @{
+    string accountMessage = ViewData["accountMessage"] as string;
     int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
     string authToken = ViewData["authToken"] as string;
@@ -187,6 +188,7 @@
             SetMediaMetadata(); 
         }
         $(function () {
+            var accountMessage = "@accountMessage";
             var streamNumber = @streamNumber;
             var mediaStreams = GetMediaStreams();
             var currentStream = (mediaStreams.length == 0) ? null : mediaStreams[streamNumber - 1];
@@ -253,6 +255,9 @@
                 SetAnalyticsProcessors(currentStream);
                 SetStreamNumber(mediaStreams, streamNumber);
                 SetStreamName(currentStream);
+            }
+            if (accountMessage != "") {
+                DisplayMessage("Account Message", accountMessage);
             }
         })
     </script>

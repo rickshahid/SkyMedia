@@ -11,7 +11,7 @@
     "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
     "Microsoft.AspNetCore.StaticFiles": "1.1.0",
     "Microsoft.Azure.DocumentDB": "1.11.1",
-    "Microsoft.Azure.Search": "3.0.1",
+    "Microsoft.Azure.Search": "3.0.2",
     "Microsoft.Extensions.Configuration.Abstractions": "1.1.0",
     "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
     "Microsoft.Extensions.Configuration.Json": "1.1.0",
@@ -22,8 +22,8 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "Swashbuckle": "6.0.0-beta902",
-    "windowsazure.mediaservices": "3.8.0.3",
-    "WindowsAzure.Storage": "8.0.0"
+    "windowsazure.mediaservices": "3.8.0.5",
+    "WindowsAzure.Storage": "8.0.1"
   },
 
   "tools": {

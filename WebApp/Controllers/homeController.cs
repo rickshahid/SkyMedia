@@ -14,6 +14,20 @@ namespace SkyMedia.WebApp.Controllers
 {
     public class homeController : Controller
     {
+        private bool StreamingEnabled(MediaClient mediaClient)
+        {
+            bool streamingEnabled = false;
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(EntityType.StreamingEndpoint) as IStreamingEndpoint[];
+            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
+            {
+                if (streamingEndpoint.State == StreamingEndpointState.Running)
+                {
+                    streamingEnabled = true;
+                }
+            }
+            return streamingEnabled;
+        }
+
         private string[] MapProtectionTypes(string streamProtectionTypes)
         {
             string[] protectionTypes = new string[] { };
@@ -146,23 +160,27 @@ namespace SkyMedia.WebApp.Controllers
         private List<MediaStream> GetMediaStreams(MediaClient mediaClient)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
-            IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
-            foreach (IAsset asset in assets)
+            ILocator[] locators = mediaClient.GetEntities(EntityType.Locator) as ILocator[];
+            foreach (ILocator locator in locators)
             {
-                if (!mediaClient.LiveAsset(asset))
+                IAsset asset = locator.Asset;
+                if (asset.IsStreamable && asset.AssetFiles.Count() > 1)
                 {
-                    LocatorType locatorType = LocatorType.OnDemandOrigin;
-                    string locatorUrl = mediaClient.GetLocatorUrl(asset, locatorType, null);
+                    string locatorUrl = mediaClient.GetLocatorUrl(asset, locator.Type, null);
                     if (!string.IsNullOrEmpty(locatorUrl))
                     {
                         MediaStream mediaStream = new MediaStream();
                         mediaStream.Name = asset.Name;
                         mediaStream.SourceUrl = locatorUrl;
-                        mediaStream.TextTracks = GetTextTracks(mediaClient, asset, locatorType);
+                        mediaStream.TextTracks = GetTextTracks(mediaClient, asset, locator.Type);
                         mediaStream.ProtectionTypes = mediaClient.GetProtectionTypes(asset);
                         mediaStream.AnalyticsProcessors = GetAnalyticsProcessors(asset);
                         mediaStreams.Add(mediaStream);
                     }
+                }
+                if (mediaStreams.Count == 5)
+                {
+                    break;
                 }
             }
             mediaStreams.Sort(CompareStreams);
@@ -311,7 +329,8 @@ namespace SkyMedia.WebApp.Controllers
             string authToken = AuthToken.GetValue(this.Request, this.Response);
 
             MediaClient mediaClient = null;
-            List<MediaStream> mediaStreams;
+            string accountMessage = string.Empty;
+            List<MediaStream> mediaStreams = new List<MediaStream>();
 
             if (mediaAccount.Length > 0)
             {
@@ -333,10 +352,15 @@ namespace SkyMedia.WebApp.Controllers
             {
                 mediaStreams = GetMediaStreams();
             }
-            else
+            else if (StreamingEnabled(mediaClient))
             {
                 mediaStreams = GetMediaStreams(mediaClient);
             }
+            else
+            {
+                accountMessage = "Your media account does not have an active streaming endpoint.";
+            }
+            ViewData["accountMessage"] = accountMessage;
             ViewData["mediaStreams"] = mediaStreams.ToArray();
 
             ViewData["streamNumber"] = 1;

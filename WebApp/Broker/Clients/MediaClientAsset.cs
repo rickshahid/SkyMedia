@@ -11,23 +11,6 @@ namespace SkyMedia.ServiceBroker
 {
     internal partial class MediaClient
     {
-        internal bool LiveAsset(IAsset asset)
-        {
-            bool liveAsset = false;
-            IChannel[] channels = GetEntities(EntityType.Channel) as IChannel[];
-            foreach (IChannel channel in channels)
-            {
-                foreach (IProgram program in channel.Programs)
-                {
-                    if (string.Equals(program.AssetId, asset.Id, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        liveAsset = true;
-                    }
-                }
-            }
-            return liveAsset;
-        }
-
         private IAsset[] GetAssets(string[] assetIds)
         {
             List<IAsset> assets = new List<IAsset>();
