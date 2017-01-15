@@ -36,6 +36,7 @@
         FaceRedaction,
         MotionDetection,
         MotionHyperlapse,
+        VideoAnnotation,
         VideoSummarization,
         CharacterRecognition
     }

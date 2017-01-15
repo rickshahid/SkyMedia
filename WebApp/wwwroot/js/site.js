@@ -45,17 +45,17 @@ function SetTipVisible(targetId, tipVisible) {
 function SetLayout() {
     CreateTipRight("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipRight("siteCode", "Azure Sky Media<br /><br />Open Source");
-    CreateTipRight("accountDashboard", "Azure Media Services<br /><br />Account Dashboard");
+    CreateTipRight("accountInventory", "Azure Media Services<br /><br />Account Inventory");
     CreateTipLeft("userDirectory", "Azure Active Directory<br /><br />B2C");
     CreateTipLeft("userProfileEdit", "Azure Sky Media<br /><br />User Profile Edit");
     CreateTipLeft("userSignIn", "Azure Sky Media<br /><br />User Identity");
     CreateTipLeft("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
     CreateTipRight("amsPlatform", "Azure Media Services");
     CreateTipRight("amsPlayer", "Azure Media Player");
-    CreateTipRight("channelIngest", "Azure Media Services<br /><br />Live Channel");
-    CreateTipRight("mediaAnalytics", "Azure Media Services<br /><br />Media Analytics");
-    CreateTipRight("mediaEditor", "Azure Media Services<br /><br />Video Editor");
-    CreateTipRight("contentNetwork", "Azure CDN<br /><br />(Content Delivery Network)");
+    CreateTipRight("mediaStreaming", "Azure Media Services<br /><br />Streaming");
+    CreateTipRight("mediaEncoding", "Azure Media Services<br /><br />Encoding");
+    CreateTipRight("mediaProtection", "Azure Media Services<br /><br />Content Protection");
+    CreateTipRight("mediaAnalytics", "Azure Media Services<br /><br />Content Analytics");
     CreateTipLeft("appServiceWeb", "Azure App Service<br /><br />Web Apps");
     CreateTipLeft("appServiceMobile", "Azure App Service<br /><br />Mobile Apps");
     CreateTipLeft("appServiceApi", "Azure App Service<br /><br />API Apps");
