@@ -84,9 +84,8 @@ namespace SkyMedia.WebApp.Controllers
             settingKey = Constants.AppSettings.StorageMaxRetryCount;
             viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
 
-            MediaClient mediaClient = new MediaClient(authToken);
             viewData["storageAccount"] = Selections.GetStorageAccounts(authToken);
-            viewData["mediaProcessor1"] = Selections.GetMediaProcessors(mediaClient);
+            viewData["mediaProcessor1"] = Selections.GetMediaProcessors();
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }
 

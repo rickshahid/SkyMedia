@@ -129,9 +129,6 @@ namespace SkyMedia.ServiceBroker
                     case MediaProcessor.MotionHyperlapse:
                         tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, inputAssets);
                         break;
-                    case MediaProcessor.VideoAnnotation:
-                        tasks = GetVideoAnnotationTasks(mediaClient, jobTask, inputAssets);
-                        break;
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets);
                         break;

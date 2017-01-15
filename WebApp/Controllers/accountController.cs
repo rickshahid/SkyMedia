@@ -156,7 +156,7 @@ namespace SkyMedia.WebApp.Controllers
             entityCounts.Add(new string[] { "Assets", assets.Length.ToString() });
             entityCounts.Add(new string[] { "Asset Files", files.Length.ToString() });
             entityCounts.Add(new string[] { "Reserved Units", GetReservedUnitCount(encodingUnits) });
-            entityCounts.Add(new string[] { "Media Processors", processors.Length.ToString(), "/account/processors" });
+            entityCounts.Add(new string[] { "Media Processors", processors.Length.ToString(), "/dashboard/processors" });
             entityCounts.Add(new string[] { "Programs", programs.Length.ToString() });
             entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
             entityCounts.Add(new string[] { "Jobs", jobs.Length.ToString() });
@@ -191,24 +191,6 @@ namespace SkyMedia.WebApp.Controllers
             HttpContext.Authentication.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme).Wait();
             HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).Wait();
             return RedirectToAction("index", "home");
-        }
-
-        public IActionResult processors()
-        {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["mediaProcessors"] = mediaClient.GetEntities(EntityType.Processor) as IMediaProcessor[];
-            return View();
-        }
-
-        public IActionResult index()
-        {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["entityCounts"] = GetEntityCounts(mediaClient);
-            ViewData["id"] = this.Request.Query["id"];
-            ViewData["name"] = this.Request.Query["name"];
-            return View();
         }
     }
 }

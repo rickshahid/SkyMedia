@@ -14,7 +14,7 @@ namespace SkyMedia.ServiceBroker
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.IndexerV1;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorIndexerV1Id;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorIndexerV1DocumentId;
@@ -60,7 +60,7 @@ namespace SkyMedia.ServiceBroker
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.IndexerV2;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorIndexerV2Id;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorIndexerV2DocumentId;
@@ -104,7 +104,7 @@ namespace SkyMedia.ServiceBroker
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceDetection;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorFaceDetectionDocumentId;
@@ -123,7 +123,7 @@ namespace SkyMedia.ServiceBroker
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceRedaction;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             jobTask.Name = string.Concat(jobTask.Name, " ", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jobTask.FaceRedactionMode));
             string settingKey = Constants.AppSettings.MediaProcessorFaceRedactionId;
             string processorId = AppSetting.GetValue(settingKey);
@@ -143,7 +143,7 @@ namespace SkyMedia.ServiceBroker
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.MotionDetection;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorMotionDetectionId;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorMotionDetectionDocumentId;
@@ -160,7 +160,7 @@ namespace SkyMedia.ServiceBroker
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.MotionHyperlapse;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorMotionHyperlapseId;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorMotionHyperlapseDocumentId;
@@ -178,28 +178,11 @@ namespace SkyMedia.ServiceBroker
             return jobTasks.ToArray();
         }
 
-        private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
-            string settingKey = Constants.AppSettings.MediaProcessorVideoAnnotationId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorVideoAnnotationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
-            DatabaseClient databaseClient = new DatabaseClient();
-            JObject processorConfig = databaseClient.GetDocument(documentId);
-            jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
-            return jobTasks.ToArray();
-        }
-
         private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.VideoSummarization;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorVideoSummarizationId;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorVideoSummarizationDocumentId;
@@ -218,7 +201,7 @@ namespace SkyMedia.ServiceBroker
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.CharacterRecognition;
-            jobTask.Name = Selections.GetProcessorName(mediaClient, jobTask.MediaProcessor);
+            jobTask.Name = Selections.GetProcessorName(jobTask.MediaProcessor);
             string settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
             string processorId = AppSetting.GetValue(settingKey);
             settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionDocumentId;

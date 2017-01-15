@@ -12,7 +12,6 @@ namespace SkyMedia.ServiceBroker
     internal partial class MediaClient
     {
         private CloudMediaContext _media;
-        private IMediaProcessor[] _processors;
 
         public MediaClient(string authToken)
         {
@@ -59,20 +58,7 @@ namespace SkyMedia.ServiceBroker
                 _media.ParallelTransferThreadCount = settingValue;
             }
 
-            _processors = GetEntities(EntityType.Processor) as IMediaProcessor[];
-        }
-
-        public bool ProcessorEnabled(string processorId)
-        {
-            bool processorEnabled = false;
-            foreach (IMediaProcessor processor in _processors)
-            {
-                if (string.Equals(processor.Id, processorId, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    processorEnabled = true;
-                }
-            }
-            return processorEnabled;
+            IStorageAccount storageAccount = _media.DefaultStorageAccount;
         }
 
         public object GetEntities(EntityType entityType)
