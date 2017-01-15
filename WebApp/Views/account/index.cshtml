@@ -11,7 +11,7 @@
                     parameterFlag: parameterFlag
                 },
                 function (entityCounts) {
-                    SetDashboard(entityCounts);
+                    SetInventory(entityCounts);
                 }
             );
         }
@@ -64,21 +64,21 @@
             }
             return innerHtml + ":</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
         }
-        function SetDashboard(entityCounts) {
+        function SetInventory(entityCounts) {
             var innerHtml = "";
             for (var i = 0; i < 11; i++) {
                 innerHtml = SetEntity(innerHtml, entityCounts[i]);
             }
-            $("#dashboard1").html(innerHtml);
+            $("#inventory1").html(innerHtml);
             innerHtml = "";
             for (var i = 11; i < entityCounts.length; i++) {
                 innerHtml = SetEntity(innerHtml, entityCounts[i]);
             }
-            $("#dashboard2").html(innerHtml);
+            $("#inventory2").html(innerHtml);
         }
         $(function () {
             var entityCounts = @Html.Raw(Json.Serialize(ViewData["entityCounts"]));
-            SetDashboard(entityCounts);
+            SetInventory(entityCounts);
             CreateTipTop("mediaProcessors", "Azure Media Services<br /><br />Processors");
             CreateTipTop("siteApi", "Azure Sky Media<br /><br />Web API");
             CreateTipTop("channelCreate", "Create Live Channel");
@@ -89,22 +89,22 @@
 }
 
 @section title {
-    Media Account Dashboard
+    Media Account Inventory
 }
 
-<table class="dashboard">
+<table class="accountInventory">
     <tr>
         <td>
-            <table id="dashboard1" class="entityCounts"></table>
+            <table id="inventory1" class="entityCounts"></table>
         </td>
         <td>
-            <table id="dashboard2" class="entityCounts"></table>
+            <table id="inventory2" class="entityCounts"></table>
         </td>
     </tr>
 </table>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "mediaProcessors", "MediaProcessors.png", "window.location.href = '/dashboard/processors'" })
+    @Html.Partial("SiteButton", new string[] { "mediaProcessors", "MediaProcessors.png", "window.location.href = '/account/processors'" })
     @Html.Partial("SiteButton", new string[] { "siteApi", "SiteAPI.png", "window.open('/swagger/ui/')" })
     @Html.Partial("SiteButton", new string[] { "channelCreate", "ChannelCreate.png", "ConfirmCommand('channelCreate')" })
     @Html.Partial("SiteButton", new string[] { "channelSignal", "ChannelSignal.png", "ConfirmCommand('channelSignal')" })

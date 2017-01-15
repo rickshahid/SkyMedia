@@ -34,7 +34,7 @@
                         @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                         @if (ViewData.ContainsKey("userAccount"))
                         {
-                            @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.location.href = '/dashboard'" })
+                            @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", "window.location.href = '/account'" })
                         }
                         @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
                     </td>
@@ -80,16 +80,17 @@
                             @Html.Partial("SiteButton", new string[] { "amsPlayer", "MediaPlayer.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/media-player/')" })
                         </div>
                         <div>
-                            @Html.Partial("SiteButton", new string[] { "channelIngest", "ChannelIngest.png", "window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-manage-channels-overview')" })
+                            @Html.Partial("SiteButton", new string[] { "mediaStreaming", "MediaStreaming.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/live-on-demand/')" })
                         </div>
                         <div>
-                            @Html.Partial("SiteButton", new string[] { "mediaAnalytics", "MediaAnalytics.png", "window.open('http://azuremedialabs.azurewebsites.net/demos/Analytics.html')" })
+                            @Html.Partial("SiteButton", new string[] { "mediaEncoding", "MediaEncoding.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/encoding/')" })
                         </div>
                         <div>
-                            @Html.Partial("SiteButton", new string[] { "mediaEditor", "MediaEditor.png", "window.open('http://aka.ms/videoeditordemo/')" })
+                            @Html.Partial("SiteButton", new string[] { "mediaProtection", "MediaProtection.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/content-protection/')" })
                         </div>
                         <div>
-                            @Html.Partial("SiteButton", new string[] { "contentNetwork", "ContentNetwork.png", "window.open('http://azure.microsoft.com/en-us/services/cdn/')" })
+                            @Html.Partial("SiteButton", new string[] { "mediaAnalytics", "MediaAnalyticsOpen.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/media-analytics/')" })
+                            @*@Html.Partial("SiteButton", new string[] { "mediaEditor", "MediaEditor.png", "window.open('http://aka.ms/videoeditordemo/')" })*@
                         </div>
                     </td>
                     <td>

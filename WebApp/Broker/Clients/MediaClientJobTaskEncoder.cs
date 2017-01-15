@@ -33,14 +33,14 @@ namespace SkyMedia.ServiceBroker
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             if (jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
             {
-                jobTask.Name = Selections.GetProcessorName(MediaProcessor.EncoderPremium);
+                jobTask.Name = Selections.GetProcessorName(mediaClient, MediaProcessor.EncoderPremium);
                 List<MediaAssetInput> assets = new List<MediaAssetInput>(inputAssets);
                 assets.Sort(OrderByWorkflow);
                 inputAssets = assets.ToArray();
             }
             else
             {
-                jobTask.Name = Selections.GetProcessorName(MediaProcessor.EncoderStandard);
+                jobTask.Name = Selections.GetProcessorName(mediaClient, MediaProcessor.EncoderStandard);
                 bool inputSubclipped = false;
                 foreach (MediaAssetInput inputAsset in inputAssets)
                 {

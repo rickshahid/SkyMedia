@@ -29,7 +29,7 @@ namespace SkyMedia.ServiceBroker
             return storageAccounts.ToArray();
         }
 
-        public static SelectListItem[] GetMediaProcessors()
+        public static SelectListItem[] GetMediaProcessors(MediaClient mediaClient)
         {
             List<SelectListItem> mediaProcessors = new List<SelectListItem>();
 
@@ -78,6 +78,16 @@ namespace SkyMedia.ServiceBroker
             mediaProcessor.Value = MediaProcessor.MotionHyperlapse.ToString();
             mediaProcessors.Add(mediaProcessor);
 
+            string settingKey = Constants.AppSettings.MediaProcessorVideoAnnotationId;
+            string processorId = AppSetting.GetValue(settingKey);
+            if (mediaClient.ProcessorEnabled(processorId))
+            {
+                mediaProcessor = new SelectListItem();
+                mediaProcessor.Text = "Video Annotation";
+                mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
+                mediaProcessors.Add(mediaProcessor);
+            }
+
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Video Summarization";
             mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
@@ -91,10 +101,10 @@ namespace SkyMedia.ServiceBroker
             return mediaProcessors.ToArray();
         }
 
-        public static string GetProcessorName(MediaProcessor mediaProcessor)
+        public static string GetProcessorName(MediaClient mediaClient, MediaProcessor mediaProcessor)
         {
             string processorName = string.Empty;
-            SelectListItem[] processors = GetMediaProcessors();
+            SelectListItem[] processors = GetMediaProcessors(mediaClient);
             foreach (SelectListItem processor in processors)
             {
                 if (string.Equals(processor.Value, mediaProcessor.ToString(), StringComparison.InvariantCultureIgnoreCase))
