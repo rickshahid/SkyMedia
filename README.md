@@ -11,6 +11,7 @@ Here is a breakdown of the integrated capabilities that are enabled by this samp
 * Upload and process media files via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
 * Background process that tracks and publishes media workflow outputs via parameters specified at job submission time
+(Note this item is currently under development switching from Azure Queue notification to Azure Functions webhook.)
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
@@ -74,7 +75,7 @@ The set of Azure Media Services processors that are integrated within the app in
 
 * Character Recognition - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
 
-If you run into an issue, please let me know. As always, feedback and/or suggestions is highly encouraged and appreciated.
+If you run into an issue, please let me know.
 
 Thanks.
 
