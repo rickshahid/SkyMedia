@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
-using SkyMedia.ServiceBroker;
+using AzureSkyMedia.ServiceBroker;
 
-namespace SkyMedia.WebApp.Controllers
+namespace AzureSkyMedia.WebApp.Controllers
 {
     public class uploadController : Controller
     {
         public JsonResult manifest(string manifestId, string inputAssetName, string storageAccount, bool storageEncryption,
                                    bool multipleFileAsset, bool uploadBulkIngest, string[] fileNames)
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             if (string.IsNullOrEmpty(inputAssetName) && fileNames.Length > 0)
             {
@@ -28,7 +28,7 @@ namespace SkyMedia.WebApp.Controllers
 
         public JsonResult storage(TransferService transferService, string[] filePaths, string storageAccount, string containerName)
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             string accountKey = Storage.GetAccountKey(authToken, storageAccount);
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             blobClient.GetContainer(containerName); // CreateIfNotExists
@@ -50,7 +50,7 @@ namespace SkyMedia.WebApp.Controllers
 
         public JsonResult file(string name, int chunk, int chunks, string storageAccount, string storageContainer)
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
             string containerName = Path.GetFileName(storageContainer);
@@ -85,21 +85,21 @@ namespace SkyMedia.WebApp.Controllers
             viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
 
             MediaClient mediaClient = new MediaClient(authToken);
-            viewData["storageAccount"] = Selections.GetStorageAccounts(authToken);
-            viewData["mediaProcessor1"] = Selections.GetMediaProcessors(mediaClient);
+            viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
+            viewData["mediaProcessor1"] = homeController.GetMediaProcessors();
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }
 
         public IActionResult index()
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             SetViewData(authToken, this.ViewData);
             return View();
         }
 
         public IActionResult signiant()
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
 
             string settingKey = Constants.AppSettings.SigniantTransferApi;
             ViewData["signiantTransferApi"] = AppSetting.GetValue(settingKey);
@@ -113,7 +113,7 @@ namespace SkyMedia.WebApp.Controllers
 
         public IActionResult aspera()
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
 
             string settingKey = Constants.AppSettings.AsperaTransferApi;
             ViewData["asperaTransferApi"] = AppSetting.GetValue(settingKey);

@@ -135,39 +135,41 @@ $.jgrid.extend({
 			 */
 			function calculation(oper, v, field, rc, _cnt)  {
 				var ret;
-				switch (oper) {
-					case  "sum" : 
-						ret = parseFloat(v||0) + parseFloat((rc[field]||0));
-						break;
-					case "count" :
-						if(v==="" || v == null) {
-							v=0;
-						}
-						if(rc.hasOwnProperty(field)) {
-							ret = v+1;
-						} else {
-							ret = 0;
-						}
-						break;
-					case "min" : 
-						if(v==="" || v == null) {
-							ret = parseFloat(rc[field]||0);
-						} else {
-							ret =Math.min(parseFloat(v),parseFloat(rc[field]||0));
-						}
-						break;
-					case "max" : 
-						if(v==="" || v == null) {
-							ret = parseFloat(rc[field]||0);
-						} else {
-							ret = Math.max(parseFloat(v),parseFloat(rc[field]||0));
-						}
-						break;
-					case "avg" : //avg grouping
-						 
-						ret = (parseFloat(v||0) * (_cnt -1) + parseFloat(rc[field]||0) ) /_cnt;
-						 
-						break;	
+				if( $.isFunction(oper)) {
+					ret = oper.call(this, v, field, rc);
+				} else {
+					switch (oper) {
+						case  "sum" : 
+							ret = parseFloat(v||0) + parseFloat((rc[field]||0));
+							break;
+						case "count" :
+							if(v==="" || v == null) {
+								v=0;
+							}
+							if(rc.hasOwnProperty(field)) {
+								ret = v+1;
+							} else {
+								ret = 0;
+							}
+							break;
+						case "min" : 
+							if(v==="" || v == null) {
+								ret = parseFloat(rc[field]||0);
+							} else {
+								ret =Math.min(parseFloat(v),parseFloat(rc[field]||0));
+							}
+							break;
+						case "max" : 
+							if(v==="" || v == null) {
+								ret = parseFloat(rc[field]||0);
+							} else {
+								ret = Math.max(parseFloat(v),parseFloat(rc[field]||0));
+							}
+							break;
+						case "avg" : //avg grouping
+							ret = (parseFloat(v||0) * (_cnt -1) + parseFloat(rc[field]||0) ) /_cnt;
+							break;	
+					}
 				}
 				return ret;
 			}
@@ -177,7 +179,7 @@ $.jgrid.extend({
 			 */
 			function agregateFunc ( row, aggr, value, curr) {
 				// default is sum
-				var arrln = aggr.length, i, label, j, jv, mainval="",swapvals=[];
+				var arrln = aggr.length, i, label, j, jv, mainval="",swapvals=[], swapstr, _cntavg = 1, lbl;
 				if($.isArray(value)) {
 					jv = value.length;
 					swapvals = value;
@@ -188,22 +190,19 @@ $.jgrid.extend({
 				member = [];
 				labels = [];
 				member.root = 0;
-				if(! !!curr._count ){
-					curr._count = 1;
-				}else{
-					curr._count ++;
-				}
 				for(j=0;j<jv;j++) {
 					var  tmpmember = [], vl;
 					for(i=0; i < arrln; i++) {
+						swapstr = typeof aggr[i].aggregator === 'string' ? aggr[i].aggregator : 'cust';
+							
 						if(value == null) {
-							label = $.trim(aggr[i].member)+"_"+aggr[i].aggregator;
+							label = $.trim(aggr[i].member)+"_" + swapstr;
 							vl = label;
-							swapvals[0]= aggr[i].label || (aggr[i].aggregator+ " " +$.trim(aggr[i].member));
+							swapvals[0]= aggr[i].label || (swapstr + " " +$.trim(aggr[i].member));
 						} else {
 							vl = value[j].replace(/\s+/g, '');
 							try {
-								label = (arrln === 1 ? mainval + vl : mainval + vl+"_"+aggr[i].aggregator+"_" + String(i));
+								label = (arrln === 1 ? mainval + vl : mainval + vl + "_" + swapstr + "_" + String(i));
 							} catch(e) {}
 							swapvals[j] = value[j];
 						}
@@ -211,9 +210,18 @@ $.jgrid.extend({
 							//mainval = vl;
 						//}
 						label = !isNaN(parseInt(label,10)) ? label + " " : label;
-						curr[label] =  tmpmember[label] = calculation( aggr[i].aggregator, curr[label], aggr[i].member, row, curr._count);
+						if(aggr[i].aggregator === 'avg') {
+							lbl = rowindex === -1 ? pivotrows.length+"_"+label : rowindex+"_"+label;
+							if(!_avg[lbl]) {
+								_avg[lbl] = 1;
+							} else {
+								_avg[lbl]++;
+							}
+							_cntavg = _avg[lbl];
+						}						
+						curr[label] =  tmpmember[label] = calculation( aggr[i].aggregator, curr[label], aggr[i].member, row, _cntavg);
 					}
-					mainval += value[j].replace(/\s+/g, '');
+					mainval += (value && value[j] != null) ? value[j].replace(/\s+/g, '') : ''
 					//vl = !isNaN(parseInt(vl,10)) ? vl + " " : vl;
 					member[label] = tmpmember;
 					labels[label] = swapvals[j];
@@ -242,7 +250,7 @@ $.jgrid.extend({
 				colc = $.extend(true, colc, o.xDimension[i]);
 				columns.push( colc );
 			}
-			var groupfields = xlen - 1, tree={};
+			var groupfields = xlen - 1, tree={}, _avg=[];
 			//tree = { text: 'root', leaf: false, children: [] };
 			//loop over alll the source data
 			while( r < rowlen ) {
@@ -336,6 +344,7 @@ $.jgrid.extend({
 				}
 				r++;
 			}
+			_avg = null; // free mem
 			var  lastval=[], initColLen = columns.length, swaplen = initColLen;
 			if(ylen>0) {
 				headers[ylen-1] = {	useColSpanStyle: false,	groupHeaders: []};
@@ -488,6 +497,9 @@ $.jgrid.extend({
 			var $t = this;
 
 			function pivot( data) {
+				if(!$.isArray(data)) {
+					throw "data provides is not an array";
+				}
 				var pivotGrid = jQuery($t).jqGrid('pivotSetup',data, pivotOpt),
 				footerrow = $.assocArraySize(pivotGrid.summary) > 0 ? true : false,
 				query= $.jgrid.from.call($t, pivotGrid.rows), i, so, st, len;
@@ -500,10 +512,22 @@ $.jgrid.extend({
 					query.orderBy(pivotGrid.groupOptions.groupingView.groupField[i], so, st, '', st);
 				}
 				len = pivotOpt.xDimension.length;
-				if(pivotGrid.groupOptions.sortname && len) {
-					so = pivotOpt.xDimension[len-1].sortorder ? pivotOpt.xDimension[len-1].sortorder : 'asc';
-					st = pivotOpt.xDimension[len-1].sorttype ? pivotOpt.xDimension[len-1].sorttype : 'text';
-					query.orderBy(pivotGrid.groupOptions.sortname, so, st, '', st);					
+				if(gridOpt.sortname) { // should be a part of xDimension
+					so = gridOpt.sortorder ? gridOpt.sortorder : 'asc';
+					st = 'text';
+					for( i=0; i< len; i++) {
+						if(pivotOpt.xDimension[i].dataName === gridOpt.sortname) {
+							st = pivotOpt.xDimension[i].sorttype ? pivotOpt.xDimension[i].sorttype : 'text';
+							break;
+						}
+					}
+					query.orderBy(gridOpt.sortname, so, st, '', st);
+				} else {
+					if(pivotGrid.groupOptions.sortname && len) {
+						so = pivotOpt.xDimension[len-1].sortorder ? pivotOpt.xDimension[len-1].sortorder : 'asc';
+						st = pivotOpt.xDimension[len-1].sorttype ? pivotOpt.xDimension[len-1].sorttype : 'text';
+						query.orderBy(pivotGrid.groupOptions.sortname, so, st, '', st);					
+					}
 				}
 				jQuery($t).jqGrid($.extend(true, {
 					datastr: $.extend(query.select(),footerrow ? {userdata:pivotGrid.summary} : {}),

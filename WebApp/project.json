@@ -6,13 +6,14 @@
     "Microsoft.AspNetCore.Authentication.OpenIdConnect": "1.1.0",
     "Microsoft.AspNetCore.Diagnostics": "1.1.0",
     "Microsoft.AspNetCore.Mvc": "1.1.0",
+    "Microsoft.AspNetCore.Razor.Tools": {
+      "version": "1.0.0-preview2-final",
+      "type": "build"
+    },
     "Microsoft.AspNetCore.Routing": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
     "Microsoft.AspNetCore.StaticFiles": "1.1.0",
-    "Microsoft.Azure.DocumentDB": "1.11.1",
-    "Microsoft.Azure.Search": "3.0.2",
-    "Microsoft.Extensions.Configuration.Abstractions": "1.1.0",
     "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
     "Microsoft.Extensions.Configuration.Json": "1.1.0",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.1.0",
@@ -22,6 +23,7 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.1.0",
     "Swashbuckle": "6.0.0-beta902",
+    "System.IdentityModel.Tokens.Jwt": "5.1.2",
     "windowsazure.mediaservices": "3.8.0.5",
     "WindowsAzure.Storage": "8.0.1"
   },
@@ -32,7 +34,13 @@
   },
 
   "frameworks": {
-    "net461": { }
+    "net462": {
+      "dependencies": {
+        "ServiceBroker": {
+          "target": "project"
+        }
+      }
+    }
   },
 
   "buildOptions": {
@@ -50,8 +58,8 @@
   },
 
   "scripts": {
-    //"prepublish": [ "bower install", "dotnet bundle" ],
+    "prepublish": [ "bower install", "dotnet bundle" ],
     "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
   },
-  "userSecretsId": "aspnet-WebApp-20160918092125"
+  "userSecretsId": "aspnet-WebApp-20170120020140"
 }

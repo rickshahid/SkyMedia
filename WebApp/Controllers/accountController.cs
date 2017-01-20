@@ -9,31 +9,28 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
 using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
 
-using SkyMedia.ServiceBroker;
+using AzureSkyMedia.ServiceBroker;
 
-namespace SkyMedia.WebApp.Controllers
+namespace AzureSkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
-        private static string GetReservedUnitCount(IEncodingReservedUnit[] reservedUnits)
+        private static string GetProcessorUnitCount(IEncodingReservedUnit[] processorUnits)
         {
             int unitCount = 0;
-            foreach (IEncodingReservedUnit reservedUnit in reservedUnits)
+            foreach (IEncodingReservedUnit processorUnit in processorUnits)
             {
-                unitCount = unitCount + reservedUnit.CurrentReservedUnits;
+                unitCount = unitCount + processorUnit.CurrentReservedUnits;
             }
             return unitCount.ToString();
         }
 
-        private static string GetStreamingUnitCount(IStreamingEndpoint[] streamingEndpoints, string endpointName)
+        private static string GetStreamingUnitCount(IStreamingEndpoint[] streamingEndpoints)
         {
             int unitCount = 0;
             foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
             {
-                if (string.Equals(streamingEndpoint.Name, endpointName, StringComparison.InvariantCultureIgnoreCase) && streamingEndpoint.ScaleUnits.HasValue)
-                {
-                    unitCount = streamingEndpoint.ScaleUnits.Value;
-                }
+                unitCount = streamingEndpoint.ScaleUnits.Value;
             }
             return unitCount.ToString();
         }
@@ -66,28 +63,33 @@ namespace SkyMedia.WebApp.Controllers
         {
             if (allEntities)
             {
-                IProgram[] programs = mediaClient.GetEntities(EntityType.Program) as IProgram[];
+                IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
                 foreach (IProgram program in programs)
                 {
                     program.Delete();
                 }
-                IChannel[] channels = mediaClient.GetEntities(EntityType.Channel) as IChannel[];
+                IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
                 foreach (IChannel channel in channels)
                 {
                     channel.Delete();
                 }
-                IIngestManifest[] manifests = mediaClient.GetEntities(EntityType.Manifest) as IIngestManifest[];
+                IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
                 foreach (IIngestManifest manifest in manifests)
                 {
                     manifest.Delete();
                 }
             }
-            IJob[] jobs = mediaClient.GetEntities(EntityType.Job) as IJob[];
+            IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
             foreach (IJob job in jobs)
             {
                 job.Delete();
             }
-            IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
+            INotificationEndPoint[] notifications = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+            foreach (INotificationEndPoint notification in notifications)
+            {
+                notification.Delete();
+            }
+            IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
             foreach (IAsset asset in assets)
             {
                 if (asset.ParentAssets.Count > 0 || allEntities)
@@ -97,22 +99,22 @@ namespace SkyMedia.WebApp.Controllers
             }
             if (allEntities)
             {
-                IAccessPolicy[] accessPolicies = mediaClient.GetEntities(EntityType.AccessPolicy) as IAccessPolicy[];
+                IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
                 foreach (IAccessPolicy accessPolicy in accessPolicies)
                 {
                     accessPolicy.Delete();
                 }
-                IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(EntityType.DeliveryPolicy) as IAssetDeliveryPolicy[];
+                IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(MediaEntity.DeliveryPolicy) as IAssetDeliveryPolicy[];
                 foreach (IAssetDeliveryPolicy deliveryPolicy in deliveryPolicies)
                 {
                     deliveryPolicy.Delete();
                 }
-                IContentKeyAuthorizationPolicy[] contentKeyAuthPolicies = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
+                IContentKeyAuthorizationPolicy[] contentKeyAuthPolicies = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
                 foreach (IContentKeyAuthorizationPolicy contentKeyAuthPolicy in contentKeyAuthPolicies)
                 {
                     contentKeyAuthPolicy.Delete();
                 }
-                IContentKeyAuthorizationPolicyOption[] contentKeyAuthPolicyOptions = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
+                IContentKeyAuthorizationPolicyOption[] contentKeyAuthPolicyOptions = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
                 foreach (IContentKeyAuthorizationPolicyOption contentKeyAuthPolicyOption in contentKeyAuthPolicyOptions)
                 {
                     contentKeyAuthPolicyOption.Delete();
@@ -122,27 +124,27 @@ namespace SkyMedia.WebApp.Controllers
 
         internal static string[][] GetEntityCounts(MediaClient mediaClient)
         {
-            IStorageAccount[] storageAccounts = mediaClient.GetEntities(EntityType.StorageAccount) as IStorageAccount[];
-            IContentKey[] contentKeys = mediaClient.GetEntities(EntityType.ContentKey) as IContentKey[];
-            IContentKeyAuthorizationPolicy[] contentKeyPolicies = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
-            IContentKeyAuthorizationPolicyOption[] contentKeyPolicyOptions = mediaClient.GetEntities(EntityType.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
-            IChannel[] channels = mediaClient.GetEntities(EntityType.Channel) as IChannel[];
-            IIngestManifest[] manifests = mediaClient.GetEntities(EntityType.Manifest) as IIngestManifest[];
-            IIngestManifestAsset[] manifestAssets = mediaClient.GetEntities(EntityType.ManifestAsset) as IIngestManifestAsset[];
-            IIngestManifestFile[] manifestFiles = mediaClient.GetEntities(EntityType.ManifestFile) as IIngestManifestFile[];
-            IAsset[] assets = mediaClient.GetEntities(EntityType.Asset) as IAsset[];
-            IAssetFile[] files = mediaClient.GetEntities(EntityType.File) as IAssetFile[];
-            IEncodingReservedUnit[] encodingUnits = mediaClient.GetEntities(EntityType.ReservedUnit) as IEncodingReservedUnit[];
-            IMediaProcessor[] processors = mediaClient.GetEntities(EntityType.Processor) as IMediaProcessor[];
-            IProgram[] programs = mediaClient.GetEntities(EntityType.Program) as IProgram[];
-            IJobTemplate[] jobTemplates = mediaClient.GetEntities(EntityType.JobTemplate) as IJobTemplate[];
-            IJob[] jobs = mediaClient.GetEntities(EntityType.Job) as IJob[];
-            INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(EntityType.NotificationEndpoint) as INotificationEndPoint[];
-            IAccessPolicy[] accessPolicies = mediaClient.GetEntities(EntityType.AccessPolicy) as IAccessPolicy[];
-            IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(EntityType.DeliveryPolicy) as IAssetDeliveryPolicy[];
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(EntityType.StreamingEndpoint) as IStreamingEndpoint[];
-            IStreamingFilter[] streamingFilters = mediaClient.GetEntities(EntityType.StreamingFilter) as IStreamingFilter[];
-            ILocator[] locators = mediaClient.GetEntities(EntityType.Locator) as ILocator[];
+            IStorageAccount[] storageAccounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
+            IContentKey[] contentKeys = mediaClient.GetEntities(MediaEntity.ContentKey) as IContentKey[];
+            IContentKeyAuthorizationPolicy[] contentKeyPolicies = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
+            IContentKeyAuthorizationPolicyOption[] contentKeyPolicyOptions = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
+            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+            IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
+            IIngestManifestAsset[] manifestAssets = mediaClient.GetEntities(MediaEntity.ManifestAsset) as IIngestManifestAsset[];
+            IIngestManifestFile[] manifestFiles = mediaClient.GetEntities(MediaEntity.ManifestFile) as IIngestManifestFile[];
+            IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
+            IAssetFile[] files = mediaClient.GetEntities(MediaEntity.File) as IAssetFile[];
+            IEncodingReservedUnit[] processorUnits = mediaClient.GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
+            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+            IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
+            IJobTemplate[] jobTemplates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
+            IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
+            INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+            IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
+            IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(MediaEntity.DeliveryPolicy) as IAssetDeliveryPolicy[];
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            IStreamingFilter[] streamingFilters = mediaClient.GetEntities(MediaEntity.StreamingFilter) as IStreamingFilter[];
+            ILocator[] locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", storageAccounts.Length.ToString() });
@@ -150,21 +152,21 @@ namespace SkyMedia.WebApp.Controllers
             entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Content Key Policy Options", contentKeyPolicyOptions.Length.ToString() });
             entityCounts.Add(new string[] { "Channels", channels.Length.ToString() });
-            entityCounts.Add(new string[] { "Manifests", manifests.Length.ToString() });
-            entityCounts.Add(new string[] { "Manifest Assets", manifestAssets.Length.ToString() });
-            entityCounts.Add(new string[] { "Manifest Files", manifestFiles.Length.ToString() });
+            entityCounts.Add(new string[] { "Ingest Manifests", manifests.Length.ToString() });
+            entityCounts.Add(new string[] { "Ingest Manifest Assets", manifestAssets.Length.ToString() });
+            entityCounts.Add(new string[] { "Ingest Manifest Files", manifestFiles.Length.ToString() });
             entityCounts.Add(new string[] { "Assets", assets.Length.ToString() });
             entityCounts.Add(new string[] { "Asset Files", files.Length.ToString() });
-            entityCounts.Add(new string[] { "Reserved Units", GetReservedUnitCount(encodingUnits) });
+            entityCounts.Add(new string[] { "Processor (Reserved) Units", GetProcessorUnitCount(processorUnits) });
             entityCounts.Add(new string[] { "Media Processors", processors.Length.ToString(), "/account/processors" });
-            entityCounts.Add(new string[] { "Programs", programs.Length.ToString() });
+            entityCounts.Add(new string[] { "Channel Programs", programs.Length.ToString() });
             entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
             entityCounts.Add(new string[] { "Jobs", jobs.Length.ToString() });
-            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString() });
+            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString(), "/account/notifications" });
             entityCounts.Add(new string[] { "Access Policies", accessPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
-            entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints, Constants.Media.Streaming.DefaultEndpointName) });
+            entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints) });
             entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString() });
             entityCounts.Add(new string[] { "Locators", locators.Length.ToString() });
             return entityCounts.ToArray();
@@ -195,15 +197,23 @@ namespace SkyMedia.WebApp.Controllers
 
         public IActionResult processors()
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["mediaProcessors"] = mediaClient.GetEntities(EntityType.Processor) as IMediaProcessor[];
+            ViewData["mediaProcessors"] = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+            return View();
+        }
+
+        public IActionResult notifications()
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
+            ViewData["notificationEndpoints"] = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
             return View();
         }
 
         public IActionResult index()
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             ViewData["entityCounts"] = GetEntityCounts(mediaClient);
             ViewData["id"] = this.Request.Query["id"];

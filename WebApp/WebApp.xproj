@@ -6,19 +6,17 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>f642d41f-54d9-452a-940f-65cbe6ec09f5</ProjectGuid>
-    <RootNamespace>SkyMedia.WebApp</RootNamespace>
+    <ProjectGuid>0fb90688-b62e-4560-9480-7cf07c7b7a08</ProjectGuid>
+    <RootNamespace>AzureSkyMedia.WebApp</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
-    <ApplicationInsightsResourceId>/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/resourcegroups/SkyMedia-USCentral-App/providers/microsoft.insights/components/skyweb-uscentral</ApplicationInsightsResourceId>
   </PropertyGroup>
   <ItemGroup>
-    <DnxInvisibleContent Include="bower.json" />
-    <DnxInvisibleContent Include=".bowerrc" />
+    <ProjectReference Include="..\ServiceBroker\ServiceBroker.csproj" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\DotNet.Web\Microsoft.DotNet.Web.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

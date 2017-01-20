@@ -10,9 +10,9 @@ using Microsoft.Extensions.Logging;
 
 using Swashbuckle.Swagger.Model;
 
-using SkyMedia.ServiceBroker;
+using AzureSkyMedia.ServiceBroker;
 
-namespace SkyMedia.WebApp
+namespace AzureSkyMedia.WebApp
 {
     public class Startup
     {

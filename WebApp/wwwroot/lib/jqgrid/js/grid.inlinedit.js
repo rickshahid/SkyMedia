@@ -124,7 +124,7 @@ $.jgrid.extend({
 						},0);
 					}
 					if(o.keys===true) {
-						$(ind).bind( o.keyevent ,function(e) {
+						$(ind).on( o.keyevent ,function(e) {
 							if (e.keyCode === 27) {
 								$($t).jqGrid("restoreRow",rowid, o.afterrestorefunc);
 								if($t.p.inlineNav) {
@@ -197,10 +197,11 @@ $.jgrid.extend({
 		editable = $(ind).attr("editable");
 		o.url = o.url || $t.p.editurl;
 		if (editable==="1") {
-			var cm;
+			var cm, index, elem;
 			$('td[role="gridcell"]',ind).each(function(i) {
 				cm = $t.p.colModel[i];
 				nm = cm.name;
+				elem = "";
 				if ( nm !== 'cb' && nm !== 'subgrid' && cm.editable===true && nm !== 'rn' && !$(this).hasClass('not-editable-cell')) {
 					switch (cm.edittype) {
 						case "checkbox":
@@ -208,13 +209,15 @@ $.jgrid.extend({
 							if(cm.editoptions ) {
 								cbv = cm.editoptions.value.split(":");
 							}
-							tmp[nm]=  $("input",this).is(":checked") ? cbv[0] : cbv[1]; 
+							tmp[nm]=  $("input",this).is(":checked") ? cbv[0] : cbv[1];
+							elem = $("input",this);
 							break;
 						case 'text':
 						case 'password':
 						case 'textarea':
 						case "button" :
 							tmp[nm]=$("input, textarea",this).val();
+							elem = $("input, textarea",this);
 							break;
 						case 'select':
 							if(!cm.editoptions.multiple) {
@@ -232,6 +235,7 @@ $.jgrid.extend({
 								tmp2[nm] = selectedText.join(",");
 							}
 							if(cm.formatter && cm.formatter === 'select') { tmp2={}; }
+							elem = $("select",this);
 							break;
 						case 'custom' :
 							try {
@@ -247,6 +251,7 @@ $.jgrid.extend({
 					}
 					cv = $.jgrid.checkValues.call($t,tmp[nm],i);
 					if(cv[0] === false) {
+						index = i;
 						return false;
 					}
 					if($t.p.autoencode) { tmp[nm] = $.jgrid.htmlEncode(tmp[nm]); }
@@ -260,8 +265,22 @@ $.jgrid.extend({
 			});
 			if (cv[0] === false){
 				try {
-					var tr = $($t).jqGrid('getGridRowById', rowid), positions = $.jgrid.findPos(tr);
-					$.jgrid.info_dialog(errors.errcap,cv[1],edit.bClose,{left:positions[0],top:positions[1]+$(tr).outerHeight(), styleUI : $t.p.styleUI });
+					if( $.isFunction($t.p.validationCell) ) {
+						$t.p.validationCell.call($t, elem, cv[1], ind.rowIndex, index);
+					} else {
+						var tr = $($t).jqGrid('getGridRowById', rowid), 
+							positions = $.jgrid.findPos(tr);
+						$.jgrid.info_dialog(errors.errcap,cv[1],edit.bClose,{
+							left:positions[0],
+							top:positions[1]+$(tr).outerHeight(), 
+							styleUI : $t.p.styleUI, 
+							onClose: function(){
+								if(index >= 0 ) {
+									$("#"+rowid+"_" +$t.p.colModel[index].name).focus();
+								}
+							}
+						});
+					}
 				} catch (e) {
 					alert(cv[1]);
 				}
@@ -322,7 +341,7 @@ $.jgrid.extend({
 				$($t).triggerHandler("jqGridInlineAfterSaveRow", [rowid, resp, tmp, o]);
 				if( $.isFunction(o.aftersavefunc) ) { o.aftersavefunc.call($t, rowid, resp, tmp, o); }
 				success = true;
-				$(ind).removeClass("jqgrid-new-row").unbind("keydown");
+				$(ind).removeClass("jqgrid-new-row").off("keydown");
 			} else {
 				$($t).jqGrid("progressBar", {method:"show", loadtype : o.saveui, htmlcontent: o.savetext });
 				tmp3 = $.extend({},tmp,tmp3);
@@ -369,7 +388,7 @@ $.jgrid.extend({
 								$($t).triggerHandler("jqGridInlineAfterSaveRow", [rowid, res, tmp, o]);
 								if( $.isFunction(o.aftersavefunc) ) { o.aftersavefunc.call($t, rowid, res, tmp, o); }
 								success = true;
-								$(ind).removeClass("jqgrid-new-row").unbind("keydown");
+								$(ind).removeClass("jqgrid-new-row").off("keydown");
 							} else {
 								$($t).triggerHandler("jqGridInlineErrorSaveRow", [rowid, res, stat, null, o]);
 								if($.isFunction(o.errorfunc) ) {
@@ -441,7 +460,7 @@ $.jgrid.extend({
 					}
 				});
 				$($t).jqGrid("setRowData",rowid,ares);
-				$(ind).attr("editable","0").unbind("keydown");
+				$(ind).attr("editable","0").off("keydown");
 				$t.p.savedRow.splice(fr,1);
 				if($("#"+$.jgrid.jqID(rowid), "#"+$.jgrid.jqID($t.p.id)).hasClass("jqgrid-new-row")){
 					setTimeout(function(){
@@ -669,7 +688,7 @@ $.jgrid.extend({
 				$("#"+gID+"_ilcancel").addClass( disabled );
 			}
 			if(o.restoreAfterSelect === true || o.saveAfterSelect === true) {
-				$($t).bind("jqGridBeforeSelectRow.inlineNav", function( event, id ) {
+				$($t).on("jqGridBeforeSelectRow.inlineNav", function( event, id ) {
 					if($t.p.savedRow.length > 0 && $t.p.inlineNav===true && ( id !== $t.p.selrow && $t.p.selrow !==null) ) {
 						if($t.p.selrow === o.addParams.rowID ) {
 							$($t).jqGrid('delRowData', $t.p.selrow);

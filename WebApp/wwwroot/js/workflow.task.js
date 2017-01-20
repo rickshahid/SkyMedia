@@ -378,7 +378,7 @@ function GetJobTask(taskNumber) {
                     };
                     var encoderConfigFile = $("#encoderConfigFile" + taskNumber)[0].files[0];
                     fileReader.readAsText(encoderConfigFile);
-                    alert("Custom encoder configuration loaded.");
+                    alert("Custom configuration loaded. Continue to job submission.");
                 } else {
                     jobTask.ProcessorConfig = $("#encoderConfig" + taskNumber).val();
                 }

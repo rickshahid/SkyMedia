@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "PowerShell", "PowerShell\PowerShell.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBroker", "ServiceBroker\ServiceBroker.csproj", "{FE4B3D56-A798-4C57-8EFE-E03EB0E55EF4}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebApp", "WebApp\WebApp.xproj", "{0FB90688-B62E-4560-9480-7CF07C7B7A08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE4B3D56-A798-4C57-8EFE-E03EB0E55EF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE4B3D56-A798-4C57-8EFE-E03EB0E55EF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE4B3D56-A798-4C57-8EFE-E03EB0E55EF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE4B3D56-A798-4C57-8EFE-E03EB0E55EF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FB90688-B62E-4560-9480-7CF07C7B7A08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FB90688-B62E-4560-9480-7CF07C7B7A08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FB90688-B62E-4560-9480-7CF07C7B7A08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FB90688-B62E-4560-9480-7CF07C7B7A08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4
+	EndGlobalSection
+EndGlobal

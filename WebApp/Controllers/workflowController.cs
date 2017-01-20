@@ -7,10 +7,9 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 using Newtonsoft.Json.Linq;
 
-using SkyMedia.ServiceBroker;
-using SkyMedia.WebApp.Models;
+using AzureSkyMedia.ServiceBroker;
 
-namespace SkyMedia.WebApp.Controllers
+namespace AzureSkyMedia.WebApp.Controllers
 {
     public class workflowController : Controller
     {
@@ -27,7 +26,7 @@ namespace SkyMedia.WebApp.Controllers
             List<MediaAssetInput> inputAssets = new List<MediaAssetInput>();
             foreach (MediaAssetInput asset in assets)
             {
-                IAsset mediaAsset = mediaClient.GetEntityById(EntityType.Asset, asset.AssetId) as IAsset;
+                IAsset mediaAsset = mediaClient.GetEntityById(MediaEntity.Asset, asset.AssetId) as IAsset;
                 MediaAssetInput inputAsset = MapInputAsset(mediaAsset);
                 inputAsset.MarkIn = asset.MarkIn;
                 inputAsset.MarkOut = asset.MarkOut;
@@ -72,7 +71,7 @@ namespace SkyMedia.WebApp.Controllers
         {
             for (int i = 0; i < inputAssets.Length; i++)
             {
-                IAsset asset = mediaClient.GetEntityById(EntityType.Asset, inputAssets[i].AssetId) as IAsset;
+                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, inputAssets[i].AssetId) as IAsset;
                 inputAssets[i].PrimaryFile = MediaClient.GetPrimaryFile(asset);
                 if (!string.IsNullOrEmpty(inputAssets[i].MarkIn) && !string.IsNullOrEmpty(inputAssets[i].MarkOut))
                 {
@@ -125,7 +124,7 @@ namespace SkyMedia.WebApp.Controllers
             {
                 foreach (MediaAssetInput inputAsset in inputAssets)
                 {
-                    IAsset asset = mediaClient.GetEntityById(EntityType.Asset, inputAsset.AssetId) as IAsset;
+                    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, inputAsset.AssetId) as IAsset;
                     inputAsset.AssetName = asset.Name;
                 }
                 result = inputAssets;
@@ -137,7 +136,7 @@ namespace SkyMedia.WebApp.Controllers
                                  bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, string jobName,
                                  int jobPriority, MediaJobTask[] jobTasks)
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             inputAssets = CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, publishInputAsset, fileNames);
             IJob job = SubmitJob(authToken, mediaClient, storageAccount, inputAssets, jobName, jobPriority, jobTasks);
@@ -146,7 +145,7 @@ namespace SkyMedia.WebApp.Controllers
 
         public JsonResult start(MediaAssetInput[] inputAssets, string jobName, int jobPriority, MediaJobTask[] jobTasks)
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             inputAssets = MapInputAssets(mediaClient, inputAssets);
             SetInputClips(mediaClient, inputAssets);
@@ -165,7 +164,7 @@ namespace SkyMedia.WebApp.Controllers
 
         public IActionResult index()
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             uploadController.SetViewData(authToken, this.ViewData);
             return View();
         }

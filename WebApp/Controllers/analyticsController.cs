@@ -2,9 +2,9 @@
 
 using Newtonsoft.Json.Linq;
 
-using SkyMedia.ServiceBroker;
+using AzureSkyMedia.ServiceBroker;
 
-namespace SkyMedia.WebApp.Controllers
+namespace AzureSkyMedia.WebApp.Controllers
 {
     public class analyticsController : Controller
     {

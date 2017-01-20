@@ -329,8 +329,7 @@ $.jgrid.extend({
 				icon = "<span style='cursor:pointer;margin-right:8px;margin-left:5px;' class='" + common.icon_base +" "+pmrtl+"' onclick=\"jQuery('#"+$.jgrid.jqID($t.p.id)+"').jqGrid('groupingToggle','"+hid+"');return false;\"></span>";
 				try {
 					if ($.isArray(grp.formatDisplayField) && $.isFunction(grp.formatDisplayField[n.idx])) {
-						n.displayValue = grp.formatDisplayField[n.idx].call($t, n.displayValue, n.value, $t.p.colModel[cp[n.idx]], n.idx, grp);
-						gv = n.displayValue;
+						gv = grp.formatDisplayField[n.idx].call($t, n.displayValue, n.value, $t.p.colModel[cp[n.idx]], n.idx, grp);
 					} else {
 						gv = $t.formatter(hid, n.displayValue, cp[n.idx], n.value );
 					}
@@ -639,7 +638,7 @@ $.jgrid.extend({
 			}
 
 			$firstRow = $theadInTable.find("tr.jqg-first-row-header");
-			$(ts).bind('jqGridResizeStop.setGroupHeaders', function (e, nw, idx) {
+			$(ts).on('jqGridResizeStop.setGroupHeaders', function (e, nw, idx) {
 				$firstRow.find('th').eq(idx)[0].style.width = nw + "px";
 			});
 		});				
@@ -654,7 +653,7 @@ $.jgrid.extend({
 			thead = $("table.ui-jqgrid-htable thead", grid.hDiv), cm = $t.p.colModel, hc;
 			if(!grid) { return; }
 
-			$(this).unbind('.setGroupHeaders');
+			$(this).off('.setGroupHeaders');
 			$tr = $("<tr>", {role: "row"}).addClass("ui-jqgrid-labels");
 			headers = grid.headers;
 			for (i = 0, l = headers.length; i < l; i++) {

@@ -1,11 +1,12 @@
-﻿@using SkyMedia.ServiceBroker;
+﻿@using AzureSkyMedia.ServiceBroker;
+@using AzureSkyMedia.WebApp.Controllers;
 
 @using Microsoft.AspNetCore.Http;
 
 @{
     HttpRequest request = this.Context.Request;
     HttpResponse response = this.Context.Response;
-    string authToken = AuthToken.GetValue(request, response);
+    string authToken = homeController.GetAuthToken(request, response);
     ViewData["authTokenCookie"] = Constants.HttpCookies.UserAuthToken;
     ViewData["authToken"] = authToken;
 

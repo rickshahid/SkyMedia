@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Linq;
-using System.Diagnostics;
 using System.Collections.Generic;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
-using SkyMedia.ServiceBroker;
-using SkyMedia.WebApp.Models;
+using AzureSkyMedia.ServiceBroker;
+using AzureSkyMedia.WebApp.Models;
 
-namespace SkyMedia.WebApp.Controllers
+namespace AzureSkyMedia.WebApp.Controllers
 {
     public class homeController : Controller
     {
         private bool StreamingEnabled(MediaClient mediaClient)
         {
             bool streamingEnabled = false;
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(EntityType.StreamingEndpoint) as IStreamingEndpoint[];
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
             foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
             {
                 if (streamingEndpoint.State == StreamingEndpointState.Running)
@@ -160,7 +160,7 @@ namespace SkyMedia.WebApp.Controllers
         private List<MediaStream> GetMediaStreams(MediaClient mediaClient)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
-            ILocator[] locators = mediaClient.GetEntities(EntityType.Locator) as ILocator[];
+            ILocator[] locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
             foreach (ILocator locator in locators)
             {
                 IAsset asset = locator.Asset;
@@ -205,27 +205,27 @@ namespace SkyMedia.WebApp.Controllers
                     string leftType = leftSide.ProtectionTypes[0];
                     string rightType = rightSide.ProtectionTypes[0];
                     StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase;
-                    if (string.Equals(leftType, ProtectionType.AES.ToString(), stringComparison))
+                    if (string.Equals(leftType, MediaProtection.AES.ToString(), stringComparison))
                     {
                         comparison = -1;
                     }
-                    else if (string.Equals(rightType, ProtectionType.AES.ToString(), stringComparison))
+                    else if (string.Equals(rightType, MediaProtection.AES.ToString(), stringComparison))
                     {
                         comparison = 1;
                     }
-                    else if (string.Equals(leftType, ProtectionType.PlayReady.ToString(), stringComparison))
+                    else if (string.Equals(leftType, MediaProtection.PlayReady.ToString(), stringComparison))
                     {
                         comparison = -1;
                     }
-                    else if (string.Equals(rightType, ProtectionType.PlayReady.ToString(), stringComparison))
+                    else if (string.Equals(rightType, MediaProtection.PlayReady.ToString(), stringComparison))
                     {
                         comparison = 1;
                     }
-                    else if (string.Equals(leftType, ProtectionType.Widevine.ToString(), stringComparison))
+                    else if (string.Equals(leftType, MediaProtection.Widevine.ToString(), stringComparison))
                     {
                         comparison = -1;
                     }
-                    else if (string.Equals(rightType, ProtectionType.Widevine.ToString(), stringComparison))
+                    else if (string.Equals(rightType, MediaProtection.Widevine.ToString(), stringComparison))
                     {
                         comparison = 1;
                     }
@@ -244,7 +244,7 @@ namespace SkyMedia.WebApp.Controllers
                 settingKey = Constants.AppSettings.MediaLiveChannelName;
                 string channelName = AppSetting.GetValue(settingKey);
                 MediaClient mediaClient = new MediaClient(liveAccount);
-                IChannel channel = mediaClient.GetEntityByName(EntityType.Channel, channelName, true) as IChannel;
+                IChannel channel = mediaClient.GetEntityByName(MediaEntity.Channel, channelName, true) as IChannel;
                 if (channel != null && channel.State == ChannelState.Running)
                 {
                     if (livePreview)
@@ -282,9 +282,116 @@ namespace SkyMedia.WebApp.Controllers
             return View("live");
         }
 
+        public static string GetAuthToken(HttpRequest request, HttpResponse response)
+        {
+            string authToken = null;
+            string cookieKey = Constants.HttpCookies.UserAuthToken;
+            if (request.HasFormContentType)
+            {
+                authToken = request.Form[Constants.HttpForm.IdToken];
+                if (!string.IsNullOrEmpty(authToken))
+                {
+                    response.Cookies.Append(cookieKey, authToken);
+                }
+            }
+            if (string.IsNullOrEmpty(authToken))
+            {
+                authToken = request.Cookies[cookieKey];
+            }
+            return authToken;
+        }
+
+        public static SelectListItem[] GetStorageAccounts(string authToken)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            List<SelectListItem> storageAccounts = new List<SelectListItem>();
+            IStorageAccount[] accounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
+            foreach (IStorageAccount account in accounts)
+            {
+                SelectListItem storageAccount = new SelectListItem();
+                storageAccount.Text = string.Concat("Account: ", account.Name);
+                storageAccount.Value = account.Name;
+                storageAccount.Selected = account.IsDefault;
+                string storageUsed = Storage.GetCapacityUsed(authToken, account.Name);
+                if (storageUsed != null)
+                {
+                    storageAccount.Text = string.Concat(storageAccount.Text, ", Storage Used: ", storageUsed, ")");
+                    storageAccounts.Add(storageAccount);
+                }
+            }
+            return storageAccounts.ToArray();
+        }
+
+        public static SelectListItem[] GetMediaProcessors()
+        {
+            List<SelectListItem> mediaProcessors = new List<SelectListItem>();
+
+            SelectListItem mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = string.Empty;
+            mediaProcessor.Value = MediaProcessor.None.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Encoder Standard";
+            mediaProcessor.Value = MediaProcessor.EncoderStandard.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Encoder Premium";
+            mediaProcessor.Value = MediaProcessor.EncoderPremium.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Indexer v1";
+            mediaProcessor.Value = MediaProcessor.IndexerV1.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Indexer v2";
+            mediaProcessor.Value = MediaProcessor.IndexerV2.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Face Detection";
+            mediaProcessor.Value = MediaProcessor.FaceDetection.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Face Redaction";
+            mediaProcessor.Value = MediaProcessor.FaceRedaction.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Motion Detection";
+            mediaProcessor.Value = MediaProcessor.MotionDetection.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Motion Hyperlapse";
+            mediaProcessor.Value = MediaProcessor.MotionHyperlapse.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Video Annotation";
+            mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Video Summarization";
+            mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Character Recognition";
+            mediaProcessor.Value = MediaProcessor.CharacterRecognition.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            return mediaProcessors.ToArray();
+        }
+
         public JsonResult command(string commandId, int parameterId, string parameterName, bool parameterFlag)
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             switch (commandId)
             {
@@ -310,23 +417,9 @@ namespace SkyMedia.WebApp.Controllers
                 return GetLiveView(queryString);
             }
 
-            if (Debugger.IsAttached)
-            {
-                apiController publishApi = new apiController();
-                MediaJobEvent jobEvent = publishApi.GetJobEvent();
-                MediaJobPublish jobPublish = new MediaJobPublish();
-                jobPublish.AccountName = jobEvent.Properties.AccountName;
-                jobPublish.JobId = jobEvent.Properties.JobId;
-                jobPublish.NewState = jobEvent.Properties.NewState;
-                if (!string.IsNullOrEmpty(jobPublish.JobId))
-                {
-                    publishApi.PublishJob(jobPublish);
-                }
-            }
-
             string settingKey = Constants.ConnectionStrings.AzureMedia;
             string[] mediaAccount = AppSetting.GetValue(settingKey, true);
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = GetAuthToken(this.Request, this.Response);
 
             MediaClient mediaClient = null;
             string accountMessage = string.Empty;

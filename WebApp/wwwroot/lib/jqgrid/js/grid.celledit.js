@@ -26,6 +26,7 @@
  * afterSubmitCell(if cellsubmit remote (ajax)),
  * afterSaveCell,
  * errorCell,
+ * validationCell
  * serializeCellData - new
  * Options
  * cellsubmit (remote,clientArray) (added in grid options)
@@ -65,18 +66,22 @@ $.jgrid.extend({
 			cm = $t.p.colModel[iCol];
 			nm = cm.name;
 			if (nm==='subgrid' || nm==='cb' || nm==='rn') {return;}
-			cc = $("td:eq("+iCol+")",$t.rows[iRow]);
+			try {
+				cc = $($t.rows[iRow].cells[iCol]);
+			} catch(e) {
+				cc = $("td:eq("+iCol+")",$t.rows[iRow]);
+			}
 			if (cm.editable===true && ed===true && !cc.hasClass("not-editable-cell") && (!$.isFunction($t.p.isCellEditable) || $t.p.isCellEditable.call($t,nm,iRow,iCol))) {
 				if(parseInt($t.p.iCol,10)>=0  && parseInt($t.p.iRow,10)>=0) {
 					//$("td:eq("+$t.p.iCol+")",$t.rows[$t.p.iRow]).removeClass("edit-cell " + highlight);
 					$($t.rows[$t.p.iRow]).removeClass("selected-row " + hover).find("td:eq("+$t.p.iCol+")").removeClass("edit-cell " + highlight);
 				}
-				$(cc).addClass("edit-cell " + highlight);
+				cc.addClass("edit-cell " + highlight);
 				$($t.rows[iRow]).addClass("selected-row " + hover);
 				try {
 					tmp =  $.unformat.call($t,cc,{rowId: $t.rows[iRow].id, colModel:cm},iCol);
 				} catch (_) {
-					tmp = ( cm.edittype && cm.edittype === 'textarea' ) ? $(cc).text() : $(cc).html();
+					tmp = ( cm.edittype && cm.edittype === 'textarea' ) ? cc.text() : cc.html();
 				}
 				if($t.p.autoencode) { tmp = $.jgrid.htmlDecode(tmp); }
 				if (!cm.edittype) {cm.edittype = "text";}
@@ -96,10 +101,10 @@ $.jgrid.extend({
 					$(elc).addClass(inpclass);
 				}
 
-				$(cc).html("").append(elc).attr("tabindex","0");
+				cc.html("").append(elc).attr("tabindex","0");
 				$.jgrid.bindEv.call($t, elc, opt);
 				window.setTimeout(function () { $(elc).focus();},1);
-				$("input, select, textarea",cc).bind("keydown",function(e) {
+				$("input, select, textarea",cc).on("keydown",function(e) {
 					if (e.keyCode === 27) {
 						if($("input.hasDatepicker",cc).length >0) {
 							if( $(".ui-datepicker").is(":hidden") )  { $($t).jqGrid("restoreCell",iRow,iCol); }
@@ -261,7 +266,20 @@ $.jgrid.extend({
 												}
 												$t.p.savedRow.splice(0,1);
 											} else {
-												$.jgrid.info_dialog(errors.errcap,ret[1],edit.bClose, {styleUI : $t.p.styleUI });
+												if ($.isFunction($t.p.errorCell)) {
+													$t.p.errorCell.call($t, result, stat);
+												} else {
+													$.jgrid.info_dialog(errors.errcap, ret[1], edit.bClose, {
+														styleUI : $t.p.styleUI,
+														top:p.top+30, 
+														left:p.left ,
+														onClose : function() {
+															if(!$t.p.restoreCellonFail) {
+																$("#"+iRow+"_"+nmjq,$t.rows[iRow]).focus();
+															}
+														}
+													});
+												}
 												if( $t.p.restoreCellonFail) {
 													$($t).jqGrid("restoreCell",iRow,iCol);
 												}
@@ -275,7 +293,16 @@ $.jgrid.extend({
 										if ($.isFunction($t.p.errorCell)) {
 											$t.p.errorCell.call($t, res,stat,err);
 										} else {
-											$.jgrid.info_dialog(errors.errcap,res.status+" : "+res.statusText+"<br/>"+stat, edit.bClose, {styleUI : $t.p.styleUI });
+											$.jgrid.info_dialog(errors.errcap, res.status+" : "+res.statusText+"<br/>"+stat, edit.bClose, {
+												styleUI : $t.p.styleUI,
+												top:p.top+30, 
+												left:p.left ,
+												onClose : function() {
+													if(!$t.p.restoreCellonFail) {
+														$("#"+iRow+"_"+nmjq,$t.rows[iRow]).focus();
+													}
+												}
+											});
 										}
 										if( $t.p.restoreCellonFail) {
 											$($t).jqGrid("restoreCell",iRow,iCol);
@@ -304,9 +331,28 @@ $.jgrid.extend({
 						}
 					} else {
 						try {
-							window.setTimeout(function(){$.jgrid.info_dialog(errors.errcap,v+ " " + cv[1], edit.bClose, {styleUI : $t.p.styleUI, top:p.top+40, left:p.left });},100);
-							$($t).jqGrid("restoreCell",iRow,iCol);
-						} catch (e) {}
+							if( $.isFunction($t.p.validationCell) ) {
+								$t.p.validationCell.call($t, $("#"+iRow+"_"+nmjq,$t.rows[iRow]), cv[1], iRow, iCol);
+							} else {
+								window.setTimeout(function(){
+									$.jgrid.info_dialog(errors.errcap,v+ " " + cv[1], edit.bClose, {
+										styleUI : $t.p.styleUI, 
+										top:p.top+30, 
+										left:p.left ,
+										onClose : function() {
+											if(!$t.p.restoreCellonFail) {
+												$("#"+iRow+"_"+nmjq,$t.rows[iRow]).focus();
+											}
+										}
+									});
+								},50);
+								if( $t.p.restoreCellonFail) {
+									$($t).jqGrid("restoreCell",iRow,iCol);
+								}
+							}
+						} catch (e) {
+							alert(cv[1]);
+						}
 					}
 				} else {
 					$($t).jqGrid("restoreCell",iRow,iCol);

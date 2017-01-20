@@ -64,9 +64,8 @@ $.extend($.jgrid,{
 			} catch (e) {
 				file = new Blob(temp, properties);
 			}
-			//saveAs(file, "jqGrid_dump.txt" );
 			url = URL.createObjectURL(file);
-			$("#link_save").attr("href",url).bind('click',function(){
+			$("#link_save").attr("href",url).on('click',function(){
 				$(this).remove();
 			});
 		}		
@@ -202,7 +201,7 @@ $.extend($.jgrid,{
 				while(i<len) {
 					$(grid[0].rows[i].cells[expCol])
 						.find("div.treeclick")
-						.bind("click",function(e){
+						.on("click",function(e){
 							var target = e.target || e.srcElement,
 							ind2 =$.jgrid.stripPref(ret.idPrefix,$(target,grid[0].rows).closest("tr.jqgrow")[0].id),
 							pos = grid[0].p._index[ind2];
@@ -221,7 +220,7 @@ $.extend($.jgrid,{
 						$(grid[0].rows[i].cells[expCol])
 							.find("span.cell-wrapper")
 							.css("cursor","pointer")
-							.bind("click",function(e) {
+							.on("click",function(e) {
 								var target = e.target || e.srcElement,
 								ind2 =$.jgrid.stripPref(ret.idPrefix,$(target,grid[0].rows).closest("tr.jqgrow")[0].id),
 								pos = grid[0].p._index[ind2];
@@ -525,7 +524,7 @@ $.extend($.jgrid,{
 						}
 					}
 					if(o.exportgrouping) {
-						expg = JSON.stringify( this.p.groupingView )
+						expg = JSON.stringify( this.p.groupingView );
 						if(typeof expg === 'string' ) {
 							pdata['groupingView'] = expg;
 						}

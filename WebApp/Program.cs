@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Hosting;
 
-namespace SkyMedia.WebApp
+namespace AzureSkyMedia.WebApp
 {
     public class Program
     {

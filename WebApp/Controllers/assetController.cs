@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using SkyMedia.ServiceBroker;
-using SkyMedia.WebApp.Models;
+using AzureSkyMedia.ServiceBroker;
 
-namespace SkyMedia.WebApp.Controllers
+namespace AzureSkyMedia.WebApp.Controllers
 {
     public class assetController : Controller
     {
         public JsonResult roots()
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             MediaAsset[] assets = mediaClient.GetAssets(null);
             return Json(assets);
@@ -17,7 +16,7 @@ namespace SkyMedia.WebApp.Controllers
 
         public JsonResult children(string assetId)
         {
-            string authToken = AuthToken.GetValue(this.Request, this.Response);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             MediaAsset[] assets = mediaClient.GetAssets(assetId);
             return Json(assets);
