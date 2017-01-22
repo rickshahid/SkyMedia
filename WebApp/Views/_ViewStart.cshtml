@@ -1,0 +1,56 @@
+﻿@using AzureSkyMedia.Services;
+@using AzureSkyMedia.WebApp.Controllers;
+
+@using Microsoft.AspNetCore.Http;
+
+@{
+    HttpRequest request = this.Context.Request;
+    HttpResponse response = this.Context.Response;
+    string authToken = homeController.GetAuthToken(request, response);
+    ViewData["authTokenCookie"] = Constants.HttpCookies.UserAuthToken;
+    ViewData["authToken"] = authToken;
+
+    if (!string.IsNullOrEmpty(authToken))
+    {
+        string attributeName = Constants.UserAttribute.UserId;
+        string userId = AuthToken.GetClaimValue(authToken, attributeName);
+
+        attributeName = Constants.UserAttribute.MediaAccountName;
+        string accountName = AuthToken.GetClaimValue(authToken, attributeName);
+
+        ViewData["accountContext"] = string.Concat(userId, " (", accountName, ")");
+    }
+
+    string settingKey = Constants.AppSettings.AppRegion;
+    ViewData["appRegion"] = AppSetting.GetValue(settingKey);
+
+    string ampVersion = this.Context.Request.Query["amp"];
+    if (string.IsNullOrEmpty(ampVersion))
+    {
+        settingKey = Constants.AppSettings.MediaPlayerVersion;
+        ampVersion = AppSetting.GetValue(settingKey);
+    }
+    ViewData["mediaPlayerVersion"] = ampVersion;
+
+    settingKey = Constants.AppSettings.StorageCdnUrl;
+    ViewData["storageCdnUrl"] = AppSetting.GetValue(settingKey);
+
+    string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
+    if (requestUrl.Contains("live"))
+    {
+        ViewData["minimalLayout"] = true;
+    }
+    ViewData["accountSignIn"] = "/account/signin";
+    ViewData["accountProfileEdit"] = "/account/profileEdit";
+    if (requestUrl.Contains("signiant"))
+    {
+        ViewData["accountSignIn"] = string.Concat(ViewData["accountSignIn"], "?subdomain=signiant");
+        ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=signiant");
+    }
+    else if (requestUrl.Contains("aspera"))
+    {
+        ViewData["accountSignIn"] = string.Concat(ViewData["accountSignIn"], "?subdomain=aspera");
+        ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=aspera");
+    }
+    Layout = "_Layout";
+}

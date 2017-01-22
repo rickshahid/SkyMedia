@@ -1,0 +1,51 @@
+﻿@{
+    string[] model = Model;
+    string uploadView = model[0];
+    string cssClass = "mediaWorkflow";
+    if (!string.IsNullOrEmpty(model[1]))
+    {
+        cssClass = string.Concat(cssClass, " ", model[1]);
+    }
+}
+
+<table id="mediaWorkflow" class="@cssClass">
+    <tr id="mediaAssetsRow" style="display: none">
+        <td class="inputLabel">
+            Media Assets:
+        </td>
+        <td>
+            <div id="mediaAssets" class="mediaAssets workflowView"></div>
+        </td>
+    </tr>
+    <tr class="mediaWorkflowJob">
+        <td class="inputLabel">
+            Media Job:
+        </td>
+        <td>
+            @Html.TextBox("jobName", null, new { @class = "jobName", placeholder = "[Media Workflow Job Name]" })
+            &nbsp;
+            <span class="inputLabel">
+                Job Priority
+                <span id="jobPriorityLabel" class="sliderLabel">0</span>
+            </span>
+            <div id="jobPriority" class="slider jobPriority"></div>
+        </td>
+    </tr>
+    @Html.Partial("MediaWorkflowTask")
+    <tr class="mediaWorkflowControls">
+        <td />
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)" })
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskRemove", "MediaWorkflowTaskRemove.png", "RemoveJobTask(this)" })
+                    </td>
+                    <td class="mediaWorkflowStart">
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowStart", "MediaWorkflowStart.png", "ValidWorkflow(" + uploadView + ")" })
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
