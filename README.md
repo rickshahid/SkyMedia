@@ -11,7 +11,7 @@ Here is a breakdown of the integrated capabilities that are enabled by this samp
 * Upload and process media files via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
 * Background process that tracks and publishes media workflow outputs via parameters specified at job submission time
-(Note this item is currently under development switching from Azure Queue notification to Azure Functions webhook.)
+(Note this item is currently under development extending from Azure Queue notification to Azure Functions webhook.)
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
