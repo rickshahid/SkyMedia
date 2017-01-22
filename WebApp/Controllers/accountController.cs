@@ -84,10 +84,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 job.Delete();
             }
-            INotificationEndPoint[] notifications = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
-            foreach (INotificationEndPoint notification in notifications)
+            INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+            foreach (INotificationEndPoint notificationEndpoint in notificationEndpoints)
             {
-                notification.Delete();
+                if (notificationEndpoint.EndPointType != NotificationEndPointType.AzureTable)
+                {
+                    notificationEndpoint.Delete();
+                }
             }
             IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
             foreach (IAsset asset in assets)
