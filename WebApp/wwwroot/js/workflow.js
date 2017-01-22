@@ -132,8 +132,18 @@ function DisplayWorkflow(jobTasks, result) {
     }
     DisplayMessage(title, message);
 }
-function UploadWorkflow(files) {
+function GetJob() {
     var jobTasks = GetJobTasks();
+    var job = {
+        Name: $("#jobName").val(),
+        Priority: $("#jobPriorityLabel").text(),
+        AutoScale: $("#jobAutoScale").prop("checked"),
+        Tasks: jobTasks
+    };
+    return job;
+}
+function UploadWorkflow(files) {
+    var job = GetJob();
     $.post("/workflow/upload",
         {
             fileNames: GetFileNames(files),
@@ -143,26 +153,22 @@ function UploadWorkflow(files) {
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             publishInputAsset: $("#publishInputAsset").prop("checked"),
             inputAssets: _inputAssets,
-            jobName: $("#jobName").val(),
-            jobPriority: $("#jobPriorityLabel").text(),
-            jobTasks: jobTasks
+            mediaJob: job
         },
         function (result) {
-            DisplayWorkflow(jobTasks, result);
+            DisplayWorkflow(job.Tasks, result);
         }
     );
 }
 function StartWorkflow() {
-    var jobTasks = GetJobTasks();
+    var job = GetJob();
     $.post("/workflow/start",
         {
             inputAssets: _inputAssets,
-            jobName: $("#jobName").val(),
-            jobPriority: $("#jobPriorityLabel").text(),
-            jobTasks: jobTasks
+            mediaJob: job
         },
         function (result) {
-            DisplayWorkflow(jobTasks, result);
+            DisplayWorkflow(job.Tasks, result);
         }
     );
 }

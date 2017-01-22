@@ -99,19 +99,18 @@ namespace AzureSkyMedia.WebApp.Controllers
             return contentProtections.ToArray();
         }
 
-        private IJob SubmitJob(string authToken, MediaClient mediaClient, string storageAccount, MediaAssetInput[] inputAssets,
-                               string jobName, int jobPriority, MediaJobTask[] jobTasks)
+        private IJob SubmitJob(string authToken, MediaClient mediaClient, string storageAccount, MediaAssetInput[] inputAssets, MediaJob mediaJob)
         {
             IJob job = null;
-            if (jobTasks != null && jobTasks.Length > 0)
+            if (mediaJob.Tasks != null && mediaJob.Tasks.Length > 0)
             {
-                MediaJob mediaJob = MediaClient.CreateJob(mediaClient, jobName, jobPriority, jobTasks, inputAssets);
+                mediaJob = MediaClient.SetJob(mediaClient, mediaJob, inputAssets);
                 job = mediaClient.CreateJob(mediaJob);
                 if (string.IsNullOrEmpty(storageAccount))
                 {
                     storageAccount = job.InputMediaAssets[0].StorageAccountName;
                 }
-                ContentProtection[] contentProtections = GetContentProtections(jobTasks);
+                ContentProtection[] contentProtections = GetContentProtections(mediaJob.Tasks);
                 MediaClient.TrackJob(authToken, job, storageAccount, contentProtections);
             }
             return job;
@@ -133,24 +132,23 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult upload(string[] fileNames, string storageAccount, bool storageEncryption, string inputAssetName,
-                                 bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, string jobName,
-                                 int jobPriority, MediaJobTask[] jobTasks)
+                                 bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, MediaJob mediaJob)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             inputAssets = CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, publishInputAsset, fileNames);
-            IJob job = SubmitJob(authToken, mediaClient, storageAccount, inputAssets, jobName, jobPriority, jobTasks);
+            IJob job = SubmitJob(authToken, mediaClient, storageAccount, inputAssets, mediaJob);
             return GetResult(mediaClient, job, inputAssets);
         }
 
-        public JsonResult start(MediaAssetInput[] inputAssets, string jobName, int jobPriority, MediaJobTask[] jobTasks)
+        public JsonResult start(MediaAssetInput[] inputAssets, MediaJob mediaJob)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             inputAssets = MapInputAssets(mediaClient, inputAssets);
             SetInputClips(mediaClient, inputAssets);
             DatabaseClient databaseClient = new DatabaseClient();
-            foreach (MediaJobTask jobTask in jobTasks)
+            foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
                 if (!string.IsNullOrEmpty(jobTask.ProcessorDocumentId))
                 {
@@ -158,7 +156,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     jobTask.ProcessorConfig = processorConfig.ToString();
                 }
             }
-            IJob job = SubmitJob(authToken, mediaClient, null, inputAssets, jobName, jobPriority, jobTasks);
+            IJob job = SubmitJob(authToken, mediaClient, null, inputAssets, mediaJob);
             return GetResult(mediaClient, job, inputAssets);
         }
 

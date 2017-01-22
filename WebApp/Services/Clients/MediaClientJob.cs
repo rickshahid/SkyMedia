@@ -67,19 +67,12 @@ namespace AzureSkyMedia.Services
             return processorId;
         }
 
-        private INotificationEndPoint GetNotificationEndpoint(bool useWebHook)
+        private INotificationEndPoint GetNotificationEndpoint()
         {
             string endpointName = Constants.Media.Job.NotificationEndpointNameStorageQueue;
             NotificationEndPointType endpointType = NotificationEndPointType.AzureQueue;
             string settingKey = Constants.AppSettings.MediaJobNotificationStorageQueueName;
             string endpointAddress = AppSetting.GetValue(settingKey);
-            if (useWebHook)
-            {
-                endpointName = Constants.Media.Job.NotificationEndpointNameWebHook;
-                endpointType = NotificationEndPointType.WebHook;
-                settingKey = Constants.AppSettings.MediaJobNotificationWebHookUrl;
-                endpointAddress = AppSetting.GetValue(settingKey);
-            }
             INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
             if (notificationEndpoint == null)
             {
@@ -104,14 +97,10 @@ namespace AzureSkyMedia.Services
             processorUnits[0].Update();
         }
 
-        public static MediaJob CreateJob(MediaClient mediaClient, string jobName, int jobPriority, MediaJobTask[] jobTasks,
-                                         MediaAssetInput[] inputAssets)
+        public static MediaJob SetJob(MediaClient mediaClient, MediaJob mediaJob, MediaAssetInput[] inputAssets)
         {
-            MediaJob mediaJob = new MediaJob();
-            mediaJob.Name = jobName;
-            mediaJob.Priority = jobPriority;
             List<MediaJobTask> taskList = new List<MediaJobTask>();
-            foreach (MediaJobTask jobTask in jobTasks)
+            foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
                 MediaJobTask[] tasks = null;
                 switch (jobTask.MediaProcessor)
@@ -184,10 +173,12 @@ namespace AzureSkyMedia.Services
                 }
                 currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
             }
-            INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(false);
-            NotificationJobState jobStates = NotificationJobState.FinalStatesOnly;
-            job.JobNotificationSubscriptions.AddNew(jobStates, notificationEndpoint);
-            //SetReservedUnits(job);
+            INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
+            job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
+            if (mediaJob.AutoScale)
+            {
+                SetProcessorUnits(job);
+            }
             job.Submit();
             return job;
         }

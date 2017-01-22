@@ -66,7 +66,7 @@ function SetLayout() {
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
     CreateTipTop("mediaAssetLibrary", "Azure Media Services<br /><br />Asset Library");
-    CreateTipTop("mediaAssetAnalytics", "Azure Media Services<br /><br />Media Analytics")
+    CreateTipTop("mediaAssetAnalytics", "Azure Media Services<br /><br />Media Analytics");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });
@@ -128,7 +128,7 @@ function SetPlayerSpinner(visible) {
     }
 }
 function GetSourceType(sourceUrl) {
-    return (sourceUrl.toLowerCase().indexOf(".mp4") > -1) ? "video/mp4" : "application/vnd.ms-sstr+xml";
+    return sourceUrl.toLowerCase().indexOf(".mp4") > -1 ? "video/mp4" : "application/vnd.ms-sstr+xml";
 }
 function GetLanguageLabel(languageCode) {
     var languageLabel;
@@ -167,7 +167,7 @@ function GetProtectionInfo(protectionTypes, authToken) {
     var protectionInfo = null;
     if (protectionTypes.length > 0) {
         protectionInfo = new Array();
-        var authToken = (window.location.href.indexOf("notoken") > -1) ? "" : "Bearer=" + authToken;
+        authToken = window.location.href.indexOf("notoken") > -1 ? "" : "Bearer=" + authToken;
         for (var i = 0; i < protectionTypes.length; i++) {
             protectionInfo.push({
                 type: protectionTypes[i],

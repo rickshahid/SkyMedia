@@ -20,9 +20,5 @@ namespace AzureSkyMedia.Services
         public DateTime TimeStamp { get; set; }
 
         public string ETag { get; set; }
-
-        //public string MessageId { get; set; }
-
-        //public string PopReceipt { get; set; }
     }
 }

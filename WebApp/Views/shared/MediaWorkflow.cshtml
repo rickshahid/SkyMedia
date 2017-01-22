@@ -23,8 +23,10 @@
         </td>
         <td>
             @Html.TextBox("jobName", null, new { @class = "jobName", placeholder = "[Media Workflow Job Name]" })
-            &nbsp;
+            @Html.CheckBox("jobAutoScale", false)
             <span class="inputLabel">
+                Auto Scale
+                &nbsp;
                 Job Priority
                 <span id="jobPriorityLabel" class="sliderLabel">0</span>
             </span>

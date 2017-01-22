@@ -19,8 +19,8 @@ namespace AzureSkyMedia.Services
                 string indexName = AuthToken.GetClaimValue(authToken, Constants.UserAttribute.SearchIndexName);
                 if (!string.IsNullOrEmpty(indexName) && !_search.Indexes.Exists(indexName))
                 {
-                    Index searchIndex = new Index(indexName, null);
-                    searchIndex = _search.Indexes.Create(searchIndex);
+                    //Index searchIndex = new Index(indexName, null);
+                    //searchIndex = _search.Indexes.Create(searchIndex);
                 }
             }
         }
