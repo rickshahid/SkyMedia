@@ -69,9 +69,9 @@ namespace AzureSkyMedia.Services
 
         private INotificationEndPoint GetNotificationEndpoint()
         {
-            string endpointName = Constants.Media.Job.NotificationEndpointNameStorageQueue;
-            NotificationEndPointType endpointType = NotificationEndPointType.AzureQueue;
-            string settingKey = Constants.AppSettings.MediaJobNotificationStorageQueueName;
+            string endpointName = Constants.Media.Job.NotificationEndpointNameWebHook;
+            NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
+            string settingKey = Constants.AppSettings.MediaJobNotificationWebHookUrl;
             string endpointAddress = AppSetting.GetValue(settingKey);
             INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
             if (notificationEndpoint == null)
@@ -200,7 +200,7 @@ namespace AzureSkyMedia.Services
 
             jobPublish.MediaAccountKey = accountKey;
             jobPublish.StorageAccountName = storageAccount;
-            jobPublish.StorageAccountKey = Storage.GetAccountKey(authToken, storageAccount);
+            jobPublish.StorageAccountKey = Storage.GetUserAccountKey(authToken, storageAccount);
             jobPublish.MobileNumber = mobileNumber;
 
             EntityClient entityClient = new EntityClient();

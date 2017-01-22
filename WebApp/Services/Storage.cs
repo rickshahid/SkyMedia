@@ -6,103 +6,69 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage.Analytics;
-using Microsoft.WindowsAzure.Storage.RetryPolicies;
-using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.Services
 {
     public static class Storage
     {
+        private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)
+        {
+            return DateTimeOffset.Compare(rightSide.Time, leftSide.Time);
+        }
+
+        private static int GetAccountIndex(string[] accountNames, string accountName)
+        {
+            int accountIndex = 0;
+            if (!string.IsNullOrEmpty(accountName))
+            {
+                for (int i = 0; i < accountNames.Length; i++)
+                {
+                    if (string.Equals(accountNames[i], accountName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        accountIndex = i;
+                    }
+                }
+            }
+            return accountIndex;
+        }
+
         private static CloudStorageAccount GetAccount(string authToken, string accountName, out string accountKey)
         {
             accountKey = string.Empty;
             string storageAccount = string.Empty;
             string[] accountNames = AuthToken.GetClaimValues(authToken, Constants.UserAttribute.StorageAccountName);
             string[] accountKeys = AuthToken.GetClaimValues(authToken, Constants.UserAttribute.StorageAccountKey);
-            if (string.IsNullOrEmpty(accountName))
-            {
-                accountKey = accountKeys[0];
-                storageAccount = string.Format(Constants.Storage.Account.Connection, accountNames[0], accountKey);
-            }
-            else
-            {
-                for (int i = 0; i < accountNames.Length; i++)
-                {
-                    if (string.Equals(accountNames[i], accountName, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        accountKey = accountKeys[i];
-                        storageAccount = string.Format(Constants.Storage.Account.Connection, accountName, accountKeys[i]);
-                    }
-                }
-            }
+            int accountIndex = GetAccountIndex(accountNames, accountName);
+            accountKey = accountKeys[accountIndex];
+            storageAccount = string.Format(Constants.Storage.Account.Connection, accountName, accountKeys[accountIndex]);
             return string.IsNullOrEmpty(storageAccount) ? null : CloudStorageAccount.Parse(storageAccount);
         }
 
-        private static SharedAccessBlobPolicy GetBlobReadAccess(TimeSpan policyDuration, TimeSpan? startDelay)
+        internal static Uri GetAccessSignature(ICloudBlob storageBlob, TimeSpan policyDuration, bool readWrite)
         {
             SharedAccessBlobPolicy accessPolicy = new SharedAccessBlobPolicy();
             accessPolicy.Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.List;
+            if (readWrite)
+            {
+                accessPolicy.Permissions = accessPolicy.Permissions | SharedAccessBlobPermissions.Write;
+            }
             accessPolicy.SharedAccessExpiryTime = DateTime.UtcNow.Add(policyDuration);
-            if (startDelay.HasValue)
-            {
-                accessPolicy.SharedAccessStartTime = DateTime.UtcNow.Add(startDelay.Value);
-            }
-            return accessPolicy;
+            string accessSignature = storageBlob.GetSharedAccessSignature(accessPolicy);
+            string signatureUrl = string.Concat(storageBlob.Uri.AbsoluteUri, accessSignature);
+            return new Uri(signatureUrl);
         }
 
-        private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)
+        internal static CloudStorageAccount GetSystemAccount()
         {
-            return DateTimeOffset.Compare(rightSide.Time, leftSide.Time);
+            string settingKey = Constants.ConnectionStrings.AzureStorage;
+            string storageAccount = AppSetting.GetValue(settingKey);
+            return CloudStorageAccount.Parse(storageAccount);
         }
 
-        public static string GetCapacityUsed(string authToken, string accountName)
-        {
-            string capacityUsed = null;
-            CloudStorageAccount storageAccount = GetAccount(authToken, accountName);
-            if (storageAccount != null)
-            {
-                CloudAnalyticsClient storageAnalytics = storageAccount.CreateCloudAnalyticsClient();
-                TableQuery<CapacityEntity> tableQuery = storageAnalytics.CreateCapacityQuery();
-                IQueryable<CapacityEntity> capacityQuery = tableQuery.Where(x => x.RowKey == "data");
-                try
-                {
-                    List<CapacityEntity> capacityEntities = capacityQuery.ToList();
-                    if (capacityEntities.Count == 0)
-                    {
-                        capacityUsed = Storage.MapByteCount(0);
-                    }
-                    else
-                    {
-                        capacityEntities.Sort(OrderByLatest);
-                        CapacityEntity latestUsage = capacityEntities.First();
-                        capacityUsed = Storage.MapByteCount(latestUsage.Capacity);
-                    }
-                }
-                catch
-                {
-                    capacityUsed = Constants.Storage.Analytics.NotAvailable;
-                }
-            }
-            return capacityUsed;
-        }
-
-        public static string GetAccountKey(string authToken, string accountName)
+        internal static CloudStorageAccount GetUserAccount(string authToken, string accountName)
         {
             string accountKey;
-            GetAccount(authToken, accountName, out accountKey);
-            return accountKey;
-        }
-
-        internal static long GetAssetBytes(IAsset asset, out int fileCount)
-        {
-            fileCount = 0;
-            long assetBytes = 0;
-            foreach (IAssetFile file in asset.AssetFiles)
-            {
-                fileCount = fileCount + 1;
-                assetBytes = assetBytes + file.ContentFileSize;
-            }
-            return assetBytes;
+            return GetAccount(authToken, accountName, out accountKey);
         }
 
         internal static string MapByteCount(long byteCount)
@@ -135,38 +101,42 @@ namespace AzureSkyMedia.Services
             return mappedCount;
         }
 
-        internal static IRetryPolicy GetRetryPolicy()
-        {
-            return new ExponentialRetry();
-        }
-
-        internal static Uri GetAccessSignatureUri(CloudBlobContainer container, TimeSpan policyDuration)
-        {
-            SharedAccessBlobPolicy readAccess = GetBlobReadAccess(policyDuration, null);
-            string accessSignature = container.GetSharedAccessSignature(readAccess);
-            string signatureUrl = string.Concat(container.Uri.AbsoluteUri, accessSignature);
-            return new Uri(signatureUrl);
-        }
-
-        internal static Uri GetAccessSignatureUri(ICloudBlob blob, TimeSpan policyDuration)
-        {
-            SharedAccessBlobPolicy readAccess = GetBlobReadAccess(policyDuration, null);
-            string accessSignature = blob.GetSharedAccessSignature(readAccess);
-            string signatureUrl = string.Concat(blob.Uri.AbsoluteUri, accessSignature);
-            return new Uri(signatureUrl);
-        }
-
-        internal static CloudStorageAccount GetAccount(string authToken, string accountName)
+        public static string GetUserAccountKey(string authToken, string accountName)
         {
             string accountKey;
-            return GetAccount(authToken, accountName, out accountKey);
+            GetAccount(authToken, accountName, out accountKey);
+            return accountKey;
         }
-
-        internal static CloudStorageAccount GetAccount()
+ 
+        public static string GetCapacityUsed(string authToken, string accountName)
         {
-            string settingKey = Constants.ConnectionStrings.AzureStorage;
-            string storageAccount = AppSetting.GetValue(settingKey);
-            return CloudStorageAccount.Parse(storageAccount);
+            string capacityUsed = null;
+            CloudStorageAccount storageAccount = GetUserAccount(authToken, accountName);
+            if (storageAccount != null)
+            {
+                CloudAnalyticsClient storageAnalytics = storageAccount.CreateCloudAnalyticsClient();
+                TableQuery<CapacityEntity> tableQuery = storageAnalytics.CreateCapacityQuery();
+                IQueryable<CapacityEntity> capacityQuery = tableQuery.Where(x => x.RowKey == "data");
+                try
+                {
+                    List<CapacityEntity> capacityEntities = capacityQuery.ToList();
+                    if (capacityEntities.Count == 0)
+                    {
+                        capacityUsed = Storage.MapByteCount(0);
+                    }
+                    else
+                    {
+                        capacityEntities.Sort(OrderByLatest);
+                        CapacityEntity latestUsage = capacityEntities.First();
+                        capacityUsed = Storage.MapByteCount(latestUsage.Capacity);
+                    }
+                }
+                catch
+                {
+                    capacityUsed = Constants.Storage.Analytics.NotAvailable;
+                }
+            }
+            return capacityUsed;
         }
     }
 }

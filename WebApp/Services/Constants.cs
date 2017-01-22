@@ -106,7 +106,6 @@ namespace AzureSkyMedia.Services
             public const string MediaProcessorCharacterRecognitionId = "Media.Processor.CharacterRecognitionId";
             public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
 
-            public const string MediaJobNotificationStorageQueueName = "Media.Job.Notification.StorageQueueName";
             public const string MediaJobNotificationWebHookUrl = "Media.Job.Notification.WebHookUrl";
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";

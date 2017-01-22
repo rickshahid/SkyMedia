@@ -12,26 +12,25 @@ namespace AzureSkyMedia.Services
 
         public EntityClient()
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount();
+            CloudStorageAccount storageAccount = Storage.GetSystemAccount();
             BindContext(storageAccount);
         }
 
         public EntityClient(string authToken)
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount(authToken, null);
+            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, null);
             BindContext(storageAccount);
         }
 
         public EntityClient(string authToken, string accountName)
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount(authToken, accountName);
+            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
             BindContext(storageAccount);
         }
 
         private void BindContext(CloudStorageAccount storageAccount)
         {
             _storage = storageAccount.CreateCloudTableClient();
-            _storage.DefaultRequestOptions.RetryPolicy = Storage.GetRetryPolicy();
 
             string settingKey = Constants.AppSettings.StorageServerTimeoutSeconds;
             string serverTimeoutSeconds = AppSetting.GetValue(settingKey);

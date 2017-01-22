@@ -25,6 +25,13 @@
         Locator
     }
 
+    internal enum MediaProtection
+    {
+        AES,
+        PlayReady,
+        Widevine
+    }
+
     public enum MediaProcessor
     {
         None,
@@ -45,11 +52,14 @@
         ContentModeration
     }
 
-    internal enum MediaProtection
+    public enum MediaJobNotificationEvent
     {
-        AES,
-        PlayReady,
-        Widevine
+        None = 0,
+        JobStateChange = 1,
+        NotificationEndPointRegistration = 2,
+        NotificationEndPointUnregistration = 3,
+        TaskStateChange = 4,
+        TaskProgress = 5
     }
 
     public enum TransferService

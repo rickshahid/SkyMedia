@@ -2,8 +2,10 @@
 
 namespace AzureSkyMedia.Services
 {
-    internal struct MediaJobEventProperties
+    public sealed class MediaJobNotificationProperties
     {
+        public string AccountId { get; set; }
+
         public string AccountName { get; set; }
 
         public string JobId { get; set; }

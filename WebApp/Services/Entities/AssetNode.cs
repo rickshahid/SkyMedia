@@ -17,6 +17,18 @@ namespace AzureSkyMedia.Services
             _cdnUrl = AppSetting.GetValue(settingKey);
         }
 
+        private long GetAssetBytes(out int fileCount)
+        {
+            fileCount = 0;
+            long assetBytes = 0;
+            foreach (IAssetFile file in _asset.AssetFiles)
+            {
+                fileCount = fileCount + 1;
+                assetBytes = assetBytes + file.ContentFileSize;
+            }
+            return assetBytes;
+        }
+
         public MediaAsset(MediaClient mediaClient, IAsset asset) : this(mediaClient)
         {
             _asset = asset;
@@ -46,7 +58,7 @@ namespace AzureSkyMedia.Services
                 else
                 {
                     int fileCount;
-                    long assetBytes = Storage.GetAssetBytes(_asset, out fileCount);
+                    long assetBytes = GetAssetBytes(out fileCount);
                     string assetSize = Storage.MapByteCount(assetBytes);
                     string filesLabel = (fileCount == 1) ? " File" : " Files";
                     string assetInfo = string.Concat(" (", fileCount, filesLabel, ", ", assetSize, ")");

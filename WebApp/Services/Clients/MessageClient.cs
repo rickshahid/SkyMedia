@@ -15,28 +15,21 @@ namespace AzureSkyMedia.Services
     {
         private CloudQueueClient _storage;
 
-        public MessageClient()
-        {
-            CloudStorageAccount storageAccount = Storage.GetAccount();
-            BindContext(storageAccount);
-        }
-
         public MessageClient(string authToken)
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount(authToken, null);
+            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, null);
             BindContext(storageAccount);
         }
 
         public MessageClient(string authToken, string accountName)
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount(authToken, accountName);
+            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
             BindContext(storageAccount);
         }
 
         private void BindContext(CloudStorageAccount storageAccount)
         {
             _storage = storageAccount.CreateCloudQueueClient();
-            _storage.DefaultRequestOptions.RetryPolicy = Storage.GetRetryPolicy();
 
             string settingKey = Constants.AppSettings.StorageServerTimeoutSeconds;
             string serverTimeoutSeconds = AppSetting.GetValue(settingKey);

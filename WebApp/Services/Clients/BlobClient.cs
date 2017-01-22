@@ -17,14 +17,14 @@ namespace AzureSkyMedia.Services
 
         public BlobClient(string authToken)
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount(authToken, null);
+            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, null);
             BindContext(storageAccount);
             _tracker = new EntityClient(authToken);
         }
 
         public BlobClient(string authToken, string accountName)
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount(authToken, accountName);
+            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
             BindContext(storageAccount);
             _tracker = new EntityClient(authToken, accountName);
         }
@@ -41,7 +41,6 @@ namespace AzureSkyMedia.Services
         private void BindContext(CloudStorageAccount storageAccount)
         {
             _storage = storageAccount.CreateCloudBlobClient();
-            _storage.DefaultRequestOptions.RetryPolicy = Storage.GetRetryPolicy();
 
             string settingKey = Constants.AppSettings.StorageServerTimeoutSeconds;
             string serverTimeoutSeconds = AppSetting.GetValue(settingKey);
@@ -154,7 +153,7 @@ namespace AzureSkyMedia.Services
         public string CopyBlob(CloudBlockBlob sourceBlob, CloudBlockBlob destinationBlob, bool asyncMode)
         {
             TimeSpan expirationTime = TimeSpan.FromMinutes(Constants.Storage.Blob.MaxCopyMinutes);
-            Uri sourceBlobUri = Storage.GetAccessSignatureUri(sourceBlob, expirationTime);
+            Uri sourceBlobUri = Storage.GetAccessSignature(sourceBlob, expirationTime, false);
             string operationId;
             if (asyncMode)
             {

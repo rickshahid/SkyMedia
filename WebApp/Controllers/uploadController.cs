@@ -29,7 +29,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult storage(TransferService transferService, string[] filePaths, string storageAccount, string containerName)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            string accountKey = Storage.GetAccountKey(authToken, storageAccount);
+            string accountKey = Storage.GetUserAccountKey(authToken, storageAccount);
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             blobClient.GetContainer(containerName); // CreateIfNotExists
             object result = null;
