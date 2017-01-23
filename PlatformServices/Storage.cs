@@ -110,7 +110,7 @@ namespace AzureSkyMedia.PlatformServices
  
         public static string GetCapacityUsed(string authToken, string accountName)
         {
-            string capacityUsed = null;
+            string capacityUsed = string.Empty;
             CloudStorageAccount storageAccount = GetUserAccount(authToken, accountName);
             if (storageAccount != null)
             {
@@ -127,8 +127,8 @@ namespace AzureSkyMedia.PlatformServices
                     else
                     {
                         capacityEntities.Sort(OrderByLatest);
-                        CapacityEntity latestUsage = capacityEntities.First();
-                        capacityUsed = Storage.MapByteCount(latestUsage.Capacity);
+                        CapacityEntity latestAnalytics = capacityEntities.First();
+                        capacityUsed = Storage.MapByteCount(latestAnalytics.Capacity);
                     }
                 }
                 catch

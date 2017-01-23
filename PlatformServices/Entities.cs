@@ -15,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string storageInfo = string.Concat("Account: ", storageAccount.Name);
             string storageUsed = Storage.GetCapacityUsed(authToken, storageAccount.Name);
-            if (storageUsed != null)
+            if (!string.IsNullOrEmpty(storageUsed))
             {
                 storageInfo = string.Concat(storageInfo, ", Storage Used: ", storageUsed, ")");
             }
@@ -257,8 +257,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (!account.IsDefault)
                 {
-                    storageInfo = GetStorageInfo(authToken, storageAccount);
-                    storageAccounts.Add(storageInfo, storageAccount.Name);
+                    storageInfo = GetStorageInfo(authToken, account);
+                    storageAccounts.Add(storageInfo, account.Name);
                 }
             }
             return storageAccounts;
