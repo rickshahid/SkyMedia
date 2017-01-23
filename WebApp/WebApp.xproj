@@ -17,5 +17,8 @@
     <ApplicationInsightsResourceId>/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/resourcegroups/SkyMedia-USCentral-App/providers/microsoft.insights/components/skymedia</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/resourcegroups/SkyMedia-USCentral-App/providers/microsoft.insights/components/skymedia</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlatformServices\PlatformServices.csproj" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\DotNet.Web\Microsoft.DotNet.Web.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

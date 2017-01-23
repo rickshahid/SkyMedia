@@ -5,33 +5,31 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.WindowsAzure.MediaServices.Client;
 
-using AzureSkyMedia.Services;
+using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
     public class uploadController : Controller
     {
-        public JsonResult manifest(string manifestId, string inputAssetName, string storageAccount, bool storageEncryption,
-                                   bool multipleFileAsset, bool uploadBulkIngest, string[] fileNames)
-        {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            if (string.IsNullOrEmpty(inputAssetName) && fileNames.Length > 0)
-            {
-                inputAssetName = fileNames[0];
-            }
-            IIngestManifest manifest = mediaClient.SetManifest(manifestId, inputAssetName, storageAccount, storageEncryption, multipleFileAsset, uploadBulkIngest, fileNames);
-            return Json(manifest);
-        }
+        //public JsonResult manifest(string manifestId, string inputAssetName, string storageAccount, bool storageEncryption,
+        //                           bool multipleFileAsset, bool uploadBulkIngest, string[] fileNames)
+        //{
+        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
+        //    MediaClient mediaClient = new MediaClient(authToken);
+        //    if (string.IsNullOrEmpty(inputAssetName) && fileNames.Length > 0)
+        //    {
+        //        inputAssetName = fileNames[0];
+        //    }
+        //    IIngestManifest manifest = mediaClient.SetManifest(manifestId, inputAssetName, storageAccount, storageEncryption, multipleFileAsset, uploadBulkIngest, fileNames);
+        //    return Json(manifest);
+        //}
 
         public JsonResult storage(TransferService transferService, string[] filePaths, string storageAccount, string containerName)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             string accountKey = Storage.GetUserAccountKey(authToken, storageAccount);
-            BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            blobClient.GetContainer(containerName); // CreateIfNotExists
+            Storage.CreateContainer(authToken, storageAccount, containerName);
             object result = null;
             switch (transferService)
             {
@@ -85,7 +83,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
 
             MediaClient mediaClient = new MediaClient(authToken);
-            viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
+            viewData["storageAccount"] = Entities.GetStorageAccounts(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors();
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.WindowsAzure.MediaServices.Client;
 
-using AzureSkyMedia.Services;
+using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
@@ -9,10 +8,9 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         [HttpGet]
         [Route("/processors")]
-        public IMediaProcessor[] GetMediaProcessors(string accountName, string accountKey)
+        public object GetMediaProcessors(string accountName, string accountKey)
         {
-            MediaClient mediaClient = new MediaClient(accountName, accountKey);
-            return mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+            return Entities.GetMediaProcessors(accountName, accountKey);
         }
 
         [HttpPost]

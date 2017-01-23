@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 using Swashbuckle.Swagger.Model;
 
-using AzureSkyMedia.Services;
+using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp
 {
