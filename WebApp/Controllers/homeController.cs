@@ -134,6 +134,20 @@ namespace AzureSkyMedia.WebApp.Controllers
             return authToken;
         }
 
+        public static SelectListItem[] GetStorageAccounts(string authToken)
+        {
+            List<SelectListItem> storageAccounts = new List<SelectListItem>();
+            NameValueCollection accounts = Entities.GetStorageAccounts(authToken);
+            foreach (string accountKey in accounts.Keys)
+            {
+                SelectListItem storageAccount = new SelectListItem();
+                storageAccount.Text = accountKey;
+                storageAccount.Value = accounts[accountKey];
+                storageAccounts.Add(storageAccount);
+            }
+            return storageAccounts.ToArray();
+        }
+
         public static SelectListItem[] GetMediaProcessors()
         {
             List<SelectListItem> mediaProcessors = new List<SelectListItem>();

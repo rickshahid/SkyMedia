@@ -83,7 +83,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
 
             MediaClient mediaClient = new MediaClient(authToken);
-            viewData["storageAccount"] = Entities.GetStorageAccounts(authToken);
+            viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors();
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }
