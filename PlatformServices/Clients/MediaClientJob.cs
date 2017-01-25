@@ -191,6 +191,9 @@ namespace AzureSkyMedia.PlatformServices
             attributeName = Constants.UserAttribute.MediaAccountKey;
             string accountKey = AuthToken.GetClaimValue(authToken, attributeName);
 
+            attributeName = Constants.UserAttribute.UserId;
+            string userId = AuthToken.GetClaimValue(authToken, attributeName);
+
             attributeName = Constants.UserAttribute.MobileNumber;
             string mobileNumber = AuthToken.GetClaimValue(authToken, attributeName);
 
@@ -201,6 +204,7 @@ namespace AzureSkyMedia.PlatformServices
             jobPublish.MediaAccountKey = accountKey;
             jobPublish.StorageAccountName = storageAccount;
             jobPublish.StorageAccountKey = Storage.GetUserAccountKey(authToken, storageAccount);
+            jobPublish.UserId = userId;
             jobPublish.MobileNumber = mobileNumber;
 
             EntityClient entityClient = new EntityClient();

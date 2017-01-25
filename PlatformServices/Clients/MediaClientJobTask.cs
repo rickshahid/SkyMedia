@@ -1,6 +1,5 @@
-﻿using System.Threading;
-using System.Globalization;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -25,9 +24,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
-            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-            TextInfo textInfo = cultureInfo.TextInfo;
-            jobTask.Name = textInfo.ToTitleCase(jobTask.MediaProcessor.ToString());
+            jobTask.Name = Regex.Replace(jobTask.MediaProcessor.ToString(), Constants.CapitalSpacingExpression, Constants.CapitalSpacingReplacement);
             jobTask.InputAssetIds = GetInputAssetIds(inputAssets);
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {

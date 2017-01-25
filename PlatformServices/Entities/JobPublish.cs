@@ -8,6 +8,8 @@
 
         public string StorageAccountKey { get; set; }
 
+        public string UserId { get; set; }
+
         public string MobileNumber { get; set; }
     }
 }

@@ -180,6 +180,12 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        private static void PublishJob(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        {
+            PublishContent(mediaClient, job, jobPublish, contentProtection);
+            PublishAnalytics(job, null, jobPublish);
+        }
+
         public static string[] GetFileNames(IAsset asset, string fileExtension)
         {
             List<string> fileNames = new List<string>();
@@ -198,10 +204,10 @@ namespace AzureSkyMedia.PlatformServices
             PublishContent(mediaClient, asset, null);
         }
 
-        public static void PublishJob(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        public static JObject PublishJob(MediaJobNotification jobNotification)
         {
-            PublishContent(mediaClient, job, jobPublish, contentProtection);
-            PublishAnalytics(job, null, jobPublish);
+            string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(jobNotification);
+            return JObject.Parse(jsonData);
         }
     }
 }

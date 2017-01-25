@@ -13,6 +13,9 @@ namespace AzureSkyMedia.PlatformServices
         public const string FormatNumber = "N2";
         public const string FormatTime = "hh':'mm':'ss";
 
+        public const string CapitalSpacingExpression = @"\B[A-Z]";
+        public const string CapitalSpacingReplacement = " $0";
+
         public struct AppSettings
         {
             public const string AppRegion = "App.Region";

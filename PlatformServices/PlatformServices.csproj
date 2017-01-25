@@ -302,7 +302,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Azure.DocumentDB.1.11.1\build\Microsoft.Azure.DocumentDB.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Azure.DocumentDB.1.11.1\build\Microsoft.Azure.DocumentDB.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)FunctionApp\bin\$(TargetFileName)</PostBuildEvent>
+    <PostBuildEvent>copy /Y $(TargetPath) $(SolutionDir)FunctionApp\bin\$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
