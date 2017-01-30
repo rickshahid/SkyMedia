@@ -16,12 +16,6 @@ namespace AzureSkyMedia.PlatformServices
             BindContext(storageAccount);
         }
 
-        public EntityClient(string authToken)
-        {
-            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, null);
-            BindContext(storageAccount);
-        }
-
         public EntityClient(string authToken, string accountName)
         {
             CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
@@ -31,23 +25,6 @@ namespace AzureSkyMedia.PlatformServices
         private void BindContext(CloudStorageAccount storageAccount)
         {
             _storage = storageAccount.CreateCloudTableClient();
-
-            string settingKey = Constants.AppSettings.StorageServerTimeoutSeconds;
-            string serverTimeoutSeconds = AppSetting.GetValue(settingKey);
-
-            settingKey = Constants.AppSettings.StorageMaxExecutionTimeSeconds;
-            string maxExecutionTimeSeconds = AppSetting.GetValue(settingKey);
-
-            int settingValueInt;
-            if (int.TryParse(serverTimeoutSeconds, out settingValueInt))
-            {
-                _storage.DefaultRequestOptions.ServerTimeout = new TimeSpan(0, 0, settingValueInt);
-            }
-
-            if (int.TryParse(maxExecutionTimeSeconds, out settingValueInt))
-            {
-                _storage.DefaultRequestOptions.MaximumExecutionTime = new TimeSpan(0, 0, settingValueInt);
-            }
         }
 
         private void SetProperties(StorageEntity entity)

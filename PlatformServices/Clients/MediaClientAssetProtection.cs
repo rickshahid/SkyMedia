@@ -97,13 +97,13 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (contentProtection.ContentAuthTypeToken)
             {
-                string settingKey = Constants.AppSettings.DirectoryDiscoveryUrl;
+                string settingKey = Constants.AppSettingKey.DirectoryDiscoveryUrl;
                 string discoveryUrl = AppSetting.GetValue(settingKey);
 
-                settingKey = Constants.AppSettings.DirectoryIssuerUrl;
+                settingKey = Constants.AppSettingKey.DirectoryIssuerUrl;
                 string issuerUrl = AppSetting.GetValue(settingKey);
 
-                settingKey = Constants.AppSettings.DirectoryClientId;
+                settingKey = Constants.AppSettingKey.DirectoryClientId;
                 string clientId = AppSetting.GetValue(settingKey);
 
                 TokenRestrictionTemplate tokenTemplate = new TokenRestrictionTemplate(TokenType.JWT);

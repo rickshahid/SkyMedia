@@ -44,7 +44,7 @@ namespace AzureSkyMedia.PlatformServices
             string apiVersion = string.Empty;
             _serviceClient = new WebClient(_accountId, _accountKey, apiVersion);
 
-            string settingKey = Constants.AppSettings.AsperaTransferInfo;
+            string settingKey = Constants.AppSettingKey.AsperaTransferInfo;
             string transferInfo = AppSetting.GetValue(settingKey);
             string transferApi = string.Concat(_serviceStats, transferInfo);
 
@@ -55,12 +55,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public JObject GetTransferSpecs(string storageRoot, string containerName, string[] filePaths, bool fileDownload)
         {
-            string settingKey = Constants.AppSettings.AsperaUploadSetup;
+            string settingKey = Constants.AppSettingKey.AsperaUploadSetup;
             string uploadSetup = AppSetting.GetValue(settingKey);
             string transferApi = string.Concat(_serviceNode, uploadSetup);
             if (fileDownload)
             {
-                settingKey = Constants.AppSettings.AsperaDownloadSetup;
+                settingKey = Constants.AppSettingKey.AsperaDownloadSetup;
                 string downloadSetup = AppSetting.GetValue(settingKey);
                 transferApi = string.Concat(_serviceNode, downloadSetup);
             }

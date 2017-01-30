@@ -45,7 +45,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IAsset asset, LocatorType locatorType)
         {
             List<MediaTrack> tracks = new List<MediaTrack>();
-            string fileExtension = Constants.Media.AssetMetadata.VttExtension;
+            string fileExtension = Constants.Media.AssetFile.VttExtension;
             string[] fileNames = MediaClient.GetFileNames(asset, fileExtension);
             foreach (string fileName in fileNames)
             {
@@ -107,15 +107,17 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
         {
-            DatabaseClient databaseClient = new DatabaseClient(true);
-            string collectionId = Constants.Database.CollectionName.Metadata;
-            foreach (IAssetFile file in asset.AssetFiles)
+            using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                if (file.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension))
+                string collectionId = Constants.Database.CollectionName.Metadata;
+                foreach (IAssetFile file in asset.AssetFiles)
                 {
-                    string[] fileNameInfo = file.Name.Split(Constants.NamedItemsSeparator);
-                    string documentId = fileNameInfo[0];
-                    databaseClient.DeleteDocument(collectionId, documentId);
+                    if (file.Name.EndsWith(Constants.Media.AssetFile.JsonExtension))
+                    {
+                        string[] fileNameInfo = file.Name.Split(Constants.NamedItemsSeparator);
+                        string documentId = fileNameInfo[0];
+                        databaseClient.DeleteDocument(collectionId, documentId);
+                    }
                 }
             }
             foreach (ILocator locator in asset.Locators)
@@ -157,10 +159,15 @@ namespace AzureSkyMedia.PlatformServices
             INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
             foreach (INotificationEndPoint notificationEndpoint in notificationEndpoints)
             {
-                if (notificationEndpoint.EndPointType != NotificationEndPointType.AzureTable)
+                if (notificationEndpoint.EndPointType == NotificationEndPointType.AzureTable)
                 {
-                    notificationEndpoint.Delete();
+                    IMonitoringConfiguration monitoringConfig = mediaClient.GetEntityById(MediaEntity.MonitoringConfiguration, notificationEndpoint.Id) as IMonitoringConfiguration;
+                    if (monitoringConfig != null)
+                    {
+                        monitoringConfig.Delete();
+                    }
                 }
+                notificationEndpoint.Delete();
             }
             IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
             foreach (IAsset asset in assets)
@@ -230,7 +237,7 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Ingest Manifest Files", manifestFiles.Length.ToString() });
             entityCounts.Add(new string[] { "Assets", assets.Length.ToString() });
             entityCounts.Add(new string[] { "Asset Files", files.Length.ToString() });
-            entityCounts.Add(new string[] { "Processor (Reserved) Units", GetProcessorUnitCount(processorUnits) });
+            entityCounts.Add(new string[] { "Processor Units", GetProcessorUnitCount(processorUnits) });
             entityCounts.Add(new string[] { "Media Processors", processors.Length.ToString(), "/account/processors" });
             entityCounts.Add(new string[] { "Channel Programs", programs.Length.ToString() });
             entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
@@ -269,11 +276,11 @@ namespace AzureSkyMedia.PlatformServices
             NameValueCollection analyticsProcessors = new NameValueCollection();
             foreach (IAssetFile assetFile in asset.AssetFiles)
             {
-                if (assetFile.Name.EndsWith(Constants.Media.AssetMetadata.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
+                if (assetFile.Name.EndsWith(Constants.Media.AssetFile.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
                 {
                     string[] fileNameInfo = assetFile.Name.Split('_');
                     string processorName = fileNameInfo[fileNameInfo.Length - 1];
-                    processorName = processorName.Replace(Constants.Media.AssetMetadata.JsonExtension, string.Empty);
+                    processorName = processorName.Replace(Constants.Media.AssetFile.JsonExtension, string.Empty);
                     processorName = processorName.Replace(Constants.NamedItemSeparator, ' ');
                     analyticsProcessors.Add(processorName, assetFile.Name);
                 }
@@ -344,15 +351,13 @@ namespace AzureSkyMedia.PlatformServices
             return fileName.Substring(fileName.Length - 2);
         }
 
-        public static string GetLiveSourceUrl(bool livePreview)
+        public static string GetLiveSourceUrl(string channelName, bool livePreview)
         {
             string liveSourceUrl = string.Empty;
-            string settingKey = Constants.AppSettings.MediaLiveAccount;
+            string settingKey = Constants.AppSettingKey.AzureMedia;
             string[] liveAccount = AppSetting.GetValue(settingKey, true);
             if (liveAccount.Length > 0)
             {
-                settingKey = Constants.AppSettings.MediaLiveChannelName;
-                string channelName = AppSetting.GetValue(settingKey);
                 MediaClient mediaClient = new MediaClient(liveAccount[0], liveAccount[1]);
                 IChannel channel = mediaClient.GetEntityByName(MediaEntity.Channel, channelName, true) as IChannel;
                 if (channel != null && channel.State == ChannelState.Running)
@@ -372,6 +377,19 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return liveSourceUrl;
+        }
+
+        public static DateTime? GetLiveEventStart(string accountName, string channelName)
+        {
+            DateTime? eventStart = null;
+            EntityClient entityClient = new EntityClient();
+            string tableName = Constants.Storage.TableNames.LiveEvent;
+            MediaLiveEvent liveEvent = entityClient.GetEntity<MediaLiveEvent>(tableName, accountName, channelName);
+            if (liveEvent != null)
+            {
+                eventStart = liveEvent.EventStart;
+            }
+            return eventStart;
         }
     }
 }

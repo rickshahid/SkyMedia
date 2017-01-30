@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -15,14 +17,11 @@ namespace AzureSkyMedia.PlatformServices
         private static IAsset[] GetTaskOutputs(IJob job, string[] processorIds)
         {
             List<IAsset> taskOutputs = new List<IAsset>();
-            foreach (string processorId in processorIds)
+            foreach (ITask jobTask in job.Tasks)
             {
-                foreach (ITask jobTask in job.Tasks)
+                if (processorIds.Contains(jobTask.MediaProcessorId))
                 {
-                    if (string.Equals(jobTask.MediaProcessorId, processorId, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        taskOutputs.AddRange(jobTask.OutputAssets);
-                    }
+                    taskOutputs.AddRange(jobTask.OutputAssets);
                 }
             }
             return taskOutputs.ToArray();
@@ -31,14 +30,11 @@ namespace AzureSkyMedia.PlatformServices
         private static ITask[] GetJobTasks(IJob job, string[] processorIds)
         {
             List<ITask> jobTasks = new List<ITask>();
-            foreach (string processorId in processorIds)
+            foreach (ITask jobTask in job.Tasks)
             {
-                foreach (ITask jobTask in job.Tasks)
+                if (processorIds.Contains(jobTask.MediaProcessorId))
                 {
-                    if (string.Equals(jobTask.MediaProcessorId, processorId, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        jobTasks.Add(jobTask);
-                    }
+                    jobTasks.Add(jobTask);
                 }
             }
             return jobTasks.ToArray();
@@ -65,7 +61,40 @@ namespace AzureSkyMedia.PlatformServices
             return languageCode;
         }
 
-        private static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
+        private static BlobClient GetBlobClient(JobPublish jobPublish)
+        {
+            string[] accountCredentials = new string[] { jobPublish.StorageAccountName, jobPublish.StorageAccountKey };
+            return new BlobClient(accountCredentials);
+        }
+
+        private static void PublishIndex(IJob job, IAsset asset, JobPublish jobPublish)
+        {
+            string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1Id;
+            string processorId1 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2Id;
+            string processorId2 = AppSetting.GetValue(settingKey);
+            string[] processorIds = new string[] { processorId1, processorId2 };
+            ITask[] jobTasks = GetJobTasks(job, processorIds);
+            if (jobTasks.Length > 0)
+            {
+                BlobClient blobClient = GetBlobClient(jobPublish);
+                foreach (ITask jobTask in jobTasks)
+                {
+                    IAsset outputAsset = jobTask.OutputAssets[0];
+                    string fileExtension = Constants.Media.AssetFile.VttExtension;
+                    string[] fileNames = GetFileNames(outputAsset, fileExtension);
+                    foreach (string fileName in fileNames)
+                    {
+                        string languageCode = GetLanguageCode(jobTask, processorId1);
+                        string languageExtension = string.Concat(Constants.NamedItemSeparator, languageCode, fileExtension);
+                        string languageFileName = fileName.Replace(fileExtension, languageExtension);
+                        blobClient.CopyFile(outputAsset, asset, fileName, languageFileName, false);
+                    }
+                }
+            }
+        }
+
+        internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
         {
             if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
             {
@@ -81,11 +110,68 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        public static void PublishAnalytics(IJob job, IAsset asset, JobPublish jobPublish)
         {
-            string settingKey = Constants.AppSettings.MediaProcessorEncoderStandardId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionId;
             string processorId1 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorEncoderPremiumId;
+            settingKey = Constants.AppSettingKey.MediaProcessorFaceRedactionId;
+            string processorId2 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettingKey.MediaProcessorMotionDetectionId;
+            string processorId3 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettingKey.MediaProcessorVideoAnnotationId;
+            string processorId4 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettingKey.MediaProcessorCharacterRecognitionId;
+            string processorId5 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettingKey.MediaProcessorContentModerationId;
+            string processorId6 = AppSetting.GetValue(settingKey);
+            string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
+            ITask[] jobTasks = GetJobTasks(job, processorIds);
+            if (jobTasks.Length > 0)
+            {
+                BlobClient blobClient = GetBlobClient(jobPublish);
+                using (DatabaseClient databaseClient = new DatabaseClient(true))
+                {
+                    string collectionId = Constants.Database.CollectionName.Metadata;
+                    foreach (ITask jobTask in jobTasks)
+                    {
+                        IAsset outputAsset = jobTask.OutputAssets[0];
+                        string fileExtension = Constants.Media.AssetFile.JsonExtension;
+                        string[] fileNames = GetFileNames(outputAsset, fileExtension);
+                        if (fileNames.Length > 0 && asset != null)
+                        {
+                            string sourceContainerName = outputAsset.Uri.Segments[1];
+                            string sourceFileName = fileNames[0];
+                            CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, false);
+                            string jsonData = string.Empty;
+                            using (Stream sourceStream = sourceBlob.OpenRead())
+                            {
+                                StreamReader streamReader = new StreamReader(sourceStream);
+                                jsonData = streamReader.ReadToEnd();
+                            }
+                            if (!string.IsNullOrEmpty(jsonData))
+                            {
+                                string documentId = databaseClient.CreateDocument(collectionId, jsonData);
+                                string processorName = jobTask.Name.Replace(' ', Constants.NamedItemSeparator);
+                                string destinationFileName = string.Concat(documentId, Constants.NamedItemsSeparator, processorName, fileExtension);
+                                blobClient.CopyFile(outputAsset, asset, sourceFileName, destinationFileName, false);
+                            }
+                        }
+                        if (jobTask.Configuration.Contains("mode") && jobTask.Configuration.Contains("analyze"))
+                        {
+                            IAsset inputAsset = jobTask.InputAssets[0];
+                            string sourceFileName = GetPrimaryFile(inputAsset);
+                            blobClient.CopyFile(inputAsset, outputAsset, sourceFileName, sourceFileName, true);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        {
+            string settingKey = Constants.AppSettingKey.MediaProcessorEncoderStandardId;
+            string processorId1 = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettingKey.MediaProcessorEncoderPremiumId;
             string processorId2 = AppSetting.GetValue(settingKey);
             string[] processorIds = new string[] { processorId1, processorId2 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
@@ -98,92 +184,6 @@ namespace AzureSkyMedia.PlatformServices
                     PublishAnalytics(job, outputAsset, jobPublish);
                 }
             }
-        }
-
-        private static void PublishIndex(IJob job, IAsset asset, JobPublish jobPublish)
-        {
-            string settingKey = Constants.AppSettings.MediaProcessorIndexerV1Id;
-            string processorId1 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorIndexerV2Id;
-            string processorId2 = AppSetting.GetValue(settingKey);
-            string[] processorIds = new string[] { processorId1, processorId2 };
-            ITask[] jobTasks = GetJobTasks(job, processorIds);
-            if (jobTasks.Length > 0)
-            {
-                string[] accountCredentials = new string[] { jobPublish.StorageAccountName, jobPublish.StorageAccountKey };
-                BlobClient blobClient = new BlobClient(accountCredentials);
-                foreach (ITask jobTask in jobTasks)
-                {
-                    IAsset outputAsset = jobTask.OutputAssets[0];
-                    string fileExtension = Constants.Media.AssetMetadata.VttExtension;
-                    string[] fileNames = GetFileNames(outputAsset, fileExtension);
-                    if (fileNames.Length > 0)
-                    {
-                        string sourceFileName = fileNames[0];
-                        string languageCode = GetLanguageCode(jobTask, processorId1);
-                        string destinationFileName = sourceFileName.Replace(fileExtension, string.Concat(Constants.NamedItemSeparator, languageCode, fileExtension));
-                        blobClient.CopyFile(outputAsset, asset, sourceFileName, destinationFileName, false);
-                    }
-                }
-            }
-        }
-
-        private static void PublishAnalytics(IJob job, IAsset asset, JobPublish jobPublish)
-        {
-            string settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
-            string processorId1 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorFaceRedactionId;
-            string processorId2 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorMotionDetectionId;
-            string processorId3 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
-            string processorId4 = AppSetting.GetValue(settingKey);
-            string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4 };
-            ITask[] jobTasks = GetJobTasks(job, processorIds);
-            if (jobTasks.Length > 0)
-            {
-                string[] accountCredentials = new string[] { jobPublish.StorageAccountName, jobPublish.StorageAccountKey };
-                BlobClient blobClient = new BlobClient(accountCredentials);
-                DatabaseClient databaseClient = new DatabaseClient(true);
-                string collectionId = Constants.Database.CollectionName.Metadata;
-                foreach (ITask jobTask in jobTasks)
-                {
-                    IAsset outputAsset = jobTask.OutputAssets[0];
-                    string fileExtension = Constants.Media.AssetMetadata.JsonExtension;
-                    string[] fileNames = GetFileNames(outputAsset, fileExtension);
-                    if (fileNames.Length > 0 && asset != null)
-                    {
-                        string sourceContainerName = outputAsset.Uri.Segments[1];
-                        string sourceFileName = fileNames[0];
-                        CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, sourceFileName, false);
-                        string jsonData = string.Empty;
-                        using (Stream sourceStream = sourceBlob.OpenRead())
-                        {
-                            StreamReader streamReader = new StreamReader(sourceStream);
-                            jsonData = streamReader.ReadToEnd();
-                        }
-                        if (!string.IsNullOrEmpty(jsonData))
-                        {
-                            string documentId = databaseClient.CreateDocument(collectionId, jsonData);
-                            string processorName = jobTask.Name.Replace(' ', Constants.NamedItemSeparator);
-                            string destinationFileName = string.Concat(documentId, Constants.NamedItemsSeparator, processorName, fileExtension);
-                            blobClient.CopyFile(outputAsset, asset, sourceFileName, destinationFileName, false);
-                        }
-                    }
-                    if (jobTask.Configuration.Contains("mode") && jobTask.Configuration.Contains("analyze"))
-                    {
-                        IAsset inputAsset = jobTask.InputAssets[0];
-                        string sourceFileName = GetPrimaryFile(inputAsset);
-                        blobClient.CopyFile(inputAsset, outputAsset, sourceFileName, sourceFileName, true);
-                    }
-                }
-            }
-        }
-
-        private static void PublishJob(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
-        {
-            PublishContent(mediaClient, job, jobPublish, contentProtection);
-            PublishAnalytics(job, null, jobPublish);
         }
 
         public static string[] GetFileNames(IAsset asset, string fileExtension)
@@ -199,15 +199,58 @@ namespace AzureSkyMedia.PlatformServices
             return fileNames.ToArray();
         }
 
-        public static void PublishContent(MediaClient mediaClient, IAsset asset)
+        public static string PublishJob(string jobNotification, bool webHook)
         {
-            PublishContent(mediaClient, asset, null);
-        }
-
-        public static JObject PublishJob(MediaJobNotification jobNotification)
-        {
-            string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(jobNotification);
-            return JObject.Parse(jsonData);
+            string jobPublication = string.Empty;
+            MediaJobNotification notification = JsonConvert.DeserializeObject<MediaJobNotification>(jobNotification);
+            if (notification.EventType == MediaJobNotificationEvent.JobStateChange &&
+                (notification.Properties.NewState == JobState.Error ||
+                 notification.Properties.NewState == JobState.Canceled ||
+                 notification.Properties.NewState == JobState.Finished))
+            {
+                if (webHook)
+                {
+                    MessageClient messageClient = new MessageClient();
+                    string queueName = Constants.Media.Job.NotificationEndpointNameStorageQueue;
+                    messageClient.AddMessage(queueName, notification);
+                }
+                else
+                {
+                    EntityClient entityClient = new EntityClient();
+                    string tableName = Constants.Storage.TableNames.JobPublish;
+                    string partitionKey = notification.Properties.AccountName;
+                    string rowKey = notification.Properties.JobId;
+                    JobPublish jobPublish = entityClient.GetEntity<JobPublish>(tableName, partitionKey, rowKey);
+                    if (jobPublish != null)
+                    {
+                        tableName = Constants.Storage.TableNames.JobPublishProtection;
+                        ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, partitionKey, rowKey);
+                        string accountName = jobPublish.PartitionKey;
+                        string accountKey = jobPublish.MediaAccountKey;
+                        MediaClient mediaClient = new MediaClient(accountName, accountKey);
+                        IJob job = mediaClient.GetEntityById(MediaEntity.Job, rowKey) as IJob;
+                        if (job != null)
+                        {
+                            mediaClient.SetProcessorUnits(job, ReservedUnitType.Basic);
+                            if (notification.Properties.NewState == JobState.Finished)
+                            {
+                                PublishContent(mediaClient, job, jobPublish, contentProtection);
+                                PublishAnalytics(job, null, jobPublish);
+                            }
+                            string messageText = GetNotificationMessage(accountName, job);
+                            MessageClient.SendText(messageText, jobPublish.MobileNumber);
+                            if (contentProtection != null)
+                            {
+                                tableName = Constants.Storage.TableNames.JobPublishProtection;
+                                entityClient.DeleteEntity(tableName, contentProtection);
+                            }
+                            tableName = Constants.Storage.TableNames.JobPublish;
+                            entityClient.DeleteEntity(tableName, jobPublish);
+                        }
+                    }
+                }
+            }
+            return jobPublication;
         }
     }
 }

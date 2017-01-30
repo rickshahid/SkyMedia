@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static CloudStorageAccount GetSystemAccount()
         {
-            string settingKey = Constants.ConnectionStrings.AzureStorage;
+            string settingKey = Constants.AppSettingKey.AzureStorage;
             string storageAccount = AppSetting.GetValue(settingKey);
             return CloudStorageAccount.Parse(storageAccount);
         }

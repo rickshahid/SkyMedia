@@ -11,10 +11,8 @@
             var signiantAccountKey = "@ViewData["signiantAccountKey"]";
             var asperaAccountKey = "@ViewData["asperaAccountKey"]";
             var storageContainer = "@ViewData["storageContainer"]";
-            var blockChunkSize = "@ViewData["blockChunkSize"]";
-            var maxRetryCount = "@ViewData["maxRetryCount"]";
             SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
-            CreateUploader(storageContainer, blockChunkSize, maxRetryCount);
+            CreateUploader(storageContainer);
         })
     </script>
 }

@@ -1,11 +1,28 @@
-//using Microsoft.Azure.Search;
+using System;
+
+using Microsoft.Azure.Search;
 //using Microsoft.Azure.Search.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class SearchClient
+    public class SearchClient : IDisposable
     {
-        //private SearchServiceClient _search;
+        private SearchServiceClient _search;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && _search != null)
+            {
+                _search.Dispose();
+                _search = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         public SearchClient(string authToken)
         {

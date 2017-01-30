@@ -19,7 +19,7 @@ namespace AzureSkyMedia.PlatformServices
             creationOptions.AssetId = asset.Id;
 
             int archiveMinutesInt;
-            string settingKey = Constants.AppSettings.MediaChannelProgramArchiveMinutes;
+            string settingKey = Constants.AppSettingKey.MediaChannelProgramArchiveMinutes;
             string archiveMinutes = AppSetting.GetValue(settingKey);
             if (int.TryParse(archiveMinutes, out archiveMinutesInt))
             {
@@ -57,11 +57,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public void CreateChannel(string channelName)
         {
-            if (string.IsNullOrEmpty(channelName))
-            {
-                string settingKey = Constants.AppSettings.MediaLiveChannelName;
-                channelName = AppSetting.GetValue(settingKey);
-            }
             ChannelEncodingType channelType = ChannelEncodingType.None;
             StreamingProtocol ingestProtocol = StreamingProtocol.RTMP;
             IChannel channel = CreateChannel(channelName, channelType, ingestProtocol);
@@ -73,7 +68,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public void SignalChannel(string channelName, int cueId)
         {
-            string settingKey = Constants.AppSettings.MediaChannelAdvertisementSeconds;
+            string settingKey = Constants.AppSettingKey.MediaChannelAdvertisementSeconds;
             string timeSeconds = AppSetting.GetValue(settingKey);
             TimeSpan timeSpan = new TimeSpan(0, 0, int.Parse(timeSeconds));
 

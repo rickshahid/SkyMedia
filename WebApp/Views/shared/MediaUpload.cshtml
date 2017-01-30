@@ -35,7 +35,7 @@
         <td>
             @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage", onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')" })
             @Html.CheckBox("storageEncryption")
-            <span class="inputLabel">
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-rest-storage-encryption')">
                 Storage Encryption (AES 256)
             </span>
         </td>

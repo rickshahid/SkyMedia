@@ -15,9 +15,9 @@ namespace AzureSkyMedia.PlatformServices
     {
         private CloudQueueClient _storage;
 
-        public MessageClient(string authToken)
+        public MessageClient()
         {
-            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, null);
+            CloudStorageAccount storageAccount = Storage.GetSystemAccount();
             BindContext(storageAccount);
         }
 
@@ -30,23 +30,6 @@ namespace AzureSkyMedia.PlatformServices
         private void BindContext(CloudStorageAccount storageAccount)
         {
             _storage = storageAccount.CreateCloudQueueClient();
-
-            string settingKey = Constants.AppSettings.StorageServerTimeoutSeconds;
-            string serverTimeoutSeconds = AppSetting.GetValue(settingKey);
-
-            settingKey = Constants.AppSettings.StorageMaxExecutionTimeSeconds;
-            string maxExecutionTimeSeconds = AppSetting.GetValue(settingKey);
-
-            int settingValueInt;
-            if (int.TryParse(serverTimeoutSeconds, out settingValueInt))
-            {
-                _storage.DefaultRequestOptions.ServerTimeout = new TimeSpan(0, 0, settingValueInt);
-            }
-
-            if (int.TryParse(maxExecutionTimeSeconds, out settingValueInt))
-            {
-                _storage.DefaultRequestOptions.MaximumExecutionTime = new TimeSpan(0, 0, settingValueInt);
-            }
         }
 
         private static string EncodeParameters(IDictionary<string, string> parameters)
@@ -64,12 +47,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public static HttpWebResponse SendText(string messageText, string mobileNumber)
         {
-            string settingKey = Constants.ConnectionStrings.Twilio;
+            string settingKey = Constants.AppSettingKey.Twilio;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountName = accountCredentials[0];
             string accountKey = accountCredentials[1];
 
-            settingKey = Constants.AppSettings.TwilioMessageApi;
+            settingKey = Constants.AppSettingKey.TwilioMessageApi;
             string messageApi = string.Format(AppSetting.GetValue(settingKey), accountName);
             HttpWebRequest httpRequest = WebRequest.CreateHttp(messageApi);
             httpRequest.Method = "POST";
@@ -83,7 +66,7 @@ namespace AzureSkyMedia.PlatformServices
             Dictionary<string, string> parameters = new Dictionary<string, string>();
 
             string parameterName = "From";
-            settingKey = Constants.AppSettings.TwilioMessageFrom;
+            settingKey = Constants.AppSettingKey.TwilioMessageFrom;
             string parameterValue = AppSetting.GetValue(settingKey);
             parameters.Add(parameterName, parameterValue);
 
@@ -115,43 +98,58 @@ namespace AzureSkyMedia.PlatformServices
             return queue;
         }
 
-        public T GetMessage<T>(string queueName, TimeSpan? visibilityTimeout, out CloudQueueMessage queueMessage) where T: class
+        public string GetMessage(string queueName, TimeSpan? visibilityTimeout, out CloudQueueMessage queueMessage, out string messageId, out string popReceipt)
         {
-            T message = null;
             queueMessage = null;
+            messageId = null;
+            popReceipt = null;
+            string message = string.Empty;
             CloudQueue queue = GetQueue(queueName, false);
             if (queue.Exists())
             {
                 queueMessage = queue.GetMessage(visibilityTimeout);
                 if (queueMessage != null)
                 {
-                    message = queueMessage.Deserialize<T>();
+                    message = queueMessage.AsString;
+                    messageId = queueMessage.Id;
+                    popReceipt = queueMessage.PopReceipt;
                 }
             }
             return message;
         }
 
-        public T GetMessage<T>(string queueName, out CloudQueueMessage queueMessage) where T : class
-        {
-            return GetMessage<T>(queueName, null, out queueMessage);
-        }
-
-        public T GetMessage<T>(string queueName) where T : class
+        public string GetMessage(string queueName, out string messageId, out string popReceipt)
         {
             CloudQueueMessage queueMessage;
-            return GetMessage<T>(queueName, null, out queueMessage);
+            return GetMessage(queueName, null, out queueMessage, out messageId, out popReceipt);
         }
 
-        public void AddMessage<T>(string queueName, T message, TimeSpan? timeToLive, TimeSpan? initialVisibilityDelay) where T : class
+        public string GetMessage(string queueName, out CloudQueueMessage queueMessage)
+        {
+            string messageId;
+            string popReceipt;
+            return GetMessage(queueName, null, out queueMessage, out messageId, out popReceipt);
+        }
+
+        public string GetMessage(string queueName)
+        {
+            CloudQueueMessage queueMessage;
+            string messageId;
+            string popReceipt;
+            return GetMessage(queueName, null, out queueMessage, out messageId, out popReceipt);
+        }
+
+        public void AddMessage(string queueName, object message, TimeSpan? timeToLive, TimeSpan? initialVisibilityDelay)
         {
             CloudQueue queue = GetQueue(queueName, true);
-            CloudQueueMessage queueMessage = message.Serialize();
+            string messageText = JsonConvert.SerializeObject(message);
+            CloudQueueMessage queueMessage = new CloudQueueMessage(messageText);
             queue.AddMessage(queueMessage, timeToLive, initialVisibilityDelay);
         }
 
-        public void AddMessage<T>(string queueName, T message) where T : class
+        public void AddMessage(string queueName, object message)
         {
-            AddMessage<T>(queueName, message, null, null);
+            AddMessage(queueName, message, null, null);
         }
 
         public void DeleteMessage(string queueName, CloudQueueMessage queueMessage)
@@ -170,21 +168,6 @@ namespace AzureSkyMedia.PlatformServices
             {
                 queue.DeleteMessage(messageId, popReceipt);
             }
-        }
-    }
-
-    internal static class CloudQueueMessageExtension
-    {
-        public static CloudQueueMessage Serialize<T>(this T message)
-        {
-            string messageContent = JsonConvert.SerializeObject(message);
-            return new CloudQueueMessage(messageContent);
-        }
-
-        public static T Deserialize<T>(this CloudQueueMessage queueMessage)
-        {
-            string messageContent = queueMessage.AsString;
-            return JsonConvert.DeserializeObject<T>(messageContent);
         }
     }
 }

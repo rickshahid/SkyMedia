@@ -64,61 +64,65 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
 
-            string settingKey1 = Constants.AppSettings.MediaStream1Name;
-            string settingKey2 = Constants.AppSettings.MediaStream1SourceUrl;
-            string settingKey3 = Constants.AppSettings.MediaStream1TextTracks;
-            string settingKey4 = Constants.AppSettings.MediaStream1ProtectionTypes;
+            string settingKey1 = Constants.AppSettingKey.MediaStream1Name;
+            string settingKey2 = Constants.AppSettingKey.MediaStream1SourceUrl;
+            string settingKey3 = Constants.AppSettingKey.MediaStream1TextTracks;
+            string settingKey4 = Constants.AppSettingKey.MediaStream1ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            settingKey1 = Constants.AppSettings.MediaStream2Name;
-            settingKey2 = Constants.AppSettings.MediaStream2SourceUrl;
-            settingKey3 = Constants.AppSettings.MediaStream2TextTracks;
-            settingKey4 = Constants.AppSettings.MediaStream2ProtectionTypes;
+            settingKey1 = Constants.AppSettingKey.MediaStream2Name;
+            settingKey2 = Constants.AppSettingKey.MediaStream2SourceUrl;
+            settingKey3 = Constants.AppSettingKey.MediaStream2TextTracks;
+            settingKey4 = Constants.AppSettingKey.MediaStream2ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            settingKey1 = Constants.AppSettings.MediaStream3Name;
-            settingKey2 = Constants.AppSettings.MediaStream3SourceUrl;
-            settingKey3 = Constants.AppSettings.MediaStream3TextTracks;
-            settingKey4 = Constants.AppSettings.MediaStream3ProtectionTypes;
+            settingKey1 = Constants.AppSettingKey.MediaStream3Name;
+            settingKey2 = Constants.AppSettingKey.MediaStream3SourceUrl;
+            settingKey3 = Constants.AppSettingKey.MediaStream3TextTracks;
+            settingKey4 = Constants.AppSettingKey.MediaStream3ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            settingKey1 = Constants.AppSettings.MediaStream4Name;
-            settingKey2 = Constants.AppSettings.MediaStream4SourceUrl;
-            settingKey3 = Constants.AppSettings.MediaStream4TextTracks;
-            settingKey4 = Constants.AppSettings.MediaStream4ProtectionTypes;
+            settingKey1 = Constants.AppSettingKey.MediaStream4Name;
+            settingKey2 = Constants.AppSettingKey.MediaStream4SourceUrl;
+            settingKey3 = Constants.AppSettingKey.MediaStream4TextTracks;
+            settingKey4 = Constants.AppSettingKey.MediaStream4ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            settingKey1 = Constants.AppSettings.MediaStream5Name;
-            settingKey2 = Constants.AppSettings.MediaStream5SourceUrl;
-            settingKey3 = Constants.AppSettings.MediaStream5TextTracks;
-            settingKey4 = Constants.AppSettings.MediaStream5ProtectionTypes;
+            settingKey1 = Constants.AppSettingKey.MediaStream5Name;
+            settingKey2 = Constants.AppSettingKey.MediaStream5SourceUrl;
+            settingKey3 = Constants.AppSettingKey.MediaStream5TextTracks;
+            settingKey4 = Constants.AppSettingKey.MediaStream5ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
             return mediaStreams;
         }
 
-        private IActionResult GetLiveView(string queryString)
+        private IActionResult GetLiveView(string channelName, string queryString)
         {
-            string settingKey = Constants.AppSettings.MediaLiveStartDateTime;
-            string startDateTime = AppSetting.GetValue(settingKey);
-            DateTime liveStart;
-            if (DateTime.TryParse(startDateTime, out liveStart))
-            {
-                ViewData["startDateTime"] = liveStart.ToString();
-            }
-            bool livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
-            ViewData["livePreview"] = livePreview;
-            ViewData["liveSourceUrl"] = Entities.GetLiveSourceUrl(livePreview);
-            settingKey = Constants.AppSettings.StorageCdnUrl;
+            string settingKey = Constants.AppSettingKey.StorageCdnUrl;
             string cdnUrl = AppSetting.GetValue(settingKey);
-            ViewData["liveCountdownUrl"] = string.Concat(cdnUrl, "/BuckleUp.jpg");
+            settingKey = Constants.AppSettingKey.AzureMedia;
+            string[] accountCredentials = AppSetting.GetValue(settingKey, true);
+            if (accountCredentials.Length > 0)
+            {
+                string accountName = accountCredentials[0];
+                DateTime? liveEventStart = Entities.GetLiveEventStart(accountName, channelName);
+                if (liveEventStart.HasValue)
+                {
+                    bool livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
+                    ViewData["livePreview"] = livePreview;
+                    ViewData["liveEventStart"] = liveEventStart.Value.ToString();
+                    ViewData["liveSourceUrl"] = Entities.GetLiveSourceUrl(channelName, livePreview);
+                    ViewData["liveCountdownUrl"] = string.Concat(cdnUrl, "/BuckleUp.jpg");
+                }
+            }
             return View("live");
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = null;
-            string cookieKey = Constants.HttpCookies.UserAuthToken;
+            string cookieKey = Constants.HttpCookie.UserAuthToken;
             if (request.HasFormContentType)
             {
                 authToken = request.Form[Constants.HttpForm.IdToken];
@@ -168,6 +172,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             mediaProcessors.Add(mediaProcessor);
 
             mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Encoder Ultra";
+            mediaProcessor.Value = MediaProcessor.EncoderUltra.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Indexer v1";
             mediaProcessor.Value = MediaProcessor.IndexerV1.ToString();
             mediaProcessors.Add(mediaProcessor);
@@ -198,8 +207,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             mediaProcessors.Add(mediaProcessor);
 
             mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Motion Stabilization";
+            mediaProcessor.Value = MediaProcessor.MotionStablization.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Video Annotation";
-            mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
+            mediaProcessor.Value = MediaProcessor.VideoAnnotation.ToString();
             mediaProcessors.Add(mediaProcessor);
 
             mediaProcessor = new SelectListItem();
@@ -208,8 +222,18 @@ namespace AzureSkyMedia.WebApp.Controllers
             mediaProcessors.Add(mediaProcessor);
 
             mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Thumbnail Generation";
+            mediaProcessor.Value = MediaProcessor.ThumbnailGeneration.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Character Recognition";
             mediaProcessor.Value = MediaProcessor.CharacterRecognition.ToString();
+            mediaProcessors.Add(mediaProcessor);
+
+            mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = "Content Moderation";
+            mediaProcessor.Value = MediaProcessor.ContentModeration.ToString();
             mediaProcessors.Add(mediaProcessor);
 
             return mediaProcessors.ToArray();
@@ -249,7 +273,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             string queryString = this.Request.QueryString.Value.ToLower();
             if (this.Request.Host.Value.Contains("live") || queryString.Contains("live"))
             {
-                return GetLiveView(queryString);
+                string channelName = this.Request.Query["channel"];
+                return GetLiveView(channelName, queryString);
             }
 
             string authToken = GetAuthToken(this.Request, this.Response);
@@ -269,6 +294,17 @@ namespace AzureSkyMedia.WebApp.Controllers
                     return RedirectToAction("profileedit", "account");
                 }
                 SearchClient searchClient = new SearchClient(authToken);
+                //string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
+                //string queueName = string.Concat(AppSetting.GetValue(settingKey), "-poison");
+                //MessageClient messageClient = new MessageClient(authToken, "skystorage1");
+                //string messageId;
+                //string popReceipt;
+                //string jobNotification = messageClient.GetMessage(queueName, out messageId, out popReceipt);
+                //if (!string.IsNullOrEmpty(jobNotification))
+                //{
+                //    MediaClient.PublishJob(jobNotification, false);
+                //    messageClient.DeleteMessage(queueName, messageId, popReceipt);
+                //}
             }
 
             if (mediaClient == null)

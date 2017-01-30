@@ -117,6 +117,7 @@ body {
 .siteLink {
     text-decoration: none;
     color: deepskyblue;
+    font-weight: bold;
 }
 
 .siteLink:hover {
@@ -281,7 +282,7 @@ body {
 }
 
 .slider.jobPriority {
-    width: 105px;
+    width: 110px;
 }
 
 .slider.durationSeconds {
@@ -489,6 +490,13 @@ body {
     padding-bottom: 5px;
 }
 
+.mediaWorkflowJobNotification {
+    color: deepskyblue;
+    margin-left: 190px;
+    margin-right: 5px;
+    font-weight: bold;
+}
+
 .mediaWorkflowTaskLink td {
     padding: 0px;
 }
@@ -582,7 +590,7 @@ body {
 
 .jobName {
     font-weight: bold;
-    width: 235px;
+    width: 165px;
 }
 
 .jobTask {

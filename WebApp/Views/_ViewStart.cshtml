@@ -7,7 +7,7 @@
     HttpRequest request = this.Context.Request;
     HttpResponse response = this.Context.Response;
     string authToken = homeController.GetAuthToken(request, response);
-    ViewData["authTokenCookie"] = Constants.HttpCookies.UserAuthToken;
+    ViewData["authTokenCookie"] = Constants.HttpCookie.UserAuthToken;
     ViewData["authToken"] = authToken;
 
     if (!string.IsNullOrEmpty(authToken))
@@ -21,18 +21,18 @@
         ViewData["accountContext"] = string.Concat(userId, " (", accountName, ")");
     }
 
-    string settingKey = Constants.AppSettings.AppRegion;
+    string settingKey = Constants.AppSettingKey.AppRegion;
     ViewData["appRegion"] = AppSetting.GetValue(settingKey);
 
     string ampVersion = this.Context.Request.Query["amp"];
     if (string.IsNullOrEmpty(ampVersion))
     {
-        settingKey = Constants.AppSettings.MediaPlayerVersion;
+        settingKey = Constants.AppSettingKey.MediaPlayerVersion;
         ampVersion = AppSetting.GetValue(settingKey);
     }
     ViewData["mediaPlayerVersion"] = ampVersion;
 
-    settingKey = Constants.AppSettings.StorageCdnUrl;
+    settingKey = Constants.AppSettingKey.StorageCdnUrl;
     ViewData["storageCdnUrl"] = AppSetting.GetValue(settingKey);
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);

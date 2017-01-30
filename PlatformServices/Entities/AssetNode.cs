@@ -13,7 +13,7 @@ namespace AzureSkyMedia.PlatformServices
         private MediaAsset(MediaClient mediaClient)
         {
             _mediaClient = mediaClient;
-            string settingKey = Constants.AppSettings.StorageCdnUrl;
+            string settingKey = Constants.AppSettingKey.StorageCdnUrl;
             _cdnUrl = AppSetting.GetValue(settingKey);
         }
 

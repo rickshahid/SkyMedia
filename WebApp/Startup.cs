@@ -27,7 +27,7 @@ namespace AzureSkyMedia.WebApp
                 configBuilder.AddUserSecrets();
             }
             AppSetting.ConfigRoot = configBuilder.Build();
-            string settingKey = Constants.AppSettings.AppInsightsInstrumentationKey;
+            string settingKey = Constants.AppSettingKey.AppInsightsInstrumentationKey;
             string appInsightsKey = AppSetting.GetValue(settingKey);
             if (!string.IsNullOrEmpty(appInsightsKey))
             {
@@ -39,11 +39,11 @@ namespace AzureSkyMedia.WebApp
         private Info GetApiInfo()
         {
             Info apiInfo = new Info();
-            string settingKey = Constants.AppSettings.AppApiTitle;
+            string settingKey = Constants.AppSettingKey.AppApiTitle;
             apiInfo.Title = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.AppApiDescription;
+            settingKey = Constants.AppSettingKey.AppApiDescription;
             apiInfo.Description = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettings.AppApiVersion;
+            settingKey = Constants.AppSettingKey.AppApiVersion;
             apiInfo.Version = AppSetting.GetValue(settingKey);
             return apiInfo;
         }
@@ -67,13 +67,13 @@ namespace AzureSkyMedia.WebApp
             switch (requestAction)
             {
                 case "signin":
-                    settingKey = Constants.AppSettings.DirectoryPolicyIdSignUpIn;
+                    settingKey = Constants.AppSettingKey.DirectoryPolicyIdSignUpIn;
                     break;
                 case "profileedit":
-                    settingKey = Constants.AppSettings.DirectoryPolicyIdProfileEdit;
+                    settingKey = Constants.AppSettingKey.DirectoryPolicyIdProfileEdit;
                     break;
                 case "passwordreset":
-                    settingKey = Constants.AppSettings.DirectoryPolicyIdPasswordReset;
+                    settingKey = Constants.AppSettingKey.DirectoryPolicyIdPasswordReset;
                     break;
             }
             if (!string.IsNullOrEmpty(settingKey))
@@ -114,13 +114,13 @@ namespace AzureSkyMedia.WebApp
             log.AddDebug();
 
             OpenIdConnectOptions openIdOptions = new OpenIdConnectOptions();
-            string settingKey = Constants.AppSettings.DirectoryIssuerUrl;
+            string settingKey = Constants.AppSettingKey.DirectoryIssuerUrl;
             openIdOptions.Authority = AppSetting.ConfigRoot[settingKey];
 
-            settingKey = Constants.AppSettings.DirectoryClientId;
+            settingKey = Constants.AppSettingKey.DirectoryClientId;
             openIdOptions.ClientId = AppSetting.ConfigRoot[settingKey];
 
-            settingKey = Constants.AppSettings.DirectoryClientSecret;
+            settingKey = Constants.AppSettingKey.DirectoryClientSecret;
             openIdOptions.ClientSecret = AppSetting.ConfigRoot[settingKey];
 
             openIdOptions.Events = new OpenIdConnectEvents

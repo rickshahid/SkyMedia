@@ -37,12 +37,12 @@ namespace AzureSkyMedia.PlatformServices
             request.ContentType = Constants.ContentType.Json;
             if (!string.IsNullOrEmpty(_apiVersion))
             {
-                request.Headers.Add(Constants.HttpHeaders.ApiVersion, _apiVersion);
+                request.Headers.Add(Constants.HttpHeader.ApiVersion, _apiVersion);
             }
             if (!string.IsNullOrEmpty(_authToken))
             {
-                string authHeader = string.Concat(Constants.HttpHeaders.AuthPrefix, _authToken);
-                request.Headers.Add(Constants.HttpHeaders.AuthHeader, authHeader);
+                string authHeader = string.Concat(Constants.HttpHeader.AuthPrefix, _authToken);
+                request.Headers.Add(Constants.HttpHeader.AuthHeader, authHeader);
             }
             if (_credentials != null)
             {

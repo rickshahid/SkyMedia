@@ -47,11 +47,13 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 if (inputSubclipped && !jobTask.ProcessorConfig.StartsWith("{"))
                 {
-                    DatabaseClient databaseClient = new DatabaseClient(true);
-                    string collectionId = Constants.Database.CollectionName.Encoding;
-                    string procedureId = "getEncoderConfig";
-                    JObject encoderConfig = databaseClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
-                    jobTask.ProcessorConfig = encoderConfig.ToString();
+                    using (DatabaseClient databaseClient = new DatabaseClient(true))
+                    {
+                        string collectionId = Constants.Database.CollectionName.Encoding;
+                        string procedureId = "getEncoderConfig";
+                        JObject encoderConfig = databaseClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
+                        jobTask.ProcessorConfig = encoderConfig.ToString();
+                    }
                 }
             }
             JArray inputSources = new JArray();

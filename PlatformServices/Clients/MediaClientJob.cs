@@ -12,67 +12,72 @@ namespace AzureSkyMedia.PlatformServices
             switch (mediaProcessor)
             {
                 case MediaProcessor.EncoderStandard:
-                    string settingKey = Constants.AppSettings.MediaProcessorEncoderStandardId;
+                    string settingKey = Constants.AppSettingKey.MediaProcessorEncoderStandardId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.EncoderPremium:
-                    settingKey = Constants.AppSettings.MediaProcessorEncoderPremiumId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorEncoderPremiumId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.EncoderUltra:
-                    settingKey = Constants.AppSettings.MediaProcessorEncoderUltraId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorEncoderUltraId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.IndexerV1:
-                    settingKey = Constants.AppSettings.MediaProcessorIndexerV1Id;
+                    settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1Id;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.IndexerV2:
-                    settingKey = Constants.AppSettings.MediaProcessorIndexerV2Id;
+                    settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2Id;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.FaceDetection:
-                    settingKey = Constants.AppSettings.MediaProcessorFaceDetectionId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.FaceRedaction:
-                    settingKey = Constants.AppSettings.MediaProcessorFaceRedactionId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorFaceRedactionId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.MotionDetection:
-                    settingKey = Constants.AppSettings.MediaProcessorMotionDetectionId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorMotionDetectionId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.MotionHyperlapse:
-                    settingKey = Constants.AppSettings.MediaProcessorMotionHyperlapseId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorMotionHyperlapseId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.MotionStablization:
-                    settingKey = Constants.AppSettings.MediaProcessorMotionStabilizationId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.VideoSummarization:
-                    settingKey = Constants.AppSettings.MediaProcessorVideoSummarizationId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorVideoSummarizationId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.ThumbnailGeneration:
-                    settingKey = Constants.AppSettings.MediaProcessorThumbnailGenerationId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
                 case MediaProcessor.CharacterRecognition:
-                    settingKey = Constants.AppSettings.MediaProcessorCharacterRecognitionId;
+                    settingKey = Constants.AppSettingKey.MediaProcessorCharacterRecognitionId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
             }
             return processorId;
         }
 
-        private INotificationEndPoint GetNotificationEndpoint()
+        private INotificationEndPoint GetNotificationEndpoint(NotificationEndPointType endpointType)
         {
-            string endpointName = Constants.Media.Job.NotificationEndpointNameWebHook;
-            NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
-            string settingKey = Constants.AppSettings.MediaJobNotificationWebHookUrl;
+            string endpointName = Constants.Media.Job.NotificationEndpointNameStorageQueue;
+            string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
             string endpointAddress = AppSetting.GetValue(settingKey);
+            if (endpointType == NotificationEndPointType.WebHook)
+            {
+                endpointName = Constants.Media.Job.NotificationEndpointNameWebHook;
+                settingKey = Constants.AppSettingKey.MediaJobNotificationWebHookUrl;
+                endpointAddress = AppSetting.GetValue(settingKey);
+            }
             INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
             if (notificationEndpoint == null)
             {
@@ -81,19 +86,11 @@ namespace AzureSkyMedia.PlatformServices
             return notificationEndpoint;
         }
 
-        internal void SetProcessorUnits(IJob job)
+        public void SetProcessorUnits(IJob job, ReservedUnitType scale)
         {
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            if (job.State == JobState.Queued)
-            {
-                processorUnits[0].ReservedUnitType = ReservedUnitType.Premium;
-                processorUnits[0].CurrentReservedUnits = job.Tasks.Count;
-            }
-            else
-            {
-                processorUnits[0].ReservedUnitType = ReservedUnitType.Basic;
-                processorUnits[0].CurrentReservedUnits = 0;
-            }
+            processorUnits[0].CurrentReservedUnits = (job.State == JobState.Queued) ? job.Tasks.Count : 0;
+            processorUnits[0].ReservedUnitType = scale;
             processorUnits[0].Update();
         }
 
@@ -133,8 +130,14 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets);
                         break;
+                    case MediaProcessor.ThumbnailGeneration:
+                        tasks = GetThumbnailGenerationTasks(mediaClient, jobTask, inputAssets);
+                        break;
                     case MediaProcessor.CharacterRecognition:
                         tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets);
+                        break;
+                    case MediaProcessor.ContentModeration:
+                        tasks = GetContentModerationTasks(mediaClient, jobTask, inputAssets);
                         break;
                 }
                 if (tasks != null)
@@ -173,12 +176,9 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
             }
-            INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
+            INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(mediaJob.Notification);
             job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
-            if (mediaJob.AutoScale)
-            {
-                SetProcessorUnits(job);
-            }
+            SetProcessorUnits(job, mediaJob.Scale);
             job.Submit();
             return job;
         }

@@ -50,9 +50,9 @@
                 SetPlayerContent();
             } else {
                 var mediaPlayer = GetMediaPlayer(false);
-                var startDateTime = "@ViewData["startDateTime"]";
+                var liveEventStart = "@ViewData["liveEventStart"]";
                 SetPlayerSpinner(false);
-                $("#liveCountdownValue").countdown(startDateTime)
+                $("#liveCountdownValue").countdown(liveEventStart)
                     .on("update.countdown", SetCountdown)
                     .on("finish.countdown", StartBroadcast)
                     .countdown("start");
@@ -62,7 +62,7 @@
 }
 
 <div class="viewTitle">
-    <a class="siteLink" href="https://docs.microsoft.com/en-us/azure/media-services/media-services-manage-channels-overview" target="_blank">@viewTitle</a>
+    <a class="siteLink" href="http://docs.microsoft.com/en-us/azure/media-services/media-services-manage-channels-overview" target="_blank">@viewTitle</a>
 </div>
 
 @Html.Partial("MediaPlayer")

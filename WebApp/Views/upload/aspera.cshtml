@@ -16,11 +16,9 @@
             var asperaAccountKey = "@ViewData["asperaAccountKey"]";
             var serviceGateway = "@ViewData["asperaServiceGateway"]";
             var storageContainer = "@ViewData["storageContainer"]";
-            var blockChunkSize = "@ViewData["blockChunkSize"]";
-            var maxRetryCount = "@ViewData["maxRetryCount"]";
             SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
             InitializeUploader("@ViewData["asperaTransferApi"]");
-            CreateUploader(storageContainer, blockChunkSize, maxRetryCount);
+            CreateUploader(storageContainer);
         })
     </script>
 }

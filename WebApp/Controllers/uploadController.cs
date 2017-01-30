@@ -76,12 +76,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             attributeName = Constants.UserAttribute.AsperaAccountKey;
             viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            string settingKey = Constants.AppSettings.StorageBlockChunkSize;
-            viewData["blockChunkSize"] = AppSetting.GetValue(settingKey);
-
-            settingKey = Constants.AppSettings.StorageMaxRetryCount;
-            viewData["maxRetryCount"] = AppSetting.GetValue(settingKey);
-
             MediaClient mediaClient = new MediaClient(authToken);
             viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors();
@@ -99,7 +93,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
 
-            string settingKey = Constants.AppSettings.SigniantTransferApi;
+            string settingKey = Constants.AppSettingKey.SigniantTransferApi;
             ViewData["signiantTransferApi"] = AppSetting.GetValue(settingKey);
 
             string attributeName = Constants.UserAttribute.SigniantServiceGateway;
@@ -113,7 +107,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
 
-            string settingKey = Constants.AppSettings.AsperaTransferApi;
+            string settingKey = Constants.AppSettingKey.AsperaTransferApi;
             ViewData["asperaTransferApi"] = AppSetting.GetValue(settingKey);
 
             string attributeName = Constants.UserAttribute.AsperaServiceGateway;

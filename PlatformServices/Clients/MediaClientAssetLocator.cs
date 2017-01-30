@@ -15,11 +15,11 @@ namespace AzureSkyMedia.PlatformServices
             IAccessPolicy accessPolicy = GetEntityByName(MediaEntity.AccessPolicy, policyName, true) as IAccessPolicy;
             if (accessPolicy == null)
             {
-                string settingKey = Constants.AppSettings.MediaLocatorReadDurationDays;
+                string settingKey = Constants.AppSettingKey.MediaLocatorReadDurationDays;
                 string durationDays = AppSetting.GetValue(settingKey);
                 TimeSpan readPolicyDuration = new TimeSpan(int.Parse(durationDays), 0, 0, 0);
 
-                settingKey = Constants.AppSettings.MediaLocatorWriteDurationHours;
+                settingKey = Constants.AppSettingKey.MediaLocatorWriteDurationHours;
                 string durationHours = AppSetting.GetValue(settingKey);
                 TimeSpan writePolicyDuration = new TimeSpan(int.Parse(durationHours), 0, 0);
 
@@ -43,18 +43,6 @@ namespace AzureSkyMedia.PlatformServices
                 locator = _media.Locators.CreateLocator(locatorType, asset, accessPolicy, startDateTime);
             }
             return locator;
-        }
-
-        private void ExtendLocator(ILocator locator)
-        {
-            string settingKey = Constants.AppSettings.MediaLocatorAutoExtend;
-            string autoExtend = AppSetting.GetValue(settingKey);
-            if (string.Equals(autoExtend, "true", StringComparison.InvariantCultureIgnoreCase))
-            {
-                IAccessPolicy accessPolicy = GetAccessPolicy(false);
-                DateTime accessExpiration = DateTime.UtcNow.Add(accessPolicy.Duration);
-                locator.Update(accessExpiration);
-            }
         }
 
         public static string GetPrimaryFile(IAsset asset)
@@ -131,7 +119,9 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (locator.ExpirationDateTime <= DateTime.UtcNow)
                 {
-                    ExtendLocator(locator);
+                    IAccessPolicy accessPolicy = GetAccessPolicy(false);
+                    DateTime accessExpiration = DateTime.UtcNow.Add(accessPolicy.Duration);
+                    locator.Update(accessExpiration);
                 }
                 locatorUrl = GetLocatorUrl(locator, fileName);
             }

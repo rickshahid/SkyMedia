@@ -136,8 +136,9 @@ function GetJob() {
     var jobTasks = GetJobTasks();
     var job = {
         Name: $("#jobName").val(),
+        Scale: $("#jobScale").val(),
         Priority: $("#jobPriorityLabel").text(),
-        AutoScale: $("#jobAutoScale").prop("checked"),
+        Notification: $("input[name='jobNotification']:checked").val(),
         Tasks: jobTasks
     };
     return job;

@@ -15,13 +15,13 @@ namespace AzureSkyMedia.PlatformServices
             string[] accountSettings = accountConnection.Split(Constants.MultiItemsSeparator);
             foreach (string accountSetting in accountSettings)
             {
-                if (accountSetting.StartsWith(Constants.ConnectionStrings.AccountNamePrefix, StringComparison.InvariantCultureIgnoreCase))
+                if (accountSetting.StartsWith(Constants.AppSettingKey.AccountNamePrefix, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    parsedConnection.Add(accountSetting.Remove(0, Constants.ConnectionStrings.AccountNamePrefix.Length));
+                    parsedConnection.Add(accountSetting.Remove(0, Constants.AppSettingKey.AccountNamePrefix.Length));
                 }
-                else if (accountSetting.StartsWith(Constants.ConnectionStrings.AccountKeyPrefix, StringComparison.InvariantCultureIgnoreCase))
+                else if (accountSetting.StartsWith(Constants.AppSettingKey.AccountKeyPrefix, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    parsedConnection.Add(accountSetting.Remove(0, Constants.ConnectionStrings.AccountKeyPrefix.Length));
+                    parsedConnection.Add(accountSetting.Remove(0, Constants.AppSettingKey.AccountKeyPrefix.Length));
                 }
             }
             return parsedConnection.ToArray();

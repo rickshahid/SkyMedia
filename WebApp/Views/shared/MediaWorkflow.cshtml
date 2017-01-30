@@ -22,15 +22,39 @@
             Media Job:
         </td>
         <td>
-            @Html.TextBox("jobName", null, new { @class = "jobName", placeholder = "[Media Workflow Job Name]" })
-            @Html.CheckBox("jobAutoScale", false)
+            @Html.TextBox("jobName", null, new { @class = "jobName", placeholder = "[Job Name]" })
+            &nbsp;
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-scale-media-processing-overview')">
+                Processing Scale
+            </span>
+            <select id="jobScale">
+                <option value="0">S1</option>
+                <option value="1">S2</option>
+                <option value="2" selected>S3</option>
+            </select>
+            &nbsp;
             <span class="inputLabel">
-                Auto Scale
-                &nbsp;
                 Job Priority
                 <span id="jobPriorityLabel" class="sliderLabel">0</span>
             </span>
             <div id="jobPriority" class="slider jobPriority"></div>
+        </td>
+    </tr>
+    <tr>
+        <td />
+        <td>
+            <span class="mediaWorkflowJobNotification">
+                Job State Notification
+            </span>
+            @Html.RadioButton("jobNotification", 1, true)
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-check-job-progress-with-queues')">
+                Storage Queue
+            </span>
+            &nbsp;
+            @Html.RadioButton("jobNotification", 3, false)
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/dotnet/api/microsoft.windowsazure.mediaservices.client.notificationendpointtype')">
+                Web Hook
+            </span>
         </td>
     </tr>
     @Html.Partial("MediaWorkflowTask")

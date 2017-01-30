@@ -104,7 +104,7 @@ function AsperaEnabled() {
 function UploadBulkEnabled() {
     return $("#uploadBulkIngest").prop("checked");
 }
-function CreateUploader(storageContainer, blockChunkSize, maxRetryCount) {
+function CreateUploader(storageContainer) {
     _storageContainer = storageContainer;
     var eventHandlers = {
         PostInit: function (uploader) {
@@ -174,8 +174,8 @@ function CreateUploader(storageContainer, blockChunkSize, maxRetryCount) {
     $("#fileUploader").plupload({
         url: "/upload/file",
         runtimes: "html5",
-        chunk_size: blockChunkSize,
-        max_retries: maxRetryCount,
+        chunk_size: "10MB",
+        max_retries: 3,
         multipart: true,
         dragdrop: false,
         sortable: true,

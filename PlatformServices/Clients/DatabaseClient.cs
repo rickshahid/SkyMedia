@@ -10,23 +10,36 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class DatabaseClient
+    public class DatabaseClient : IDisposable
     {
         private DocumentClient _database;
         private string _databaseId;
 
-        public DatabaseClient() : this(false) { }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && _database != null)
+            {
+                _database.Dispose();
+                _database = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         public DatabaseClient(bool readWrite)
         {
-            string settingKey = readWrite ? Constants.ConnectionStrings.AzureNoSqlReadWrite : Constants.ConnectionStrings.AzureNoSqlReadOnly;
+            string settingKey = readWrite ? Constants.AppSettingKey.AzureNoSqlReadWrite : Constants.AppSettingKey.AzureNoSqlReadOnly;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];
 
             _database = new DocumentClient(new Uri(accountEndpoint), accountKey);
 
-            settingKey = Constants.AppSettings.NoSqlDatabaseId;
+            settingKey = Constants.AppSettingKey.NoSqlDatabaseId;
             _databaseId = AppSetting.GetValue(settingKey);
         }
 
@@ -36,7 +49,7 @@ namespace AzureSkyMedia.PlatformServices
             if (document != null)
             {
                 jsonDoc = JObject.Parse(document.ToString());
-                string settingKey = Constants.AppSettings.NoSqlDocumentProperties;
+                string settingKey = Constants.AppSettingKey.NoSqlDocumentProperties;
                 string[] properties = AppSetting.GetValue(settingKey).Split(Constants.MultiItemSeparator);
                 foreach (string property in properties)
                 {

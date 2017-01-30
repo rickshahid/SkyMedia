@@ -33,14 +33,14 @@ namespace AzureSkyMedia.PlatformServices
             _media = new CloudMediaContext(credentials);
 
             int settingValue;
-            string settingKey = Constants.AppSettings.MediaConcurrentTransferCount;
+            string settingKey = Constants.AppSettingKey.MediaConcurrentTransferCount;
             string concurrentTransferCount = AppSetting.GetValue(settingKey);
             if (int.TryParse(concurrentTransferCount, out settingValue))
             {
                 _media.NumberOfConcurrentTransfers = settingValue;
             }
 
-            settingKey = Constants.AppSettings.MediaParallelTransferThreadCount;
+            settingKey = Constants.AppSettingKey.MediaParallelTransferThreadCount;
             string parallelTransferThreadCount = AppSetting.GetValue(settingKey);
             if (int.TryParse(parallelTransferThreadCount, out settingValue))
             {
@@ -60,6 +60,10 @@ namespace AzureSkyMedia.PlatformServices
             object entities = null;
             switch (mediaEntity)
             {
+                case MediaEntity.MonitoringConfiguration:
+                    entities = (from x in _media.MonitoringConfigurations
+                                select x).ToArray();
+                    break;
                 case MediaEntity.StorageAccount:
                     entities = (from x in _media.StorageAccounts
                                 select x).ToArray();
@@ -154,6 +158,9 @@ namespace AzureSkyMedia.PlatformServices
             StringComparison comparisonType = StringComparison.InvariantCultureIgnoreCase;
             switch (mediaEntity)
             {
+                case MediaEntity.MonitoringConfiguration:
+                    entity = _media.MonitoringConfigurations.Where(x => x.NotificationEndPointId.Equals(entityId, comparisonType)).SingleOrDefault();
+                    break;
                 case MediaEntity.StorageAccount:
                     entity = _media.StorageAccounts.Where(x => x.Name.Equals(entityId, comparisonType)).SingleOrDefault();
                     break;
@@ -226,6 +233,10 @@ namespace AzureSkyMedia.PlatformServices
             object entity = null;
             switch (mediaEntity)
             {
+                case MediaEntity.MonitoringConfiguration:
+                    IQueryable<IMonitoringConfiguration> monitoringConfigs = _media.MonitoringConfigurations.Where(x => x.NotificationEndPointId.Contains(entityName));
+                    entity = requireUnique ? monitoringConfigs.SingleOrDefault() : monitoringConfigs.FirstOrDefault();
+                    break;
                 case MediaEntity.StorageAccount:
                     IQueryable<IStorageAccount> storageAccounts = _media.StorageAccounts.Where(x => x.Name.Contains(entityName));
                     entity = requireUnique ? storageAccounts.SingleOrDefault() : storageAccounts.FirstOrDefault();

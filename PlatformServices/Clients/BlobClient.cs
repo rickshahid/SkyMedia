@@ -15,13 +15,6 @@ namespace AzureSkyMedia.PlatformServices
         private CloudBlobClient _storage;
         private EntityClient _tracker;
 
-        public BlobClient(string authToken)
-        {
-            CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, null);
-            BindContext(storageAccount);
-            _tracker = new EntityClient(authToken);
-        }
-
         public BlobClient(string authToken, string accountName)
         {
             CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
@@ -41,40 +34,6 @@ namespace AzureSkyMedia.PlatformServices
         private void BindContext(CloudStorageAccount storageAccount)
         {
             _storage = storageAccount.CreateCloudBlobClient();
-
-            string settingKey = Constants.AppSettings.StorageServerTimeoutSeconds;
-            string serverTimeoutSeconds = AppSetting.GetValue(settingKey);
-
-            settingKey = Constants.AppSettings.StorageMaxExecutionTimeSeconds;
-            string maxExecutionTimeSeconds = AppSetting.GetValue(settingKey);
-
-            settingKey = Constants.AppSettings.StorageMaxSingleBlobUploadBytes;
-            string maxSingleBlobUploadBytes = AppSetting.GetValue(settingKey);
-
-            settingKey = Constants.AppSettings.StorageParallelOperationThreadCount;
-            string parallelOperationThreadCount = AppSetting.GetValue(settingKey);
-
-            int settingValueInt;
-            if (int.TryParse(serverTimeoutSeconds, out settingValueInt))
-            {
-                _storage.DefaultRequestOptions.ServerTimeout = new TimeSpan(0, 0, settingValueInt);
-            }
-
-            if (int.TryParse(maxExecutionTimeSeconds, out settingValueInt))
-            {
-                _storage.DefaultRequestOptions.MaximumExecutionTime = new TimeSpan(0, 0, settingValueInt);
-            }
-
-            long settingValueLong;
-            if (long.TryParse(maxSingleBlobUploadBytes, out settingValueLong))
-            {
-                _storage.DefaultRequestOptions.SingleBlobUploadThresholdInBytes = settingValueLong;
-            }
-
-            if (int.TryParse(parallelOperationThreadCount, out settingValueInt))
-            {
-                _storage.DefaultRequestOptions.ParallelOperationThreadCount = settingValueInt;
-            }
         }
 
         private CloudBlobContainer GetContainer(string containerName, BlobContainerPublicAccessType? publicAccess)

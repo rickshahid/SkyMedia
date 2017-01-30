@@ -10,9 +10,13 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         private JObject GetFragment(string documentId, double timeSeconds)
         {
-            DatabaseClient databaseClient = new DatabaseClient(true);
-            string collectionId = Constants.Database.CollectionName.Metadata;
-            return databaseClient.ExecuteProcedure(collectionId, "getTimecodeFragment", documentId, timeSeconds);
+            JObject fragment;
+            using (DatabaseClient databaseClient = new DatabaseClient(true))
+            {
+                string collectionId = Constants.Database.CollectionName.Metadata;
+                fragment = databaseClient.ExecuteProcedure(collectionId, "getTimecodeFragment", documentId, timeSeconds);
+            }
+            return fragment;
         }
 
         public JsonResult metadata(string fileName, double timeSeconds)

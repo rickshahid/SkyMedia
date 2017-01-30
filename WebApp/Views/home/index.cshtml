@@ -61,7 +61,7 @@
         function GetAnalyticsProcessor(fileName) {
             var fileNameInfo = fileName.split("@Constants.NamedItemsSeparator");
             var analyticsProcessor = fileNameInfo[1].replace("@Constants.NamedItemSeparator", " ");
-            return analyticsProcessor.replace("@Constants.Media.AssetMetadata.JsonExtension", "");
+            return analyticsProcessor.replace("@Constants.Media.AssetFile.JsonExtension", "");
         }
         function SetAnalyticsProcessors(currentStream) {
             var processors = document.getElementById("analyticsProcessors");
