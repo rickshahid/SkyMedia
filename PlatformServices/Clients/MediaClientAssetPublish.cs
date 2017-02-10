@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -94,23 +93,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
-        {
-            if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
-            {
-                if (asset.Options == AssetCreationOptions.StorageEncrypted && asset.DeliveryPolicies.Count == 0)
-                {
-                    mediaClient.AddDeliveryPolicies(asset, contentProtection);
-                }
-                if (asset.Locators.Count == 0)
-                {
-                    LocatorType locatorType = LocatorType.OnDemandOrigin;
-                    mediaClient.CreateLocator(null, locatorType, asset, null);
-                }
-            }
-        }
-
-        public static void PublishAnalytics(IJob job, IAsset asset, JobPublish jobPublish)
+        private static void PublishAnalytics(IJob job, IAsset asset, JobPublish jobPublish)
         {
             string settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionId;
             string processorId1 = AppSetting.GetValue(settingKey);
@@ -167,7 +150,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        private static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
         {
             string settingKey = Constants.AppSettingKey.MediaProcessorEncoderStandardId;
             string processorId1 = AppSetting.GetValue(settingKey);
@@ -186,7 +169,23 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static string[] GetFileNames(IAsset asset, string fileExtension)
+        internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
+        {
+            if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
+            {
+                if (asset.Options == AssetCreationOptions.StorageEncrypted && asset.DeliveryPolicies.Count == 0)
+                {
+                    mediaClient.AddDeliveryPolicies(asset, contentProtection);
+                }
+                if (asset.Locators.Count == 0)
+                {
+                    LocatorType locatorType = LocatorType.OnDemandOrigin;
+                    mediaClient.CreateLocator(null, locatorType, asset, null);
+                }
+            }
+        }
+
+        internal static string[] GetFileNames(IAsset asset, string fileExtension)
         {
             List<string> fileNames = new List<string>();
             foreach (IAssetFile assetFile in asset.AssetFiles)
@@ -199,27 +198,27 @@ namespace AzureSkyMedia.PlatformServices
             return fileNames.ToArray();
         }
 
-        public static string PublishJob(string jobNotification, bool webHook)
+        public static string PublishJob(MediaJobNotification jobNotification, bool webHook)
         {
             string jobPublication = string.Empty;
-            MediaJobNotification notification = JsonConvert.DeserializeObject<MediaJobNotification>(jobNotification);
-            if (notification.EventType == MediaJobNotificationEvent.JobStateChange &&
-                (notification.Properties.NewState == JobState.Error ||
-                 notification.Properties.NewState == JobState.Canceled ||
-                 notification.Properties.NewState == JobState.Finished))
+            if (jobNotification != null && jobNotification.EventType == MediaJobNotificationEvent.JobStateChange &&
+                (jobNotification.Properties.NewState == JobState.Error ||
+                 jobNotification.Properties.NewState == JobState.Canceled ||
+                 jobNotification.Properties.NewState == JobState.Finished))
             {
                 if (webHook)
                 {
+                    string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
+                    string queueName = AppSetting.GetValue(settingKey);
                     MessageClient messageClient = new MessageClient();
-                    string queueName = Constants.Media.Job.NotificationEndpointNameStorageQueue;
-                    messageClient.AddMessage(queueName, notification);
+                    messageClient.AddMessage(queueName, jobNotification);
                 }
                 else
                 {
                     EntityClient entityClient = new EntityClient();
                     string tableName = Constants.Storage.TableNames.JobPublish;
-                    string partitionKey = notification.Properties.AccountName;
-                    string rowKey = notification.Properties.JobId;
+                    string partitionKey = jobNotification.Properties.AccountName;
+                    string rowKey = jobNotification.Properties.JobId;
                     JobPublish jobPublish = entityClient.GetEntity<JobPublish>(tableName, partitionKey, rowKey);
                     if (jobPublish != null)
                     {
@@ -232,13 +231,13 @@ namespace AzureSkyMedia.PlatformServices
                         if (job != null)
                         {
                             mediaClient.SetProcessorUnits(job, ReservedUnitType.Basic);
-                            if (notification.Properties.NewState == JobState.Finished)
+                            if (jobNotification.Properties.NewState == JobState.Finished)
                             {
                                 PublishContent(mediaClient, job, jobPublish, contentProtection);
                                 PublishAnalytics(job, null, jobPublish);
                             }
-                            string messageText = GetNotificationMessage(accountName, job);
-                            MessageClient.SendText(messageText, jobPublish.MobileNumber);
+                            //string messageText = GetNotificationMessage(accountName, job);
+                            //MessageClient.SendText(messageText, jobPublish.MobileNumber);
                             if (contentProtection != null)
                             {
                                 tableName = Constants.Storage.TableNames.JobPublishProtection;

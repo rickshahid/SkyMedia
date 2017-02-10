@@ -17,7 +17,7 @@ namespace AzureSkyMedia.PlatformServices
             string storageUsed = Storage.GetCapacityUsed(authToken, storageAccount.Name);
             if (!string.IsNullOrEmpty(storageUsed))
             {
-                storageInfo = string.Concat(storageInfo, ", Storage Used: ", storageUsed, ")");
+                storageInfo = string.Concat(storageInfo, ", Usage: ", storageUsed, ")");
             }
             return storageInfo;
         }
@@ -242,7 +242,7 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Channel Programs", programs.Length.ToString() });
             entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
             entityCounts.Add(new string[] { "Jobs", jobs.Length.ToString() });
-            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString(), "/account/notifications" });
+            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString(), "/account/endpoints" });
             entityCounts.Add(new string[] { "Access Policies", accessPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
@@ -298,6 +298,18 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaClient mediaClient = new MediaClient(accountName, accountKey);
             return mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+        }
+
+        public static object GetNotificationEndpoints(string authToken)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            return mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+        }
+
+        public static object GetNotificationEndpoints(string accountName, string accountKey)
+        {
+            MediaClient mediaClient = new MediaClient(accountName, accountKey);
+            return mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
         }
 
         public static List<MediaStream> GetMediaStreams(MediaClient mediaClient)

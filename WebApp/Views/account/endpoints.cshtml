@@ -4,28 +4,29 @@
     <script type="text/javascript" src="~/js/grid.js"></script>
     <script type="text/javascript">
         $(function () {
-            var rows = @Html.Raw(Json.Serialize(ViewData["mediaProcessors"]));
+            var rows = @Html.Raw(Json.Serialize(ViewData["notificationEndpoints"]));
             var columns = [
                 {
                     name: "id",
                     hidden: true
                 },
                 {
-                    name: "description",
-                    hidden: true
-                },
-                {
                     name: "name",
                     label: "Name",
                     align: "center",
-                    formatter: FormatColumnName,
-                    width: 400
+                    formatter: FormatColumnName
                 },
                 {
-                    name: "version",
-                    label: "Version",
+                    name: "endPointType",
+                    label: "Type",
                     align: "center",
-                    width: 100
+                    formatter: FormatColumnType
+                },
+                {
+                    name: "endPointAddress",
+                    label: "Address",
+                    align: "center",
+                    width: 400
                 }
             ];
             LoadGrid(columns, rows);
@@ -34,7 +35,7 @@
 }
 
 @section title {
-    Media Processors
+    Notification Endpoints
 }
 
 <table id="gridView"></table>

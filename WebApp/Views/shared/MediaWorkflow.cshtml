@@ -46,12 +46,12 @@
             <span class="mediaWorkflowJobNotification">
                 Job State Notification
             </span>
-            @Html.RadioButton("jobNotification", 1, true)
+            @Html.RadioButton("jobNotification", 1, false)
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-check-job-progress-with-queues')">
                 Storage Queue
             </span>
             &nbsp;
-            @Html.RadioButton("jobNotification", 3, false)
+            @Html.RadioButton("jobNotification", 3, true)
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/dotnet/api/microsoft.windowsazure.mediaservices.client.notificationendpointtype')">
                 Web Hook
             </span>

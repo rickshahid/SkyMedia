@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+using Newtonsoft.Json.Linq;
+
 using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
@@ -15,6 +17,16 @@ namespace AzureSkyMedia.PlatformServices
                 assetIds.Add(inputAsset.AssetId);
             }
             return assetIds.ToArray();
+        }
+
+        private static JObject GetProcessorConfig(string documentId)
+        {
+            JObject processorConfig;
+            using (DatabaseClient databaseClient = new DatabaseClient(false))
+            {
+                processorConfig = databaseClient.GetDocument(documentId);
+            }
+            return processorConfig;
         }
 
         private static bool HasProtectionEnabled(ContentProtection contentProtection)

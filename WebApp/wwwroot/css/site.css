@@ -359,16 +359,8 @@ body {
     margin-top: 10px;
 }
 
-.plupload_total_status {
-    display: inline-block;
-    text-align: right;
-    width: 20px;
-}
-
 .plupload_total_file_size {
-    margin-right: 10px;
-    display: block;
-    width: 60px;
+    margin-right: 8px;
 }
 
 .plupload_file_size {

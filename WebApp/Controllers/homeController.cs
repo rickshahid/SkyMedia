@@ -254,6 +254,20 @@ namespace AzureSkyMedia.WebApp.Controllers
                 case "accountClear":
                     Entities.ClearAccount(mediaClient, parameterFlag);
                     break;
+                case "queuePublish":
+                    string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
+                    string queueName = AppSetting.GetValue(settingKey);
+                    if (parameterFlag) queueName = string.Concat(queueName, "-poison");
+                    string messageId, popReceipt;
+                    MessageClient messageClient = new MessageClient();
+                    string queueMessage = messageClient.GetMessage(queueName, out messageId, out popReceipt);
+                    MediaJobNotification jobNotification = Newtonsoft.Json.JsonConvert.DeserializeObject<MediaJobNotification>(queueMessage);
+                    if (jobNotification != null)
+                    {
+                        MediaClient.PublishJob(jobNotification, false);
+                        messageClient.DeleteMessage(queueName, messageId, popReceipt);
+                    }
+                    break;
             }
             string[][] entityCounts = Entities.GetEntityCounts(mediaClient);
             return Json(entityCounts);
@@ -293,18 +307,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     return RedirectToAction("profileedit", "account");
                 }
-                SearchClient searchClient = new SearchClient(authToken);
-                //string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
-                //string queueName = string.Concat(AppSetting.GetValue(settingKey), "-poison");
-                //MessageClient messageClient = new MessageClient(authToken, "skystorage1");
-                //string messageId;
-                //string popReceipt;
-                //string jobNotification = messageClient.GetMessage(queueName, out messageId, out popReceipt);
-                //if (!string.IsNullOrEmpty(jobNotification))
-                //{
-                //    MediaClient.PublishJob(jobNotification, false);
-                //    messageClient.DeleteMessage(queueName, messageId, popReceipt);
-                //}
+                //SearchClient searchClient = new SearchClient(authToken);
             }
 
             if (mediaClient == null)

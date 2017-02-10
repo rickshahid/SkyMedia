@@ -78,15 +78,28 @@ namespace AzureSkyMedia.PlatformServices
                 settingKey = Constants.AppSettingKey.MediaJobNotificationWebHookUrl;
                 endpointAddress = AppSetting.GetValue(settingKey);
             }
-            INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
-            if (notificationEndpoint == null)
+            INotificationEndPoint notificationEndpoint = null;
+            if (!string.IsNullOrEmpty(endpointAddress))
             {
-                notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
+                notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
+                if (notificationEndpoint == null)
+                {
+                    notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
+                }
             }
             return notificationEndpoint;
         }
 
-        public void SetProcessorUnits(IJob job, ReservedUnitType scale)
+        private static string GetNotificationMessage(string accountName, IJob job)
+        {
+            string messageText = string.Concat("Azure Media Services Job ", job.State.ToString(), ".");
+            messageText = string.Concat(messageText, " Account Name: ", accountName);
+            messageText = string.Concat(messageText, ", Job Name: ", job.Name);
+            messageText = string.Concat(messageText, ", Job ID: ", job.Id);
+            return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constants.FormatTime));
+        }
+
+        private void SetProcessorUnits(IJob job, ReservedUnitType scale)
         {
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
             processorUnits[0].CurrentReservedUnits = (job.State == JobState.Queued) ? job.Tasks.Count : 0;
@@ -94,7 +107,7 @@ namespace AzureSkyMedia.PlatformServices
             processorUnits[0].Update();
         }
 
-        public static MediaJob SetJob(MediaClient mediaClient, MediaJob mediaJob, MediaAssetInput[] inputAssets)
+        internal static MediaJob SetJob(MediaClient mediaClient, MediaJob mediaJob, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> taskList = new List<MediaJobTask>();
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
@@ -156,7 +169,7 @@ namespace AzureSkyMedia.PlatformServices
             return mediaJob;
         }
 
-        public IJob CreateJob(MediaJob mediaJob)
+        internal IJob CreateJob(MediaJob mediaJob)
         {
             IJob job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
@@ -177,13 +190,16 @@ namespace AzureSkyMedia.PlatformServices
                 currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
             }
             INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(mediaJob.Notification);
-            job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
+            if (notificationEndpoint != null)
+            {
+                job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
+            }
             SetProcessorUnits(job, mediaJob.Scale);
             job.Submit();
             return job;
         }
 
-        public static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection[] contentProtections)
+        internal static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection[] contentProtections)
         {
             string attributeName = Constants.UserAttribute.MediaAccountName;
             string accountName = AuthToken.GetClaimValue(authToken, attributeName);
@@ -219,15 +235,6 @@ namespace AzureSkyMedia.PlatformServices
                 contentProtection.RowKey = jobPublish.RowKey;
                 entityClient.InsertEntity(tableName, contentProtection);
             }
-        }
-
-        public static string GetNotificationMessage(string accountName, IJob job)
-        {
-            string messageText = string.Concat("Azure Media Services Job ", job.State.ToString(), ".");
-            messageText = string.Concat(messageText, " Account Name: ", accountName);
-            messageText = string.Concat(messageText, ", Job Name: ", job.Name);
-            messageText = string.Concat(messageText, ", Job ID: ", job.Id);
-            return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constants.FormatTime));
         }
     }
 }

@@ -46,6 +46,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
+        public IActionResult endpoints()
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            ViewData["notificationEndpoints"] = Entities.GetNotificationEndpoints(authToken);
+            return View();
+        }
+
         public IActionResult index()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
