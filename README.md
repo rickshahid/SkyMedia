@@ -11,7 +11,6 @@ Here is a breakdown of the integrated capabilities that are enabled by this samp
 * Upload and process media files via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
 * Background process that tracks and publishes media workflow outputs via parameters specified at job submission time
-(Note this item is currently under development extending from Azure Queue notification to Azure Functions webhook.)
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
@@ -41,11 +40,11 @@ To enable the range of capabilities that are listed above, the following Azure p
  
  * Functions - http://azure.microsoft.com/en-us/services/functions/
 
-* Logic Apps - http://azure.microsoft.com/en-us/services/logic-apps/
+* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
-* Content Delivery Network (CDN) - http://azure.microsoft.com/en-us/services/cdn/
+* Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
 
 In addition to the Azure platform services listed above, the following Azure partner services have also been incorporated:
 
