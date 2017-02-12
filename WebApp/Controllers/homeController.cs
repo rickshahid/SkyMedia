@@ -208,7 +208,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             mediaProcessor = new SelectListItem();
             mediaProcessor.Text = "Motion Stabilization";
-            mediaProcessor.Value = MediaProcessor.MotionStablization.ToString();
+            mediaProcessor.Value = MediaProcessor.MotionStabilization.ToString();
             mediaProcessors.Add(mediaProcessor);
 
             mediaProcessor = new SelectListItem();
@@ -253,20 +253,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                     break;
                 case "accountClear":
                     Entities.ClearAccount(mediaClient, parameterFlag);
-                    break;
-                case "queuePublish":
-                    string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
-                    string queueName = AppSetting.GetValue(settingKey);
-                    if (parameterFlag) queueName = string.Concat(queueName, "-poison");
-                    string messageId, popReceipt;
-                    MessageClient messageClient = new MessageClient();
-                    string queueMessage = messageClient.GetMessage(queueName, out messageId, out popReceipt);
-                    MediaJobNotification jobNotification = Newtonsoft.Json.JsonConvert.DeserializeObject<MediaJobNotification>(queueMessage);
-                    if (jobNotification != null)
-                    {
-                        MediaClient.PublishJob(jobNotification, false);
-                        messageClient.DeleteMessage(queueName, messageId, popReceipt);
-                    }
                     break;
             }
             string[][] entityCounts = Entities.GetEntityCounts(mediaClient);

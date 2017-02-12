@@ -234,18 +234,17 @@ namespace AzureSkyMedia.PlatformServices
                             if (jobNotification.Properties.NewState == JobState.Finished)
                             {
                                 PublishContent(mediaClient, job, jobPublish, contentProtection);
-                                PublishAnalytics(job, null, jobPublish);
                             }
-                            //string messageText = GetNotificationMessage(accountName, job);
-                            //MessageClient.SendText(messageText, jobPublish.MobileNumber);
-                            if (contentProtection != null)
-                            {
-                                tableName = Constants.Storage.TableNames.JobPublishProtection;
-                                entityClient.DeleteEntity(tableName, contentProtection);
-                            }
-                            tableName = Constants.Storage.TableNames.JobPublish;
-                            entityClient.DeleteEntity(tableName, jobPublish);
+                            string messageText = GetNotificationMessage(accountName, job);
+                            MessageClient.SendText(messageText, jobPublish.MobileNumber);
                         }
+                        if (contentProtection != null)
+                        {
+                            tableName = Constants.Storage.TableNames.JobPublishProtection;
+                            entityClient.DeleteEntity(tableName, contentProtection);
+                        }
+                        tableName = Constants.Storage.TableNames.JobPublish;
+                        entityClient.DeleteEntity(tableName, jobPublish);
                     }
                 }
             }

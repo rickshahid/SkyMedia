@@ -11,23 +11,24 @@
                     hidden: true
                 },
                 {
+                    width: 300,
                     name: "name",
-                    label: "Name",
+                    label: "Endpoint Name",
                     align: "center",
-                    formatter: FormatColumnName
+                    formatter: FormatColumn
                 },
                 {
                     name: "endPointType",
-                    label: "Type",
+                    label: "Endpoint Type",
                     align: "center",
-                    formatter: FormatColumnType
+                    formatter: FormatColumn
                 },
                 {
+                    width: 600,
                     name: "endPointAddress",
-                    label: "Address",
-                    align: "center",
-                    width: 400
-                }
+                    label: "Endpoint Address",
+                    formatter: FormatColumn
+            }
             ];
             LoadGrid(columns, rows);
         })

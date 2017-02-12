@@ -15,18 +15,19 @@
                     hidden: true
                 },
                 {
+                    width: 400,
                     name: "name",
-                    label: "Name",
+                    label: "Media Processor Name",
                     align: "center",
-                    formatter: FormatColumnName,
-                    width: 400
+                    formatter: FormatColumn
                 },
                 {
+                    width: 100,
                     name: "version",
                     label: "Version",
                     align: "center",
-                    width: 100
-                }
+                    formatter: FormatColumn
+            }
             ];
             LoadGrid(columns, rows);
         })

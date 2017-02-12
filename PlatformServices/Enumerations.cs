@@ -55,7 +55,7 @@
         FaceRedaction,
         MotionDetection,
         MotionHyperlapse,
-        MotionStablization,
+        MotionStabilization,
         VideoAnnotation,
         VideoSummarization,
         ThumbnailGeneration,

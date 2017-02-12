@@ -77,6 +77,21 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
+        private static MediaJobTask[] GetMotionStabilizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
+        {
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            jobTask.MediaProcessor = MediaProcessor.MotionStabilization;
+            string settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationId;
+            string processorId = AppSetting.GetValue(settingKey);
+            settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationDocumentId;
+            string documentId = AppSetting.GetValue(settingKey);
+            JObject processorConfig = GetProcessorConfig(documentId);
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
+            jobTasks.Add(jobTask);
+            return jobTasks.ToArray();
+        }
+
         private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();

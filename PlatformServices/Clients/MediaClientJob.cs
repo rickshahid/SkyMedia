@@ -47,7 +47,7 @@ namespace AzureSkyMedia.PlatformServices
                     settingKey = Constants.AppSettingKey.MediaProcessorMotionHyperlapseId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
-                case MediaProcessor.MotionStablization:
+                case MediaProcessor.MotionStabilization:
                     settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationId;
                     processorId = AppSetting.GetValue(settingKey);
                     break;
@@ -117,6 +117,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     case MediaProcessor.EncoderStandard:
                     case MediaProcessor.EncoderPremium:
+                    case MediaProcessor.EncoderUltra:
                         tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.IndexerV1:
@@ -136,6 +137,9 @@ namespace AzureSkyMedia.PlatformServices
                         break;
                     case MediaProcessor.MotionHyperlapse:
                         tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, inputAssets);
+                        break;
+                    case MediaProcessor.MotionStabilization:
+                        tasks = GetMotionStabilizationTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.VideoAnnotation:
                         tasks = GetVideoAnnotationTasks(mediaClient, jobTask, inputAssets);
