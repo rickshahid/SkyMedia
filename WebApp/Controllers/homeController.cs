@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
@@ -55,7 +56,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 mediaStream.SourceUrl = sourceUrl;
                 mediaStream.TextTracks = MapTextTracks(textTracks);
                 mediaStream.ProtectionTypes = MapProtectionTypes(protectionTypes);
-                mediaStream.AnalyticsProcessors = new NameValueCollection();
+                mediaStream.AnalyticsProcessors = new MediaMetadata[] { };
                 mediaStreams.Add(mediaStream);
             }
         }
@@ -152,7 +153,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return storageAccounts.ToArray();
         }
 
-        public static SelectListItem[] GetMediaProcessors()
+        public static SelectListItem[] GetMediaProcessors(string authToken)
         {
             List<SelectListItem> mediaProcessors = new List<SelectListItem>();
 
@@ -161,80 +162,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             mediaProcessor.Value = MediaProcessor.None.ToString();
             mediaProcessors.Add(mediaProcessor);
 
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Encoder Standard";
-            mediaProcessor.Value = MediaProcessor.EncoderStandard.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Encoder Premium";
-            mediaProcessor.Value = MediaProcessor.EncoderPremium.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Encoder Ultra";
-            mediaProcessor.Value = MediaProcessor.EncoderUltra.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Indexer v1";
-            mediaProcessor.Value = MediaProcessor.IndexerV1.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Indexer v2";
-            mediaProcessor.Value = MediaProcessor.IndexerV2.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Face Detection";
-            mediaProcessor.Value = MediaProcessor.FaceDetection.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Face Redaction";
-            mediaProcessor.Value = MediaProcessor.FaceRedaction.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Motion Detection";
-            mediaProcessor.Value = MediaProcessor.MotionDetection.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Motion Hyperlapse";
-            mediaProcessor.Value = MediaProcessor.MotionHyperlapse.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Motion Stabilization";
-            mediaProcessor.Value = MediaProcessor.MotionStabilization.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Video Annotation";
-            mediaProcessor.Value = MediaProcessor.VideoAnnotation.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Video Summarization";
-            mediaProcessor.Value = MediaProcessor.VideoSummarization.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Thumbnail Generation";
-            mediaProcessor.Value = MediaProcessor.ThumbnailGeneration.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Character Recognition";
-            mediaProcessor.Value = MediaProcessor.CharacterRecognition.ToString();
-            mediaProcessors.Add(mediaProcessor);
-
-            mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = "Content Moderation";
-            mediaProcessor.Value = MediaProcessor.ContentModeration.ToString();
-            mediaProcessors.Add(mediaProcessor);
+            NameValueCollection processors = Entities.GetMediaProcessors(authToken, false) as NameValueCollection;
+            foreach (string processor in processors)
+            {
+                mediaProcessor = new SelectListItem();
+                mediaProcessor.Text = processor;
+                mediaProcessor.Value = processors[processor];
+                mediaProcessors.Add(mediaProcessor);
+            }
 
             return mediaProcessors.ToArray();
         }
@@ -261,12 +196,27 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult index()
         {
+            string authToken = GetAuthToken(this.Request, this.Response);
+
             if (this.Request.HasFormContentType)
             {
                 string requestError = this.Request.Form["error_description"];
                 if (!string.IsNullOrEmpty(requestError) && requestError.Contains("AADB2C90118"))
                 {
                     return RedirectToAction("passwordreset", "account");
+                }
+
+                try
+                {
+                    CacheClient cacheClient = new CacheClient(authToken);
+                    cacheClient.Initialize(authToken);
+                }
+                catch (Exception ex)
+                {
+                    if (Debugger.IsAttached)
+                    {
+                        throw ex;
+                    }
                 }
             }
 
@@ -276,8 +226,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string channelName = this.Request.Query["channel"];
                 return GetLiveView(channelName, queryString);
             }
-
-            string authToken = GetAuthToken(this.Request, this.Response);
 
             MediaClient mediaClient = null;
             string accountMessage = string.Empty;

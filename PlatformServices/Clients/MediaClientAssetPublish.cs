@@ -39,10 +39,10 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static string GetLanguageCode(ITask indexerTask, string indexerProcessorV1Id)
+        private static string GetLanguageCode(ITask indexerTask)
         {
             string languageCode = string.Empty;
-            if (string.Equals(indexerTask.MediaProcessorId, indexerProcessorV1Id, StringComparison.InvariantCultureIgnoreCase))
+            if (string.Equals(indexerTask.MediaProcessorId, Constants.Media.ProcessorId.IndexerV1, StringComparison.InvariantCultureIgnoreCase))
             {
                 XmlDocument processorConfig = new XmlDocument();
                 processorConfig.LoadXml(indexerTask.Configuration);
@@ -68,10 +68,8 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void PublishIndex(IJob job, IAsset asset, JobPublish jobPublish)
         {
-            string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1Id;
-            string processorId1 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2Id;
-            string processorId2 = AppSetting.GetValue(settingKey);
+            string processorId1 = Constants.Media.ProcessorId.IndexerV1;
+            string processorId2 = Constants.Media.ProcessorId.IndexerV2;
             string[] processorIds = new string[] { processorId1, processorId2 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             if (jobTasks.Length > 0)
@@ -84,7 +82,7 @@ namespace AzureSkyMedia.PlatformServices
                     string[] fileNames = GetFileNames(outputAsset, fileExtension);
                     foreach (string fileName in fileNames)
                     {
-                        string languageCode = GetLanguageCode(jobTask, processorId1);
+                        string languageCode = GetLanguageCode(jobTask);
                         string languageExtension = string.Concat(Constants.NamedItemSeparator, languageCode, fileExtension);
                         string languageFileName = fileName.Replace(fileExtension, languageExtension);
                         blobClient.CopyFile(outputAsset, asset, fileName, languageFileName, false);
@@ -95,18 +93,12 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void PublishAnalytics(IJob job, IAsset asset, JobPublish jobPublish)
         {
-            string settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionId;
-            string processorId1 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorFaceRedactionId;
-            string processorId2 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorMotionDetectionId;
-            string processorId3 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorVideoAnnotationId;
-            string processorId4 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorCharacterRecognitionId;
-            string processorId5 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorContentModerationId;
-            string processorId6 = AppSetting.GetValue(settingKey);
+            string processorId1 = Constants.Media.ProcessorId.FaceDetection;
+            string processorId2 = Constants.Media.ProcessorId.FaceRedaction;
+            string processorId3 = Constants.Media.ProcessorId.MotionDetection;
+            string processorId4 = Constants.Media.ProcessorId.VideoAnnotation;
+            string processorId5 = Constants.Media.ProcessorId.CharacterRecognition;
+            string processorId6 = Constants.Media.ProcessorId.ContentModeration;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             if (jobTasks.Length > 0)
@@ -152,24 +144,23 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
         {
-            string settingKey = Constants.AppSettingKey.MediaProcessorEncoderStandardId;
-            string processorId1 = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorEncoderPremiumId;
-            string processorId2 = AppSetting.GetValue(settingKey);
-            string[] processorIds = new string[] { processorId1, processorId2 };
+            string processorId1 = Constants.Media.ProcessorId.EncoderStandard;
+            string processorId2 = Constants.Media.ProcessorId.EncoderPremium;
+            string processorId3 = Constants.Media.ProcessorId.EncoderUltra;
+            string[] processorIds = new string[] { processorId1, processorId2, processorId3 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             foreach (ITask jobTask in jobTasks)
             {
                 foreach (IAsset outputAsset in jobTask.OutputAssets)
                 {
-                    PublishContent(mediaClient, outputAsset, contentProtection);
+                    PublishStream(mediaClient, outputAsset, contentProtection);
                     PublishIndex(job, outputAsset, jobPublish);
                     PublishAnalytics(job, outputAsset, jobPublish);
                 }
             }
         }
 
-        internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
+        internal static void PublishStream(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
         {
             if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
             {

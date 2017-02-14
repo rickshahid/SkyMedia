@@ -11,9 +11,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.IndexerV1;
-            string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1Id;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1DocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1DocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             XmlDocument processorConfigXml = new XmlDocument();
@@ -55,9 +53,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.IndexerV2;
-            string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2Id;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2DocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2DocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];

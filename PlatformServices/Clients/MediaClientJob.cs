@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -6,67 +7,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        private string GetProcessorId(MediaProcessor mediaProcessor)
-        {
-            string processorId = null;
-            switch (mediaProcessor)
-            {
-                case MediaProcessor.EncoderStandard:
-                    string settingKey = Constants.AppSettingKey.MediaProcessorEncoderStandardId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.EncoderPremium:
-                    settingKey = Constants.AppSettingKey.MediaProcessorEncoderPremiumId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.EncoderUltra:
-                    settingKey = Constants.AppSettingKey.MediaProcessorEncoderUltraId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.IndexerV1:
-                    settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1Id;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.IndexerV2:
-                    settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2Id;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.FaceDetection:
-                    settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.FaceRedaction:
-                    settingKey = Constants.AppSettingKey.MediaProcessorFaceRedactionId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.MotionDetection:
-                    settingKey = Constants.AppSettingKey.MediaProcessorMotionDetectionId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.MotionHyperlapse:
-                    settingKey = Constants.AppSettingKey.MediaProcessorMotionHyperlapseId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.MotionStabilization:
-                    settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.VideoSummarization:
-                    settingKey = Constants.AppSettingKey.MediaProcessorVideoSummarizationId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.ThumbnailGeneration:
-                    settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-                case MediaProcessor.CharacterRecognition:
-                    settingKey = Constants.AppSettingKey.MediaProcessorCharacterRecognitionId;
-                    processorId = AppSetting.GetValue(settingKey);
-                    break;
-            }
-            return processorId;
-        }
-
         private INotificationEndPoint GetNotificationEndpoint(NotificationEndPointType endpointType)
         {
             string endpointName = Constants.Media.Job.NotificationEndpointNameStorageQueue;
@@ -178,20 +118,29 @@ namespace AzureSkyMedia.PlatformServices
             IJob job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
-                string processorId = GetProcessorId(jobTask.MediaProcessor);
+                string processorId = Entities.GetMediaProcessorId(jobTask.MediaProcessor);
                 IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
-                ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
-                if (jobTask.ParentIndex.HasValue)
+                if (processor == null)
                 {
-                    ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
-                    currentTask.InputAssets.AddRange(parentTask.OutputAssets);
+                    string processorName = Entities.GetMediaProcessorName(jobTask.MediaProcessor);
+                    string message = string.Format(Constants.Message.MediaProcessorNotFound, processorName);
+                    throw new ApplicationException(message);
                 }
                 else
                 {
-                    IAsset[] assets = GetAssets(jobTask.InputAssetIds);
-                    currentTask.InputAssets.AddRange(assets);
+                    ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
+                    if (jobTask.ParentIndex.HasValue)
+                    {
+                        ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
+                        currentTask.InputAssets.AddRange(parentTask.OutputAssets);
+                    }
+                    else
+                    {
+                        IAsset[] assets = GetAssets(jobTask.InputAssetIds);
+                        currentTask.InputAssets.AddRange(assets);
+                    }
+                    currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
                 }
-                currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
             }
             INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(mediaJob.Notification);
             if (notificationEndpoint != null)

@@ -137,6 +137,10 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="StackExchange.Redis, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.1.2.0\lib\net46\StackExchange.Redis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -254,6 +258,7 @@
     <Compile Include="AuthToken.cs" />
     <Compile Include="Clients\AsperaClient.cs" />
     <Compile Include="Clients\BlobClient.cs" />
+    <Compile Include="Clients\CacheClient.cs" />
     <Compile Include="Clients\DatabaseClient.cs" />
     <Compile Include="Clients\EntityClient.cs" />
     <Compile Include="Clients\MediaClient.cs" />
@@ -283,6 +288,7 @@
     <Compile Include="Entities\JobPublish.cs" />
     <Compile Include="Entities\JobTask.cs" />
     <Compile Include="Entities\LiveEvent.cs" />
+    <Compile Include="Entities\Metadata.cs" />
     <Compile Include="Entities\Stream.cs" />
     <Compile Include="Entities\Track.cs" />
     <Compile Include="Enumerations.cs" />
@@ -291,8 +297,12 @@
     <Compile Include="Workflow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

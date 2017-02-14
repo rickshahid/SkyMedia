@@ -174,6 +174,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 $("#" + encoderOptionsRowId).show();
                 break;
             case "EncoderPremium":
+            case "EncoderUltra":
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("None - No Custom Media Processor Configuration File", "None");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (XML)", "Custom");
                 $("#" + encoderOptionsRowId).show();
@@ -370,6 +371,7 @@ function GetJobTask(taskNumber) {
         switch (jobTask.MediaProcessor) {
             case "EncoderStandard":
             case "EncoderPremium":
+            case "EncoderUltra":
                 var encoderConfig = $("#encoderConfig" + taskNumber).val();
                 if (encoderConfig == "Custom") {
                     var fileReader = new FileReader();

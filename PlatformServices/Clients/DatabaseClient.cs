@@ -49,11 +49,10 @@ namespace AzureSkyMedia.PlatformServices
             if (document != null)
             {
                 jsonDoc = JObject.Parse(document.ToString());
-                string settingKey = Constants.AppSettingKey.NoSqlDocumentProperties;
-                string[] properties = AppSetting.GetValue(settingKey).Split(Constants.MultiItemSeparator);
-                foreach (string property in properties)
+                string[] documentProperties = Constants.Database.DocumentProperties.Split(Constants.MultiItemSeparator);
+                foreach (string documentProperty in documentProperties)
                 {
-                    jsonDoc.Remove(property);
+                    jsonDoc.Remove(documentProperty);
                 }
             }
             return jsonDoc;

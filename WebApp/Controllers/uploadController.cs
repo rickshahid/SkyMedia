@@ -78,7 +78,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             MediaClient mediaClient = new MediaClient(authToken);
             viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
-            viewData["mediaProcessor1"] = homeController.GetMediaProcessors();
+            viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }
 

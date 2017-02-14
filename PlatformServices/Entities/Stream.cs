@@ -1,6 +1,4 @@
-﻿using System.Collections.Specialized;
-
-namespace AzureSkyMedia.PlatformServices
+﻿namespace AzureSkyMedia.PlatformServices
 {
     public struct MediaStream
     {
@@ -12,6 +10,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] ProtectionTypes { get; set; }
 
-        public NameValueCollection AnalyticsProcessors { get; set; }
+        public MediaMetadata[] AnalyticsProcessors { get; set; }
     }
 }

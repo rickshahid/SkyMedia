@@ -11,9 +11,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceDetection;
-            string settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
@@ -29,9 +27,7 @@ namespace AzureSkyMedia.PlatformServices
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceRedaction;
             jobTask.Name = string.Concat(jobTask.Name, " ", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jobTask.FaceRedactionMode));
-            string settingKey = Constants.AppSettingKey.MediaProcessorFaceRedactionId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorFaceRedactionDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorFaceRedactionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
@@ -46,9 +42,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.MotionDetection;
-            string settingKey = Constants.AppSettingKey.MediaProcessorMotionDetectionId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorMotionDetectionDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorMotionDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -61,9 +55,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.MotionHyperlapse;
-            string settingKey = Constants.AppSettingKey.MediaProcessorMotionHyperlapseId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorMotionHyperlapseDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorMotionHyperlapseDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorSources = processorConfig["Sources"][0];
@@ -81,9 +73,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.MotionStabilization;
-            string settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorMotionStabilizationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -96,9 +86,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
-            string settingKey = Constants.AppSettingKey.MediaProcessorVideoAnnotationId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -111,9 +99,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.VideoSummarization;
-            string settingKey = Constants.AppSettingKey.MediaProcessorVideoSummarizationId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorVideoSummarizationDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorVideoSummarizationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
@@ -128,9 +114,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.ThumbnailGeneration;
-            string settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -143,9 +127,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.CharacterRecognition;
-            string settingKey = Constants.AppSettingKey.MediaProcessorCharacterRecognitionId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorCharacterRecognitionDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorCharacterRecognitionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -158,9 +140,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.ContentModeration;
-            string settingKey = Constants.AppSettingKey.MediaProcessorContentModerationId;
-            string processorId = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.MediaProcessorContentModerationDocumentId;
+            string settingKey = Constants.AppSettingKey.MediaProcessorContentModerationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();

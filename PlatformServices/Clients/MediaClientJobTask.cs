@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 using Newtonsoft.Json.Linq;
 
@@ -36,7 +35,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
-            jobTask.Name = Regex.Replace(jobTask.MediaProcessor.ToString(), Constants.CapitalSpacingExpression, Constants.CapitalSpacingReplacement);
+            jobTask.Name = Entities.GetMediaProcessorName(jobTask.MediaProcessor);
             jobTask.InputAssetIds = GetInputAssetIds(inputAssets);
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {

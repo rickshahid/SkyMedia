@@ -5,9 +5,9 @@
     $("#mediaWorkflowTaskRemove").hide();
     if (uploadView) {
         var currentUrl = window.location.href;
-        if (currentUrl.indexOf("signiant") > -1) {
+        if (currentUrl.indexOf("signiant.") > -1) {
             $("#uploadSigniantFlight").show();
-        } else if (currentUrl.indexOf("aspera") > -1) {
+        } else if (currentUrl.indexOf("aspera.") > -1) {
             $("#uploadAsperaFasp").show();
         } else {
             $("#uploadSigniantFlight").show();

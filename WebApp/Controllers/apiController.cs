@@ -10,7 +10,8 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/processors")]
         public object GetMediaProcessors([FromBody] string accountName, [FromBody] string accountKey)
         {
-            return Entities.GetMediaProcessors(accountName, accountKey);
+            MediaClient mediaClient = new MediaClient(accountName, accountKey);
+            return mediaClient.GetEntities(MediaEntity.Processor);
         }
 
         [HttpGet]
@@ -24,7 +25,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/publish")]
         public void PublishMediaJob([FromBody] MediaJobNotification jobNotification, [FromBody] bool webHook, [FromBody] bool poisonQueue)
         {
-            if (jobNotification == null)
+            if (jobNotification == null || string.IsNullOrEmpty(jobNotification.ETag))
             {
                 string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
                 string queueName = AppSetting.GetValue(settingKey);
