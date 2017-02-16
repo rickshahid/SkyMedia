@@ -58,6 +58,8 @@ The set of Azure Media Services processors that are integrated within the app in
 
 * Encoder Premium - https://docs.microsoft.com/en-us/azure/media-services/media-services-premium-workflow-encoder-formats
 
+* Encoder Ultra - https://azure.microsoft.com/en-us/blog/encoding-and-delivery-of-uhd-content/
+
 * Indexer v1 - https://docs.microsoft.com/en-us/azure/media-services/media-services-index-content
 
 * Indexer v2 - https://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
