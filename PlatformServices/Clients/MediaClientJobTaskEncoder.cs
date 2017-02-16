@@ -49,7 +49,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     using (DatabaseClient databaseClient = new DatabaseClient(true))
                     {
-                        string collectionId = Constants.Database.CollectionName.Encoding;
+                        string collectionId = Constants.Database.DocumentCollection.Encoding;
                         string procedureId = "getEncoderConfig";
                         JObject encoderConfig = databaseClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
                         jobTask.ProcessorConfig = encoderConfig.ToString();
@@ -82,8 +82,9 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 jobTask.ProcessorConfig = newConfig.ToString();
             }
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            bool multipleInputTask = jobTask.MediaProcessor != MediaProcessor.EncoderStandard;
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, multipleInputTask);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
     }

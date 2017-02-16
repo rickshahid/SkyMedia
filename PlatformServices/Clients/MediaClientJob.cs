@@ -105,10 +105,7 @@ namespace AzureSkyMedia.PlatformServices
             mediaJob.Tasks = taskList.ToArray();
             if (string.IsNullOrEmpty(mediaJob.Name))
             {
-                string taskName = mediaJob.Tasks[0].Name;
-                string assetId = inputAssets[0].AssetId;
-                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                mediaJob.Name = string.Concat(taskName, " (", asset.Name, ")");
+                mediaJob.Name = mediaJob.Tasks[0].Name;
             }
             return mediaJob;
         }
@@ -178,10 +175,10 @@ namespace AzureSkyMedia.PlatformServices
 
             EntityClient entityClient = new EntityClient();
 
-            string tableName = Constants.Storage.TableNames.JobPublish;
+            string tableName = Constants.Storage.TableName.JobPublish;
             entityClient.InsertEntity(tableName, jobPublish);
 
-            tableName = Constants.Storage.TableNames.JobPublishProtection;
+            tableName = Constants.Storage.TableName.JobPublishProtection;
             foreach (ContentProtection contentProtection in contentProtections)
             {
                 contentProtection.PartitionKey = jobPublish.PartitionKey;

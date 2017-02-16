@@ -28,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             }
 
             string[] serviceInfo = _serviceNode.Split('.');
-            serviceInfo[0] = string.Concat(serviceInfo[0], Constants.Storage.AsperaWorker);
+            serviceInfo[0] = string.Concat(serviceInfo[0], Constants.Storage.Partner.AsperaWorker);
             _serviceStats = string.Join(".", serviceInfo);
             if (!_serviceStats.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
             {

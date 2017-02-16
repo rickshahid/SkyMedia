@@ -110,7 +110,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                string collectionId = Constants.Database.CollectionName.Metadata;
+                string collectionId = Constants.Database.DocumentCollection.Metadata;
                 foreach (IAssetFile file in asset.AssetFiles)
                 {
                     if (file.Name.EndsWith(Constants.Media.AssetFile.JsonExtension))
@@ -529,7 +529,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             DateTime? eventStart = null;
             EntityClient entityClient = new EntityClient();
-            string tableName = Constants.Storage.TableNames.LiveEvent;
+            string tableName = Constants.Storage.TableName.LiveEvent;
             MediaLiveEvent liveEvent = entityClient.GetEntity<MediaLiveEvent>(tableName, accountName, channelName);
             if (liveEvent != null)
             {

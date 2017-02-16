@@ -63,7 +63,7 @@ namespace AzureSkyMedia.PlatformServices
             IAsset asset = _media.Assets.Create(assetName, storageAccount, creationOptions);
 
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            string sourceContainerName = Constants.Storage.ContainerNames.Upload;
+            string sourceContainerName = Constants.Storage.Blob.Container.Upload;
 
             if (storageEncryption)
             {

@@ -34,12 +34,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             switch (transferService)
             {
                 case TransferService.SigniantFlight:
-                    string storageContainer = string.Format(Constants.Storage.SigniantContainer, storageAccount, accountKey, containerName);
+                    string storageContainer = string.Format(Constants.Storage.Partner.SigniantContainer, storageAccount, accountKey, containerName);
                     result = string.Concat("{", storageContainer, "}");
                     break;
                 case TransferService.AsperaFasp:
                     AsperaClient asperaClient = new AsperaClient(authToken);
-                    storageContainer = string.Format(Constants.Storage.AsperaContainer, storageAccount, WebUtility.UrlEncode(accountKey));
+                    storageContainer = string.Format(Constants.Storage.Partner.AsperaContainer, storageAccount, WebUtility.UrlEncode(accountKey));
                     result = asperaClient.GetTransferSpecs(storageContainer, containerName, filePaths, false);
                     break;
             } 
@@ -68,7 +68,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         internal static void SetViewData(string authToken, ViewDataDictionary viewData)
         {
-            viewData["storageContainer"] = Constants.Storage.ContainerNames.Upload;
+            viewData["storageContainer"] = Constants.Storage.Blob.Container.Upload;
 
             string attributeName = Constants.UserAttribute.SigniantAccountKey;
             viewData["signiantAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);

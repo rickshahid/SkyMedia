@@ -4,6 +4,11 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaJobTask
     {
+        public MediaJobTask CreateCopy()
+        {
+            return (MediaJobTask)this.MemberwiseClone();
+        }
+
         public int? ParentIndex { get; set; }
 
         public string Name { get; set; }

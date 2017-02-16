@@ -18,10 +18,7 @@ namespace AzureSkyMedia.PlatformServices
                 string settingKey = Constants.AppSettingKey.MediaLocatorReadDurationDays;
                 string durationDays = AppSetting.GetValue(settingKey);
                 TimeSpan readPolicyDuration = new TimeSpan(int.Parse(durationDays), 0, 0, 0);
-
-                settingKey = Constants.AppSettingKey.MediaLocatorWriteDurationHours;
-                string durationHours = AppSetting.GetValue(settingKey);
-                TimeSpan writePolicyDuration = new TimeSpan(int.Parse(durationHours), 0, 0);
+                TimeSpan writePolicyDuration = new TimeSpan(Constants.Storage.Blob.WriteDurationHours, 0, 0);
 
                 AccessPermissions accessPermissions = writePolicy ? AccessPermissions.Write : AccessPermissions.Read;
                 TimeSpan accessDuration = writePolicy ? writePolicyDuration : readPolicyDuration;

@@ -33,8 +33,8 @@ namespace AzureSkyMedia.PlatformServices
             if (jobTask.IndexerSpokenLanguages == null)
             {
                 jobTask.ProcessorConfig = processorConfigXml.OuterXml;
-                jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-                jobTasks.Add(jobTask);
+                MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+                jobTasks.AddRange(mappedJobTasks);
             }
             else
             {
@@ -42,8 +42,8 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     configSettings[0].Attributes[1].Value = spokenLanguage;
                     jobTask.ProcessorConfig = processorConfigXml.OuterXml;
-                    jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-                    jobTasks.Add(jobTask);
+                    MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+                    jobTasks.AddRange(mappedJobTasks);
                 }
             }
             return jobTasks.ToArray();
@@ -73,8 +73,8 @@ namespace AzureSkyMedia.PlatformServices
             if (jobTask.IndexerSpokenLanguages == null)
             {
                 jobTask.ProcessorConfig = processorConfig.ToString();
-                jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-                jobTasks.Add(jobTask);
+                MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+                jobTasks.AddRange(mappedJobTasks);
             }
             else
             {
@@ -82,8 +82,8 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     processorOptions["Language"] = spokenLanguage;
                     jobTask.ProcessorConfig = processorConfig.ToString();
-                    jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-                    jobTasks.Add(jobTask);
+                    MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+                    jobTasks.AddRange(mappedJobTasks);
                 }
             }
             return jobTasks.ToArray();

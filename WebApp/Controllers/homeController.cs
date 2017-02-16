@@ -221,7 +221,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
 
             string queryString = this.Request.QueryString.Value.ToLower();
-            if (this.Request.Host.Value.Contains("live") || queryString.Contains("live"))
+            if (this.Request.Host.Value.Contains("account."))
+            {
+                return RedirectToAction("signin", "account");
+            }
+            else if (this.Request.Host.Value.Contains("live.") || queryString.Contains("live"))
             {
                 string channelName = this.Request.Query["channel"];
                 return GetLiveView(channelName, queryString);

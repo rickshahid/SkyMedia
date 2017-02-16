@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
-using Newtonsoft.Json.Linq;
-
 using Microsoft.WindowsAzure.MediaServices.Client;
+
+using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        private static string[] GetInputAssetIds(MediaAssetInput[] inputAssets)
+        private static string[] GetAssetIds(MediaAssetInput[] inputAssets)
         {
             List<string> assetIds = new List<string>();
             foreach (MediaAssetInput inputAsset in inputAssets)
@@ -28,23 +28,37 @@ namespace AzureSkyMedia.PlatformServices
             return processorConfig;
         }
 
-        private static bool HasProtectionEnabled(ContentProtection contentProtection)
-        {
-            return contentProtection != null && (contentProtection.AES || contentProtection.DRMPlayReady || contentProtection.DRMWidevine);
-        }
-
-        private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
+        private static MediaJobTask MapJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
         {
             jobTask.Name = Entities.GetMediaProcessorName(jobTask.MediaProcessor);
-            jobTask.InputAssetIds = GetInputAssetIds(inputAssets);
-            if (string.IsNullOrEmpty(jobTask.OutputAssetName))
+            if (string.IsNullOrEmpty(jobTask.OutputAssetName) && !string.IsNullOrEmpty(assetName))
             {
-                string assetId = jobTask.InputAssetIds[0];
-                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                jobTask.OutputAssetName = string.Concat(asset.Name, " (", jobTask.Name, ")");
+                jobTask.OutputAssetName = assetName;
             }
-            jobTask.OutputAssetEncryption = HasProtectionEnabled(jobTask.ContentProtection) ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
+            jobTask.OutputAssetEncryption = (jobTask.ContentProtection != null) ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
             return jobTask;
+        }
+
+        private static MediaJobTask[] MapJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, bool multipleInputTask)
+        {
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            if (multipleInputTask)
+            {
+                jobTask = MapJobTask(mediaClient, jobTask, inputAssets[0].AssetName);
+                jobTask.InputAssetIds = GetAssetIds(inputAssets);
+                jobTasks.Add(jobTask);
+            }
+            else
+            {
+                foreach (MediaAssetInput inputAsset in inputAssets)
+                {
+                    MediaJobTask newJobTask = jobTask.CreateCopy();
+                    newJobTask = MapJobTask(mediaClient, newJobTask, inputAsset.AssetName);
+                    newJobTask.InputAssetIds = new string[] { inputAsset.AssetId };
+                    jobTasks.Add(newJobTask);
+                }
+            }
+            return jobTasks.ToArray();
         }
     }
 }

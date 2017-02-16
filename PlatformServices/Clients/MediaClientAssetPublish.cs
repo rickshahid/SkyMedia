@@ -41,14 +41,17 @@ namespace AzureSkyMedia.PlatformServices
 
         private static string GetLanguageCode(ITask indexerTask)
         {
-            string languageCode = string.Empty;
+            string languageCode = Constants.Media.ProcessorConfig.IndexerLanguageCodeEngligh;
             if (string.Equals(indexerTask.MediaProcessorId, Constants.Media.ProcessorId.IndexerV1, StringComparison.InvariantCultureIgnoreCase))
             {
                 XmlDocument processorConfig = new XmlDocument();
                 processorConfig.LoadXml(indexerTask.Configuration);
                 XmlNodeList configSettings = processorConfig.SelectNodes(Constants.Media.ProcessorConfig.IndexerV1XPath);
                 string spokenLanguage = configSettings[0].Attributes[1].Value;
-                languageCode = string.Equals(spokenLanguage, "Spanish", StringComparison.InvariantCultureIgnoreCase) ? "es" : "en";
+                if (string.Equals(spokenLanguage, Constants.Media.ProcessorConfig.IndexerLanguageSpanish, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    languageCode = Constants.Media.ProcessorConfig.IndexerLanguageCodeSpanish;
+                }
             }
             else
             {
@@ -106,7 +109,7 @@ namespace AzureSkyMedia.PlatformServices
                 BlobClient blobClient = GetBlobClient(jobPublish);
                 using (DatabaseClient databaseClient = new DatabaseClient(true))
                 {
-                    string collectionId = Constants.Database.CollectionName.Metadata;
+                    string collectionId = Constants.Database.DocumentCollection.Metadata;
                     foreach (ITask jobTask in jobTasks)
                     {
                         IAsset outputAsset = jobTask.OutputAssets[0];
@@ -134,8 +137,8 @@ namespace AzureSkyMedia.PlatformServices
                         if (jobTask.Configuration.Contains("mode") && jobTask.Configuration.Contains("analyze"))
                         {
                             IAsset inputAsset = jobTask.InputAssets[0];
-                            string sourceFileName = GetPrimaryFile(inputAsset);
-                            blobClient.CopyFile(inputAsset, outputAsset, sourceFileName, sourceFileName, true);
+                            string primaryFileName = GetPrimaryFile(inputAsset);
+                            blobClient.CopyFile(inputAsset, outputAsset, primaryFileName, primaryFileName, true);
                         }
                     }
                 }
@@ -207,13 +210,13 @@ namespace AzureSkyMedia.PlatformServices
                 else
                 {
                     EntityClient entityClient = new EntityClient();
-                    string tableName = Constants.Storage.TableNames.JobPublish;
+                    string tableName = Constants.Storage.TableName.JobPublish;
                     string partitionKey = jobNotification.Properties.AccountName;
                     string rowKey = jobNotification.Properties.JobId;
                     JobPublish jobPublish = entityClient.GetEntity<JobPublish>(tableName, partitionKey, rowKey);
                     if (jobPublish != null)
                     {
-                        tableName = Constants.Storage.TableNames.JobPublishProtection;
+                        tableName = Constants.Storage.TableName.JobPublishProtection;
                         ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, partitionKey, rowKey);
                         string accountName = jobPublish.PartitionKey;
                         string accountKey = jobPublish.MediaAccountKey;
@@ -231,10 +234,10 @@ namespace AzureSkyMedia.PlatformServices
                         }
                         if (contentProtection != null)
                         {
-                            tableName = Constants.Storage.TableNames.JobPublishProtection;
+                            tableName = Constants.Storage.TableName.JobPublishProtection;
                             entityClient.DeleteEntity(tableName, contentProtection);
                         }
-                        tableName = Constants.Storage.TableNames.JobPublish;
+                        tableName = Constants.Storage.TableName.JobPublish;
                         entityClient.DeleteEntity(tableName, jobPublish);
                     }
                 }

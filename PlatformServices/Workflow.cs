@@ -12,6 +12,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaAssetInput inputAsset = new MediaAssetInput();
             inputAsset.AssetId = asset.Id;
+            inputAsset.AssetName = asset.Name;
             inputAsset.PrimaryFile = MediaClient.GetPrimaryFile(asset);
             return inputAsset;
         }

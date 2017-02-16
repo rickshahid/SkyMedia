@@ -111,7 +111,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string CopyBlob(CloudBlockBlob sourceBlob, CloudBlockBlob destinationBlob, bool asyncMode)
         {
-            TimeSpan expirationTime = TimeSpan.FromMinutes(Constants.Storage.Blob.MaxCopyMinutes);
+            TimeSpan expirationTime = new TimeSpan(Constants.Storage.Blob.WriteDurationHours, 0, 0);
             Uri sourceBlobUri = Storage.GetAccessSignature(sourceBlob, expirationTime, false);
             string operationId;
             if (asyncMode)
@@ -162,7 +162,7 @@ namespace AzureSkyMedia.PlatformServices
             CloudBlockBlob blob = GetBlob(containerName, directoryPath, fileName);
             blob.PutBlock(blockId, inputStream, null);
 
-            string tableName = Constants.Storage.TableNames.FileUpload;
+            string tableName = Constants.Storage.TableName.FileUpload;
             string partitionKey = userId;
             string rowKey = blob.Name;
 

@@ -4,6 +4,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     public struct Constants
     {
+        public const string NotAvailable = "N/A";
+
         public const char MultiItemSeparator = ',';
         public const char MultiItemsSeparator = ';';
 
@@ -90,7 +92,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
 
-            public const string MediaLocatorWriteDurationHours = "Media.Locator.WriteDurationHours";
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
 
             public const string MediaPlayerVersion = "Media.Player.Version";
@@ -160,31 +161,29 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Storage
         {
-            public const string SigniantContainer = " \"account-name\": \"{0}\", \"access-key\": \"{1}\", \"container\": \"{2}\" ";
-            public const string AsperaContainer = "azu://{0}:{1}@blob.core.windows.net";
-            public const string AsperaWorker = "-worker";
+            public struct Partner
+            {
+                public const string SigniantContainer = " \"account-name\": \"{0}\", \"access-key\": \"{1}\", \"container\": \"{2}\" ";
+                public const string AsperaContainer = "azu://{0}:{1}@blob.core.windows.net";
+                public const string AsperaWorker = "-worker";
+            }
 
             public struct Account
             {
                 public const string Connection = "DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}";
             }
 
-            public struct Analytics
-            {
-                public const string NotAvailable = "N/A";
-            }
-
             public struct Blob
             {
-                public const int MaxCopyMinutes = 120;
+                public const int WriteDurationHours = 1;
+
+                public struct Container
+                {
+                    public const string Upload = "upload";
+                }
             }
 
-            public struct ContainerNames
-            {
-                public const string Upload = "upload";
-            }
-
-            public struct TableNames
+            public struct TableName
             {
                 public const string FileUpload = "FileUpload";
                 public const string JobPublish = "JobPublish";
@@ -192,7 +191,7 @@ namespace AzureSkyMedia.PlatformServices
                 public const string LiveEvent = "LiveEvent";
             }
 
-            public struct TableProperties
+            public struct TableProperty
             {
                 public const string PartitionKey = "PartitionKey";
                 public const string OpenConcurrency = "*";
@@ -203,7 +202,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string DocumentProperties = "id,name,_rid,_self,_etag,_ts,_attachments";
 
-            public struct CollectionName
+            public struct DocumentCollection
             {
                 public const string Encoding = "Encoding";
                 public const string Metadata = "Metadata";
@@ -237,6 +236,9 @@ namespace AzureSkyMedia.PlatformServices
             public struct ProcessorConfig
             {
                 public const string IndexerV1XPath = "/configuration/features/feature/settings/add";
+                public const string IndexerLanguageSpanish = "Spanish";
+                public const string IndexerLanguageCodeEngligh = "en";
+                public const string IndexerLanguageCodeSpanish = "es";
             }
 
             public struct ContentProtection

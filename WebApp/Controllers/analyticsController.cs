@@ -13,7 +13,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             JObject fragment;
             using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                string collectionId = Constants.Database.CollectionName.Metadata;
+                string collectionId = Constants.Database.DocumentCollection.Metadata;
                 fragment = databaseClient.ExecuteProcedure(collectionId, "getTimecodeFragment", documentId, timeSeconds);
             }
             return fragment;

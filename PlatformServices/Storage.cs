@@ -133,7 +133,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 catch
                 {
-                    capacityUsed = Constants.Storage.Analytics.NotAvailable;
+                    capacityUsed = Constants.NotAvailable;
                 }
             }
             return capacityUsed;

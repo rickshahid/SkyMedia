@@ -17,8 +17,8 @@ namespace AzureSkyMedia.PlatformServices
             JToken processorOptions = processorConfig["options"];
             processorOptions["mode"] = jobTask.FaceDetectionMode;
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -33,8 +33,8 @@ namespace AzureSkyMedia.PlatformServices
             JToken processorOptions = processorConfig["options"];
             processorOptions["mode"] = jobTask.FaceRedactionMode;
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -46,8 +46,8 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -64,8 +64,8 @@ namespace AzureSkyMedia.PlatformServices
             JToken processorOptions = processorConfig["Options"];
             processorOptions["Speed"] = jobTask.HyperlapseSpeed;
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -77,8 +77,8 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -90,8 +90,8 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -105,8 +105,8 @@ namespace AzureSkyMedia.PlatformServices
             JToken processorOptions = processorConfig["options"];
             processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.SummaryDurationSeconds;
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -118,8 +118,8 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -131,8 +131,8 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
 
@@ -144,8 +144,8 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            jobTask = SetJobTask(mediaClient, jobTask, inputAssets);
-            jobTasks.Add(jobTask);
+            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(mappedJobTasks);
             return jobTasks.ToArray();
         }
     }
