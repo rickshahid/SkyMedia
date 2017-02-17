@@ -137,11 +137,11 @@ body {
     font-size: large;
 }
 
-.mediaPanel {
+.mediaStreamer {
     margin: 0px auto;
 }
 
-.mediaPanel td {
+.mediaStreamer td {
     vertical-align: bottom;
     padding: 0px;
 }

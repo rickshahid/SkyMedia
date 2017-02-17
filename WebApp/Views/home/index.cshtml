@@ -1,5 +1,4 @@
 ﻿@using AzureSkyMedia.PlatformServices;
-@using AzureSkyMedia.WebApp;
 
 @{
     string accountMessage = ViewData["accountMessage"] as string;
@@ -223,11 +222,12 @@
                 stop: function (event, ui) {
                     if (mediaStreams.length > 0) {
                         var streamNumber = (mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
-                        var currentStream = mediaStreams[streamNumber - 1];
-                        SetAnalyticsProcessors(currentStream);
-                        SetPlayerContent(currentStream, true);
-                        SetStreamName(currentStream);
-                        $("#streamUrl").html("");
+                        window.location.href = "/?stream=" + streamNumber;
+                        //var currentStream = mediaStreams[streamNumber - 1];
+                        //SetAnalyticsProcessors(currentStream);
+                        //SetPlayerContent(currentStream, true);
+                        //SetStreamName(currentStream);
+                        //$("#streamUrl").html("");
                     }
                 }
             });
@@ -294,7 +294,7 @@
     Azure Sky Media
 }
 
-<table class="mediaPanel">
+<table class="mediaStreamer">
     <tr>
         <td>
             @Html.Partial("MediaPlayer")
