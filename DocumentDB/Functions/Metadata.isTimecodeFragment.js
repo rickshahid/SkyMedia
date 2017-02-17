@@ -1,4 +1,4 @@
-function isTimecodeFragment (timeSeconds, timeScale, fragment) {
+function isTimecodeFragment(timeSeconds, timeScale, fragment) {
 
     var timeStart = fragment.start / timeScale;
 
