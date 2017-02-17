@@ -51,7 +51,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (string fileName in fileNames)
             {
                 MediaTrack track = new MediaTrack();
-                track.Type = Constants.Media.TrackSubtitles;
+                track.Type = Constants.Media.Stream.TextTrackSubtitles;
                 track.Source = mediaClient.GetLocatorUrl(asset, locatorType, fileName);
                 track.Language = GetLanguageCode(track.Source);
                 tracks.Add(track);
@@ -59,51 +59,9 @@ namespace AzureSkyMedia.PlatformServices
             return tracks.ToArray();
         }
 
-        private static int CompareStreams(MediaStream leftSide, MediaStream rightSide)
+        private static int OrderLocators(ILocator leftSide, ILocator rightSide)
         {
-            int comparison = string.Compare(leftSide.Name, rightSide.Name);
-            if (comparison == 0)
-            {
-                if (leftSide.ProtectionTypes.Length == 0)
-                {
-                    comparison = -1;
-                }
-                else if (rightSide.ProtectionTypes.Length == 0)
-                {
-                    comparison = 1;
-                }
-                else
-                {
-                    string leftType = leftSide.ProtectionTypes[0];
-                    string rightType = rightSide.ProtectionTypes[0];
-                    StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase;
-                    if (string.Equals(leftType, MediaProtection.AES.ToString(), stringComparison))
-                    {
-                        comparison = -1;
-                    }
-                    else if (string.Equals(rightType, MediaProtection.AES.ToString(), stringComparison))
-                    {
-                        comparison = 1;
-                    }
-                    else if (string.Equals(leftType, MediaProtection.PlayReady.ToString(), stringComparison))
-                    {
-                        comparison = -1;
-                    }
-                    else if (string.Equals(rightType, MediaProtection.PlayReady.ToString(), stringComparison))
-                    {
-                        comparison = 1;
-                    }
-                    else if (string.Equals(leftType, MediaProtection.Widevine.ToString(), stringComparison))
-                    {
-                        comparison = -1;
-                    }
-                    else if (string.Equals(rightType, MediaProtection.Widevine.ToString(), stringComparison))
-                    {
-                        comparison = 1;
-                    }
-                }
-            }
-            return comparison;
+            return DateTime.Compare(leftSide.Asset.Created, rightSide.Asset.Created);
         }
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
@@ -131,7 +89,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             asset.Delete();
         }
-
+        
         public static void ClearAccount(MediaClient mediaClient, bool allEntities)
         {
             if (allEntities)
@@ -450,6 +408,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
             ILocator[] locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
+            Array.Sort<ILocator>(locators, OrderLocators);
             foreach (ILocator locator in locators)
             {
                 IAsset asset = locator.Asset;
@@ -472,7 +431,6 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 }
             }
-            mediaStreams.Sort(CompareStreams);
             return mediaStreams;
         }
 

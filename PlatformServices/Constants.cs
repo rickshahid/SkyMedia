@@ -211,9 +211,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Media
         {
-            public const string TrackSubtitles = "subtitles";
-            public const string AddressesAll = "All Addresses";
-
             public struct ProcessorId
             {
                 public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
@@ -245,41 +242,40 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const int EncryptionKeyByteCount = 16;
 
-                public const string ContentKeyNameAES = "AES Key";
-                public const string ContentKeyNameASK = "ASK Key";
-                public const string ContentKeyNameDRMPlayReady = "DRM (PlayReady) Key";
-                public const string ContentKeyNameDRMWidevine = "DRM (Widevine) Key";
-                public const string ContentKeyNameDRMPlayReadyWidevine = "DRM (PlayReady & Widevine) Key";
+                public const string ContentKeyNameAes = "AES Key";
+                public const string ContentKeyNameDrmPlayReady = "DRM (PlayReady) Key";
+                public const string ContentKeyNameDrmWidevine = "DRM (Widevine) Key";
+                public const string ContentKeyNameDrmPlayReadyWidevine = "DRM (PlayReady & Widevine) Key";
 
                 public const string AuthPolicyName = " Auth Policy";
                 public const string AuthPolicyOpenRestrictionName = " Open Restriction";
                 public const string AuthPolicyTokenRestrictionName = " Web Token Restriction";
                 public const string AuthPolicyAddressRestrictionName = " IP Address Restriction";
-                public const string AuthPolicyOptionNameAES = " Option";
-                public const string AuthPolicyOptionNameDRMPlayReady = " Option PlayReady";
-                public const string AuthPolicyOptionNameDRMWidevine = " Option Widevine";
+                public const string AuthPolicyOptionNameAes = " Option";
+                public const string AuthPolicyOptionNameDrmPlayReady = " Option PlayReady";
+                public const string AuthPolicyOptionNameDrmWidevine = " Option Widevine";
 
-                public const string AuthAddressRangeXML = "<Allowed addressType=\"IPv4\"><AddressRange start=\"{0}\" end=\"{1}\" /></Allowed>";
+                public const string AuthAddressRangeXml = "<Allowed addressType=\"IPv4\"><AddressRange start=\"{0}\" end=\"{1}\" /></Allowed>";
             }
 
             public struct DeliveryProtocol
             {
-                public const AssetDeliveryProtocol AES = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
+                public const AssetDeliveryProtocol Aes = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
                     AssetDeliveryProtocol.SmoothStreaming;
 
-                public const AssetDeliveryProtocol DRMPlayReady = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
+                public const AssetDeliveryProtocol DrmPlayReady = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
                     AssetDeliveryProtocol.SmoothStreaming;
 
-                public const AssetDeliveryProtocol DRMWidevine = AssetDeliveryProtocol.Dash;
+                public const AssetDeliveryProtocol DrmWidevine = AssetDeliveryProtocol.Dash;
             }
 
             public struct DeliveryPolicy
             {
                 public const string DecryptionStorage = "Dynamic Storage Decryption";
-                public const string EncryptionAES = "Dynamic AES Encryption";
-                public const string EncryptionDRMPlayReady = "Dynamic DRM (PlayReady) Encryption";
-                public const string EncryptionDRMWidevine = "Dynamic DRM (Widevine) Encryption";
-                public const string EncryptionDRMPlayReadyWidevine = "Dynamic DRM (PlayReady & Widevine) Encryption";
+                public const string EncryptionAes = "Dynamic AES Encryption";
+                public const string EncryptionDrmPlayReady = "Dynamic DRM (PlayReady) Encryption";
+                public const string EncryptionDrmWidevine = "Dynamic DRM (Widevine) Encryption";
+                public const string EncryptionDrmPlayReadyWidevine = "Dynamic DRM (PlayReady & Widevine) Encryption";
             }
 
             public struct AccessPolicy
@@ -312,6 +308,12 @@ namespace AzureSkyMedia.PlatformServices
                 public const string VttExtension = ".vtt";
                 public const string JsonExtension = ".json";
             }
+
+            public struct Stream
+            {
+                public const string TextTrackSubtitles = "subtitles";
+                public const string AddressRangeAll = "All IP Addresses";
+            }
         }
 
         public struct Cache
@@ -320,11 +322,6 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string MediaProcessors = "AzureMediaProcessors";
             }
-        }
-
-        public struct Message
-        {
-            public const string MediaProcessorNotFound = "The {0} processor was not found in your media account!";
         }
     }
 }

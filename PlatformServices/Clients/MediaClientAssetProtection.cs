@@ -43,28 +43,28 @@ namespace AzureSkyMedia.PlatformServices
             if (contentProtection.AES)
             {
                 ContentKeyType keyType = ContentKeyType.EnvelopeEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameAES;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameAes;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 contentKeys.Add(contentKey);
             }
             if (contentProtection.DRMPlayReady && contentProtection.DRMWidevine)
             {
                 ContentKeyType keyType = ContentKeyType.CommonEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMPlayReadyWidevine;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameDrmPlayReadyWidevine;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 contentKeys.Add(contentKey);
             }
             else if (contentProtection.DRMPlayReady)
             {
                 ContentKeyType keyType = ContentKeyType.CommonEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMPlayReady;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameDrmPlayReady;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 contentKeys.Add(contentKey);
             }
             else if (contentProtection.DRMWidevine)
             {
                 ContentKeyType keyType = ContentKeyType.CommonEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMWidevine;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameDrmWidevine;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 contentKeys.Add(contentKey);
             }
@@ -81,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
                 startAddress = addressRange[0].Trim();
                 endAddress = addressRange[1].Trim();
             }
-            return string.Format(Constants.Media.ContentProtection.AuthAddressRangeXML, startAddress, endAddress);
+            return string.Format(Constants.Media.ContentProtection.AuthAddressRangeXml, startAddress, endAddress);
         }
 
         private List<ContentKeyAuthorizationPolicyRestriction> CreateContentKeyAuthPolicyRestrictions(string policyName, ContentProtection contentProtection)
@@ -134,7 +134,7 @@ namespace AzureSkyMedia.PlatformServices
             switch (contentKey.ContentKeyType)
             {
                 case ContentKeyType.EnvelopeEncryption:
-                    string policyOptionName = string.Concat(policyName, Constants.Media.ContentProtection.AuthPolicyOptionNameAES);
+                    string policyOptionName = string.Concat(policyName, Constants.Media.ContentProtection.AuthPolicyOptionNameAes);
                     IContentKeyAuthorizationPolicyOption policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName, true) as IContentKeyAuthorizationPolicyOption;
                     if (policyOption == null)
                     {
@@ -148,7 +148,7 @@ namespace AzureSkyMedia.PlatformServices
                 case ContentKeyType.CommonEncryption:
                     if (contentProtection.DRMPlayReady)
                     {
-                        policyOptionName = string.Concat(policyName, Constants.Media.ContentProtection.AuthPolicyOptionNameDRMPlayReady);
+                        policyOptionName = string.Concat(policyName, Constants.Media.ContentProtection.AuthPolicyOptionNameDrmPlayReady);
                         policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName, true) as IContentKeyAuthorizationPolicyOption;
                         if (policyOption == null)
                         {
@@ -167,7 +167,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     if (contentProtection.DRMWidevine)
                     {
-                        policyOptionName = string.Concat(policyName, Constants.Media.ContentProtection.AuthPolicyOptionNameDRMWidevine);
+                        policyOptionName = string.Concat(policyName, Constants.Media.ContentProtection.AuthPolicyOptionNameDrmWidevine);
                         policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName, true) as IContentKeyAuthorizationPolicyOption;
                         if (policyOption == null)
                         {
@@ -219,13 +219,13 @@ namespace AzureSkyMedia.PlatformServices
             switch (deliveryType)
             {
                 case ContentKeyDeliveryType.BaselineHttp:
-                    deliveryProtocols = Constants.Media.DeliveryProtocol.AES;
+                    deliveryProtocols = Constants.Media.DeliveryProtocol.Aes;
                     break;
                 case ContentKeyDeliveryType.PlayReadyLicense:
-                    deliveryProtocols = Constants.Media.DeliveryProtocol.DRMPlayReady;
+                    deliveryProtocols = Constants.Media.DeliveryProtocol.DrmPlayReady;
                     break;
                 case ContentKeyDeliveryType.Widevine:
-                    deliveryProtocols = Constants.Media.DeliveryProtocol.DRMWidevine;
+                    deliveryProtocols = Constants.Media.DeliveryProtocol.DrmWidevine;
                     break;
             }
             return deliveryProtocols;
@@ -252,9 +252,9 @@ namespace AzureSkyMedia.PlatformServices
             if (contentProtection.AES)
             {
                 policyType = AssetDeliveryPolicyType.DynamicEnvelopeEncryption;
-                policyName = Constants.Media.DeliveryPolicy.EncryptionAES;
+                policyName = Constants.Media.DeliveryPolicy.EncryptionAes;
                 ContentKeyType keyType = ContentKeyType.EnvelopeEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameAES;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameAes;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 Uri keyDeliveryUrl = contentKey.GetKeyDeliveryUrl(ContentKeyDeliveryType.BaselineHttp);
                 byte[] encryptionIV = CreateEncryptionKey();
@@ -267,9 +267,9 @@ namespace AzureSkyMedia.PlatformServices
             if (contentProtection.DRMPlayReady && contentProtection.DRMWidevine)
             {
                 policyType = AssetDeliveryPolicyType.DynamicCommonEncryption;
-                policyName = Constants.Media.DeliveryPolicy.EncryptionDRMPlayReadyWidevine;
+                policyName = Constants.Media.DeliveryPolicy.EncryptionDrmPlayReadyWidevine;
                 ContentKeyType keyType = ContentKeyType.CommonEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMPlayReadyWidevine;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameDrmPlayReadyWidevine;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 policyConfig = new Dictionary<AssetDeliveryPolicyConfigurationKey, string>();
                 Uri keyDeliveryUrl = contentKey.GetKeyDeliveryUrl(ContentKeyDeliveryType.PlayReadyLicense);
@@ -284,9 +284,9 @@ namespace AzureSkyMedia.PlatformServices
             else if (contentProtection.DRMPlayReady)
             {
                 policyType = AssetDeliveryPolicyType.DynamicCommonEncryption;
-                policyName = Constants.Media.DeliveryPolicy.EncryptionDRMPlayReady;
+                policyName = Constants.Media.DeliveryPolicy.EncryptionDrmPlayReady;
                 ContentKeyType keyType = ContentKeyType.CommonEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMPlayReady;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameDrmPlayReady;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 Uri keyDeliveryUrl = contentKey.GetKeyDeliveryUrl(ContentKeyDeliveryType.PlayReadyLicense);
                 policyConfig = new Dictionary<AssetDeliveryPolicyConfigurationKey, string>();
@@ -297,9 +297,9 @@ namespace AzureSkyMedia.PlatformServices
             else if (contentProtection.DRMWidevine)
             {
                 policyType = AssetDeliveryPolicyType.DynamicCommonEncryption;
-                policyName = Constants.Media.DeliveryPolicy.EncryptionDRMWidevine;
+                policyName = Constants.Media.DeliveryPolicy.EncryptionDrmWidevine;
                 ContentKeyType keyType = ContentKeyType.CommonEncryption;
-                string keyName = Constants.Media.ContentProtection.ContentKeyNameDRMWidevine;
+                string keyName = Constants.Media.ContentProtection.ContentKeyNameDrmWidevine;
                 IContentKey contentKey = GetContentKey(keyType, keyName, contentProtection);
                 Uri keyDeliveryUrl = contentKey.GetKeyDeliveryUrl(ContentKeyDeliveryType.Widevine);
                 policyConfig = new Dictionary<AssetDeliveryPolicyConfigurationKey, string>();

@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
 
             IPRange allAddresses = new IPRange();
             allAddresses.Address = new IPAddress(0);
-            allAddresses.Name = Constants.Media.AddressesAll;
+            allAddresses.Name = Constants.Media.Stream.AddressRangeAll;
             allAddresses.SubnetPrefixLength = 0;
 
             creationOptions.Input = new ChannelInput();

@@ -117,27 +117,18 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string processorId = Entities.GetMediaProcessorId(jobTask.MediaProcessor);
                 IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
-                if (processor == null)
+                ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
+                if (jobTask.ParentIndex.HasValue)
                 {
-                    string processorName = Entities.GetMediaProcessorName(jobTask.MediaProcessor);
-                    string message = string.Format(Constants.Message.MediaProcessorNotFound, processorName);
-                    throw new ApplicationException(message);
+                    ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
+                    currentTask.InputAssets.AddRange(parentTask.OutputAssets);
                 }
                 else
                 {
-                    ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
-                    if (jobTask.ParentIndex.HasValue)
-                    {
-                        ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
-                        currentTask.InputAssets.AddRange(parentTask.OutputAssets);
-                    }
-                    else
-                    {
-                        IAsset[] assets = GetAssets(jobTask.InputAssetIds);
-                        currentTask.InputAssets.AddRange(assets);
-                    }
-                    currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
+                    IAsset[] assets = GetAssets(jobTask.InputAssetIds);
+                    currentTask.InputAssets.AddRange(assets);
                 }
+                currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
             }
             INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(mediaJob.Notification);
             if (notificationEndpoint != null)

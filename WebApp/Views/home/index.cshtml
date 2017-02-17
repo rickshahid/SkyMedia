@@ -108,6 +108,7 @@
                 for (var i = 0; i < fragmentEvent.length; i++) {
                     var faceMetadata = {};
                     faceMetadata.id = fragmentEvent[i].id;
+                    faceMetadata.label = "Face " + faceMetadata.id;
                     faceMetadata.x = fragmentEvent[i].x * frameWidth;
                     faceMetadata.x = faceMetadata.x * scaleWidth;
                     faceMetadata.y = fragmentEvent[i].y * frameHeight;
@@ -170,11 +171,11 @@
                 width: faceMetadata.width + "px"
             });
             $("#videoOverlay" + faceMetadata.id).show();
-            var faceLabel = "Face " + faceMetadata.id;
+            var faceLabel = faceMetadata.label;
             if (faceMetadata.emotion != null) {
                 faceLabel = faceLabel + "<br /><br />(" + faceMetadata.emotion + ")";
             }
-            CreateTipTop("videoOverlay" + faceMetadata.id, faceLabel, 0, -10, false);
+            CreateTipTop("videoOverlay" + faceMetadata.id, faceLabel, 0, 0, false);
             SetTipVisible("videoOverlay" + faceMetadata.id, true);
         }
         function ClearVideoOverlay() {
@@ -246,6 +247,30 @@
             mediaPlayer.addEventListener(amp.eventName.pause, function () {
                 if ($("#analyticsPanel").is(":visible")) {
                     SetMediaMetadata();
+                }
+            });
+            mediaPlayer.addEventListener(amp.eventName.timeupdate, function () {
+                var streamUrl = mediaPlayer.currentSrc();
+                if (streamUrl.indexOf("Bright Future.ism") > -1) {
+                    var currentTime = mediaPlayer.currentTime();
+                    if (currentTime >= 15 && !$("#videoOverlay1").is(":visible")) {
+                        var faceMetadata = {};
+                        faceMetadata.id = 1;
+                        faceMetadata.label = "Joshua Shahid<br /><br />(Future Solution Architect)";
+                        faceMetadata.x = 80;
+                        faceMetadata.y = 198;
+                        faceMetadata.height = 20;
+                        faceMetadata.width = 20;
+                        SetVideoOverlay(faceMetadata);
+                        faceMetadata = {};
+                        faceMetadata.id = 2;
+                        faceMetadata.label = "Jenaa Shahid<br /><br />(Future Solution Architect)";
+                        faceMetadata.x = 584;
+                        faceMetadata.y = 192;
+                        faceMetadata.height = 20;
+                        faceMetadata.width = 20;
+                        SetVideoOverlay(faceMetadata);
+                    }
                 }
             });
             window.onresize = ResetMediaMetadata;
