@@ -16,7 +16,7 @@ Here is a summary list of the key integrated capabilities within this sample Azu
 
 To see some screenshots of a few key application modules, check out https://github.com/RickShahid/SkyMedia/wiki
 
-To enable the capabilities listed above as well as others, the following Azure platform services are leveraged:
+To enable the capabilities that are listed above as well as others, the following Azure platform services are leveraged:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
@@ -32,8 +32,6 @@ To enable the capabilities listed above as well as others, the following Azure p
 
 * Cognitive Services - http://www.microsoft.com/cognitive-services/
 
-* Search Service - http://azure.microsoft.com/en-us/services/search/
-
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
  * Web - http://azure.microsoft.com/en-us/services/app-service/web/
@@ -44,19 +42,21 @@ To enable the capabilities listed above as well as others, the following Azure p
  
  * Functions - http://azure.microsoft.com/en-us/services/functions/
 
+* Search - http://azure.microsoft.com/en-us/services/search/
+
 * Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
 * Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
 
-In addition to the Azure platform services listed above, the following Azure partner services have also been incorporated:
+In addition to the Azure platform services listed above, the following Azure partner services are also integrated:
 
 * Signiant Flight - http://azure.microsoft.com/en-us/marketplace/partners/signiant/flight/
 
 * Aspera FASP - http://azure.microsoft.com/en-us/marketplace/partners/aspera/sod/
 
-The set of Azure Media Services processors that are integrated within the app include the following (more are on the way):
+The set of Azure Media Services processors that are integrated include the following (more are on the way):
 
 * Encoder Standard - https://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-standard-formats
 
