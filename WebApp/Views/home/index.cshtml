@@ -1,7 +1,6 @@
 ﻿@using AzureSkyMedia.PlatformServices;
 
 @{
-    string accountMessage = ViewData["accountMessage"] as string;
     int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
     string authToken = ViewData["authToken"] as string;
@@ -190,7 +189,6 @@
             SetMediaMetadata(); 
         }
         $(function () {
-            var accountMessage = "@accountMessage";
             var streamNumber = @streamNumber;
             var mediaStreams = GetMediaStreams();
             var currentStream = (mediaStreams.length == 0) ? null : mediaStreams[streamNumber - 1];
@@ -223,11 +221,6 @@
                     if (mediaStreams.length > 0) {
                         var streamNumber = (mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
                         window.location.href = "/?stream=" + streamNumber;
-                        //var currentStream = mediaStreams[streamNumber - 1];
-                        //SetAnalyticsProcessors(currentStream);
-                        //SetPlayerContent(currentStream, true);
-                        //SetStreamName(currentStream);
-                        //$("#streamUrl").html("");
                     }
                 }
             });
@@ -250,6 +243,7 @@
                 }
             });
             mediaPlayer.addEventListener(amp.eventName.timeupdate, function () {
+                ClearVideoOverlay();
                 var streamUrl = mediaPlayer.currentSrc();
                 if (streamUrl.indexOf("Bright Future.ism") > -1) {
                     var currentTime = mediaPlayer.currentTime();
@@ -282,9 +276,6 @@
                 SetAnalyticsProcessors(currentStream);
                 SetStreamNumber(mediaStreams, streamNumber);
                 SetStreamName(currentStream);
-            }
-            if (accountMessage != "") {
-                DisplayMessage("Account Message", accountMessage);
             }
         })
     </script>

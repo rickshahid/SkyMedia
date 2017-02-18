@@ -93,6 +93,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
 
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
+            public const string MediaLocatorMaxStreamCount = "Media.Locator.MaxStreamCount";
 
             public const string MediaPlayerVersion = "Media.Player.Version";
 

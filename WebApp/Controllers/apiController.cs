@@ -14,13 +14,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaClient.GetEntities(MediaEntity.Processor);
         }
 
-        [HttpGet]
-        [Route("/endpoints")]
-        public object GetNotificationEndpoints([FromBody] string accountName, [FromBody] string accountKey)
-        {
-            return Entities.GetNotificationEndpoints(accountName, accountKey);
-        }
-
         [HttpPost]
         [Route("/publish")]
         public void PublishMediaJob([FromBody] MediaJobNotification jobNotification, [FromBody] bool webHook, [FromBody] bool poisonQueue)

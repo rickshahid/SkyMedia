@@ -30,7 +30,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask MapJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
         {
-            jobTask.Name = Entities.GetMediaProcessorName(jobTask.MediaProcessor);
+            jobTask.Name = Account.GetMediaProcessorName(jobTask.MediaProcessor);
             if (string.IsNullOrEmpty(jobTask.OutputAssetName) && !string.IsNullOrEmpty(assetName))
             {
                 jobTask.OutputAssetName = assetName;

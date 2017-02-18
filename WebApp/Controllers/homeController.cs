@@ -25,7 +25,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     string[] textTrack = trackInfo.Split(Constants.MultiItemSeparator);
                     track.Type = textTrack[0];
                     track.Source = textTrack[1];
-                    track.Language = Entities.GetLanguageCode(track.Source);
+                    track.Language = StreamFile.GetLanguageCode(track.Source);
                     tracks.Add(track);
                 }
             }
@@ -61,7 +61,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        private List<MediaStream> GetMediaStreams()
+        private MediaStream[] GetMediaStreams()
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
 
@@ -95,7 +95,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             settingKey4 = Constants.AppSettingKey.MediaStream5ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            return mediaStreams;
+            return mediaStreams.ToArray();
         }
 
         private IActionResult GetLiveView(string channelName, string queryString)
@@ -107,13 +107,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             if (accountCredentials.Length > 0)
             {
                 string accountName = accountCredentials[0];
-                DateTime? liveEventStart = Entities.GetLiveEventStart(accountName, channelName);
+                DateTime? liveEventStart = StreamLive.GetEventStart(accountName, channelName);
                 if (liveEventStart.HasValue)
                 {
                     bool livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
                     ViewData["livePreview"] = livePreview;
                     ViewData["liveEventStart"] = liveEventStart.Value.ToString();
-                    ViewData["liveSourceUrl"] = Entities.GetLiveSourceUrl(channelName, livePreview);
+                    ViewData["liveSourceUrl"] = StreamLive.GetSourceUrl(channelName, livePreview);
                     ViewData["liveCountdownUrl"] = string.Concat(cdnUrl, "/BuckleUp.jpg");
                 }
             }
@@ -142,7 +142,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public static SelectListItem[] GetStorageAccounts(string authToken)
         {
             List<SelectListItem> storageAccounts = new List<SelectListItem>();
-            NameValueCollection accounts = Entities.GetStorageAccounts(authToken);
+            NameValueCollection accounts = Storage.GetAccounts(authToken);
             foreach (string accountKey in accounts.Keys)
             {
                 SelectListItem storageAccount = new SelectListItem();
@@ -162,7 +162,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             mediaProcessor.Value = MediaProcessor.None.ToString();
             mediaProcessors.Add(mediaProcessor);
 
-            NameValueCollection processors = Entities.GetMediaProcessors(authToken, false) as NameValueCollection;
+            NameValueCollection processors = Account.GetMediaProcessors(authToken, false) as NameValueCollection;
             foreach (string processor in processors)
             {
                 mediaProcessor = new SelectListItem();
@@ -187,10 +187,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                     mediaClient.SignalChannel(parameterName, parameterId);
                     break;
                 case "accountClear":
-                    Entities.ClearAccount(mediaClient, parameterFlag);
+                    Account.ClearAccount(mediaClient, parameterFlag);
                     break;
             }
-            string[][] entityCounts = Entities.GetEntityCounts(mediaClient);
+            string[][] entityCounts = Account.GetEntityCounts(mediaClient);
             return Json(entityCounts);
         }
 
@@ -232,9 +232,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
 
             MediaClient mediaClient = null;
-            string accountMessage = string.Empty;
-            List<MediaStream> mediaStreams = new List<MediaStream>();
-
             if (!string.IsNullOrEmpty(authToken))
             {
                 try
@@ -248,20 +245,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                 //SearchClient searchClient = new SearchClient(authToken);
             }
 
-            if (mediaClient == null)
-            {
-                mediaStreams = GetMediaStreams();
-            }
-            else if (Entities.StreamingEnabled(mediaClient))
-            {
-                mediaStreams = Entities.GetMediaStreams(mediaClient);
-            }
-            else
-            {
-                accountMessage = "Your media account does not have an active streaming endpoint.";
-            }
-            ViewData["accountMessage"] = accountMessage;
-            ViewData["mediaStreams"] = mediaStreams.ToArray();
+            MediaStream[] mediaStreams = (mediaClient == null) ? GetMediaStreams() : StreamFile.GetMediaStreams(mediaClient);
+            ViewData["mediaStreams"] = mediaStreams;
 
             ViewData["streamNumber"] = 1;
             ViewData["autoPlay"] = "false";

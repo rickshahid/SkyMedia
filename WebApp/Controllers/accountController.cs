@@ -42,14 +42,14 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult processors()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            ViewData["mediaProcessors"] = Entities.GetMediaProcessors(authToken, true);
+            ViewData["mediaProcessors"] = Account.GetMediaProcessors(authToken, true);
             return View();
         }
 
         public IActionResult endpoints()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            ViewData["notificationEndpoints"] = Entities.GetNotificationEndpoints(authToken);
+            ViewData["notificationEndpoints"] = Account.GetNotificationEndpoints(authToken);
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["entityCounts"] = Entities.GetEntityCounts(mediaClient);
+            ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);
             ViewData["id"] = this.Request.Query["id"];
             ViewData["name"] = this.Request.Query["name"];
             return View();

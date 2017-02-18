@@ -115,7 +115,7 @@ namespace AzureSkyMedia.PlatformServices
             IJob job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
-                string processorId = Entities.GetMediaProcessorId(jobTask.MediaProcessor);
+                string processorId = Processors.GetMediaProcessorId(jobTask.MediaProcessor);
                 IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
                 ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
                 if (jobTask.ParentIndex.HasValue)

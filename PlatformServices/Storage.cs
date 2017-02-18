@@ -1,16 +1,60 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage.Analytics;
+using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
     public static class Storage
     {
+        private static string GetCapacityUsed(string authToken, string accountName)
+        {
+            string capacityUsed = string.Empty;
+            CloudStorageAccount storageAccount = GetUserAccount(authToken, accountName);
+            if (storageAccount != null)
+            {
+                CloudAnalyticsClient storageAnalytics = storageAccount.CreateCloudAnalyticsClient();
+                TableQuery<CapacityEntity> tableQuery = storageAnalytics.CreateCapacityQuery();
+                IQueryable<CapacityEntity> capacityQuery = tableQuery.Where(x => x.RowKey == "data");
+                try
+                {
+                    List<CapacityEntity> capacityEntities = capacityQuery.ToList();
+                    if (capacityEntities.Count == 0)
+                    {
+                        capacityUsed = Storage.MapByteCount(0);
+                    }
+                    else
+                    {
+                        capacityEntities.Sort(OrderByLatest);
+                        CapacityEntity latestAnalytics = capacityEntities.First();
+                        capacityUsed = Storage.MapByteCount(latestAnalytics.Capacity);
+                    }
+                }
+                catch
+                {
+                    capacityUsed = Constants.NotAvailable;
+                }
+            }
+            return capacityUsed;
+        }
+
+        private static string GetAccountInfo(string authToken, IStorageAccount storageAccount)
+        {
+            string accountInfo = string.Concat("Account: ", storageAccount.Name);
+            string storageUsed = GetCapacityUsed(authToken, storageAccount.Name);
+            if (!string.IsNullOrEmpty(storageUsed))
+            {
+                accountInfo = string.Concat(accountInfo, ", Usage: ", storageUsed, ")");
+            }
+            return accountInfo;
+        }
+
         private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)
         {
             return DateTimeOffset.Compare(rightSide.Time, leftSide.Time);
@@ -108,42 +152,30 @@ namespace AzureSkyMedia.PlatformServices
             return accountKey;
         }
  
-        public static string GetCapacityUsed(string authToken, string accountName)
-        {
-            string capacityUsed = string.Empty;
-            CloudStorageAccount storageAccount = GetUserAccount(authToken, accountName);
-            if (storageAccount != null)
-            {
-                CloudAnalyticsClient storageAnalytics = storageAccount.CreateCloudAnalyticsClient();
-                TableQuery<CapacityEntity> tableQuery = storageAnalytics.CreateCapacityQuery();
-                IQueryable<CapacityEntity> capacityQuery = tableQuery.Where(x => x.RowKey == "data");
-                try
-                {
-                    List<CapacityEntity> capacityEntities = capacityQuery.ToList();
-                    if (capacityEntities.Count == 0)
-                    {
-                        capacityUsed = Storage.MapByteCount(0);
-                    }
-                    else
-                    {
-                        capacityEntities.Sort(OrderByLatest);
-                        CapacityEntity latestAnalytics = capacityEntities.First();
-                        capacityUsed = Storage.MapByteCount(latestAnalytics.Capacity);
-                    }
-                }
-                catch
-                {
-                    capacityUsed = Constants.NotAvailable;
-                }
-            }
-            return capacityUsed;
-        }
-
         public static void CreateContainer(string authToken, string storageAccount, string containerName)
         {
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             CloudBlobContainer container = blobClient.GetContainer(containerName);
             container.CreateIfNotExists();
+        }
+
+        public static NameValueCollection GetAccounts(string authToken)
+        {
+            NameValueCollection storageAccounts = new NameValueCollection();
+            MediaClient mediaClient = new MediaClient(authToken);
+            IStorageAccount storageAccount = mediaClient.DefaultStorageAccount;
+            string accountInfo = GetAccountInfo(authToken, storageAccount);
+            storageAccounts.Add(accountInfo, storageAccount.Name);
+            IStorageAccount[] accounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
+            foreach (IStorageAccount account in accounts)
+            {
+                if (!account.IsDefault)
+                {
+                    accountInfo = GetAccountInfo(authToken, account);
+                    storageAccounts.Add(accountInfo, account.Name);
+                }
+            }
+            return storageAccounts;
         }
     }
 }
