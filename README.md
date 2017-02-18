@@ -32,19 +32,17 @@ To enable the various capabilities listed above, the following Azure platform se
  
  * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
-* Cognitive Services - http://www.microsoft.com/cognitive-services/
+* Cognitive Services (Under Construction) - http://www.microsoft.com/cognitive-services/
+
+* Search (Under Construction) - http://azure.microsoft.com/en-us/services/search/
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
- * Web - http://azure.microsoft.com/en-us/services/app-service/web/
+ * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
 
- * API - http://azure.microsoft.com/en-us/services/app-service/api/
+ * API App - http://azure.microsoft.com/en-us/services/app-service/api/
  
- * Mobile - http://azure.microsoft.com/en-us/services/app-service/mobile/
- 
- * Functions - http://azure.microsoft.com/en-us/services/functions/
-
-* Search - http://azure.microsoft.com/en-us/services/search/
+ * Functions App - http://azure.microsoft.com/en-us/services/functions/
 
 * Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
