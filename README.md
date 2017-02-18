@@ -8,9 +8,11 @@ Here is a summary list of the key integrated capabilities within this sample Azu
 
 * Upload and process media files via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
-* Define media workflows with multiple tasks (executed parallelly and/or sequentially) across various media processors
+* Define media workflows using multiple tasks (executed parallelly and/or sequentially) across various media processors
 
-* Background functions that track and publish media workflow outputs via parameters specified at job submission time
+* Background functions that track and publish media workflow task outputs via parameters specified at submission time
+
+* Generate video asset subclips and/or dynamic streaming filters via integration of the Azure Media Video Editor plugin
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
