@@ -16,7 +16,7 @@ Here is a summary list of the key integrated capabilities within this sample Azu
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
-For screenshots of a few key application modules, take a look at https://github.com/RickShahid/SkyMedia/wiki
+For screenshots of key application modules, take a look at https://github.com/RickShahid/SkyMedia/wiki
 
 To enable the various capabilities listed above, the following Azure platform services are leveraged:
 
