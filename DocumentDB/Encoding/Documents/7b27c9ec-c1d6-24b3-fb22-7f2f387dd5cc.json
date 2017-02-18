@@ -1,0 +1,43 @@
+{
+  "name": "H264 Single Bitrate 4x3 SD Audio 5.1",
+  "Version": 1,
+  "Codecs": [
+    {
+      "KeyFrameInterval": "00:00:02",
+      "SceneChangeDetection": true,
+      "H264Layers": [
+        {
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 1800,
+          "MaxBitrate": 1800,
+          "BufferWindow": "00:00:05",
+          "Width": 640,
+          "Height": 480,
+          "BFrames": 3,
+          "ReferenceFrames": 3,
+          "AdaptiveBFrame": true,
+          "Type": "H264Layer",
+          "FrameRate": "0/1"
+        }
+      ],
+      "Type": "H264Video"
+    },
+    {
+      "Profile": "AACLC",
+      "Channels": 6,
+      "SamplingRate": 48000,
+      "Bitrate": 384,
+      "Type": "AACAudio"
+    }
+  ],
+  "Outputs": [
+    {
+      "FileName": "{Basename}_{Width}x{Height}_{VideoBitrate}.mp4",
+      "Format": {
+        "Type": "MP4Format"
+      }
+    }
+  ],
+  "id": "7b27c9ec-c1d6-24b3-fb22-7f2f387dd5cc"
+}

@@ -1,0 +1,43 @@
+{
+  "name": "H264 Single Bitrate 1080p Audio 5.1",
+  "Version": 1,
+  "Codecs": [
+    {
+      "KeyFrameInterval": "00:00:02",
+      "SceneChangeDetection": true,
+      "H264Layers": [
+        {
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 6750,
+          "MaxBitrate": 6750,
+          "BufferWindow": "00:00:05",
+          "Width": 1920,
+          "Height": 1080,
+          "BFrames": 3,
+          "ReferenceFrames": 3,
+          "AdaptiveBFrame": true,
+          "Type": "H264Layer",
+          "FrameRate": "0/1"
+        }
+      ],
+      "Type": "H264Video"
+    },
+    {
+      "Profile": "AACLC",
+      "Channels": 6,
+      "SamplingRate": 48000,
+      "Bitrate": 384,
+      "Type": "AACAudio"
+    }
+  ],
+  "Outputs": [
+    {
+      "FileName": "{Basename}_{Width}x{Height}_{VideoBitrate}.mp4",
+      "Format": {
+        "Type": "MP4Format"
+      }
+    }
+  ],
+  "id": "28f987e3-f7fd-e79a-2b23-c79a573bbd80"
+}
