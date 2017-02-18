@@ -2,21 +2,21 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-Here is a summary list of key integrated capabilities within this sample Azure ASP.NET Core MVC web application:
+Here is a summary list of the key integrated capabilities within this sample Azure ASP.NET Core MVC web application:
 
-* Self-service user and account registration across Azure Media Services, Azure Storage, Signiant Flight & Aspera FASP, etc
-
-* Define media workflows with multiple job tasks (executed parallelly and/or sequentially) across various media processors
+* Self-service user and account management across Azure Media Services, Azure Storage, Signiant Flight, Aspera FASP, etc
 
 * Upload and process media files via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
-* Background process that tracks and publishes media workflow outputs via parameters specified at job submission time
+* Define media workflows with multiple tasks (executed parallelly and/or sequentially) across various media processors
+
+* Background functions that track and publish media workflow outputs via parameters specified at job submission time
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
-For screenshots of key modules in action, check out the wiki page at https://github.com/RickShahid/SkyMedia/wiki
+To see some screenshots of a few key application modules, check out https://github.com/RickShahid/SkyMedia/wiki
 
-To enable the range of capabilities that are listed above, the following Azure platform services are leveraged:
+To enable the capabilities listed above as well as others, the following Azure platform services are leveraged:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
@@ -29,6 +29,10 @@ To enable the range of capabilities that are listed above, the following Azure p
  * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
  
  * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
+
+* Cognitive Services - http://www.microsoft.com/cognitive-services/
+
+* Search Service - http://azure.microsoft.com/en-us/services/search/
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
