@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "options": {
+    "mode": "faces",
+    "aggregateEmotionWindowMs": "500",
+    "aggregateEmotionIntervalMs": "500"
+  },
+  "id": "0c04deb3-c14d-f40f-83cb-4d92a4d7cc41"
+}

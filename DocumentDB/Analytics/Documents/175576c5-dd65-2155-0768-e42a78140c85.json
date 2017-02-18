@@ -1,0 +1,14 @@
+{
+  "Version": "1.0",
+  "Sources": [
+    {
+      "StartFrame": 0,
+      "NumFrames": 10000
+    }
+  ],
+  "Options": {
+    "Speed": 3,
+    "Stabilize": true
+  },
+  "id": "175576c5-dd65-2155-0768-e42a78140c85"
+}
