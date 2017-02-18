@@ -178,6 +178,7 @@ function GetProtectionInfo(protectionTypes, authToken) {
     return protectionInfo;
 }
 function ToggleMediaAnalytics(button) {
+    ClearVideoOverlay();
     var buttonImage = button.children[0];
     if (buttonImage.src.indexOf("MediaAnalyticsOpen") > -1) {
         buttonImage.src = buttonImage.src.replace("Open", "Close");
