@@ -52,9 +52,9 @@ To enable the various capabilities listed above, the following Azure platform se
 
 In addition to the Azure platform services listed above, the following Azure partner services are also integrated:
 
-* Signiant Flight - http://azure.microsoft.com/en-us/marketplace/partners/signiant/flight/
+* Signiant Flight - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
 
-* Aspera FASP - http://azure.microsoft.com/en-us/marketplace/partners/aspera/sod/
+* Aspera FASP - http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod
 
 The set of Azure Media Services processors that are integrated include the following (more are on the way):
 
@@ -80,8 +80,9 @@ The set of Azure Media Services processors that are integrated include the follo
 
 * Character Recognition - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
 
-If you run into an issue, please let me know.
+If you have an enhancement suggestion or if you run into an issue, please let me know.
 
 Thanks.
 
-Rick
+Rick Shahid
+rick.shahid@live.com
