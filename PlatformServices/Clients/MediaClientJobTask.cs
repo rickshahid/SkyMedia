@@ -30,7 +30,11 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask MapJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
         {
-            jobTask.Name = Account.GetMediaProcessorName(jobTask.MediaProcessor);
+            jobTask.Name = Processors.GetMediaProcessorName(jobTask.MediaProcessor);
+            if (jobTask.ProcessorConfig.Contains(Constants.Media.ProcessorConfig.EncoderStandardThumbnailsFormat))
+            {
+                jobTask.Name = string.Concat(jobTask.Name, " (", Constants.Media.ProcessorConfig.EncoderStandardThumbnailsPreset , ")");
+            }
             if (string.IsNullOrEmpty(jobTask.OutputAssetName) && !string.IsNullOrEmpty(assetName))
             {
                 jobTask.OutputAssetName = assetName;

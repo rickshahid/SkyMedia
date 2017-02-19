@@ -69,6 +69,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream5TextTracks = "Media.Stream5.TextTracks";
             public const string MediaStream5ProtectionTypes = "Media.Stream5.ProtectionTypes";
 
+            public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
+
             public const string MediaProcessorIndexerV1DocumentId = "Media.Processor.IndexerV1DocumentId";
             public const string MediaProcessorIndexerV2DocumentId = "Media.Processor.IndexerV2DocumentId";
 
@@ -82,7 +84,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaProcessorVideoAnnotationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
             public const string MediaProcessorVideoSummarizationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
 
-            public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
             public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
             public const string MediaProcessorContentModerationDocumentId = "Media.Processor.ContentModerationDocumentId";
 
@@ -226,13 +227,15 @@ namespace AzureSkyMedia.PlatformServices
                 public const string MotionStabilization = "nb:mpid:UUID:73845a7d-8505-421d-9af9-d4bdc7838bdf";
                 public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";
                 public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
-                public const string ThumbnailGeneration = "nb:mpid:UUID:ff7eb2bd-9cd4-46e6-80e4-1c83579915da";
                 public const string CharacterRecognition = "nb:mpid:UUID:074c3899-d9fb-448f-9ae1-4ebcbe633056";
                 public const string ContentModeration = "nb:mpid:UUID:bb312589-3bd4-4f2e-af26-2df8a984b395";
             }
 
             public struct ProcessorConfig
             {
+                public const string EncoderStandardThumbnailsPreset = "Thumbnails";
+                public const string EncoderStandardThumbnailsFormat = "PngImage";
+
                 public const string IndexerV1XPath = "/configuration/features/feature/settings/add";
                 public const string IndexerLanguageSpanish = "Spanish";
                 public const string IndexerLanguageCodeEngligh = "en";
@@ -323,6 +326,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string MediaProcessors = "AzureMediaProcessors";
             }
+        }
+
+        public struct Message
+        {
+            public const string StreamingEndpointNotRunning = "Your media account does not have a streaming endpoint running!";
         }
     }
 }

@@ -37,6 +37,16 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
+                if (string.Equals(jobTask.ProcessorConfig, Constants.Media.ProcessorConfig.EncoderStandardThumbnailsPreset, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
+                    string documentId = AppSetting.GetValue(settingKey);
+                    using (DatabaseClient databaseClient = new DatabaseClient(false))
+                    {
+                        JObject processorConfig = databaseClient.GetDocument(documentId);
+                        jobTask.ProcessorConfig = processorConfig.ToString();
+                    }
+                }
                 bool inputSubclipped = false;
                 foreach (MediaAssetInput inputAsset in inputAssets)
                 {

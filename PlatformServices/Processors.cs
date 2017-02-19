@@ -1,4 +1,6 @@
-﻿namespace AzureSkyMedia.PlatformServices
+﻿using System.Text.RegularExpressions;
+
+namespace AzureSkyMedia.PlatformServices
 {
     public static class Processors
     {
@@ -16,10 +18,10 @@
                 case MediaProcessor.EncoderUltra:
                     processorId = Constants.Media.ProcessorId.EncoderUltra;
                     break;
-                case MediaProcessor.IndexerV1:
+                case MediaProcessor.Indexer_v1:
                     processorId = Constants.Media.ProcessorId.IndexerV1;
                     break;
-                case MediaProcessor.IndexerV2:
+                case MediaProcessor.Indexer_v2:
                     processorId = Constants.Media.ProcessorId.IndexerV2;
                     break;
                 case MediaProcessor.FaceDetection:
@@ -43,9 +45,6 @@
                 case MediaProcessor.VideoSummarization:
                     processorId = Constants.Media.ProcessorId.VideoSummarization;
                     break;
-                case MediaProcessor.ThumbnailGeneration:
-                    processorId = Constants.Media.ProcessorId.ThumbnailGeneration;
-                    break;
                 case MediaProcessor.CharacterRecognition:
                     processorId = Constants.Media.ProcessorId.CharacterRecognition;
                     break;
@@ -54,6 +53,13 @@
                     break;
             }
             return processorId;
+        }
+
+        public static string GetMediaProcessorName(MediaProcessor mediaProcessor)
+        {
+            string processorName = Regex.Replace(mediaProcessor.ToString(), Constants.CapitalSpacingExpression, Constants.CapitalSpacingReplacement);
+            processorName = processorName.Replace("_", " ");
+            return processorName;
         }
 
         public static MediaProcessor GetMediaProcessorType(string processorId)
@@ -71,10 +77,10 @@
                     mediaProcessor = MediaProcessor.EncoderUltra;
                     break;
                 case Constants.Media.ProcessorId.IndexerV1:
-                    mediaProcessor = MediaProcessor.IndexerV1;
+                    mediaProcessor = MediaProcessor.Indexer_v1;
                     break;
                 case Constants.Media.ProcessorId.IndexerV2:
-                    mediaProcessor = MediaProcessor.IndexerV2;
+                    mediaProcessor = MediaProcessor.Indexer_v2;
                     break;
                 case Constants.Media.ProcessorId.FaceDetection:
                     mediaProcessor = MediaProcessor.FaceDetection;
@@ -96,9 +102,6 @@
                     break;
                 case Constants.Media.ProcessorId.VideoSummarization:
                     mediaProcessor = MediaProcessor.VideoSummarization;
-                    break;
-                case Constants.Media.ProcessorId.ThumbnailGeneration:
-                    mediaProcessor = MediaProcessor.ThumbnailGeneration;
                     break;
                 case Constants.Media.ProcessorId.CharacterRecognition:
                     mediaProcessor = MediaProcessor.CharacterRecognition;

@@ -49,8 +49,8 @@
         EncoderStandard,
         EncoderPremium,
         EncoderUltra,
-        IndexerV1,
-        IndexerV2,
+        Indexer_v1,
+        Indexer_v2,
         FaceDetection,
         FaceRedaction,
         MotionDetection,
@@ -58,7 +58,6 @@
         MotionStabilization,
         VideoAnnotation,
         VideoSummarization,
-        ThumbnailGeneration,
         CharacterRecognition,
         ContentModeration
     }

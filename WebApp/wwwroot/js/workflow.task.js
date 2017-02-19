@@ -169,6 +169,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 4x3 SD (1600 kbps) AAC", "H264 Single Bitrate 4x3 SD");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR High Quality SD for Android (500 kbps) AAC", "H264 Single Bitrate High Quality SD for Android");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR Low Quality SD for Android (56 kbps) AAC", "H264 Single Bitrate Low Quality SD for Android");
+                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - Thumbnails (PNG Format, 5% Intervals, 640 x 360 px)", "Thumbnails");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (JSON)", "Custom");
                 encoderConfigOptions.selectedIndex = 2;
                 $("#" + encoderOptionsRowId).show();

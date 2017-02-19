@@ -5,6 +5,7 @@
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
     string authToken = ViewData["authToken"] as string;
     string autoPlay = ViewData["autoPlay"] as string;
+    string accountMessage = ViewData["accountMessage"] as string;
 }
 
 @section head {
@@ -75,7 +76,7 @@
         }
         function GetFragmentEvent(timeSeconds, timescale, fragment) {
             var ticksPerMillisecond = timescale / 1000;
-            var millisecondsPerInterval = fragment.interval / ticksPerMillisecond;        
+            var millisecondsPerInterval = fragment.interval / ticksPerMillisecond;
             var millisecondsOffset = (timeSeconds - (fragment.start / timescale)) * 1000;
             var eventIndex = Math.floor(millisecondsOffset / millisecondsPerInterval);
             return fragment["events"][eventIndex];
@@ -186,7 +187,7 @@
         }
         function ResetMediaMetadata() {
             ClearVideoOverlay();
-            SetMediaMetadata(); 
+            SetMediaMetadata();
         }
         $(function () {
             var streamNumber = @streamNumber;
@@ -195,6 +196,7 @@
             var sliderWidth = $("#streamCatcher").width();
             var sliderStep = (mediaStreams.length < 2) ? sliderWidth : Math.floor(sliderWidth / (mediaStreams.length - 1));
             var sliderValue = (streamNumber - 1) * sliderStep;
+            var accountMessage = "@accountMessage";
             $("#streamCatcher").slider({
                 min: 0,
                 max: sliderWidth,
@@ -276,6 +278,9 @@
                 SetAnalyticsProcessors(currentStream);
                 SetStreamNumber(mediaStreams, streamNumber);
                 SetStreamName(currentStream);
+            }
+            if (accountMessage != "") {
+                DisplayMessage("Account Message", accountMessage);
             }
         })
     </script>

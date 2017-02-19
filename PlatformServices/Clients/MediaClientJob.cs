@@ -60,10 +60,10 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.EncoderUltra:
                         tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets);
                         break;
-                    case MediaProcessor.IndexerV1:
+                    case MediaProcessor.Indexer_v1:
                         tasks = GetIndexerV1Tasks(mediaClient, jobTask, inputAssets);
                         break;
-                    case MediaProcessor.IndexerV2:
+                    case MediaProcessor.Indexer_v2:
                         tasks = GetIndexerV2Tasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.FaceDetection:
@@ -86,9 +86,6 @@ namespace AzureSkyMedia.PlatformServices
                         break;
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets);
-                        break;
-                    case MediaProcessor.ThumbnailGeneration:
-                        tasks = GetThumbnailGenerationTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.CharacterRecognition:
                         tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets);

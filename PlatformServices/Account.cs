@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Text.RegularExpressions;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
@@ -56,11 +55,6 @@ namespace AzureSkyMedia.PlatformServices
             asset.Delete();
         }
 
-        public static string GetMediaProcessorName(MediaProcessor mediaProcessor)
-        {
-            return Regex.Replace(mediaProcessor.ToString(), Constants.CapitalSpacingExpression, Constants.CapitalSpacingReplacement);
-        }
-
         public static object GetMediaProcessors(string authToken, bool gridView)
         {
             object mediaProcessors = null;
@@ -81,7 +75,7 @@ namespace AzureSkyMedia.PlatformServices
                 NameValueCollection processors = new NameValueCollection();
                 foreach (MediaProcessor mediaProcessorType in mediaProcessorTypes)
                 {
-                    string processorName = GetMediaProcessorName(mediaProcessorType);
+                    string processorName = Processors.GetMediaProcessorName(mediaProcessorType);
                     processors.Add(processorName, mediaProcessorType.ToString());
                 }
                 mediaProcessors = processors;
@@ -93,6 +87,21 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaClient mediaClient = new MediaClient(authToken);
             return mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+        }
+
+        public static bool IsStreamingEnabled(MediaClient mediaClient)
+        {
+            bool streamingEnabled = false;
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
+            {
+                if (streamingEndpoint.State == StreamingEndpointState.Running ||
+                    streamingEndpoint.State == StreamingEndpointState.Scaling)
+                {
+                    streamingEnabled = true;
+                }
+            }
+            return streamingEnabled;
         }
 
         public static string[][] GetEntityCounts(MediaClient mediaClient)

@@ -173,11 +173,6 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         mediaProcessors.Add(mediaProcessor);
                     }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.ThumbnailGeneration) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
                     mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.CharacterRecognition) as IMediaProcessor;
                     if (mediaProcessor != null)
                     {

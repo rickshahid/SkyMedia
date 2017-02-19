@@ -10,7 +10,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetIndexerV1Tasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.IndexerV1;
+            jobTask.MediaProcessor = MediaProcessor.Indexer_v1;
             string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV1DocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -52,7 +52,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetIndexerV2Tasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.IndexerV2;
+            jobTask.MediaProcessor = MediaProcessor.Indexer_v2;
             string settingKey = Constants.AppSettingKey.MediaProcessorIndexerV2DocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);

@@ -110,19 +110,6 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static MediaJobTask[] GetThumbnailGenerationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.ThumbnailGeneration;
-            string settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
-            JObject processorConfig = GetProcessorConfig(documentId);
-            jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
-            return jobTasks.ToArray();
-        }
-
         private static MediaJobTask[] GetCharacterRecognitionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();

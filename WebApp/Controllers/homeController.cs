@@ -245,8 +245,23 @@ namespace AzureSkyMedia.WebApp.Controllers
                 //SearchClient searchClient = new SearchClient(authToken);
             }
 
-            MediaStream[] mediaStreams = (mediaClient == null) ? GetMediaStreams() : StreamFile.GetMediaStreams(mediaClient);
+            MediaStream[] mediaStreams;
+            string accountMessage = string.Empty;
+            if (mediaClient == null)
+            {
+                mediaStreams = GetMediaStreams();
+            }
+            else if (!Account.IsStreamingEnabled(mediaClient))
+            {
+                mediaStreams = new MediaStream[] { };
+                accountMessage = Constants.Message.StreamingEndpointNotRunning;
+            }
+            else
+            {
+                mediaStreams = StreamFile.GetMediaStreams(mediaClient);
+            }
             ViewData["mediaStreams"] = mediaStreams;
+            ViewData["accountMessage"] = accountMessage;
 
             ViewData["streamNumber"] = 1;
             ViewData["autoPlay"] = "false";
