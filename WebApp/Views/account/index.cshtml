@@ -79,8 +79,6 @@
         $(function () {
             var entityCounts = @Html.Raw(Json.Serialize(ViewData["entityCounts"]));
             SetInventory(entityCounts);
-            CreateTipTop("mediaProcessors", "Azure Media Services<br /><br />Processors");
-            CreateTipTop("siteApi", "Azure Sky Media<br /><br />Web API");
             CreateTipTop("channelCreate", "Create Live Channel");
             CreateTipTop("channelSignal", "Signal Ad Insertion");
             CreateTipTop("accountClear", "Clear Media Account");
@@ -104,7 +102,6 @@
 </table>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "siteApi", "SiteAPI.png", "window.open('/swagger/ui/')" })
     @Html.Partial("SiteButton", new string[] { "channelCreate", "ChannelCreate.png", "ConfirmCommand('channelCreate')" })
     @Html.Partial("SiteButton", new string[] { "channelSignal", "ChannelSignal.png", "ConfirmCommand('channelSignal')" })
     @if (Debugger.IsAttached)

@@ -100,9 +100,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         private IActionResult GetLiveView(string channelName, string queryString)
         {
-            string settingKey = Constants.AppSettingKey.StorageCdnUrl;
-            string cdnUrl = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.AzureMedia;
+            string settingKey = Constants.AppSettingKey.AzureMedia;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             if (accountCredentials.Length > 0)
             {
@@ -114,7 +112,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                     ViewData["livePreview"] = livePreview;
                     ViewData["liveEventStart"] = liveEventStart.Value.ToString();
                     ViewData["liveSourceUrl"] = StreamLive.GetSourceUrl(channelName, livePreview);
-                    ViewData["liveCountdownUrl"] = string.Concat(cdnUrl, "/BuckleUp.jpg");
                 }
             }
             return View("live");

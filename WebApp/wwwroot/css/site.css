@@ -710,8 +710,3 @@ body {
 .liveCountdownValue {
     color: azure;
 }
-
-.liveCountdownImage {
-    padding-top: 20px;
-    display: none;
-}

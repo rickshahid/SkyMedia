@@ -185,6 +185,11 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
 
+            public struct Queue
+            {
+                public const string PoisonSuffix = "-poison";
+            }
+
             public struct TableName
             {
                 public const string FileUpload = "FileUpload";

@@ -34,14 +34,10 @@
             countdownHtml = countdownHtml + " <span class='liveCountdownValue'>%-S</span> Second%!S";
             $("#liveCountdownLabel").text(countdownLabel);
             $("#liveCountdownValue").html(e.strftime(countdownHtml));
-            if (e.offset.totalMinutes < 1) {
-                $("#liveCountdownImage").show();
-            }
         }
         function StartBroadcast(e) {
             $("#liveCountdownLabel").text("");
             $("#liveCountdownValue").html("");
-            $("#liveCountdownImage").hide();
             SetPlayerSpinner(true);
             SetPlayerContent();
         }
@@ -70,7 +66,4 @@
 <div class="liveCountdown">
     <span id="liveCountdownLabel"></span>
     <span id="liveCountdownValue"></span>
-    <div id="liveCountdownImage" class="liveCountdownImage">
-        <img src="@ViewData["liveCountdownUrl"]" />
-    </div>
 </div>
