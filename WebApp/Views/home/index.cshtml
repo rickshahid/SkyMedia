@@ -245,7 +245,6 @@
                 }
             });
             mediaPlayer.addEventListener(amp.eventName.timeupdate, function () {
-                ClearVideoOverlay();
                 var streamUrl = mediaPlayer.currentSrc();
                 if (streamUrl.indexOf("Bright Future.ism") > -1) {
                     var currentTime = mediaPlayer.currentTime();
@@ -260,7 +259,7 @@
                         SetVideoOverlay(faceMetadata);
                         faceMetadata = {};
                         faceMetadata.id = 2;
-                        faceMetadata.label = "Jenaa Shahid<br /><br />(Future Solution Architect)";
+                        faceMetadata.label = "Jenna Shahid<br /><br />(Future Solution Architect)";
                         faceMetadata.x = 584;
                         faceMetadata.y = 192;
                         faceMetadata.height = 20;
