@@ -239,7 +239,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     return RedirectToAction("profileedit", "account");
                 }
-                //SearchClient searchClient = new SearchClient(authToken);
             }
 
             MediaStream[] mediaStreams;

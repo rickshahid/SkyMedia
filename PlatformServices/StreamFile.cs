@@ -24,9 +24,9 @@ namespace AzureSkyMedia.PlatformServices
             return textTracks.ToArray();
         }
 
-        private static string GetAnalyticsProcessorName(IAssetFile assetFile)
+        private static string GetAnalyticsProcessorName(string fileName)
         {
-            string[] fileNameInfo = assetFile.Name.Split('_');
+            string[] fileNameInfo = fileName.Split('_');
             string processorName = fileNameInfo[fileNameInfo.Length - 1];
             processorName = processorName.Replace(Constants.Media.AssetFile.JsonExtension, string.Empty);
             return processorName.Replace(Constants.NamedItemSeparator, ' ');
@@ -35,16 +35,15 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaMetadata[] GetAnalyticsProcessors(IAsset asset)
         {
             List<MediaMetadata> analyticsProcessors = new List<MediaMetadata>();
-            foreach (IAssetFile assetFile in asset.AssetFiles)
+            string fileExtension = Constants.Media.AssetFile.JsonExtension;
+            string[] fileNames = MediaClient.GetFileNames(asset, fileExtension);
+            foreach (string fileName in fileNames)
             {
-                if (assetFile.Name.EndsWith(Constants.Media.AssetFile.JsonExtension, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    string processorName = GetAnalyticsProcessorName(assetFile);
-                    MediaMetadata mediaMetadata = new MediaMetadata();
-                    mediaMetadata.ProcessorName = processorName;
-                    mediaMetadata.MetadataFile = assetFile.Name;
-                    analyticsProcessors.Add(mediaMetadata);
-                }
+                string processorName = GetAnalyticsProcessorName(fileName);
+                MediaMetadata mediaMetadata = new MediaMetadata();
+                mediaMetadata.ProcessorName = processorName;
+                mediaMetadata.MetadataFile = fileName;
+                analyticsProcessors.Add(mediaMetadata);
             }
             return analyticsProcessors.ToArray();
         }

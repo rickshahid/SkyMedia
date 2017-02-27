@@ -33,8 +33,9 @@ namespace AzureSkyMedia.PlatformServices
             jobTask.Name = Processors.GetMediaProcessorName(jobTask.MediaProcessor);
             if (jobTask.ProcessorConfig.Contains(Constants.Media.ProcessorConfig.EncoderStandardThumbnailsFormat))
             {
-                jobTask.Name = string.Concat(jobTask.Name, " (", Constants.Media.ProcessorConfig.EncoderStandardThumbnailsPreset , ")");
+                jobTask.Name = string.Concat(jobTask.Name, " ", Constants.Media.ProcessorConfig.EncoderStandardThumbnailsPreset);
             }
+            jobTask.Name = string.Concat(jobTask.Name, " (", assetName, ")");
             if (string.IsNullOrEmpty(jobTask.OutputAssetName) && !string.IsNullOrEmpty(assetName))
             {
                 jobTask.OutputAssetName = assetName;

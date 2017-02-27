@@ -535,6 +535,17 @@ body {
     display: none !important;
 }
 
+.jstree-hovered {
+  background: deepskyblue !important;
+  box-shadow: none !important;
+  color: yellow !important;
+}
+
+.jstree-clicked {
+  background: deepskyblue !important;
+  box-shadow: none !important;
+}
+
 .jstree-checkbox {
     width: 28px !important;
 }

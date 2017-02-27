@@ -1,4 +1,9 @@
 ﻿var _mediaAsset, _editedAssets, _inputAssets;
+function EndsWith(source, suffix) {
+    source = source.toLowerCase();
+    suffix = suffix.toLowerCase();
+    return (source.lastIndexOf(suffix) == source.length - suffix.length) > 0;
+}
 function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signout";
@@ -107,9 +112,9 @@ function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
     DisplayDialog(dialogId, title, message, buttons, null, width, onClose);
 }
-function GetMediaPlayer(editVideo) {
+function GetMediaPlayer(editMode) {
     var mediaPlayer = amp("mediaPlayer");
-    if (editVideo) {
+    if (editMode) {
         mediaPlayer.AMVE({
             containerId: "videoEditor",
             clipdataCallback: SetVideoEdit

@@ -9,7 +9,7 @@
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/qtip2/jquery.qtip.min.css" />
         <link type="text/css" rel="stylesheet" href="~/css/site.css" />
-        @Html.ApplicationInsightsJavaScript(telemetryConfig)
+        @Html.Raw(javaScriptSnippet.FullScript)
         <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-ui-multiselect/src/jquery.multiselect.min.js"></script>

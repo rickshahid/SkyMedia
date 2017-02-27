@@ -128,12 +128,10 @@ namespace AzureSkyMedia.WebApp
                 OnRedirectToIdentityProvider = OnAuthenticationRedirect
             };
 
-            app.UseApplicationInsightsRequestTelemetry();
             if (!env.IsProduction())
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseApplicationInsightsExceptionTelemetry();
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();

@@ -108,6 +108,7 @@ function SetAssetText(clearEdit) {
     assetsTree.rename_node(assetNode, nodeText);
 }
 function DisplayVideoEditor(treeNode, authToken) {
+    var title = "Azure Media Video Editor";
     var nodeRef = $.jstree.reference(treeNode.reference);
     _mediaAsset = nodeRef.get_node(treeNode.reference);
     if (_mediaAsset.a_attr.isStreamable) {
@@ -120,7 +121,6 @@ function DisplayVideoEditor(treeNode, authToken) {
             protectionInfo: GetProtectionInfo(protectionTypes, authToken)
         }]);
         var dialogId = "editorDialog";
-        var title = "Azure Media Video Editor";
         var buttons = {};
         var onClose = function () {
             var editedAsset = GetEditedAsset(_mediaAsset.id);
@@ -132,7 +132,6 @@ function DisplayVideoEditor(treeNode, authToken) {
         DisplayDialog(dialogId, title, null, buttons, null, null, onClose);
     } else {
         var dialogId = "subclipDialog";
-        var title = "Azure Media Video Subclip";
         var buttons = {
             OK: function () {
                 var startTimeHours = $("#subclipStartTimeHours").spinner("value");
@@ -198,10 +197,12 @@ function SetVideoEdit(clipData) {
     }
 }
 function ClearVideoEdit(treeNode) {
-    SetAssetText(true);
-    for (var i = 0; i < _editedAssets.length; i++) {
-        if (_editedAssets[i].AssetId == _mediaAsset.id) {
-            _editedAssets.splice(i, 1);
+    if (_mediaAsset != null) {
+        SetAssetText(true);
+        for (var i = 0; i < _editedAssets.length; i++) {
+            if (_editedAssets[i].AssetId == _mediaAsset.id) {
+                _editedAssets.splice(i, 1);
+            }
         }
     }
 }

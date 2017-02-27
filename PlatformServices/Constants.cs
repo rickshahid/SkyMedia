@@ -117,6 +117,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AzureMedia = "Media";
             public const string AzureCache = "Cache";
+            public const string AzureSearch = "Search";
+
             public const string Twilio = "Twilio";
         }
 
@@ -151,9 +153,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaAccountKey = "extension_MediaAccountKey";
             public const string StorageAccountName = "extension_StorageAccountName";
             public const string StorageAccountKey = "extension_StorageAccountKey";
-            public const string SearchAccountName = "extension_SearchAccountName";
-            public const string SearchAccountKey = "extension_SearchAccountKey";
-            public const string SearchIndexName = "extension_SearchIndexName";
             public const string SigniantServiceGateway = "extension_SigniantServiceGateway";
             public const string SigniantAccountKey = "extension_SigniantAccountKey";
             public const string AsperaServiceGateway = "extension_AsperaServiceGateway";

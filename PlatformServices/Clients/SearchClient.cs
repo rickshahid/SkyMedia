@@ -24,22 +24,16 @@ namespace AzureSkyMedia.PlatformServices
             GC.SuppressFinalize(this);
         }
 
-        public SearchClient(string authToken)
+        public SearchClient()
         {
-            //string accountName = AuthToken.GetClaimValue(authToken, Constants.UserAttribute.SearchAccountName);
-            //string accountKey = AuthToken.GetClaimValue(authToken, Constants.UserAttribute.SearchAccountKey);
-            //if (!string.IsNullOrEmpty(accountName))
-            //{
-            //    SearchCredentials credentials = new SearchCredentials(accountKey);
-            //    _search = new SearchServiceClient(accountName, credentials);
+            string settingKey = Constants.AppSettingKey.AzureSearch;
+            string[] accountCredentials = AppSetting.GetValue(settingKey, true);
+            string accountName = accountCredentials[0];
+            string accountKey = accountCredentials[1];
 
-            //    string indexName = AuthToken.GetClaimValue(authToken, Constants.UserAttribute.SearchIndexName);
-            //    if (!string.IsNullOrEmpty(indexName) && !_search.Indexes.Exists(indexName))
-            //    {
-            //        Index searchIndex = new Index(indexName, null);
-            //        searchIndex = _search.Indexes.Create(searchIndex);
-            //    }
-            //}
+            SearchCredentials credentials = new SearchCredentials(accountKey);
+            _search = new SearchServiceClient(accountName, credentials);
+
         }
     }
 }
