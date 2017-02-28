@@ -59,7 +59,7 @@ function TransferHandler(event, data) {
                 case AW4.Connect.TRANSFER_STATUS.RUNNING:
                     var transferProgress = Math.floor(transfer.percentage * 100);
                     $("#transferProgress").progressbar("value", transferProgress);
-                    $("#transferMessage").text(_statusLabel + "Transfer Running (" + transfer.calculated_rate_kbps + " Kbps)");
+                    $("#transferMessage").text(_statusLabel + "Transfer Running (" + transfer.calculated_rate_kbps.toLocaleString() + " Kbps)");
                     break;
                 case AW4.Connect.TRANSFER_STATUS.COMPLETED:
                     var elapsedTime = GetElapsedTime();

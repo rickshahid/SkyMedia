@@ -16,6 +16,7 @@
         <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
         <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
         <script type="text/javascript" src="~/lib/qtip2/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="~/js/qtip.js"></script>
         <script type="text/javascript" src="~/js/site.js"></script>
         @RenderSection("head", false)
     </head>
@@ -35,7 +36,8 @@
                         @if (ViewData.ContainsKey("accountContext"))
                         {
                             @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", "window.location.href = '/account'" })
-                            @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.open('http://azure.microsoft.com/en-us/blog/azure-media-services-live-monitoring-dashboard-open-source-release/')" })
+                            @*@Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.open('http://azure.microsoft.com/en-us/blog/azure-media-services-live-monitoring-dashboard-open-source-release/')" })*@
+                            @Html.Partial("SiteButton", new string[] { "mediaLibrary", "MediaLibrary.png", "window.location.href = '/asset'" })
                         }
                         else
                         {
@@ -87,7 +89,6 @@
                         </div>
                         <div>
                             @Html.Partial("SiteButton", new string[] { "mediaAnalytics", "MediaAnalyticsOpen.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/media-analytics/')" })
-                            @*@Html.Partial("SiteButton", new string[] { "mediaEditor", "MediaEditor.png", "window.open('http://aka.ms/videoeditordemo/')" })*@
                         </div>
                     </td>
                     <td>

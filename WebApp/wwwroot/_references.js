@@ -1,6 +1,7 @@
 ﻿/// <autosync enabled="true" />
 /// <reference path="js/amve.min.js" />
 /// <reference path="js/grid.js" />
+/// <reference path="js/qtip.js" />
 /// <reference path="js/site.js" />
 /// <reference path="js/tree.js" />
 /// <reference path="js/uploader.aspera.js" />

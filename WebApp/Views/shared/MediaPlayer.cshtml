@@ -1,3 +1,16 @@
-﻿<div id="videoEditor" class="mediaPlayer">
-    <video id="mediaPlayer" class="azuremediaplayer amp-default-skin amp-big-play-centered" controls height="auto" width="100%" />
-</div>
+﻿@{
+    bool clipMode = Model;
+}
+
+@if (clipMode)
+{
+    <div id="mediaClipper" class="mediaPlayer">
+        <video id="videoClipper" class="azuremediaplayer amp-default-skin amp-big-play-centered" controls height="auto" width="100%" />
+    </div>
+}
+else
+{
+    <div class="mediaPlayer">
+        <video id="videoPlayer" class="azuremediaplayer amp-default-skin amp-big-play-centered" controls height="auto" width="100%" />
+    </div>
+}

@@ -81,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (ITask jobTask in jobTasks)
                 {
                     IAsset outputAsset = jobTask.OutputAssets[0];
-                    string fileExtension = Constants.Media.AssetFile.VttExtension;
+                    string fileExtension = Constants.Media.FileExtension.WebVtt;
                     string[] fileNames = GetFileNames(outputAsset, fileExtension);
                     foreach (string fileName in fileNames)
                     {
@@ -113,7 +113,7 @@ namespace AzureSkyMedia.PlatformServices
                     foreach (ITask jobTask in jobTasks)
                     {
                         IAsset outputAsset = jobTask.OutputAssets[0];
-                        string fileExtension = Constants.Media.AssetFile.JsonExtension;
+                        string fileExtension = Constants.Media.FileExtension.Json;
                         string[] fileNames = GetFileNames(outputAsset, fileExtension);
                         if (fileNames.Length > 0 && asset != null)
                         {

@@ -74,7 +74,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAssetFile assetFile in asset.AssetFiles)
                 {
-                    if (assetFile.Name.EndsWith(Constants.Media.AssetManifest.FileExtension, StringComparison.InvariantCultureIgnoreCase))
+                    if (assetFile.Name.EndsWith(Constants.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
                     {
                         assetFile.IsPrimary = true;
                         assetFile.Update();
@@ -99,9 +99,9 @@ namespace AzureSkyMedia.PlatformServices
                 case LocatorType.OnDemandOrigin:
                     primaryUrl = string.Concat(primaryUrl, "/", locator.ContentAccessComponent);
                     primaryUrl = string.Concat(primaryUrl, "/", fileName);
-                    if (fileName.EndsWith(Constants.Media.AssetManifest.FileExtension, StringComparison.InvariantCultureIgnoreCase))
+                    if (fileName.EndsWith(Constants.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        primaryUrl = string.Concat(primaryUrl, Constants.Media.AssetManifest.LocatorSuffix);
+                        primaryUrl = string.Concat(primaryUrl, Constants.Media.Stream.LocatorManifestSuffix);
                     }
                     break;
             }

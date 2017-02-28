@@ -11,7 +11,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IAsset asset, LocatorType locatorType)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
-            string fileExtension = Constants.Media.AssetFile.VttExtension;
+            string fileExtension = Constants.Media.FileExtension.WebVtt;
             string[] fileNames = MediaClient.GetFileNames(asset, fileExtension);
             foreach (string fileName in fileNames)
             {
@@ -28,14 +28,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             string[] fileNameInfo = fileName.Split('_');
             string processorName = fileNameInfo[fileNameInfo.Length - 1];
-            processorName = processorName.Replace(Constants.Media.AssetFile.JsonExtension, string.Empty);
+            processorName = processorName.Replace(Constants.Media.FileExtension.Json, string.Empty);
             return processorName.Replace(Constants.NamedItemSeparator, ' ');
         }
 
         private static MediaMetadata[] GetAnalyticsProcessors(IAsset asset)
         {
             List<MediaMetadata> analyticsProcessors = new List<MediaMetadata>();
-            string fileExtension = Constants.Media.AssetFile.JsonExtension;
+            string fileExtension = Constants.Media.FileExtension.Json;
             string[] fileNames = MediaClient.GetFileNames(asset, fileExtension);
             foreach (string fileName in fileNames)
             {
@@ -75,14 +75,30 @@ namespace AzureSkyMedia.PlatformServices
                     string locatorUrl = mediaClient.GetLocatorUrl(asset, locator.Type, null);
                     if (!string.IsNullOrEmpty(locatorUrl))
                     {
+                        MediaTrack[] textTracks = GetTextTracks(mediaClient, asset, locator.Type);
+                        string[] protectionTypes = mediaClient.GetProtectionTypes(asset);
+                        MediaMetadata[] analyticsProcessors = GetAnalyticsProcessors(asset);
+
                         MediaStream mediaStream = new MediaStream();
                         mediaStream.Name = asset.Name;
                         mediaStream.SourceUrl = locatorUrl;
-                        mediaStream.TextTracks = GetTextTracks(mediaClient, asset, locator.Type);
-                        mediaStream.ProtectionTypes = mediaClient.GetProtectionTypes(asset);
-                        mediaStream.AnalyticsProcessors = GetAnalyticsProcessors(asset);
+                        mediaStream.TextTracks = textTracks;
+                        mediaStream.ProtectionTypes = protectionTypes;
+                        mediaStream.AnalyticsProcessors = analyticsProcessors;
                         mediaStreams.Add(mediaStream);
+
+                        foreach (IStreamingAssetFilter filter in asset.AssetFilters)
+                        {
+                            mediaStream = new MediaStream();
+                            mediaStream.Name = string.Concat(asset.Name, " (Filtered)");
+                            mediaStream.SourceUrl = string.Concat(locatorUrl, "(filter=", filter.Name, ")");
+                            mediaStream.TextTracks = new MediaTrack[] { };
+                            mediaStream.ProtectionTypes = new string[] { };
+                            mediaStream.AnalyticsProcessors = new MediaMetadata[] { };
+                            mediaStreams.Add(mediaStream);
+                        }
                     }
+
                 }
                 if (mediaStreams.Count == maxStreamCount)
                 {

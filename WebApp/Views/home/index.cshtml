@@ -1,49 +1,31 @@
 ﻿@using AzureSkyMedia.PlatformServices;
 
 @{
-    int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
-    string authToken = ViewData["authToken"] as string;
+    int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
     string autoPlay = ViewData["autoPlay"] as string;
+    string authToken = ViewData["authToken"] as string;
     string accountMessage = ViewData["accountMessage"] as string;
 }
 
 @section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/amp-default/azuremediaplayer.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
+    <script type="text/javascript" src="~/js/amve.min.js"></script>
     <script type="text/javascript">
-        function SetPlayerContent(currentStream, autoPlay) {
-            var mediaPlayer = GetMediaPlayer(false);
-            mediaPlayer.autoplay(autoPlay);
-            mediaPlayer.src(
-                [{
-                    src: currentStream.sourceUrl,
-                    type: GetSourceType(currentStream.sourceUrl),
-                    protectionInfo: GetProtectionInfo(currentStream.protectionTypes, "@authToken")
-                }],
-                currentStream.textTracks
-            );
-            var languageCode = "@ViewData["languageCode"]".toLowerCase();
-            if (languageCode != "") {
-                for (var i = 0; i < mediaPlayer.textTracks_.length; i++) {
-                    if (mediaPlayer.textTracks_.tracks_[i].language.toLowerCase() == languageCode) {
-                        mediaPlayer.textTracks_.tracks_[i].mode = "showing";
-                    }
-                }
-            }
-        }
-        function SetStreamNumber(mediaStreams, streamNumber) {
+        function SetStreamNumber(streamNumber) {
             var sliderHandle = document.getElementsByClassName("ui-slider-handle")[0];
-            if (streamNumber == 1 || streamNumber == mediaStreams.length) {
+            if (streamNumber == 1 || streamNumber == _mediaStreams.length) {
                 sliderHandle.innerText = "";
             } else {
                 sliderHandle.innerText = streamNumber;
             }
         }
-        function SetStreamName(currentStream) {
-            var streamName = currentStream.name.replace("<br /><br />", " ");
-            if (currentStream.protectionTypes.length > 0) {
-                streamName = streamName + " + " + currentStream.protectionTypes.join(" + ");
+        function SetStreamName(mediaStream) {
+            var streamName = mediaStream.name.replace("<br /><br />", " ");
+            if (mediaStream.protectionTypes.length > 0) {
+                streamName = streamName + " + " + mediaStream.protectionTypes.join(" + ");
             }
             $("#streamName").html(streamName);
         }
@@ -60,14 +42,14 @@
         function GetAnalyticsProcessor(fileName) {
             var fileNameInfo = fileName.split("@Constants.NamedItemsSeparator");
             var analyticsProcessor = fileNameInfo[1].replace("@Constants.NamedItemSeparator", " ");
-            return analyticsProcessor.replace("@Constants.Media.AssetFile.JsonExtension", "");
+            return analyticsProcessor.replace("@Constants.Media.FileExtension.Json", "");
         }
-        function SetAnalyticsProcessors(currentStream) {
+        function SetAnalyticsProcessors(mediaStream) {
             var processors = document.getElementById("analyticsProcessors");
             processors.options.length = 0;
             processors.options[processors.options.length]= new Option("", "");
-            for (var i = 0; i < currentStream.analyticsProcessors.length; i++) {
-                var processor = currentStream.analyticsProcessors[i];
+            for (var i = 0; i < mediaStream.analyticsProcessors.length; i++) {
+                var processor = mediaStream.analyticsProcessors[i];
                 var optionName = processor.processorName;
                 var optionValue = processor.metadataFile;
                 processors.options[processors.options.length]= new Option(optionName, optionValue);
@@ -190,12 +172,13 @@
             SetMediaMetadata();
         }
         $(function () {
-            var streamNumber = @streamNumber;
-            var mediaStreams = GetMediaStreams();
-            var currentStream = (mediaStreams.length == 0) ? null : mediaStreams[streamNumber - 1];
+            _mediaStreams = GetMediaStreams();
+            _streamNumber = @streamNumber;
+            _authToken = "@authToken";
+            var mediaStream = (_mediaStreams.length == 0) ? null : _mediaStreams[_streamNumber - 1];
             var sliderWidth = $("#streamCatcher").width();
-            var sliderStep = (mediaStreams.length < 2) ? sliderWidth : Math.floor(sliderWidth / (mediaStreams.length - 1));
-            var sliderValue = (streamNumber - 1) * sliderStep;
+            var sliderStep = (_mediaStreams.length < 2) ? sliderWidth : Math.floor(sliderWidth / (_mediaStreams.length - 1));
+            var sliderValue = (_streamNumber - 1) * sliderStep;
             var accountMessage = "@accountMessage";
             $("#streamCatcher").slider({
                 min: 0,
@@ -206,23 +189,23 @@
                     "ui-slider-handle": "streamCatcherHandle"
                 },
                 slide: function (event, ui) {
-                    if (mediaStreams.length > 0) {
-                        var streamNumber = (mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
-                        var currentStream = mediaStreams[streamNumber - 1];
-                        var streamName = currentStream.name;
-                        var protectionTypes = currentStream.protectionTypes;
+                    if (_mediaStreams.length > 0) {
+                        var streamNumber = (_mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
+                        var mediaStream = _mediaStreams[streamNumber - 1];
+                        var streamName = mediaStream.name;
+                        var protectionTypes = mediaStream.protectionTypes;
                         if (protectionTypes.length > 0) {
                             streamName = streamName + "<br /><br />" + protectionTypes.join(", ");
                         }
                         CreateTipTopLeft("streamCatcher", streamName, ui.value + 2, -10);
                         SetTipVisible("streamCatcher", true);
-                        SetStreamNumber(mediaStreams, streamNumber);
+                        SetStreamNumber(streamNumber);
                     }
                 },
                 stop: function (event, ui) {
-                    if (mediaStreams.length > 0) {
-                        var streamNumber = (mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
-                        window.location.href = "/?stream=" + streamNumber;
+                    if (_mediaStreams.length > 0) {
+                        _streamNumber = (_mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
+                        window.location.href = "/?stream=" + _streamNumber;
                     }
                 }
             });
@@ -270,13 +253,13 @@
             });
             window.onresize = ResetMediaMetadata;
             window.onorientationchange = ResetMediaMetadata;
-            if (currentStream == null) {
+            if (mediaStream == null) {
                 SetPlayerSpinner(false);
             } else {
-                SetPlayerContent(currentStream, @autoPlay);
-                SetAnalyticsProcessors(currentStream);
-                SetStreamNumber(mediaStreams, streamNumber);
-                SetStreamName(currentStream);
+                SetPlayerContent(mediaStream, "@ViewData["languageCode"]", false, @autoPlay, "@authToken");
+                SetAnalyticsProcessors(mediaStream);
+                SetStreamNumber(_streamNumber);
+                SetStreamName(mediaStream);
             }
             if (accountMessage != "") {
                 DisplayMessage("Account Message", accountMessage);
@@ -292,7 +275,7 @@
 <table class="mediaStreamer">
     <tr>
         <td>
-            @Html.Partial("MediaPlayer")
+            @Html.Partial("MediaPlayer", false)
         </td>
         <td id="analyticsPanel" class="analyticsPanel">
             <table>
@@ -317,6 +300,10 @@
 </table>
 
 @Html.Partial("MediaBar", mediaStreams)
+
+<div id="clipperDialog" style="display: none">
+    @Html.Partial("MediaPlayer", true)
+</div>
 
 @section foot {
     <div class="streamInfo">

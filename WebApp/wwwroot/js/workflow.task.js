@@ -1,4 +1,8 @@
-﻿function ValidWorkflowTasks(validInput) {
+﻿function ReplaceAllText(currentText, oldText, newText) {
+    var regExp = new RegExp(oldText, "g");
+    return currentText.replace(regExp, newText);
+}
+function ValidWorkflowTasks(validInput) {
     var taskNumber = 1;
     do {
         var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
@@ -29,44 +33,44 @@ function GetLastTaskNumber(lastTaskRow) {
     return parseInt(lastTaskRow.id.replace("mediaWorkflowTaskRow", ""));
 }
 function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
-    var taskRowHtml = ReplaceAll(lastTaskRow.outerHTML, "mediaWorkflowTaskRow" + lastTaskNumber, "mediaWorkflowTaskRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "Job Task #" + lastTaskNumber, "Job Task #" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "mediaProcessor" + lastTaskNumber, "mediaProcessor" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "taskParent" + lastTaskNumber, "taskParent" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfigRow" + lastTaskNumber, "encoderConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfig" + lastTaskNumber, "encoderConfig" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfigFileRow" + lastTaskNumber, "encoderConfigFileRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderConfigFile" + lastTaskNumber, "encoderConfigFile" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderOptionsRow" + lastTaskNumber, "encoderOptionsRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderProtectContent" + lastTaskNumber, "encoderProtectContent" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderFragmentOutput" + lastTaskNumber, "encoderFragmentOutput" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionRow" + lastTaskNumber, "encoderContentProtectionRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAes" + lastTaskNumber, "encoderContentProtectionAes" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionDrmPlayReady" + lastTaskNumber, "encoderContentProtectionDrmPlayReady" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionDrmWidevine" + lastTaskNumber, "encoderContentProtectionDrmWidevine" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAuthTypeToken" + lastTaskNumber, "encoderContentProtectionAuthTypeToken" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "indexerConfigRow" +lastTaskNumber, "indexerConfigRow" +newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "indexerSpokenLanguages" + lastTaskNumber, "indexerSpokenLanguages" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "faceRedactionMode" + lastTaskNumber, "faceRedactionMode" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "motionConfigRow" + lastTaskNumber, "motionConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "motionSensitivityLevel" + lastTaskNumber, "motionSensitivityLevel" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "motionDetectLightChange" + lastTaskNumber, "motionDetectLightChange" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "hyperlapseConfigRow" + lastTaskNumber, "hyperlapseConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "hyperlapseStartFrame" + lastTaskNumber, "hyperlapseStartFrame" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "hyperlapseFrameCount" + lastTaskNumber, "hyperlapseFrameCount" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "hyperlapseSpeed" + lastTaskNumber, "hyperlapseSpeed" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "summaryConfigRow" + lastTaskNumber, "summaryConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "summaryDurationSeconds" + lastTaskNumber, "summaryDurationSeconds" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "outputAssetName" + lastTaskNumber, "outputAssetName" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "taskOptions" + lastTaskNumber, "taskOptions" + newTaskNumber);
-    taskRowHtml = ReplaceAll(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
+    var taskRowHtml = ReplaceAllText(lastTaskRow.outerHTML, "mediaWorkflowTaskRow" + lastTaskNumber, "mediaWorkflowTaskRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "Job Task #" + lastTaskNumber, "Job Task #" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "mediaProcessor" + lastTaskNumber, "mediaProcessor" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "taskParent" + lastTaskNumber, "taskParent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigRow" + lastTaskNumber, "encoderConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfig" + lastTaskNumber, "encoderConfig" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFileRow" + lastTaskNumber, "encoderConfigFileRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFile" + lastTaskNumber, "encoderConfigFile" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderOptionsRow" + lastTaskNumber, "encoderOptionsRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderProtectContent" + lastTaskNumber, "encoderProtectContent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderFragmentOutput" + lastTaskNumber, "encoderFragmentOutput" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionRow" + lastTaskNumber, "encoderContentProtectionRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAes" + lastTaskNumber, "encoderContentProtectionAes" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionDrmPlayReady" + lastTaskNumber, "encoderContentProtectionDrmPlayReady" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionDrmWidevine" + lastTaskNumber, "encoderContentProtectionDrmWidevine" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeToken" + lastTaskNumber, "encoderContentProtectionAuthTypeToken" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSpokenLanguages" + lastTaskNumber, "indexerSpokenLanguages" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionMode" + lastTaskNumber, "faceRedactionMode" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "motionConfigRow" + lastTaskNumber, "motionConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "motionSensitivityLevel" + lastTaskNumber, "motionSensitivityLevel" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectLightChange" + lastTaskNumber, "motionDetectLightChange" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseConfigRow" + lastTaskNumber, "hyperlapseConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseStartFrame" + lastTaskNumber, "hyperlapseStartFrame" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseFrameCount" + lastTaskNumber, "hyperlapseFrameCount" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseSpeed" + lastTaskNumber, "hyperlapseSpeed" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "summaryConfigRow" + lastTaskNumber, "summaryConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "summaryDurationSeconds" + lastTaskNumber, "summaryDurationSeconds" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "outputAssetName" + lastTaskNumber, "outputAssetName" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "taskOptions" + lastTaskNumber, "taskOptions" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
     return taskRowHtml;
 }
 function AddJobTaskLink(workflowTable, taskRowIndex) {
@@ -171,7 +175,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR Low Quality SD for Android (56 kbps) AAC", "H264 Single Bitrate Low Quality SD for Android");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - Thumbnails (PNG Format, 5% Intervals, 640 x 360 px)", "Thumbnails");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (JSON)", "Custom");
-                encoderConfigOptions.selectedIndex = 2;
+                encoderConfigOptions.selectedIndex = 4;
                 $("#" + encoderOptionsRowId).show();
                 break;
             case "EncoderPremium":

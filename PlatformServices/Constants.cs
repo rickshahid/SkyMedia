@@ -305,20 +305,18 @@ namespace AzureSkyMedia.PlatformServices
                 public const string MediaFile = "/MediaFile.png";
             }
 
-            public struct AssetManifest
+            public struct FileExtension
             {
-                public const string FileExtension = ".ism";
-                public const string LocatorSuffix = "/manifest";
-            }
-
-            public struct AssetFile
-            {
-                public const string VttExtension = ".vtt";
-                public const string JsonExtension = ".json";
+                public const string Manifest = ".ism";
+                public const string WebVtt = ".vtt";
+                public const string Json = ".json";
             }
 
             public struct Stream
             {
+                public const string LocatorIdPrefix = "nb:lid:UUID:";
+                public const string LocatorManifestSuffix = "/manifest";
+                public const string AssetFilteredSuffix = " (Filtered)";
                 public const string TextTrackSubtitles = "subtitles";
                 public const string AddressRangeAll = "All IP Addresses";
             }

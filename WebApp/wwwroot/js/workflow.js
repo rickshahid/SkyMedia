@@ -93,11 +93,11 @@ function GetInputAssets() {
             var inputAsset = {
                 AssetId: mediaAssets[i]
             };
-            if (_editedAssets != null) {
-                for (var x = 0; x < _editedAssets.length; x++) {
-                    if (inputAsset.AssetId == _editedAssets[x].AssetId) {
-                        inputAsset.MarkIn = _editedAssets[x].MarkIn;
-                        inputAsset.MarkOut = _editedAssets[x].MarkOut;
+            if (_clippedAssets != null) {
+                for (var x = 0; x < _clippedAssets.length; x++) {
+                    if (inputAsset.AssetId == _clippedAssets[x].AssetId) {
+                        inputAsset.MarkIn = _clippedAssets[x].MarkIn;
+                        inputAsset.MarkOut = _clippedAssets[x].MarkOut;
                     }
                 }
             }

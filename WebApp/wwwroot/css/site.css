@@ -559,7 +559,7 @@ body {
     font-size: large;
 }
 
-.treeNodeEdited {
+.treeNodeClipped {
     font-style: italic;
 }
 
@@ -641,14 +641,6 @@ body {
 
 .contentAuthAddressRange {
     width: 128px;
-}
-
-.subclipTimes td {
-    padding: 5px;
-}
-
-.subclipTime {
-    padding-right: 10px !important;
 }
 
 .ui-jqgrid {

@@ -1,13 +1,7 @@
 ﻿@using AzureSkyMedia.PlatformServices;
 
 @{
-    string mediaCatcher = "display: none";
-    MediaStream[] mediaStreams = new MediaStream[] { };
-    if (Model != null)
-    {
-        mediaCatcher = "";
-        mediaStreams = Model;
-    }
+    MediaStream[] mediaStreams = Model;
 }
 
 <table class="mediaBar">
@@ -24,7 +18,7 @@
             @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'" })
         }
         </td>
-        <td style="@mediaCatcher">
+        <td>
             <table>
                 <tr>
                     <td class="streamNumber side">
@@ -42,7 +36,7 @@
         <td id="userButtonRight1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaAssetLibrary", "MediaLibrary.png", "window.location.href = '/asset'" })
+            @Html.Partial("SiteButton", new string[] { "mediaAssetClipper", "MediaClipper.png", "DisplayVideoClipper(' " + ViewData["languageCode"] + "')" })
         }
         </td>
         <td id="userButtonRight2">

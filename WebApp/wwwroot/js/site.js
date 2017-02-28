@@ -1,61 +1,13 @@
-﻿var _mediaAsset, _editedAssets, _inputAssets;
-function EndsWith(source, suffix) {
-    source = source.toLowerCase();
-    suffix = suffix.toLowerCase();
-    return (source.lastIndexOf(suffix) == source.length - suffix.length) > 0;
-}
-function SignOut(cookieName) {
-    $.removeCookie(cookieName);
-    window.location.href = "/account/signout";
-}
-function ReplaceAll(text, find, replace) {
-    var regExp = new RegExp(find, "g");
-    return text.replace(regExp, replace);
-}
-function CreateTip(targetId, tipText, tipPosition, hideEvent) {
-   $("#" + targetId).qtip({
-        content: { text: tipText },
-        position: tipPosition,
-        show: { delay: 1000 },
-        hide: { event: hideEvent }
-    });
-}
-function CreateTipTop(targetId, tipText, adjustX, adjustY, hideEvent) {
-    var tipPosition = { my: "bottom center", at: "top center", adjust: { x: adjustX, y: adjustY } };
-    CreateTip(targetId, tipText, tipPosition, hideEvent);
-}
-function CreateTipTopLeft(targetId, tipText, adjustX, adjustY, hideEvent) {
-    var tipPosition = { my: "bottom center", at: "top left", adjust: { x: adjustX, y: adjustY } };
-    CreateTip(targetId, tipText, tipPosition, hideEvent);
-}
-function CreateTipBottom(targetId, tipText, adjustX, adjustY, hideEvent) {
-    var tipPosition = { my: "top center", at: "bottom center", adjust: { x: adjustX, y: adjustY } };
-    CreateTip(targetId, tipText, tipPosition, hideEvent);
-}
-function CreateTipBottomLeft(targetId, tipText, adjustX, adjustY, hideEvent) {
-    var tipPosition = { my: "top center", at: "bottom left", adjust: { x: adjustX, y: adjustY } };
-    CreateTip(targetId, tipText, tipPosition, hideEvent);
-}
-function CreateTipLeft(targetId, tipText, adjustX, adjustY, hideEvent) {
-    var tipPosition = { my: "right center", at: "left center", adjust: { x: adjustX, y: adjustY } };
-    CreateTip(targetId, tipText, tipPosition, hideEvent);
-}
-function CreateTipRight(targetId, tipText, adjustX, adjustY, hideEvent) {
-    var tipPosition = { my: "left center", at: "right center", adjust: { x: adjustX, y: adjustY } };
-    CreateTip(targetId, tipText, tipPosition, hideEvent);
-}
-function SetTipVisible(targetId, tipVisible) {
-    $("#" + targetId).qtip("toggle", tipVisible);
-}
+﻿var _inputAssets, _mediaStreams, _streamNumber, _authToken;
 function SetLayout() {
-    CreateTipRight("siteHome", "Azure Sky Media<br /><br />Site Home");
-    CreateTipRight("siteCode", "Azure Sky Media<br /><br />Open Source");
-    CreateTipRight("accountInventory", "Azure Media Services<br /><br />Account Inventory");
-    CreateTipRight("accountDashboard", "Azure Media Services<br /><br />Account Dashboard");
-    CreateTipLeft("userDirectory", "Azure Active Directory<br /><br />B2C");
-    CreateTipLeft("userProfileEdit", "Azure Sky Media<br /><br />User Profile Edit");
-    CreateTipLeft("userSignIn", "Azure Sky Media<br /><br />User Identity");
-    CreateTipLeft("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
+    CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
+    CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");
+    CreateTipBottom("accountInventory", "Azure Media Services<br /><br />Account Inventory");
+    CreateTipBottom("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
+    CreateTipBottom("userDirectory", "Azure Active Directory<br /><br />B2C Service");
+    CreateTipBottom("userSignIn", "Azure Sky Media<br /><br />User Identity");
+    CreateTipBottom("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
+    CreateTipBottom("userProfileEdit", "Azure Sky Media<br /><br />User Profile Edit");
     CreateTipRight("amsPlatform", "Azure Media Services");
     CreateTipRight("amsPlayer", "Azure Media Player");
     CreateTipRight("mediaStreaming", "Azure Media Services<br /><br />Streaming");
@@ -70,11 +22,18 @@ function SetLayout() {
     CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Functions");
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
-    CreateTipTop("mediaAssetLibrary", "Azure Media Services<br /><br />Asset Library");
+    CreateTipTop("mediaAssetClipper", "Azure Media Services<br /><br />Video Clipper");
     CreateTipTop("mediaAssetAnalytics", "Azure Media Services<br /><br />Media Analytics");
+    $(".amp-logo").click(function () {
+        window.open("http://amslabs.azurewebsites.net/");
+    });
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });
+}
+function SignOut(cookieName) {
+    $.removeCookie(cookieName);
+    window.location.href = "/account/signout";
 }
 function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
     if (buttons == null) {
@@ -111,26 +70,6 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
 function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
     DisplayDialog(dialogId, title, message, buttons, null, width, onClose);
-}
-function GetMediaPlayer(editMode) {
-    var mediaPlayer = amp("mediaPlayer");
-    if (editMode) {
-        mediaPlayer.AMVE({
-            containerId: "videoEditor",
-            clipdataCallback: SetVideoEdit
-        });
-    }
-    $(".amp-logo").click(function () {
-        window.open("http://amslabs.azurewebsites.net/");
-    });
-    return mediaPlayer;
-}
-function SetPlayerSpinner(visible) {
-    if (visible) {
-        $(".vjs-loading-spinner").show();
-    } else {
-        $(".vjs-loading-spinner").hide();
-    }
 }
 function GetSourceType(sourceUrl) {
     return sourceUrl.toLowerCase().indexOf(".mp4") > -1 ? "video/mp4" : "application/vnd.ms-sstr+xml";
@@ -181,6 +120,75 @@ function GetProtectionInfo(protectionTypes, authToken) {
         }
     }
     return protectionInfo;
+}
+function GetMediaPlayer(clipMode) {
+    var videoId = clipMode ? "videoClipper" : "videoPlayer";
+    var mediaPlayer = amp(videoId);
+    if (clipMode) {
+        mediaPlayer.AMVE({
+            containerId: "mediaClipper",
+            clipdataCallback: CreateVideoClip
+        });
+    }
+    return mediaPlayer;
+}
+function SetPlayerSpinner(visible) {
+    if (visible) {
+        $(".vjs-loading-spinner").show();
+    } else {
+        $(".vjs-loading-spinner").hide();
+    }
+}
+function SetPlayerContent(mediaStream, languageCode, clipMode, autoPlay, authToken) {
+    var mediaPlayer = GetMediaPlayer(clipMode);
+    mediaPlayer.autoplay(autoPlay);
+    mediaPlayer.src(
+        [{
+            src: mediaStream.sourceUrl,
+            type: GetSourceType(mediaStream.sourceUrl),
+            protectionInfo: GetProtectionInfo(mediaStream.protectionTypes, authToken)
+        }],
+        mediaStream.textTracks
+    );
+    if (languageCode != "") {
+        var languageCode = languageCode.toLowerCase();
+        for (var i = 0; i < mediaPlayer.textTracks_.length; i++) {
+            if (mediaPlayer.textTracks_.tracks_[i].language.toLowerCase() == languageCode) {
+                mediaPlayer.textTracks_.tracks_[i].mode = "showing";
+            }
+        }
+    }
+}
+function DisplayVideoClipper(languageCode) {
+    var mediaStream = _mediaStreams[_streamNumber - 1];
+    var dialogId = "clipperDialog";
+    var title = "Azure Media Video Clipper";
+    var buttons = {};
+    var onClose = function () {
+        $("#mediaClipper").empty();
+        location.reload(true);
+    };
+    SetPlayerContent(mediaStream, languageCode, true, true, _authToken);
+    DisplayDialog(dialogId, title, null, buttons, null, null, onClose);
+}
+function CreateVideoClip(clipData) {
+    if (clipData != null) {
+        //if (clipData._amveUX.mode == 2) { // Rendered
+            // TBD
+        //} else {
+            $.post("/asset/filter",
+                {
+                    sourceUrl: clipData.src,
+                    filterName: clipData.title,
+                    markIn: Math.floor(clipData.markIn),
+                    markOut: Math.floor(clipData.markOut)
+                },
+                function (result) {
+                }
+            );
+        //}
+        $("#clipperDialog").dialog("close");
+    }
 }
 function ToggleMediaAnalytics(button) {
     ClearVideoOverlay();

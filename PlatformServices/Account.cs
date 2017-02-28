@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
                 string collectionId = Constants.Database.DocumentCollection.Metadata;
                 foreach (IAssetFile file in asset.AssetFiles)
                 {
-                    if (file.Name.EndsWith(Constants.Media.AssetFile.JsonExtension))
+                    if (file.Name.EndsWith(Constants.Media.FileExtension.Json))
                     {
                         string[] fileNameInfo = file.Name.Split(Constants.NamedItemsSeparator);
                         string documentId = fileNameInfo[0];
