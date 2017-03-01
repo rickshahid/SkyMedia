@@ -93,14 +93,6 @@ function GetInputAssets() {
             var inputAsset = {
                 AssetId: mediaAssets[i]
             };
-            if (_clippedAssets != null) {
-                for (var x = 0; x < _clippedAssets.length; x++) {
-                    if (inputAsset.AssetId == _clippedAssets[x].AssetId) {
-                        inputAsset.MarkIn = _clippedAssets[x].MarkIn;
-                        inputAsset.MarkOut = _clippedAssets[x].MarkOut;
-                    }
-                }
-            }
             inputAssets.push(inputAsset);
         }
     }

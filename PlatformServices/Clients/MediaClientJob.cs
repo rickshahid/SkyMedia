@@ -9,12 +9,12 @@ namespace AzureSkyMedia.PlatformServices
     {
         private INotificationEndPoint GetNotificationEndpoint(NotificationEndPointType endpointType)
         {
-            string endpointName = Constants.Media.Job.NotificationEndpointNameStorageQueue;
+            string endpointName = Constants.Media.JobNotification.EndpointNameStorageQueue;
             string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
             string endpointAddress = AppSetting.GetValue(settingKey);
             if (endpointType == NotificationEndPointType.WebHook)
             {
-                endpointName = Constants.Media.Job.NotificationEndpointNameWebHook;
+                endpointName = Constants.Media.JobNotification.EndpointNameWebHook;
                 settingKey = Constants.AppSettingKey.MediaJobNotificationWebHookUrl;
                 endpointAddress = AppSetting.GetValue(settingKey);
             }

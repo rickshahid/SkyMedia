@@ -24,16 +24,24 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(assets);
         }
 
-        public JsonResult filter(string sourceUrl, string filterName, int markIn, int markOut)
+        public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            if (string.IsNullOrEmpty(filterName))
+            if (string.IsNullOrEmpty(clipName))
             {
-                filterName = Guid.NewGuid().ToString();
+                clipName = Guid.NewGuid().ToString();
             }
-            object clipFilter = mediaClient.CreateClip(sourceUrl, filterName, markIn, markOut);
-            return Json(clipFilter);
+            object result;
+            if (clipMode == Constants.Media.RenderedClipMode)
+            {
+                result = Workflow.SubmitJob(mediaClient, sourceUrl);
+            }
+            else
+            {
+                result = mediaClient.CreateFilter(sourceUrl, clipName, markIn, markOut);
+            }
+            return Json(result);
         }
 
         public IActionResult index()

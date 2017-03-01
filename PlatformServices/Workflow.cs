@@ -126,5 +126,22 @@ namespace AzureSkyMedia.PlatformServices
             }
             return GetWorkflowResult(mediaClient, job, inputAssets);
         }
+
+        public static object SubmitJob(MediaClient mediaClient, string sourceUrl)
+        {
+            MediaJobTask jobTask = new MediaJobTask();
+            jobTask.MediaProcessor = MediaProcessor.EncoderStandard;
+            jobTask.ProcessorDocumentId = Constants.Media.ProcessorConfig.EncoderStandardDefaultPreset;
+
+            MediaJob mediaJob = new MediaJob();
+            mediaJob.Name = string.Empty;
+            mediaJob.Scale = ReservedUnitType.Premium;
+            mediaJob.Notification = NotificationEndPointType.WebHook;
+            mediaJob.Tasks = new MediaJobTask[] { jobTask };
+
+            IJob job = mediaClient.CreateJob(mediaJob);
+            MediaAssetInput[] inputAssets = mediaClient.GetInputAssets(sourceUrl);
+            return GetWorkflowResult(mediaClient, job, inputAssets);
+        }
     }
 }

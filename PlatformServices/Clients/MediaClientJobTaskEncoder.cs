@@ -9,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static bool PremiumWorkflow(string fileName)
         {
-            return fileName.EndsWith(Constants.Media.Job.PremiumWorkflowSuffix, StringComparison.InvariantCulture);
+            return fileName.EndsWith(Constants.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.InvariantCulture);
         }
 
         private static int OrderByWorkflow(MediaAssetInput leftSide, MediaAssetInput rightSide)

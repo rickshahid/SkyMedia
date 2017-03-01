@@ -217,6 +217,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Media
         {
+            public const int RenderedClipMode = 2;
+
             public struct ProcessorId
             {
                 public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
@@ -237,8 +239,10 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct ProcessorConfig
             {
+                public const string EncoderStandardDefaultPreset = "H264 Multiple Bitrate 720p Audio 5.1";
                 public const string EncoderStandardThumbnailsPreset = "Thumbnails";
                 public const string EncoderStandardThumbnailsFormat = "PngImage";
+                public const string EncoderPremiumWorkflowExtension = ".workflow";
 
                 public const string IndexerV1XPath = "/configuration/features/feature/settings/add";
                 public const string IndexerLanguageSpanish = "Spanish";
@@ -292,11 +296,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string WritePolicyName = "Default Write Access Policy";
             }
 
-            public struct Job
+            public struct JobNotification
             {
-                public const string NotificationEndpointNameStorageQueue = "Job Notification Storage Queue";
-                public const string NotificationEndpointNameWebHook = "Job Notification Web Hook";
-                public const string PremiumWorkflowSuffix = ".workflow";
+                public const string EndpointNameStorageQueue = "Job Notification Storage Queue";
+                public const string EndpointNameWebHook = "Job Notification Web Hook";
             }
 
             public struct TreeIcon

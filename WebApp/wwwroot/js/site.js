@@ -166,27 +166,24 @@ function DisplayVideoClipper(languageCode) {
     var buttons = {};
     var onClose = function () {
         $("#mediaClipper").empty();
-        location.reload(true);
     };
     SetPlayerContent(mediaStream, languageCode, true, true, _authToken);
     DisplayDialog(dialogId, title, null, buttons, null, null, onClose);
 }
 function CreateVideoClip(clipData) {
     if (clipData != null) {
-        //if (clipData._amveUX.mode == 2) { // Rendered
-            // TBD
-        //} else {
-            $.post("/asset/filter",
-                {
-                    sourceUrl: clipData.src,
-                    filterName: clipData.title,
-                    markIn: Math.floor(clipData.markIn),
-                    markOut: Math.floor(clipData.markOut)
-                },
-                function (result) {
-                }
-            );
-        //}
+        $.post("/asset/clip",
+            {
+                clipMode: clipData._amveUX.mode,
+                clipName: clipData.title,
+                sourceUrl: clipData.src,
+                markIn: Math.floor(clipData.markIn),
+                markOut: Math.floor(clipData.markOut)
+            },
+            function (result) {
+                window.location = window.location.href;
+            }
+        );
         $("#clipperDialog").dialog("close");
     }
 }
