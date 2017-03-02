@@ -129,7 +129,9 @@ namespace AzureSkyMedia.PlatformServices
                             if (!string.IsNullOrEmpty(jsonData))
                             {
                                 string documentId = databaseClient.CreateDocument(collectionId, jsonData);
-                                string processorName = jobTask.Name.Replace(' ', Constants.NamedItemSeparator);
+                                MediaProcessor mediaProcessor = Processors.GetMediaProcessorType(jobTask.MediaProcessorId);
+                                string processorName = Processors.GetMediaProcessorName(mediaProcessor);
+                                processorName = processorName.Replace(' ', Constants.NamedItemSeparator);
                                 string destinationFileName = string.Concat(documentId, Constants.NamedItemsSeparator, processorName, fileExtension);
                                 blobClient.CopyFile(outputAsset, asset, sourceFileName, destinationFileName, false);
                             }
