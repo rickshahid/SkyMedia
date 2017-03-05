@@ -15,7 +15,7 @@
         font-size: small !important;
     }
 
-    .streamCatcher {
+    .streamSlider {
         width: 100px !important;
     }
 }
@@ -33,7 +33,7 @@
         font-size: medium !important;
     }
 
-    .streamCatcher {
+    .streamSlider {
         width: 100px !important;
     }
 }
@@ -50,8 +50,8 @@
     .viewTitle, .accountContext, .streamInfo, .liveCountdown {
         font-size: large !important;
     }
-
-    .streamCatcher {
+ 
+    .streamSlider {
         width: 150px !important;
     }
 }
@@ -176,11 +176,11 @@ body {
     margin: 10px auto;
 }
 
-.streamCatcher {
+.streamSlider {
     width: 200px;
 }
 
-.streamCatcherHandle {
+.streamSliderHandle {
     color: azure !important;
     top: -12px !important;
     text-align: center;
@@ -192,9 +192,12 @@ body {
     color: azure;
 }
 
-.streamNumber.side {
-    padding-left: 15px;
+.streamNumber.left {
     padding-right: 15px;
+}
+
+.streamNumber.right {
+    padding-left: 15px;
 }
 
 .streamInfo {

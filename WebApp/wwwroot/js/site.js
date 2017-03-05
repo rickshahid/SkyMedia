@@ -22,6 +22,8 @@ function SetLayout() {
     CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Functions");
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
+    CreateTipTop("mediaStreamLeft", "Azure Media Services<br /><br />Stream Left");
+    CreateTipTop("mediaStreamRight", "Azure Media Services<br /><br />Stream Right");
     CreateTipTop("mediaAssetClipper", "Azure Media Services<br /><br />Video Clipper");
     CreateTipTop("mediaAssetAnalytics", "Azure Media Services<br /><br />Media Analytics");
     $(".amp-logo").click(function () {
@@ -29,6 +31,9 @@ function SetLayout() {
     });
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
+    });
+    $.ajaxSetup({
+        cache: false
     });
 }
 function SignOut(cookieName) {

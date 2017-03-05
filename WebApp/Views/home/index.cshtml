@@ -14,6 +14,15 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="~/js/amve.min.js"></script>
     <script type="text/javascript">
+        function SlideStreamNumber(slideDirection) {
+            var streamNumber = _streamNumber;
+            if (slideDirection == "left" && streamNumber > 1) {
+                streamNumber = streamNumber - 1;
+            } else if (slideDirection == "right" && streamNumber < _mediaStreams.length) {
+                streamNumber = streamNumber + 1;
+            }
+            window.location.href = "/?stream=" + streamNumber;
+        }
         function SetStreamNumber(streamNumber) {
             var sliderHandle = document.getElementsByClassName("ui-slider-handle")[0];
             if (streamNumber == 1 || streamNumber == _mediaStreams.length) {
@@ -176,17 +185,17 @@
             _streamNumber = @streamNumber;
             _authToken = "@authToken";
             var mediaStream = (_mediaStreams.length == 0) ? null : _mediaStreams[_streamNumber - 1];
-            var sliderWidth = $("#streamCatcher").width();
+            var sliderWidth = $("#streamSlider").width();
             var sliderStep = (_mediaStreams.length < 2) ? sliderWidth : Math.floor(sliderWidth / (_mediaStreams.length - 1));
             var sliderValue = (_streamNumber - 1) * sliderStep;
             var accountMessage = "@accountMessage";
-            $("#streamCatcher").slider({
+            $("#streamSlider").slider({
                 min: 0,
                 max: sliderWidth,
                 step: sliderStep,
                 value: sliderValue,
                 classes: {
-                    "ui-slider-handle": "streamCatcherHandle"
+                    "ui-slider-handle": "streamSliderHandle"
                 },
                 slide: function (event, ui) {
                     if (_mediaStreams.length > 0) {
@@ -197,8 +206,8 @@
                         if (protectionTypes.length > 0) {
                             streamName = streamName + "<br /><br />" + protectionTypes.join(", ");
                         }
-                        CreateTipTopLeft("streamCatcher", streamName, ui.value + 2, -10);
-                        SetTipVisible("streamCatcher", true);
+                        CreateTipTopLeft("streamSlider", streamName, ui.value + 2, -10);
+                        SetTipVisible("streamSlider", true);
                         SetStreamNumber(streamNumber);
                     }
                 },
