@@ -184,7 +184,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (XML)", "Custom");
                 $("#" + encoderOptionsRowId).show();
                 break;
-            case "IndexerV1":
+            case "Indexer_v1":
                 $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
                 indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
@@ -192,7 +192,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 SetJobTaskWidgets(taskNumber, true);
                 $("#" + indexerConfigRowId).show();
                 break;
-            case "IndexerV2":
+            case "Indexer_v2":
                 $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
                 indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
                 indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
@@ -394,7 +394,7 @@ function GetJobTask(taskNumber) {
                 }
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
-            case "IndexerV1":
+            case "Indexer_v1":
                 jobTask.IndexerSpokenLanguages = new Array();
                 $("#indexerSpokenLanguages" + taskNumber + " :selected").each(function (i, o) {
                     jobTask.IndexerSpokenLanguages[i] = $(o).text();
@@ -402,7 +402,7 @@ function GetJobTask(taskNumber) {
                 jobTask.IndexerCaptionWebVtt = $("#indexerCaptionWebVtt" + taskNumber).prop("checked");
                 jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
                 break
-            case "IndexerV2":
+            case "Indexer_v2":
                 jobTask.IndexerSpokenLanguages = $("#indexerSpokenLanguages" + taskNumber).val();
                 jobTask.IndexerCaptionWebVtt = $("#indexerCaptionWebVtt" + taskNumber).prop("checked");
                 jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
