@@ -49,18 +49,18 @@
             return mediaStreams;
         }
         function GetAnalyticsProcessor(fileName) {
-            var fileNameInfo = fileName.split("@Constants.NamedItemsSeparator");
-            var analyticsProcessor = fileNameInfo[1].replace("@Constants.NamedItemSeparator", " ");
-            return analyticsProcessor.replace("@Constants.Media.FileExtension.Json", "");
+            var fileNameInfo = fileName.split("@Constant.TextDelimiter.Identifier");
+            var analyticsProcessor = fileNameInfo[1];
+            return analyticsProcessor.replace("@Constant.Media.FileExtension.Json", "");
         }
         function SetAnalyticsProcessors(mediaStream) {
             var processors = document.getElementById("analyticsProcessors");
             processors.options.length = 0;
             processors.options[processors.options.length]= new Option("", "");
-            for (var i = 0; i < mediaStream.analyticsProcessors.length; i++) {
-                var processor = mediaStream.analyticsProcessors[i];
-                var optionName = processor.processorName;
-                var optionValue = processor.metadataFile;
+            for (var i = 0; i < mediaStream.analyticsMetadata.length; i++) {
+                var analyticsMetadata = mediaStream.analyticsMetadata[i];
+                var optionName = analyticsMetadata.processorName;
+                var optionValue = analyticsMetadata.fileName;
                 processors.options[processors.options.length]= new Option(optionName, optionValue);
             }
             $("#mediaMetadata").empty();
@@ -206,7 +206,7 @@
                         if (protectionTypes.length > 0) {
                             streamName = streamName + "<br /><br />" + protectionTypes.join(", ");
                         }
-                        CreateTipTopLeft("streamSlider", streamName, ui.value + 2, -10);
+                        CreateTipTopLeft("streamSlider", streamName, ui.value + 2, -15);
                         SetTipVisible("streamSlider", true);
                         SetStreamNumber(streamNumber);
                     }

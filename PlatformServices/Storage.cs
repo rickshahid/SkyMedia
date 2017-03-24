@@ -11,6 +11,11 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
+    public class StorageEntity : TableEntity
+    {
+        public DateTime? CreatedOn { get; set; }
+    }
+
     public static class Storage
     {
         private static string GetCapacityUsed(string authToken, string accountName)
@@ -38,7 +43,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 catch
                 {
-                    capacityUsed = Constants.NotAvailable;
+                    capacityUsed = Constant.NotAvailable;
                 }
             }
             return capacityUsed;
@@ -80,11 +85,11 @@ namespace AzureSkyMedia.PlatformServices
         {
             accountKey = string.Empty;
             string storageAccount = string.Empty;
-            string[] accountNames = AuthToken.GetClaimValues(authToken, Constants.UserAttribute.StorageAccountName);
-            string[] accountKeys = AuthToken.GetClaimValues(authToken, Constants.UserAttribute.StorageAccountKey);
+            string[] accountNames = AuthToken.GetClaimValues(authToken, Constant.UserAttribute.StorageAccountName);
+            string[] accountKeys = AuthToken.GetClaimValues(authToken, Constant.UserAttribute.StorageAccountKey);
             int accountIndex = GetAccountIndex(accountNames, accountName);
             accountKey = accountKeys[accountIndex];
-            storageAccount = string.Format(Constants.Storage.Account.Connection, accountName, accountKeys[accountIndex]);
+            storageAccount = string.Format(Constant.Storage.Account.Connection, accountName, accountKeys[accountIndex]);
             return string.IsNullOrEmpty(storageAccount) ? null : CloudStorageAccount.Parse(storageAccount);
         }
 
@@ -104,7 +109,7 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static CloudStorageAccount GetSystemAccount()
         {
-            string settingKey = Constants.AppSettingKey.AzureStorage;
+            string settingKey = Constant.AppSettingKey.AzureStorage;
             string storageAccount = AppSetting.GetValue(settingKey);
             return CloudStorageAccount.Parse(storageAccount);
         }
@@ -120,19 +125,19 @@ namespace AzureSkyMedia.PlatformServices
             string mappedCount;
             if (byteCount >= 1099511627776)
             {
-                mappedCount = (byteCount / 1099511627776.0).ToString(Constants.FormatNumber) + " TB";
+                mappedCount = (byteCount / 1099511627776.0).ToString(Constant.TextFormatter.Numeric) + " TB";
             }
             else if (byteCount >= 1073741824)
             {
-                mappedCount = (byteCount / 1073741824.0).ToString(Constants.FormatNumber) + " GB";
+                mappedCount = (byteCount / 1073741824.0).ToString(Constant.TextFormatter.Numeric) + " GB";
             }
             else if (byteCount >= 1048576)
             {
-                mappedCount = (byteCount / 1048576.0).ToString(Constants.FormatNumber) + " MB";
+                mappedCount = (byteCount / 1048576.0).ToString(Constant.TextFormatter.Numeric) + " MB";
             }
             else if (byteCount >= 1024)
             {
-                mappedCount = (byteCount / 1024.0).ToString(Constants.FormatNumber) + " KB";
+                mappedCount = (byteCount / 1024.0).ToString(Constant.TextFormatter.Numeric) + " KB";
             }
             else if (byteCount == 1)
             {

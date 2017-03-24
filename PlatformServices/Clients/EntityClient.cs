@@ -29,7 +29,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private void SetProperties(StorageEntity entity)
         {
-            entity.ETag = Constants.Storage.TableProperty.OpenConcurrency;
+            entity.ETag = Constant.Storage.TableProperty.OpenConcurrency;
             if (!entity.CreatedOn.HasValue)
             {
                 entity.CreatedOn = DateTime.UtcNow;
@@ -54,7 +54,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public IEnumerable<T> GetEntities<T>(string tableName, string partitionKey) where T : StorageEntity, new()
         {
-            string propertyName = Constants.Storage.TableProperty.PartitionKey;
+            string propertyName = Constant.Storage.TableProperty.PartitionKey;
             return GetEntities<T>(tableName, propertyName, QueryComparisons.Equal, partitionKey);
         }
 

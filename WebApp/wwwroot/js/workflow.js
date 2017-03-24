@@ -1,13 +1,14 @@
 ﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
+    CreateTipRight("mediaWorkflowSave", "Save Workflow");
+    CreateTipLeft("mediaWorkflowStart", "Start Workflow");
     CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
     CreateTipRight("mediaWorkflowTaskRemove", "Remove Job Task");
-    CreateTipLeft("mediaWorkflowStart", "Start Workflow");
     $("#mediaWorkflowTaskRemove").hide();
     if (uploadView) {
         var currentUrl = window.location.href;
-        if (currentUrl.indexOf("signiant.") > -1) {
+        if (currentUrl.indexOf("signiant") > -1) {
             $("#uploadSigniantFlight").show();
-        } else if (currentUrl.indexOf("aspera.") > -1) {
+        } else if (currentUrl.indexOf("aspera") > -1) {
             $("#uploadAsperaFasp").show();
         } else {
             $("#uploadSigniantFlight").show();
@@ -33,7 +34,7 @@
             $("#jobPriorityLabel").text(ui.value);
         }
     });
-    SetJobTaskWidgets(1, false);
+    SetJobTaskWidgets(1);
 }
 function ValidWorkflowInput(uploadView) {
     var validInput = true;
@@ -44,7 +45,7 @@ function ValidWorkflowInput(uploadView) {
             validInput = false;
         }
         if ($("#multipleFileAsset").prop("checked") && $("#inputAssetName").val() == "") {
-            CreateTipTop("inputAssetName", "Set Multiple File Asset Name");
+            CreateTipTop("inputAssetName", "Set New Asset Name");
             SetTipVisible("inputAssetName", true);
             $("#inputAssetName").focus();
             validInput = false;
@@ -52,17 +53,47 @@ function ValidWorkflowInput(uploadView) {
     } else {
         _inputAssets = GetInputAssets();
         if (_inputAssets.length == 0) {
-            CreateTipTopLeft("mediaAssets", "Check Media Asset(s)", 48, 5);
+            CreateTipTopLeft("mediaAssets", "Select Media Assets", 48, 8);
             SetTipVisible("mediaAssets", true);
             validInput = false;
         }
     }
     return ValidWorkflowTasks(validInput);
 }
-function ValidWorkflow(uploadView) {
+function ValidWorkflowTasks(validInput) {
+    var taskNumber = 1;
+    do {
+        var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
+        if (mediaProcessor != null) {
+            if (mediaProcessor == "None") {
+                CreateTipTop("mediaProcessor" + taskNumber, "Select Media Processor");
+                SetTipVisible("mediaProcessor" + taskNumber, true);
+                validInput = false;
+            }
+            var encoderConfig = $("#encoderConfig" + taskNumber).val();
+            if (encoderConfig == "Custom") {
+                var encoderConfigFile = $("#encoderConfigFile" + taskNumber).val();
+                if (encoderConfigFile == "") {
+                    CreateTipTop("encoderConfigFile" + taskNumber, "Select Custom Configuration File");
+                    SetTipVisible("encoderConfigFile" + taskNumber, true);
+                    validInput = false;
+                }
+            }
+            taskNumber = taskNumber + 1;
+        }
+    } while (mediaProcessor != null);
+    return validInput
+}
+function ValidWorkflowTaskClear(taskNumber) {
+    SetTipVisible("mediaProcessor" + taskNumber, false);
+    SetTipVisible("encoderConfigFile" + taskNumber, false);
+}
+function ValidWorkflow(uploadView, saveWorkflow) {
     if (ValidWorkflowInput(uploadView)) {
         if (uploadView) {
             _fileUploader.start();
+        } else if (saveWorkflow) {
+            SaveWorkflow();
         } else {
             StartWorkflow();
         }
@@ -120,20 +151,12 @@ function DisplayWorkflow(jobTasks, result) {
         }
     } else {
         title = "Azure Media Services Job";
+        if (result.templateId != null) {
+            title = title + " Template";
+        }
         message = result.name + "<br /><br />" + result.id;
     }
     DisplayMessage(title, message);
-}
-function GetJob() {
-    var jobTasks = GetJobTasks();
-    var job = {
-        Name: $("#jobName").val(),
-        Scale: $("#jobScale").val(),
-        Priority: $("#jobPriorityLabel").text(),
-        Notification: $("input[name='jobNotification']:checked").val(),
-        Tasks: jobTasks
-    };
-    return job;
 }
 function UploadWorkflow(files) {
     var job = GetJob();
@@ -145,6 +168,18 @@ function UploadWorkflow(files) {
             inputAssetName: $("#inputAssetName").val(),
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             publishInputAsset: $("#publishInputAsset").prop("checked"),
+            inputAssets: _inputAssets,
+            mediaJob: job
+        },
+        function (result) {
+            DisplayWorkflow(job.Tasks, result);
+        }
+    );
+}
+function SaveWorkflow() {
+    var job = GetJob();
+    $.post("/workflow/save",
+        {
             inputAssets: _inputAssets,
             mediaJob: job
         },

@@ -13,7 +13,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static Lazy<ConnectionMultiplexer> _service = new Lazy<ConnectionMultiplexer>(() =>
         {
-            string settingKey = Constants.AppSettingKey.AzureCache;
+            string settingKey = Constant.AppSettingKey.AzureCache;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountName = accountCredentials[0];
             string accountKey = accountCredentials[1];
@@ -30,7 +30,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public CacheClient(string authToken)
         {
-            _partitionId = AuthToken.GetClaimValue(authToken, Constants.UserAttribute.MediaAccountName);
+            _partitionId = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountName);
         }
 
         private IDatabase GetCache()
@@ -40,7 +40,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private string MapItemKey(string itemKey)
         {
-            return string.Concat(_partitionId, Constants.NamedItemSeparator, itemKey);
+            return string.Concat(_partitionId, Constant.TextDelimiter.Identifier, itemKey);
         }
 
         public MediaProcessor[] Initialize(string authToken)
@@ -50,11 +50,11 @@ namespace AzureSkyMedia.PlatformServices
             List<MediaProcessor> mediaProcessorList = new List<MediaProcessor>();
             foreach (IMediaProcessor mediaProcessor in mediaProcessors)
             {
-                MediaProcessor processorType = Processors.GetMediaProcessorType(mediaProcessor.Id);
+                MediaProcessor processorType = Processor.GetProcessorType(mediaProcessor.Id);
                 mediaProcessorList.Add(processorType);
             }
             MediaProcessor[] mediaProcessorTypes = mediaProcessorList.ToArray();
-            SetValue<MediaProcessor[]>(Constants.Cache.ItemKey.MediaProcessors, mediaProcessorTypes);
+            SetValue<MediaProcessor[]>(Constant.Cache.ItemKey.MediaProcessors, mediaProcessorTypes);
             return mediaProcessorTypes;
         }
 

@@ -15,7 +15,7 @@
         },
         sortname: "name",
         sortorder: "asc",
-        height: 352
+        height: 440
     });
     for (var i = 0; i < rows.length; i++) {
         $("#gridView").jqGrid("addRowData", rows[i].id, rows[i]);

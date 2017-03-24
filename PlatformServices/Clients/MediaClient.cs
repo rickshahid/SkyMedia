@@ -14,10 +14,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaClient(string authToken)
         {
-            string attributeName = Constants.UserAttribute.MediaAccountName;
+            string attributeName = Constant.UserAttribute.MediaAccountName;
             string accountName = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constants.UserAttribute.MediaAccountKey;
+            attributeName = Constant.UserAttribute.MediaAccountKey;
             string accountKey = AuthToken.GetClaimValue(authToken, attributeName);
 
             BindContext(accountName, accountKey);
@@ -34,14 +34,14 @@ namespace AzureSkyMedia.PlatformServices
             _media = new CloudMediaContext(credentials);
 
             int settingValue;
-            string settingKey = Constants.AppSettingKey.MediaConcurrentTransferCount;
+            string settingKey = Constant.AppSettingKey.MediaConcurrentTransferCount;
             string concurrentTransferCount = AppSetting.GetValue(settingKey);
             if (int.TryParse(concurrentTransferCount, out settingValue))
             {
                 _media.NumberOfConcurrentTransfers = settingValue;
             }
 
-            settingKey = Constants.AppSettingKey.MediaParallelTransferThreadCount;
+            settingKey = Constant.AppSettingKey.MediaParallelTransferThreadCount;
             string parallelTransferThreadCount = AppSetting.GetValue(settingKey);
             if (int.TryParse(parallelTransferThreadCount, out settingValue))
             {
@@ -56,7 +56,7 @@ namespace AzureSkyMedia.PlatformServices
             get { return _media.DefaultStorageAccount; }
         }
 
-        public object GetEntities(MediaEntity mediaEntity)
+        public object GetEntities(MediaEntity mediaEntity, bool gridView)
         {
             object entities = null;
             switch (mediaEntity)
@@ -110,80 +110,81 @@ namespace AzureSkyMedia.PlatformServices
                                 select x).ToArray();
                     break;
                 case MediaEntity.Processor:
-                    //entities = (from x in _media.MediaProcessors
-                    //            select x).ToArray();
-                    List<IMediaProcessor> mediaProcessors = new List<IMediaProcessor>();
-                    IMediaProcessor mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.EncoderStandard) as IMediaProcessor;
-                    if (mediaProcessor != null)
+                    if (gridView)
                     {
-                        mediaProcessors.Add(mediaProcessor);
+                        entities = (from x in _media.MediaProcessors
+                                    select x).ToArray();
                     }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.EncoderPremium) as IMediaProcessor;
-                    if (mediaProcessor != null)
+                    else
                     {
-                        mediaProcessors.Add(mediaProcessor);
+                        List<IMediaProcessor> mediaProcessors = new List<IMediaProcessor>();
+                        IMediaProcessor mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.EncoderStandard) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.EncoderPremium) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.EncoderUltra) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.Indexer) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.FaceDetection) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.FaceRedaction) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.VideoAnnotation) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.VideoSummarization) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.CharacterRecognition) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.ContentModeration) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.MotionDetection) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.MotionHyperlapse) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.MotionStabilization) as IMediaProcessor;
+                        if (mediaProcessor != null)
+                        {
+                            mediaProcessors.Add(mediaProcessor);
+                        }
+                        entities = mediaProcessors.ToArray();
                     }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.EncoderUltra) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.IndexerV1) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.IndexerV2) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.FaceDetection) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.FaceRedaction) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.MotionDetection) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.MotionHyperlapse) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.MotionStabilization) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.VideoAnnotation) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.VideoSummarization) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.CharacterRecognition) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    mediaProcessor = GetEntityById(MediaEntity.Processor, Constants.Media.ProcessorId.ContentModeration) as IMediaProcessor;
-                    if (mediaProcessor != null)
-                    {
-                        mediaProcessors.Add(mediaProcessor);
-                    }
-                    entities = mediaProcessors.ToArray();
                     break;
                 case MediaEntity.ProcessorUnit:
                     entities = (from x in _media.EncodingReservedUnits
@@ -223,6 +224,11 @@ namespace AzureSkyMedia.PlatformServices
                     break;
             }
             return entities;
+        }
+
+        public object GetEntities(MediaEntity mediaEntity)
+        {
+            return GetEntities(mediaEntity, false);
         }
 
         public object GetEntityById(MediaEntity mediaEntity, string entityId)

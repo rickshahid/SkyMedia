@@ -47,16 +47,16 @@ namespace AzureSkyMedia.PlatformServices
 
         public static HttpWebResponse SendText(string messageText, string mobileNumber)
         {
-            string settingKey = Constants.AppSettingKey.Twilio;
+            string settingKey = Constant.AppSettingKey.Twilio;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountName = accountCredentials[0];
             string accountKey = accountCredentials[1];
 
-            settingKey = Constants.AppSettingKey.TwilioMessageApi;
+            settingKey = Constant.AppSettingKey.TwilioMessageApi;
             string messageApi = string.Format(AppSetting.GetValue(settingKey), accountName);
             HttpWebRequest httpRequest = WebRequest.CreateHttp(messageApi);
             httpRequest.Method = "POST";
-            httpRequest.ContentType = Constants.ContentType.Url;
+            httpRequest.ContentType = Constant.ContentType.Url;
 
             string authToken = string.Concat(accountName, ":", accountKey);
             byte[] authBytes = Encoding.UTF8.GetBytes(authToken);
@@ -66,7 +66,7 @@ namespace AzureSkyMedia.PlatformServices
             Dictionary<string, string> parameters = new Dictionary<string, string>();
 
             string parameterName = "From";
-            settingKey = Constants.AppSettingKey.TwilioMessageFrom;
+            settingKey = Constant.AppSettingKey.TwilioMessageFrom;
             string parameterValue = AppSetting.GetValue(settingKey);
             parameters.Add(parameterName, parameterValue);
 

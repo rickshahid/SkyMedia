@@ -32,14 +32,14 @@ namespace AzureSkyMedia.PlatformServices
 
         public DatabaseClient(bool readWrite)
         {
-            string settingKey = readWrite ? Constants.AppSettingKey.AzureNoSqlReadWrite : Constants.AppSettingKey.AzureNoSqlReadOnly;
+            string settingKey = readWrite ? Constant.AppSettingKey.AzureNoSqlReadWrite : Constant.AppSettingKey.AzureNoSqlReadOnly;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];
 
             _database = new DocumentClient(new Uri(accountEndpoint), accountKey);
 
-            settingKey = Constants.AppSettingKey.NoSqlDatabaseId;
+            settingKey = Constant.AppSettingKey.NoSqlDatabaseId;
             _databaseId = AppSetting.GetValue(settingKey);
         }
 
@@ -49,7 +49,7 @@ namespace AzureSkyMedia.PlatformServices
             if (document != null)
             {
                 jsonDoc = JObject.Parse(document.ToString());
-                string[] documentProperties = Constants.Database.DocumentProperties.Split(Constants.MultiItemSeparator);
+                string[] documentProperties = Constant.Database.DocumentProperties.Split(Constant.TextDelimiter.Application);
                 foreach (string documentProperty in documentProperties)
                 {
                     jsonDoc.Remove(documentProperty);
@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public JObject GetDocument(string documentId)
         {
-            string[] documentInfo = documentId.Split(Constants.MultiItemSeparator);
+            string[] documentInfo = documentId.Split(Constant.TextDelimiter.Identifier);
             string collectionId = documentInfo[0];
             documentId = documentInfo[1];
             IQueryable<Document> query = _database.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId)
@@ -82,7 +82,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public void DeleteDocument(string collectionId, string documentId)
         {
-            string docId = string.Concat(collectionId, Constants.MultiItemSeparator, documentId);
+            string docId = string.Concat(collectionId, Constant.TextDelimiter.Identifier, documentId);
             JObject jsonDoc = GetDocument(docId);
             if (jsonDoc != null)
             {

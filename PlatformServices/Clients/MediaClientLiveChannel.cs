@@ -19,7 +19,7 @@ namespace AzureSkyMedia.PlatformServices
             creationOptions.AssetId = asset.Id;
 
             int archiveMinutesInt;
-            string settingKey = Constants.AppSettingKey.MediaChannelProgramArchiveMinutes;
+            string settingKey = Constant.AppSettingKey.MediaChannelProgramArchiveMinutes;
             string archiveMinutes = AppSetting.GetValue(settingKey);
             if (int.TryParse(archiveMinutes, out archiveMinutesInt))
             {
@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
 
             IPRange allAddresses = new IPRange();
             allAddresses.Address = new IPAddress(0);
-            allAddresses.Name = Constants.Media.Stream.AddressRangeAll;
+            allAddresses.Name = Constant.Media.Stream.AddressRangeAll;
             allAddresses.SubnetPrefixLength = 0;
 
             creationOptions.Input = new ChannelInput();
@@ -68,7 +68,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public void SignalChannel(string channelName, int cueId)
         {
-            string settingKey = Constants.AppSettingKey.MediaChannelAdvertisementSeconds;
+            string settingKey = Constant.AppSettingKey.MediaChannelAdvertisementSeconds;
             string timeSeconds = AppSetting.GetValue(settingKey);
             TimeSpan timeSpan = new TimeSpan(0, 0, int.Parse(timeSeconds));
 

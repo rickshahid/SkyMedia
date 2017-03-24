@@ -1,42 +1,46 @@
 ﻿@{
     int taskNumber = 1;
-    string taskRowId = "mediaWorkflowTaskRow" + taskNumber;
-    string mediaProcessorId = "mediaProcessor" + taskNumber;
-    string taskParentId = "taskParent" + taskNumber;
-    string encoderConfigRowId = "encoderConfigRow" + taskNumber;
-    string encoderConfigId = "encoderConfig" + taskNumber;
-    string encoderConfigFileRowId = "encoderConfigFileRow" + taskNumber;
-    string encoderConfigFileId = "encoderConfigFile" + taskNumber;
-    string encoderOptionsRowId = "encoderOptionsRow" + taskNumber;
-    string encoderProtectContentId = "encoderProtectContent" + taskNumber;
-    string encoderFragmentOutputId = "encoderFragmentOutput" + taskNumber;
-    string encoderContentProtectionRowId = "encoderContentProtectionRow" + taskNumber;
-    string encoderContentProtectionAesId = "encoderContentProtectionAes" + taskNumber;
-    string encoderContentProtectionDrmPlayReadyId = "encoderContentProtectionDrmPlayReady" + taskNumber;
-    string encoderContentProtectionDrmWidevineId = "encoderContentProtectionDrmWidevine" + taskNumber;
-    string encoderContentProtectionAuthTypeTokenId = "encoderContentProtectionAuthTypeToken" + taskNumber;
-    string encoderContentProtectionAuthTypeAddressId = "encoderContentProtectionAuthTypeAddress" + taskNumber;
-    string encoderContentProtectionAuthAddressRangeId = "encoderContentProtectionAuthAddressRange" + taskNumber;
-    string indexerConfigRowId = "indexerConfigRow" + taskNumber;
-    string indexerSpokenLanguagesId = "indexerSpokenLanguages" + taskNumber;
-    string indexerCaptionWebVttId = "indexerCaptionWebVtt" + taskNumber;
-    string indexerCaptionTtmlId = "indexerCaptionTtml" + taskNumber;
-    string faceDetectionConfigRowId = "faceDetectionConfigRow" + taskNumber;
-    string faceDetectionModeId = "faceDetectionMode" + taskNumber;
-    string faceRedactionConfigRowId = "faceRedactionConfigRow" + taskNumber;
-    string faceRedactionModeId = "faceRedactionMode" + taskNumber;
-    string motionConfigRowId = "motionConfigRow" + taskNumber;
-    string motionSensitivityLevelId = "motionSensitivityLevel" + taskNumber;
-    string motionDetectLightChangeId = "motionDetectLightChange" + taskNumber;
-    string hyperlapseConfigRowId = "hyperlapseConfigRow" + taskNumber;
-    string hyperlapseStartFrameId = "hyperlapseStartFrame" + taskNumber;
-    string hyperlapseFrameCountId = "hyperlapseFrameCount" + taskNumber;
-    string hyperlapseSpeedId = "hyperlapseSpeed" + taskNumber;
-    string summaryConfigRowId = "summaryConfigRow" + taskNumber;
-    string summaryDurationSecondsLabelId = "summaryDurationSecondsLabel" + taskNumber;
-    string summaryDurationSecondsId = "summaryDurationSeconds" + taskNumber;
-    string outputAssetNameId = "outputAssetName" + taskNumber;
-    string taskOptionsId = "taskOptions" + taskNumber;
+    string taskRowId = string.Concat("mediaWorkflowTaskRow", taskNumber);
+    string taskParentId = string.Concat("taskParent", taskNumber);
+    string mediaProcessorId = string.Concat("mediaProcessor", taskNumber);
+    string encoderConfigRowId = string.Concat("encoderConfigRow", taskNumber);
+    string encoderConfigDocId = string.Concat("encoderConfigDoc", taskNumber);
+    string encoderConfigId = string.Concat("encoderConfig", taskNumber);
+    string encoderConfigFileRowId = string.Concat("encoderConfigFileRow", taskNumber);
+    string encoderConfigFileDocId = string.Concat("encoderConfigFileDoc", taskNumber);
+    string encoderConfigFileId = string.Concat("encoderConfigFile", taskNumber);
+    string encoderOptionsRowId = string.Concat("encoderOptionsRow", taskNumber);
+    string encoderFragmentOutputId = string.Concat("encoderFragmentOutput", taskNumber);
+    string contentProtectionIdPrefix = "encoderContentProtection";
+    string contentProtectionId = string.Concat(contentProtectionIdPrefix, taskNumber);
+    string contentProtectionRowId = string.Concat(contentProtectionIdPrefix, "Row" + taskNumber);
+    string contentProtectionAesId = string.Concat(contentProtectionIdPrefix, "Aes" + taskNumber);
+    string contentProtectionDrmPlayReadyId = string.Concat(contentProtectionIdPrefix, "DrmPlayReady" + taskNumber);
+    string contentProtectionDrmWidevineId = string.Concat(contentProtectionIdPrefix, "DrmWidevine" + taskNumber);
+    string contentProtectionDrmFairPlayId = string.Concat(contentProtectionIdPrefix, "DrmFairPlay" + taskNumber);
+    string contentProtectionAuthTypeTokenId = string.Concat(contentProtectionIdPrefix, "AuthTypeToken" + taskNumber);
+    string contentProtectionAuthTypeAddressId = string.Concat(contentProtectionIdPrefix, "AuthTypeAddress" + taskNumber);
+    string contentProtectionAuthAddressRangeId = string.Concat(contentProtectionIdPrefix, "AuthAddressRange" + taskNumber);
+    string indexerConfigRowId = string.Concat("indexerConfigRow", taskNumber);
+    string indexerSpokenLanguagesId = string.Concat("indexerSpokenLanguages", taskNumber);
+    string indexerCaptionWebVttId = string.Concat("indexerCaptionWebVtt", taskNumber);
+    string indexerCaptionTtmlId = string.Concat("indexerCaptionTtml", taskNumber);
+    string faceDetectionConfigRowId = string.Concat("faceDetectionConfigRow", taskNumber);
+    string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
+    string faceRedactionConfigRowId = string.Concat("faceRedactionConfigRow", taskNumber);
+    string faceRedactionModeId = string.Concat("faceRedactionMode", taskNumber);
+    string summaryConfigRowId = string.Concat("summaryConfigRow", taskNumber);
+    string summaryDurationMinutesId = string.Concat("summaryDurationMinutes", taskNumber);
+    string summaryDurationSecondsId = string.Concat("summaryDurationSeconds", taskNumber);
+    string motionConfigRowId = string.Concat("motionConfigRow", taskNumber);
+    string motionSensitivityLevelId = string.Concat("motionSensitivityLevel", taskNumber);
+    string motionDetectLightChangeId = string.Concat("motionDetectLightChange", taskNumber);
+    string hyperlapseConfigRowId = string.Concat("hyperlapseConfigRow", taskNumber);
+    string hyperlapseStartFrameId = string.Concat("hyperlapseStartFrame", taskNumber);
+    string hyperlapseFrameCountId = string.Concat("hyperlapseFrameCount", taskNumber);
+    string hyperlapseSpeedId = string.Concat("hyperlapseSpeed", taskNumber);
+    string outputAssetNameId = string.Concat("outputAssetName", taskNumber);
+    string taskOptionsId = string.Concat("taskOptions", taskNumber);
 }
 
 <tr id="@taskRowId">
@@ -47,25 +51,27 @@
         <table class="jobTask">
             <tr>
                 <td class="inputLabel">
-                    Media Processor:
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-get-media-processor')">
+                        Media Processor:
+                    </span>
                 </td>
                 <td>
                     @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1)" })
                     &nbsp;
                     <span class="inputLabel">
-                        Parent Task #
+                        Use Parent Task #
                     </span>
                     <select id="@taskParentId" class="jobTaskParent" disabled>
                         <option value=""></option>
                     </select>
                     <span class="inputLabel">
-                        Dependency
+                        Output
                     </span>
                 </td>
             </tr>
             <tr id="@encoderConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-presets-overview')">
+                    <span id="@encoderConfigDocId" class="siteLink">
                         Encoder Config:
                     </span>
                 </td>
@@ -75,30 +81,30 @@
             </tr>
             <tr id="@encoderConfigFileRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-schema')">
+                    <span id="@encoderConfigFileDocId" class="siteLink">
                         Custom Config:
                     </span>
                 </td>
                 <td>
-                    @Html.TextBox(encoderConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file" })
+                    @Html.TextBox(encoderConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file", onchange = "SetEncoderConfig(this)" })
                 </td>
             </tr>
             <tr id="@indexerConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
-                        Audio Indexer:
+                        Indexer Config:
                     </span>
                 </td>
                 <td>
                     <select id="@indexerSpokenLanguagesId" multiple="multiple"></select>
                     &nbsp;
                     <span class="inputLabel">
-                        Captions:
+                        CC
                     </span>
                     &nbsp;
                     @Html.CheckBox(indexerCaptionWebVttId, true, new { disabled = "disabled" } )
                     <span class="inputLabel">
-                        VTT
+                        WebVTT
                     </span>
                     &nbsp;
                     @Html.CheckBox(indexerCaptionTtmlId, false)
@@ -120,7 +126,7 @@
                     </span>
                     @Html.RadioButton(faceDetectionModeId, "aggregateEmotion", false)
                     <span class="inputLabel faceDetectionMode">
-                        Aggregate Emotion
+                        Group Emotion
                     </span>
                     @Html.RadioButton(faceDetectionModeId, "perFaceEmotion", false)
                     <span class="inputLabel">
@@ -137,16 +143,42 @@
                 <td>
                     @Html.RadioButton(faceRedactionModeId, "analyze", true)
                     <span class="inputLabel faceRedactionMode">
-                        Analyze Only Mode
+                        Analyze Only
                     </span>
                     @Html.RadioButton(faceRedactionModeId, "redact", false)
                     <span class="inputLabel faceRedactionMode">
-                        Redact Mode
+                        Apply Redaction
                     </span>
                     @Html.RadioButton(faceRedactionModeId, "combined", false)
                     <span class="inputLabel">
                         Combined Mode
                     </span>
+                </td>
+            </tr>
+            <tr id="@summaryConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization')">
+                        Summarization:
+                    </span>
+                </td>
+                <td>
+                    <table class="spinnerConfig">
+                        <tr>
+                            <td class="inputLabel">
+                                Output Duration
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                <input id="@summaryDurationMinutesId" value="1" class="spinner d2" />
+                                Minutes
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                <input id="@summaryDurationSecondsId" value="0" class="spinner d2" />
+                                Seconds
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
             <tr id="@motionConfigRowId" style="display: none">
@@ -157,7 +189,7 @@
                 </td>
                 <td>
                     <span class="inputLabel">
-                        Sensitivity Level
+                        Sensitivity
                     </span>
                     <select id="@motionSensitivityLevelId" class="motionSensitivityLevel">
                         <option value="low">Low</option>
@@ -173,54 +205,35 @@
             <tr id="@hyperlapseConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content')">
-                        Hyperlapse:
+                        Motion Hyperlapse:
                     </span>
                 </td>
                 <td>
-                    <table class="motionHyperlapseConfig">
+                    <table class="spinnerConfig">
                         <tr>
                             <td class="inputLabel">
-                                Start Frame
-                            </td>
-                            <td>
-                                <input id="@hyperlapseStartFrameId" value="0" class="spinner d4" />
+                                <input id="@hyperlapseStartFrameId" value="0" class="spinner d7" />
+                                -
                             </td>
                             <td class="inputLabel">
+                                <input id="@hyperlapseFrameCountId" value="10000" class="spinner d7" />
                                 Frames
                             </td>
-                            <td>
-                                <input id="@hyperlapseFrameCountId" value="10000" class="spinner d5" />
-                            </td>
                             <td class="inputLabel">
+                                &nbsp;
+                                <input id="@hyperlapseSpeedId" value="2" class="spinner d2" />
                                 Speed
-                            </td>
-                            <td>
-                                <input id="@hyperlapseSpeedId" value="3" class="spinner d2" />
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
-            <tr id="@summaryConfigRowId" style="display: none">
-                <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization')">
-                        Summarization:
-                    </span>
-                </td>
-                <td>
-                    <span class="inputLabel">
-                        Output Video Duration
-                        <span id="@summaryDurationSecondsLabelId" class="sliderLabel">0:15</span>
-                    </span>
-                    <div id="@summaryDurationSecondsId" class="slider durationSeconds"></div>
-                </td>
-            </tr>
             <tr>
                 <td class="inputLabel">
-                    Output Asset:
+                    Output Asset Name:
                 </td>
                 <td>
-                    @Html.TextBox(outputAssetNameId, null, new { @class = "outputAssetName", placeholder = "[Output Asset Name]" })
+                    @Html.TextBox(outputAssetNameId, null, new { @class = "outputAssetName" })
                     &nbsp;
                     <select id="@taskOptionsId" multiple="multiple">
                         <option value="1">Encrypt Task Configuration</option>
@@ -232,18 +245,18 @@
             <tr id="@encoderOptionsRowId" style="display: none">
                 <td />
                 <td>
-                    @Html.CheckBox(encoderProtectContentId, false, new { onclick = "ShowContentProtection(this)" })
+                    @Html.CheckBox(encoderFragmentOutputId, false)
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/dotnet/api/microsoft.windowsazure.mediaservices.client.assetformatoption')">
+                        Content Pre-Fragment
+                    </span>
+                    &nbsp;
+                    @Html.CheckBox(contentProtectionId, false, new { onclick = "ShowContentProtection(this)" })
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
                         Content Protection
                     </span>
-                    &nbsp;
-                    @Html.CheckBox(encoderFragmentOutputId, false)
-                    <span class="inputLabel">
-                        Content (Output) Fragmentation
-                    </span>
                 </td>
             </tr>
-            <tr id="@encoderContentProtectionRowId" class="contentProtectionRow" style="display: none">
+            <tr id="@contentProtectionRowId" class="contentProtectionRow" style="display: none">
                 <td colspan="2">
                     <table>
                         <tr>
@@ -256,40 +269,49 @@
                                 <table class="contentProtectionOptions">
                                     <tr>
                                         <td class="inputLabel">
-                                            Delivery:
+                                            Encryption:
                                         </td>
                                         <td>
-                                            @Html.CheckBox(encoderContentProtectionAesId, false, new { onchange = "SetContentProtection(this)" })
+                                            @Html.CheckBox(contentProtectionAesId, false, new { onchange = "SetContentProtection(this)" })
                                             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-aes128')">
-                                                AES 128
+                                                AES
                                             </span>
-                                            &nbsp;
-                                            @Html.CheckBox(encoderContentProtectionDrmPlayReadyId, false, new { onchange = "SetContentProtection(this)" })
-                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
-                                                PlayReady DRM
+                                            <span class="contentProtectionOptionsEncryption">
+                                                or
                                             </span>
-                                            &nbsp;
-                                            @Html.CheckBox(encoderContentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)" })
-                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
-                                                Widevine DRM
+                                            <span class="contentProtectionOptionsEncryptionDrm">
+                                                @Html.CheckBox(contentProtectionDrmPlayReadyId, false, new { onchange = "SetContentProtection(this)" })
+                                                <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                    PlayReady
+                                                </span>
+                                                @Html.CheckBox(contentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)" })
+                                                <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                    Widevine
+                                                </span>
+                                                @Html.CheckBox(contentProtectionDrmFairPlayId, false, new { onchange = "SetContentProtection(this)", disabled = "disabled" })
+                                                <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-hls-with-fairplay')">
+                                                    FairPlay
+                                                </span>
                                             </span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="inputLabel">
-                                            AuthZ:
+                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
+                                                User Auth:
+                                            </span>
                                         </td>
                                         <td>
-                                            @Html.CheckBox(encoderContentProtectionAuthTypeTokenId, true)
+                                            @Html.CheckBox(contentProtectionAuthTypeTokenId, true)
                                             <span class="inputLabel">
                                                 Web Token
                                             </span>
                                             &nbsp;
-                                            @Html.CheckBox(encoderContentProtectionAuthTypeAddressId, false, new { onchange = "SetContentAuthAddressRange(this)" })
+                                            @Html.CheckBox(contentProtectionAuthTypeAddressId, false, new { onchange = "SetContentAuthAddressRange(this)" })
                                             <span class="inputLabel">
                                                 Address Range
                                             </span>
-                                            @Html.TextBox(encoderContentProtectionAuthAddressRangeId, null, new { @class = "contentAuthAddressRange", placeholder = "Start IPv4, End IPv4", disabled = "disabled" })
+                                            @Html.TextBox(contentProtectionAuthAddressRangeId, null, new { @class = "contentAuthAddressRange", placeholder = "Start IPv4, End IPv4", disabled = "disabled" })
                                         </td>
                                     </tr>
                                 </table>

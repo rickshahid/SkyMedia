@@ -6,12 +6,16 @@ namespace AzureSkyMedia.PlatformServices
     {
         public string Name { get; set; }
 
-        public ReservedUnitType Scale { get; set; }
-
         public int Priority { get; set; }
 
-        public NotificationEndPointType Notification { get; set; }
+        public string TemplateId { get; set; }
+
+        public bool SaveAsTemplate { get; set; }
 
         public MediaJobTask[] Tasks { get; set; }
+
+        public ReservedUnitType NodeType { get; set; }
+
+        public NotificationEndPointType NotificationType { get; set; }
     }
 }

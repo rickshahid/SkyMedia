@@ -40,9 +40,9 @@ namespace AzureSkyMedia.PlatformServices
             Claim tokenClaim = GetTokenClaim(authToken, claimName);
             if (tokenClaim != null)
             {
-                if (tokenClaim.Value.Contains(Constants.MultiItemSeparator.ToString()))
+                if (tokenClaim.Value.Contains(Constant.TextDelimiter.Application.ToString()))
                 {
-                    claimValues = tokenClaim.Value.Split(Constants.MultiItemSeparator);
+                    claimValues = tokenClaim.Value.Split(Constant.TextDelimiter.Application);
                     for (int i = 0; i < claimValues.Length; i++)
                     {
                         claimValues[i] = claimValues[i].Trim();

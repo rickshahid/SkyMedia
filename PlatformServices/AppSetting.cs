@@ -12,16 +12,16 @@ namespace AzureSkyMedia.PlatformServices
         private static string[] ParseConnection(string accountConnection)
         {
             List<string> parsedConnection = new List<string>();
-            string[] accountSettings = accountConnection.Split(Constants.MultiItemsSeparator);
+            string[] accountSettings = accountConnection.Split(Constant.TextDelimiter.Connection);
             foreach (string accountSetting in accountSettings)
             {
-                if (accountSetting.StartsWith(Constants.AppSettingKey.AccountNamePrefix, StringComparison.InvariantCultureIgnoreCase))
+                if (accountSetting.StartsWith(Constant.AppSettingKey.AccountNamePrefix, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    parsedConnection.Add(accountSetting.Remove(0, Constants.AppSettingKey.AccountNamePrefix.Length));
+                    parsedConnection.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountNamePrefix.Length));
                 }
-                else if (accountSetting.StartsWith(Constants.AppSettingKey.AccountKeyPrefix, StringComparison.InvariantCultureIgnoreCase))
+                else if (accountSetting.StartsWith(Constant.AppSettingKey.AccountKeyPrefix, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    parsedConnection.Add(accountSetting.Remove(0, Constants.AppSettingKey.AccountKeyPrefix.Length));
+                    parsedConnection.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountKeyPrefix.Length));
                 }
             }
             return parsedConnection.ToArray();
@@ -29,14 +29,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public static string[] GetValue(string settingKey, bool parseValue)
         {
-            string configValue = (ConfigRoot == null) ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
-            if (configValue == null) configValue = string.Empty;
-            return parseValue ? ParseConnection(configValue) : new string[] { configValue };
+            string settingValue = (ConfigRoot == null) ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
+            if (settingValue == null) settingValue = string.Empty;
+            return parseValue ? ParseConnection(settingValue) : new string[] { settingValue };
         }
 
         public static string GetValue(string settingKey)
         {
-            return GetValue(settingKey, false)[0];
+            string[] settingValue = GetValue(settingKey, false);
+            return settingValue.Length == 0 ? string.Empty : settingValue[0];
         }
     }
 }

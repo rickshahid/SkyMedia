@@ -33,13 +33,17 @@ namespace AzureSkyMedia.PlatformServices
         {
             using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                string collectionId = Constants.Database.DocumentCollection.Metadata;
+                string collectionId = Constant.Database.DocumentCollection.Metadata;
                 foreach (IAssetFile file in asset.AssetFiles)
                 {
-                    if (file.Name.EndsWith(Constants.Media.FileExtension.Json))
+                    if (file.Name.EndsWith(Constant.Media.FileExtension.Json))
                     {
-                        string[] fileNameInfo = file.Name.Split(Constants.NamedItemsSeparator);
-                        string documentId = fileNameInfo[0];
+                        string documentId = file.Name;
+                        string[] fileName = file.Name.Split(Constant.TextDelimiter.Identifier);
+                        if (fileName.Length > 0)
+                        {
+                            documentId = fileName[0];
+                        }
                         databaseClient.DeleteDocument(collectionId, documentId);
                     }
                 }
@@ -48,7 +52,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 locator.Delete();
             }
-            for (int i = asset.DeliveryPolicies.Count - 1; i > -1; i--)
+            for (int i = asset.DeliveryPolicies.Count - 1; i >= 0; i--)
             {
                 asset.DeliveryPolicies.RemoveAt(i);
             }
@@ -61,12 +65,12 @@ namespace AzureSkyMedia.PlatformServices
             if (gridView)
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor, gridView) as IMediaProcessor[];
             }
             else
             {
                 CacheClient cacheClient = new CacheClient(authToken);
-                string itemKey = Constants.Cache.ItemKey.MediaProcessors;
+                string itemKey = Constant.Cache.ItemKey.MediaProcessors;
                 MediaProcessor[] mediaProcessorTypes = cacheClient.GetValue<MediaProcessor[]>(itemKey);
                 if (mediaProcessorTypes == null)
                 {
@@ -75,7 +79,7 @@ namespace AzureSkyMedia.PlatformServices
                 NameValueCollection processors = new NameValueCollection();
                 foreach (MediaProcessor mediaProcessorType in mediaProcessorTypes)
                 {
-                    string processorName = Processors.GetMediaProcessorName(mediaProcessorType);
+                    string processorName = Processor.GetProcessorName(mediaProcessorType);
                     processors.Add(processorName, mediaProcessorType.ToString());
                 }
                 mediaProcessors = processors;
@@ -117,7 +121,7 @@ namespace AzureSkyMedia.PlatformServices
             IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
             IAssetFile[] files = mediaClient.GetEntities(MediaEntity.File) as IAssetFile[];
             IEncodingReservedUnit[] processorUnits = mediaClient.GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor, true) as IMediaProcessor[];
             IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
             IJobTemplate[] jobTemplates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
             IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];

@@ -1,7 +1,7 @@
 ;var MXI_DEBUG = true;
 /**
  * mOxie - multi-runtime File API & XMLHttpRequest L2 Polyfill
- * v1.5.2
+ * v1.5.3
  *
  * Copyright 2013, Moxiecode Systems AB
  * Released under GPL License.
@@ -9,7 +9,7 @@
  * License: http://www.plupload.com/license
  * Contributing: http://www.plupload.com/contributing
  *
- * Date: 2016-11-23
+ * Date: 2017-02-02
  */
 ;(function (global, factory) {
 	var extract = function() {
@@ -3336,7 +3336,7 @@ define("moxie/core/utils/Mime", [
 			
 			// convert extensions to mime types list
 			for (i = 0; i < filters.length; i++) {
-				ext = filters[i].extensions.split(/\s*,\s*/);
+				ext = filters[i].extensions.toLowerCase().split(/\s*,\s*/);
 
 				for (ii = 0; ii < ext.length; ii++) {
 					
@@ -3346,13 +3346,12 @@ define("moxie/core/utils/Mime", [
 					}
 
 					type = self.mimes[ext[ii]];
-					if (type && Basic.inArray(type, mimes) === -1) {
-						mimes.push(type);
-					}
 
 					// future browsers should filter by extension, finally
 					if (addMissingExtensions && /^\w+$/.test(ext[ii])) {
 						mimes.push('.' + ext[ii]);
+					} else if (type && Basic.inArray(type, mimes) === -1) {
+						mimes.push(type);
 					} else if (!type) {
 						// if we have no type in our map, then accept all
 						return [];
@@ -3367,6 +3366,8 @@ define("moxie/core/utils/Mime", [
 			var self = this, exts = [];
 			
 			Basic.each(mimes, function(mime) {
+				mime = mime.toLowerCase();
+
 				if (mime === '*') {
 					exts = [];
 					return false;
@@ -4353,7 +4354,9 @@ define('moxie/file/FileReader', [
  * Contributing: http://www.plupload.com/contributing
  */
 
-define('moxie/core/utils/Url', [], function() {
+define('moxie/core/utils/Url', [
+	'moxie/core/utils/Basic'
+], function(Basic) {
 	/**
 	Parse url into separate components and fill in absent parts with parts from current url,
 	based on https://raw.github.com/kvz/phpjs/master/functions/url/parse_url.js
@@ -4372,24 +4375,36 @@ define('moxie/core/utils/Url', [], function() {
 			https: 443
 		}
 		, uri = {}
-		, regex = /^(?:([^:\/?#]+):)?(?:\/\/()(?:(?:()(?:([^:@\/]*):?([^:@\/]*))?@)?([^:\/?#]*)(?::(\d*))?))?()(?:(()(?:(?:[^?#\/]*\/)*)()(?:[^?#]*))(?:\\?([^#]*))?(?:#(.*))?)/
+		, regex = /^(?:([^:\/?#]+):)?(?:\/\/()(?:(?:()(?:([^:@\/]*):?([^:@\/]*))?@)?(\[[\da-fA-F:]+\]|[^:\/?#]*)(?::(\d*))?))?()(?:(()(?:(?:[^?#\/]*\/)*)()(?:[^?#]*))(?:\\?([^#]*))?(?:#(.*))?)/
 		, m = regex.exec(url || '')
+		, isRelative
+		, isSchemeLess = /^\/\/\w/.test(url)
 		;
-					
+
+		switch (Basic.typeOf(currentUrl)) {
+			case 'undefined':
+				currentUrl = parseUrl(document.location.href, false);
+				break;
+
+			case 'string':
+				currentUrl = parseUrl(currentUrl, false);
+				break;
+		}
+
 		while (i--) {
 			if (m[i]) {
 				uri[key[i]] = m[i];
 			}
 		}
 
-		// when url is relative, we set the origin and the path ourselves
-		if (!uri.scheme) {
-			// come up with defaults
-			if (!currentUrl || typeof(currentUrl) === 'string') {
-				currentUrl = parseUrl(currentUrl || document.location.href);
-			}
+		isRelative = !isSchemeLess && !uri.scheme;
 
+		if (isSchemeLess || isRelative) {
 			uri.scheme = currentUrl.scheme;
+		}
+
+		// when url is relative, we set the origin and the path ourselves
+		if (isRelative) {
 			uri.host = currentUrl.host;
 			uri.port = currentUrl.port;
 
@@ -4410,8 +4425,8 @@ define('moxie/core/utils/Url', [], function() {
 
 		if (!uri.port) {
 			uri.port = ports[uri.scheme] || 80;
-		} 
-		
+		}
+
 		uri.port = parseInt(uri.port, 10);
 
 		if (!uri.path) {
@@ -4453,11 +4468,11 @@ define('moxie/core/utils/Url', [], function() {
 		function origin(url) {
 			return [url.scheme, url.host, url.port].join('/');
 		}
-			
+
 		if (typeof url === 'string') {
 			url = parseUrl(url);
-		}	
-		
+		}
+
 		return origin(parseUrl()) === origin(url);
 	};
 
@@ -6214,9 +6229,7 @@ define("moxie/image/Image", [
 				if (!Env.can('create_canvas')) {
 					throw new x.RuntimeError(x.RuntimeError.NOT_SUPPORTED_ERR);
 				}
-
-				var runtime = this.connectRuntime(this.ruid);
-				return runtime.exec.call(this, 'Image', 'getAsCanvas');
+				return this.exec('Image', 'getAsCanvas');
 			},
 
 			/**
@@ -6379,7 +6392,7 @@ define("moxie/image/Image", [
 					});
 
 					imgCopy.bind("Load", function() {
-						imgCopy.downsize(opts);
+						this.downsize(opts);
 					});
 
 					// if embedded thumb data is available and dimensions are big enough, use it
@@ -6405,6 +6418,10 @@ define("moxie/image/Image", [
 				if (this.ruid) {
 					this.getRuntime().exec.call(this, 'Image', 'destroy');
 					this.disconnectRuntime();
+				}
+				if (this.meta && this.meta.thumb) {
+					// thumb is blob, make sure we destroy it first
+					this.meta.thumb.data.destroy();
 				}
 				this.unbindAll();
 			}
@@ -6435,6 +6452,7 @@ define("moxie/image/Image", [
 				if (this.name === '') {
 					this.name = info.name;
 				}
+
 				return true;
 			} catch(ex) {
 				this.trigger('error', ex.code);
@@ -9158,7 +9176,7 @@ define("moxie/runtime/html5/image/Image", [
 
 		Basic.extend(this, {
 			loadFromBlob: function(blob) {
-				var comp = this, I = comp.getRuntime()
+				var I = this.getRuntime()
 				, asBinary = arguments.length > 1 ? arguments[1] : true
 				;
 
@@ -9177,7 +9195,7 @@ define("moxie/runtime/html5/image/Image", [
 						if (asBinary) {
 							_binStr = _toBinary(dataUrl);
 						}
-						_preload.call(comp, dataUrl);
+						_preload.call(this, dataUrl);
 					});
 				}
 			},
@@ -9201,6 +9219,7 @@ define("moxie/runtime/html5/image/Image", [
 					_imgInfo = new ImageInfo(_binStr);
 				}
 
+				// this stuff below is definitely having fun with itself
 				info = {
 					width: _getImg().width || 0,
 					height: _getImg().height || 0,
@@ -9213,7 +9232,7 @@ define("moxie/runtime/html5/image/Image", [
 				if (_preserveHeaders) {
 					info.meta = _imgInfo && _imgInfo.meta || this.meta || {};
 
-					// store thumbnail data as blob
+					// if data was taken from ImageInfo it will be a binary string, so we convert it to blob
 					if (info.meta && info.meta.thumb && !(info.meta.thumb.data instanceof Blob)) {
 						info.meta.thumb.data = new Blob(null, {
 							type: 'image/jpeg',
@@ -9419,14 +9438,14 @@ define("moxie/runtime/html5/image/Image", [
 			if (window.FileReader) {
 				fr = new FileReader();
 				fr.onload = function() {
-					callback(this.result);
+					callback.call(comp, this.result);
 				};
 				fr.onerror = function() {
 					comp.trigger('error', x.ImageError.WRONG_FORMAT);
 				};
 				fr.readAsDataURL(file);
 			} else {
-				return callback(file.getAsDataURL());
+				return callback.call(this, file.getAsDataURL());
 			}
 		}
 
@@ -10247,7 +10266,7 @@ define("moxie/runtime/flash/image/Image", [
 			, info = self.shimExec.call(this, 'Image', 'getInfo')
 			;
 
-			if (info.meta && info.meta.thumb && !(info.meta.thumb.data instanceof Blob)) {
+			if (info.meta && info.meta.thumb && info.meta.thumb.data && !(self.meta.thumb.data instanceof Blob)) {
 				info.meta.thumb.data = new Blob(self.uid, info.meta.thumb.data);
 			}
 			return info;
@@ -10794,7 +10813,7 @@ define("moxie/runtime/silverlight/image/Image", [
 				});
 
 				// save thumb data as blob
-				if (info.meta && info.meta.thumb && !(info.meta.thumb.data instanceof Blob)) {
+				if (info.meta && info.meta.thumb && info.meta.thumb.data && !(self.meta.thumb.data instanceof Blob)) {
 					info.meta.thumb.data = new Blob(self.uid, info.meta.thumb.data);
 				}
 			}

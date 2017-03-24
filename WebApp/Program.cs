@@ -8,12 +8,14 @@ namespace AzureSkyMedia.WebApp
     {
         public static void Main(string[] args)
         {
-            WebHostBuilder hostBuilder = new WebHostBuilder();
-            hostBuilder.UseKestrel();
-            hostBuilder.UseContentRoot(Directory.GetCurrentDirectory());
-            hostBuilder.UseIISIntegration();
-            hostBuilder.UseStartup<Startup>();
-            IWebHost webHost = hostBuilder.Build();
+            string contentRoot = Directory.GetCurrentDirectory();
+            WebHostBuilder webHostBuilder = new WebHostBuilder();
+            webHostBuilder.UseKestrel();
+            webHostBuilder.UseContentRoot(contentRoot);
+            webHostBuilder.UseIISIntegration();
+            webHostBuilder.UseStartup<Startup>();
+            webHostBuilder.UseApplicationInsights();
+            IWebHost webHost = webHostBuilder.Build();
             webHost.Run();
         }
     }

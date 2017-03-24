@@ -2,7 +2,7 @@
     string[] model = Model;
     string uploadView = model[0];
     string cssClass = "mediaWorkflow";
-    if (!string.IsNullOrEmpty(model[1]))
+    if (model.Length > 1)
     {
         cssClass = string.Concat(cssClass, " ", model[1]);
     }
@@ -19,15 +19,15 @@
     </tr>
     <tr class="mediaWorkflowJob">
         <td class="inputLabel">
-            Media Job:
+            Job Name:
         </td>
         <td>
-            @Html.TextBox("jobName", null, new { @class = "jobName", placeholder = "[Job Name]" })
+            @Html.TextBox("jobName", null, new { @class = "jobName" })
             &nbsp;
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-scale-media-processing-overview')">
-                Processing Scale
+                Job Node Type
             </span>
-            <select id="jobScale">
+            <select id="jobNode" class="jobNode">
                 <option value="0">S1</option>
                 <option value="1">S2</option>
                 <option value="2" selected>S3</option>
@@ -41,8 +41,11 @@
         </td>
     </tr>
     <tr>
-        <td />
+        <td class="inputLabel">
+            Job Template:
+        </td>
         <td>
+            @Html.DropDownList("jobTemplate", null, new { @class = "jobTemplate" })
             <span class="mediaWorkflowJobNotification">
                 Job State Notification
             </span>
@@ -64,11 +67,14 @@
             <table>
                 <tr>
                     <td>
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)" })
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowSave", "MediaWorkflowSave.png", "ValidWorkflow(" + uploadView + ", true)" })
+                    </td>
+                    <td>
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)", "mediaWorkflowTaskButtons1" })
                         @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskRemove", "MediaWorkflowTaskRemove.png", "RemoveJobTask(this)" })
                     </td>
                     <td class="mediaWorkflowStart">
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowStart", "MediaWorkflowStart.png", "ValidWorkflow(" + uploadView + ")" })
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowStart", "MediaWorkflowStart.png", "ValidWorkflow(" + uploadView + ", false)" })
                     </td>
                 </tr>
             </table>

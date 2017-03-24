@@ -1,241 +1,8 @@
-﻿function ReplaceAllText(currentText, oldText, newText) {
-    var regExp = new RegExp(oldText, "g");
-    return currentText.replace(regExp, newText);
-}
-function ValidWorkflowTasks(validInput) {
-    var taskNumber = 1;
-    do {
-        var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
-        if (mediaProcessor != null) {
-            if (mediaProcessor == "None") {
-                CreateTipTop("mediaProcessor" + taskNumber, "Select Media Processor");
-                SetTipVisible("mediaProcessor" + taskNumber, true);
-                validInput = false;
-            }
-            var encoderConfig = $("#encoderConfig" + taskNumber).val();
-            if (encoderConfig == "Custom") {
-                var encoderConfigFile = $("#encoderConfigFile" + taskNumber).val();
-                if (encoderConfigFile == "") {
-                    CreateTipTop("encoderConfigFile" + taskNumber, "Select Custom Configuration File");
-                    SetTipVisible("encoderConfigFile" + taskNumber, true);
-                    validInput = false;
-                }
-            }
-            taskNumber = taskNumber + 1;
-        }
-    } while (mediaProcessor != null);
-    return validInput
-}
-function GetTaskRowIndex(taskButton) {
+﻿function GetTaskRowIndex(taskButton) {
     return $(taskButton).parents("tr")[1].rowIndex;
 }
 function GetLastTaskNumber(lastTaskRow) {
     return parseInt(lastTaskRow.id.replace("mediaWorkflowTaskRow", ""));
-}
-function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
-    var taskRowHtml = ReplaceAllText(lastTaskRow.outerHTML, "mediaWorkflowTaskRow" + lastTaskNumber, "mediaWorkflowTaskRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "Job Task #" + lastTaskNumber, "Job Task #" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "mediaProcessor" + lastTaskNumber, "mediaProcessor" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "taskParent" + lastTaskNumber, "taskParent" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigRow" + lastTaskNumber, "encoderConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfig" + lastTaskNumber, "encoderConfig" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFileRow" + lastTaskNumber, "encoderConfigFileRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFile" + lastTaskNumber, "encoderConfigFile" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderOptionsRow" + lastTaskNumber, "encoderOptionsRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderProtectContent" + lastTaskNumber, "encoderProtectContent" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderFragmentOutput" + lastTaskNumber, "encoderFragmentOutput" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionRow" + lastTaskNumber, "encoderContentProtectionRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAes" + lastTaskNumber, "encoderContentProtectionAes" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionDrmPlayReady" + lastTaskNumber, "encoderContentProtectionDrmPlayReady" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionDrmWidevine" + lastTaskNumber, "encoderContentProtectionDrmWidevine" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeToken" + lastTaskNumber, "encoderContentProtectionAuthTypeToken" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSpokenLanguages" + lastTaskNumber, "indexerSpokenLanguages" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionMode" + lastTaskNumber, "faceRedactionMode" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "motionConfigRow" + lastTaskNumber, "motionConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "motionSensitivityLevel" + lastTaskNumber, "motionSensitivityLevel" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectLightChange" + lastTaskNumber, "motionDetectLightChange" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseConfigRow" + lastTaskNumber, "hyperlapseConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseStartFrame" + lastTaskNumber, "hyperlapseStartFrame" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseFrameCount" + lastTaskNumber, "hyperlapseFrameCount" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "hyperlapseSpeed" + lastTaskNumber, "hyperlapseSpeed" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summaryConfigRow" + lastTaskNumber, "summaryConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summaryDurationSeconds" + lastTaskNumber, "summaryDurationSeconds" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "outputAssetName" + lastTaskNumber, "outputAssetName" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "taskOptions" + lastTaskNumber, "taskOptions" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
-    return taskRowHtml;
-}
-function AddJobTaskLink(workflowTable, taskRowIndex) {
-    var taskLinkRow = workflowTable.insertRow(taskRowIndex);
-    var rowCell0 = taskLinkRow.insertCell(0);
-    var rowCell1 = taskLinkRow.insertCell(1);
-    taskLinkRow.className = "mediaWorkflowTaskLink";
-    rowCell1.innerHTML = "<hr />";
-}
-function AddJobTask(taskButton) {
-    var workflowTable = document.getElementById("mediaWorkflow");
-    var taskRowIndex = GetTaskRowIndex(taskButton);
-    var lastTaskRow = workflowTable.rows[taskRowIndex - 1];
-    var lastTaskNumber = GetLastTaskNumber(lastTaskRow);
-    var newTaskRow = workflowTable.insertRow(taskRowIndex);
-    var newTaskNumber = lastTaskNumber + 1;
-    ClearJobTaskWidgets(lastTaskNumber);
-    newTaskRow.outerHTML = GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber);
-    AddJobTaskLink(workflowTable, taskRowIndex);
-    SetJobTaskParents(newTaskNumber);
-    SetJobTaskWidgets(newTaskNumber, false);
-    SetJobTaskWidgets(lastTaskNumber, false);
-    var mediaProcessor = $("#mediaProcessor" + newTaskNumber)[0];
-    SetProcessorConfig(mediaProcessor, newTaskNumber);
-    $("#mediaWorkflowTaskRemove").show();
-    if (lastTaskNumber == 8) {
-        var marginLeft = $("#mediaWorkflowTaskAdd").css("margin-left");
-        $("#mediaWorkflowTaskRemove").css("margin-left", marginLeft);
-        $("#mediaWorkflowTaskAdd").hide();
-    }
-}
-function RemoveJobTask(taskButton) {
-    var workflowTable = document.getElementById("mediaWorkflow");
-    var taskRowIndex = GetTaskRowIndex(taskButton);
-    var lastTaskRow = workflowTable.rows[taskRowIndex - 1];
-    var lastTaskNumber = GetLastTaskNumber(lastTaskRow);
-    workflowTable.deleteRow(lastTaskRow.rowIndex - 1);
-    workflowTable.deleteRow(lastTaskRow.rowIndex);
-    $("#mediaWorkflowTaskAdd").show();
-    $("#mediaWorkflowTaskRemove").css("margin-left", "");
-    if (lastTaskNumber == 2) {
-        $("#mediaWorkflowTaskRemove").hide();
-    }
-}
-function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds) {
-    $("#" + encoderConfigFileId).val("");
-    if (encoderConfigOptions != null) {
-        encoderConfigOptions.length = 0;
-    }
-    if (indexerLanguageOptions != null) {
-        indexerLanguageOptions.length = 0;
-    }
-    for (var i = 0; i < hideRowIds.length; i++) {
-        $("#" + hideRowIds[i]).hide();
-    }
-}
-function SetProcessorConfig(mediaProcessor, taskNumber) {
-    var encoderConfigRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigRow");
-    var encoderConfigId = mediaProcessor.id.replace("mediaProcessor", "encoderConfig");
-    var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
-    var encoderConfigFileRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFileRow");
-    var encoderConfigFileId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFile");
-    var encoderOptionsRowId = mediaProcessor.id.replace("mediaProcessor", "encoderOptionsRow");
-    var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
-    var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
-    var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "indexerSpokenLanguages");
-    var indexerLanguageOptions = $("#" + indexerLanguagesId)[0].options;
-    var faceDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionConfigRow");
-    var faceRedactionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceRedactionConfigRow");
-    var motionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionConfigRow");
-    var hyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "hyperlapseConfigRow");
-    var summaryConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summaryConfigRow");
-    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, motionConfigRowId, hyperlapseConfigRowId, summaryConfigRowId];
-    ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds);
-    if (mediaProcessor.value != "None") {
-        switch (mediaProcessor.value) {
-            case "EncoderStandard":
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 4K (12 levels, 1000 - 20000 kbps) AAC 5.1", "H264 Multiple Bitrate 4K Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 4K (12 levels, 1000 - 20000 kbps) AAC", "H264 Multiple Bitrate 4K");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 1080p (8 levels, 400 - 6000 kbps) AAC 5.1", "H264 Multiple Bitrate 1080p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 1080p (8 levels, 400 - 6000 kbps) AAC", "H264 Multiple Bitrate 1080p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 720p (6 levels, 400 - 3400 kbps) AAC 5.1", "H264 Multiple Bitrate 720p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 720p (6 levels, 400 - 3400 kbps) AAC", "H264 Multiple Bitrate 720p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 16x9 for iOS (8 levels, 200 - 8500 kbps) AAC", "H264 Multiple Bitrate 16x9 for iOS");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 16x9 SD (5 levels, 400 - 1900 kbps) AAC 5.1", "H264 Multiple Bitrate 16x9 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 16x9 SD (5 levels, 400 - 1900 kbps) AAC", "H264 Multiple Bitrate 16x9 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 4x3 for iOS (8 levels, 200 - 8500 kbps) AAC", "H264 Multiple Bitrate 4x3 for iOS");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 4x3 SD (5 levels, 400 - 1600 kbps) AAC 5.1", "H264 Multiple Bitrate 4x3 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 MBR 4x3 SD (5 levels, 400 - 1600 kbps) AAC", "H264 Multiple Bitrate 4x3 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 4K (18000 kbps) AAC 5.1", "H264 Single Bitrate 4K Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 4K (18000 kbps) AAC", "H264 Single Bitrate 4K");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 1080p (6750 kbps) AAC 5.1", "H264 Single Bitrate 1080p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 1080p (6750 kbps) AAC", "H264 Single Bitrate 1080p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 720p (4500 kbps) AAC 5.1", "H264 Single Bitrate 720p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 720p (4500 kbps) AAC", "H264 Single Bitrate 720p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 720p for Android (2000 kbps) AAC", "H264 Single Bitrate 720p for Android");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 16x9 SD (2200 kbps) AAC 5.1", "H264 Single Bitrate 16x9 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 16x9 SD (2200 kbps) AAC", "H264 Single Bitrate 16x9 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 4x3 SD (1600 kbps) AAC 5.1", "H264 Single Bitrate 4x3 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR 4x3 SD (1600 kbps) AAC", "H264 Single Bitrate 4x3 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR High Quality SD for Android (500 kbps) AAC", "H264 Single Bitrate High Quality SD for Android");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - H.264 SBR Low Quality SD for Android (56 kbps) AAC", "H264 Single Bitrate Low Quality SD for Android");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Preset - Thumbnails (PNG Format, 5% Intervals, 640 x 360 px)", "Thumbnails");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (JSON)", "Custom");
-                encoderConfigOptions.selectedIndex = 4;
-                $("#" + encoderOptionsRowId).show();
-                break;
-            case "EncoderPremium":
-            case "EncoderUltra":
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("None - No Custom Media Processor Configuration File", "None");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom - Media Processor Configuration File (XML)", "Custom");
-                $("#" + encoderOptionsRowId).show();
-                break;
-            case "Indexer_v1":
-                $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
-                indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Spanish", "EsEs");
-                SetJobTaskWidgets(taskNumber, true);
-                $("#" + indexerConfigRowId).show();
-                break;
-            case "Indexer_v2":
-                $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
-                indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Spanish", "EsEs");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Arabic (Egyptian)", "ArEg");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Chinese", "ZhCn");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("French", "FrFr");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("German", "DeDe");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Italian", "ItIt");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Japanese", "JaJp");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Portuguese", "PtBr");
-                SetJobTaskWidgets(taskNumber, false);
-                $("#" + indexerConfigRowId).show();
-                break;
-            case "FaceDetection":
-                $("#" + faceDetectionConfigRowId).show();
-                break;
-            case "FaceRedaction":
-                $("#" + faceRedactionConfigRowId).show();
-                break;
-            case "MotionDetection":
-                $("#" + motionConfigRowId).show();
-                break;
-            case "MotionHyperlapse":
-                $("#" + hyperlapseConfigRowId).show();
-                break;
-            case "VideoSummarization":
-                $("#" + summaryConfigRowId).show();
-                break;
-        }
-        if (encoderConfigOptions.length > 0) {
-            $("#" + encoderConfigRowId).show();
-            $("#" + encoderConfigId).change();
-        }
-    }
-}
-function SetEncoderConfigOptions(encoderConfig) {
-    var encoderConfigFileRowId = encoderConfig.id.replace("encoderConfig", "encoderConfigFileRow");
-    if (encoderConfig.value == "Custom") {
-        $("#" + encoderConfigFileRowId).show();
-    } else {
-        $("#" + encoderConfigFileRowId).hide();
-    }
 }
 function SetJobTaskParents(taskNumber) {
     var taskParent = $("#taskParent" + taskNumber)[0];
@@ -248,111 +15,76 @@ function SetJobTaskParents(taskNumber) {
         taskParent.disabled = false;
     }
 }
-function SetJobTaskWidgets(taskNumber, indexerV1) {
+function SetJobTaskWidgets(taskNumber) {
     var languageCount = $("#indexerSpokenLanguages" + taskNumber + " option").length;
     $("#indexerSpokenLanguages" + taskNumber).multiselect({
-        noneSelectedText: "0 of " + languageCount + " Languages Enabled",
-        selectedText: "# of " + languageCount + " Languages Enabled",
-        classes: "multiSelectOptions mediaProcessor" + (indexerV1 ? " mediaIndexerLanguages" : ""),
+        noneSelectedText: "0 of " + languageCount + " Spoken Languages",
+        selectedText: "# of " + languageCount + " Spoken Languages",
+        classes: "multiSelectOptions mediaProcessor",
         header: false
     });
-    $("#hyperlapseStartFrame" + taskNumber).spinner({
-        min: 0,
-        max: 9999
+    $.widget("ui.spinnerEx1", $.ui.spinner, {
+        _format: function (value) {
+            if (value < 10) {
+                value = "0" + value;
+            }
+            return value;
+        },
+        _parse: function (value) {
+            return parseInt(value);
+        }
     });
-    $("#hyperlapseFrameCount" + taskNumber).spinner({
-        min: 0,
-        max: 10000
-    });
-    $.widget("ui.spinnerEx", $.ui.spinner, {
+    $.widget("ui.spinnerEx2", $.ui.spinner, {
         _format: function (value) {
             return value + "x";
         },
         _parse: function (value) {
-            return parseFloat(value);
+            return parseInt(value);
         }
     });
-    $("#hyperlapseSpeed" + taskNumber).spinnerEx({
+    $("#summaryDurationMinutes" + taskNumber).spinnerEx1({
+        min: 0,
+        max: 99
+    });
+    $("#summaryDurationSeconds" + taskNumber).spinnerEx1({
+        min: 0,
+        max: 59
+    });
+    $("#hyperlapseStartFrame" + taskNumber).spinner({
+        min: 0,
+        max: 9999999
+    });
+    $("#hyperlapseFrameCount" + taskNumber).spinner({
+        min: 0,
+        max: 9999999
+    });
+    $("#hyperlapseSpeed" + taskNumber).spinnerEx2({
         min: 1,
         max: 9
     });
-    $("#summaryDurationSeconds" + taskNumber).slider({
-        min: 15,
-        max: 180,
-        step: 1,
-        classes: {
-            "ui-slider-handle": "sliderHandle"
-        },
-        slide: function (event, ui) {
-            var dateTime = new Date(null);
-            dateTime.setSeconds(ui.value);
-            var seconds = dateTime.getSeconds();
-            if (seconds < 10) {
-                seconds = "0" + seconds;
-            }
-            var duration = dateTime.getMinutes() + ":" + seconds;
-            $("#summaryDurationSecondsLabel" + taskNumber).text(duration);
-        }
-    });
     $("#taskOptions" + taskNumber).multiselect({
-        noneSelectedText: "0 of 3 Task Options Enabled",
-        selectedText: "# of 3 Task Options Enabled",
+        noneSelectedText: "0 of 3 Job Task Options",
+        selectedText: "# of 3 Job Task Options",
         classes: "multiSelectOptions jobTaskOptions",
         header: false
     });
 }
 function ClearJobTaskWidgets(lastTaskNumber) {
     $("#indexerSpokenLanguages" + lastTaskNumber).multiselect("destroy");
+    $("#summaryDurationMinutes" + lastTaskNumber).spinnerEx1("destroy");
+    $("#summaryDurationSeconds" + lastTaskNumber).spinnerEx1("destroy");
     $("#hyperlapseStartFrame" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseFrameCount" + lastTaskNumber).spinner("destroy");
-    $("#hyperlapseSpeed" + lastTaskNumber).spinnerEx("destroy");
+    $("#hyperlapseSpeed" + lastTaskNumber).spinnerEx2("destroy");
     $("#taskOptions" + lastTaskNumber).multiselect("destroy");
 }
-function ShowContentProtection(checkbox) {
-    var encoderContentProtectionRowId = checkbox.id.replace("encoderProtectContent", "encoderContentProtectionRow");
-    if (checkbox.checked) {
-        $("#" + encoderContentProtectionRowId).show();
-    } else {
-        $("#" + encoderContentProtectionRowId).hide();
-    }
-}
-function GetContentProtection(taskNumber) {
-    var contentProtection = null;
-    if ($("#encoderProtectContent" + taskNumber).prop("checked")) {
-        contentProtection = {
-            AES: $("#encoderContentProtectionAes" + taskNumber).prop("checked"),
-            DRMPlayReady: $("#encoderContentProtectionDrmPlayReady" + taskNumber).prop("checked"),
-            DRMWidevine: $("#encoderContentProtectionDrmWidevine" + taskNumber).prop("checked"),
-            ContentAuthTypeToken: $("#encoderContentProtectionAuthTypeToken" + taskNumber).prop("checked"),
-            ContentAuthTypeAddress: $("#encoderContentProtectionAuthTypeAddress" + taskNumber).prop("checked"),
-            ContentAuthAddressRange: $("#encoderContentProtectionAuthAddressRange" + taskNumber).val()
-        };
-    }
-    return contentProtection;
-}
-function SetContentProtection(checkbox) {
-    switch (checkbox.id) {
-        case "aes":
-            if (checkbox.checked) {
-                $("#drmPlayReady").prop("checked", false);
-                $("#drmWidevine").prop("checked", false);
-            }
-            break;
-        case "drmPlayReady":
-        case "drmWidevine":
-            if (checkbox.checked) {
-                $("#aes").prop("checked", false);
-            }
-            break;
-    }
-}
-function SetContentAuthAddressRange(checkBox) {
-    if (checkBox.checked) {
-        $("#contentAuthAddressRange").prop("disabled", false);
-        $("#contentAuthAddressRange").focus();
-    } else {
-        $("#contentAuthAddressRange").prop("disabled", true);
-    }
+function SetEncoderConfig(fileInput) {
+    var fileReader = new FileReader();
+    fileReader.onload = function (e) {
+        _encoderConfig = e.target.result;
+    };
+    var file = fileInput.files[0];
+    fileReader.readAsText(file);
 }
 function GetJobTaskOptions(taskNumber) {
     var taskOptions = 0;
@@ -365,13 +97,13 @@ function GetJobTaskOptions(taskNumber) {
 function GetJobTask(taskNumber) {
     var jobTask = null;
     var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
-    if (mediaProcessor != null && mediaProcessor != "None") {
+    if (mediaProcessor != "None") {
         var taskParent = $("#taskParent" + taskNumber).val();
         jobTask = {
             ParentIndex: (taskParent == "") ? null : taskParent - 1,
+            MediaProcessor: mediaProcessor,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
-            Options: GetJobTaskOptions(taskNumber),
-            MediaProcessor: mediaProcessor
+            Options: GetJobTaskOptions(taskNumber)
         };
         switch (jobTask.MediaProcessor) {
             case "EncoderStandard":
@@ -379,30 +111,16 @@ function GetJobTask(taskNumber) {
             case "EncoderUltra":
                 var encoderConfig = $("#encoderConfig" + taskNumber).val();
                 if (encoderConfig == "Custom") {
-                    var fileReader = new FileReader();
-                    fileReader.onload = function (e) {
-                        jobTask.ProcessorConfig = e.target.result;
-                    };
-                    var encoderConfigFile = $("#encoderConfigFile" + taskNumber)[0].files[0];
-                    fileReader.readAsText(encoderConfigFile);
-                    alert("Custom configuration loaded. Continue to job submission.");
+                    jobTask.ProcessorConfig = _encoderConfig;
                 } else {
-                    jobTask.ProcessorConfig = $("#encoderConfig" + taskNumber).val();
+                    jobTask.ProcessorConfig = encoderConfig;
                 }
                 if ($("#encoderFragmentOutput" + taskNumber).prop("checked")) {
                     jobTask.OutputAssetFormat = 1; // AssetFormatOption.AdaptiveStreaming
                 }
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
-            case "Indexer_v1":
-                jobTask.IndexerSpokenLanguages = new Array();
-                $("#indexerSpokenLanguages" + taskNumber + " :selected").each(function (i, o) {
-                    jobTask.IndexerSpokenLanguages[i] = $(o).text();
-                });
-                jobTask.IndexerCaptionWebVtt = $("#indexerCaptionWebVtt" + taskNumber).prop("checked");
-                jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
-                break
-            case "Indexer_v2":
+            case "Indexer":
                 jobTask.IndexerSpokenLanguages = $("#indexerSpokenLanguages" + taskNumber).val();
                 jobTask.IndexerCaptionWebVtt = $("#indexerCaptionWebVtt" + taskNumber).prop("checked");
                 jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
@@ -413,6 +131,11 @@ function GetJobTask(taskNumber) {
             case "FaceRedaction":
                 jobTask.FaceRedactionMode = $("#faceRedactionMode" + taskNumber + ":checked").val();
                 break;
+            case "VideoSummarization":
+                var durationMinutes = $("#summaryDurationMinutes" + taskNumber).val();
+                var durationSeconds = $("#summaryDurationSeconds" + taskNumber).val();
+                jobTask.SummaryDurationSeconds = (durationMinutes * 60) + durationSeconds;
+                break;
             case "MotionDetection":
                 jobTask.MotionSensitivityLevel = $("#motionSensitivityLevel" + taskNumber).val();
                 jobTask.MotionDetectLightChange = $("#motionDetectLightChange" + taskNumber).prop("checked");
@@ -422,25 +145,7 @@ function GetJobTask(taskNumber) {
                 jobTask.HyperlapseFrameCount = $("#hyperlapseFrameCount" + taskNumber).val();
                 jobTask.HyperlapseSpeed = $("#hyperlapseSpeed" + taskNumber).val().substr(0, 1);
                 break;
-            case "VideoSummarization":
-                var durationLabel = $("#summaryDurationSecondsLabel" + taskNumber).text();
-                var durationInfo = durationLabel.split(":");
-                var durationSeconds = (parseInt(durationInfo[0]) * 60) + parseInt(durationInfo[1]);
-                jobTask.SummaryDurationSeconds = durationSeconds;
-                break;
         }
     }
     return jobTask;
-}
-function GetJobTasks() {
-    var taskNumber = 1;
-    var jobTasks = new Array();
-    do {
-        var jobTask = GetJobTask(taskNumber);
-        if (jobTask != null) {
-            jobTasks.push(jobTask);
-        }
-        taskNumber = taskNumber + 1;
-    } while (jobTask != null)
-    return jobTasks;
 }

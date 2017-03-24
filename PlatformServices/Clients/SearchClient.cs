@@ -26,7 +26,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public SearchClient()
         {
-            string settingKey = Constants.AppSettingKey.AzureSearch;
+            string settingKey = Constant.AppSettingKey.AzureSearch;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountName = accountCredentials[0];
             string accountKey = accountCredentials[1];

@@ -2,29 +2,34 @@
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public struct Constants
+    public struct Constant
     {
         public const string NotAvailable = "N/A";
 
-        public const char MultiItemSeparator = ',';
-        public const char MultiItemsSeparator = ';';
+        public struct TextDelimiter
+        {
+            public const char Connection = ';';
+            public const char Identifier = '_';
+            public const char Application = ',';
+        }
 
-        public const char NamedItemSeparator = '-';
-        public const char NamedItemsSeparator = '_';
+        public struct TextFormatter
+        {
+            public const string Numeric = "N2";
+            public const string ClockTime = "hh':'mm':'ss";
 
-        public const string FormatNumber = "N2";
-        public const string FormatTime = "hh':'mm':'ss";
-
-        public const string CapitalSpacingExpression = @"\B[A-Z]";
-        public const string CapitalSpacingReplacement = " $0";
-
+            public const string SpacePattern = @"\B[A-Z]";
+            public const string SpaceReplacement = " $0";
+        }
+        
         public struct AppSettingKey
         {
             public const string AppRegion = "App.Region";
 
             public const string AppApiTitle = "App.Api.Title";
-            public const string AppApiDescription = "App.Api.Description";
             public const string AppApiVersion = "App.Api.Version";
+            public const string AppApiDescription = "App.Api.Description";
+            public const string AppApiEndpointUrl = "App.Api.EndpointUrl";
 
             public const string AppInsightsInstrumentationKey = "App.Insights.InstrumentationKey";
 
@@ -59,20 +64,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream3TextTracks = "Media.Stream3.TextTracks";
             public const string MediaStream3ProtectionTypes = "Media.Stream3.ProtectionTypes";
 
-            public const string MediaStream4Name = "Media.Stream4.Name";
-            public const string MediaStream4SourceUrl = "Media.Stream4.SourceUrl";
-            public const string MediaStream4TextTracks = "Media.Stream4.TextTracks";
-            public const string MediaStream4ProtectionTypes = "Media.Stream4.ProtectionTypes";
-
-            public const string MediaStream5Name = "Media.Stream5.Name";
-            public const string MediaStream5SourceUrl = "Media.Stream5.SourceUrl";
-            public const string MediaStream5TextTracks = "Media.Stream5.TextTracks";
-            public const string MediaStream5ProtectionTypes = "Media.Stream5.ProtectionTypes";
-
             public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
-
-            public const string MediaProcessorIndexerV1DocumentId = "Media.Processor.IndexerV1DocumentId";
-            public const string MediaProcessorIndexerV2DocumentId = "Media.Processor.IndexerV2DocumentId";
+            public const string MediaProcessorIndexerDocumentId = "Media.Processor.IndexerDocumentId";
 
             public const string MediaProcessorFaceDetectionDocumentId = "Media.Processor.FaceDetectionDocumentId";
             public const string MediaProcessorFaceRedactionDocumentId = "Media.Processor.FaceRedactionDocumentId";
@@ -224,17 +217,16 @@ namespace AzureSkyMedia.PlatformServices
                 public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
                 public const string EncoderPremium = "nb:mpid:UUID:77fea72a-107c-439e-b0bb-f88153b93461";
                 public const string EncoderUltra = "nb:mpid:UUID:816a4fda-76dc-463b-866b-9aa2f65deeac";
-                public const string IndexerV1 = "nb:mpid:UUID:233e57fc-36bb-4f6f-8f18-3b662747a9f8";
-                public const string IndexerV2 = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
+                public const string Indexer = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
                 public const string FaceDetection = "nb:mpid:UUID:6a9b8239-81ea-4762-8125-66b4f45737a2";
                 public const string FaceRedaction = "nb:mpid:UUID:3806d7a6-4985-4437-b098-50e3733310e8";
-                public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
-                public const string MotionHyperlapse = "nb:mpid:UUID:db657ff0-fc6e-407c-a03a-80fdca3b81cd";
-                public const string MotionStabilization = "nb:mpid:UUID:73845a7d-8505-421d-9af9-d4bdc7838bdf";
                 public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";
                 public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
                 public const string CharacterRecognition = "nb:mpid:UUID:074c3899-d9fb-448f-9ae1-4ebcbe633056";
                 public const string ContentModeration = "nb:mpid:UUID:bb312589-3bd4-4f2e-af26-2df8a984b395";
+                public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
+                public const string MotionHyperlapse = "nb:mpid:UUID:db657ff0-fc6e-407c-a03a-80fdca3b81cd";
+                public const string MotionStabilization = "nb:mpid:UUID:73845a7d-8505-421d-9af9-d4bdc7838bdf";
             }
 
             public struct ProcessorConfig
@@ -244,10 +236,9 @@ namespace AzureSkyMedia.PlatformServices
                 public const string EncoderStandardThumbnailsFormat = "PngImage";
                 public const string EncoderPremiumWorkflowExtension = ".workflow";
 
-                public const string IndexerV1XPath = "/configuration/features/feature/settings/add";
-                public const string IndexerLanguageSpanish = "Spanish";
-                public const string IndexerLanguageCodeEngligh = "en";
-                public const string IndexerLanguageCodeSpanish = "es";
+                //public const string IndexerLanguageSpanish = "Spanish";
+                //public const string IndexerLanguageCodeEngligh = "en";
+                //public const string IndexerLanguageCodeSpanish = "es";
             }
 
             public struct ContentProtection

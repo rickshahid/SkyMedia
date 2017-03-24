@@ -5,7 +5,10 @@
     <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
     <script type="text/javascript" src="~/js/uploader.js"></script>
     <script type="text/javascript" src="~/js/workflow.js"></script>
+    <script type="text/javascript" src="~/js/workflow.job.js"></script>
     <script type="text/javascript" src="~/js/workflow.task.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.configuration.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.protection.js"></script>
     <script type="text/javascript">
         $(function () {
             var signiantAccountKey = "@ViewData["signiantAccountKey"]";
@@ -29,4 +32,4 @@
     <br />
 </div>
 
-@Html.Partial("MediaWorkflow", new string[] { "true", "" })
+@Html.Partial("MediaWorkflow", new string[] { "true" })

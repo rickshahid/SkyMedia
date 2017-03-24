@@ -63,14 +63,14 @@ namespace AzureSkyMedia.PlatformServices
             IAsset asset = _media.Assets.Create(assetName, storageAccount, creationOptions);
 
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            string sourceContainerName = Constants.Storage.Blob.Container.Upload;
+            string sourceContainerName = Constant.Storage.Blob.Container.Upload;
 
             if (storageEncryption)
             {
                 foreach (string fileName in fileNames)
                 {
                     CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, null, fileName, false);
-                    Stream sourceStream = sourceBlob.OpenRead();
+                    System.IO.Stream sourceStream = sourceBlob.OpenRead();
 
                     IAssetFile assetFile = asset.AssetFiles.Create(fileName);
                     assetFile.Upload(sourceStream);

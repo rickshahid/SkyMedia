@@ -4,6 +4,16 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
+    public enum MediaJobNotificationEvent
+    {
+        None = 0,
+        JobStateChange = 1,
+        NotificationEndPointRegistration = 2,
+        NotificationEndPointUnregistration = 3,
+        TaskStateChange = 4,
+        TaskProgress = 5
+    }
+
     public sealed class MediaJobNotification
     {
         public MediaJobNotificationEvent EventType { get; set; }

@@ -1,10 +1,10 @@
-﻿var _inputAssets, _mediaStreams, _streamNumber, _authToken;
+﻿var _inputAssets, _encoderConfig, _mediaStreams, _streamNumber, _authToken;
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");
     CreateTipBottom("accountInventory", "Azure Media Services<br /><br />Account Inventory");
     CreateTipBottom("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
-    CreateTipBottom("userDirectory", "Azure Active Directory<br /><br />B2C Service");
+    CreateTipBottom("userDirectory", "Azure B2C<br /><br />Active Directory");
     CreateTipBottom("userSignIn", "Azure Sky Media<br /><br />User Identity");
     CreateTipBottom("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
     CreateTipBottom("userProfileEdit", "Azure Sky Media<br /><br />User Profile Edit");
@@ -14,16 +14,18 @@ function SetLayout() {
     CreateTipRight("mediaEncoding", "Azure Media Services<br /><br />Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br /><br />Content Protection");
     CreateTipRight("mediaAnalytics", "Azure Media Services<br /><br />Media Analytics");
+    CreateTipRight("contentDeliveryNetwork", "Azure CDN<br /><br />(Content Delivery Network)");
     CreateTipLeft("appServiceWeb", "Azure App Service<br /><br />Web Apps");
     CreateTipLeft("appServiceMobile", "Azure App Service<br /><br />Mobile Apps");
+    CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Function Apps");
     CreateTipLeft("appServiceApi", "Azure App Service<br /><br />API Apps");
-    CreateTipLeft("appServiceApiManagement", "Azure App Service<br /><br />API Management");
-    CreateTipLeft("appServiceLogic", "Azure App Service<br /><br />Logic Apps");
-    CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Functions");
+    CreateTipLeft("appServiceApiManagement", "Azure API Management");
+    CreateTipLeft("appServiceLogic", "Azure Logic Apps");
+    CreateTipLeft("appServiceBot", "Azure Bot Service");
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
-    CreateTipTop("mediaStreamLeft", "Azure Media Services<br /><br />Stream Left");
-    CreateTipTop("mediaStreamRight", "Azure Media Services<br /><br />Stream Right");
+    CreateTipTop("mediaStreamLeft", "Azure Media Services<br /><br />Stream Tuner Left");
+    CreateTipTop("mediaStreamRight", "Azure Media Services<br /><br />Stream Tuner Right");
     CreateTipTop("mediaAssetClipper", "Azure Media Services<br /><br />Video Clipper");
     CreateTipTop("mediaAssetAnalytics", "Azure Media Services<br /><br />Media Analytics");
     $(".amp-logo").click(function () {
@@ -80,37 +82,38 @@ function GetSourceType(sourceUrl) {
     return sourceUrl.toLowerCase().indexOf(".mp4") > -1 ? "video/mp4" : "application/vnd.ms-sstr+xml";
 }
 function GetLanguageLabel(languageCode) {
-    var languageLabel;
-    switch (languageCode.substr(0, 2).toLowerCase()) {
-        case "en":
-            languageLabel = "English";
-            break;
-        case "es":
-            languageLabel = "Spanish";
-            break;
-        case "ar":
-            languageLabel = "Arabic";
-            break;
-        case "zh":
-            languageLabel = "Chinese";
-            break;
-        case "fr":
-            languageLabel = "French";
-            break;
-        case "de":
-            languageLabel = "German";
-            break;
-        case "it":
-            languageLabel = "Italian";
-            break;
-        case "ja":
-            languageLabel = "Japanese";
-            break;
-        case "pt":
-            languageLabel = "Portuguese";
-            break;
-    }
-    return languageLabel;
+    return languageCode;
+//    var languageLabel;
+//    switch (languageCode.substr(0, 2).toLowerCase()) {
+//        case "en":
+//            languageLabel = "English";
+//            break;
+//        case "es":
+//            languageLabel = "Spanish";
+//            break;
+//        case "ar":
+//            languageLabel = "Arabic";
+//            break;
+//        case "zh":
+//            languageLabel = "Chinese";
+//            break;
+//        case "fr":
+//            languageLabel = "French";
+//            break;
+//        case "de":
+//            languageLabel = "German";
+//            break;
+//        case "it":
+//            languageLabel = "Italian";
+//            break;
+//        case "ja":
+//            languageLabel = "Japanese";
+//            break;
+//        case "pt":
+//            languageLabel = "Portuguese";
+//            break;
+//    }
+//    return languageLabel;
 }
 function GetProtectionInfo(protectionTypes, authToken) {
     var protectionInfo = null;

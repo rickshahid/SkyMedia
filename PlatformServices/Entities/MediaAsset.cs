@@ -8,12 +8,12 @@ namespace AzureSkyMedia.PlatformServices
         private string _cdnUrl;
         private IAsset _asset;
         private IAssetFile _file;
-        private string[] _protectionTypes;
+        private MediaProtection[] _protectionTypes;
 
         private MediaAsset(MediaClient mediaClient)
         {
             _mediaClient = mediaClient;
-            string settingKey = Constants.AppSettingKey.StorageCdnUrl;
+            string settingKey = Constant.AppSettingKey.StorageCdnUrl;
             _cdnUrl = AppSetting.GetValue(settingKey);
         }
 
@@ -38,7 +38,7 @@ namespace AzureSkyMedia.PlatformServices
         public MediaAsset(MediaClient mediaClient, IAssetFile file) : this(mediaClient)
         {
             _file = file;
-            _protectionTypes = new string[] { };
+            _protectionTypes = new MediaProtection[] { };
         }
 
         public string Id
@@ -69,13 +69,13 @@ namespace AzureSkyMedia.PlatformServices
                         {
                             switch (_protectionTypes[0])
                             {
-                                case "AES":
+                                case MediaProtection.AES:
                                     protectionLabel = string.Concat(protectionLabel, " & Envelope (AES)");
                                     break;
-                                case "PlayReady":
+                                case MediaProtection.PlayReady:
                                     protectionLabel = string.Concat(protectionLabel, " & DRM (PlayReady)");
                                     break;
-                                case "Widevine":
+                                case MediaProtection.Widevine:
                                     protectionLabel = string.Concat(protectionLabel, " & DRM (Widevine)");
                                     break;
                             }
@@ -92,7 +92,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                string treeIcon = (_file != null) ? Constants.Media.TreeIcon.MediaFile : Constants.Media.TreeIcon.MediaAsset;
+                string treeIcon = (_file != null) ? Constant.Media.TreeIcon.MediaFile : Constant.Media.TreeIcon.MediaAsset;
                 return string.Concat(_cdnUrl, treeIcon);
             }
         }
@@ -129,5 +129,20 @@ namespace AzureSkyMedia.PlatformServices
                 return new { protectionTypes = _protectionTypes };
             }
         }
+    }
+
+    public class MediaAssetInput
+    {
+        public string AssetId { get; set; }
+
+        public string AssetName { get; set; }
+
+        public string PrimaryFile { get; set; }
+
+        public string MarkIn { get; set; }
+
+        public string MarkOut { get; set; }
+
+        public string ClipDuration { get; set; }
     }
 }

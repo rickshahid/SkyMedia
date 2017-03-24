@@ -9,27 +9,26 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
+        private string _authScheme = OpenIdConnectDefaults.AuthenticationScheme;
+
         public void signin(string subdomain)
         {
-            string authScheme = OpenIdConnectDefaults.AuthenticationScheme;
             AuthenticationProperties authProperties = new AuthenticationProperties();
             authProperties.Items.Add("SubDomain", subdomain);
-            HttpContext.Authentication.ChallengeAsync(authScheme, authProperties).Wait();
+            HttpContext.Authentication.ChallengeAsync(_authScheme, authProperties).Wait();
         }
 
         public void profileedit(string subdomain)
         {
-            string authScheme = OpenIdConnectDefaults.AuthenticationScheme;
             AuthenticationProperties authProperties = new AuthenticationProperties();
             authProperties.Items.Add("SubDomain", subdomain);
-            HttpContext.Authentication.ChallengeAsync(authScheme, authProperties).Wait();
+            HttpContext.Authentication.ChallengeAsync(_authScheme, authProperties).Wait();
         }
 
         public void passwordreset()
         {
-            string authScheme = OpenIdConnectDefaults.AuthenticationScheme;
             AuthenticationProperties authProperties = new AuthenticationProperties();
-            HttpContext.Authentication.ChallengeAsync(authScheme, authProperties).Wait();
+            HttpContext.Authentication.ChallengeAsync(_authScheme, authProperties).Wait();
         }
 
         public IActionResult signout()

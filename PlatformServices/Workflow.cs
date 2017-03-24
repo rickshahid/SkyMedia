@@ -58,8 +58,8 @@ namespace AzureSkyMedia.PlatformServices
                     int clipDuration = markOut - markIn;
                     TimeSpan markInTime = new TimeSpan(0, 0, markIn);
                     TimeSpan clipDurationTime = new TimeSpan(0, 0, clipDuration);
-                    inputAssets[i].MarkIn = markInTime.ToString(Constants.FormatTime);
-                    inputAssets[i].ClipDuration = clipDurationTime.ToString(Constants.FormatTime);
+                    inputAssets[i].MarkIn = markInTime.ToString(Constant.TextFormatter.ClockTime);
+                    inputAssets[i].ClipDuration = clipDurationTime.ToString(Constant.TextFormatter.ClockTime);
                 }
             }
         }
@@ -131,13 +131,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaJobTask jobTask = new MediaJobTask();
             jobTask.MediaProcessor = MediaProcessor.EncoderStandard;
-            jobTask.ProcessorDocumentId = Constants.Media.ProcessorConfig.EncoderStandardDefaultPreset;
+            jobTask.ProcessorDocumentId = Constant.Media.ProcessorConfig.EncoderStandardDefaultPreset;
 
             MediaJob mediaJob = new MediaJob();
             mediaJob.Name = string.Empty;
-            mediaJob.Scale = ReservedUnitType.Premium;
-            mediaJob.Notification = NotificationEndPointType.WebHook;
+            mediaJob.Priority = 0;
             mediaJob.Tasks = new MediaJobTask[] { jobTask };
+            mediaJob.NodeType = ReservedUnitType.Premium;
+            mediaJob.NotificationType = NotificationEndPointType.WebHook;
 
             IJob job = mediaClient.CreateJob(mediaJob);
             MediaAssetInput[] inputAssets = mediaClient.GetInputAssets(sourceUrl);

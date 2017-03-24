@@ -2,7 +2,7 @@
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class MediaLiveEvent : StorageEntity
+    public class LiveEvent : StorageEntity
     {
         public DateTime EventStart { get; set; }
     }

@@ -13,33 +13,39 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class homeController : Controller
     {
-        private MediaTrack[] MapTextTracks(string textTracks)
+        private MediaTextTrack[] MapTextTracks(string textTracks)
         {
-            List<MediaTrack> tracks = new List<MediaTrack>();
+            List<MediaTextTrack> tracks = new List<MediaTextTrack>();
             if (!string.IsNullOrEmpty(textTracks))
             {
-                string[] tracksInfo = textTracks.Split(Constants.MultiItemsSeparator);
+                string[] tracksInfo = textTracks.Split(Constant.TextDelimiter.Connection);
                 foreach (string trackInfo in tracksInfo)
                 {
-                    MediaTrack track = new MediaTrack();
-                    string[] textTrack = trackInfo.Split(Constants.MultiItemSeparator);
+                    MediaTextTrack track = new MediaTextTrack();
+                    string[] textTrack = trackInfo.Split(Constant.TextDelimiter.Application);
                     track.Type = textTrack[0];
-                    track.Source = textTrack[1];
-                    track.Language = StreamFile.GetLanguageCode(track.Source);
+                    track.SourceUrl = textTrack[1];
+                    track.LanguageCode = Language.GetLanguageCode(track.SourceUrl);
+                    track.Label = Language.GetLanguageLabel(track.LanguageCode);
                     tracks.Add(track);
                 }
             }
             return tracks.ToArray();
         }
 
-        private string[] MapProtectionTypes(string streamProtectionTypes)
+        private MediaProtection[] MapProtectionTypes(string streamProtectionTypes)
         {
-            string[] protectionTypes = new string[] { };
+            List<MediaProtection> protectionTypes = new List<MediaProtection>();
             if (!string.IsNullOrEmpty(streamProtectionTypes))
             {
-                protectionTypes = streamProtectionTypes.Split(Constants.MultiItemSeparator);
+                string[] contentProtectionTypes = streamProtectionTypes.Split(Constant.TextDelimiter.Application);
+                foreach (string contentProtectionType in contentProtectionTypes)
+                {
+                    MediaProtection protectionType = (MediaProtection)Enum.Parse(typeof(MediaProtection), contentProtectionType);
+                    protectionTypes.Add(protectionType);
+                }
             }
-            return protectionTypes;
+            return protectionTypes.ToArray();
         }
 
         private void AddBaseStream(List<MediaStream> mediaStreams, string settingStreamName, string settingSourceUrl,
@@ -56,7 +62,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 mediaStream.SourceUrl = sourceUrl;
                 mediaStream.TextTracks = MapTextTracks(textTracks);
                 mediaStream.ProtectionTypes = MapProtectionTypes(protectionTypes);
-                mediaStream.AnalyticsProcessors = new MediaMetadata[] { };
+                mediaStream.AnalyticsMetadata = new MediaMetadata[] { };
                 mediaStreams.Add(mediaStream);
             }
         }
@@ -65,34 +71,22 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
 
-            string settingKey1 = Constants.AppSettingKey.MediaStream1Name;
-            string settingKey2 = Constants.AppSettingKey.MediaStream1SourceUrl;
-            string settingKey3 = Constants.AppSettingKey.MediaStream1TextTracks;
-            string settingKey4 = Constants.AppSettingKey.MediaStream1ProtectionTypes;
+            string settingKey1 = Constant.AppSettingKey.MediaStream1Name;
+            string settingKey2 = Constant.AppSettingKey.MediaStream1SourceUrl;
+            string settingKey3 = Constant.AppSettingKey.MediaStream1TextTracks;
+            string settingKey4 = Constant.AppSettingKey.MediaStream1ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            settingKey1 = Constants.AppSettingKey.MediaStream2Name;
-            settingKey2 = Constants.AppSettingKey.MediaStream2SourceUrl;
-            settingKey3 = Constants.AppSettingKey.MediaStream2TextTracks;
-            settingKey4 = Constants.AppSettingKey.MediaStream2ProtectionTypes;
+            settingKey1 = Constant.AppSettingKey.MediaStream2Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream2SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream2TextTracks;
+            settingKey4 = Constant.AppSettingKey.MediaStream2ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            settingKey1 = Constants.AppSettingKey.MediaStream3Name;
-            settingKey2 = Constants.AppSettingKey.MediaStream3SourceUrl;
-            settingKey3 = Constants.AppSettingKey.MediaStream3TextTracks;
-            settingKey4 = Constants.AppSettingKey.MediaStream3ProtectionTypes;
-            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
-
-            settingKey1 = Constants.AppSettingKey.MediaStream4Name;
-            settingKey2 = Constants.AppSettingKey.MediaStream4SourceUrl;
-            settingKey3 = Constants.AppSettingKey.MediaStream4TextTracks;
-            settingKey4 = Constants.AppSettingKey.MediaStream4ProtectionTypes;
-            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
-
-            settingKey1 = Constants.AppSettingKey.MediaStream5Name;
-            settingKey2 = Constants.AppSettingKey.MediaStream5SourceUrl;
-            settingKey3 = Constants.AppSettingKey.MediaStream5TextTracks;
-            settingKey4 = Constants.AppSettingKey.MediaStream5ProtectionTypes;
+            settingKey1 = Constant.AppSettingKey.MediaStream3Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream3SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream3TextTracks;
+            settingKey4 = Constant.AppSettingKey.MediaStream3ProtectionTypes;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
             return mediaStreams.ToArray();
@@ -100,18 +94,18 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         private IActionResult GetLiveView(string channelName, string queryString)
         {
-            string settingKey = Constants.AppSettingKey.AzureMedia;
+            string settingKey = Constant.AppSettingKey.AzureMedia;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             if (accountCredentials.Length > 0)
             {
                 string accountName = accountCredentials[0];
-                DateTime? liveEventStart = StreamLive.GetEventStart(accountName, channelName);
+                DateTime? liveEventStart = Stream.GetEventStart(accountName, channelName);
                 if (liveEventStart.HasValue)
                 {
                     bool livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
                     ViewData["livePreview"] = livePreview;
                     ViewData["liveEventStart"] = liveEventStart.Value.ToString();
-                    ViewData["liveSourceUrl"] = StreamLive.GetSourceUrl(channelName, livePreview);
+                    ViewData["liveSourceUrl"] = Stream.GetSourceUrl(channelName, livePreview);
                 }
             }
             return View("live");
@@ -120,10 +114,10 @@ namespace AzureSkyMedia.WebApp.Controllers
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = null;
-            string cookieKey = Constants.HttpCookie.UserAuthToken;
+            string cookieKey = Constant.HttpCookie.UserAuthToken;
             if (request.HasFormContentType)
             {
-                authToken = request.Form[Constants.HttpForm.IdToken];
+                authToken = request.Form[Constant.HttpForm.IdToken];
                 if (!string.IsNullOrEmpty(authToken))
                 {
                     response.Cookies.Append(cookieKey, authToken);
@@ -148,6 +142,20 @@ namespace AzureSkyMedia.WebApp.Controllers
                 storageAccounts.Add(storageAccount);
             }
             return storageAccounts.ToArray();
+        }
+
+        public static SelectListItem[] GetJobTemplates(string authToken)
+        {
+            List<SelectListItem> jobTemplates = new List<SelectListItem>();
+            NameValueCollection templates = MediaClient.GetJobTemplates(authToken);
+            foreach (string templateKey in templates.Keys)
+            {
+                SelectListItem jobTemplate = new SelectListItem();
+                jobTemplate.Text = templateKey;
+                jobTemplate.Value = templates[templateKey];
+                jobTemplates.Add(jobTemplate);
+            }
+            return jobTemplates.ToArray();
         }
 
         public static SelectListItem[] GetMediaProcessors(string authToken)
@@ -250,11 +258,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             else if (!Account.IsStreamingEnabled(mediaClient))
             {
                 mediaStreams = new MediaStream[] { };
-                accountMessage = Constants.Message.StreamingEndpointNotRunning;
+                accountMessage = Constant.Message.StreamingEndpointNotRunning;
             }
             else
             {
-                mediaStreams = StreamFile.GetMediaStreams(mediaClient);
+                mediaStreams = Stream.GetMediaStreams(mediaClient);
             }
             ViewData["mediaStreams"] = mediaStreams;
             ViewData["accountMessage"] = accountMessage;

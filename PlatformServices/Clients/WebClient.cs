@@ -33,16 +33,16 @@ namespace AzureSkyMedia.PlatformServices
         {
             HttpWebRequest request = WebRequest.CreateHttp(apiEndpoint);
             request.Method = requestType.ToUpper();
-            request.Accept = Constants.ContentType.Json;
-            request.ContentType = Constants.ContentType.Json;
+            request.Accept = Constant.ContentType.Json;
+            request.ContentType = Constant.ContentType.Json;
             if (!string.IsNullOrEmpty(_apiVersion))
             {
-                request.Headers.Add(Constants.HttpHeader.ApiVersion, _apiVersion);
+                request.Headers.Add(Constant.HttpHeader.ApiVersion, _apiVersion);
             }
             if (!string.IsNullOrEmpty(_authToken))
             {
-                string authHeader = string.Concat(Constants.HttpHeader.AuthPrefix, _authToken);
-                request.Headers.Add(Constants.HttpHeader.AuthHeader, authHeader);
+                string authHeader = string.Concat(Constant.HttpHeader.AuthPrefix, _authToken);
+                request.Headers.Add(Constant.HttpHeader.AuthHeader, authHeader);
             }
             if (_credentials != null)
             {
@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (!string.IsNullOrEmpty(requestBody))
             {
-                using (Stream requestStream = request.GetRequestStream())
+                using (System.IO.Stream requestStream = request.GetRequestStream())
                 {
                     byte[] requestBytes = Encoding.UTF8.GetBytes(requestBody);
                     requestStream.Write(requestBytes, 0, requestBytes.Length);
@@ -71,7 +71,7 @@ namespace AzureSkyMedia.PlatformServices
             using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
                 statusCode = response.StatusCode;
-                Stream responseStream = response.GetResponseStream();
+                System.IO.Stream responseStream = response.GetResponseStream();
                 StreamReader responseReader = new StreamReader(responseStream);
                 responseBody = responseReader.ReadToEnd();
             }

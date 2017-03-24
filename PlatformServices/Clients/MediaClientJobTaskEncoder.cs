@@ -9,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static bool PremiumWorkflow(string fileName)
         {
-            return fileName.EndsWith(Constants.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.InvariantCulture);
+            return fileName.EndsWith(Constant.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.InvariantCulture);
         }
 
         private static int OrderByWorkflow(MediaAssetInput leftSide, MediaAssetInput rightSide)
@@ -37,9 +37,9 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                if (string.Equals(jobTask.ProcessorConfig, Constants.Media.ProcessorConfig.EncoderStandardThumbnailsPreset, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(jobTask.ProcessorConfig, Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    string settingKey = Constants.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
+                    string settingKey = Constant.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
                     string documentId = AppSetting.GetValue(settingKey);
                     using (DatabaseClient databaseClient = new DatabaseClient(false))
                     {
@@ -59,7 +59,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     using (DatabaseClient databaseClient = new DatabaseClient(true))
                     {
-                        string collectionId = Constants.Database.DocumentCollection.Encoding;
+                        string collectionId = Constant.Database.DocumentCollection.Encoding;
                         string procedureId = "getEncoderConfig";
                         JObject encoderConfig = databaseClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
                         jobTask.ProcessorConfig = encoderConfig.ToString();

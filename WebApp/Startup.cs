@@ -8,7 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-using Swashbuckle.Swagger.Model;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -24,10 +26,10 @@ namespace AzureSkyMedia.WebApp
             configBuilder.AddEnvironmentVariables();
             if (env.IsDevelopment())
             {
-                configBuilder.AddUserSecrets();
+                configBuilder.AddUserSecrets<Startup>();
             }
             AppSetting.ConfigRoot = configBuilder.Build();
-            string settingKey = Constants.AppSettingKey.AppInsightsInstrumentationKey;
+            string settingKey = Constant.AppSettingKey.AppInsightsInstrumentationKey;
             string appInsightsKey = AppSetting.GetValue(settingKey);
             if (!string.IsNullOrEmpty(appInsightsKey))
             {
@@ -39,13 +41,30 @@ namespace AzureSkyMedia.WebApp
         private Info GetApiInfo()
         {
             Info apiInfo = new Info();
-            string settingKey = Constants.AppSettingKey.AppApiTitle;
+            string settingKey = Constant.AppSettingKey.AppApiTitle;
             apiInfo.Title = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.AppApiDescription;
+            settingKey = Constant.AppSettingKey.AppApiDescription;
             apiInfo.Description = AppSetting.GetValue(settingKey);
-            settingKey = Constants.AppSettingKey.AppApiVersion;
+            settingKey = Constant.AppSettingKey.AppApiVersion;
             apiInfo.Version = AppSetting.GetValue(settingKey);
             return apiInfo;
+        }
+
+        private void SetApiOptions(SwaggerGenOptions options)
+        {
+            Info apiInfo = GetApiInfo();
+            options.SwaggerDoc(apiInfo.Version, apiInfo);
+        }
+
+        private void SetApiOptions(SwaggerUIOptions options)
+        {
+            string settingKey = Constant.AppSettingKey.AppApiEndpointUrl;
+            string endpointUrl = AppSetting.GetValue(settingKey);
+            settingKey = Constant.AppSettingKey.AppApiVersion;
+            string apiVersion = AppSetting.GetValue(settingKey);
+            options.SwaggerEndpoint(endpointUrl, apiVersion);
+            options.ShowRequestHeaders();
+            options.ShowJsonEditor();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -53,9 +72,7 @@ namespace AzureSkyMedia.WebApp
             services.AddApplicationInsightsTelemetry(AppSetting.ConfigRoot);
             services.AddAuthentication(options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
             services.AddMvc();
-            services.AddSwaggerGen();
-            Info apiInfo = GetApiInfo();
-            services.ConfigureSwaggerGen(options => options.SingleApiVersion(apiInfo));
+            services.AddSwaggerGen(SetApiOptions);
         }
 
         private static string GetPolicyId(RedirectContext context)
@@ -67,13 +84,13 @@ namespace AzureSkyMedia.WebApp
             switch (requestAction)
             {
                 case "signin":
-                    settingKey = Constants.AppSettingKey.DirectoryPolicyIdSignUpIn;
+                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
                     break;
                 case "profileedit":
-                    settingKey = Constants.AppSettingKey.DirectoryPolicyIdProfileEdit;
+                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdProfileEdit;
                     break;
                 case "passwordreset":
-                    settingKey = Constants.AppSettingKey.DirectoryPolicyIdPasswordReset;
+                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdPasswordReset;
                     break;
             }
             if (!string.IsNullOrEmpty(settingKey))
@@ -114,13 +131,13 @@ namespace AzureSkyMedia.WebApp
             log.AddDebug();
 
             OpenIdConnectOptions openIdOptions = new OpenIdConnectOptions();
-            string settingKey = Constants.AppSettingKey.DirectoryIssuerUrl;
+            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
             openIdOptions.Authority = AppSetting.ConfigRoot[settingKey];
 
-            settingKey = Constants.AppSettingKey.DirectoryClientId;
+            settingKey = Constant.AppSettingKey.DirectoryClientId;
             openIdOptions.ClientId = AppSetting.ConfigRoot[settingKey];
 
-            settingKey = Constants.AppSettingKey.DirectoryClientSecret;
+            settingKey = Constant.AppSettingKey.DirectoryClientSecret;
             openIdOptions.ClientSecret = AppSetting.ConfigRoot[settingKey];
 
             openIdOptions.Events = new OpenIdConnectEvents
@@ -141,7 +158,7 @@ namespace AzureSkyMedia.WebApp
             app.UseOpenIdConnectAuthentication(openIdOptions);
             app.UseMvcWithDefaultRoute();
             app.UseSwagger();
-            app.UseSwaggerUi();
+            app.UseSwaggerUI(SetApiOptions);
         }
     }
 }

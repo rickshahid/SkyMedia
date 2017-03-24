@@ -13,7 +13,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             JObject fragment;
             using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                string collectionId = Constants.Database.DocumentCollection.Metadata;
+                string collectionId = Constant.Database.DocumentCollection.Metadata;
                 fragment = databaseClient.ExecuteProcedure(collectionId, "getTimecodeFragment", documentId, timeSeconds);
             }
             return fragment;
@@ -21,7 +21,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public JsonResult metadata(string fileName, double timeSeconds)
         {
-            string[] fileNameInfo = fileName.Split(Constants.NamedItemsSeparator);
+            string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
             string documentId = fileNameInfo[0];
             JObject fragment = GetFragment(documentId, timeSeconds);
             return Json(fragment);

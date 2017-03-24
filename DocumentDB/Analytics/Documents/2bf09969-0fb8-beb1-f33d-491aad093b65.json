@@ -1,5 +1,0 @@
-{
-  "Version": 1,
-  "Xml": "<?xml version='1.0' encoding='utf-8'?><configuration version='2.0'><input></input><settings></settings><features><feature name='ASR'><settings><add key='Language' value='English' /><add key='CaptionFormats' value='WebVTT' /></settings></feature></features></configuration>",
-  "id": "2bf09969-0fb8-beb1-f33d-491aad093b65"
-}

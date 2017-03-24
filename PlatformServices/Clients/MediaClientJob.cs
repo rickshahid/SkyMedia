@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -7,15 +7,27 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
+        public static NameValueCollection GetJobTemplates(string authToken)
+        {
+            NameValueCollection jobTemplates = new NameValueCollection();
+            MediaClient mediaClient = new MediaClient(authToken);
+            IJobTemplate[] templates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
+            foreach (IJobTemplate template in templates)
+            {
+                jobTemplates.Add(template.Name, template.Id);
+            }
+            return jobTemplates;
+        }
+
         private INotificationEndPoint GetNotificationEndpoint(NotificationEndPointType endpointType)
         {
-            string endpointName = Constants.Media.JobNotification.EndpointNameStorageQueue;
-            string settingKey = Constants.AppSettingKey.MediaJobNotificationStorageQueueName;
+            string endpointName = Constant.Media.JobNotification.EndpointNameStorageQueue;
+            string settingKey = Constant.AppSettingKey.MediaJobNotificationStorageQueueName;
             string endpointAddress = AppSetting.GetValue(settingKey);
             if (endpointType == NotificationEndPointType.WebHook)
             {
-                endpointName = Constants.Media.JobNotification.EndpointNameWebHook;
-                settingKey = Constants.AppSettingKey.MediaJobNotificationWebHookUrl;
+                endpointName = Constant.Media.JobNotification.EndpointNameWebHook;
+                settingKey = Constant.AppSettingKey.MediaJobNotificationWebHookUrl;
                 endpointAddress = AppSetting.GetValue(settingKey);
             }
             INotificationEndPoint notificationEndpoint = null;
@@ -36,7 +48,7 @@ namespace AzureSkyMedia.PlatformServices
             messageText = string.Concat(messageText, " Account Name: ", accountName);
             messageText = string.Concat(messageText, ", Job Name: ", job.Name);
             messageText = string.Concat(messageText, ", Job ID: ", job.Id);
-            return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constants.FormatTime));
+            return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constant.TextFormatter.ClockTime));
         }
 
         private void SetProcessorUnits(IJob job, ReservedUnitType scale)
@@ -60,17 +72,26 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.EncoderUltra:
                         tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets);
                         break;
-                    case MediaProcessor.Indexer_v1:
-                        tasks = GetIndexerV1Tasks(mediaClient, jobTask, inputAssets);
+                    case MediaProcessor.Indexer:
+                        tasks = GetIndexerTasks(mediaClient, jobTask, inputAssets);
                         break;
-                    case MediaProcessor.Indexer_v2:
-                        tasks = GetIndexerV2Tasks(mediaClient, jobTask, inputAssets);
+                    case MediaProcessor.VideoAnnotation:
+                        tasks = GetVideoAnnotationTasks(mediaClient, jobTask, inputAssets);
+                        break;
+                    case MediaProcessor.VideoSummarization:
+                        tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.FaceDetection:
                         tasks = GetFaceDetectionTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.FaceRedaction:
                         tasks = GetFaceRedactionTasks(mediaClient, jobTask, inputAssets);
+                        break;
+                    case MediaProcessor.CharacterRecognition:
+                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets);
+                        break;
+                    case MediaProcessor.ContentModeration:
+                        tasks = GetContentModerationTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.MotionDetection:
                         tasks = GetMotionDetectionTasks(mediaClient, jobTask, inputAssets);
@@ -80,18 +101,6 @@ namespace AzureSkyMedia.PlatformServices
                         break;
                     case MediaProcessor.MotionStabilization:
                         tasks = GetMotionStabilizationTasks(mediaClient, jobTask, inputAssets);
-                        break;
-                    case MediaProcessor.VideoAnnotation:
-                        tasks = GetVideoAnnotationTasks(mediaClient, jobTask, inputAssets);
-                        break;
-                    case MediaProcessor.VideoSummarization:
-                        tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets);
-                        break;
-                    case MediaProcessor.CharacterRecognition:
-                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets);
-                        break;
-                    case MediaProcessor.ContentModeration:
-                        tasks = GetContentModerationTasks(mediaClient, jobTask, inputAssets);
                         break;
                 }
                 if (tasks != null)
@@ -109,46 +118,64 @@ namespace AzureSkyMedia.PlatformServices
 
         internal IJob CreateJob(MediaJob mediaJob)
         {
-            IJob job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
-            foreach (MediaJobTask jobTask in mediaJob.Tasks)
+            IJob job;
+            if (!string.IsNullOrEmpty(mediaJob.TemplateId))
             {
-                string processorId = Processors.GetMediaProcessorId(jobTask.MediaProcessor);
-                IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
-                ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
-                if (jobTask.ParentIndex.HasValue)
-                {
-                    ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
-                    currentTask.InputAssets.AddRange(parentTask.OutputAssets);
-                }
-                else
-                {
-                    IAsset[] assets = GetAssets(jobTask.InputAssetIds);
-                    currentTask.InputAssets.AddRange(assets);
-                }
-                currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
+                IJobTemplate jobTemplate = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
+                IAsset[] inputAssets = new IAsset[] { };
+                job = _media.Jobs.Create(mediaJob.Name, jobTemplate, inputAssets, mediaJob.Priority);
             }
-            INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(mediaJob.Notification);
-            if (notificationEndpoint != null)
+            else
             {
-                job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
+                job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
+                foreach (MediaJobTask jobTask in mediaJob.Tasks)
+                {
+                    string processorId = Processor.GetProcessorId(jobTask.MediaProcessor);
+                    IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
+                    ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
+                    if (jobTask.ParentIndex.HasValue)
+                    {
+                        ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
+                        currentTask.InputAssets.AddRange(parentTask.OutputAssets);
+                    }
+                    else
+                    {
+                        IAsset[] assets = GetAssets(jobTask.InputAssetIds);
+                        currentTask.InputAssets.AddRange(assets);
+                    }
+                    currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
+                }
+                INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(mediaJob.NotificationType);
+                if (notificationEndpoint != null)
+                {
+                    job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
+                }
             }
-            SetProcessorUnits(job, mediaJob.Scale);
-            job.Submit();
+            if (mediaJob.SaveAsTemplate)
+            {
+                string templateName = mediaJob.Name;
+                job.SaveAsTemplate(templateName);
+            }
+            else
+            {
+                SetProcessorUnits(job, mediaJob.NodeType);
+                job.Submit();
+            }
             return job;
         }
 
         internal static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection[] contentProtections)
         {
-            string attributeName = Constants.UserAttribute.MediaAccountName;
+            string attributeName = Constant.UserAttribute.MediaAccountName;
             string accountName = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constants.UserAttribute.MediaAccountKey;
+            attributeName = Constant.UserAttribute.MediaAccountKey;
             string accountKey = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constants.UserAttribute.UserId;
+            attributeName = Constant.UserAttribute.UserId;
             string userId = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constants.UserAttribute.MobileNumber;
+            attributeName = Constant.UserAttribute.MobileNumber;
             string mobileNumber = AuthToken.GetClaimValue(authToken, attributeName);
 
             JobPublish jobPublish = new JobPublish();
@@ -163,10 +190,10 @@ namespace AzureSkyMedia.PlatformServices
 
             EntityClient entityClient = new EntityClient();
 
-            string tableName = Constants.Storage.TableName.JobPublish;
+            string tableName = Constant.Storage.TableName.JobPublish;
             entityClient.InsertEntity(tableName, jobPublish);
 
-            tableName = Constants.Storage.TableName.JobPublishProtection;
+            tableName = Constant.Storage.TableName.JobPublishProtection;
             foreach (ContentProtection contentProtection in contentProtections)
             {
                 contentProtection.PartitionKey = jobPublish.PartitionKey;

@@ -24,14 +24,14 @@
     "README.md",
     ".*"
   ],
-  "version": "2.2.1",
-  "_release": "2.2.1",
+  "version": "2.3.1",
+  "_release": "2.3.1",
   "_resolution": {
     "type": "version",
-    "tag": "v2.2.1",
-    "commit": "6ba377509dc4dc24992d7be753da5cf8304600f6"
+    "tag": "v2.3.1",
+    "commit": "d7150ca0a192e3a07ac7468f661edeca767a7163"
   },
   "_source": "https://github.com/moxiecode/plupload.git",
-  "_target": "2.2.1",
+  "_target": "2.3.1",
   "_originalSource": "plupload"
 }

@@ -33,7 +33,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 clipName = Guid.NewGuid().ToString();
             }
             object result;
-            if (clipMode == Constants.Media.RenderedClipMode)
+            if (clipMode == Constant.Media.RenderedClipMode)
             {
                 result = Workflow.SubmitJob(mediaClient, sourceUrl);
             }

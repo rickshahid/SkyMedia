@@ -1,14 +1,5 @@
-﻿using System;
-
-using Microsoft.WindowsAzure.Storage.Table;
-
-namespace AzureSkyMedia.PlatformServices
+﻿namespace AzureSkyMedia.PlatformServices
 {
-    public class StorageEntity : TableEntity
-    {
-        public DateTime? CreatedOn { get; set; }
-    }
-
     internal class BlockUpload : StorageEntity
     {
         private string _blocks;
@@ -21,7 +12,11 @@ namespace AzureSkyMedia.PlatformServices
             set
             {
                 _blocks = value;
-                _blockIds = (_blocks == null) ? null : _blocks.Split(Constants.MultiItemSeparator);
+                _blockIds = null;
+                if (_blocks != null)
+                {
+                    _blockIds = _blocks.Split(Constant.TextDelimiter.Application);
+                }
             }
         }
 
@@ -31,8 +26,12 @@ namespace AzureSkyMedia.PlatformServices
 
             set
             {
+                _blocks = null;
                 _blockIds = value;
-                _blocks = (_blockIds == null) ? null : string.Join(Constants.MultiItemSeparator.ToString(), _blockIds);
+                if (_blockIds != null)
+                {
+                    _blocks = string.Join(Constant.TextDelimiter.Application.ToString(), _blockIds);
+                }
             }
         }
     }

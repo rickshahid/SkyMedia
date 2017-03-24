@@ -34,12 +34,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             switch (transferService)
             {
                 case TransferService.SigniantFlight:
-                    string storageContainer = string.Format(Constants.Storage.Partner.SigniantContainer, storageAccount, accountKey, containerName);
+                    string storageContainer = string.Format(Constant.Storage.Partner.SigniantContainer, storageAccount, accountKey, containerName);
                     result = string.Concat("{", storageContainer, "}");
                     break;
                 case TransferService.AsperaFasp:
                     AsperaClient asperaClient = new AsperaClient(authToken);
-                    storageContainer = string.Format(Constants.Storage.Partner.AsperaContainer, storageAccount, WebUtility.UrlEncode(accountKey));
+                    storageContainer = string.Format(Constant.Storage.Partner.AsperaContainer, storageAccount, WebUtility.UrlEncode(accountKey));
                     result = asperaClient.GetTransferSpecs(storageContainer, containerName, filePaths, false);
                     break;
             } 
@@ -50,7 +50,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
+            System.IO.Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
             string containerName = Path.GetFileName(storageContainer);
             if (chunks == 0)
             {
@@ -59,7 +59,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             else
             {
                 bool lastBlock = (chunk == chunks - 1);
-                string attributeName = Constants.UserAttribute.UserId;
+                string attributeName = Constant.UserAttribute.UserId;
                 string userId = AuthToken.GetClaimValue(authToken, attributeName);
                 blobClient.UploadBlock(userId, inputStream, containerName, null, name, chunk, lastBlock);
             }
@@ -68,16 +68,17 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         internal static void SetViewData(string authToken, ViewDataDictionary viewData)
         {
-            viewData["storageContainer"] = Constants.Storage.Blob.Container.Upload;
+            viewData["storageContainer"] = Constant.Storage.Blob.Container.Upload;
 
-            string attributeName = Constants.UserAttribute.SigniantAccountKey;
+            string attributeName = Constant.UserAttribute.SigniantAccountKey;
             viewData["signiantAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constants.UserAttribute.AsperaAccountKey;
+            attributeName = Constant.UserAttribute.AsperaAccountKey;
             viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            MediaClient mediaClient = new MediaClient(authToken);
+            //MediaClient mediaClient = new MediaClient(authToken);
             viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
+            viewData["jobTemplate"] = homeController.GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }
@@ -93,10 +94,10 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
 
-            string settingKey = Constants.AppSettingKey.SigniantTransferApi;
+            string settingKey = Constant.AppSettingKey.SigniantTransferApi;
             ViewData["signiantTransferApi"] = AppSetting.GetValue(settingKey);
 
-            string attributeName = Constants.UserAttribute.SigniantServiceGateway;
+            string attributeName = Constant.UserAttribute.SigniantServiceGateway;
             ViewData["signiantServiceGateway"] = AuthToken.GetClaimValue(authToken, attributeName);
 
             SetViewData(authToken, this.ViewData);
@@ -107,13 +108,13 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
 
-            string settingKey = Constants.AppSettingKey.AsperaTransferApi;
+            string settingKey = Constant.AppSettingKey.AsperaTransferApi;
             ViewData["asperaTransferApi"] = AppSetting.GetValue(settingKey);
 
-            string attributeName = Constants.UserAttribute.AsperaServiceGateway;
+            string attributeName = Constant.UserAttribute.AsperaServiceGateway;
             ViewData["asperaServiceGateway"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constants.UserAttribute.AsperaAccountId;
+            attributeName = Constant.UserAttribute.AsperaAccountId;
             ViewData["asperaAccountId"] = AuthToken.GetClaimValue(authToken, attributeName);
 
             SetViewData(authToken, this.ViewData);

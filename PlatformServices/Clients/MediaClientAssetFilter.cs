@@ -9,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
         private IAsset GetSourceAsset(string sourceUrl)
         {
             string locatorId = sourceUrl.Split('/')[3];
-            locatorId = string.Concat(Constants.Media.Stream.LocatorIdPrefix, locatorId);
+            locatorId = string.Concat(Constant.Media.Stream.LocatorIdPrefix, locatorId);
             ILocator locator = GetEntityById(MediaEntity.Locator, locatorId) as ILocator;
             return locator.Asset;
         }

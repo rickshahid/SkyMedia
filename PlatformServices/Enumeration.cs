@@ -1,20 +1,11 @@
 ﻿namespace AzureSkyMedia.PlatformServices
 {
-    internal enum MediaProtection
+    public enum MediaProtection
     {
         AES,
         PlayReady,
-        Widevine
-    }
-
-    public enum MediaJobNotificationEvent
-    {
-        None = 0,
-        JobStateChange = 1,
-        NotificationEndPointRegistration = 2,
-        NotificationEndPointUnregistration = 3,
-        TaskStateChange = 4,
-        TaskProgress = 5
+        Widevine,
+        FairPlay
     }
 
     public enum MediaEntity
@@ -49,17 +40,16 @@
         EncoderStandard,
         EncoderPremium,
         EncoderUltra,
-        Indexer_v1,
-        Indexer_v2,
+        Indexer,
         FaceDetection,
         FaceRedaction,
-        MotionDetection,
-        MotionHyperlapse,
-        MotionStabilization,
         VideoAnnotation,
         VideoSummarization,
         CharacterRecognition,
-        ContentModeration
+        ContentModeration,
+        MotionDetection,
+        MotionHyperlapse,
+        MotionStabilization
     }
 
     public enum TransferService

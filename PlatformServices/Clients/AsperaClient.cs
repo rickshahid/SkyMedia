@@ -20,7 +20,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public AsperaClient(string authToken)
         {
-            string attributeName = Constants.UserAttribute.AsperaServiceGateway;
+            string attributeName = Constant.UserAttribute.AsperaServiceGateway;
             _serviceNode = AuthToken.GetClaimValue(authToken, attributeName);
             if (!_serviceNode.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -28,23 +28,23 @@ namespace AzureSkyMedia.PlatformServices
             }
 
             string[] serviceInfo = _serviceNode.Split('.');
-            serviceInfo[0] = string.Concat(serviceInfo[0], Constants.Storage.Partner.AsperaWorker);
+            serviceInfo[0] = string.Concat(serviceInfo[0], Constant.Storage.Partner.AsperaWorker);
             _serviceStats = string.Join(".", serviceInfo);
             if (!_serviceStats.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
             {
                 _serviceStats = string.Concat("https://", _serviceStats);
             }
 
-            attributeName = Constants.UserAttribute.AsperaAccountId;
+            attributeName = Constant.UserAttribute.AsperaAccountId;
             _accountId = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constants.UserAttribute.AsperaAccountKey;
+            attributeName = Constant.UserAttribute.AsperaAccountKey;
             _accountKey = AuthToken.GetClaimValue(authToken, attributeName);
 
             string apiVersion = string.Empty;
             _serviceClient = new WebClient(_accountId, _accountKey, apiVersion);
 
-            string settingKey = Constants.AppSettingKey.AsperaTransferInfo;
+            string settingKey = Constant.AppSettingKey.AsperaTransferInfo;
             string transferInfo = AppSetting.GetValue(settingKey);
             string transferApi = string.Concat(_serviceStats, transferInfo);
 
@@ -55,12 +55,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public JObject GetTransferSpecs(string storageRoot, string containerName, string[] filePaths, bool fileDownload)
         {
-            string settingKey = Constants.AppSettingKey.AsperaUploadSetup;
+            string settingKey = Constant.AppSettingKey.AsperaUploadSetup;
             string uploadSetup = AppSetting.GetValue(settingKey);
             string transferApi = string.Concat(_serviceNode, uploadSetup);
             if (fileDownload)
             {
-                settingKey = Constants.AppSettingKey.AsperaDownloadSetup;
+                settingKey = Constant.AppSettingKey.AsperaDownloadSetup;
                 string downloadSetup = AppSetting.GetValue(settingKey);
                 transferApi = string.Concat(_serviceNode, downloadSetup);
             }

@@ -14,6 +14,7 @@
         <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-ui-multiselect/src/jquery.multiselect.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
+        <script type="text/javascript" src="~/lib/jquery.scrollTo/jquery.scrollTo.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
         <script type="text/javascript" src="~/lib/qtip2/jquery.qtip.min.js"></script>
         <script type="text/javascript" src="~/js/qtip.js"></script>
@@ -90,8 +91,11 @@
                         <div>
                             @Html.Partial("SiteButton", new string[] { "mediaAnalytics", "MediaAnalyticsOpen.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/media-analytics/')" })
                         </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "contentDeliveryNetwork", "ContentDeliveryNetwork.png", "window.open('http://azure.microsoft.com/en-us/services/cdn/')" })
+                        </div>
                     </td>
-                    <td>
+                    <td class="layoutBody">
                         @RenderBody()
                     </td>
                     <td class="layoutSide">
@@ -100,6 +104,9 @@
                         </div>
                         <div>
                             @Html.Partial("SiteButton", new string[] { "appServiceMobile", "AppServiceMobile.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/mobile/')" })
+                        </div>
+                        <div>
+                            @Html.Partial("SiteButton", new string[] { "appServiceFunctions", "AppServiceFunctions.png", "window.open('http://azure.microsoft.com/en-us/services/functions/')" })
                         </div>
                         <div>
                             @Html.Partial("SiteButton", new string[] { "appServiceApi", "AppServiceAPI.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/api/')" })
@@ -111,7 +118,7 @@
                             @Html.Partial("SiteButton", new string[] { "appServiceLogic", "AppServiceLogic.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/logic/')" })
                         </div>
                         <div>
-                            @Html.Partial("SiteButton", new string[] { "appServiceFunctions", "AppServiceFunctions.png", "window.open('http://azure.microsoft.com/en-us/services/functions/')" })
+                            @Html.Partial("SiteButton", new string[] { "appServiceBot", "AppServiceBot.png", "window.open('http://azure.microsoft.com/en-us/services/bot-service/')" })
                         </div>
                     </td>
                 </tr>                            

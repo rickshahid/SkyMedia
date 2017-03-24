@@ -2,11 +2,13 @@
 {
     public class ContentProtection : StorageEntity
     {
-        public bool AES { get; set; }
+        public bool Aes { get; set; }
 
-        public bool DRMPlayReady { get; set; }
+        public bool DrmPlayReady { get; set; }
 
-        public bool DRMWidevine { get; set; }
+        public bool DrmWidevine { get; set; }
+
+        public bool DrmFairPlay { get; set; }
 
         public bool ContentAuthTypeToken { get; set; }
 

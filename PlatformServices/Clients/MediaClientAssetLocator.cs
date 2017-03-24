@@ -9,16 +9,16 @@ namespace AzureSkyMedia.PlatformServices
     {
         private IAccessPolicy GetAccessPolicy(bool writePolicy)
         {
-            string readPolicyName = Constants.Media.AccessPolicy.ReadPolicyName;
-            string writePolicyName = Constants.Media.AccessPolicy.WritePolicyName;
+            string readPolicyName = Constant.Media.AccessPolicy.ReadPolicyName;
+            string writePolicyName = Constant.Media.AccessPolicy.WritePolicyName;
             string policyName = writePolicy ? writePolicyName : readPolicyName;
             IAccessPolicy accessPolicy = GetEntityByName(MediaEntity.AccessPolicy, policyName, true) as IAccessPolicy;
             if (accessPolicy == null)
             {
-                string settingKey = Constants.AppSettingKey.MediaLocatorReadDurationDays;
+                string settingKey = Constant.AppSettingKey.MediaLocatorReadDurationDays;
                 string durationDays = AppSetting.GetValue(settingKey);
                 TimeSpan readPolicyDuration = new TimeSpan(int.Parse(durationDays), 0, 0, 0);
-                TimeSpan writePolicyDuration = new TimeSpan(Constants.Storage.Blob.WriteDurationHours, 0, 0);
+                TimeSpan writePolicyDuration = new TimeSpan(Constant.Storage.Blob.WriteDurationHours, 0, 0);
 
                 AccessPermissions accessPermissions = writePolicy ? AccessPermissions.Write : AccessPermissions.Read;
                 TimeSpan accessDuration = writePolicy ? writePolicyDuration : readPolicyDuration;
@@ -74,7 +74,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAssetFile assetFile in asset.AssetFiles)
                 {
-                    if (assetFile.Name.EndsWith(Constants.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
+                    if (assetFile.Name.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
                     {
                         assetFile.IsPrimary = true;
                         assetFile.Update();
@@ -99,9 +99,9 @@ namespace AzureSkyMedia.PlatformServices
                 case LocatorType.OnDemandOrigin:
                     primaryUrl = string.Concat(primaryUrl, "/", locator.ContentAccessComponent);
                     primaryUrl = string.Concat(primaryUrl, "/", fileName);
-                    if (fileName.EndsWith(Constants.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
+                    if (fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        primaryUrl = string.Concat(primaryUrl, Constants.Media.Stream.LocatorManifestSuffix);
+                        primaryUrl = string.Concat(primaryUrl, Constant.Media.Stream.LocatorManifestSuffix);
                     }
                     break;
             }

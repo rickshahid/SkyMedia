@@ -7,32 +7,32 @@
     HttpRequest request = this.Context.Request;
     HttpResponse response = this.Context.Response;
     string authToken = homeController.GetAuthToken(request, response);
-    ViewData["authTokenCookie"] = Constants.HttpCookie.UserAuthToken;
+    ViewData["authTokenCookie"] = Constant.HttpCookie.UserAuthToken;
     ViewData["authToken"] = authToken;
 
     if (!string.IsNullOrEmpty(authToken))
     {
-        string attributeName = Constants.UserAttribute.UserId;
+        string attributeName = Constant.UserAttribute.UserId;
         string userId = AuthToken.GetClaimValue(authToken, attributeName);
 
-        attributeName = Constants.UserAttribute.MediaAccountName;
+        attributeName = Constant.UserAttribute.MediaAccountName;
         string accountName = AuthToken.GetClaimValue(authToken, attributeName);
 
         ViewData["accountContext"] = string.Concat(userId, " (", accountName, ")");
     }
 
-    string settingKey = Constants.AppSettingKey.AppRegion;
+    string settingKey = Constant.AppSettingKey.AppRegion;
     ViewData["appRegion"] = AppSetting.GetValue(settingKey);
 
     string ampVersion = this.Context.Request.Query["amp"];
     if (string.IsNullOrEmpty(ampVersion))
     {
-        settingKey = Constants.AppSettingKey.MediaPlayerVersion;
+        settingKey = Constant.AppSettingKey.MediaPlayerVersion;
         ampVersion = AppSetting.GetValue(settingKey);
     }
     ViewData["mediaPlayerVersion"] = ampVersion;
 
-    settingKey = Constants.AppSettingKey.StorageCdnUrl;
+    settingKey = Constant.AppSettingKey.StorageCdnUrl;
     ViewData["storageCdnUrl"] = AppSetting.GetValue(settingKey);
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);

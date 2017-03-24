@@ -2,15 +2,18 @@
     
 namespace AzureSkyMedia.PlatformServices
 {
-    public struct MediaTrack
+    public struct MediaTextTrack
     {
         [JsonProperty(PropertyName = "kind")]
         public string Type { get; set; }
 
+        [JsonProperty(PropertyName = "label")]
+        public string Label { get; set; }
+
         [JsonProperty(PropertyName = "src")]
-        public string Source { get; set; }
+        public string SourceUrl { get; set; }
 
         [JsonProperty(PropertyName = "srclang")]
-        public string Language { get; set; }
+        public string LanguageCode { get; set; }
     }
 }
