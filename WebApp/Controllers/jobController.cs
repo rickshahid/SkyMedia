@@ -6,11 +6,11 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class apiController : Controller
+    public class jobController : Controller
     {
         [HttpPost]
         [Route("/publish")]
-        public void PublishMediaJob(bool poisonQueue)
+        public void Publish(string accountName, string accountKey, bool poisonQueue)
         {
             string settingKey = Constant.AppSettingKey.MediaJobNotificationStorageQueueName;
             string queueName = AppSetting.GetValue(settingKey);
@@ -19,7 +19,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                 queueName = string.Concat(queueName, Constant.Storage.Queue.PoisonSuffix);
             }
             string messageId, popReceipt;
-            MessageClient messageClient = new MessageClient();
+            string[] accountCredentials = new string[] { accountName, accountKey };
+            MessageClient messageClient = string.IsNullOrEmpty(accountName) ? new MessageClient() : new MessageClient(accountCredentials);
             string queueMessage = messageClient.GetMessage(queueName, out messageId, out popReceipt);
             MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(queueMessage);
             if (jobNotification != null)

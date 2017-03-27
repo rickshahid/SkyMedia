@@ -37,7 +37,6 @@
                         @if (ViewData.ContainsKey("accountContext"))
                         {
                             @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", "window.location.href = '/account'" })
-                            @*@Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.open('http://azure.microsoft.com/en-us/blog/azure-media-services-live-monitoring-dashboard-open-source-release/')" })*@
                             @Html.Partial("SiteButton", new string[] { "mediaLibrary", "MediaLibrary.png", "window.location.href = '/asset'" })
                         }
                         else

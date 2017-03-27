@@ -158,7 +158,7 @@ namespace AzureSkyMedia.PlatformServices
             return entityCounts.ToArray();
         }
 
-        public static void ClearAccount(MediaClient mediaClient, bool allEntities)
+        public static void ClearEntities(MediaClient mediaClient, bool allEntities)
         {
             if (allEntities)
             {

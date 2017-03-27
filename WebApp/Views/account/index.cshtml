@@ -2,57 +2,32 @@
 
 @section head {
     <script type="text/javascript">
-        function DispatchCommand(commandId, parameterFlag) {
-            $.post("/home/command",
+        function ClearAccount(allEntities) {
+            $.post("/account/clear",
                 {
-                    commandId: commandId,
-                    parameterId: "@ViewData["id"]",
-                    parameterName: "@ViewData["name"]",
-                    parameterFlag: parameterFlag
+                    allEntities: allEntities,
                 },
                 function (entityCounts) {
                     SetInventory(entityCounts);
                 }
             );
         }
-        function ConfirmCommand(commandId) {
-            var title, message;
+        function ConfirmClear() {
+            var title = "Confirm Media Account Clear (Permanent Media Entity Deletion)";
+            var message = "Do you want to delete all entities or only child assets in your media account?";
             var buttons = {
-                Yes: function () {
-                    DispatchCommand(commandId, false);
+                "All Entities": function () {
+                    ClearAccount(true);
                     $(this).dialog("close");
                 },
-                No: function () {
+                "Child Assets": function () {
+                    ClearAccount(false);
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
                     $(this).dialog("close");
                 }
             };
-            switch (commandId) {
-                case "channelCreate":
-                    title = "Confirm Live Channel Creation";
-                    message = "Are you sure you want to create a new live channel in your media account?";
-                    break;
-                case "channelSignal":
-                    title = "Confirm Live Channel Advertisement Insertion";
-                    message = "Are you sure you want to insert an advertisement signal into your live channel?";
-                    break;
-                case "accountClear":
-                    title = "Confirm Media Account Clear (Permanent Media Entity Deletion)";
-                    message = "Do you want to delete all entities or only child assets in your media account?";
-                    var buttons = {
-                        "All Entities": function () {
-                            DispatchCommand(commandId, true);
-                            $(this).dialog("close");
-                        },
-                        "Child Assets": function () {
-                            DispatchCommand(commandId, false);
-                            $(this).dialog("close");
-                        },
-                        Cancel: function () {
-                            $(this).dialog("close");
-                        }
-                    };
-                    break;
-            }
             DisplayMessage(title, message, buttons, null, null);
         }
         function SetEntity(innerHtml, entityCount) {
@@ -79,8 +54,7 @@
         $(function () {
             var entityCounts = @Html.Raw(Json.Serialize(ViewData["entityCounts"]));
             SetInventory(entityCounts);
-            CreateTipTop("channelCreate", "Create Live Channel");
-            CreateTipTop("channelSignal", "Signal Ad Insertion");
+            CreateTipTop("accountDashboard", "Live Monitoring Dashboard");
             CreateTipTop("accountClear", "Clear Media Account");
         })
     </script>
@@ -102,10 +76,9 @@
 </table>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "channelCreate", "ChannelCreate.png", "ConfirmCommand('channelCreate')" })
-    @Html.Partial("SiteButton", new string[] { "channelSignal", "ChannelSignal.png", "ConfirmCommand('channelSignal')" })
+    @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.open('http://azure.microsoft.com/en-us/blog/azure-media-services-live-monitoring-dashboard-open-source-release/')" })
     @if (Debugger.IsAttached)
     {
-        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmCommand('accountClear')" })
+        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
     }
 </div>

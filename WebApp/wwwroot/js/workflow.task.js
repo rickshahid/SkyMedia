@@ -97,11 +97,11 @@ function GetJobTaskOptions(taskNumber) {
 function GetJobTask(taskNumber) {
     var jobTask = null;
     var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
-    if (mediaProcessor != "None") {
+    if (mediaProcessor != null && mediaProcessor != "None") {
         var taskParent = $("#taskParent" + taskNumber).val();
         jobTask = {
-            ParentIndex: (taskParent == "") ? null : taskParent - 1,
             MediaProcessor: mediaProcessor,
+            ParentIndex: (taskParent == "") ? null : taskParent - 1,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
             Options: GetJobTaskOptions(taskNumber)
         };

@@ -179,26 +179,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaProcessors.ToArray();
         }
 
-        public JsonResult command(string commandId, int parameterId, string parameterName, bool parameterFlag)
-        {
-            string authToken = GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            switch (commandId)
-            {
-                case "channelCreate":
-                    mediaClient.CreateChannel(parameterName);
-                    break;
-                case "channelSignal":
-                    mediaClient.SignalChannel(parameterName, parameterId);
-                    break;
-                case "accountClear":
-                    Account.ClearAccount(mediaClient, parameterFlag);
-                    break;
-            }
-            string[][] entityCounts = Account.GetEntityCounts(mediaClient);
-            return Json(entityCounts);
-        }
-
         public IActionResult index()
         {
             string authToken = GetAuthToken(this.Request, this.Response);

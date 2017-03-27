@@ -80,10 +80,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             string processorId1 = Constant.Media.ProcessorId.FaceDetection;
             string processorId2 = Constant.Media.ProcessorId.FaceRedaction;
-            string processorId3 = Constant.Media.ProcessorId.MotionDetection;
-            string processorId4 = Constant.Media.ProcessorId.VideoAnnotation;
-            string processorId5 = Constant.Media.ProcessorId.CharacterRecognition;
-            string processorId6 = Constant.Media.ProcessorId.ContentModeration;
+            string processorId3 = Constant.Media.ProcessorId.VideoAnnotation;
+            string processorId4 = Constant.Media.ProcessorId.CharacterRecognition;
+            string processorId5 = Constant.Media.ProcessorId.ContentModeration;
+            string processorId6 = Constant.Media.ProcessorId.MotionDetection;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             if (jobTasks.Length > 0)
@@ -110,11 +110,10 @@ namespace AzureSkyMedia.PlatformServices
                             }
                             if (!string.IsNullOrEmpty(jsonData))
                             {
-                                string documentId = databaseClient.CreateDocument(collectionId, jsonData);
+                                string assetAccount = jobPublish.PartitionKey;
+                                string documentId = databaseClient.CreateDocument(assetAccount, asset.Id, collectionId, jsonData);
                                 MediaProcessor mediaProcessor = Processor.GetProcessorType(jobTask.MediaProcessorId);
-                                string processorName = Processor.GetProcessorName(mediaProcessor);
-                                processorName = processorName.Replace(" ", string.Empty);
-                                string destinationFileName = string.Concat(documentId, Constant.TextDelimiter.Identifier, processorName, fileExtension);
+                                string destinationFileName = string.Concat(documentId, Constant.TextDelimiter.Identifier, mediaProcessor.ToString(), fileExtension);
                                 blobClient.CopyFile(outputAsset, asset, sourceFileName, destinationFileName, false);
                             }
                         }
@@ -129,7 +128,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        private static void PublishContent(MediaClient mediaClient, string accountName, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
         {
             string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
             string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
@@ -211,7 +210,7 @@ namespace AzureSkyMedia.PlatformServices
                             mediaClient.SetProcessorUnits(job, ReservedUnitType.Basic);
                             if (jobNotification.Properties.NewState == JobState.Finished)
                             {
-                                PublishContent(mediaClient, job, jobPublish, contentProtection);
+                                PublishContent(mediaClient, accountName, job, jobPublish, contentProtection);
                             }
                             if (!string.IsNullOrEmpty(jobPublish.MobileNumber))
                             {

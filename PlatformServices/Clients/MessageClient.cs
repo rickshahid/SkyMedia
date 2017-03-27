@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 
 using Newtonsoft.Json;
@@ -24,6 +25,15 @@ namespace AzureSkyMedia.PlatformServices
         public MessageClient(string authToken, string accountName)
         {
             CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
+            BindContext(storageAccount);
+        }
+
+        public MessageClient(string[] accountCredentials)
+        {
+            string accountName = accountCredentials[0];
+            string accountKey = accountCredentials[1];
+            StorageCredentials storageCredentials = new StorageCredentials(accountName, accountKey);
+            CloudStorageAccount storageAccount = new CloudStorageAccount(storageCredentials, true);
             BindContext(storageAccount);
         }
 

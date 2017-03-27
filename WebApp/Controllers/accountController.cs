@@ -57,9 +57,16 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);
-            ViewData["id"] = this.Request.Query["id"];
-            ViewData["name"] = this.Request.Query["name"];
             return View();
+        }
+
+        public JsonResult clear(bool allEntities)
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
+            Account.ClearEntities(mediaClient, allEntities);
+            string[][] entityCounts = Account.GetEntityCounts(mediaClient);
+            return Json(entityCounts);
         }
     }
 }

@@ -43,19 +43,19 @@ namespace AzureSkyMedia.PlatformServices
             _databaseId = AppSetting.GetValue(settingKey);
         }
 
-        private JObject GetResult(string document)
+        private JObject GetResult(string response)
         {
-            JObject jsonDoc = null;
-            if (document != null)
+            JObject result = null;
+            if (!string.IsNullOrEmpty(response))
             {
-                jsonDoc = JObject.Parse(document.ToString());
+                result = JObject.Parse(response);
                 string[] documentProperties = Constant.Database.DocumentProperties.Split(Constant.TextDelimiter.Application);
                 foreach (string documentProperty in documentProperties)
                 {
-                    jsonDoc.Remove(documentProperty);
+                    result.Remove(documentProperty);
                 }
             }
-            return jsonDoc;
+            return result;
         }
 
         public JObject GetDocument(string documentId)
@@ -70,9 +70,11 @@ namespace AzureSkyMedia.PlatformServices
             return (document == null) ? null : GetResult(document.ToString());
         }
 
-        public string CreateDocument(string collectionId, string jsonData)
+        public string CreateDocument(string assetAccount, string assetId, string collectionId, string jsonData)
         {
             JObject jsonDoc = JObject.Parse(jsonData);
+            jsonDoc["assetAccount"] = assetAccount;
+            jsonDoc["assetId"] = assetId;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Task<ResourceResponse<Document>> createTask = _database.CreateDocumentAsync(collectionUri, jsonDoc);
             createTask.Wait();
