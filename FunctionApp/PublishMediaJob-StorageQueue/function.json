@@ -1,5 +1,7 @@
 ﻿{
   "disabled": false,
+  "scriptFile": "..\\bin\\AzureSkyMedia.FunctionApp.dll",
+  "entryPoint": "AzureSkyMedia.FunctionApp.PublishMediaJobStorageQueue.Run",
   "bindings": [
     {
       "name": "queueMessage",
