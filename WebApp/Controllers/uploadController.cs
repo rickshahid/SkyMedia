@@ -76,9 +76,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             attributeName = Constant.UserAttribute.AsperaAccountKey;
             viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            //MediaClient mediaClient = new MediaClient(authToken);
             viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
-            viewData["jobTemplate"] = homeController.GetJobTemplates(authToken);
+            viewData["jobName"] = homeController.GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }

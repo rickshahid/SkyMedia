@@ -3,7 +3,7 @@
 }
 
 @media all and (max-width: 320px) {
-    #siteHome, #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #mediaLibrary, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
@@ -11,7 +11,7 @@
         width: 280px !important;
     }
 
-    .viewTitle, .accountContext, .streamInfo, .liveCountdown {
+    .viewTitle, .accountContext, .streamInfo {
         font-size: small !important;
     }
 
@@ -21,7 +21,7 @@
 }
 
 @media all and (min-width: 321px) and (max-width: 480px) {
-    #siteHome, #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #mediaLibrary, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
@@ -29,17 +29,17 @@
         width: 300px !important;
     }
 
-    .viewTitle, .accountContext, .streamInfo, .liveCountdown {
+    .viewTitle, .accountContext, .streamInfo {
         font-size: medium !important;
     }
 
     .streamSlider {
-        width: 100px !important;
+        width: 150px !important;
     }
 }
 
 @media all and (min-width: 481px) and (max-width: 768px) {
-    .layoutSide {
+    .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
@@ -47,12 +47,8 @@
         width: 450px !important;
     }
 
-    .viewTitle, .accountContext, .streamInfo, .liveCountdown {
+    .viewTitle, .accountContext, .streamInfo {
         font-size: large !important;
-    }
- 
-    .streamSlider {
-        width: 150px !important;
     }
 }
 
@@ -64,7 +60,7 @@ body {
     margin: 0px auto;
 }
 
-.layout.minimal {
+.layout.live {
     display: table;
 }
 
@@ -243,7 +239,7 @@ body {
 
 .motionSensitivityLevel {
     font-weight: bold;
-    width: 110px;
+    width: 120px;
 }
 
 .motionDetectLightChange {
@@ -293,7 +289,7 @@ body {
 }
 
 .slider.jobPriority {
-    width: 110px;
+    width: 108px;
 }
 
 .slider.durationSeconds {
@@ -468,13 +464,13 @@ body {
 }
 
 .mediaUploadRight {
-    margin-left: 15px;
+    margin-left: 14px;
     margin-right: 0px;
 }
 
 .mediaStorage {
     font-weight: bold;
-    width: 350px;
+    width: 409px;
 }
 
 .mediaWorkflow {
@@ -490,14 +486,11 @@ body {
 }
 
 .mediaWorkflowJob td {
-    padding-bottom: 5px;
+    padding-bottom: 10px;
 }
 
-.mediaWorkflowJobNotification {
-    color: deepskyblue;
-    margin-left: 7px;
-    margin-right: 5px;
-    font-weight: bold;
+.mediaWorkflowTaskRow td {
+    padding: 0px;
 }
 
 .mediaWorkflowTaskLink td {
@@ -511,22 +504,23 @@ body {
     width: 0px;
 }
 
-.mediaWorkflowTaskButtons1 {
-    margin-left: 225px;
-}
-
-.mediaWorkflowTaskButtons2 {
-    margin-left: 200px;
+.mediaWorkflowTaskButtons {
+    text-align: center;
+    width: 100%;
 }
 
 .mediaWorkflowControls td {
+    padding: 3px 0px 0px 0px !important;
     white-space: nowrap;
-    padding: 0px;
 }
 
 .mediaWorkflowStart {
     text-align: right;
     width: 100%;
+}
+
+.mediaAssetsLabel {
+    text-align: center !important;
 }
 
 .mediaAssets {
@@ -542,7 +536,7 @@ body {
 
 .mediaAssets.workflowView {
     height: 250px;
-    width: 590px;
+    width: 605px;
 }
 
 .mediaFile > .jstree-checkbox {
@@ -579,12 +573,12 @@ body {
 
 .mediaProcessor {
     font-weight: bold;
-    width: 185px !important;
+    width: 195px !important;
 }
 
 .mediaProcessorConfig {
     font-weight: bold;
-    width: 415px;
+    width: 437px;
 }
 
 .inputLabel {
@@ -598,33 +592,35 @@ body {
 
 .inputAssetName {
     font-weight: bold;
-    width: 120px;
+    width: 240px;
 }
 
 .outputAssetName {
     font-weight: bold;
-    width: 181px;
+    width: 191px;
 }
 
 .jobName {
+    background-color: white !important;
+    border: none !important;
     font-weight: bold;
-    width: 165px;
+    width: 168px;
 }
 
 .jobNode{
     font-weight: bold;
 }
 
-.jobTemplate {
-    font-weight: bold;
-    width: 170px;
-}
-
 .jobTask {
     border: 1px dashed deepskyblue;
     font-weight: bold;
     padding-left: 5px;
-    width: 590px;
+    margin-left: 5px;
+    width: 605px;
+}
+
+.jobTask td {
+    padding: 5px;
 }
 
 .jobTaskParent {
@@ -633,7 +629,7 @@ body {
 }
 
 .jobTaskOptions {
-    width: 218px !important;
+    width: 230px !important;
     max-height: 85px;
 }
 

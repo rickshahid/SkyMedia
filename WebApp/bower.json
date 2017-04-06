@@ -7,10 +7,14 @@
     "jquery": "3.2.0",
     "jquery-cookie": "1.4.1",
     "jquery.countdown": "2.2.0",
+    "jquery-editable-select": "2.2.4",
     "jquery.scrollTo": "2.1.2",
     "jquery-ui": "1.12.1",
     "jstree": "3.3.3",
     "plupload": "2.3.1",
     "qtip2": "2.2.1"
+  },
+  "resolutions": {
+    "jquery": ">=1.9.1"
   }
 }

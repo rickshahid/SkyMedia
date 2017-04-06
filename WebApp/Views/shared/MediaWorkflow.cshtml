@@ -10,8 +10,8 @@
 
 <table id="mediaWorkflow" class="@cssClass">
     <tr id="mediaAssetsRow" style="display: none">
-        <td class="inputLabel">
-            Media Assets:
+        <td class="inputLabel mediaAssetsLabel">
+            Media<br />Assets
         </td>
         <td>
             <div id="mediaAssets" class="mediaAssets workflowView"></div>
@@ -19,10 +19,10 @@
     </tr>
     <tr class="mediaWorkflowJob">
         <td class="inputLabel">
-            Job Name:
+            Job Name
         </td>
         <td>
-            @Html.TextBox("jobName", null, new { @class = "jobName" })
+            @Html.DropDownList("jobName", null, new { @class = "jobName" })
             &nbsp;
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-scale-media-processing-overview')">
                 Job Node Type
@@ -40,26 +40,6 @@
             <div id="jobPriority" class="slider jobPriority"></div>
         </td>
     </tr>
-    <tr>
-        <td class="inputLabel">
-            Job Template:
-        </td>
-        <td>
-            @Html.DropDownList("jobTemplate", null, new { @class = "jobTemplate" })
-            <span class="mediaWorkflowJobNotification">
-                Job State Notification
-            </span>
-            @Html.RadioButton("jobNotification", 1, false)
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-check-job-progress-with-queues')">
-                Storage Queue
-            </span>
-            &nbsp;
-            @Html.RadioButton("jobNotification", 3, true)
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/dotnet/api/microsoft.windowsazure.mediaservices.client.notificationendpointtype')">
-                Web Hook
-            </span>
-        </td>
-    </tr>
     @Html.Partial("MediaWorkflowTask")
     <tr class="mediaWorkflowControls">
         <td />
@@ -69,8 +49,8 @@
                     <td>
                         @Html.Partial("SiteButton", new string[] { "mediaWorkflowSave", "MediaWorkflowSave.png", "ValidWorkflow(" + uploadView + ", true)" })
                     </td>
-                    <td>
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)", "mediaWorkflowTaskButtons1" })
+                    <td class="mediaWorkflowTaskButtons">
+                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)" })
                         @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskRemove", "MediaWorkflowTaskRemove.png", "RemoveJobTask(this)" })
                     </td>
                     <td class="mediaWorkflowStart">

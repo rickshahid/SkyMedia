@@ -31,8 +31,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            inputAssets = Workflow.MapInputAssets(mediaClient, inputAssets);
-            Workflow.SetInputClips(mediaClient, inputAssets);
+            inputAssets = Workflow.GetInputAssets(mediaClient, inputAssets);
             using (DatabaseClient databaseClient = new DatabaseClient(false))
             {
                 foreach (MediaJobTask jobTask in mediaJob.Tasks)

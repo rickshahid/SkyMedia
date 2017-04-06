@@ -34,15 +34,16 @@
         </td>
         <td>
             @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage", onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')" })
+            &nbsp;
             @Html.CheckBox("storageEncryption")
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-rest-storage-encryption')">
-                Storage Encryption (AES 256)
+                Storage Encryption
             </span>
         </td>
     </tr>
     <tr>
         <td class="inputLabel">
-            Media Asset:
+            Input Asset:
         </td>
         <td>
             @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Asset Name]" })
@@ -56,11 +57,11 @@
             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-deliver-streaming-content')">
                 Publish Input Asset
             </span>
-            &nbsp;
+            @*&nbsp;
             @Html.CheckBox("uploadBulkIngest", null, new { onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')", disabled = "disabled" })
             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files#ingest_in_bulk')">
                 Bulk Upload
-            </span>
+            </span>*@
         </td>
     </tr>
 </table>

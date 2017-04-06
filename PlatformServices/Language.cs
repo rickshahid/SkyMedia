@@ -1,12 +1,22 @@
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.PlatformServices
 {
     public static class Language
     {
-        public static string GetLanguageCode(string sourceUrl)
+        public static string GetLanguageCode(MediaTextTrack textTrack)
         {
-            string[] sourceInfo = sourceUrl.Split('.');
+            string[] sourceInfo = textTrack.SourceUrl.Split('.');
             string fileName = sourceInfo[sourceInfo.Length - 2];
             return fileName.Substring(fileName.Length - 2);
+        }
+
+        public static string GetLanguageCode(string indexerConfig)
+        {
+            JObject processorConfig = JObject.Parse(indexerConfig);
+            JToken processorOptions = processorConfig["Features"][0]["Options"];
+            string spokenLanguage = processorOptions["Language"].ToString();
+            return spokenLanguage.Substring(0, 2).ToLower();
         }
 
         public static string GetLanguageLabel(string languageCode)

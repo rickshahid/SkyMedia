@@ -7,6 +7,24 @@
     <RootNamespace>AzureSkyMedia.WebApp</RootNamespace>
     <UserSecretsId>13228807-9b78-491c-b9fe-1d7a798e089e</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\cdn\Screenshot1-AzureActiveDirectoryB2CSignUpIn.png" />
+    <Content Include="wwwroot\cdn\Screenshot2-AzureMediaFileUploadWorkflow.png" />
+    <Content Include="wwwroot\cdn\Screenshot3-AzureMediaAnalyticsStream.png" />
+    <Content Include="wwwroot\cdn\Screenshot4-AzureMediaProcessors.png" />
+    <Content Include="wwwroot\cdn\Screenshot5-AzureMediaVideoClipper.png" />
+    <Content Include="wwwroot\cdn\Shot1-AzureActiveDirectoryB2CSignUpIn.png" />
+    <Content Include="wwwroot\cdn\Shot2-AzureMediaFileUploadWorkflow.png" />
+    <Content Include="wwwroot\cdn\Shot3-AzureMediaAnalyticsStream.png" />
+    <Content Include="wwwroot\cdn\Shot4-AzureMediaProcessors.png" />
+    <Content Include="wwwroot\cdn\Shot5-AzureMediaVideoClipper.png" />
+    <Content Include="wwwroot\cdn\Snip1AzureActiveDirectoryB2CSignUpIn.png" />
+    <Content Include="wwwroot\cdn\Snip2AzureMediaFileUploadWorkflow.png" />
+    <Content Include="wwwroot\cdn\Snip3AzureMediaAnalyticsStream.png" />
+    <Content Include="wwwroot\cdn\Snip4AzureMediaProcessors.png" />
+    <Content Include="wwwroot\cdn\Snip5AzureMediaVideoClipper.png" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
@@ -18,7 +36,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0-rc3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.1.3" />
   </ItemGroup>
@@ -27,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlatformServices\PlatformServices.csproj" />

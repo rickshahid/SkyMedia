@@ -1,7 +1,4 @@
 ﻿{
-  "disabled": false,
-  "scriptFile": "..\\bin\\AzureSkyMedia.FunctionApp.dll",
-  "entryPoint": "AzureSkyMedia.FunctionApp.PublishMediaJobWebHook.Run",
   "bindings": [
     {
       "type": "httpTrigger",
@@ -14,5 +11,6 @@
       "direction": "out",
       "name": "res"
     }
-  ]
+  ],
+  "disabled": false
 }

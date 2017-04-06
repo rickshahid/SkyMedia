@@ -46,6 +46,15 @@ namespace AzureSkyMedia.PlatformServices
             get { return (_file != null) ? _file.Id : _asset.Id; }
         }
 
+        public IAsset Asset
+        {
+            get { return (_file != null) ? null : _asset; }
+        }
+        public bool IsStreamable
+        {
+            get { return (_file != null) ? false : _asset.IsStreamable; }
+        }
+
         public string Text
         {
             get

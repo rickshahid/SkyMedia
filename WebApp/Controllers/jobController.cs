@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+
+using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 
@@ -10,24 +12,29 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         [HttpPost]
         [Route("/publish")]
-        public void Publish(string accountName, string accountKey, bool poisonQueue)
+        public JobPublication Publish(string jobMessage, bool poisonQueue)
         {
-            string settingKey = Constant.AppSettingKey.MediaJobNotificationStorageQueueName;
-            string queueName = AppSetting.GetValue(settingKey);
-            if (poisonQueue)
+            JobPublication jobPublication = new JobPublication();
+            try
             {
-                queueName = string.Concat(queueName, Constant.Storage.Queue.PoisonSuffix);
+                if (string.IsNullOrEmpty(jobMessage))
+                {
+                    jobPublication = MediaClient.PublishJob(poisonQueue);
+                }
+                else
+                {
+                    MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(jobMessage);
+                    if (jobNotification != null)
+                    {
+                        jobPublication = MediaClient.PublishJob(jobNotification, false);
+                    }
+                }
             }
-            string messageId, popReceipt;
-            string[] accountCredentials = new string[] { accountName, accountKey };
-            MessageClient messageClient = string.IsNullOrEmpty(accountName) ? new MessageClient() : new MessageClient(accountCredentials);
-            string queueMessage = messageClient.GetMessage(queueName, out messageId, out popReceipt);
-            MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(queueMessage);
-            if (jobNotification != null)
+            catch (Exception ex)
             {
-                MediaClient.PublishJob(jobNotification, false);
-                messageClient.DeleteMessage(queueName, messageId, popReceipt);
+                jobPublication.ErrorMessage = ex.ToString();
             }
+            return jobPublication;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             object result;
             if (clipMode == Constant.Media.RenderedClipMode)
             {
-                result = Workflow.SubmitJob(mediaClient, sourceUrl);
+                result = Workflow.SubmitJob(authToken, mediaClient, sourceUrl);
             }
             else
             {

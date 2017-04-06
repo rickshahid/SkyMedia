@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -18,6 +17,19 @@ namespace AzureSkyMedia.PlatformServices
                 assets.Add(asset);
             }
             return assets.ToArray();
+        }
+
+        internal static string[] GetFileNames(IAsset asset, string fileExtension)
+        {
+            List<string> fileNames = new List<string>();
+            foreach (IAssetFile assetFile in asset.AssetFiles)
+            {
+                if (assetFile.Name.EndsWith(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    fileNames.Add(assetFile.Name);
+                }
+            }
+            return fileNames.ToArray();
         }
 
         public MediaAsset[] GetAssets(string assetId)

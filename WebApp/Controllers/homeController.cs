@@ -25,7 +25,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     string[] textTrack = trackInfo.Split(Constant.TextDelimiter.Application);
                     track.Type = textTrack[0];
                     track.SourceUrl = textTrack[1];
-                    track.LanguageCode = Language.GetLanguageCode(track.SourceUrl);
+                    track.LanguageCode = Language.GetLanguageCode(track);
                     track.Label = Language.GetLanguageLabel(track.LanguageCode);
                     tracks.Add(track);
                 }
@@ -94,6 +94,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         private IActionResult GetLiveView(string channelName, string queryString)
         {
+            bool livePreview = false;
             string settingKey = Constant.AppSettingKey.AzureMedia;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             if (accountCredentials.Length > 0)
@@ -102,12 +103,12 @@ namespace AzureSkyMedia.WebApp.Controllers
                 DateTime? liveEventStart = Stream.GetEventStart(accountName, channelName);
                 if (liveEventStart.HasValue)
                 {
-                    bool livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
-                    ViewData["livePreview"] = livePreview;
+                    livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
                     ViewData["liveEventStart"] = liveEventStart.Value.ToString();
                     ViewData["liveSourceUrl"] = Stream.GetSourceUrl(channelName, livePreview);
                 }
             }
+            ViewData["livePreview"] = livePreview;
             return View("live");
         }
 

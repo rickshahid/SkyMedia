@@ -23,6 +23,7 @@
     } else {
         $("#mediaAssetsRow").show();
     }
+    $("#jobName").editableSelect();
     $("#jobPriority").slider({
         min: 0,
         max: 9,

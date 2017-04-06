@@ -12,16 +12,21 @@ namespace AzureSkyMedia.PlatformServices
         private static string[] ParseConnection(string accountConnection)
         {
             List<string> parsedConnection = new List<string>();
+            StringComparison comparisonType = StringComparison.InvariantCultureIgnoreCase;
             string[] accountSettings = accountConnection.Split(Constant.TextDelimiter.Connection);
             foreach (string accountSetting in accountSettings)
             {
-                if (accountSetting.StartsWith(Constant.AppSettingKey.AccountNamePrefix, StringComparison.InvariantCultureIgnoreCase))
+                if (accountSetting.StartsWith(Constant.AppSettingKey.AccountNamePrefix, comparisonType))
                 {
                     parsedConnection.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountNamePrefix.Length));
                 }
-                else if (accountSetting.StartsWith(Constant.AppSettingKey.AccountKeyPrefix, StringComparison.InvariantCultureIgnoreCase))
+                else if (accountSetting.StartsWith(Constant.AppSettingKey.AccountKeyPrefix, comparisonType))
                 {
                     parsedConnection.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountKeyPrefix.Length));
+                }
+                else if (accountSetting.StartsWith(Constant.AppSettingKey.DatabaseIdPrefix, comparisonType))
+                {
+                    parsedConnection.Add(accountSetting.Remove(0, Constant.AppSettingKey.DatabaseIdPrefix.Length));
                 }
             }
             return parsedConnection.ToArray();

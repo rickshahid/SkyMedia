@@ -12,8 +12,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class DatabaseClient : IDisposable
     {
-        private DocumentClient _database;
         private string _databaseId;
+        private DocumentClient _database;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -36,19 +36,16 @@ namespace AzureSkyMedia.PlatformServices
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];
-
+            _databaseId = accountCredentials[2];
             _database = new DocumentClient(new Uri(accountEndpoint), accountKey);
-
-            settingKey = Constant.AppSettingKey.NoSqlDatabaseId;
-            _databaseId = AppSetting.GetValue(settingKey);
         }
 
-        private JObject GetResult(string response)
+        private JObject GetResult(string responseData)
         {
             JObject result = null;
-            if (!string.IsNullOrEmpty(response))
+            if (!string.IsNullOrEmpty(responseData))
             {
-                result = JObject.Parse(response);
+                result = JObject.Parse(responseData);
                 string[] documentProperties = Constant.Database.DocumentProperties.Split(Constant.TextDelimiter.Application);
                 foreach (string documentProperty in documentProperties)
                 {
@@ -70,9 +67,9 @@ namespace AzureSkyMedia.PlatformServices
             return (document == null) ? null : GetResult(document.ToString());
         }
 
-        public string CreateDocument(string assetAccount, string assetId, string collectionId, string jsonData)
+        public string CreateDocument(string collectionId, string docData, string assetAccount, string assetId)
         {
-            JObject jsonDoc = JObject.Parse(jsonData);
+            JObject jsonDoc = JObject.Parse(docData);
             jsonDoc["assetAccount"] = assetAccount;
             jsonDoc["assetId"] = assetId;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);

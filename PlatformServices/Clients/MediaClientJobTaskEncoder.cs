@@ -7,7 +7,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        private static bool PremiumWorkflow(string fileName)
+        private static bool IsPremiumWorkflow(string fileName)
         {
             return fileName.EndsWith(Constant.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.InvariantCulture);
         }
@@ -15,11 +15,11 @@ namespace AzureSkyMedia.PlatformServices
         private static int OrderByWorkflow(MediaAssetInput leftSide, MediaAssetInput rightSide)
         {
             int comparison = 0;
-            if (PremiumWorkflow(leftSide.PrimaryFile))
+            if (IsPremiumWorkflow(leftSide.PrimaryFile))
             {
                 comparison = -1;
             }
-            else if (PremiumWorkflow(rightSide.PrimaryFile))
+            else if (IsPremiumWorkflow(rightSide.PrimaryFile))
             {
                 comparison = 1;
             }

@@ -12,6 +12,7 @@
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/amp-default/azuremediaplayer.min.css" />
     <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
+    <script type="text/javascript" src="~/js/playbackrate.js"></script>
     <script type="text/javascript" src="~/js/amve.min.js"></script>
     <script type="text/javascript">
         function SlideStreamNumber(slideDirection) {
@@ -133,7 +134,7 @@
                             withQuotes: false
                         };
                         switch (analyticsProcessor) {
-                            case "Face Detection":
+                            case "FaceDetection":
                                 $("#mediaMetadata").jsonBrowse(result, jsonOptions);
                                 var facesMetadata = GetFacesMetadata(playerHeight, playerWidth, timeSeconds, result);
                                 for (var i = 0; i < facesMetadata.length; i++) {
@@ -141,7 +142,7 @@
                                     SetVideoOverlay(faceMetadata);
                                 }
                                 break;
-                            case "Emotion Detection":
+                            case "EmotionDetection":
                                 var fragmentEvent = GetFragmentEvent(timeSeconds, result.timescale, result.fragment);
                                 $("#mediaMetadata").jsonBrowse(fragmentEvent, jsonOptions);
                                 break;
@@ -314,9 +315,8 @@
     @Html.Partial("MediaPlayer", true)
 </div>
 
-@section foot {
-    <div class="streamInfo">
-        <div id="streamName" class="streamName"></div>
-        <div id="streamUrl" class="streamUrl"></div>
-    </div>
-}
+<div class="streamInfo">
+    <div id="streamName" class="streamName"></div>
+    <div id="streamUrl" class="streamUrl"></div>
+</div>
+

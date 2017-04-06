@@ -130,8 +130,13 @@ function GetProtectionInfo(protectionTypes, authToken) {
     return protectionInfo;
 }
 function GetMediaPlayer(clipMode) {
-    var videoId = clipMode ? "videoClipper" : "videoPlayer";
-    var mediaPlayer = amp(videoId);
+    var videoTagId = clipMode ? "videoClipper" : "videoPlayer";
+    var playerOptions = {
+        plugins: {
+            "playbackrate": {}
+        }
+    };
+    var mediaPlayer = amp(videoTagId, playerOptions);
     if (clipMode) {
         mediaPlayer.AMVE({
             containerId: "mediaClipper",

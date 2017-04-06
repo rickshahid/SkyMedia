@@ -1,8 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
@@ -40,62 +36,6 @@ namespace AzureSkyMedia.PlatformServices
         private void BindContext(CloudStorageAccount storageAccount)
         {
             _storage = storageAccount.CreateCloudQueueClient();
-        }
-
-        private static string EncodeParameters(IDictionary<string, string> parameters)
-        {
-            List<string> encodedParameters = new List<string>();
-            foreach (KeyValuePair<string, string> parameter in parameters)
-            {
-                string parameterName = WebUtility.UrlEncode(parameter.Key);
-                string parameterValue = WebUtility.UrlEncode(parameter.Value);
-                string encodedParameter = string.Concat(parameterName, "=", parameterValue);
-                encodedParameters.Add(encodedParameter);
-            }
-            return string.Join("&", encodedParameters);
-        }
-
-        public static HttpWebResponse SendText(string messageText, string mobileNumber)
-        {
-            string settingKey = Constant.AppSettingKey.Twilio;
-            string[] accountCredentials = AppSetting.GetValue(settingKey, true);
-            string accountName = accountCredentials[0];
-            string accountKey = accountCredentials[1];
-
-            settingKey = Constant.AppSettingKey.TwilioMessageApi;
-            string messageApi = string.Format(AppSetting.GetValue(settingKey), accountName);
-            HttpWebRequest httpRequest = WebRequest.CreateHttp(messageApi);
-            httpRequest.Method = "POST";
-            httpRequest.ContentType = Constant.ContentType.Url;
-
-            string authToken = string.Concat(accountName, ":", accountKey);
-            byte[] authBytes = Encoding.UTF8.GetBytes(authToken);
-            authToken = string.Concat("Basic ", Convert.ToBase64String(authBytes));
-            httpRequest.Headers.Add("Authorization", authToken);
-
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-
-            string parameterName = "From";
-            settingKey = Constant.AppSettingKey.TwilioMessageFrom;
-            string parameterValue = AppSetting.GetValue(settingKey);
-            parameters.Add(parameterName, parameterValue);
-
-            parameterName = "To";
-            parameterValue = mobileNumber;
-            parameters.Add(parameterName, parameterValue);
-
-            parameterName = "Body";
-            parameterValue = messageText;
-            parameters.Add(parameterName, parameterValue);
-
-            string requestParams = EncodeParameters(parameters);
-            httpRequest.ContentLength = Encoding.UTF8.GetByteCount(requestParams);
-            using (StreamWriter requestWriter = new StreamWriter(httpRequest.GetRequestStream()))
-            {
-                requestWriter.Write(requestParams);
-            }
-
-            return (HttpWebResponse)httpRequest.GetResponse();
         }
 
         public CloudQueue GetQueue(string queueName, bool enableCreate)
@@ -149,17 +89,18 @@ namespace AzureSkyMedia.PlatformServices
             return GetMessage(queueName, null, out queueMessage, out messageId, out popReceipt);
         }
 
-        public void AddMessage(string queueName, object message, TimeSpan? timeToLive, TimeSpan? initialVisibilityDelay)
+        public string AddMessage(string queueName, object message, TimeSpan? timeToLive, TimeSpan? initialVisibilityDelay)
         {
             CloudQueue queue = GetQueue(queueName, true);
             string messageText = JsonConvert.SerializeObject(message);
             CloudQueueMessage queueMessage = new CloudQueueMessage(messageText);
             queue.AddMessage(queueMessage, timeToLive, initialVisibilityDelay);
+            return messageText;
         }
 
-        public void AddMessage(string queueName, object message)
+        public string AddMessage(string queueName, object message)
         {
-            AddMessage(queueName, message, null, null);
+            return AddMessage(queueName, message, null, null);
         }
 
         public void DeleteMessage(string queueName, CloudQueueMessage queueMessage)

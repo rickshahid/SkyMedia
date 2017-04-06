@@ -43,36 +43,33 @@
     string taskOptionsId = string.Concat("taskOptions", taskNumber);
 }
 
-<tr id="@taskRowId">
+<tr id="@taskRowId" class="mediaWorkflowTaskRow">
     <td class="inputLabel">
-        Job Task #@taskNumber:
+        Job Task #@taskNumber
     </td>
     <td>
         <table class="jobTask">
             <tr>
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-get-media-processor')">
-                        Media Processor:
+                        Media Processor
                     </span>
                 </td>
                 <td>
                     @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1)" })
                     &nbsp;
                     <span class="inputLabel">
-                        Use Parent Task #
+                        Use output from Job Task #
                     </span>
                     <select id="@taskParentId" class="jobTaskParent" disabled>
                         <option value=""></option>
                     </select>
-                    <span class="inputLabel">
-                        Output
-                    </span>
                 </td>
             </tr>
             <tr id="@encoderConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span id="@encoderConfigDocId" class="siteLink">
-                        Encoder Config:
+                        Encoder Config
                     </span>
                 </td>
                 <td>
@@ -82,7 +79,7 @@
             <tr id="@encoderConfigFileRowId" style="display: none">
                 <td class="inputLabel">
                     <span id="@encoderConfigFileDocId" class="siteLink">
-                        Custom Config:
+                        Custom Config
                     </span>
                 </td>
                 <td>
@@ -92,7 +89,7 @@
             <tr id="@indexerConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
-                        Indexer Config:
+                        Indexer Config
                     </span>
                 </td>
                 <td>
@@ -116,7 +113,7 @@
             <tr id="@faceDetectionConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection')">
-                        Face Detection:
+                        Face Detection
                     </span>
                 </td>
                 <td>
@@ -126,7 +123,7 @@
                     </span>
                     @Html.RadioButton(faceDetectionModeId, "aggregateEmotion", false)
                     <span class="inputLabel faceDetectionMode">
-                        Group Emotion
+                        Aggregate Emotion
                     </span>
                     @Html.RadioButton(faceDetectionModeId, "perFaceEmotion", false)
                     <span class="inputLabel">
@@ -137,7 +134,7 @@
             <tr id="@faceRedactionConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction')">
-                        Face Redaction:
+                        Face Redaction
                     </span>
                 </td>
                 <td>
@@ -158,7 +155,7 @@
             <tr id="@summaryConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization')">
-                        Summarization:
+                        Summarization
                     </span>
                 </td>
                 <td>
@@ -184,7 +181,7 @@
             <tr id="@motionConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection')">
-                        Motion Detection:
+                        Motion Detection
                     </span>
                 </td>
                 <td>
@@ -205,7 +202,7 @@
             <tr id="@hyperlapseConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content')">
-                        Motion Hyperlapse:
+                        Motion Hyperlapse
                     </span>
                 </td>
                 <td>
@@ -230,7 +227,7 @@
             </tr>
             <tr>
                 <td class="inputLabel">
-                    Output Asset Name:
+                    Output Asset Name
                 </td>
                 <td>
                     @Html.TextBox(outputAssetNameId, null, new { @class = "outputAssetName" })
@@ -247,7 +244,7 @@
                 <td>
                     @Html.CheckBox(encoderFragmentOutputId, false)
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/dotnet/api/microsoft.windowsazure.mediaservices.client.assetformatoption')">
-                        Content Pre-Fragment
+                        Content Pre-Fragmented
                     </span>
                     &nbsp;
                     @Html.CheckBox(contentProtectionId, false, new { onclick = "ShowContentProtection(this)" })
@@ -269,7 +266,7 @@
                                 <table class="contentProtectionOptions">
                                     <tr>
                                         <td class="inputLabel">
-                                            Encryption:
+                                            Encryption
                                         </td>
                                         <td>
                                             @Html.CheckBox(contentProtectionAesId, false, new { onchange = "SetContentProtection(this)" })
@@ -298,7 +295,7 @@
                                     <tr>
                                         <td class="inputLabel">
                                             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
-                                                User Auth:
+                                                User Auth
                                             </span>
                                         </td>
                                         <td>

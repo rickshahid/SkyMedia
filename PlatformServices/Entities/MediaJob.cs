@@ -15,7 +15,5 @@ namespace AzureSkyMedia.PlatformServices
         public MediaJobTask[] Tasks { get; set; }
 
         public ReservedUnitType NodeType { get; set; }
-
-        public NotificationEndPointType NotificationType { get; set; }
     }
 }

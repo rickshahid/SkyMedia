@@ -44,7 +44,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryPolicyIdPasswordReset = "Directory.PolicyId.PasswordReset";
 
             public const string StorageCdnUrl = "Storage.CdnUrl";
-            public const string NoSqlDatabaseId = "NoSql.DatabaseId";
 
             public const string MediaConcurrentTransferCount = "Media.ConcurrentTransferCount";
             public const string MediaParallelTransferThreadCount = "Media.ParallelTransferThreadCount";
@@ -98,11 +97,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string AsperaUploadSetup = "Aspera.UploadSetup";
             public const string AsperaDownloadSetup = "Aspera.DownloadSetup";
 
-            public const string TwilioMessageApi = "Twilio.MessageApi";
-            public const string TwilioMessageFrom = "Twilio.MessageFrom";
-
             public const string AccountNamePrefix = "AccountName=";
             public const string AccountKeyPrefix = "AccountKey=";
+            public const string DatabaseIdPrefix = "DatabaseId=";
 
             public const string AzureStorage = "Storage";
             public const string AzureNoSqlReadOnly = "NoSql.ReadOnly";
@@ -111,8 +108,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string AzureMedia = "Media";
             public const string AzureCache = "Cache";
             public const string AzureSearch = "Search";
-
-            public const string Twilio = "Twilio";
         }
 
         public struct HttpHeader
@@ -231,14 +226,10 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct ProcessorConfig
             {
-                public const string EncoderStandardDefaultPreset = "H264 Multiple Bitrate 720p Audio 5.1";
+                public const string EncoderStandardDefaultPreset = "Adaptive Streaming";
                 public const string EncoderStandardThumbnailsPreset = "Thumbnails";
                 public const string EncoderStandardThumbnailsFormat = "PngImage";
                 public const string EncoderPremiumWorkflowExtension = ".workflow";
-
-                //public const string IndexerLanguageSpanish = "Spanish";
-                //public const string IndexerLanguageCodeEngligh = "en";
-                //public const string IndexerLanguageCodeSpanish = "es";
             }
 
             public struct ContentProtection
@@ -289,8 +280,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct JobNotification
             {
-                public const string EndpointNameStorageQueue = "Job Notification Storage Queue";
-                public const string EndpointNameWebHook = "Job Notification Web Hook";
+                public const string EndpointName = "Job Notification Web Hook";
             }
 
             public struct TreeIcon

@@ -312,18 +312,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public void AddDeliveryPolicies(IAsset asset, ContentProtection contentProtection)
         {
-            if (asset.Options == AssetCreationOptions.StorageEncrypted)
+            IContentKey[] contentKeys = GetContentKeys(contentProtection);
+            foreach (IContentKey contentKey in contentKeys)
             {
-                IContentKey[] contentKeys = GetContentKeys(contentProtection);
-                foreach (IContentKey contentKey in contentKeys)
-                {
-                    asset.ContentKeys.Add(contentKey);
-                }
-                IAssetDeliveryPolicy[] deliveryPolicies = GetDeliveryPolicies(contentProtection);
-                foreach (IAssetDeliveryPolicy deliveryPolicy in deliveryPolicies)
-                {
-                    asset.DeliveryPolicies.Add(deliveryPolicy);
-                }
+                asset.ContentKeys.Add(contentKey);
+            }
+            IAssetDeliveryPolicy[] deliveryPolicies = GetDeliveryPolicies(contentProtection);
+            foreach (IAssetDeliveryPolicy deliveryPolicy in deliveryPolicies)
+            {
+                asset.DeliveryPolicies.Add(deliveryPolicy);
             }
         }
 

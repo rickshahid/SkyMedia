@@ -19,25 +19,16 @@ namespace AzureSkyMedia.PlatformServices
             return jobTemplates;
         }
 
-        private INotificationEndPoint GetNotificationEndpoint(NotificationEndPointType endpointType)
+        private INotificationEndPoint GetNotificationEndpoint()
         {
-            string endpointName = Constant.Media.JobNotification.EndpointNameStorageQueue;
-            string settingKey = Constant.AppSettingKey.MediaJobNotificationStorageQueueName;
-            string endpointAddress = AppSetting.GetValue(settingKey);
-            if (endpointType == NotificationEndPointType.WebHook)
+            string endpointName = Constant.Media.JobNotification.EndpointName;
+            INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
+            if (notificationEndpoint == null)
             {
-                endpointName = Constant.Media.JobNotification.EndpointNameWebHook;
-                settingKey = Constant.AppSettingKey.MediaJobNotificationWebHookUrl;
-                endpointAddress = AppSetting.GetValue(settingKey);
-            }
-            INotificationEndPoint notificationEndpoint = null;
-            if (!string.IsNullOrEmpty(endpointAddress))
-            {
-                notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
-                if (notificationEndpoint == null)
-                {
-                    notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
-                }
+                NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
+                string settingKey = Constant.AppSettingKey.MediaJobNotificationWebHookUrl;
+                string endpointAddress = AppSetting.GetValue(settingKey);
+                notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
             }
             return notificationEndpoint;
         }
@@ -59,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             processorUnits[0].Update();
         }
 
-        internal static MediaJob SetJob(MediaClient mediaClient, MediaJob mediaJob, MediaAssetInput[] inputAssets)
+        internal static MediaJob GetJob(MediaClient mediaClient, MediaJob mediaJob, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> taskList = new List<MediaJobTask>();
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
@@ -145,7 +136,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
                 }
-                INotificationEndPoint notificationEndpoint = GetNotificationEndpoint(mediaJob.NotificationType);
+                INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
                 if (notificationEndpoint != null)
                 {
                     job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
@@ -162,44 +153,6 @@ namespace AzureSkyMedia.PlatformServices
                 job.Submit();
             }
             return job;
-        }
-
-        internal static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection[] contentProtections)
-        {
-            string attributeName = Constant.UserAttribute.MediaAccountName;
-            string accountName = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.MediaAccountKey;
-            string accountKey = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.UserId;
-            string userId = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.MobileNumber;
-            string mobileNumber = AuthToken.GetClaimValue(authToken, attributeName);
-
-            JobPublish jobPublish = new JobPublish();
-            jobPublish.PartitionKey = accountName;
-            jobPublish.RowKey = job.Id;
-
-            jobPublish.MediaAccountKey = accountKey;
-            jobPublish.StorageAccountName = storageAccount;
-            jobPublish.StorageAccountKey = Storage.GetUserAccountKey(authToken, storageAccount);
-            jobPublish.UserId = userId;
-            jobPublish.MobileNumber = mobileNumber;
-
-            EntityClient entityClient = new EntityClient();
-
-            string tableName = Constant.Storage.TableName.JobPublish;
-            entityClient.InsertEntity(tableName, jobPublish);
-
-            tableName = Constant.Storage.TableName.JobPublishProtection;
-            foreach (ContentProtection contentProtection in contentProtections)
-            {
-                contentProtection.PartitionKey = jobPublish.PartitionKey;
-                contentProtection.RowKey = jobPublish.RowKey;
-                entityClient.InsertEntity(tableName, contentProtection);
-            }
         }
     }
 }

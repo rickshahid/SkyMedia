@@ -7,7 +7,6 @@ function GetJob() {
         Name: $("#jobName").val(),
         Priority: $("#jobPriorityLabel").text(),
         NodeType: $("#jobNode").val(),
-        NotificationType: $("input[name='jobNotification']:checked").val(),
         Tasks: GetJobTasks()
     };
     return job;
@@ -46,12 +45,9 @@ function AddJobTask(taskButton) {
     SetJobTaskWidgets(lastTaskNumber);
     var mediaProcessor = $("#mediaProcessor" + newTaskNumber)[0];
     SetProcessorConfig(mediaProcessor, newTaskNumber);
-    $("#mediaWorkflowTaskAdd").removeClass("mediaWorkflowTaskButtons1");
-    $("#mediaWorkflowTaskAdd").addClass("mediaWorkflowTaskButtons2");
     $("#mediaWorkflowTaskRemove").show();
     if (lastTaskNumber == 4) {
         $("#mediaWorkflowTaskAdd").hide();
-        $("#mediaWorkflowTaskRemove").addClass("mediaWorkflowTaskButtons1");
     }
     EnsureVisibility();
 }
@@ -64,10 +60,7 @@ function RemoveJobTask(taskButton) {
     workflowTable.deleteRow(lastTaskRow.rowIndex - 1);
     workflowTable.deleteRow(lastTaskRow.rowIndex);
     $("#mediaWorkflowTaskAdd").show();
-    $("#mediaWorkflowTaskRemove").removeClass("mediaWorkflowTaskButtons1");
     if (lastTaskNumber == 2) {
-        $("#mediaWorkflowTaskAdd").removeClass("mediaWorkflowTaskButtons2");
-        $("#mediaWorkflowTaskAdd").addClass("mediaWorkflowTaskButtons1");
         $("#mediaWorkflowTaskRemove").hide();
     }
 }

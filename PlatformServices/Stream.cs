@@ -18,7 +18,7 @@ namespace AzureSkyMedia.PlatformServices
                 MediaTextTrack textTrack = new MediaTextTrack();
                 textTrack.Type = Constant.Media.Stream.TextTrackSubtitles;
                 textTrack.SourceUrl = mediaClient.GetLocatorUrl(asset, locatorType, fileName);
-                textTrack.LanguageCode = Language.GetLanguageCode(textTrack.SourceUrl);
+                textTrack.LanguageCode = Language.GetLanguageCode(textTrack);
                 textTrack.Label = Language.GetLanguageLabel(textTrack.LanguageCode);
                 textTracks.Add(textTrack);
             }
