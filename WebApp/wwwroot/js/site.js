@@ -1,4 +1,4 @@
-﻿var _inputAssets, _encoderConfig, _mediaStreams, _streamNumber, _authToken;
+﻿var _inputAssets, _encoderConfig, _saveWorkflow, _mediaStreams, _streamNumber, _authToken;
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");

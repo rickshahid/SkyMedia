@@ -37,7 +37,7 @@
     });
     SetJobTaskWidgets(1);
 }
-function ValidWorkflowInput(uploadView) {
+function ValidWorkflowInput(uploadView, saveWorkflow) {
     var validInput = true;
     if (uploadView) {
         if (_fileUploader.files.length == 0) {
@@ -58,6 +58,12 @@ function ValidWorkflowInput(uploadView) {
             SetTipVisible("mediaAssets", true);
             validInput = false;
         }
+    }
+    if (saveWorkflow && $("#jobName").val() == "") {
+        CreateTipTop("jobName", "Job Template Name");
+        SetTipVisible("jobName", true);
+        $("#jobName").focus();
+        validInput = false;
     }
     return ValidWorkflowTasks(validInput);
 }
@@ -90,11 +96,10 @@ function ValidWorkflowTaskClear(taskNumber) {
     SetTipVisible("encoderConfigFile" + taskNumber, false);
 }
 function ValidWorkflow(uploadView, saveWorkflow) {
-    if (ValidWorkflowInput(uploadView)) {
+    if (ValidWorkflowInput(uploadView, saveWorkflow)) {
+        _saveWorkflow = saveWorkflow;
         if (uploadView) {
             _fileUploader.start();
-        } else if (saveWorkflow) {
-            SaveWorkflow();
         } else {
             StartWorkflow();
         }
@@ -152,7 +157,7 @@ function DisplayWorkflow(jobTasks, result) {
         }
     } else {
         title = "Azure Media Services Job";
-        if (result.templateId != null) {
+        if (result.id.indexOf("jtid") > -1) {
             title = title + " Template";
         }
         message = result.name + "<br /><br />" + result.id;
@@ -169,18 +174,6 @@ function UploadWorkflow(files) {
             inputAssetName: $("#inputAssetName").val(),
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             publishInputAsset: $("#publishInputAsset").prop("checked"),
-            inputAssets: _inputAssets,
-            mediaJob: job
-        },
-        function (result) {
-            DisplayWorkflow(job.Tasks, result);
-        }
-    );
-}
-function SaveWorkflow() {
-    var job = GetJob();
-    $.post("/workflow/save",
-        {
             inputAssets: _inputAssets,
             mediaJob: job
         },

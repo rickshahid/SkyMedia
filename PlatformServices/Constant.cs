@@ -196,10 +196,16 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string DocumentProperties = "id,name,_rid,_self,_etag,_ts,_attachments";
 
-            public struct DocumentCollection
+            public struct Collection
             {
                 public const string Encoding = "Encoding";
                 public const string Metadata = "Metadata";
+            }
+
+            public struct Procedure
+            {
+                public const string EncoderConfig = "getEncoderConfig";
+                public const string MetadataFragment = "getTimecodeFragment";
             }
         }
 

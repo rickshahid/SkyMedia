@@ -33,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                string collectionId = Constant.Database.DocumentCollection.Metadata;
+                string collectionId = Constant.Database.Collection.Metadata;
                 foreach (IAssetFile file in asset.AssetFiles)
                 {
                     if (file.Name.EndsWith(Constant.Media.FileExtension.Json))
@@ -176,6 +176,11 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (IIngestManifest manifest in manifests)
                 {
                     manifest.Delete();
+                }
+                IJobTemplate[] jobTemplates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
+                foreach (IJobTemplate jobTemplate in jobTemplates)
+                {
+                    jobTemplate.Delete();
                 }
             }
             IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];

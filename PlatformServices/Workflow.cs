@@ -132,10 +132,14 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static object GetJobResult(MediaClient mediaClient, IJob job, MediaAssetInput[] inputAssets)
+        private static object GetJobResult(MediaClient mediaClient, IJob job, IJobTemplate jobTemplate, MediaAssetInput[] inputAssets)
         {
             object result = job;
-            if (job == null)
+            if (jobTemplate != null)
+            {
+                result = jobTemplate;
+            }
+            else if (job == null && inputAssets != null)
             {
                 foreach (MediaAssetInput inputAsset in inputAssets)
                 {
@@ -150,14 +154,18 @@ namespace AzureSkyMedia.PlatformServices
         public static object SubmitJob(string authToken, MediaClient mediaClient, string storageAccount, MediaAssetInput[] inputAssets, MediaJob mediaJob)
         {
             IJob job = null;
+            IJobTemplate jobTemplate = null;
             if (mediaJob.Tasks != null && mediaJob.Tasks.Length > 0)
             {
                 mediaJob = MediaClient.GetJob(mediaClient, mediaJob, inputAssets);
                 ContentProtection contentProtection = GetContentProtection(mediaJob.Tasks);
-                job = mediaClient.CreateJob(mediaJob);
-                TrackJob(authToken, job, storageAccount, contentProtection);
+                job = mediaClient.CreateJob(mediaJob, out jobTemplate);
+                if (!string.IsNullOrEmpty(job.Id))
+                {
+                    TrackJob(authToken, job, storageAccount, contentProtection);
+                }
             }
-            return GetJobResult(mediaClient, job, inputAssets);
+            return GetJobResult(mediaClient, job, jobTemplate, inputAssets);
         }
 
         public static object SubmitJob(string authToken, MediaClient mediaClient, string sourceUrl)
@@ -170,11 +178,14 @@ namespace AzureSkyMedia.PlatformServices
             mediaJob.Tasks = new MediaJobTask[] { jobTask };
             mediaJob.NodeType = ReservedUnitType.Premium;
 
-            IJob job = mediaClient.CreateJob(mediaJob);
-            string storageAccount = mediaClient.DefaultStorageAccount.Name;
-            MediaAssetInput[] inputAssets = mediaClient.GetInputAssets(sourceUrl);
-            TrackJob(authToken, job, storageAccount, null);
-            return GetJobResult(mediaClient, job, inputAssets);
+            IJobTemplate jobTemplate;
+            IJob job = mediaClient.CreateJob(mediaJob, out jobTemplate);
+            if (!string.IsNullOrEmpty(job.Id))
+            {
+                string storageAccount = mediaClient.DefaultStorageAccount.Name;
+                TrackJob(authToken, job, storageAccount, null);
+            }
+            return GetJobResult(mediaClient, job, jobTemplate, null);
         }
     }
 }

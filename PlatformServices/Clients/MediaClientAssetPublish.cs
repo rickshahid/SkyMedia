@@ -172,7 +172,7 @@ namespace AzureSkyMedia.PlatformServices
                                 }
                                 if (!string.IsNullOrEmpty(jsonData))
                                 {
-                                    string collectionId = Constant.Database.DocumentCollection.Metadata;
+                                    string collectionId = Constant.Database.Collection.Metadata;
                                     string fileSuffix = string.Concat(Constant.TextDelimiter.Identifier, mediaProcessor.ToString(), fileExtension);
                                     ClearMetadata(databaseClient, collectionId, fileSuffix, encoderOutputAsset, mediaProcessor);
                                     string documentId = databaseClient.CreateDocument(collectionId, jsonData, jobPublish.PartitionKey, encoderOutputAsset.Id);

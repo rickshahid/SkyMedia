@@ -18,15 +18,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(result);
         }
 
-        public JsonResult save(MediaAssetInput[] inputAssets, MediaJob mediaJob)
-        {
-            mediaJob.SaveAsTemplate = true;
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            object result = Workflow.SubmitJob(authToken, mediaClient, null, inputAssets, mediaJob);
-            return Json(result);
-        }
-
         public JsonResult start(MediaAssetInput[] inputAssets, MediaJob mediaJob)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);

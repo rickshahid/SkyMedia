@@ -4,6 +4,7 @@
 }
 function GetJob() {
     var job = {
+        Save: _saveWorkflow,
         Name: $("#jobName").val(),
         Priority: $("#jobPriorityLabel").text(),
         NodeType: $("#jobNode").val(),

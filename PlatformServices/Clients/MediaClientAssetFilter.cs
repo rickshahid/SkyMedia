@@ -24,13 +24,5 @@ namespace AzureSkyMedia.PlatformServices
             IAsset sourceAsset = GetSourceAsset(sourceUrl);
             return sourceAsset.AssetFilters.Create(filterName, timeRange, trackConditions);
         }
-
-        public MediaAssetInput[] GetInputAssets(string sourceUrl)
-        {
-            IAsset sourceAsset = GetSourceAsset(sourceUrl);
-            MediaAssetInput inputAsset = new MediaAssetInput();
-            inputAsset.AssetId = sourceAsset.Id;
-            return new MediaAssetInput[] { inputAsset };
-        }
     }
 }

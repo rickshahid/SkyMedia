@@ -8,23 +8,23 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class analyticsController : Controller
     {
-        private JObject GetFragment(string documentId, double timeSeconds)
+        private JObject GetMetadataFragment(string documentId, double timeSeconds)
         {
-            JObject fragment;
+            JObject metadataFragment;
             using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                string collectionId = Constant.Database.DocumentCollection.Metadata;
-                fragment = databaseClient.ExecuteProcedure(collectionId, "getTimecodeFragment", documentId, timeSeconds);
+                string collectionId = Constant.Database.Collection.Metadata;
+                string procedureId = Constant.Database.Procedure.MetadataFragment;
+                metadataFragment = databaseClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
             }
-            return fragment;
+            return metadataFragment;
         }
 
         public JsonResult metadata(string fileName, double timeSeconds)
         {
-            string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
-            string documentId = fileNameInfo[0];
-            JObject fragment = GetFragment(documentId, timeSeconds);
-            return Json(fragment);
+            string documentId = fileName.Split(Constant.TextDelimiter.Identifier)[0];
+            JObject metadataFragment = GetMetadataFragment(documentId, timeSeconds);
+            return Json(metadataFragment);
         }
     }
 }

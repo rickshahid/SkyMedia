@@ -9,21 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\cdn\Screenshot1-AzureActiveDirectoryB2CSignUpIn.png" />
-    <Content Include="wwwroot\cdn\Screenshot2-AzureMediaFileUploadWorkflow.png" />
-    <Content Include="wwwroot\cdn\Screenshot3-AzureMediaAnalyticsStream.png" />
-    <Content Include="wwwroot\cdn\Screenshot4-AzureMediaProcessors.png" />
-    <Content Include="wwwroot\cdn\Screenshot5-AzureMediaVideoClipper.png" />
-    <Content Include="wwwroot\cdn\Shot1-AzureActiveDirectoryB2CSignUpIn.png" />
-    <Content Include="wwwroot\cdn\Shot2-AzureMediaFileUploadWorkflow.png" />
-    <Content Include="wwwroot\cdn\Shot3-AzureMediaAnalyticsStream.png" />
-    <Content Include="wwwroot\cdn\Shot4-AzureMediaProcessors.png" />
-    <Content Include="wwwroot\cdn\Shot5-AzureMediaVideoClipper.png" />
+    <Content Include="wwwroot\cdn\Snip1-AzureActiveDirectoryB2CSignUpIn.png" />
+    <Content Include="wwwroot\cdn\Snip1.AzureActiveDirectoryB2CSignUpIn.png" />
     <Content Include="wwwroot\cdn\Snip1AzureActiveDirectoryB2CSignUpIn.png" />
-    <Content Include="wwwroot\cdn\Snip2AzureMediaFileUploadWorkflow.png" />
-    <Content Include="wwwroot\cdn\Snip3AzureMediaAnalyticsStream.png" />
+    <Content Include="wwwroot\cdn\Snip2-AzureMediaFileUploadWorkflow.png" />
+    <Content Include="wwwroot\cdn\Snip2.AzureMediaFileUploadWorkflow.png" />
+    <Content Include="wwwroot\cdn\Snip3.AzureMediaAnalyticsStream.png" />
+    <Content Include="wwwroot\cdn\Snip4.AzureMediaProcessors.png" />
     <Content Include="wwwroot\cdn\Snip4AzureMediaProcessors.png" />
-    <Content Include="wwwroot\cdn\Snip5AzureMediaVideoClipper.png" />
+    <Content Include="wwwroot\cdn\Snip5.AzureMediaVideoClipper.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />

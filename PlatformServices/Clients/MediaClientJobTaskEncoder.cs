@@ -59,8 +59,8 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     using (DatabaseClient databaseClient = new DatabaseClient(true))
                     {
-                        string collectionId = Constant.Database.DocumentCollection.Encoding;
-                        string procedureId = "getEncoderConfig";
+                        string collectionId = Constant.Database.Collection.Encoding;
+                        string procedureId = Constant.Database.Procedure.EncoderConfig;
                         JObject encoderConfig = databaseClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
                         jobTask.ProcessorConfig = encoderConfig.ToString();
                     }
