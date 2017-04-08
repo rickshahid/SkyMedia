@@ -7,9 +7,20 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Processor
     {
-        public static string SetProcessorName(string processorName)
+        private static string GetProcessorName(string processorName, string fileName)
         {
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
+                processorName = fileNameInfo[fileNameInfo.Length - 1];
+                processorName = processorName.Replace(Constant.Media.FileExtension.Json, string.Empty);
+            }
             return Regex.Replace(processorName, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
+        }
+
+        public static string GetProcessorName(MediaProcessor mediaProcessor)
+        {
+            return GetProcessorName(mediaProcessor.ToString(), null);
         }
 
         public static string GetProcessorId(MediaProcessor mediaProcessor)
@@ -29,17 +40,23 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.Indexer:
                     processorId = Constant.Media.ProcessorId.Indexer;
                     break;
+                case MediaProcessor.FaceDetection:
+                    processorId = Constant.Media.ProcessorId.FaceDetection;
+                    break;
+                case MediaProcessor.FaceRedaction:
+                    processorId = Constant.Media.ProcessorId.FaceRedaction;
+                    break;
                 case MediaProcessor.VideoAnnotation:
                     processorId = Constant.Media.ProcessorId.VideoAnnotation;
                     break;
                 case MediaProcessor.VideoSummarization:
                     processorId = Constant.Media.ProcessorId.VideoSummarization;
                     break;
-                case MediaProcessor.FaceDetection:
-                    processorId = Constant.Media.ProcessorId.FaceDetection;
+                case MediaProcessor.CharacterRecognition:
+                    processorId = Constant.Media.ProcessorId.CharacterRecognition;
                     break;
-                case MediaProcessor.FaceRedaction:
-                    processorId = Constant.Media.ProcessorId.FaceRedaction;
+                case MediaProcessor.ContentModeration:
+                    processorId = Constant.Media.ProcessorId.ContentModeration;
                     break;
                 case MediaProcessor.MotionDetection:
                     processorId = Constant.Media.ProcessorId.MotionDetection;
@@ -50,20 +67,8 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.MotionStabilization:
                     processorId = Constant.Media.ProcessorId.MotionStabilization;
                     break;
-                case MediaProcessor.CharacterRecognition:
-                    processorId = Constant.Media.ProcessorId.CharacterRecognition;
-                    break;
-                case MediaProcessor.ContentModeration:
-                    processorId = Constant.Media.ProcessorId.ContentModeration;
-                    break;
             }
             return processorId;
-        }
-
-        public static string GetProcessorName(MediaProcessor mediaProcessor)
-        {
-            string processorName = SetProcessorName(mediaProcessor.ToString());
-            return processorName.Replace(Constant.TextDelimiter.Identifier, ' ');
         }
 
         public static MediaProcessor GetProcessorType(string processorId)
@@ -114,14 +119,6 @@ namespace AzureSkyMedia.PlatformServices
             return mediaProcessor;
         }
 
-        private static string GetAnalyticsProcessorName(string fileName)
-        {
-            string[] fileNameInfo = fileName.Split('_');
-            string processorName = fileNameInfo[fileNameInfo.Length - 1];
-            processorName = processorName.Replace(Constant.Media.FileExtension.Json, string.Empty);
-            return Processor.SetProcessorName(processorName);
-        }
-
         public static MediaMetadata[] GetAnalyticsMetadata(IAsset asset)
         {
             List<MediaMetadata> analyticsMetadata = new List<MediaMetadata>();
@@ -129,7 +126,7 @@ namespace AzureSkyMedia.PlatformServices
             string[] fileNames = MediaClient.GetFileNames(asset, fileExtension);
             foreach (string fileName in fileNames)
             {
-                string processorName = GetAnalyticsProcessorName(fileName);
+                string processorName = GetProcessorName(null, fileName);
                 MediaMetadata mediaMetadata = new MediaMetadata();
                 mediaMetadata.ProcessorName = processorName;
                 mediaMetadata.FileName = fileName;

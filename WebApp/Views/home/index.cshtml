@@ -40,7 +40,7 @@
             $("#streamName").html(streamName);
         }
         function GetMediaStreams() {
-            var mediaStreams = @Html.Raw(Json.Serialize(ViewData["mediaStreams"]));
+            var mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             for (var i = 0; i < mediaStreams.length; i++) {
                 for (var t = 0; t < mediaStreams[i].textTracks.length; t++) {
                     var languageCode = mediaStreams[i].textTracks[t].srclang;

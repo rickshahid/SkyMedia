@@ -52,7 +52,7 @@
             $("#inventory2").html(innerHtml);
         }
         $(function () {
-            var entityCounts = @Html.Raw(Json.Serialize(ViewData["entityCounts"]));
+            var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
             SetInventory(entityCounts);
             CreateTipTop("accountDashboard", "Live Monitoring Dashboard");
             CreateTipTop("accountClear", "Clear Media Account");

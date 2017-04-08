@@ -1,4 +1,4 @@
-﻿var _inputAssets, _encoderConfig, _saveWorkflow, _mediaStreams, _streamNumber, _authToken;
+﻿var _authToken, _inputAssets, _encoderConfig, _saveWorkflow, _mediaStreams, _streamNumber, _spokenLanguages;
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");
@@ -82,38 +82,7 @@ function GetSourceType(sourceUrl) {
     return sourceUrl.toLowerCase().indexOf(".mp4") > -1 ? "video/mp4" : "application/vnd.ms-sstr+xml";
 }
 function GetLanguageLabel(languageCode) {
-    return languageCode;
-//    var languageLabel;
-//    switch (languageCode.substr(0, 2).toLowerCase()) {
-//        case "en":
-//            languageLabel = "English";
-//            break;
-//        case "es":
-//            languageLabel = "Spanish";
-//            break;
-//        case "ar":
-//            languageLabel = "Arabic";
-//            break;
-//        case "zh":
-//            languageLabel = "Chinese";
-//            break;
-//        case "fr":
-//            languageLabel = "French";
-//            break;
-//        case "de":
-//            languageLabel = "German";
-//            break;
-//        case "it":
-//            languageLabel = "Italian";
-//            break;
-//        case "ja":
-//            languageLabel = "Japanese";
-//            break;
-//        case "pt":
-//            languageLabel = "Portuguese";
-//            break;
-//    }
-//    return languageLabel;
+    return _spokenLanguages[languageCode];
 }
 function GetProtectionInfo(protectionTypes, authToken) {
     var protectionInfo = null;

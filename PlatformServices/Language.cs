@@ -19,40 +19,25 @@ namespace AzureSkyMedia.PlatformServices
             return spokenLanguage.Substring(0, 2).ToLower();
         }
 
+        public static JObject GetSpokenLanguages()
+        {
+            JObject spokenLanguages = new JObject();
+            spokenLanguages.Add("en", "English");
+            spokenLanguages.Add("es", "Spanish");
+            spokenLanguages.Add("ar", "Arabic");
+            spokenLanguages.Add("zh", "Chinese");
+            spokenLanguages.Add("fr", "French");
+            spokenLanguages.Add("de", "German");
+            spokenLanguages.Add("it", "Italian");
+            spokenLanguages.Add("jp", "Japanese");
+            spokenLanguages.Add("pt", "Portuguese");
+            return spokenLanguages;
+        }
+
         public static string GetLanguageLabel(string languageCode)
         {
-            string languageLabel = string.Empty;
-            switch (languageCode.Substring(0, 2).ToLower())
-            {
-                case "en":
-                    languageLabel = "English";
-                    break;
-                case "es":
-                    languageLabel = "Spanish";
-                    break;
-                case "ar":
-                    languageLabel = "Arabic";
-                    break;
-                case "zh":
-                    languageLabel = "Chinese";
-                    break;
-                case "fr":
-                    languageLabel = "French";
-                    break;
-                case "de":
-                    languageLabel = "German";
-                    break;
-                case "it":
-                    languageLabel = "Italian";
-                    break;
-                case "ja":
-                    languageLabel = "Japanese";
-                    break;
-                case "pt":
-                    languageLabel = "Portuguese";
-                    break;
-            }
-            return languageLabel;
+            JObject spokenLanguages = GetSpokenLanguages();
+            return spokenLanguages[languageCode].ToString();
         }
     }
 }

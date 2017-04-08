@@ -21,6 +21,11 @@
         <script type="text/javascript" src="~/lib/qtip2/jquery.qtip.min.js"></script>
         <script type="text/javascript" src="~/js/qtip.js"></script>
         <script type="text/javascript" src="~/js/site.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                _spokenLanguages = @Json.Serialize(ViewData["spokenLanguages"]);
+            })
+        </script>
         @RenderSection("head", false)
     </head>
     <body onload="SetLayout()">
