@@ -122,7 +122,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (_file != null)
                 {
-                    return new { @class = "mediaFile", isStreamable = false };
+                    string cssClass = _file.IsPrimary ? "mediaFilePrimary" : "mediaFile";
+                    return new { @class = cssClass, isStreamable = false };
                 }
                 else
                 {

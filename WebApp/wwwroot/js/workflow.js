@@ -147,6 +147,7 @@ function GetAssetInfo(result, i) {
 }
 function DisplayWorkflow(jobTasks, result) {
     var title, message = "";
+    var onClose = null;
     if (jobTasks.length == 0) {
         title = "Azure Media Services Asset";
         if (result.length > 1) {
@@ -159,10 +160,13 @@ function DisplayWorkflow(jobTasks, result) {
         title = "Azure Media Services Job";
         if (result.id.indexOf("jtid") > -1) {
             title = title + " Template";
+            onClose = function () {
+                window.location = window.location.href;
+            }
         }
         message = result.name + "<br /><br />" + result.id;
     }
-    DisplayMessage(title, message);
+    DisplayMessage(title, message, null, null, onClose);
 }
 function UploadWorkflow(files) {
     var job = GetJob();

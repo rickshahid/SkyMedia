@@ -34,7 +34,7 @@
         {
             <table class="banner">
                 <tr>
-                    <td class="bannerLeft">
+                    <td class="bannerSide">
                         @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                         @if (ViewData.ContainsKey("accountContext"))
                         {
@@ -57,7 +57,7 @@
                             </div>
                         }
                     </td>
-                    <td class="bannerRight">
+                    <td class="bannerSide">
                         @Html.Partial("SiteButton", new string[] { "userDirectory", "UserDirectory.png", "window.open('http://azure.microsoft.com/en-us/services/active-directory-b2c/')" })
                         @if (ViewData.ContainsKey("accountContext"))
                         {

@@ -77,10 +77,9 @@ body {
     width: 720px;
 }
 
-.bannerLeft {
-    vertical-align: bottom;
+.bannerSide {
     white-space: nowrap;
-    text-align: left;
+    text-align: center;
 }
 
 .bannerCenter {
@@ -88,15 +87,10 @@ body {
     width: 100%;
 }
 
-.bannerRight {
-    vertical-align: bottom;
-    white-space: nowrap;
-    text-align: right;
-}
-
 .accountContext {
     margin-bottom: 10px;
     color: deepskyblue;
+    font-style: italic;
     font-weight: bold;
     font-size: large;
 }
@@ -541,6 +535,10 @@ body {
 
 .mediaFile > .jstree-checkbox {
     display: none !important;
+}
+
+.mediaFilePrimary {
+    color: blueviolet !important;
 }
 
 .jstree-hovered {
