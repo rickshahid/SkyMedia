@@ -92,24 +92,23 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaStreams.ToArray();
         }
 
-        private IActionResult GetLiveView(string channelName, string queryString)
+        private void SetLiveView(string channelName, string queryString)
         {
             bool livePreview = false;
             string settingKey = Constant.AppSettingKey.AzureMedia;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
-            if (accountCredentials.Length > 0)
+            if (accountCredentials.Length > 0 && !string.IsNullOrEmpty(channelName))
             {
                 string accountName = accountCredentials[0];
-                DateTime? liveEventStart = Stream.GetEventStart(accountName, channelName);
-                if (liveEventStart.HasValue)
+                DateTime? eventStart = Live.GetEventStart(accountName, channelName);
+                if (eventStart.HasValue)
                 {
                     livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
-                    ViewData["liveEventStart"] = liveEventStart.Value.ToString();
-                    ViewData["liveSourceUrl"] = Stream.GetSourceUrl(channelName, livePreview);
+                    ViewData["liveEventStart"] = eventStart.Value.ToString();
+                    ViewData["liveSourceUrl"] = Live.GetSourceUrl(channelName, livePreview);
                 }
             }
             ViewData["livePreview"] = livePreview;
-            return View("live");
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
@@ -182,72 +181,85 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult index()
         {
-            string authToken = GetAuthToken(this.Request, this.Response);
-
-            if (this.Request.HasFormContentType)
+            string accountMessage = string.Empty;
+            string queryString = this.Request.QueryString.Value.ToLower();
+            MediaStream[] mediaStreams = new MediaStream[] { };
+            try
             {
-                string requestError = this.Request.Form["error_description"];
-                if (!string.IsNullOrEmpty(requestError) && requestError.Contains("AADB2C90118"))
-                {
-                    return RedirectToAction("passwordreset", "account");
-                }
+                string authToken = GetAuthToken(this.Request, this.Response);
 
-                try
+                if (this.Request.HasFormContentType)
                 {
-                    CacheClient cacheClient = new CacheClient(authToken);
-                    cacheClient.Initialize(authToken);
-                }
-                catch (Exception ex)
-                {
-                    if (Debugger.IsAttached)
+                    string requestError = this.Request.Form["error_description"];
+                    if (!string.IsNullOrEmpty(requestError) && requestError.Contains("AADB2C90118"))
                     {
-                        throw ex;
+                        return RedirectToAction("passwordreset", "account");
+                    }
+
+                    try
+                    {
+                        CacheClient cacheClient = new CacheClient(authToken);
+                        cacheClient.Initialize(authToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (Debugger.IsAttached)
+                        {
+                            throw ex;
+                        }
                     }
                 }
-            }
 
-            string queryString = this.Request.QueryString.Value.ToLower();
-            if (this.Request.Host.Value.Contains("account."))
-            {
-                return RedirectToAction("signin", "account");
-            }
-            else if (this.Request.Host.Value.Contains("live.") || queryString.Contains("live"))
-            {
-                string channelName = this.Request.Query["channel"];
-                return GetLiveView(channelName, queryString);
-            }
-
-            MediaClient mediaClient = null;
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                try
+                if (this.Request.Host.Value.Contains("account."))
                 {
-                    mediaClient = new MediaClient(authToken);
+                    return RedirectToAction("signin", "account");
                 }
-                catch
+                else if (this.Request.Host.Value.Contains("live.") || queryString.Contains("live"))
                 {
-                    return RedirectToAction("profileedit", "account");
+                    string channelName = this.Request.Query["channel"];
+                    SetLiveView(channelName, queryString);
+                    if (ViewData["liveSourceUrl"] == null)
+                    {
+                        string settingKey = Constant.AppSettingKey.MediaStream3SourceUrl;
+                        ViewData["liveSourceUrl"] = AppSetting.GetValue(settingKey);
+                    }
+                    return View("live");
                 }
-            }
 
-            MediaStream[] mediaStreams;
-            string accountMessage = string.Empty;
-            if (mediaClient == null)
-            {
-                mediaStreams = GetMediaStreams();
+                MediaClient mediaClient = null;
+                if (!string.IsNullOrEmpty(authToken))
+                {
+                    try
+                    {
+                        mediaClient = new MediaClient(authToken);
+                    }
+                    catch
+                    {
+                        return RedirectToAction("profileedit", "account");
+                    }
+                }
+
+                if (mediaClient == null)
+                {
+                    mediaStreams = GetMediaStreams();
+                }
+                else if (!Account.IsStreamingEnabled(mediaClient))
+                {
+                    accountMessage = Constant.Message.StreamingEndpointNotRunning;
+                }
+                else
+                {
+                    mediaStreams = Stream.GetMediaStreams(mediaClient);
+                }
+
             }
-            else if (!Account.IsStreamingEnabled(mediaClient))
+            catch (Exception ex)
             {
-                mediaStreams = new MediaStream[] { };
-                accountMessage = Constant.Message.StreamingEndpointNotRunning;
+                accountMessage = ex.ToString();
             }
-            else
-            {
-                mediaStreams = Stream.GetMediaStreams(mediaClient);
-            }
-            ViewData["mediaStreams"] = mediaStreams;
             ViewData["accountMessage"] = accountMessage;
 
+            ViewData["mediaStreams"] = mediaStreams;
             ViewData["streamNumber"] = 1;
             ViewData["autoPlay"] = "false";
             if (queryString.Contains("stream"))

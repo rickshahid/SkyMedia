@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
                         foreach (IStreamingAssetFilter filter in asset.AssetFilters)
                         {
                             mediaStream = new MediaStream();
-                            mediaStream.Name = string.Concat(asset.Name, " (Filtered)");
+                            mediaStream.Name = string.Concat(asset.Name, Constant.Media.Stream.AssetFilteredSuffix);
                             mediaStream.SourceUrl = string.Concat(locatorUrl, "(filter=", filter.Name, ")");
                             mediaStream.TextTracks = new MediaTextTrack[] { };
                             mediaStream.ProtectionTypes = new MediaProtection[] { };
@@ -68,7 +68,6 @@ namespace AzureSkyMedia.PlatformServices
                             mediaStreams.Add(mediaStream);
                         }
                     }
-
                 }
                 if (mediaStreams.Count == maxStreamCount)
                 {
@@ -76,47 +75,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return mediaStreams.ToArray();
-        }
-
-        public static string GetSourceUrl(string channelName, bool livePreview)
-        {
-            string liveSourceUrl = string.Empty;
-            string settingKey = Constant.AppSettingKey.AzureMedia;
-            string[] liveAccount = AppSetting.GetValue(settingKey, true);
-            if (liveAccount.Length > 0)
-            {
-                MediaClient mediaClient = new MediaClient(liveAccount[0], liveAccount[1]);
-                IChannel channel = mediaClient.GetEntityByName(MediaEntity.Channel, channelName, true) as IChannel;
-                if (channel != null && channel.State == ChannelState.Running)
-                {
-                    if (livePreview)
-                    {
-                        liveSourceUrl = channel.Preview.Endpoints.First().Url.ToString();
-                    }
-                    else
-                    {
-                        IProgram program = channel.Programs.First();
-                        if (program.State == ProgramState.Running)
-                        {
-                            liveSourceUrl = mediaClient.GetLocatorUrl(program.Asset, LocatorType.OnDemandOrigin, null);
-                        }
-                    }
-                }
-            }
-            return liveSourceUrl;
-        }
-
-        public static DateTime? GetEventStart(string accountName, string channelName)
-        {
-            DateTime? eventStart = null;
-            EntityClient entityClient = new EntityClient();
-            string tableName = Constant.Storage.TableName.LiveEvent;
-            LiveEvent liveEvent = entityClient.GetEntity<LiveEvent>(tableName, accountName, channelName);
-            if (liveEvent != null)
-            {
-                eventStart = liveEvent.EventStart;
-            }
-            return eventStart;
         }
     }
 }
