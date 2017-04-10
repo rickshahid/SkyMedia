@@ -3,11 +3,17 @@
     $.scrollTo("#mediaWorkflowTaskRemove");
 }
 function GetJob() {
+    var templateId = "";
+    var editableSelect = document.getElementsByClassName("es-visible selected");
+    if (editableSelect.length > 0) {
+        templateId = editableSelect[0].attributes["value"].value
+    }
     var job = {
         Save: _saveWorkflow,
         Name: $("#jobName").val(),
         Priority: $("#jobPriorityLabel").text(),
         NodeType: $("#jobNode").val(),
+        TemplateId: templateId,
         Tasks: GetJobTasks()
     };
     return job;

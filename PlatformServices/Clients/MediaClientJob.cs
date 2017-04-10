@@ -7,18 +7,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        public static NameValueCollection GetJobTemplates(string authToken)
-        {
-            NameValueCollection jobTemplates = new NameValueCollection();
-            MediaClient mediaClient = new MediaClient(authToken);
-            IJobTemplate[] templates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
-            foreach (IJobTemplate template in templates)
-            {
-                jobTemplates.Add(template.Name, template.Id);
-            }
-            return jobTemplates;
-        }
-
         private INotificationEndPoint GetNotificationEndpoint()
         {
             string endpointName = Constant.Media.JobNotification.EndpointName;
@@ -113,13 +101,13 @@ namespace AzureSkyMedia.PlatformServices
             jobTemplate = null;
             if (!string.IsNullOrEmpty(mediaJob.TemplateId))
             {
-                IJobTemplate template = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
                 List<IAsset> inputAssets = new List<IAsset>();
                 foreach (MediaJobTask jobTask in mediaJob.Tasks)
                 {
                     IAsset[] assets = GetAssets(jobTask.InputAssetIds);
                     inputAssets.AddRange(assets);
                 }
+                IJobTemplate template = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
                 job = _media.Jobs.Create(mediaJob.Name, template, inputAssets, mediaJob.Priority);
             }
             else
@@ -159,6 +147,18 @@ namespace AzureSkyMedia.PlatformServices
                 job.Submit();
             }
             return job;
+        }
+
+        public static NameValueCollection GetJobTemplates(string authToken)
+        {
+            NameValueCollection jobTemplates = new NameValueCollection();
+            MediaClient mediaClient = new MediaClient(authToken);
+            IJobTemplate[] templates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
+            foreach (IJobTemplate template in templates)
+            {
+                jobTemplates.Add(template.Name, template.Id);
+            }
+            return jobTemplates;
         }
     }
 }

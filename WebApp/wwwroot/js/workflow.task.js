@@ -89,8 +89,10 @@ function SetEncoderConfig(fileInput) {
 function GetJobTaskOptions(taskNumber) {
     var taskOptions = 0;
     var selectedOptions = $("#taskOptions" + taskNumber).val();
-    for (var i = 0; i < selectedOptions.length; i++) {
-        taskOptions = taskOptions + parseInt(selectedOptions[i]);
+    if (selectedOptions != null) {
+        for (var i = 0; i < selectedOptions.length; i++) {
+            taskOptions = taskOptions + parseInt(selectedOptions[i]);
+        }
     }
     return taskOptions;
 }

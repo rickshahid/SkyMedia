@@ -10,6 +10,14 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class jobController : Controller
     {
+        public JsonResult template(string templateId)
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
+            object jobTemplate = mediaClient.GetEntityById(MediaEntity.JobTemplate, templateId);
+            return Json(jobTemplate);
+        }
+
         [HttpPost]
         [Route("/publish")]
         public JobPublication Publish(string jobMessage, bool poisonQueue)
