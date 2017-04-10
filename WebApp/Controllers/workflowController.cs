@@ -23,14 +23,17 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             inputAssets = Workflow.GetInputAssets(mediaClient, inputAssets);
-            using (DatabaseClient databaseClient = new DatabaseClient(false))
+            if (mediaJob.Tasks != null)
             {
-                foreach (MediaJobTask jobTask in mediaJob.Tasks)
+                using (DatabaseClient databaseClient = new DatabaseClient(false))
                 {
-                    if (!string.IsNullOrEmpty(jobTask.ProcessorDocumentId))
+                    foreach (MediaJobTask jobTask in mediaJob.Tasks)
                     {
-                        JObject processorConfig = databaseClient.GetDocument(jobTask.ProcessorDocumentId);
-                        jobTask.ProcessorConfig = processorConfig.ToString();
+                        if (!string.IsNullOrEmpty(jobTask.ProcessorDocumentId))
+                        {
+                            JObject processorConfig = databaseClient.GetDocument(jobTask.ProcessorDocumentId);
+                            jobTask.ProcessorConfig = processorConfig.ToString();
+                        }
                     }
                 }
             }

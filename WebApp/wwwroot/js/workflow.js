@@ -65,7 +65,7 @@ function ValidWorkflowInput(uploadView, saveWorkflow) {
         $("#jobName").focus();
         validInput = false;
     }
-    return ValidWorkflowTasks(validInput);
+    return validInput;
 }
 function ValidWorkflowTasks(validInput) {
     var taskNumber = 1;
@@ -96,7 +96,12 @@ function ValidWorkflowTaskClear(taskNumber) {
     SetTipVisible("encoderConfigFile" + taskNumber, false);
 }
 function ValidWorkflow(uploadView, saveWorkflow) {
-    if (ValidWorkflowInput(uploadView, saveWorkflow)) {
+    var validWorkflow = ValidWorkflowInput(uploadView, saveWorkflow);
+    var jobTemplateId = GetJobTemplateId();
+    if (jobTemplateId == "") {
+        validWorkflow = ValidWorkflowTasks(validWorkflow);
+    }
+    if (validWorkflow) {
         _saveWorkflow = saveWorkflow;
         if (uploadView) {
             _fileUploader.start();
