@@ -150,18 +150,9 @@ function GetAssetInfo(result, i) {
     }
     return assetInfo + result[i].assetId;
 }
-function DisplayWorkflow(jobTasks, result) {
-    var title, message = "";
-    var onClose = null;
-    if (jobTasks.length == 0) {
-        title = "Azure Media Services Asset";
-        if (result.length > 1) {
-            title = title + "s";
-        }
-        for (var i = 0; i < result.length; i++) {
-            message = message + GetAssetInfo(result, i);
-        }
-    } else {
+function DisplayWorkflow(result) {
+    var title, message = "", onClose = null;
+    if (result.id.indexOf("jid") > -1 || result.id.indexOf("jtid") > -1) {
         title = "Azure Media Services Job";
         if (result.id.indexOf("jtid") > -1) {
             title = title + " Template";
@@ -170,11 +161,18 @@ function DisplayWorkflow(jobTasks, result) {
             }
         }
         message = result.name + "<br /><br />" + result.id;
+    } else {
+        title = "Azure Media Services Asset";
+        if (result.length > 1) {
+            title = title + "s";
+        }
+        for (var i = 0; i < result.length; i++) {
+            message = message + GetAssetInfo(result, i);
+        }
     }
     DisplayMessage(title, message, null, null, onClose);
 }
 function UploadWorkflow(files) {
-    var job = GetJob();
     $.post("/workflow/upload",
         {
             fileNames: GetFileNames(files),
@@ -184,22 +182,21 @@ function UploadWorkflow(files) {
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             publishInputAsset: $("#publishInputAsset").prop("checked"),
             inputAssets: _inputAssets,
-            mediaJob: job
+            mediaJob: GetJob()
         },
         function (result) {
-            DisplayWorkflow(job.Tasks, result);
+            DisplayWorkflow(result);
         }
     );
 }
 function StartWorkflow() {
-    var job = GetJob();
     $.post("/workflow/start",
         {
             inputAssets: _inputAssets,
-            mediaJob: job
+            mediaJob: GetJob()
         },
         function (result) {
-            DisplayWorkflow(job.Tasks, result);
+            DisplayWorkflow(result);
         }
     );
 }

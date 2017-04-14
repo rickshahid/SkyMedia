@@ -30,10 +30,11 @@ namespace AzureSkyMedia.PlatformServices
             return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constant.TextFormatter.ClockTime));
         }
 
-        private void SetProcessorUnits(IJob job, ReservedUnitType scale)
+        private void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType scale)
         {
+            int taskCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            processorUnits[0].CurrentReservedUnits = (job.State == JobState.Queued) ? job.Tasks.Count : 0;
+            processorUnits[0].CurrentReservedUnits = (job.State == JobState.Queued) ? taskCount : 0;
             processorUnits[0].ReservedUnitType = scale;
             processorUnits[0].Update();
         }
@@ -95,20 +96,20 @@ namespace AzureSkyMedia.PlatformServices
             return mediaJob;
         }
 
-        internal IJob CreateJob(MediaJob mediaJob, out IJobTemplate jobTemplate)
+        internal IJob CreateJob(MediaJob mediaJob, MediaAssetInput[] inputAssets, out IJobTemplate jobTemplate)
         {
             IJob job;
             jobTemplate = null;
             if (!string.IsNullOrEmpty(mediaJob.TemplateId))
             {
-                List<IAsset> inputAssets = new List<IAsset>();
-                foreach (MediaJobTask jobTask in mediaJob.Tasks)
+                List<IAsset> inputAssetList = new List<IAsset>();
+                foreach (MediaAssetInput inputAsset in inputAssets)
                 {
-                    IAsset[] assets = GetAssets(jobTask.InputAssetIds);
-                    inputAssets.AddRange(assets);
+                    IAsset asset = GetEntityById(MediaEntity.Asset, inputAsset.AssetId) as IAsset;
+                    inputAssetList.Add(asset);
                 }
-                IJobTemplate template = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
-                job = _media.Jobs.Create(mediaJob.Name, template, inputAssets, mediaJob.Priority);
+                jobTemplate = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
+                job = _media.Jobs.Create(mediaJob.Name, jobTemplate, inputAssetList, mediaJob.Priority);
             }
             else
             {
@@ -136,14 +137,14 @@ namespace AzureSkyMedia.PlatformServices
                     job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
                 }
             }
-            if (mediaJob.Save)
+            if (mediaJob.SaveWorkflow)
             {
                 string templateName = mediaJob.Name;
                 jobTemplate = job.SaveAsTemplate(templateName);
             }
             else
             {
-                SetProcessorUnits(job, mediaJob.NodeType);
+                SetProcessorUnits(job, jobTemplate, mediaJob.NodeType);
                 job.Submit();
             }
             return job;

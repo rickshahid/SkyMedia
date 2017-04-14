@@ -4,20 +4,23 @@
 }
 function GetJobTemplateId() {
     var templateId = "";
-    var editableSelect = document.getElementsByClassName("es-visible selected");
-    if (editableSelect.length > 0) {
-        templateId = editableSelect[0].attributes["value"].value
+    var jobName = $("#jobName").val();
+    var jobTemplates = document.getElementsByClassName("es-visible");
+    for (var i = 0; i < jobTemplates.length; i++) {
+        if (jobName == jobTemplates[i].textContent) {
+            templateId = jobTemplates[i].attributes["value"].value;
+        }
     }
     return templateId;
 }
 function GetJob() {
     var job = {
-        Save: _saveWorkflow,
         Name: $("#jobName").val(),
-        Priority: $("#jobPriorityLabel").text(),
         NodeType: $("#jobNode").val(),
+        Priority: $("#jobPriorityLabel").text(),
+        Tasks: GetJobTasks(),
         TemplateId: GetJobTemplateId(),
-        Tasks: GetJobTasks()
+        SaveWorkflow: _saveWorkflow
     };
     return job;
 }
