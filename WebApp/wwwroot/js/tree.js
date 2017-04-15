@@ -13,7 +13,7 @@
             },
             "data": {
                 "url": function (node) {
-                    return (node.id == "#") ? "/asset/roots" : "/asset/children?assetId=" + node.id;
+                    return (node.id == "#") ? "/asset/parents" : "/asset/children?assetId=" + node.id;
                 },
                 "data": function (node) {
                     return { "id": node.id };

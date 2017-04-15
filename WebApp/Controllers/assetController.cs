@@ -8,7 +8,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class assetController : Controller
     {
-        public JsonResult roots()
+        public JsonResult parents()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
@@ -35,11 +35,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             object result;
             if (clipMode == Constant.Media.RenderedClipMode)
             {
-                result = Workflow.SubmitJob(authToken, mediaClient, sourceUrl);
+                result = Editor.SubmitJob(authToken, mediaClient, sourceUrl, markIn, markOut);
             }
             else
             {
-                result = mediaClient.CreateFilter(sourceUrl, clipName, markIn, markOut);
+                result = Editor.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
             }
             return Json(result);
         }

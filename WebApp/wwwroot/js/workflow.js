@@ -110,6 +110,19 @@ function ValidWorkflow(uploadView, saveWorkflow) {
         }
     }
 }
+function GetInputAssets() {
+    var inputAssets = new Array();
+    if ($("#mediaAssets").children.length > 0) {
+        var mediaAssets = $("#mediaAssets").jstree(true).get_checked();
+        for (var i = 0; i < mediaAssets.length; i++) {
+            var inputAsset = {
+                AssetId: mediaAssets[i]
+            };
+            inputAssets.push(inputAsset);
+        }
+    }
+    return inputAssets;
+}
 function GetFileNames(files) {
     var fileNames = new Array();
     if (files != null) {
@@ -126,51 +139,6 @@ function GetFileNames(files) {
         }
     }
     return fileNames;
-}
-function GetInputAssets() {
-    var inputAssets = new Array();
-    if ($("#mediaAssets").children.length > 0) {
-        var mediaAssets = $("#mediaAssets").jstree(true).get_checked();
-        for (var i = 0; i < mediaAssets.length; i++) {
-            var inputAsset = {
-                AssetId: mediaAssets[i]
-            };
-            inputAssets.push(inputAsset);
-        }
-    }
-    return inputAssets;
-}
-function GetAssetInfo(result, i) {
-    var assetInfo = result[i].assetName + "<br />";
-    if (result.length == 1) {
-        assetInfo = assetInfo + "<br />";
-    }
-    if (i > 0) {
-        assetInfo = "<br /><br />" + assetInfo;
-    }
-    return assetInfo + result[i].assetId;
-}
-function DisplayWorkflow(result) {
-    var title, message = "", onClose = null;
-    if (result.id.indexOf("jid") > -1 || result.id.indexOf("jtid") > -1) {
-        title = "Azure Media Services Job";
-        if (result.id.indexOf("jtid") > -1) {
-            title = title + " Template";
-            onClose = function () {
-                window.location = window.location.href;
-            }
-        }
-        message = result.name + "<br /><br />" + result.id;
-    } else {
-        title = "Azure Media Services Asset";
-        if (result.length > 1) {
-            title = title + "s";
-        }
-        for (var i = 0; i < result.length; i++) {
-            message = message + GetAssetInfo(result, i);
-        }
-    }
-    DisplayMessage(title, message, null, null, onClose);
 }
 function UploadWorkflow(files) {
     $.post("/workflow/upload",

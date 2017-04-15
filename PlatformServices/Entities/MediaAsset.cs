@@ -149,10 +149,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public string PrimaryFile { get; set; }
 
-        public string MarkIn { get; set; }
+        public int MarkInSeconds { get; set; }
 
-        public string MarkOut { get; set; }
+        public string MarkInTime { get; set; }
 
-        public string ClipDuration { get; set; }
+        public int MarkOutSeconds { get; set; }
+
+        public string MarkOutTime { get; set; }
     }
 }

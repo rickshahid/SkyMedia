@@ -78,6 +78,38 @@ function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
     DisplayDialog(dialogId, title, message, buttons, null, width, onClose);
 }
+function DisplayWorkflow(result) {
+    var title, message = "", onClose = null;
+    if (result.id.indexOf("jid") > -1 || result.id.indexOf("jtid") > -1) {
+        title = "Azure Media Services Job";
+        if (result.id.indexOf("jtid") > -1) {
+            title = title + " Template";
+            onClose = function () {
+                window.location = window.location.href;
+            }
+        }
+        message = result.name + "<br /><br />" + result.id;
+    } else {
+        title = "Azure Media Services Asset";
+        if (result.length > 1) {
+            title = title + "s";
+        }
+        for (var i = 0; i < result.length; i++) {
+            message = message + GetAssetInfo(result, i);
+        }
+    }
+    DisplayMessage(title, message, null, null, onClose);
+}
+function GetAssetInfo(result, i) {
+    var assetInfo = result[i].assetName + "<br />";
+    if (result.length == 1) {
+        assetInfo = assetInfo + "<br />";
+    }
+    if (i > 0) {
+        assetInfo = "<br /><br />" + assetInfo;
+    }
+    return assetInfo + result[i].assetId;
+}
 function GetSourceType(sourceUrl) {
     return sourceUrl.toLowerCase().indexOf(".mp4") > -1 ? "video/mp4" : "application/vnd.ms-sstr+xml";
 }
@@ -163,7 +195,11 @@ function CreateVideoClip(clipData) {
                 markOut: Math.floor(clipData.markOut)
             },
             function (result) {
-                window.location = window.location.href;
+                if (result.id.indexOf("jid") > -1) {
+                    DisplayWorkflow(result);
+                } else {
+                    window.location = window.location.href;
+                }
             }
         );
         $("#clipperDialog").dialog("close");

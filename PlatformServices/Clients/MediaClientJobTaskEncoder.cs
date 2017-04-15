@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
                 bool inputSubclipped = false;
                 foreach (MediaAssetInput inputAsset in inputAssets)
                 {
-                    if (!string.IsNullOrEmpty(inputAsset.MarkIn))
+                    if (!string.IsNullOrEmpty(inputAsset.MarkInTime))
                     {
                         inputSubclipped = true;
                     }
@@ -69,11 +69,11 @@ namespace AzureSkyMedia.PlatformServices
             JArray inputSources = new JArray();
             foreach (MediaAssetInput inputAsset in inputAssets)
             {
-                if (!string.IsNullOrEmpty(inputAsset.MarkIn))
+                if (!string.IsNullOrEmpty(inputAsset.MarkInTime))
                 {
                     JObject inputSource = new JObject();
-                    inputSource.Add("StartTime", inputAsset.MarkIn);
-                    inputSource.Add("Duration", inputAsset.ClipDuration);
+                    inputSource.Add("StartTime", inputAsset.MarkInTime);
+                    inputSource.Add("Duration", inputAsset.MarkOutTime);
                     inputSources.Add(inputSource);
                 }
             }

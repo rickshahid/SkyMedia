@@ -36,62 +36,7 @@ namespace AzureSkyMedia.PlatformServices
             return contentProtection;
         }
 
-        public static MediaAssetInput[] GetInputAssets(MediaClient mediaClient, MediaAssetInput[] inputAssets)
-        {
-            List<MediaAssetInput> assets = new List<MediaAssetInput>();
-            foreach (MediaAssetInput inputAsset in inputAssets)
-            {
-                MediaAssetInput asset = GetInputAsset(mediaClient, inputAsset.AssetId);
-                asset.MarkIn = inputAsset.MarkIn;
-                asset.MarkOut = inputAsset.MarkOut;
-                if (!string.IsNullOrEmpty(asset.MarkIn) && !string.IsNullOrEmpty(asset.MarkOut))
-                {
-                    int markIn = Convert.ToInt32(asset.MarkIn);
-                    int markOut = Convert.ToInt32(asset.MarkOut);
-                    int clipDuration = markOut - markIn;
-                    TimeSpan markInTime = new TimeSpan(0, 0, markIn);
-                    TimeSpan clipDurationTime = new TimeSpan(0, 0, clipDuration);
-                    asset.MarkIn = markInTime.ToString(Constant.TextFormatter.ClockTime);
-                    asset.ClipDuration = clipDurationTime.ToString(Constant.TextFormatter.ClockTime);
-                }
-                assets.Add(asset);
-            }
-            return assets.ToArray();
-        }
-
-        public static MediaAssetInput[] CreateInputAssets(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
-                                                          string inputAssetName, bool multipleFileAsset, bool publishInputAsset, string[] fileNames)
-        {
-            List<MediaAssetInput> inputAssets = new List<MediaAssetInput>();
-            if (multipleFileAsset)
-            {
-                IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
-                if (publishInputAsset)
-                {
-                    MediaClient.PublishLocator(mediaClient, asset, null);
-                }
-                MediaAssetInput inputAsset = GetInputAsset(asset);
-                inputAssets.Add(inputAsset);
-            }
-            else
-            {
-                for (int i = 0; i < fileNames.Length; i++)
-                {
-                    string fileName = fileNames[i];
-                    string assetName = Path.GetFileNameWithoutExtension(fileName);
-                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
-                    if (publishInputAsset)
-                    {
-                        MediaClient.PublishLocator(mediaClient, asset, null);
-                    }
-                    MediaAssetInput inputAsset = GetInputAsset(asset);
-                    inputAssets.Add(inputAsset);
-                }
-            }
-            return inputAssets.ToArray();
-        }
-
-        private static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection contentProtection)
+        internal static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection contentProtection)
         {
             string attributeName = Constant.UserAttribute.MediaAccountName;
             string accountName = AuthToken.GetClaimValue(authToken, attributeName);
@@ -132,7 +77,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static object GetJobResult(MediaClient mediaClient, IJob job, IJobTemplate jobTemplate, MediaAssetInput[] inputAssets)
+        internal static object GetJobResult(MediaClient mediaClient, IJob job, IJobTemplate jobTemplate, MediaAssetInput[] inputAssets)
         {
             object result = job;
             if (job == null || string.IsNullOrEmpty(job.Id))
@@ -152,6 +97,58 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return result;
+        }
+
+        public static MediaAssetInput[] GetInputAssets(MediaClient mediaClient, MediaAssetInput[] inputAssets)
+        {
+            List<MediaAssetInput> assets = new List<MediaAssetInput>();
+            foreach (MediaAssetInput inputAsset in inputAssets)
+            {
+                MediaAssetInput asset = GetInputAsset(mediaClient, inputAsset.AssetId);
+                asset.MarkInSeconds = inputAsset.MarkInSeconds;
+                asset.MarkOutSeconds = inputAsset.MarkOutSeconds;
+                if (asset.MarkInSeconds > 0)
+                {
+                    TimeSpan markIn = new TimeSpan(0, 0, asset.MarkInSeconds);
+                    TimeSpan markOut = new TimeSpan(0, 0, asset.MarkOutSeconds - asset.MarkInSeconds);
+                    asset.MarkInTime = markIn.ToString(Constant.TextFormatter.ClockTime);
+                    asset.MarkOutTime = markOut.ToString(Constant.TextFormatter.ClockTime);
+                }
+                assets.Add(asset);
+            }
+            return assets.ToArray();
+        }
+
+        public static MediaAssetInput[] CreateInputAssets(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
+                                                          string inputAssetName, bool multipleFileAsset, bool publishInputAsset, string[] fileNames)
+        {
+            List<MediaAssetInput> inputAssets = new List<MediaAssetInput>();
+            if (multipleFileAsset)
+            {
+                IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
+                if (publishInputAsset)
+                {
+                    MediaClient.PublishLocator(mediaClient, asset, null);
+                }
+                MediaAssetInput inputAsset = GetInputAsset(asset);
+                inputAssets.Add(inputAsset);
+            }
+            else
+            {
+                for (int i = 0; i < fileNames.Length; i++)
+                {
+                    string fileName = fileNames[i];
+                    string assetName = Path.GetFileNameWithoutExtension(fileName);
+                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
+                    if (publishInputAsset)
+                    {
+                        MediaClient.PublishLocator(mediaClient, asset, null);
+                    }
+                    MediaAssetInput inputAsset = GetInputAsset(asset);
+                    inputAssets.Add(inputAsset);
+                }
+            }
+            return inputAssets.ToArray();
         }
 
         public static object SubmitJob(string authToken, MediaClient mediaClient, string storageAccount, MediaAssetInput[] inputAssets, MediaJob mediaJob)
@@ -174,27 +171,6 @@ namespace AzureSkyMedia.PlatformServices
                 TrackJob(authToken, job, storageAccount, contentProtection);
             }
             return GetJobResult(mediaClient, job, jobTemplate, inputAssets);
-        }
-
-        public static object SubmitJob(string authToken, MediaClient mediaClient, string sourceUrl)
-        {
-            return null;
-            //MediaJobTask jobTask = new MediaJobTask();
-            //jobTask.MediaProcessor = MediaProcessor.EncoderStandard;
-            //jobTask.ProcessorDocumentId = Constant.Media.ProcessorConfig.EncoderStandardDefaultPreset;
-
-            //MediaJob mediaJob = new MediaJob();
-            //mediaJob.Tasks = new MediaJobTask[] { jobTask };
-            //mediaJob.NodeType = ReservedUnitType.Premium;
-
-            //IJobTemplate jobTemplate;
-            //IJob job = mediaClient.CreateJob(mediaJob, out jobTemplate);
-            //if (!string.IsNullOrEmpty(job.Id))
-            //{
-            //    string storageAccount = mediaClient.DefaultStorageAccount.Name;
-            //    TrackJob(authToken, job, storageAccount, null);
-            //}
-            //return GetJobResult(mediaClient, job, jobTemplate, null);
         }
     }
 }

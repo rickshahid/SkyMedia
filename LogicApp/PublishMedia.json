@@ -1,0 +1,154 @@
+{
+    "$connections": {
+        "value": {
+            "azurequeues": {
+                "connectionId": "/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/resourceGroups/SkyMedia-USWest-App/providers/Microsoft.Web/connections/azurequeues",
+                "connectionName": "azurequeues",
+                "id": "/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/providers/Microsoft.Web/locations/westus/managedApis/azurequeues"
+            },
+            "twilio": {
+                "connectionId": "/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/resourceGroups/SkyMedia-USWest-App/providers/Microsoft.Web/connections/twilio",
+                "connectionName": "twilio",
+                "id": "/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3/providers/Microsoft.Web/locations/westus/managedApis/twilio"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each": {
+                "actions": {
+                    "Condition": {
+                        "actions": {
+                            "Send_Text_Message_(SMS)": {
+                                "inputs": {
+                                    "body": {
+                                        "body": "@{body('PublishPost')?['userMessage']}",
+                                        "from": "+13109058223",
+                                        "to": "@{body('PublishPost')?['mobileNumber']}"
+                                    },
+                                    "host": {
+                                        "api": {
+                                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/twilio"
+                                        },
+                                        "connection": {
+                                            "name": "@parameters('$connections')['twilio']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/Messages.json"
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "expression": "@and(not(equals(body('PublishPost')?['userMessage'], '')),not(equals(body('PublishPost')?['mobileNumber'], '')))",
+                        "runAfter": {
+                            "Delete_message": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "If"
+                    },
+                    "Delete_message": {
+                        "inputs": {
+                            "host": {
+                                "api": {
+                                    "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/azurequeues"
+                                },
+                                "connection": {
+                                    "name": "@parameters('$connections')['azurequeues']['connectionId']"
+                                }
+                            },
+                            "method": "delete",
+                            "path": "/@{encodeURIComponent('job-notification')}/messages/@{encodeURIComponent(item()?['MessageId'])}",
+                            "queries": {
+                                "popreceipt": "@{item()?['PopReceipt']}"
+                            }
+                        },
+                        "runAfter": {
+                            "PublishPost": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    },
+                    "PublishPost": {
+                        "inputs": {
+                            "method": "post",
+                            "queries": {
+                                "jobMessage": "@{item()?['MessageText']}",
+                                "poisonQueue": false
+                            },
+                            "uri": "https://www.skymedia.io/publish"
+                        },
+                        "metadata": {
+                            "apiDefinitionUrl": "https://www.skymedia.io/swagger/v1/swagger.json",
+                            "swaggerSource": "custom"
+                        },
+                        "runAfter": {},
+                        "type": "Http"
+                    }
+                },
+                "foreach": "@body('Get_messages')?['QueueMessagesList']?['QueueMessage']",
+                "runAfter": {
+                    "Get_messages": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "Get_messages": {
+                "inputs": {
+                    "host": {
+                        "api": {
+                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/azurequeues"
+                        },
+                        "connection": {
+                            "name": "@parameters('$connections')['azurequeues']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/@{encodeURIComponent('job-notification')}/messages",
+                    "queries": {
+                        "numofmessages": "1"
+                    }
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_specified_number_of_messages_are_in_a_given_queue": {
+                "inputs": {
+                    "host": {
+                        "api": {
+                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/azurequeues"
+                        },
+                        "connection": {
+                            "name": "@parameters('$connections')['azurequeues']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/@{encodeURIComponent('job-notification')}/count_trigger",
+                    "queries": {
+                        "threshold": 1
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Second",
+                    "interval": 30
+                },
+                "type": "ApiConnection"
+            }
+        }
+    }
+}
