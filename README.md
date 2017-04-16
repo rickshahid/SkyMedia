@@ -10,7 +10,7 @@ Here is an introductory list of capabilities that are integrated within this sam
 
 * Define media workflows using multiple tasks (executed parallelly and/or sequentially) across various media processors
 
-* Background functions that track and publish media workflow task outputs via parameters specified at submission time
+* Track media workflow tasks and automatically publish outputs based upon parameters specified at job submission time
 
 * Generate video asset subclips and/or dynamic streaming filters via integration of the Azure Media Video Editor plugin
 
@@ -70,13 +70,13 @@ The set of Azure Media Services processors that are integrated include the follo
 
 * Face Redaction - https://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction
 
-* Motion Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection
-
-* Motion Hyperlapse - https://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
-
 * Video Summarization - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization
 
 * Character Recognition - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
+
+* Motion Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection
+
+* Motion Hyperlapse - https://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
 
 If you have an enhancement suggestion or if you run into an issue, please let me know.
 
