@@ -10,7 +10,7 @@ Here is an introductory list of capabilities that are integrated within this sam
 
 * Define media workflows using multiple tasks (executed parallelly and/or sequentially) across various media processors
 
-* Track media workflow tasks and automatically publish outputs based upon parameters specified at job submission time
+* Track media workflow tasks and automatically publish outputs based on parameters specified at job submission time
 
 * Generate video asset subclips and/or dynamic streaming filters via integration of the Azure Media Video Editor plugin
 
