@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-Here is a summary list of the key integrated capabilities within this sample Azure ASP.NET Core MVC web application:
+Here is an introductory list of capabilities that are integrated within this sample Azure ASP.NET Core MVC web application:
 
 * Self-service user and account management across Azure Media Services, Azure Storage, Signiant Flight, Aspera FASP, etc
 
@@ -64,9 +64,7 @@ The set of Azure Media Services processors that are integrated include the follo
 
 * Encoder Ultra - https://azure.microsoft.com/en-us/blog/encoding-and-delivery-of-uhd-content/
 
-* Indexer v1 - https://docs.microsoft.com/en-us/azure/media-services/media-services-index-content
-
-* Indexer v2 - https://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
+* Indexer - https://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
 
 * Face Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection
 
