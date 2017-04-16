@@ -91,7 +91,7 @@ namespace AzureSkyMedia.PlatformServices
             mediaJob.Tasks = taskList.ToArray();
             if (string.IsNullOrEmpty(mediaJob.Name))
             {
-                mediaJob.Name = mediaJob.Tasks[0].Name;
+                mediaJob.Name = inputAssets[0].AssetName;
             }
             return mediaJob;
         }

@@ -232,7 +232,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct ProcessorConfig
             {
-                public const string EncoderStandardDefaultPreset = "Adaptive Streaming";
+                public const string EncoderStandardDefaultPreset = "H264 Multiple Bitrate 720p Audio 5.1";
                 public const string EncoderStandardThumbnailsPreset = "Thumbnails";
                 public const string EncoderStandardThumbnailsFormat = "PngImage";
                 public const string EncoderPremiumWorkflowExtension = ".workflow";

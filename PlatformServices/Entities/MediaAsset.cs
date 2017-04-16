@@ -43,16 +43,16 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Id
         {
-            get { return (_file != null) ? _file.Id : _asset.Id; }
+            get { return _file != null ? _file.Id : _asset.Id; }
         }
 
         public IAsset Asset
         {
-            get { return (_file != null) ? null : _asset; }
+            get { return _file != null ? null : _asset; }
         }
         public bool IsStreamable
         {
-            get { return (_file != null) ? false : _asset.IsStreamable; }
+            get { return _file != null ? false : _asset.IsStreamable; }
         }
 
         public string Text
@@ -69,7 +69,7 @@ namespace AzureSkyMedia.PlatformServices
                     int fileCount;
                     long assetBytes = GetAssetBytes(out fileCount);
                     string assetSize = Storage.MapByteCount(assetBytes);
-                    string filesLabel = (fileCount == 1) ? " File" : " Files";
+                    string filesLabel = fileCount == 1 ? " File" : " Files";
                     string assetInfo = string.Concat(" (", fileCount, filesLabel, ", ", assetSize, ")");
                     if (_asset.Options == AssetCreationOptions.StorageEncrypted)
                     {
@@ -87,6 +87,9 @@ namespace AzureSkyMedia.PlatformServices
                                 case MediaProtection.Widevine:
                                     protectionLabel = string.Concat(protectionLabel, " & DRM (Widevine)");
                                     break;
+                                case MediaProtection.FairPlay:
+                                    protectionLabel = string.Concat(protectionLabel, " & DRM (FairPlay)");
+                                    break;
                             }
                         }
                         protectionLabel = string.Concat(protectionLabel, " Encryption");
@@ -101,14 +104,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                string treeIcon = (_file != null) ? Constant.Media.TreeIcon.MediaFile : Constant.Media.TreeIcon.MediaAsset;
+                string treeIcon = _file != null ? Constant.Media.TreeIcon.MediaFile : Constant.Media.TreeIcon.MediaAsset;
                 return string.Concat(_cdnUrl, treeIcon);
             }
         }
 
         public string Url
         {
-            get { return (_file != null) ? string.Empty : _mediaClient.GetLocatorUrl(_asset, LocatorType.OnDemandOrigin, null); }
+            get { return _file != null ? string.Empty : _mediaClient.GetLocatorUrl(_asset, LocatorType.OnDemandOrigin, null); }
         }
 
         public bool Children

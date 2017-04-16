@@ -33,35 +33,20 @@ namespace AzureSkyMedia.WebApp.Controllers
             return tracks.ToArray();
         }
 
-        private MediaProtection[] MapProtectionTypes(string streamProtectionTypes)
-        {
-            List<MediaProtection> protectionTypes = new List<MediaProtection>();
-            if (!string.IsNullOrEmpty(streamProtectionTypes))
-            {
-                string[] contentProtectionTypes = streamProtectionTypes.Split(Constant.TextDelimiter.Application);
-                foreach (string contentProtectionType in contentProtectionTypes)
-                {
-                    MediaProtection protectionType = (MediaProtection)Enum.Parse(typeof(MediaProtection), contentProtectionType);
-                    protectionTypes.Add(protectionType);
-                }
-            }
-            return protectionTypes.ToArray();
-        }
-
         private void AddBaseStream(List<MediaStream> mediaStreams, string settingStreamName, string settingSourceUrl,
                                    string settingTextTrack, string settingProtectionTypes)
         {
             string streamName = AppSetting.GetValue(settingStreamName);
             string sourceUrl = AppSetting.GetValue(settingSourceUrl);
-            string textTracks = AppSetting.GetValue(settingTextTrack);
             string protectionTypes = AppSetting.GetValue(settingProtectionTypes);
+            string textTracks = AppSetting.GetValue(settingTextTrack);
             if (!string.IsNullOrEmpty(streamName))
             {
                 MediaStream mediaStream = new MediaStream();
                 mediaStream.Name = streamName;
                 mediaStream.SourceUrl = sourceUrl;
+                mediaStream.ProtectionTypes = string.IsNullOrEmpty(protectionTypes) ? new string[] { } : protectionTypes.Split(Constant.TextDelimiter.Application);
                 mediaStream.TextTracks = MapTextTracks(textTracks);
-                mediaStream.ProtectionTypes = MapProtectionTypes(protectionTypes);
                 mediaStream.AnalyticsMetadata = new MediaMetadata[] { };
                 mediaStreams.Add(mediaStream);
             }

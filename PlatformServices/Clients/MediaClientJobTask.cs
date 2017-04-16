@@ -35,12 +35,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 jobTask.Name = string.Concat(jobTask.Name, " ", Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset);
             }
-            jobTask.Name = string.Concat(jobTask.Name, " (", assetName, ")");
-            if (string.IsNullOrEmpty(jobTask.OutputAssetName) && !string.IsNullOrEmpty(assetName))
+            if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {
-                jobTask.OutputAssetName = assetName;
+                jobTask.OutputAssetName = string.Concat(assetName, " - ", jobTask.Name);
             }
-            jobTask.OutputAssetEncryption = (jobTask.ContentProtection != null) ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
+            jobTask.OutputAssetEncryption = jobTask.ContentProtection != null ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
             return jobTask;
         }
 

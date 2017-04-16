@@ -42,11 +42,11 @@ function SetJobTaskWidgets(taskNumber) {
             return parseInt(value);
         }
     });
-    $("#summaryDurationMinutes" + taskNumber).spinnerEx1({
+    $("#summarizationDurationMinutes" + taskNumber).spinnerEx1({
         min: 0,
         max: 99
     });
-    $("#summaryDurationSeconds" + taskNumber).spinnerEx1({
+    $("#summarizationDurationSeconds" + taskNumber).spinnerEx1({
         min: 0,
         max: 59
     });
@@ -71,8 +71,8 @@ function SetJobTaskWidgets(taskNumber) {
 }
 function ClearJobTaskWidgets(lastTaskNumber) {
     $("#indexerSpokenLanguages" + lastTaskNumber).multiselect("destroy");
-    $("#summaryDurationMinutes" + lastTaskNumber).spinnerEx1("destroy");
-    $("#summaryDurationSeconds" + lastTaskNumber).spinnerEx1("destroy");
+    $("#summarizationDurationMinutes" + lastTaskNumber).spinnerEx1("destroy");
+    $("#summarizationDurationSeconds" + lastTaskNumber).spinnerEx1("destroy");
     $("#hyperlapseStartFrame" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseFrameCount" + lastTaskNumber).spinner("destroy");
     $("#hyperlapseSpeed" + lastTaskNumber).spinnerEx2("destroy");
@@ -134,18 +134,18 @@ function GetJobTask(taskNumber) {
                 jobTask.FaceRedactionMode = $("#faceRedactionMode" + taskNumber + ":checked").val();
                 break;
             case "VideoSummarization":
-                var durationMinutes = $("#summaryDurationMinutes" + taskNumber).val();
-                var durationSeconds = $("#summaryDurationSeconds" + taskNumber).val();
-                jobTask.SummaryDurationSeconds = (durationMinutes * 60) + durationSeconds;
+                var durationMinutes = $("#summarizationDurationMinutes" + taskNumber).val();
+                var durationSeconds = $("#summarizationDurationSeconds" + taskNumber).val();
+                jobTask.SummarizationDurationSeconds = (durationMinutes * 60) + durationSeconds;
                 break;
             case "MotionDetection":
-                jobTask.MotionSensitivityLevel = $("#motionSensitivityLevel" + taskNumber).val();
-                jobTask.MotionDetectLightChange = $("#motionDetectLightChange" + taskNumber).prop("checked");
+                jobTask.MotionDetectionSensitivityLevel = $("#motionDetectionSensitivityLevel" + taskNumber).val();
+                jobTask.MotionDetectionLightChange = $("#motionDetectionLightChange" + taskNumber).prop("checked");
                 break;
             case "MotionHyperlapse":
-                jobTask.HyperlapseStartFrame = $("#hyperlapseStartFrame" + taskNumber).val();
-                jobTask.HyperlapseFrameCount = $("#hyperlapseFrameCount" + taskNumber).val();
-                jobTask.HyperlapseSpeed = $("#hyperlapseSpeed" + taskNumber).val().substr(0, 1);
+                jobTask.MotionHyperlapseStartFrame = $("#hyperlapseStartFrame" + taskNumber).val();
+                jobTask.MotionHyperlapseFrameCount = $("#hyperlapseFrameCount" + taskNumber).val();
+                jobTask.MotionHyperlapseSpeed = $("#hyperlapseSpeed" + taskNumber).val().substr(0, 1);
                 break;
         }
     }

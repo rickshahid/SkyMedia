@@ -11,9 +11,11 @@
 @section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/amp-default/azuremediaplayer.min.css" />
     <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/share.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="~/js/playbackrate.js"></script>
     <script type="text/javascript" src="~/js/amve.min.js"></script>
+    <script type="text/javascript" src="~/js/share.js"></script>
     <script type="text/javascript">
         function SlideStreamNumber(slideDirection) {
             var streamNumber = _streamNumber;
@@ -220,6 +222,14 @@
                 }
             });
             var mediaPlayer = GetMediaPlayer(false);
+            mediaPlayer.addEventListener(amp.eventName.loadedmetadata, function () {
+                var shareOptions = new Amp.Plugin.Share.ShareOptions;
+                shareOptions.socialShare.shareIcons.push(Amp.Plugin.Share.SocialShareIcon.getPredefinedShareIcon(0)); // Facebook
+                shareOptions.socialShare.shareIcons.push(Amp.Plugin.Share.SocialShareIcon.getPredefinedShareIcon(1)); // Twitter
+                shareOptions.socialShare.shareIcons.push(Amp.Plugin.Share.SocialShareIcon.getPredefinedShareIcon(2)); // LinkedIn
+                shareOptions.socialShare.shareIcons.push(Amp.Plugin.Share.SocialShareIcon.getPredefinedShareIcon(3)); // Mail
+                this.share(shareOptions);
+            });
             mediaPlayer.addEventListener(amp.eventName.play, function () {
                 var streamUrl = mediaPlayer.currentSrc();
                 streamUrl = streamUrl.replace("https:", "");
@@ -235,30 +245,6 @@
             mediaPlayer.addEventListener(amp.eventName.pause, function () {
                 if ($("#analyticsPanel").is(":visible")) {
                     SetMediaMetadata();
-                }
-            });
-            mediaPlayer.addEventListener(amp.eventName.timeupdate, function () {
-                var streamUrl = mediaPlayer.currentSrc();
-                if (streamUrl.indexOf("Bright Future.ism") > -1) {
-                    var currentTime = mediaPlayer.currentTime();
-                    if (currentTime >= 15 && !$("#videoOverlay1").is(":visible")) {
-                        var faceMetadata = {};
-                        faceMetadata.id = 1;
-                        faceMetadata.label = "Joshua Shahid<br /><br />(Future Solution Architect)";
-                        faceMetadata.x = 80;
-                        faceMetadata.y = 198;
-                        faceMetadata.height = 20;
-                        faceMetadata.width = 20;
-                        SetVideoOverlay(faceMetadata);
-                        faceMetadata = {};
-                        faceMetadata.id = 2;
-                        faceMetadata.label = "Jenna Shahid<br /><br />(Future Solution Architect)";
-                        faceMetadata.x = 584;
-                        faceMetadata.y = 192;
-                        faceMetadata.height = 20;
-                        faceMetadata.width = 20;
-                        SetVideoOverlay(faceMetadata);
-                    }
                 }
             });
             window.onresize = ResetMediaMetadata;

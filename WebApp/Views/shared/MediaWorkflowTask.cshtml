@@ -29,16 +29,16 @@
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
     string faceRedactionConfigRowId = string.Concat("faceRedactionConfigRow", taskNumber);
     string faceRedactionModeId = string.Concat("faceRedactionMode", taskNumber);
-    string summaryConfigRowId = string.Concat("summaryConfigRow", taskNumber);
-    string summaryDurationMinutesId = string.Concat("summaryDurationMinutes", taskNumber);
-    string summaryDurationSecondsId = string.Concat("summaryDurationSeconds", taskNumber);
-    string motionConfigRowId = string.Concat("motionConfigRow", taskNumber);
-    string motionSensitivityLevelId = string.Concat("motionSensitivityLevel", taskNumber);
-    string motionDetectLightChangeId = string.Concat("motionDetectLightChange", taskNumber);
-    string hyperlapseConfigRowId = string.Concat("hyperlapseConfigRow", taskNumber);
-    string hyperlapseStartFrameId = string.Concat("hyperlapseStartFrame", taskNumber);
-    string hyperlapseFrameCountId = string.Concat("hyperlapseFrameCount", taskNumber);
-    string hyperlapseSpeedId = string.Concat("hyperlapseSpeed", taskNumber);
+    string summarizationConfigRowId = string.Concat("summarizationonfigRow", taskNumber);
+    string summarizationDurationMinutesId = string.Concat("summarizationDurationMinutes", taskNumber);
+    string summarizationDurationSecondsId = string.Concat("summarizationDurationSeconds", taskNumber);
+    string motionDetectionConfigRowId = string.Concat("motionDetectionConfigRow", taskNumber);
+    string motionDetectionSensitivityLevelId = string.Concat("motionDetectionSensitivityLevel", taskNumber);
+    string motionDetectionLightChangeId = string.Concat("motionDetectionLightChange", taskNumber);
+    string motionHyperlapseConfigRowId = string.Concat("motionHyperlapseConfigRow", taskNumber);
+    string motionHyperlapseStartFrameId = string.Concat("motionHyperlapseStartFrame", taskNumber);
+    string motionHyperlapseFrameCountId = string.Concat("motionHyperlapseFrameCount", taskNumber);
+    string motionHyperlapseSpeedId = string.Concat("motionHyperlapseSpeed", taskNumber);
     string outputAssetNameId = string.Concat("outputAssetName", taskNumber);
     string taskOptionsId = string.Concat("taskOptions", taskNumber);
 }
@@ -152,7 +152,7 @@
                     </span>
                 </td>
             </tr>
-            <tr id="@summaryConfigRowId" style="display: none">
+            <tr id="@summarizationConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization')">
                         Summarization
@@ -166,19 +166,19 @@
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
-                                <input id="@summaryDurationMinutesId" value="1" class="spinner d2" />
+                                <input id="@summarizationDurationMinutesId" value="1" class="spinner d2" />
                                 Minutes
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
-                                <input id="@summaryDurationSecondsId" value="0" class="spinner d2" />
+                                <input id="@summarizationDurationSecondsId" value="0" class="spinner d2" />
                                 Seconds
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
-            <tr id="@motionConfigRowId" style="display: none">
+            <tr id="@motionDetectionConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection')">
                         Motion Detection
@@ -188,18 +188,18 @@
                     <span class="inputLabel">
                         Sensitivity
                     </span>
-                    <select id="@motionSensitivityLevelId" class="motionSensitivityLevel">
+                    <select id="@motionDetectionSensitivityLevelId" class="motionSensitivityLevel">
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
                     </select>
-                    @Html.CheckBox(motionDetectLightChangeId, false, new { @class = "motionDetectLightChange" })
+                    @Html.CheckBox(motionDetectionLightChangeId, false, new { @class = "motionDetectLightChange" })
                     <span class="inputLabel">
                         Detect Light Change
                     </span>
                 </td>
             </tr>
-            <tr id="@hyperlapseConfigRowId" style="display: none">
+            <tr id="@motionHyperlapseConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content')">
                         Motion Hyperlapse
@@ -209,16 +209,16 @@
                     <table class="spinnerConfig">
                         <tr>
                             <td class="inputLabel">
-                                <input id="@hyperlapseStartFrameId" value="0" class="spinner d7" />
+                                <input id="@motionHyperlapseStartFrameId" value="0" class="spinner d7" />
                                 -
                             </td>
                             <td class="inputLabel">
-                                <input id="@hyperlapseFrameCountId" value="10000" class="spinner d7" />
+                                <input id="@motionHyperlapseFrameCountId" value="10000" class="spinner d7" />
                                 Frames
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
-                                <input id="@hyperlapseSpeedId" value="2" class="spinner d2" />
+                                <input id="@motionHyperlapseSpeedId" value="2" class="spinner d2" />
                                 Speed
                             </td>
                         </tr>

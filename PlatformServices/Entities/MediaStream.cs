@@ -6,9 +6,9 @@
 
         public string SourceUrl { get; set; }
 
-        public MediaTextTrack[] TextTracks { get; set; }
+        public string[] ProtectionTypes { get; set; }
 
-        public MediaProtection[] ProtectionTypes { get; set; }
+        public MediaTextTrack[] TextTracks { get; set; }
 
         public MediaMetadata[] AnalyticsMetadata { get; set; }
     }

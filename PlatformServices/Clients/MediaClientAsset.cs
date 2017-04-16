@@ -107,42 +107,5 @@ namespace AzureSkyMedia.PlatformServices
             asset.Update();
             return asset;
         }
-
-        public IIngestManifest SetManifest(string manifestId, string assetName, string storageAccount, bool storageEncryption,
-                                           bool multipleFileAsset, bool uploadBulkIngest, string[] fileNames)
-        {
-            IIngestManifest manifest = null;
-            if (!string.IsNullOrEmpty(manifestId))
-            {
-                manifest = GetEntityById(MediaEntity.Manifest, manifestId) as IIngestManifest;
-            }
-            if (manifest == null && uploadBulkIngest)
-            {
-                string manifestName = Guid.NewGuid().ToString();
-                manifest = _media.IngestManifests.Create(manifestName, storageAccount);
-            }
-            if (manifest != null)
-            {
-                foreach (IIngestManifestAsset manifestAsset in manifest.IngestManifestAssets)
-                {
-                    manifestAsset.Delete();
-                }
-                AssetCreationOptions creationOptions = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
-                if (multipleFileAsset)
-                {
-                    IAsset asset = _media.Assets.Create(assetName, storageAccount, creationOptions);
-                    manifest.IngestManifestAssets.Create(asset, fileNames);
-                }
-                else
-                {
-                    foreach (string fileName in fileNames)
-                    {
-                        IAsset asset = _media.Assets.Create(fileName, storageAccount, creationOptions);
-                        manifest.IngestManifestAssets.Create(asset, new string[] { fileName });
-                    }
-                }
-            }
-            return manifest;
-        }
     }
 }

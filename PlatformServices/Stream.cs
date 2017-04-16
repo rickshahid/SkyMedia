@@ -45,16 +45,19 @@ namespace AzureSkyMedia.PlatformServices
                     string locatorUrl = mediaClient.GetLocatorUrl(asset, locator.Type, null);
                     if (!string.IsNullOrEmpty(locatorUrl))
                     {
-                        MediaTextTrack[] textTracks = GetTextTracks(mediaClient, asset, locator.Type);
+                        List<string> protectionTypeList = new List<string>();
                         MediaProtection[] protectionTypes = mediaClient.GetProtectionTypes(asset);
-                        MediaMetadata[] analyticsMetadata = Processor.GetAnalyticsMetadata(asset);
+                        foreach (MediaProtection protectionType in protectionTypes)
+                        {
+                            protectionTypeList.Add(protectionType.ToString());
+                        }
 
                         MediaStream mediaStream = new MediaStream();
                         mediaStream.Name = asset.Name;
                         mediaStream.SourceUrl = locatorUrl;
-                        mediaStream.TextTracks = textTracks;
-                        mediaStream.ProtectionTypes = protectionTypes;
-                        mediaStream.AnalyticsMetadata = analyticsMetadata;
+                        mediaStream.ProtectionTypes = protectionTypeList.ToArray();
+                        mediaStream.TextTracks = GetTextTracks(mediaClient, asset, locator.Type);
+                        mediaStream.AnalyticsMetadata = Processor.GetAnalyticsMetadata(asset);
                         mediaStreams.Add(mediaStream);
 
                         foreach (IStreamingAssetFilter filter in asset.AssetFilters)
@@ -62,8 +65,8 @@ namespace AzureSkyMedia.PlatformServices
                             mediaStream = new MediaStream();
                             mediaStream.Name = string.Concat(asset.Name, Constant.Media.Stream.AssetFilteredSuffix);
                             mediaStream.SourceUrl = string.Concat(locatorUrl, "(filter=", filter.Name, ")");
+                            mediaStream.ProtectionTypes = new string[] { };
                             mediaStream.TextTracks = new MediaTextTrack[] { };
-                            mediaStream.ProtectionTypes = new MediaProtection[] { };
                             mediaStream.AnalyticsMetadata = new MediaMetadata[] { };
                             mediaStreams.Add(mediaStream);
                         }

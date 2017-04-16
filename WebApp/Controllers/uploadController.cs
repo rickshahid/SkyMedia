@@ -12,19 +12,6 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class uploadController : Controller
     {
-        //public JsonResult manifest(string manifestId, string inputAssetName, string storageAccount, bool storageEncryption,
-        //                           bool multipleFileAsset, bool uploadBulkIngest, string[] fileNames)
-        //{
-        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
-        //    MediaClient mediaClient = new MediaClient(authToken);
-        //    if (string.IsNullOrEmpty(inputAssetName) && fileNames.Length > 0)
-        //    {
-        //        inputAssetName = fileNames[0];
-        //    }
-        //    IIngestManifest manifest = mediaClient.SetManifest(manifestId, inputAssetName, storageAccount, storageEncryption, multipleFileAsset, uploadBulkIngest, fileNames);
-        //    return Json(manifest);
-        //}
-
         public JsonResult storage(TransferService transferService, string[] filePaths, string storageAccount, string containerName)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
@@ -82,13 +69,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             viewData["encoderConfig1"] = new List<SelectListItem>();
         }
 
-        public IActionResult index()
-        {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            SetViewData(authToken, this.ViewData);
-            return View();
-        }
-
         public IActionResult signiant()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
@@ -116,6 +96,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             attributeName = Constant.UserAttribute.AsperaAccountId;
             ViewData["asperaAccountId"] = AuthToken.GetClaimValue(authToken, attributeName);
 
+            SetViewData(authToken, this.ViewData);
+            return View();
+        }
+
+        public IActionResult index()
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
             SetViewData(authToken, this.ViewData);
             return View();
         }

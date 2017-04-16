@@ -41,16 +41,16 @@ namespace AzureSkyMedia.PlatformServices
 
         public string FaceRedactionMode { get; set; }
 
-        public string MotionSensitivityLevel { get; set; }
+        public int SummarizationDurationSeconds { get; set; }
 
-        public bool MotionDetectLightChange { get; set; }
+        public string MotionDetectionSensitivityLevel { get; set; }
 
-        public int HyperlapseStartFrame { get; set; }
+        public bool MotionDetectionLightChange { get; set; }
 
-        public int HyperlapseFrameCount { get; set; }
+        public int MotionHyperlapseStartFrame { get; set; }
 
-        public int HyperlapseSpeed { get; set; }
+        public int MotionHyperlapseFrameCount { get; set; }
 
-        public int SummaryDurationSeconds { get; set; }
+        public int MotionHyperlapseSpeed { get; set; }
     }
 }

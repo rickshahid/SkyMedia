@@ -68,7 +68,7 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
-            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.SummaryDurationSeconds;
+            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.SummarizationDurationSeconds;
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
             jobTasks.AddRange(mappedJobTasks);
@@ -127,10 +127,10 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorSources = processorConfig["Sources"][0];
-            processorSources["StartFrame"] = jobTask.HyperlapseStartFrame;
-            processorSources["NumFrames"] = jobTask.HyperlapseFrameCount;
+            processorSources["StartFrame"] = jobTask.MotionHyperlapseStartFrame;
+            processorSources["NumFrames"] = jobTask.MotionHyperlapseFrameCount;
             JToken processorOptions = processorConfig["Options"];
-            processorOptions["Speed"] = jobTask.HyperlapseSpeed;
+            processorOptions["Speed"] = jobTask.MotionHyperlapseSpeed;
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
             jobTasks.AddRange(mappedJobTasks);
