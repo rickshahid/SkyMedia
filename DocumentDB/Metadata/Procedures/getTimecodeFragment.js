@@ -7,11 +7,10 @@ function getTimecodeFragment(documentId, timeSeconds) {
     query = query + " AND udf.isTimecodeFragment(" + timeSeconds + ", document.timescale, fragment)";
     var accepted = collection.queryDocuments(collection.getSelfLink(), query,
         function (err, feed, options) {
-            if (err) throw err;
-            var response = context.getResponse();
-            if (!feed || !feed.length) {
-                response.setBody("No documents found.");
-            } else {
+            if (err) {
+                throw err;
+            } else if (feed && feed.length) {
+                var response = context.getResponse();
                 response.setBody(JSON.stringify(feed[0]));
             }
         }
