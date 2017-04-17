@@ -231,6 +231,11 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     contentKeyAuthPolicyOption.Delete();
                 }
+                IContentKey[] contentKeys = mediaClient.GetEntities(MediaEntity.ContentKey) as IContentKey[];
+                foreach (IContentKey contentKey in contentKeys)
+                {
+                    contentKey.Delete();
+                }
             }
         }
     }
