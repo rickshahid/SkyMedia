@@ -17,6 +17,17 @@
     <script type="text/javascript" src="~/js/amve.min.js"></script>
     <script type="text/javascript" src="~/js/share.js"></script>
     <script type="text/javascript">
+        function GetStreamName(mediaStream, streamSlider) {
+            var streamName = mediaStream.name;
+            if (!streamSlider) {
+                streamName = streamName.replace("<br /><br />", " ");
+            }
+            if (mediaStream.protectionTypes.length > 0) {
+                var lineBreak = streamSlider ? "<br /><br />" : "<br />";
+                streamName = streamName + lineBreak + "(" + mediaStream.protectionTypes.join(", ") + ")";
+            }
+            return streamName;
+        }
         function SlideStreamNumber(slideDirection) {
             var streamNumber = _streamNumber;
             if (slideDirection == "left" && streamNumber > 1) {
@@ -35,10 +46,7 @@
             }
         }
         function SetStreamName(mediaStream) {
-            var streamName = mediaStream.name.replace("<br /><br />", " ");
-            if (mediaStream.protectionTypes.length > 0) {
-                streamName = streamName + " + " + mediaStream.protectionTypes.join(" + ");
-            }
+            var streamName = GetStreamName(mediaStream, false);
             $("#streamName").html(streamName);
         }
         function GetMediaStreams() {
@@ -204,11 +212,7 @@
                     if (_mediaStreams.length > 0) {
                         var streamNumber = (_mediaStreams.length == 1) ? 1 : (ui.value / sliderStep) + 1;
                         var mediaStream = _mediaStreams[streamNumber - 1];
-                        var streamName = mediaStream.name;
-                        var protectionTypes = mediaStream.protectionTypes;
-                        if (protectionTypes.length > 0) {
-                            streamName = streamName + "<br /><br />" + protectionTypes.join(", ");
-                        }
+                        var streamName = GetStreamName(mediaStream, true);
                         CreateTipTopLeft("streamSlider", streamName, ui.value + 2, -15);
                         SetTipVisible("streamSlider", true);
                         SetStreamNumber(streamNumber);
