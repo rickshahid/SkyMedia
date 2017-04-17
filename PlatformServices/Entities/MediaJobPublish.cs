@@ -19,8 +19,6 @@
 
         public string UserMessage { get; set; }
 
-        public string ErrorMessage { get; set; }
-
         public string MobileNumber { get; set; }
     }
 }

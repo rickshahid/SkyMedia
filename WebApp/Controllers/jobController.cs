@@ -22,25 +22,18 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/publish")]
         public JobPublication Publish(string jobMessage, bool poisonQueue)
         {
-            JobPublication jobPublication = new JobPublication();
-            try
+            JobPublication jobPublication = null;
+            if (string.IsNullOrEmpty(jobMessage))
             {
-                if (string.IsNullOrEmpty(jobMessage))
-                {
-                    jobPublication = MediaClient.PublishJob(poisonQueue);
-                }
-                else
-                {
-                    MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(jobMessage);
-                    if (jobNotification != null)
-                    {
-                        jobPublication = MediaClient.PublishJob(jobNotification, false);
-                    }
-                }
+                jobPublication = MediaClient.PublishJob(poisonQueue);
             }
-            catch (Exception ex)
+            else
             {
-                jobPublication.ErrorMessage = ex.ToString();
+                MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(jobMessage);
+                if (jobNotification != null)
+                {
+                    jobPublication = MediaClient.PublishJob(jobNotification, false);
+                }
             }
             return jobPublication;
         }
