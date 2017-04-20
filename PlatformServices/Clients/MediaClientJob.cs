@@ -45,7 +45,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
                 MediaJobTask[] tasks = null;
-                switch (jobTask.MediaProcessor)
+                switch (jobTask.ProcessorType)
                 {
                     case MediaProcessor.EncoderStandard:
                     case MediaProcessor.EncoderPremium:
@@ -106,7 +106,10 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (MediaAssetInput inputAsset in inputAssets)
                 {
                     IAsset asset = GetEntityById(MediaEntity.Asset, inputAsset.AssetId) as IAsset;
-                    inputAssetList.Add(asset);
+                    if (asset != null)
+                    {
+                        inputAssetList.Add(asset);
+                    }
                 }
                 jobTemplate = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
                 job = _media.Jobs.Create(mediaJob.Name, jobTemplate, inputAssetList, mediaJob.Priority);
@@ -116,7 +119,7 @@ namespace AzureSkyMedia.PlatformServices
                 job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
                 foreach (MediaJobTask jobTask in mediaJob.Tasks)
                 {
-                    string processorId = Processor.GetProcessorId(jobTask.MediaProcessor);
+                    string processorId = Processor.GetProcessorId(jobTask.ProcessorType);
                     IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
                     ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
                     if (jobTask.ParentIndex.HasValue)

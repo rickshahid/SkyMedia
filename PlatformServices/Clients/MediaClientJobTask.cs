@@ -30,7 +30,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask MapJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
         {
-            jobTask.Name = Processor.GetProcessorName(jobTask.MediaProcessor);
+            jobTask.Name = Processor.GetProcessorName(jobTask.ProcessorType);
             if (jobTask.ProcessorConfig.Contains(Constant.Media.ProcessorConfig.EncoderStandardThumbnailsFormat))
             {
                 jobTask.Name = string.Concat(jobTask.Name, " ", Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset);

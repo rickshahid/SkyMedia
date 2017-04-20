@@ -181,7 +181,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string FileUpload = "FileUpload";
                 public const string JobPublish = "JobPublish";
-                public const string JobPublishProtection = "JobPublishProtection";
+                public const string ContentProtection = "ContentProtection";
                 public const string LiveEvent = "LiveEvent";
             }
 

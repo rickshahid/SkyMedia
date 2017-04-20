@@ -62,7 +62,7 @@ namespace AzureSkyMedia.PlatformServices
             IChannel channel = CreateChannel(channelName, channelType, ingestProtocol);
             foreach (IProgram program in channel.Programs)
             {
-                CreateLocator(null, LocatorType.OnDemandOrigin, program.Asset, null);
+                CreateLocator(LocatorType.OnDemandOrigin, program.Asset);
             }
         }
 

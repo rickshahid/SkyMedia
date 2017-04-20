@@ -27,39 +27,10 @@ namespace AzureSkyMedia.PlatformServices
             return accessPolicy;
         }
 
-        public ILocator CreateLocator(string locatorId, LocatorType locatorType, IAsset asset, DateTime? startDateTime)
+        private ILocator CreateLocator(LocatorType locatorType, IAsset asset)
         {
-            ILocator locator;
             IAccessPolicy accessPolicy = GetAccessPolicy(false);
-            if (!string.IsNullOrEmpty(locatorId))
-            {
-                locator = _media.Locators.CreateLocator(locatorId, locatorType, asset, accessPolicy, startDateTime);
-            }
-            else
-            {
-                locator = _media.Locators.CreateLocator(locatorType, asset, accessPolicy, startDateTime);
-            }
-            return locator;
-        }
-
-        public static string GetPrimaryFile(IAsset asset)
-        {
-            string primaryFile = string.Empty;
-            if (asset.AssetFiles.Count() == 1)
-            {
-                primaryFile = asset.AssetFiles.Single().Name;
-            }
-            else
-            {
-                foreach (IAssetFile assetFile in asset.AssetFiles)
-                {
-                    if (assetFile.IsPrimary)
-                    {
-                        primaryFile = assetFile.Name;
-                    }
-                }
-            }
-            return primaryFile;
+            return _media.Locators.CreateLocator(locatorType, asset, accessPolicy, null);
         }
 
         private static void SetPrimaryFile(IAsset asset)
@@ -83,9 +54,29 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        internal static string GetPrimaryFile(IAsset asset)
+        {
+            string primaryFile = string.Empty;
+            if (asset.AssetFiles.Count() == 1)
+            {
+                primaryFile = asset.AssetFiles.Single().Name;
+            }
+            else
+            {
+                foreach (IAssetFile assetFile in asset.AssetFiles)
+                {
+                    if (assetFile.IsPrimary)
+                    {
+                        primaryFile = assetFile.Name;
+                    }
+                }
+            }
+            return primaryFile;
+        }
+
         private string GetLocatorUrl(ILocator locator, string fileName)
         {
-            string primaryUrl = locator.BaseUri.Remove(0, 5);
+            string primaryUrl = locator.BaseUri.Replace("http:", string.Empty);
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = GetPrimaryFile(locator.Asset);
@@ -108,10 +99,15 @@ namespace AzureSkyMedia.PlatformServices
             return primaryUrl;
         }
 
-        public string GetLocatorUrl(IAsset asset, LocatorType locatorType, string fileName)
+        public string GetLocatorUrl(IAsset asset, string fileName)
         {
             string locatorUrl = string.Empty;
-            ILocator locator = asset.Locators.Where(l => l.Type == locatorType).LastOrDefault();
+            LocatorType locatorType = LocatorType.OnDemandOrigin;
+            ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
+            if (locator == null)
+            {
+                locator = CreateLocator(locatorType, asset);
+            }
             if (locator != null)
             {
                 if (locator.ExpirationDateTime <= DateTime.UtcNow)
@@ -123,6 +119,11 @@ namespace AzureSkyMedia.PlatformServices
                 locatorUrl = GetLocatorUrl(locator, fileName);
             }
             return locatorUrl;
+        }
+
+        public string GetLocatorUrl(IAsset asset)
+        {
+            return GetLocatorUrl(asset, null);
         }
     }
 }

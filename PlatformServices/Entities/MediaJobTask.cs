@@ -15,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] InputAssetIds { get; set; }
 
-        public MediaProcessor MediaProcessor { get; set; }
+        public MediaProcessor ProcessorType { get; set; }
 
         public string ProcessorConfig { get; set; }
 

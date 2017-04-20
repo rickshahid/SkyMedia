@@ -18,15 +18,15 @@ namespace AzureSkyMedia.PlatformServices
             return Regex.Replace(processorName, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
         }
 
-        public static string GetProcessorName(MediaProcessor mediaProcessor)
+        public static string GetProcessorName(MediaProcessor processorType)
         {
-            return GetProcessorName(mediaProcessor.ToString(), null);
+            return GetProcessorName(processorType.ToString(), null);
         }
 
-        public static string GetProcessorId(MediaProcessor mediaProcessor)
+        public static string GetProcessorId(MediaProcessor processorType)
         {
             string processorId = null;
-            switch (mediaProcessor)
+            switch (processorType)
             {
                 case MediaProcessor.EncoderStandard:
                     processorId = Constant.Media.ProcessorId.EncoderStandard;
@@ -73,64 +73,78 @@ namespace AzureSkyMedia.PlatformServices
 
         public static MediaProcessor GetProcessorType(string processorId)
         {
-            MediaProcessor mediaProcessor = MediaProcessor.None;
+            MediaProcessor processorType = MediaProcessor.None;
             switch (processorId)
             {
                 case Constant.Media.ProcessorId.EncoderStandard:
-                    mediaProcessor = MediaProcessor.EncoderStandard;
+                    processorType = MediaProcessor.EncoderStandard;
                     break;
                 case Constant.Media.ProcessorId.EncoderPremium:
-                    mediaProcessor = MediaProcessor.EncoderPremium;
+                    processorType = MediaProcessor.EncoderPremium;
                     break;
                 case Constant.Media.ProcessorId.EncoderUltra:
-                    mediaProcessor = MediaProcessor.EncoderUltra;
+                    processorType = MediaProcessor.EncoderUltra;
                     break;
                 case Constant.Media.ProcessorId.Indexer:
-                    mediaProcessor = MediaProcessor.Indexer;
+                    processorType = MediaProcessor.Indexer;
                     break;
                 case Constant.Media.ProcessorId.FaceDetection:
-                    mediaProcessor = MediaProcessor.FaceDetection;
+                    processorType = MediaProcessor.FaceDetection;
                     break;
                 case Constant.Media.ProcessorId.FaceRedaction:
-                    mediaProcessor = MediaProcessor.FaceRedaction;
+                    processorType = MediaProcessor.FaceRedaction;
                     break;
                 case Constant.Media.ProcessorId.VideoAnnotation:
-                    mediaProcessor = MediaProcessor.VideoAnnotation;
+                    processorType = MediaProcessor.VideoAnnotation;
                     break;
                 case Constant.Media.ProcessorId.VideoSummarization:
-                    mediaProcessor = MediaProcessor.VideoSummarization;
+                    processorType = MediaProcessor.VideoSummarization;
                     break;
                 case Constant.Media.ProcessorId.CharacterRecognition:
-                    mediaProcessor = MediaProcessor.CharacterRecognition;
+                    processorType = MediaProcessor.CharacterRecognition;
                     break;
                 case Constant.Media.ProcessorId.ContentModeration:
-                    mediaProcessor = MediaProcessor.ContentModeration;
+                    processorType = MediaProcessor.ContentModeration;
                     break;
                 case Constant.Media.ProcessorId.MotionDetection:
-                    mediaProcessor = MediaProcessor.MotionDetection;
+                    processorType = MediaProcessor.MotionDetection;
                     break;
                 case Constant.Media.ProcessorId.MotionHyperlapse:
-                    mediaProcessor = MediaProcessor.MotionHyperlapse;
+                    processorType = MediaProcessor.MotionHyperlapse;
                     break;
                 case Constant.Media.ProcessorId.MotionStabilization:
-                    mediaProcessor = MediaProcessor.MotionStabilization;
+                    processorType = MediaProcessor.MotionStabilization;
                     break;
             }
-            return mediaProcessor;
+            return processorType;
         }
 
-        public static MediaMetadata[] GetAnalyticsMetadata(IAsset asset)
+        public static MediaMetadata[] GetAnalyticsMetadata(MediaClient mediaClient, IAsset asset)
         {
             List<MediaMetadata> analyticsMetadata = new List<MediaMetadata>();
-            string fileExtension = Constant.Media.FileExtension.Json;
-            string[] fileNames = MediaClient.GetFileNames(asset, fileExtension);
-            foreach (string fileName in fileNames)
+            if (asset.ParentAssets.Count > 0)
             {
-                string processorName = GetProcessorName(null, fileName);
-                MediaMetadata mediaMetadata = new MediaMetadata();
-                mediaMetadata.ProcessorName = processorName;
-                mediaMetadata.FileName = fileName;
-                analyticsMetadata.Add(mediaMetadata);
+                string parentAssetId = asset.ParentAssets[0].Id;
+                MediaAsset[] childAssets = mediaClient.GetAssets(parentAssetId);
+                foreach (MediaAsset childAsset in childAssets)
+                {
+                    string webVtt = childAsset.WebVtt;
+                    if (!string.IsNullOrEmpty(webVtt))
+                    {
+                        MediaMetadata mediaMetadata = new MediaMetadata();
+                        mediaMetadata.ProcessorName = GetProcessorName(MediaProcessor.Indexer);
+                        mediaMetadata.SourceUrl = mediaClient.GetLocatorUrl(childAsset.Asset, webVtt);
+                        analyticsMetadata.Add(mediaMetadata);
+                    }
+                    else if (!string.IsNullOrEmpty(childAsset.AlternateId))
+                    {
+                        string[] assetMetadata = childAsset.AlternateId.Split(Constant.TextDelimiter.Identifier);
+                        MediaMetadata mediaMetadata = new MediaMetadata();
+                        mediaMetadata.ProcessorName = assetMetadata[0];
+                        mediaMetadata.DocumentId = assetMetadata[1];
+                        analyticsMetadata.Add(mediaMetadata);
+                    }
+                }
             }
             return analyticsMetadata.ToArray();
         }

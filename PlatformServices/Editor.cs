@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
             inputAssets = Workflow.GetInputAssets(mediaClient, inputAssets);
 
             MediaJobTask jobTask = new MediaJobTask();
-            jobTask.MediaProcessor = MediaProcessor.EncoderStandard;
+            jobTask.ProcessorType = MediaProcessor.EncoderStandard;
             jobTask.ProcessorConfig = Constant.Media.ProcessorConfig.EncoderStandardDefaultPreset;
 
             MediaJob mediaJob = new MediaJob();

@@ -71,16 +71,16 @@ namespace AzureSkyMedia.PlatformServices
             {
                 CacheClient cacheClient = new CacheClient(authToken);
                 string itemKey = Constant.Cache.ItemKey.MediaProcessors;
-                MediaProcessor[] mediaProcessorTypes = cacheClient.GetValue<MediaProcessor[]>(itemKey);
-                if (mediaProcessorTypes == null)
+                MediaProcessor[] processorTypes = cacheClient.GetValue<MediaProcessor[]>(itemKey);
+                if (processorTypes == null)
                 {
-                    mediaProcessorTypes = cacheClient.Initialize(authToken);
+                    processorTypes = cacheClient.Initialize(authToken);
                 }
                 NameValueCollection processors = new NameValueCollection();
-                foreach (MediaProcessor mediaProcessorType in mediaProcessorTypes)
+                foreach (MediaProcessor processorType in processorTypes)
                 {
-                    string processorName = Processor.GetProcessorName(mediaProcessorType);
-                    processors.Add(processorName, mediaProcessorType.ToString());
+                    string processorName = Processor.GetProcessorName(processorType);
+                    processors.Add(processorName, processorType.ToString());
                 }
                 mediaProcessors = processors;
             }

@@ -25,7 +25,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     string[] textTrack = trackInfo.Split(Constant.TextDelimiter.Application);
                     track.Type = textTrack[0];
                     track.SourceUrl = textTrack[1];
-                    track.LanguageCode = Language.GetLanguageCode(track);
+                    track.LanguageCode = Language.GetLanguageCode(track.SourceUrl);
                     track.Label = Language.GetLanguageLabel(track.LanguageCode);
                     tracks.Add(track);
                 }
@@ -236,7 +236,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     mediaStreams = Stream.GetMediaStreams(mediaClient);
                 }
-
             }
             catch (Exception ex)
             {

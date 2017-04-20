@@ -4,19 +4,25 @@ namespace AzureSkyMedia.PlatformServices
 {
     public static class Language
     {
-        public static string GetLanguageCode(MediaTextTrack textTrack)
+        public static string GetLanguageCode(string sourceUrl)
         {
-            string[] sourceInfo = textTrack.SourceUrl.Split('.');
+            string[] sourceInfo = sourceUrl.Split('.');
             string fileName = sourceInfo[sourceInfo.Length - 2];
             return fileName.Substring(fileName.Length - 2);
         }
 
-        public static string GetLanguageCode(string indexerConfig)
+        public static string GetLanguageCode(JObject processorConfig)
         {
-            JObject processorConfig = JObject.Parse(indexerConfig);
-            JToken processorOptions = processorConfig["Features"][0]["Options"];
-            string spokenLanguage = processorOptions["Language"].ToString();
-            return spokenLanguage.Substring(0, 2).ToLower();
+            string spokenLanguage = string.Empty;
+            if (processorConfig["Features"] != null && processorConfig["Features"].HasValues)
+            {
+                JToken processorOptions = processorConfig["Features"][0]["Options"];
+                if (processorOptions != null && processorOptions["Language"] != null)
+                {
+                    spokenLanguage = processorOptions["Language"].ToString().Substring(0, 2).ToLower();
+                }
+            }
+            return spokenLanguage;
         }
 
         public static JObject GetSpokenLanguages()

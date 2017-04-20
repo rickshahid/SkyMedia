@@ -14,7 +14,10 @@ namespace AzureSkyMedia.PlatformServices
             foreach (string assetId in assetIds)
             {
                 IAsset asset = GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                assets.Add(asset);
+                if (asset != null)
+                {
+                    assets.Add(asset);
+                }
             }
             return assets.ToArray();
         }
@@ -49,10 +52,13 @@ namespace AzureSkyMedia.PlatformServices
             else
             {
                 IAsset rootAsset = GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                foreach (IAssetFile assetFile in rootAsset.AssetFiles)
+                if (rootAsset != null)
                 {
-                    MediaAsset fileAsset = new MediaAsset(this, assetFile);
-                    mediaAssets.Add(fileAsset);
+                    foreach (IAssetFile assetFile in rootAsset.AssetFiles)
+                    {
+                        MediaAsset fileAsset = new MediaAsset(this, assetFile);
+                        mediaAssets.Add(fileAsset);
+                    }
                 }
                 foreach (IAsset asset in _media.Assets)
                 {

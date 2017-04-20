@@ -102,12 +102,12 @@ function GetJobTask(taskNumber) {
     if (mediaProcessor != null && mediaProcessor != "None") {
         var taskParent = $("#taskParent" + taskNumber).val();
         jobTask = {
-            MediaProcessor: mediaProcessor,
+            ProcessorType: mediaProcessor,
             ParentIndex: (taskParent == "") ? null : taskParent - 1,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
             Options: GetJobTaskOptions(taskNumber)
         };
-        switch (jobTask.MediaProcessor) {
+        switch (jobTask.ProcessorType) {
             case "EncoderStandard":
             case "EncoderPremium":
             case "EncoderUltra":

@@ -10,7 +10,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetIndexerTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.Indexer;
+            jobTask.ProcessorType = MediaProcessor.Indexer;
             string settingKey = Constant.AppSettingKey.MediaProcessorIndexerDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
+            jobTask.ProcessorType = MediaProcessor.VideoAnnotation;
             string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -63,7 +63,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.VideoSummarization;
+            jobTask.ProcessorType = MediaProcessor.VideoSummarization;
             string settingKey = Constant.AppSettingKey.MediaProcessorVideoSummarizationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -78,7 +78,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.FaceDetection;
+            jobTask.ProcessorType = MediaProcessor.FaceDetection;
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -93,7 +93,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetFaceRedactionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.FaceRedaction;
+            jobTask.ProcessorType = MediaProcessor.FaceRedaction;
             jobTask.Name = string.Concat(jobTask.Name, " ", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jobTask.FaceRedactionMode));
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceRedactionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
@@ -109,7 +109,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetMotionDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.MotionDetection;
+            jobTask.ProcessorType = MediaProcessor.MotionDetection;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -122,7 +122,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetMotionHyperlapseTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.MotionHyperlapse;
+            jobTask.ProcessorType = MediaProcessor.MotionHyperlapse;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionHyperlapseDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -140,7 +140,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetMotionStabilizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.MotionStabilization;
+            jobTask.ProcessorType = MediaProcessor.MotionStabilization;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionStabilizationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -153,7 +153,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetCharacterRecognitionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.CharacterRecognition;
+            jobTask.ProcessorType = MediaProcessor.CharacterRecognition;
             string settingKey = Constant.AppSettingKey.MediaProcessorCharacterRecognitionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
@@ -166,7 +166,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetContentModerationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.ContentModeration;
+            jobTask.ProcessorType = MediaProcessor.ContentModeration;
             string settingKey = Constant.AppSettingKey.MediaProcessorContentModerationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);

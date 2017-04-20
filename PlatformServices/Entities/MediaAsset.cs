@@ -1,4 +1,6 @@
-﻿using Microsoft.WindowsAzure.MediaServices.Client;
+﻿using System;
+
+using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -46,10 +48,16 @@ namespace AzureSkyMedia.PlatformServices
             get { return _file != null ? _file.Id : _asset.Id; }
         }
 
+        public string AlternateId
+        {
+            get { return _file != null ? string.Empty : _asset.AlternateId; }
+        }
+
         public IAsset Asset
         {
             get { return _file != null ? null : _asset; }
         }
+
         public bool IsStreamable
         {
             get { return _file != null ? false : _asset.IsStreamable; }
@@ -111,7 +119,27 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Url
         {
-            get { return _file != null ? string.Empty : _mediaClient.GetLocatorUrl(_asset, LocatorType.OnDemandOrigin, null); }
+            get { return _file != null ? string.Empty : _mediaClient.GetLocatorUrl(_asset); }
+        }
+
+        public string WebVtt
+        {
+            get
+            {
+                string webVtt = string.Empty;
+                if (_asset != null)
+                {
+                    string fileExtension = Constant.Media.FileExtension.WebVtt;
+                    foreach (IAssetFile assetFile in _asset.AssetFiles)
+                    {
+                        if (assetFile.Name.EndsWith(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            webVtt = assetFile.Name;
+                        }
+                    }
+                }
+                return webVtt;
+            }
         }
 
         public bool Children

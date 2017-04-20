@@ -70,7 +70,7 @@ namespace AzureSkyMedia.PlatformServices
 
             if (contentProtection != null)
             {
-                tableName = Constant.Storage.TableName.JobPublishProtection;
+                tableName = Constant.Storage.TableName.ContentProtection;
                 contentProtection.PartitionKey = jobPublish.PartitionKey;
                 contentProtection.RowKey = jobPublish.RowKey;
                 entityClient.InsertEntity(tableName, contentProtection);

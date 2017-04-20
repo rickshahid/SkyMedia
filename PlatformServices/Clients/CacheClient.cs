@@ -47,15 +47,15 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaClient mediaClient = new MediaClient(authToken);
             IMediaProcessor[] mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-            List<MediaProcessor> mediaProcessorList = new List<MediaProcessor>();
+            List<MediaProcessor> processorList = new List<MediaProcessor>();
             foreach (IMediaProcessor mediaProcessor in mediaProcessors)
             {
                 MediaProcessor processorType = Processor.GetProcessorType(mediaProcessor.Id);
-                mediaProcessorList.Add(processorType);
+                processorList.Add(processorType);
             }
-            MediaProcessor[] mediaProcessorTypes = mediaProcessorList.ToArray();
-            SetValue<MediaProcessor[]>(Constant.Cache.ItemKey.MediaProcessors, mediaProcessorTypes);
-            return mediaProcessorTypes;
+            MediaProcessor[] processorTypes = processorList.ToArray();
+            SetValue<MediaProcessor[]>(Constant.Cache.ItemKey.MediaProcessors, processorTypes);
+            return processorTypes;
         }
 
         public T GetValue<T>(string itemKey)

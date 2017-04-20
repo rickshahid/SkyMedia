@@ -281,10 +281,12 @@
                                                 <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
                                                     PlayReady
                                                 </span>
+                                                &nbsp;
                                                 @Html.CheckBox(contentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)" })
                                                 <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
                                                     Widevine
                                                 </span>
+                                                &nbsp;
                                                 @Html.CheckBox(contentProtectionDrmFairPlayId, false, new { onchange = "SetContentProtection(this)", disabled = "disabled" })
                                                 <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-hls-with-fairplay')">
                                                     FairPlay

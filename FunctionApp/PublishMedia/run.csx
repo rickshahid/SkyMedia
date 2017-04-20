@@ -17,8 +17,7 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
         if (jobNotification != null)
         {
             JobPublication jobPublication = MediaClient.PublishJob(jobNotification, true);
-            string logMessage = !string.IsNullOrEmpty(jobPublication.ErrorMessage) ? jobPublication.ErrorMessage : jobPublication.UserMessage;
-            log.Info($"Job Publication: {logMessage}");
+            log.Info($"Job Publication: {jobPublication.StatusMessage}");
         }
     }
     return req.CreateResponse(HttpStatusCode.OK);

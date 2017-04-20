@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
                         IProgram program = channel.Programs.FirstOrDefault();
                         if (program != null && program.State == ProgramState.Running)
                         {
-                            sourceUrl = mediaClient.GetLocatorUrl(program.Asset, LocatorType.OnDemandOrigin, null);
+                            sourceUrl = mediaClient.GetLocatorUrl(program.Asset);
                         }
                     }
                 }

@@ -11,16 +11,20 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTextTrack[] GetTextTracks(MediaClient mediaClient, IAsset asset, LocatorType locatorType)
         {
             List<MediaTextTrack> textTracks = new List<MediaTextTrack>();
-            string fileExtension = Constant.Media.FileExtension.WebVtt;
-            string[] fileNames = MediaClient.GetFileNames(asset, fileExtension);
-            foreach (string fileName in fileNames)
+            string parentAssetId = asset.ParentAssets[0].Id;
+            MediaAsset[] childAssets = mediaClient.GetAssets(parentAssetId);
+            foreach (MediaAsset childAsset in childAssets)
             {
-                MediaTextTrack textTrack = new MediaTextTrack();
-                textTrack.Type = Constant.Media.Stream.TextTrackSubtitles;
-                textTrack.SourceUrl = mediaClient.GetLocatorUrl(asset, locatorType, fileName);
-                textTrack.LanguageCode = Language.GetLanguageCode(textTrack);
-                textTrack.Label = Language.GetLanguageLabel(textTrack.LanguageCode);
-                textTracks.Add(textTrack);
+                string webVtt = childAsset.WebVtt;
+                if (!string.IsNullOrEmpty(webVtt))
+                {
+                    MediaTextTrack textTrack = new MediaTextTrack();
+                    textTrack.Type = Constant.Media.Stream.TextTrackSubtitles;
+                    textTrack.SourceUrl = mediaClient.GetLocatorUrl(childAsset.Asset, webVtt);
+                    textTrack.LanguageCode = childAsset.AlternateId;
+                    textTrack.Label = Language.GetLanguageLabel(textTrack.LanguageCode);
+                    textTracks.Add(textTrack);
+                }
             }
             return textTracks.ToArray();
         }
@@ -42,7 +46,7 @@ namespace AzureSkyMedia.PlatformServices
                 IAsset asset = locator.Asset;
                 if (asset.IsStreamable && asset.AssetFiles.Count() > 1)
                 {
-                    string locatorUrl = mediaClient.GetLocatorUrl(asset, locator.Type, null);
+                    string locatorUrl = mediaClient.GetLocatorUrl(asset);
                     if (!string.IsNullOrEmpty(locatorUrl))
                     {
                         List<string> protectionTypeList = new List<string>();
@@ -57,7 +61,7 @@ namespace AzureSkyMedia.PlatformServices
                         mediaStream.SourceUrl = locatorUrl;
                         mediaStream.ProtectionTypes = protectionTypeList.ToArray();
                         mediaStream.TextTracks = GetTextTracks(mediaClient, asset, locator.Type);
-                        mediaStream.AnalyticsMetadata = Processor.GetAnalyticsMetadata(asset);
+                        mediaStream.AnalyticsMetadata = Processor.GetAnalyticsMetadata(mediaClient, asset);
                         mediaStreams.Add(mediaStream);
 
                         foreach (IStreamingAssetFilter filter in asset.AssetFilters)
