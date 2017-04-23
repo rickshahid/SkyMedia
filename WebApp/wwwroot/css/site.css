@@ -131,15 +131,6 @@ body {
     font-size: large;
 }
 
-.mediaStreamer {
-    margin: 0px auto;
-}
-
-.mediaStreamer td {
-    vertical-align: bottom;
-    padding: 0px;
-}
-
 .analyticsPanel {
     padding-bottom: 3px;
     display: none;
@@ -149,8 +140,12 @@ body {
     width: 100%;
 }
 
-.mediaPlayer {
-    width: 700px;
+.mediaAnalytics {
+    white-space: pre-line;
+    background: azure;
+    overflow: auto;
+    height: 395px;
+    width: 350px;
 }
 
 .mediaOverlay {
@@ -160,14 +155,21 @@ body {
     z-index: 100;
 }
 
-.mediaMetadata {
-    background: azure;
-    overflow: auto;
-    width: 350px;
+.mediaPlayer {
+    width: 700px;
 }
 
 .mediaBar {
     margin: 10px auto;
+}
+
+.mediaStreamer {
+    margin: 0px auto;
+}
+
+.mediaStreamer td {
+    vertical-align: bottom;
+    padding: 0px;
 }
 
 .streamSlider {

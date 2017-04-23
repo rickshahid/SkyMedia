@@ -128,7 +128,7 @@ namespace AzureSkyMedia.PlatformServices
                 IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
                 if (publishInputAsset)
                 {
-                    MediaClient.PublishLocator(mediaClient, asset, null);
+                    MediaClient.PublishContent(mediaClient, asset, null);
                 }
                 MediaAssetInput inputAsset = GetInputAsset(asset);
                 inputAssets.Add(inputAsset);
@@ -142,7 +142,7 @@ namespace AzureSkyMedia.PlatformServices
                     IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
                     if (publishInputAsset)
                     {
-                        MediaClient.PublishLocator(mediaClient, asset, null);
+                        MediaClient.PublishContent(mediaClient, asset, null);
                     }
                     MediaAssetInput inputAsset = GetInputAsset(asset);
                     inputAssets.Add(inputAsset);

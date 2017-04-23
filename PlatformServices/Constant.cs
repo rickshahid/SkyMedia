@@ -307,7 +307,7 @@ namespace AzureSkyMedia.PlatformServices
                 public const string LocatorIdPrefix = "nb:lid:UUID:";
                 public const string LocatorManifestSuffix = "/manifest";
                 public const string AssetFilteredSuffix = " (Filtered)";
-                public const string TextTrackSubtitles = "subtitles";
+                public const string TextTrackCaptions = "captions";
                 public const string AddressRangeAll = "All IP Addresses";
             }
         }

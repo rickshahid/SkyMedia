@@ -23,7 +23,7 @@
                             "Send_Text_Message_(SMS)": {
                                 "inputs": {
                                     "body": {
-                                        "body": "@{body('PublishPost')?['userMessage']}",
+                                        "body": "@{body('PublishPost')?['statusMessage']}",
                                         "from": "+13109058223",
                                         "to": "@{body('PublishPost')?['mobileNumber']}"
                                     },
@@ -42,7 +42,7 @@
                                 "type": "ApiConnection"
                             }
                         },
-                        "expression": "@and(not(equals(body('PublishPost')?['userMessage'], '')),not(equals(body('PublishPost')?['mobileNumber'], '')))",
+                        "expression": "@and(not(equals(body('PublishPost')?['mobileNumber'], '')),not(equals(body('PublishPost')?['statusMessage'], '')))",
                         "runAfter": {
                             "Delete_message": [
                                 "Succeeded"

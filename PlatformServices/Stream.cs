@@ -19,7 +19,7 @@ namespace AzureSkyMedia.PlatformServices
                 if (!string.IsNullOrEmpty(webVtt))
                 {
                     MediaTextTrack textTrack = new MediaTextTrack();
-                    textTrack.Type = Constant.Media.Stream.TextTrackSubtitles;
+                    textTrack.Type = Constant.Media.Stream.TextTrackCaptions;
                     textTrack.SourceUrl = mediaClient.GetLocatorUrl(childAsset.Asset, webVtt);
                     textTrack.LanguageCode = childAsset.AlternateId;
                     textTrack.Label = Language.GetLanguageLabel(textTrack.LanguageCode);

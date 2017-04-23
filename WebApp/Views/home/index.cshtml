@@ -66,7 +66,7 @@
             for (var i = 0; i < mediaStream.analyticsMetadata.length; i++) {
                 var analyticsMetadata = mediaStream.analyticsMetadata[i];
                 var optionName = analyticsMetadata.processorName;
-                var optionValue = analyticsMetadata.documentId;
+                var optionValue = analyticsMetadata.sourceUrl != null ? analyticsMetadata.sourceUrl : analyticsMetadata.documentId;
                 processors.options[processors.options.length]= new Option(optionName, optionValue);
             }
             $("#mediaMetadata").empty();
@@ -92,15 +92,15 @@
             }
             return faceEmotion;
         }
-        function GetFacesMetadata(playerHeight, playerWidth, timeSeconds, result) {
+        function GetFacesMetadata(playerHeight, playerWidth, timeSeconds, mediaMetadata) {
             var facesMetadata = new Array();
-            var fragment = result.fragment
+            var fragment = mediaMetadata.fragment
             if (fragment.events != null) {
-                var frameHeight = result.height;
-                var frameWidth = result.width;
+                var frameHeight = mediaMetadata.height;
+                var frameWidth = mediaMetadata.width;
                 var scaleHeight = playerHeight / frameHeight;
                 var scaleWidth = playerWidth / frameWidth;
-                var fragmentEvent = GetFragmentEvent(timeSeconds, result.timescale, fragment);
+                var fragmentEvent = GetFragmentEvent(timeSeconds, mediaMetadata.timescale, fragment);
                 for (var i = 0; i < fragmentEvent.length; i++) {
                     var faceMetadata = {};
                     faceMetadata.id = fragmentEvent[i].id;
@@ -121,33 +121,41 @@
         }
         function SetMediaMetadata() {
             var mediaPlayer = GetMediaPlayer(false);
-            var documentId = $("#analyticsProcessors").val();
+            var playerHeight = mediaPlayer.height();
+            var playerWidth = mediaPlayer.width();
             var timeSeconds = mediaPlayer.currentTime();
-            $.post("/analytics/metadata",
-                {
-                    documentId: documentId,
-                    timeSeconds: timeSeconds
-                },
-                function (result) {
-                    var analyticsProcessor = $("#analyticsProcessors option:selected").text();
-                    var playerHeight = mediaPlayer.height();
-                    var playerWidth = mediaPlayer.width();
-                    var jsonOptions = {
-                        collapsed: false,
-                        withQuotes: false
-                    };
-                    switch (analyticsProcessor) {
-                        case "Face Detection":
+            var selectedText = $("#analyticsProcessors option:selected").text();
+            var selectedValue = $("#analyticsProcessors").val();
+            var jsonOptions = {
+                collapsed: false,
+                withQuotes: false
+            };
+            $("#mediaTranscript").hide();
+            $("#mediaMetadata").hide();
+            switch (selectedText) {
+                case "Indexer":
+                    $("#mediaTranscript").show();
+                    $.get(selectedValue, function (result) {
+                        $("#mediaTranscript").text(result);
+                    });
+                    break;
+                case "Face Detection":
+                    $("#mediaMetadata").show();
+                    $.post("/analytics/metadata",
+                        {
+                            documentId: selectedValue,
+                            timeSeconds: timeSeconds
+                        },
+                        function (result) {
                             $("#mediaMetadata").jsonBrowse(result, jsonOptions);
                             var facesMetadata = GetFacesMetadata(playerHeight, playerWidth, timeSeconds, result);
                             for (var i = 0; i < facesMetadata.length; i++) {
                                 var faceMetadata = facesMetadata[i];
                                 SetVideoOverlay(faceMetadata);
                             }
-                            break;
-                    }
-                }
-            );
+                        }
+                    );
+            }
         }
         function SetVideoOverlay(faceMetadata) {
             $("<div id='videoOverlay" + faceMetadata.id + "' class='mediaOverlay'></div>").insertBefore("#videoPlayer");
@@ -278,7 +286,8 @@
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <div id="mediaMetadata" class="mediaMetadata"></div>
+                        <div id="mediaTranscript" class="mediaAnalytics" style="display: none"></div>
+                        <div id="mediaMetadata" class="mediaAnalytics"></div>
                     </td>
                 </tr>
             </table>

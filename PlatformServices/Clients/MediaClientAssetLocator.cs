@@ -104,10 +104,6 @@ namespace AzureSkyMedia.PlatformServices
             string locatorUrl = string.Empty;
             LocatorType locatorType = LocatorType.OnDemandOrigin;
             ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
-            if (locator == null)
-            {
-                locator = CreateLocator(locatorType, asset);
-            }
             if (locator != null)
             {
                 if (locator.ExpirationDateTime <= DateTime.UtcNow)

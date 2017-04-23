@@ -134,7 +134,7 @@ namespace AzureSkyMedia.PlatformServices
                         MediaMetadata mediaMetadata = new MediaMetadata();
                         mediaMetadata.ProcessorName = GetProcessorName(MediaProcessor.Indexer);
                         mediaMetadata.SourceUrl = mediaClient.GetLocatorUrl(childAsset.Asset, webVtt);
-                        analyticsMetadata.Add(mediaMetadata);
+                        analyticsMetadata.Insert(0, mediaMetadata);
                     }
                     else if (!string.IsNullOrEmpty(childAsset.AlternateId))
                     {

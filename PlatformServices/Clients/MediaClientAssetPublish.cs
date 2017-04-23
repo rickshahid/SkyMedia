@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -13,6 +14,19 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
+        private static string[] GetFileNames(IAsset asset, string fileExtension)
+        {
+            List<string> fileNames = new List<string>();
+            foreach (IAssetFile assetFile in asset.AssetFiles)
+            {
+                if (assetFile.Name.EndsWith(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    fileNames.Add(assetFile.Name);
+                }
+            }
+            return fileNames.ToArray();
+        }
+
         private static ITask[] GetJobTasks(IJob job, string[] processorIds)
         {
             List<ITask> jobTasks = new List<ITask>();
@@ -42,30 +56,20 @@ namespace AzureSkyMedia.PlatformServices
             return entityClient.GetEntity<ContentProtection>(tableName, partitionKey, rowKey);
         }
 
-        private static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        private static void PublishIndex(MediaClient mediaClient, IJob job)
         {
-            string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
-            string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
-            string processorId3 = Constant.Media.ProcessorId.EncoderUltra;
-            string[] processorIds = new string[] { processorId1, processorId2, processorId3 };
+            string processorId = Constant.Media.ProcessorId.Indexer;
+            string[] processorIds = new string[] { processorId };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
-            if (jobTasks.Length == 0)
+            foreach (ITask jobTask in jobTasks)
             {
-                string assetId = job.InputMediaAssets[0].Id;
-                PublishMetadata(job, jobPublish, assetId);
-                PublishIndex(job);
-            }
-            else
-            {
-                foreach (ITask jobTask in jobTasks)
+                JObject processorConfig = JObject.Parse(jobTask.Configuration);
+                string languageCode = Language.GetLanguageCode(processorConfig);
+                foreach (IAsset outputAsset in jobTask.OutputAssets)
                 {
-                    foreach (IAsset encoderOutput in jobTask.OutputAssets)
-                    {
-                        string assetId = encoderOutput.Id;
-                        PublishMetadata(job, jobPublish, assetId);
-                        PublishIndex(job);
-                        PublishLocator(mediaClient, encoderOutput, contentProtection);
-                    }
+                    outputAsset.AlternateId = languageCode;
+                    outputAsset.Update();
+                    mediaClient.CreateLocator(LocatorType.OnDemandOrigin, outputAsset);
                 }
             }
         }
@@ -136,24 +140,35 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishIndex(IJob job)
+        private static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
         {
-            string processorId = Constant.Media.ProcessorId.Indexer;
-            string[] processorIds = new string[] { processorId };
+            string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
+            string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
+            string processorId3 = Constant.Media.ProcessorId.EncoderUltra;
+            string[] processorIds = new string[] { processorId1, processorId2, processorId3 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
-            foreach (ITask jobTask in jobTasks)
+            if (jobTasks.Length == 0)
             {
-                JObject processorConfig = JObject.Parse(jobTask.Configuration);
-                string languageCode = Language.GetLanguageCode(processorConfig);
-                foreach (IAsset outputAsset in jobTask.OutputAssets)
+                string assetId = job.InputMediaAssets[0].Id;
+                PublishMetadata(job, jobPublish, assetId);
+                PublishIndex(mediaClient, job);
+            }
+            else
+            {
+                foreach (ITask jobTask in jobTasks)
                 {
-                    outputAsset.AlternateId = languageCode;
-                    outputAsset.Update();
+                    foreach (IAsset encoderOutput in jobTask.OutputAssets)
+                    {
+                        string assetId = encoderOutput.Id;
+                        PublishContent(mediaClient, encoderOutput, contentProtection);
+                        PublishIndex(mediaClient, job);
+                        PublishMetadata(job, jobPublish, assetId);
+                    }
                 }
             }
         }
 
-        internal static void PublishLocator(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
+        internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
         {
             if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
             {
@@ -198,7 +213,7 @@ namespace AzureSkyMedia.PlatformServices
                     JobPublish jobPublish = GetJobPublish(entityClient, jobNotification);
                     if (jobPublish != null)
                     {
-                        jobPublication.UserId = jobPublication.UserId;
+                        jobPublication.UserId = jobPublish.UserId;
                         jobPublication.MobileNumber = jobPublish.MobileNumber;
                         ContentProtection contentProtection = GetContentProtection(entityClient, jobPublish);
                         string accountName = jobPublish.PartitionKey;

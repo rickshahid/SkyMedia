@@ -22,19 +22,6 @@ namespace AzureSkyMedia.PlatformServices
             return assets.ToArray();
         }
 
-        internal static string[] GetFileNames(IAsset asset, string fileExtension)
-        {
-            List<string> fileNames = new List<string>();
-            foreach (IAssetFile assetFile in asset.AssetFiles)
-            {
-                if (assetFile.Name.EndsWith(fileExtension, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    fileNames.Add(assetFile.Name);
-                }
-            }
-            return fileNames.ToArray();
-        }
-
         public MediaAsset[] GetAssets(string assetId)
         {
             List<MediaAsset> mediaAssets = new List<MediaAsset>();
@@ -56,8 +43,8 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     foreach (IAssetFile assetFile in rootAsset.AssetFiles)
                     {
-                        MediaAsset fileAsset = new MediaAsset(this, assetFile);
-                        mediaAssets.Add(fileAsset);
+                        MediaAsset mediaFile = new MediaAsset(this, assetFile);
+                        mediaAssets.Add(mediaFile);
                     }
                 }
                 foreach (IAsset asset in _media.Assets)
@@ -110,7 +97,6 @@ namespace AzureSkyMedia.PlatformServices
             }
 
             SetPrimaryFile(asset);
-            asset.Update();
             return asset;
         }
     }
