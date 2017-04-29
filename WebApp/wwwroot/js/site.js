@@ -177,12 +177,12 @@ function SetPlayerContent(mediaStream, languageCode, clipMode, autoPlay, authTok
 }
 function ToggleMediaAnalytics() {
     ClearVideoOverlay();
-    var analyticsZoomImage = document.getElementById("analyticsZoomImage");
+    var analyticsPanelImage = document.getElementById("analyticsPanelImage");
     if ($("#analyticsPanel").is(":visible")) {
-        analyticsZoomImage.src = analyticsZoomImage.src.replace("Out", "In");
+        analyticsPanelImage.src = analyticsPanelImage.src.replace("Out", "In");
         $("#analyticsPanel").hide();
     } else {
-        analyticsZoomImage.src = analyticsZoomImage.src.replace("In", "Out");
+        analyticsPanelImage.src = analyticsPanelImage.src.replace("In", "Out");
         $("#analyticsPanel").show();
     }
 }

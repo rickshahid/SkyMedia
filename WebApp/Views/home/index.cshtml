@@ -220,16 +220,16 @@
             mediaPlayer.ready(function () {
                 var mediaStream = _mediaStreams[_streamNumber - 1];
                 if (mediaStream.analyticsMetadata.length > 0) {
-                    var analyticsZoomImage = document.createElement("img");
-                    analyticsZoomImage.id = "analyticsZoomImage";
-                    analyticsZoomImage.src = "@cdnUrl" + "/MediaAnalyticsZoomIn.png";
-                    var analyticsZoomButton = document.createElement("button");
-                    analyticsZoomButton.id = "analyticsZoomButton";
-                    analyticsZoomButton.className = "vjs-control vjs-button";
-                    analyticsZoomButton.appendChild(analyticsZoomImage);
+                    var analyticsPanelImage = document.createElement("img");
+                    analyticsPanelImage.id = "analyticsPanelImage";
+                    analyticsPanelImage.src = "@cdnUrl" + "/MediaAnalyticsIn.png";
+                    var analyticsPanelButton = document.createElement("button");
+                    analyticsPanelButton.id = "analyticsPanelButton";
+                    analyticsPanelButton.className = "vjs-control vjs-button";
+                    analyticsPanelButton.appendChild(analyticsPanelImage);
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
-                    controlBarRight.appendChild(analyticsZoomButton);
-                    $("#analyticsZoomButton").click(function () {
+                    controlBarRight.appendChild(analyticsPanelButton);
+                    $("#analyticsPanelButton").click(function () {
                         ToggleMediaAnalytics();
                     });
                 }
