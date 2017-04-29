@@ -89,6 +89,10 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaLocatorMaxStreamCount = "Media.Locator.MaxStreamCount";
 
             public const string MediaPlayerVersion = "Media.Player.Version";
+            public const string MediaPlayerSkin = "Media.Player.Skin";
+
+            public const string MediaClipperVersion = "Media.Clipper.Version";
+            public const string MediaClipperSkin = "Media.Clipper.Skin";
 
             public const string SigniantTransferApi = "Signiant.TransferApi";
 

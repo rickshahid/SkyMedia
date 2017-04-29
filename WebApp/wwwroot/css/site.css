@@ -3,7 +3,7 @@
 }
 
 @media all and (max-width: 320px) {
-    #siteHome, #mediaLibrary, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
@@ -21,7 +21,7 @@
 }
 
 @media all and (min-width: 321px) and (max-width: 480px) {
-    #siteHome, #mediaLibrary, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 

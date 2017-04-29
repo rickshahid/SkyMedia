@@ -1,11 +1,10 @@
-﻿var _authToken, _inputAssets, _encoderConfig, _saveWorkflow, _mediaStreams, _streamNumber, _spokenLanguages;
+﻿var _authToken, _inputAssets, _encoderConfig, _mediaStreams, _streamNumber, _spokenLanguages, _saveWorkflow;
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");
     CreateTipBottom("accountInventory", "Azure Media Services<br /><br />Account Inventory");
-    CreateTipBottom("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
     CreateTipBottom("userDirectory", "Azure B2C<br /><br />Active Directory");
-    CreateTipBottom("userSignIn", "Azure Sky Media<br /><br />User Identity");
+    CreateTipBottom("userSignIn", "Azure Sky Media<br /><br />User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
     CreateTipBottom("userProfileEdit", "Azure Sky Media<br /><br />User Profile Edit");
     CreateTipRight("amsPlatform", "Azure Media Services");
@@ -14,20 +13,21 @@ function SetLayout() {
     CreateTipRight("mediaEncoding", "Azure Media Services<br /><br />Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br /><br />Content Protection");
     CreateTipRight("mediaAnalytics", "Azure Media Services<br /><br />Media Analytics");
-    CreateTipRight("contentDeliveryNetwork", "Azure CDN<br /><br />(Content Delivery Network)");
+    CreateTipRight("appServiceBot", "Azure Bot Service");
+    CreateTipLeft("appService", "Azure App Service");
     CreateTipLeft("appServiceWeb", "Azure App Service<br /><br />Web Apps");
     CreateTipLeft("appServiceMobile", "Azure App Service<br /><br />Mobile Apps");
     CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Function Apps");
     CreateTipLeft("appServiceApi", "Azure App Service<br /><br />API Apps");
     CreateTipLeft("appServiceApiManagement", "Azure API Management");
     CreateTipLeft("appServiceLogic", "Azure Logic Apps");
-    CreateTipLeft("appServiceBot", "Azure Bot Service");
+    CreateTipLeft("appServiceInsights", "Azure Application Insights");
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
     CreateTipTop("mediaStreamLeft", "Azure Media Services<br /><br />Stream Tuner Left");
     CreateTipTop("mediaStreamRight", "Azure Media Services<br /><br />Stream Tuner Right");
-    CreateTipTop("mediaAssetClipper", "Azure Media Services<br /><br />Video Clipper");
-    CreateTipTop("mediaAssetAnalytics", "Azure Media Services<br /><br />Media Analytics");
+    CreateTipTop("mediaLive", "Azure Media Services<br /><br />Live Stream");
+    CreateTipTop("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
     $(".amp-logo").click(function () {
         window.open("http://amslabs.azurewebsites.net/");
     });
@@ -42,7 +42,7 @@ function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signout";
 }
-function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
+function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose) {
     if (buttons == null) {
         buttons = {
             OK: function () {
@@ -65,6 +65,7 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
         height: height,
         width: width,
         title: title,
+        open: onOpen,
         close: onClose,
         resizable: false,
         modal: true
@@ -76,7 +77,7 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
 }
 function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
-    DisplayDialog(dialogId, title, message, buttons, null, width, onClose);
+    DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose);
 }
 function DisplayWorkflow(result) {
     var title, message = "", onClose = null;
@@ -132,19 +133,20 @@ function GetProtectionInfo(protectionTypes, authToken) {
 }
 function GetMediaPlayer(clipMode) {
     var videoTagId = clipMode ? "videoClipper" : "videoPlayer";
-    var playerOptions = {
-        plugins: {
-            "playbackrate": {}
-        }
-    };
-    var mediaPlayer = amp(videoTagId, playerOptions);
+    var plugins = {};
     if (clipMode) {
-        mediaPlayer.AMVE({
+        plugins.AMVE = {
             containerId: "mediaClipper",
             clipdataCallback: CreateVideoClip
-        });
+        };
     }
-    return mediaPlayer;
+    var playerOptions = {
+        plugins: plugins,
+        playbackSpeed: {
+            enabled: true
+        }
+    };
+    return amp(videoTagId, playerOptions);
 }
 function SetPlayerSpinner(visible) {
     if (visible) {
@@ -173,49 +175,22 @@ function SetPlayerContent(mediaStream, languageCode, clipMode, autoPlay, authTok
         }
     }
 }
-function DisplayVideoClipper(languageCode) {
-    var mediaStream = _mediaStreams[_streamNumber - 1];
-    var dialogId = "clipperDialog";
-    var title = "Azure Media Video Clipper";
-    var buttons = {};
-    var onClose = function () {
-        $("#mediaClipper").empty();
-    };
-    SetPlayerContent(mediaStream, languageCode, true, true, _authToken);
-    DisplayDialog(dialogId, title, null, buttons, null, null, onClose);
-}
-function CreateVideoClip(clipData) {
-    if (clipData != null) {
-        $.post("/asset/clip",
-            {
-                clipMode: clipData._amveUX.mode,
-                clipName: clipData.title,
-                sourceUrl: clipData.src,
-                markIn: Math.floor(clipData.markIn),
-                markOut: Math.floor(clipData.markOut)
-            },
-            function (result) {
-                if (result.id.indexOf("jid") > -1) {
-                    DisplayWorkflow(result);
-                } else {
-                    window.location = window.location.href;
-                }
-            }
-        );
-        $("#clipperDialog").dialog("close");
+function ToggleMediaAnalytics() {
+    ClearVideoOverlay();
+    var analyticsZoomImage = document.getElementById("analyticsZoomImage");
+    if ($("#analyticsPanel").is(":visible")) {
+        analyticsZoomImage.src = analyticsZoomImage.src.replace("Out", "In");
+        $("#analyticsPanel").hide();
+    } else {
+        analyticsZoomImage.src = analyticsZoomImage.src.replace("In", "Out");
+        $("#analyticsPanel").show();
     }
 }
-function ToggleMediaAnalytics(button) {
-    ClearVideoOverlay();
+function ToggleMediaLive(button) {
     var buttonImage = button.children[0];
-    if (buttonImage.src.indexOf("MediaAnalyticsOpen") > -1) {
-        buttonImage.src = buttonImage.src.replace("Open", "Close");
-        var mediaPlayer = GetMediaPlayer(false);
-        var playerHeight = mediaPlayer.height();
-        $("#mediaMetadata").height(playerHeight);
-        $("#analyticsPanel").show();
+    if (buttonImage.src.indexOf("MediaLiveOn") > -1) {
+        buttonImage.src = buttonImage.src.replace("On", "Off");
     } else {
-        buttonImage.src = buttonImage.src.replace("Close", "Open");
-        $("#analyticsPanel").hide();
+        buttonImage.src = buttonImage.src.replace("Off", "On");
     }
 }

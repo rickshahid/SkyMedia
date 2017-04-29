@@ -42,13 +42,13 @@
         <td id="userButtonRight1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaAssetClipper", "MediaClipper.png", "DisplayVideoClipper(' " + ViewData["languageCode"] + "')" })
+            @Html.Partial("SiteButton", new string[] { "mediaLive", "MediaLiveOff.png", "ToggleMediaLive(this)" })
         }
         </td>
         <td id="userButtonRight2">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaAssetAnalytics", "MediaAnalyticsOpen.png", "ToggleMediaAnalytics(this)" })
+            @Html.Partial("SiteButton", new string[] { "mediaLibrary", "MediaLibrary.png", "window.location.href = '/asset'" })
         }
         </td>
     </tr>

@@ -24,13 +24,27 @@
     string settingKey = Constant.AppSettingKey.AppRegion;
     ViewData["appRegion"] = AppSetting.GetValue(settingKey);
 
-    string ampVersion = this.Context.Request.Query["amp"];
+    string ampVersion = this.Context.Request.Query["amp-version"];
     if (string.IsNullOrEmpty(ampVersion))
     {
         settingKey = Constant.AppSettingKey.MediaPlayerVersion;
         ampVersion = AppSetting.GetValue(settingKey);
     }
     ViewData["mediaPlayerVersion"] = ampVersion;
+
+    string ampSkin = this.Context.Request.Query["amp-skin"];
+    if (string.IsNullOrEmpty(ampSkin))
+    {
+        settingKey = Constant.AppSettingKey.MediaPlayerSkin;
+        ampSkin = AppSetting.GetValue(settingKey);
+    }
+    ViewData["mediaPlayerSkin"] = ampSkin;
+
+    settingKey = Constant.AppSettingKey.MediaClipperVersion;
+    ViewData["mediaClipperVersion"] = AppSetting.GetValue(settingKey);
+
+    settingKey = Constant.AppSettingKey.MediaClipperSkin;
+    ViewData["mediaClipperSkin"] = AppSetting.GetValue(settingKey);
 
     settingKey = Constant.AppSettingKey.StorageCdnUrl;
     ViewData["storageCdnUrl"] = AppSetting.GetValue(settingKey);

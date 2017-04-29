@@ -5,12 +5,12 @@
 @if (clipMode)
 {
     <div id="mediaClipper" class="mediaPlayer">
-        <video id="videoClipper" class="azuremediaplayer amp-default-skin amp-big-play-centered" controls height="auto" width="100%" />
+        <video id="videoClipper" class="azuremediaplayer @ViewData["mediaClipperSkin"]-skin amp-big-play-centered" controls height="auto" width="100%" />
     </div>
 }
 else
 {
     <div class="mediaPlayer">
-        <video id="videoPlayer" class="azuremediaplayer amp-default-skin amp-big-play-centered" controls height="auto" width="100%" />
+        <video id="videoPlayer" class="azuremediaplayer @ViewData["mediaPlayerSkin"]-skin amp-big-play-centered" controls height="auto" width="100%" />
     </div>
 }

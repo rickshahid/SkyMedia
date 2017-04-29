@@ -164,6 +164,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaProcessors.ToArray();
         }
 
+        public IActionResult clipper()
+        {
+            ViewData["layoutDialog"] = true;
+            return View();
+        }
+
         public IActionResult index()
         {
             string accountMessage = string.Empty;
