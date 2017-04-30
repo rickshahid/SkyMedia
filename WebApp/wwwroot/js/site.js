@@ -19,7 +19,6 @@ function SetLayout() {
     CreateTipLeft("appServiceMobile", "Azure App Service<br /><br />Mobile Apps");
     CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Function Apps");
     CreateTipLeft("appServiceApi", "Azure App Service<br /><br />API Apps");
-    CreateTipLeft("appServiceApiManagement", "Azure API Management");
     CreateTipLeft("appServiceLogic", "Azure Logic Apps");
     CreateTipLeft("appServiceInsights", "Azure Application Insights");
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
@@ -28,9 +27,6 @@ function SetLayout() {
     CreateTipTop("mediaStreamRight", "Azure Media Services<br /><br />Stream Tuner Right");
     CreateTipTop("mediaLive", "Azure Media Services<br /><br />Live Stream");
     CreateTipTop("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
-    $(".amp-logo").click(function () {
-        window.open("http://amslabs.azurewebsites.net/");
-    });
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });

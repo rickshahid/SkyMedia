@@ -95,10 +95,6 @@ body {
     font-size: large;
 }
 
-.amp-logo:hover {
-    cursor: pointer;
-}
-
 .siteButton {
     background: none;
     border: none;
