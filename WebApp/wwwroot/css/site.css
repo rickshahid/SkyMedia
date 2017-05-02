@@ -69,7 +69,6 @@ body {
 }
 
 .layoutBody {
-    vertical-align: top;
 }
 
 .banner {
@@ -127,8 +126,12 @@ body {
     font-size: large;
 }
 
+.mediaContent {
+    vertical-align: bottom;
+    padding-bottom: 4px;
+}
+
 .analyticsPanel {
-    padding-bottom: 3px;
     display: none;
 }
 
@@ -140,7 +143,6 @@ body {
     white-space: pre-line;
     background: azure;
     overflow: auto;
-    height: 395px;
     width: 350px;
 }
 
@@ -155,17 +157,13 @@ body {
     width: 700px;
 }
 
+.mediaPlayerButton {
+    background: none;
+    border: none;
+}
+
 .mediaBar {
     margin: 10px auto;
-}
-
-.mediaStreamer {
-    margin: 0px auto;
-}
-
-.mediaStreamer td {
-    vertical-align: bottom;
-    padding: 0px;
 }
 
 .streamSlider {

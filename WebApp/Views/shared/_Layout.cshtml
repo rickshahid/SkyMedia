@@ -29,11 +29,7 @@
         @RenderSection("head", false)
     </head>
     <body onload="SetLayout()">
-        @if (ViewData.ContainsKey("layoutDialog"))
-        {
-            @RenderBody()
-        }
-        else if (ViewData.ContainsKey("layoutLive"))
+        @if (ViewData.ContainsKey("layoutLive"))
         {
             <div class="layout live">
                 @RenderBody()

@@ -5,6 +5,7 @@ namespace AzureSkyMedia.PlatformServices
     public struct Constant
     {
         public const string NotAvailable = "N/A";
+        public const string ConfigFile = "appsettings.json";
 
         public struct TextDelimiter
         {
@@ -90,9 +91,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
-
-            public const string MediaClipperVersion = "Media.Clipper.Version";
-            public const string MediaClipperSkin = "Media.Clipper.Skin";
 
             public const string SigniantTransferApi = "Signiant.TransferApi";
 

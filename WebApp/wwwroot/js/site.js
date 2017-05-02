@@ -113,11 +113,11 @@ function GetSourceType(sourceUrl) {
 function GetLanguageLabel(languageCode) {
     return _spokenLanguages[languageCode];
 }
-function GetProtectionInfo(protectionTypes, authToken) {
+function GetProtectionInfo(protectionTypes) {
     var protectionInfo = null;
     if (protectionTypes.length > 0) {
         protectionInfo = new Array();
-        authToken = window.location.href.indexOf("notoken") > -1 ? "" : "Bearer=" + authToken;
+        var authToken = window.location.href.indexOf("notoken") > -1 ? "" : "Bearer=" + _authToken;
         for (var i = 0; i < protectionTypes.length; i++) {
             protectionInfo.push({
                 type: protectionTypes[i],
@@ -151,21 +151,19 @@ function SetPlayerSpinner(visible) {
         $(".vjs-loading-spinner").hide();
     }
 }
-function SetPlayerContent(mediaStream, languageCode, clipMode, autoPlay, authToken) {
-    var mediaPlayer = GetMediaPlayer(clipMode);
+function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
     mediaPlayer.autoplay(autoPlay);
     mediaPlayer.src(
         [{
             src: mediaStream.sourceUrl,
             type: GetSourceType(mediaStream.sourceUrl),
-            protectionInfo: GetProtectionInfo(mediaStream.protectionTypes, authToken)
+            protectionInfo: GetProtectionInfo(mediaStream.protectionTypes)
         }],
         mediaStream.textTracks
     );
     if (languageCode != "") {
-        var languageCode = languageCode.toLowerCase();
         for (var i = 0; i < mediaPlayer.textTracks_.length; i++) {
-            if (mediaPlayer.textTracks_.tracks_[i].language.toLowerCase() == languageCode) {
+            if (mediaPlayer.textTracks_.tracks_[i].language == languageCode) {
                 mediaPlayer.textTracks_.tracks_[i].mode = "showing";
             }
         }
@@ -179,6 +177,9 @@ function ToggleMediaAnalytics() {
         $("#analyticsPanel").hide();
     } else {
         analyticsPanelImage.src = analyticsPanelImage.src.replace("In", "Out");
+        var mediaPlayer = GetMediaPlayer(false);
+        var playerHeight = mediaPlayer.el().clientHeight;
+        $("#mediaMetadata").height(playerHeight);
         $("#analyticsPanel").show();
     }
 }
