@@ -141,7 +141,7 @@
             });
             mediaPlayer.addEventListener(amp.eventName.pause, function () {
                 if ($("#analyticsPanel").is(":visible")) {
-                    //SetMediaMetadata();
+                    SetMediaMetadata();
                 }
             });
             window.onresize = ResetMediaMetadata;

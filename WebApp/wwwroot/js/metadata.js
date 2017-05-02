@@ -123,5 +123,5 @@ function ClearVideoOverlay() {
 }
 function ResetMediaMetadata() {
     ClearVideoOverlay();
-    //SetMediaMetadata();
+    SetMediaMetadata();
 }

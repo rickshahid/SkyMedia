@@ -179,6 +179,7 @@ function ToggleMediaAnalytics() {
         analyticsPanelImage.src = analyticsPanelImage.src.replace("In", "Out");
         var mediaPlayer = GetMediaPlayer(false);
         var playerHeight = mediaPlayer.el().clientHeight;
+        $("#mediaTranscript").height(playerHeight);
         $("#mediaMetadata").height(playerHeight);
         $("#analyticsPanel").show();
     }
