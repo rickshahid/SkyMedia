@@ -8,6 +8,7 @@
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-multiselect/jquery.multiselect.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-editable-select/dist/jquery-editable-select.min.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/qtip2/jquery.qtip.min.css" />
         <link type="text/css" rel="stylesheet" href="~/css/site.css" />
         @Html.Raw(javaScriptSnippet.FullScript)
@@ -18,14 +19,11 @@
         <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
         <script type="text/javascript" src="~/lib/jquery.scrollTo/jquery.scrollTo.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
+        <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
         <script type="text/javascript" src="~/lib/qtip2/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="~/js/grid.js"></script>
         <script type="text/javascript" src="~/js/qtip.js"></script>
         <script type="text/javascript" src="~/js/site.js"></script>
-        <script type="text/javascript">
-            $(function () {
-                _spokenLanguages = @Json.Serialize(ViewData["spokenLanguages"]);
-            })
-        </script>
         @RenderSection("head", false)
     </head>
     <body onload="SetLayout()">

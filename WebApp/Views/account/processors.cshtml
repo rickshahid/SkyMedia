@@ -1,7 +1,4 @@
 ﻿@section head {
-    <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
-    <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
-    <script type="text/javascript" src="~/js/grid.js"></script>
     <script type="text/javascript">
         $(function () {
             var rows = @Json.Serialize(ViewData["mediaProcessors"]);
@@ -18,18 +15,18 @@
                     width: 400,
                     name: "name",
                     label: "Media Processor Name",
-                    align: "center",
-                    formatter: FormatColumn
+                    formatter: FormatColumn,
+                    align: "center"
                 },
                 {
-                    width: 100,
+                    width: 125,
                     name: "version",
                     label: "Version",
-                    align: "center",
-                    formatter: FormatColumn
-            }
+                    formatter: FormatColumn,
+                    align: "center"
+                }
             ];
-            LoadGrid(columns, rows);
+            LoadGrid("mediaProcessors", columns, rows, 400);
         })
     </script>
 }
@@ -38,4 +35,4 @@
     Media Processors
 }
 
-<table id="gridView"></table>
+<table id="mediaProcessors"></table>

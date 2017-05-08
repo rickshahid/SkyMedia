@@ -55,6 +55,19 @@ namespace AzureSkyMedia.PlatformServices
             return result;
         }
 
+        public JObject[] GetDocuments(string collectionId)
+        {
+            List<JObject> documents = new List<JObject>();
+            IQueryable<Document> query = _database.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId);
+            IEnumerable<Document> docs = query.AsEnumerable<Document>();
+            foreach (Document doc in docs)
+            {
+                JObject result = GetResult(doc.ToString());
+                documents.Add(result);
+            }
+            return documents.ToArray();
+        }
+
         public JObject GetDocument(string documentId)
         {
             string[] documentInfo = documentId.Split(Constant.TextDelimiter.Identifier);
@@ -67,11 +80,13 @@ namespace AzureSkyMedia.PlatformServices
             return (document == null) ? null : GetResult(document.ToString());
         }
 
-        public string CreateDocument(string collectionId, string docData, string assetAccount, string assetId)
+        public string CreateDocument(string collectionId, string docData, IDictionary<string, string> docAttributes)
         {
             JObject jsonDoc = JObject.Parse(docData);
-            jsonDoc["assetAccount"] = assetAccount;
-            jsonDoc["assetId"] = assetId;
+            foreach (KeyValuePair<string, string> docAttribute in docAttributes)
+            {
+                jsonDoc[docAttribute.Key] = docAttribute.Value;
+            }
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Task<ResourceResponse<Document>> createTask = _database.CreateDocumentAsync(collectionUri, jsonDoc);
             createTask.Wait();

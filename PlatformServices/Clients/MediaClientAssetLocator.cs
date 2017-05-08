@@ -76,7 +76,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private string GetLocatorUrl(ILocator locator, string fileName)
         {
-            string primaryUrl = locator.BaseUri.Replace("http:", string.Empty);
+            string primaryUrl = locator.BaseUri.Split(':')[1];
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = GetPrimaryFile(locator.Asset);

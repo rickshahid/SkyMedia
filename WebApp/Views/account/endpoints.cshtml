@@ -1,7 +1,4 @@
 ﻿@section head {
-    <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
-    <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
-    <script type="text/javascript" src="~/js/grid.js"></script>
     <script type="text/javascript">
         $(function () {
             var rows = @Json.Serialize(ViewData["notificationEndpoints"]);
@@ -11,26 +8,27 @@
                     hidden: true
                 },
                 {
-                    width: 300,
+                    width: 250,
                     name: "name",
                     label: "Endpoint Name",
-                    align: "center",
-                    formatter: FormatColumn
+                    formatter: FormatColumn,
+                    align: "center"
                 },
                 {
+                    width: 200,
                     name: "endPointType",
                     label: "Endpoint Type",
-                    align: "center",
-                    formatter: FormatColumn
+                    formatter: FormatColumn,
+                    align: "center"
                 },
                 {
-                    width: 600,
+                    width: 500,
                     name: "endPointAddress",
                     label: "Endpoint Address",
                     formatter: FormatColumn
-            }
+                }
             ];
-            LoadGrid(columns, rows);
+            LoadGrid("notificationEndpoints", columns, rows, 400);
         })
     </script>
 }
@@ -39,4 +37,4 @@
     Notification Endpoints
 }
 
-<table id="gridView"></table>
+<table id="notificationEndpoints"></table>

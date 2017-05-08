@@ -122,6 +122,8 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\skyfun-uswest - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\skyfun-uswest - Web Deploy.pubxml" />
+    <Content Include="PurgeMetadata\function.json" />
+    <Content Include="PurgeMetadata\run.csx" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

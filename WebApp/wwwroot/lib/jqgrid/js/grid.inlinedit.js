@@ -21,7 +21,7 @@ $.jgrid.extend({
 //Editing
 	editRow : function(rowid,keys,oneditfunc,successfunc, url, extraparam, aftersavefunc,errorfunc, afterrestorefunc) {
 		// Compatible mode old versions
-		var o={}, args = $.makeArray(arguments).slice(1);
+		var o={}, args = $.makeArray(arguments).slice(1), $t = this[0];
 
 		if( $.type(args[0]) === "object" ) {
 			o = args[0];
@@ -50,12 +50,14 @@ $.jgrid.extend({
 			afterrestorefunc: null,
 			restoreAfterError: true,
 			mtype: "POST",
-			focusField : true
+			focusField : true,
+			saveui : "enable",
+			savetext : $.jgrid.getRegional($t,'defaults.savetext')			
 		}, $.jgrid.inlineEdit, o );
 
 		// End compatible
 		return this.each(function(){
-			var $t = this, nm, tmp, editable, cnt=0, focus=null, svr={}, ind,cm, bfer,
+			var nm, tmp, editable, cnt=0, focus=null, svr={}, ind,cm, bfer,
 			inpclass = $(this).jqGrid('getStyleUI',$t.p.styleUI+".inlinedit",'inputClass', true);
 			if (!$t.grid ) { return; }
 			ind = $($t).jqGrid("getInd",rowid,true);
@@ -126,7 +128,7 @@ $.jgrid.extend({
 					if(o.keys===true) {
 						$(ind).on( o.keyevent ,function(e) {
 							if (e.keyCode === 27) {
-								$($t).jqGrid("restoreRow",rowid, o.afterrestorefunc);
+								$($t).jqGrid("restoreRow",rowid, o);
 								if($t.p.inlineNav) {
 									try {
 										$($t).jqGrid('showAddEditButtons');
@@ -189,7 +191,7 @@ $.jgrid.extend({
 		if(ind === false) {return success;}
 		var errors = $.jgrid.getRegional($t, 'errors'),
 		edit =$.jgrid.getRegional($t, 'edit'),
-		bfsr = $.isFunction( o.beforeSaveRow ) ?	o.beforeSaveRow.call($t,o, rowid) :  undefined;
+		bfsr = $.isFunction( o.beforeSaveRow ) ? o.beforeSaveRow.call($t,o, rowid) :  undefined;
 		if( bfsr === undefined ) {
 			bfsr = true;
 		}
@@ -206,7 +208,7 @@ $.jgrid.extend({
 					switch (cm.edittype) {
 						case "checkbox":
 							var cbv = ["Yes","No"];
-							if(cm.editoptions ) {
+							if(cm.editoptions && cm.editoptions.value) {
 								cbv = cm.editoptions.value.split(":");
 							}
 							tmp[nm]=  $("input",this).is(":checked") ? cbv[0] : cbv[1];
@@ -357,7 +359,7 @@ $.jgrid.extend({
 							var ret = true, sucret, k;
 							sucret = $($t).triggerHandler("jqGridInlineSuccessSaveRow", [res, rowid, o]);
 							if (!$.isArray(sucret)) {sucret = [true, tmp3];}
-							if (sucret[0] && $.isFunction(o.successfunc)) {sucret = o.successfunc.call($t, res);}							
+							if (sucret[0] && $.isFunction(o.successfunc)) {sucret = o.successfunc.call($t, res);}
 							if($.isArray(sucret)) {
 								// expect array - status, data, rowid
 								ret = sucret[0];
@@ -395,7 +397,7 @@ $.jgrid.extend({
 									o.errorfunc.call($t, rowid, res, stat, null);
 								}
 								if(o.restoreAfterError === true) {
-									$($t).jqGrid("restoreRow",rowid, o.afterrestorefunc);
+									$($t).jqGrid("restoreRow",rowid, o);
 								}
 							}
 						}
@@ -414,7 +416,7 @@ $.jgrid.extend({
 							}
 						}
 						if(o.restoreAfterError === true) {
-							$($t).jqGrid("restoreRow",rowid, o.afterrestorefunc);
+							$($t).jqGrid("restoreRow",rowid, o);
 						}
 					}
 				}, $.jgrid.ajaxOptions, $t.p.ajaxRowOptions || {}));
@@ -455,7 +457,7 @@ $.jgrid.extend({
 					} catch (e) {}
 				}
 				$.each($t.p.colModel, function(){
-					if(this.editable === true && $t.p.savedRow[fr].hasOwnProperty(this.name)) {
+					if( $t.p.savedRow[fr].hasOwnProperty(this.name)) {
 						ares[this.name] = $t.p.savedRow[fr][this.name];
 					}
 				});
@@ -715,6 +717,17 @@ $.jgrid.extend({
 			$("#"+gID+"_ilcancel").addClass( disabled );
 			$("#"+gID+"_iladd").removeClass( disabled );
 			$("#"+gID+"_iledit").removeClass( disabled );
+		});
+	},
+	showSaveCancelButtons : function()  {
+		return this.each(function(){
+			if (!this.grid ) { return; }
+			var gID = $.jgrid.jqID(this.p.id),
+			disabled = $.trim( $(this).jqGrid('getStyleUI', this.p.styleUI+'.common', 'disabled', true) );
+			$("#"+gID+"_ilsave").removeClass( disabled );
+			$("#"+gID+"_ilcancel").removeClass( disabled );
+			$("#"+gID+"_iladd").addClass( disabled );
+			$("#"+gID+"_iledit").addClass( disabled );
 		});
 	}
 //end inline edit

@@ -11,14 +11,14 @@
   },
   "license": "CC-BY-NC-3.0",
   "homepage": "https://github.com/tonytomov/jqGrid",
-  "version": "5.2.0",
-  "_release": "5.2.0",
+  "version": "5.2.1",
+  "_release": "5.2.1",
   "_resolution": {
     "type": "version",
-    "tag": "v5.2.0",
-    "commit": "8c54cad41ea1ab8ef15d58a42b447b5adf02a99f"
+    "tag": "v5.2.1",
+    "commit": "e285b5c3bdece7ff6432af46c9357c584ea79404"
   },
   "_source": "https://github.com/tonytomov/jqGrid.git",
-  "_target": "5.2.0",
+  "_target": "5.2.1",
   "_originalSource": "jqgrid"
 }

@@ -1,5 +1,5 @@
 /*jshint eqeqeq:false, eqnull:true, devel:true */
-/*global jQuery, jqGridUtils, JSZip, pdfMake */
+/*global jQuery, JSZip, pdfMake, XMLSerializer, define */
 (function( factory ) {
 	"use strict";
 	if ( typeof define === "function" && define.amd ) {
@@ -173,7 +173,7 @@ $.extend($.jgrid,{
 					'<workbookView xWindow="0" yWindow="0" windowWidth="25600" windowHeight="19020" tabRatio="500"/>'+
 				'</bookViews>'+
 				'<sheets>'+
-					'<sheet name="" sheetId="1" r:id="rId1"/>'+
+					'<sheet name="Sheet1" sheetId="1" r:id="rId1"/>'+
 				'</sheets>'+
 			'</workbook>',
 
@@ -272,7 +272,7 @@ $.extend($.jgrid,{
 				'<cellXfs count="2">'+
 				'<xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="1" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
-				'<xf numFmtId="0" fontId="2" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
+				'<xf numFmtId="0" fontId="2" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"><alignment horizontal="center" /></xf>'+
 				'<xf numFmtId="0" fontId="3" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="4" fillId="0" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
 				'<xf numFmtId="0" fontId="0" fillId="2" borderId="0" applyFont="1" applyFill="1" applyBorder="1"/>'+
@@ -365,6 +365,7 @@ $.jgrid.extend({
 			dlen = data1.length,
 			cm = $t.p.colModel,
 			cmlen = cm.length,
+			clbl = $t.p.colNames,
 			i, j=0, row, str = '' , tmp, k,
 			cap = "", hdr = "", ftr="",	lbl="", albl=[], restorevis = [];
 			function groupToCsv (grdata, p) {
@@ -515,15 +516,24 @@ $.jgrid.extend({
 			}
 
 			// end group function
-			var def = {}, key;
+			var def = [], key, restorexcol=[];
 			$.each(cm,function(i,n) {
+				if(n.exportcol === undefined) {
+					n.exportcol = true;
+				}
 				if((n.name === 'cb' || n.name === 'rn') && !n.hidden) {
 					restorevis.push(i);
 					n.hidden = true;
 				}
-				if(!n.hidden) {
-					albl.push( $.jgrid.formatCellCsv( n.label || n.name, p) );
-					def[n.name] = n.label || n.name;					
+				if(!n.exportcol) {
+					if(!n.hidden) {
+						restorexcol.push(i);
+						n.hidden = true;
+					}
+				}
+				if(!n.hidden && n.exportcol) {
+					albl.push( $.jgrid.formatCellCsv( clbl[i], p) );
+					def.push( n.name ); // clbl[i];
 				}
 			});
 			
@@ -566,20 +576,20 @@ $.jgrid.extend({
 				for (i=0;i < gh.length; i++) {
 					var ghdata = gh[i].groupHeaders;
 					j = 0; tmp = [];
-					for(key in def ) {
-						if(!def.hasOwnProperty( key )) {
-							continue;
-						}
+					for(key=0; key<def.length; key++ ) {
+						//if(!def.hasOwnProperty( key )) {
+						//	continue;
+						//}
 						tmp[j] = '';
 						for(k=0;k<ghdata.length;k++) {
-							if(ghdata[k].startColumnName === key) {
-								tmp[j]= ghdata[k].titleText;
+							if(ghdata[k].startColumnName === def[key]) {
+								tmp[j]= $.jgrid.formatCellCsv( ghdata[k].titleText, p);
 							}
 						}
 						j++;
 					}
 					hdr += tmp.join( p.separator ) + p.newLine;
- 				}
+				}
 			}
 			if(p.includeFooter && $t.p.footerrow) {
 				// already formated
@@ -604,11 +614,14 @@ $.jgrid.extend({
 			for(i=0;i<restorevis.length;i++) {
 				cm[restorevis[i]].hidden = false;
 			}
+			for(i=0;i<restorexcol.length;i++) {
+				cm[restorexcol[i]].hidden = false;
+			}
 		});
 		if (p.returnAsString) {
 			return ret;
 		} else {
-			jqGridUtils.saveAs( ret, p.fileName, { type : p.mimetype });
+			$.jgrid.saveAs( ret, p.fileName, { type : p.mimetype });
 		}
 	},
 	/*
@@ -624,7 +637,9 @@ $.jgrid.extend({
 			includeFooter: true,
 			fileName : "jqGridExport.xlsx",
 			mimetype : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-			maxlength : 40 // maxlength for visible string data 
+			maxlength : 40, // maxlength for visible string data 
+			onBeforeExport : null,
+			replaceStr : null
 		}, o || {} );
 		this.each(function() {
 			var $t = this,
@@ -649,7 +664,7 @@ $.jgrid.extend({
 				"[Content_Types].xml": $.parseXML( es['[Content_Types].xml'])
 			},
 			cm = $t.p.colModel,
-			i=0, j, ien, obj={},
+			i=0, j, ien, //obj={},
 			data = { 
 				body  : $t.addLocalData( true ),
 				header : [],
@@ -658,29 +673,33 @@ $.jgrid.extend({
 				map : [] 
 			};
 			for ( j=0, ien=cm.length ; j<ien ; j++ ) {
-				if(cm[j].hidden || cm[j].name === 'cb' || cm[j].name === 'rn') {
+				if(cm[j].exportcol === undefined) {
+					cm[j].exportcol =  true;
+				}
+				if(cm[j].hidden || cm[j].name === 'cb' || cm[j].name === 'rn' || !cm[j].exportcol) {
 					continue;
 				}
-				obj[ cm[j].name ] = cm[j].label || cm[j].name;
+				data.header[i] = cm[j].name;
 				data.width[ i ] = 5;
 				data.map[i] = j;
 				i++;
 			}
-			data.header.push( obj );
-			var currentRow, rowNode,
+			function _replStrFunc (v) {
+				return v.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;')
+						.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, '');						
+			}
+			var _replStr = $.isFunction(o.replaceStr) ? o.replaceStr : _replStrFunc,
+			currentRow, rowNode,
 			addRow = function ( row, header ) {
 				currentRow = rowPos+1;
 				rowNode = $.jgrid.makeNode( rels, "row", { attr: {r:currentRow} } );
-				var i=0;
-				for ( var key  in data.header[0]) {
-					if(!data.header[0].hasOwnProperty( key )) {
-						continue;
-					}
+				for ( var i =0; i < data.header.length; i++) {
 					// key = cm[i].name;
 					// Concat both the Cell Columns as a letter and the Row of the cell.
 					var cellId = $.jgrid.excelCellPos(i) + '' + currentRow,
 					cell,
-					v= row[key];
+					v= ($.isArray(row) && header) ? $t.p.colNames[data.map[i]] : row[  data.header[i] ];
 					if ( v == null ) {
 						v = '';
 					}
@@ -708,8 +727,8 @@ $.jgrid.extend({
 					} else {
 						// Replace non standard characters for text output
 						var text = ! v.replace ?
-							v :
-							$.jgrid.htmlEncode (v );
+							v : _replStr(v);
+							//$.jgrid.htmlEncode (v );
 							cell = $.jgrid.makeNode( rels, 'c', {
 							attr: {
 								t: 'inlineStr',
@@ -726,7 +745,6 @@ $.jgrid.extend({
 							}
 						} );
 					}
-					i++;
 					rowNode.appendChild( cell );
 				}
 				relsGet.appendChild(rowNode);
@@ -769,9 +787,9 @@ $.jgrid.extend({
 				function buildSummaryTd(i, ik, grp, foffset) {
 					var fdata = findGroupIdx(i, ik, grp),
 					//cm = $t.p.colModel,
-					vv, grlen = fdata.cnt, k, retarr = emptyData(data.header[0]);
+					vv, grlen = fdata.cnt, k, retarr = emptyData(data.header);
 					for(k=foffset; k<colspans;k++) {
-						if(cm[k].hidden) {
+						if(cm[k].hidden || cm[k].exportcol) {
 							continue;
 						}
 						var tplfld = "{0}";
@@ -804,10 +822,8 @@ $.jgrid.extend({
 				}
 				function emptyData ( d ) {
 					var clone = {};
-					for(var key in d ) {
-						if(d.hasOwnProperty(key)) {
-							clone[key] = "";
-						}
+					for(var key=0;key<d.length; key++ ) {
+						clone[ d[key] ] = "";
 					}
 					return clone;
 				}
@@ -837,7 +853,7 @@ $.jgrid.extend({
 					if(grp.groupSummaryPos[n.idx] === 'header')  {
 						arr = buildSummaryTd(i, 0, grp.groups, 0 /*grp.groupColumnShow[n.idx] === false ? (mul ==="" ? 2 : 3) : ((mul ==="") ? 1 : 2)*/ );
 					} else {
-						arr = emptyData(data.header[0]);
+						arr = emptyData(data.header);
 					}
 					var fkey = Object.keys(arr);
 					arr[fkey[0]] = $.jgrid.stripHtml( new Array(n.idx*5).join(' ') + grpTextStr );
@@ -876,17 +892,15 @@ $.jgrid.extend({
 			
 			$( 'sheets sheet', xlsx.xl['workbook.xml'] ).attr( 'name', o.sheetName );
 			if(o.includeGroupHeader && $t.p.groupHeader && $t.p.groupHeader.length) {
-				var gh = $t.p.groupHeader, mergecell=[];
-				var mrow = 0;
-				for (i=0;i<gh.length;i++) {
-					var ghdata = gh[i].groupHeaders, clone ={};
-					j=0; mrow++;
-					for(var key in data.header[0] ) {
-						if(!data.header[0].hasOwnProperty(key)) {
-							continue;
-						}
+				var gh = $t.p.groupHeader, mergecell=[],
+				mrow = 0, key, l;
+				for (l = 0; l < gh.length; l++) {
+					var ghdata = gh[l].groupHeaders, clone ={};
+					mrow++; j=0;
+					for(j = 0; j < data.header.length; j++  ) {
+						key = data.header[j];
 						clone[key] = "";
-						for(var k=0;k<ghdata.length;k++) {
+						for(var k = 0; k < ghdata.length; k++) {
 							if(ghdata[k].startColumnName === key) {
 								clone[key] = ghdata[k].titleText;
 								var start = $.jgrid.excelCellPos(j) + mrow,
@@ -894,10 +908,12 @@ $.jgrid.extend({
 								mergecell.push({ ref: start+":"+end });
 							}
 						}
-						j++;
 					}
 					addRow( clone, true );
- 				}
+				}
+				
+				$('row c', rels).attr( 's', '2' ); // bold
+				
 				var merge = $.jgrid.makeNode( rels, 'mergeCells', {
 					attr : {
 						count : mergecell.length
@@ -912,8 +928,8 @@ $.jgrid.extend({
 			}
 			
 			if ( o.includeLabels ) {
-				addRow( data.header[0], true );
-				$('row c', rels).attr( 's', '2' ); // bold
+				addRow( data.header, true );
+				$('row:last c', rels).attr( 's', '2' ); // bold
 			}
 			if( $t.p.grouping ) {
 				groupToExcel(data.body);
@@ -947,26 +963,27 @@ $.jgrid.extend({
 					}
 				} ) );
 			}
+			if($.isFunction( o.onBeforeExport) ) {
+				o.onBeforeExport( xlsx );
+			}
 			data = null; // free memory
 			try {
 				var zip = new JSZip();
 				var zipConfig = {
 					type: 'blob',
-					mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+					mimeType: o.mimetype
 				};
 				$.jgrid.xmlToZip( zip, xlsx );
-					if ( zip.generateAsync ) {
+				if ( zip.generateAsync ) {
 					// JSZip 3+
-					zip
-						.generateAsync( zipConfig )
-						.then( function ( blob ) {
-							jqGridUtils.saveAs( blob, o.fileName, { type : o.mimetype } );
-						});
+					zip.generateAsync( zipConfig )
+					.then( function ( blob ) {
+						$.jgrid.saveAs( blob, o.fileName, { type : o.mimetype } );
+					});
 				} else {
 					// JSZip 2.5
-					jqGridUtils.saveAs( zip.generate( zipConfig ), o.fileName, { type : o.mimetype } );				}
-			}
-			catch(e) {
+					$.jgrid.saveAs( zip.generate( zipConfig ), o.fileName, { type : o.mimetype } );				}
+			} catch(e) {
 				throw e;
 			}
 		});
@@ -977,7 +994,7 @@ $.jgrid.extend({
 			orientation: 'portrait',
 			pageSize: 'A4',
 			description: null,
-			customSettings: null,
+			onBeforeExport: null,
 			download: 'download',
 			includeLabels : true,
 			includeGroupHeader : true,
@@ -988,7 +1005,7 @@ $.jgrid.extend({
 		}, o || {} );
 		return this.each(function() {
 			var $t = this, rows = [], j, cm = $t.p.colModel, ien, obj = {}, key, 
-			data = $t.addLocalData( true ), def = {}, i=0, map=[], test=[], widths = [],  align={};
+			data = $t.addLocalData( true ), def = [], i=0, map=[], test=[], widths = [],  align={};
 // Group function			
 			function groupToPdf ( grdata ) {
 				var grp = $t.p.groupingView, 
@@ -1010,17 +1027,14 @@ $.jgrid.extend({
 				function constructRow( row, fmt ) {
 					var k =0, test=[];
 					//row = data[i];
-					for( var key in def ) {
-						//obj = row[key] == null ? '' : $.jgrid.formatCell( row[key] + '', map[k], data[i], cm[map[k]], $t)
-						if(def.hasOwnProperty( key )) {
-							obj = {
-								text: row[key] == null ? '' : (fmt ? $.jgrid.formatCell( row[key] + '', map[k], data[i], cm[map[k]], $t) : row[key]),
-								alignment : align[key],
-								style : 'tableBody'
-							};
-							test.push(obj);
-							k++;
-						}
+					for( var key=0; key < def.length; key++ ) {
+						obj = {
+							text: row[def[key]] == null ? '' : (fmt ? $.jgrid.formatCell( row[def[key]] + '', map[k], data[i], cm[map[k]], $t) : row[def[key]]),
+							alignment : align[key],
+							style : 'tableBody'
+						};
+						test.push(obj);
+						k++;
 					}
 					return test;
 				}
@@ -1050,7 +1064,7 @@ $.jgrid.extend({
 					//cm = $t.p.colModel,
 					vv, grlen = fdata.cnt, k, retarr = emptyData(def);
 					for(k=foffset; k<colspans;k++) {
-						if(cm[k].hidden) {
+						if(cm[k].hidden || !cm[k].exportcol) {
 							continue;
 						}
 						var tplfld = "{0}";
@@ -1084,10 +1098,8 @@ $.jgrid.extend({
 				
 				function emptyData ( d ) {
 					var clone = {};
-					for(var key in d ) {
-						if(d.hasOwnProperty(key)) {
-							clone[key] = "";
-						}
+					for(var key = 0; key< d.length; key++ ) {
+						clone[d[key]] = "";
 					}
 					return clone;
 				}
@@ -1156,12 +1168,15 @@ $.jgrid.extend({
 //============================================================================			
 			var k;
 			for ( j=0, ien=cm.length ; j<ien ; j++ ) {
-				if(cm[j].hidden || cm[j].name === 'cb' || cm[j].name === 'rn') {
+				if(cm[j].exportcol === undefined ) {
+					cm[j].exportcol = true;
+				}
+				if(cm[j].hidden || cm[j].name === 'cb' || cm[j].name === 'rn' || !cm[j].exportcol) {
 					continue;
 				}
-				obj = { text:  cm[j].label || cm[j].name, style: 'tableHeader' };
+				obj = { text:  $t.p.colNames[j], style: 'tableHeader' };
 				test.push( obj );
-				def[cm[j].name]  = cm[j].label || cm[j].name;
+				def[i]  = cm[j].name;
 				map[i] = j;
 				widths.push(cm[j].width); 
 				align[cm[j].name] = cm[j].align || 'left';
@@ -1173,13 +1188,10 @@ $.jgrid.extend({
 				for (i=0;i < gh.length; i++) {
 					var clone = [],
 					ghdata = gh[i].groupHeaders;
-					for(key in def ) {
-						if(!def.hasOwnProperty( key )) {
-							continue;
-						}
+					for(key=0; key < def.length; key++ ) {
 						obj = {text:'', style: 'tableHeader'};
 						for(k=0;k<ghdata.length;k++) {
-							if(ghdata[k].startColumnName === key) {
+							if(ghdata[k].startColumnName === def[key]) {
 								obj = { 
 									text : ghdata[k].titleText, 
 									colSpan: ghdata[k].numberOfColumns,
@@ -1191,7 +1203,7 @@ $.jgrid.extend({
 						j++;
 					}
 					rows.push(clone);
- 				}
+				}
 			}
 			
 			if(o.includeLabels) {
@@ -1205,18 +1217,14 @@ $.jgrid.extend({
 					k =0; 
 					test=[];
 					row = data[i];
-					for( key in def ) {
-						//obj = row[key] == null ? '' : $.jgrid.formatCell( row[key] + '', map[k], data[i], cm[map[k]], $t)
-						if( def.hasOwnProperty( key )) {
-							obj	= {
-								text: row[key] == null ? '' : $.jgrid.formatCell( row[key] + '', map[k], data[i], cm[map[k]], $t),
-								alignment : align[key],
-								style : 'tableBody'
-							};
-					
-							test.push(obj);
-							k++;
-						}
+					for( key = 0;key < def.length; key++ ) {
+						obj	= {
+							text: row[def[key]] == null ? '' : $.jgrid.formatCell( row[def[key]] + '', map[k], data[i], cm[map[k]], $t),
+							alignment : align[def[key]],
+							style : 'tableBody'
+						};
+						test.push(obj);
+						k++;
 					}
 					rows.push(test);
 				}
@@ -1225,15 +1233,13 @@ $.jgrid.extend({
 			if ( o.includeFooter && $t.p.footerrow) {
 				var fdata = $($t).jqGrid('footerData', 'get');
 				test=[];
-				for( key in def) {
-					if(def.hasOwnProperty(key) ) {
-						obj  =  {
-							text : $.jgrid.stripHtml(fdata[key]),
-							style : 'tableFooter',
-							alignment : align[key]
-						};
-						test.push( obj );
-					}
+				for( key =0; key< def.length; key++) {
+					obj  =  {
+						text : $.jgrid.stripHtml(fdata[def[key]]),
+						style : 'tableFooter',
+						alignment : align[def[key]]
+					};
+					test.push( obj );
 				}
 				rows.push( test );
 			}
@@ -1293,8 +1299,8 @@ $.jgrid.extend({
 					margin: [ 0, 0, 0, 12 ]
 				} );
 			}
-			if( o. customSettings ) {
-				o.customSettings.call($t, doc);
+			if( $.isFunction( o.onBeforeExport ) ) {
+				o.onBeforeExport.call($t, doc);
 			}
 			try {
 				var pdf = pdfMake.createPdf( doc );
@@ -1302,7 +1308,7 @@ $.jgrid.extend({
 					pdf.open();
 				} else {
 					pdf.getBuffer( function (buffer) {
-						jqGridUtils.saveAs( buffer, o.fileName, {type: o.mimetype } );
+						$.jgrid.saveAs( buffer, o.fileName, {type: o.mimetype } );
 					} );
 				}
 			} catch(e) {

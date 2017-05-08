@@ -69,6 +69,7 @@ body {
 }
 
 .layoutBody {
+    vertical-align: top;
 }
 
 .banner {
@@ -139,7 +140,14 @@ body {
     width: 100%;
 }
 
-.mediaAnalytics {
+.mediaSearch {
+    width: 185px;
+}
+
+.mediaTranscript {
+}
+
+.mediaMetadata {
     white-space: pre-line;
     background: azure;
     overflow: auto;
@@ -668,6 +676,7 @@ body {
 
 .ui-jqgrid {
     border: none !important;
+    background: background;
 }
 
 .ui-jqgrid-hbox {

@@ -306,7 +306,7 @@ $.jgrid.extend({
 							} catch (ef) {
 								vv = this.v;
 							}
-							tmpdata= "<td "+$t.formatCol(k,1,'')+">"+$.jgrid.template(tplfld,vv)+ "</td>";
+							tmpdata= "<td "+$t.formatCol(k,1,'')+">"+$.jgrid.template(tplfld, vv, fdata.cnt)+ "</td>";
 							return false;
 						}
 					});
@@ -412,7 +412,7 @@ $.jgrid.extend({
 			// show previous hidden groups if they are hidden and weren't removed yet
 			for(i=0;i<grp.groupField.length;i++) {
 				if(!grp.groupColumnShow[i] && grp.visibiltyOnNextGrouping[i]) {
-				$($t).jqGrid('showCol',grp.groupField[i]);
+					$($t).jqGrid('showCol',grp.groupField[i]);
 				}
 			}
 			// set visibility status of current group columns on next grouping
@@ -594,8 +594,9 @@ $.jgrid.extend({
 				} else {
 					if (skip === 0) {
 						if (o.useColSpanStyle) {
-							// expand the header height to two rows
-							$th.attr("rowspan", "2");
+							// expand the header height to n rows
+							var rowspan = $th.attr("rowspan") ? parseInt($th.attr("rowspan"),10) + 1 : 2;
+							$th.attr("rowspan", rowspan);
 						} else {
 							$('<th>', {role: "columnheader"})
 								.addClass(base.headerBox+" ui-th-column-header ui-th-"+ts.p.direction)

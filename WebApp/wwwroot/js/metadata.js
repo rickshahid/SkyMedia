@@ -1,37 +1,28 @@
-﻿function SetAnalyticsProcessors(mediaStream) {
-    var processors = document.getElementById("analyticsProcessors");
-    processors.options.length = 0;
-    processors.options[processors.options.length]= new Option("", "");
-    for (var i = 0; i < mediaStream.analyticsMetadata.length; i++) {
-        var analyticsMetadata = mediaStream.analyticsMetadata[i];
-        var optionName = analyticsMetadata.processorName;
-        var optionValue = analyticsMetadata.sourceUrl != null ? analyticsMetadata.sourceUrl : analyticsMetadata.documentId;
-        processors.options[processors.options.length]= new Option(optionName, optionValue);
-    }
-    $("#mediaMetadata").empty();
-}
-function GetFragmentEvent(timeSeconds, timescale, fragment) {
-    var ticksPerMillisecond = timescale / 1000;
+﻿function GetFragmentEvent(fragment, timeScale, timeSeconds) {
+    var ticksPerMillisecond = timeScale / 1000;
     var millisecondsPerInterval = fragment.interval / ticksPerMillisecond;
-    var millisecondsOffset = (timeSeconds - (fragment.start / timescale)) * 1000;
+    var millisecondsOffset = (timeSeconds - (fragment.start / timeScale)) * 1000;
     var eventIndex = Math.floor(millisecondsOffset / millisecondsPerInterval);
     return fragment["events"][eventIndex];
 }
-function GetFaceEmotion(faceScores) {
-    var faceScore = 0, faceEmotion;
-    if (faceScores != null) {
-        var keys = Object.keys(faceScores);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            if (faceScores[key] > faceScore) {
-                faceScore = faceScores[key];
-                faceEmotion = key[0].toUpperCase() + key.slice(1);
-            }
+function GetFaceLabel(faceMetadata) {
+    var faceLabel = "Face " + faceMetadata.id;
+    // TODO: Face Recognition Integration!
+    return faceLabel
+}
+function GetFaceEmotion(emotionScores) {
+    var faceEmotion, emotionScore = 0;
+    var emotionKeys = Object.keys(emotionScores);
+    for (var i = 0; i < emotionKeys.length; i++) {
+        var key = emotionKeys[i];
+        if (emotionScores[key] > emotionScore) {
+            emotionScore = emotionScores[key];
+            faceEmotion = key[0].toUpperCase() + key.slice(1);
         }
     }
     return faceEmotion;
 }
-function GetFacesMetadata(playerHeight, playerWidth, timeSeconds, mediaMetadata) {
+function GetFacesMetadata(mediaMetadata, playerHeight, playerWidth, timeSeconds) {
     var facesMetadata = new Array();
     var fragment = mediaMetadata.fragment
     if (fragment.events != null) {
@@ -39,11 +30,10 @@ function GetFacesMetadata(playerHeight, playerWidth, timeSeconds, mediaMetadata)
         var frameWidth = mediaMetadata.width;
         var scaleHeight = playerHeight / frameHeight;
         var scaleWidth = playerWidth / frameWidth;
-        var fragmentEvent = GetFragmentEvent(timeSeconds, mediaMetadata.timescale, fragment);
+        var fragmentEvent = GetFragmentEvent(fragment, mediaMetadata.timescale, timeSeconds);
         for (var i = 0; i < fragmentEvent.length; i++) {
             var faceMetadata = {};
             faceMetadata.id = fragmentEvent[i].id;
-            faceMetadata.label = "Face " + faceMetadata.id;
             faceMetadata.x = fragmentEvent[i].x * frameWidth;
             faceMetadata.x = faceMetadata.x * scaleWidth;
             faceMetadata.y = fragmentEvent[i].y * frameHeight;
@@ -52,48 +42,85 @@ function GetFacesMetadata(playerHeight, playerWidth, timeSeconds, mediaMetadata)
             faceMetadata.height = faceMetadata.height * scaleHeight;
             faceMetadata.width = fragmentEvent[i].width * frameWidth;
             faceMetadata.width = faceMetadata.width * scaleWidth;
+            faceMetadata.label = GetFaceLabel(faceMetadata);
             faceMetadata.emotion = GetFaceEmotion(fragmentEvent[i]["scores"]);
             facesMetadata.push(faceMetadata);
         }
     }
     return facesMetadata;
 }
-function SetMediaMetadata() {
-    var mediaPlayer = GetMediaPlayer(false);
-    var playerHeight = mediaPlayer.height();
-    var playerWidth = mediaPlayer.width();
-    var timeSeconds = mediaPlayer.currentTime();
+function SetAnalyticsProcessors(mediaStream) {
+    var processors = document.getElementById("analyticsProcessors");
+    processors.options.length = 0;
+    processors.options[processors.options.length] = new Option("", "");
+    for (var i = 0; i < mediaStream.analyticsMetadata.length; i++) {
+        var metadata = mediaStream.analyticsMetadata[i];
+        var optionName = metadata.processorName;
+        var optionValue = metadata.sourceUrl != null ? metadata.sourceUrl : metadata.documentId;
+        processors.options[processors.options.length] = new Option(optionName, optionValue);
+    }
+}
+function SetAnalyticsMetadata() {
     var selectedText = $("#analyticsProcessors option:selected").text();
-    var selectedValue = $("#analyticsProcessors").val();
-    var jsonOptions = {
-        collapsed: false,
-        withQuotes: false
-    };
+    $("#mediaSearchRow").hide();
     $("#mediaTranscript").hide();
     $("#mediaMetadata").hide();
-    switch (selectedText) {
-        case "Indexer":
-            $("#mediaTranscript").show();
-            $.get(selectedValue, function (result) {
-                $("#mediaTranscript").text(result);
-            });
-            break;
-        case "Face Detection":
-            $("#mediaMetadata").show();
-            $.post("/analytics/metadata",
-                {
-                    documentId: selectedValue,
-                    timeSeconds: timeSeconds
-                },
-                function (result) {
-                    $("#mediaMetadata").jsonBrowse(result, jsonOptions);
-                    var facesMetadata = GetFacesMetadata(playerHeight, playerWidth, timeSeconds, result);
-                    for (var i = 0; i < facesMetadata.length; i++) {
-                        var faceMetadata = facesMetadata[i];
-                        SetVideoOverlay(faceMetadata);
+    if (selectedText == "") {
+        $("#mediaMetadata").show();
+        $("#mediaMetadata").empty();
+    } else {
+        var selectedValue = $("#analyticsProcessors").val();
+        var mediaPlayer = GetMediaPlayer(false);
+        var playerHeight = mediaPlayer.el().clientHeight;
+        var playerWidth = mediaPlayer.el().clientWidth;
+        var timeSeconds = mediaPlayer.currentTime();
+        var jsonOptions = {
+            collapsed: false,
+            withQuotes: false
+        };
+        switch (selectedText) {
+            case "Indexer":
+                $("#mediaSearchRow").show();
+                $("#mediaTranscript").show();
+                $.get(selectedValue, function (result) {
+                    var transcriptLines = result.split("\r\n");
+                    var columns = [{
+                        name: "data",
+                        editable: true,
+                        width: 344
+                    }];
+                    var rows = new Array();
+                    for (var i = 0; i < transcriptLines.length; i++) {
+                        var data = transcriptLines[i];
+                        if (data != "") {
+                            var row = {
+                                id: i,
+                                data: data
+                            };
+                            rows.push(row);
+                        }
                     }
-                }
-            );
+                    LoadGrid("transcriptGrid", columns, rows, playerHeight);
+                    $("#transcriptGrid_data").hide();
+                });
+                break;
+            case "Face Detection":
+                $("#mediaMetadata").show();
+                $.post("/analytics/metadata",
+                    {
+                        documentId: selectedValue,
+                        timeSeconds: timeSeconds
+                    },
+                    function (result) {
+                        $("#mediaMetadata").jsonBrowse(result, jsonOptions);
+                        _facesMetadata = GetFacesMetadata(result, playerHeight, playerWidth, timeSeconds);
+                        for (var i = 0; i < _facesMetadata.length; i++) {
+                            var faceMetadata = _facesMetadata[i];
+                            SetVideoOverlay(faceMetadata);
+                        }
+                    }
+                );
+        }
     }
 }
 function SetVideoOverlay(faceMetadata) {
@@ -121,7 +148,12 @@ function ClearVideoOverlay() {
         $("#" + videoOverlay.id).remove();
     }
 }
-function ResetMediaMetadata() {
+function ResetVideoOverlay() {
     ClearVideoOverlay();
-    SetMediaMetadata();
+    if (_facesMetadata != null) {
+        for (var i = 0; i < _facesMetadata.length; i++) {
+            var faceMetadata = _facesMetadata[i];
+            SetVideoOverlay(faceMetadata);
+        }
+    }
 }

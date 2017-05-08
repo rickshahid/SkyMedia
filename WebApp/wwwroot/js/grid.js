@@ -1,26 +1,22 @@
-﻿function LoadGrid(columns, rows) {
-    $("#gridView").jqGrid({
-        datatype: "local",
+﻿function LoadGrid(gridId, columns, rows, height) {
+    $("#" + gridId).jqGrid({
         colModel: columns,
-        loadComplete: function () {
-            for (var i = 0; i < rows.length; i++) {
-                var rowId = rows[i].id;
-                var row = document.getElementById(rowId);
-                if (row != null) {
-                    for (var x = 0; x < row.cells.length; x++) {
-                        row.cells[x].title = "";
-                    }
-                }
-            }
-        },
+        datatype: "local",
+        data: rows,
+        loadComplete: ClearTitles,
+        viewsortcols: [false, "horizontal", true],
         sortname: "name",
-        sortorder: "asc",
-        height: 440
+        height: height
     });
-    for (var i = 0; i < rows.length; i++) {
-        $("#gridView").jqGrid("addRowData", rows[i].id, rows[i]);
+}
+function ClearTitles(grid) {
+    for (var i = 0; i < grid.rows.length; i++) {
+        var rowId = grid.rows[i].id;
+        var row = document.getElementById(rowId);
+        for (var x = 0; x < row.cells.length; x++) {
+            row.cells[x].title = "";
+        }
     }
-    $("#gridView").jqGrid("sortGrid", "name", false, "asc");
 }
 function FormatColumn(value, grid, row) {
     var title = row.name;
@@ -41,5 +37,5 @@ function FormatColumn(value, grid, row) {
                 break;
         }
     }
-    return "<span class=\"gridColumn\" onclick=\"DisplayMessage('" + title + "', '" + message + "', null, 600, null)\">" + value + "</span>";
+    return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "', null, 600, null)\">" + value + "</span>";
 }

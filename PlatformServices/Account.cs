@@ -31,23 +31,6 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
         {
-            using (DatabaseClient databaseClient = new DatabaseClient(true))
-            {
-                string collectionId = Constant.Database.Collection.Metadata;
-                foreach (IAssetFile file in asset.AssetFiles)
-                {
-                    if (file.Name.EndsWith(Constant.Media.FileExtension.Json))
-                    {
-                        string documentId = file.Name;
-                        string[] fileName = file.Name.Split(Constant.TextDelimiter.Identifier);
-                        if (fileName.Length > 0)
-                        {
-                            documentId = fileName[0];
-                        }
-                        databaseClient.DeleteDocument(collectionId, documentId);
-                    }
-                }
-            }
             foreach (ILocator locator in asset.Locators)
             {
                 locator.Delete();

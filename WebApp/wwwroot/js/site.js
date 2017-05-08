@@ -1,4 +1,4 @@
-﻿var _authToken, _inputAssets, _encoderConfig, _mediaStreams, _streamNumber, _spokenLanguages, _saveWorkflow;
+﻿var _authToken, _inputAssets, _encoderConfig, _mediaStreams, _streamNumber, _saveWorkflow, _facesMetadata;
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");
@@ -110,9 +110,6 @@ function GetAssetInfo(result, i) {
 function GetSourceType(sourceUrl) {
     return sourceUrl.toLowerCase().indexOf(".mp4") > -1 ? "video/mp4" : "application/vnd.ms-sstr+xml";
 }
-function GetLanguageLabel(languageCode) {
-    return _spokenLanguages[languageCode];
-}
 function GetProtectionInfo(protectionTypes) {
     var protectionInfo = null;
     if (protectionTypes.length > 0) {
@@ -169,7 +166,13 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
         }
     }
 }
-function ToggleMediaAnalytics() {
+function SetAnalyticsHeight() {
+    var mediaPlayer = GetMediaPlayer(false);
+    var playerHeight = mediaPlayer.el().clientHeight;
+    $("#mediaTranscript").height(playerHeight);
+    $("#mediaMetadata").height(playerHeight);
+}
+function ToggleAnalyticsPanel() {
     ClearVideoOverlay();
     var analyticsPanelImage = document.getElementById("analyticsPanelImage");
     if ($("#analyticsPanel").is(":visible")) {
@@ -177,14 +180,11 @@ function ToggleMediaAnalytics() {
         $("#analyticsPanel").hide();
     } else {
         analyticsPanelImage.src = analyticsPanelImage.src.replace("In", "Out");
-        var mediaPlayer = GetMediaPlayer(false);
-        var playerHeight = mediaPlayer.el().clientHeight;
-        $("#mediaTranscript").height(playerHeight);
-        $("#mediaMetadata").height(playerHeight);
         $("#analyticsPanel").show();
+        SetAnalyticsHeight();
     }
 }
-function ToggleMediaLive(button) {
+function ToggleLiveStream(button) {
     var buttonImage = button.children[0];
     if (buttonImage.src.indexOf("MediaLiveOn") > -1) {
         buttonImage.src = buttonImage.src.replace("On", "Off");

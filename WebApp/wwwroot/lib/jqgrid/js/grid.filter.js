@@ -72,7 +72,8 @@ $.fn.jqFilter = function( arg ) {
 		addsubgrup : "Add subgroup",
 		addrule : "Add rule",
 		delgroup : "Delete group",
-		delrule : "Delete rule"
+		delrule : "Delete rule",
+		autoencode : false
 	}, $.jgrid.filter, arg || {});
 	return this.each( function() {
 		if (this.filter) {return;}
@@ -335,9 +336,9 @@ $.fn.jqFilter = function( arg ) {
 			}
 
 			// append rules rows
-			var suni = that.p.ruleButtons && that.p.uniqueSearchFields;
+			var suni = that.p.ruleButtons && that.p.uniqueSearchFields, ii;
 			if( suni ) {
-				for (var ii = 0; ii < that.p.columns.length; ii++) {
+				for ( ii = 0; ii < that.p.columns.length; ii++) {
 					if(that.p.columns[ii].inlist) {
 						that.p.columns[ii].search = true;
 					}
@@ -350,7 +351,7 @@ $.fn.jqFilter = function( arg ) {
 					);
 					if( suni ) {
 						var field = group.rules[i].field;
-						for (var ii = 0; ii < that.p.columns.length; ii++) {
+						for ( ii = 0; ii < that.p.columns.length; ii++) {
 							if(field === that.p.columns[ii].name) {
 								that.p.columns[ii].search = false;
 								break;
@@ -451,8 +452,14 @@ $.fn.jqFilter = function( arg ) {
 				$.jgrid.bindEv.call($t, elm, cm.searchoptions);
 				$(".input-elm",trpar).on('change',function( e ) {
 					var elem = e.target;
-					rule.data = elem.nodeName.toUpperCase() === "SPAN" && cm.searchoptions && $.isFunction(cm.searchoptions.custom_value) ?
-						cm.searchoptions.custom_value.call($t, $(elem).children(".customelement:first"), 'get') : elem.value;
+					if( cm.inputtype === 'custom' && $.isFunction(cm.searchoptions.custom_value) ) {
+						rule.data =  cm.searchoptions.custom_value.call($t, $(".customelement", this), 'get');
+					} else {
+						rule.data = $(elem).val();
+					}
+					if(cm.inputtype === 'select' && cm.searchoptions.multiple ) {
+						rule.data = rule.data.join(",");
+					}
 					that.onchange(); // signals that the filter has changed
 				});
 				setTimeout(function(){ //IE, Opera, Chrome
@@ -548,7 +555,7 @@ $.fn.jqFilter = function( arg ) {
 			$(ruleDataInput)
 			.addClass("input-elm " + classes.srInput )
 			.on('change', function() {
-				rule.data = cm.inputtype === 'custom' ? cm.searchoptions.custom_value.call($t, $(this).children(".customelement:first"),'get') : $(this).val();
+				rule.data = cm.inputtype === 'custom' ? cm.searchoptions.custom_value.call($t, $(".customelement", this),'get') : $(this).val();
 				that.onchange(); // signals that the filter has changed
 			});
 
@@ -627,7 +634,7 @@ $.fn.jqFilter = function( arg ) {
 				}
 			}
 			if (cm === undefined) { return ""; }
-			val = rule.data;
+			val = this.p.autoencode ? $.jgrid.htmlEncode(rule.data) : rule.data;
 			if(opC === 'bw' || opC === 'bn') { val = val+"%"; }
 			if(opC === 'ew' || opC === 'en') { val = "%"+val; }
 			if(opC === 'cn' || opC === 'nc') { val = "%"+val+"%"; }
@@ -771,6 +778,39 @@ $.extend($.fn.jqFilter,{
 	}
 
 });
+$.extend($.jgrid,{
+	filterRefactor : function ( p  )  {
+		/*ruleGroup : {}, ssfield:[], splitSelect:",", groupOpSelect:"OR"*/
+		var filters={} /*?*/, rules, k, rule, ssdata, group;
+		try {
+			filters = typeof p.ruleGroudp === "string" ? $.jgrid.parse(p.ruleGroup) : p.ruleGroup;
+			if(filters.rules && filters.rules.length) {
+				rules = filters.rules;
+				for(k=0; k < rules.length; k++) {
+					rule = rules[k];
+					if($.inArray(rule.filed, p.ssfield)) {
+						ssdata = rule.data.split(p.splitSelect);
+						if(ssdata.length > 1) {
+							if(filters.groups === undefined) {
+								filters.groups = [];
+							}
+							group = { groupOp: p.groupOpSelect, groups: [], rules: [] };
+							filters.groups.push(group);
+							$.each(ssdata,function(l) {
+								if (ssdata[l]) {
+									group.rules.push({ data: ssdata[l],	op: rule.op, field: rule.field});
+								}
+							});
+							rules.splice(k, 1);
+							k--;
+						}
+					}
+				}
+			}
+		} catch(e) {} 
+		return filters;
+	}
+});
 $.jgrid.extend({
 	filterToolbar : function(p){
 		var regional =  $.jgrid.getRegional(this[0], 'search');
@@ -783,7 +823,7 @@ $.jgrid.extend({
 			beforeClear: null,
 			afterClear: null,
 			onClearSearchValue : null,
-			searchurl : '',
+			url : '',
 			stringResult: false,
 			groupOp: 'AND',
 			defaultSearch : "bw",
@@ -817,8 +857,8 @@ $.jgrid.extend({
 					} else {
 						so  = (sop.sopt) ? sop.sopt[0] : this.stype==='select' ?  'eq' : p.defaultSearch;
 					}
-					v = this.stype === "custom" && $.isFunction(sop.custom_value) && $elem.length > 0 && $elem[0].nodeName.toUpperCase() === "SPAN" ?
-						sop.custom_value.call($t, $elem.children(".customelement:first"), "get") :
+					v = this.stype === "custom" && $.isFunction(sop.custom_value) && $elem.length > 0 ?
+						sop.custom_value.call($t, $elem, "get") :
 						$elem.val();
 					// detect multiselect
 					if(this.stype === 'select' && sop.multiple && $.isArray(v) && v.length) {
@@ -856,31 +896,12 @@ $.jgrid.extend({
 					// multiselect
 					var filters, rules, k,str, rule, ssdata, group;
 					if(ms) {
-						filters = $.jgrid.parse(ruleGroup);//, rules, k,str, rule, ssdata, group;
-						if(filters.rules && filters.rules.length) {
-							rules = filters.rules;
-							for(k=0;k < rules.length; k++) {
-								rule = rules[k];
-								if($.inArray(rule.filed, ssfield)) {
-									ssdata = rule.data.split(p.splitSelect);
-									if(ssdata.length > 1) {
-										if(filters.groups === undefined) {
-											filters.groups = [];
-										}
-										group = { groupOp: p.groupOpSelect, groups: [], rules: [] };
-										filters.groups.push(group);									
-										$.each(ssdata,function(l) {
-											str = ssdata[l];
-											if (str) {
-												group.rules.push({ data: ssdata[l],	op: rule.op, field: rule.field});
-											}
-										});
-										rules.splice(k, 1);
-										k--;
-									}
-								}
-							}
-						}
+						$.jgrid.filterRefactor({
+							ruleGroup : ruleGroup,
+							ssfield : ssfield,
+							splitSelect : p.splitSelect,
+							groupOpSelect : p.groupOpSelect
+						});
 						//ruleGroup = JSON.stringify( filters );
 					}
 					if(bbt) {
@@ -924,9 +945,9 @@ $.jgrid.extend({
 					$.extend($t.p.postData,sdata);
 				}
 				var saveurl;
-				if($t.p.searchurl) {
+				if(p.url) {
 					saveurl = $t.p.url;
-					$($t).jqGrid("setGridParam",{url:$t.p.searchurl});
+					$($t).jqGrid("setGridParam", { url: p.url });
 				}
 				var bsr = $($t).triggerHandler("jqGridToolbarBeforeSearch") === 'stop' ? true : false;
 				if(!bsr && $.isFunction(p.beforeSearch)){bsr = p.beforeSearch.call($t);}
@@ -975,8 +996,8 @@ $.jgrid.extend({
 							}
 							break;
 						case 'custom':
-							if ($.isFunction(this.searchoptions.custom_value) && $elem.length > 0 && $elem[0].nodeName.toUpperCase() === "SPAN") {
-								this.searchoptions.custom_value.call($t, $elem.children(".customelement:first"), "set", v || "");
+							if ($.isFunction(this.searchoptions.custom_value) && $elem.length > 0 ) {
+								this.searchoptions.custom_value.call($t, $elem, "set", v || "");
 							}
 							break;
 					}
@@ -1003,9 +1024,9 @@ $.jgrid.extend({
 					$.extend($t.p.postData,sdata);
 				}
 				var saveurl;
-				if($t.p.searchurl) {
+				if(p.url) {
 					saveurl = $t.p.url;
-					$($t).jqGrid("setGridParam",{url:$t.p.searchurl});
+					$($t).jqGrid("setGridParam",{url:p.url});
 				}
 				var bcv = $($t).triggerHandler("jqGridToolbarBeforeClear") === 'stop' ? true : false;
 				if(!bcv && $.isFunction(p.beforeClear)){bcv = p.beforeClear.call($t);}
@@ -1019,18 +1040,17 @@ $.jgrid.extend({
 				if($.isFunction(p.afterClear)){p.afterClear();}
 			},
 			toggleToolbar = function(){
-				var trow = $("tr.ui-search-toolbar",$t.grid.hDiv),
-				trow2 = $t.p.frozenColumns === true ?  $("tr.ui-search-toolbar",$t.grid.fhDiv) : false;
+				var trow = $("tr.ui-search-toolbar",$t.grid.hDiv);
+				if($t.p.frozenColumns === true) {
+					$($t).jqGrid('destroyFrozenColumns');
+				}
 				if(trow.css("display") === 'none') {
 					trow.show(); 
-					if(trow2) {
-						trow2.show();
-					}
 				} else { 
 					trow.hide(); 
-					if(trow2) {
-						trow2.hide();
-					}
+				}
+				if($t.p.frozenColumns === true) {
+					$($t).jqGrid("setFrozenColumns");
 				}
 			},
 			buildRuleMenu = function( elem, left, top ){
@@ -1397,6 +1417,8 @@ $.jgrid.extend({
 			tmplLabel : ' Template: ',
 			showOnLoad: false,
 			layer: null,
+			splitSelect : ",",
+			groupOpSelect : "OR",
 			operands : { "eq" :"=", "ne":"<>","lt":"<","le":"<=","gt":">","ge":">=","bw":"LIKE","bn":"NOT LIKE","in":"IN","ni":"NOT IN","ew":"LIKE","en":"NOT LIKE","cn":"LIKE","nc":"NOT LIKE","nu":"IS NULL","nn":"ISNOT NULL"}
 		}, regional,  p || {});
 		return this.each(function() {
@@ -1406,7 +1428,7 @@ $.jgrid.extend({
 			showFrm = true,
 			mustReload = true,
 			IDs = {themodal:'searchmod'+fid,modalhead:'searchhd'+fid,modalcontent:'searchcnt'+fid, scrollelm : fid},
-			defaultFilters  = $t.p.postData[p.sFilter],
+			defaultFilters  = ($.isPlainObject($t.p_savedFilter) && !$.isEmptyObject($t.p_savedFilter ) ) ? $t.p_savedFilter :  $t.p.postData[p.sFilter],
 			fl,
 			classes = $.jgrid.styleUI[($t.p.styleUI || 'jQueryUI')].filter,
 			common = $.jgrid.styleUI[($t.p.styleUI || 'jQueryUI')].common;
@@ -1446,7 +1468,7 @@ $.jgrid.extend({
 				var columns = $.extend([],$t.p.colModel),
 				bS  ="<a id='"+fid+"_search' class='fm-button " + common.button + " fm-button-icon-right ui-search'><span class='" + common.icon_base + " " +classes.icon_search + "'></span>"+p.Find+"</a>",
 				bC  ="<a id='"+fid+"_reset' class='fm-button " + common.button +" fm-button-icon-left ui-reset'><span class='" + common.icon_base + " " +classes.icon_reset + "'></span>"+p.Reset+"</a>",
-				bQ = "", tmpl="", colnm, found = false, bt, cmi=-1;
+				bQ = "", tmpl="", colnm, found = false, bt, cmi=-1, ms = false, ssfield = [];
 				if(p.showQuery) {
 					bQ ="<a id='"+fid+"_query' class='fm-button " + common.button + " fm-button-icon-left'><span class='" + common.icon_base + " " +classes.icon_query + "'></span>Query</a>";
 				}
@@ -1465,6 +1487,10 @@ $.jgrid.extend({
 								colnm = n.index || n.name;
 								cmi =i;
 							}
+						}
+						if( n.stype==="select" &&  n.searchoptions && n.searchoptions.multiple) {
+							ms = true;
+							ssfield.push( n.index || n.name );
 						}
 					});
 				} else {
@@ -1515,6 +1541,7 @@ $.jgrid.extend({
 					addrule : p.addrule,
 					delgroup : p.delgroup,
 					delrule : p.delrule,
+					autoencode : $t.p.autoencode,
 					onChange : function() {
 						if(this.p.showQuery) {
 							$('.query',this).html(this.toUserFriendlyString());
@@ -1579,7 +1606,18 @@ $.jgrid.extend({
 					var sdata={}, res, filters;
 					fl = $("#"+fid);
 					fl.find(".input-elm:focus").change();
-					filters = fl.jqFilter('filterData');
+					if( ms && p.multipleSearch) {
+						$t.p_savedFilter = {};
+						filters = $.jgrid.filterRefactor({
+							ruleGroup: $.extend(true, {}, fl.jqFilter('filterData')),
+							ssfield : ssfield,
+							splitSelect : p.splitSelect,
+							groupOpSelect : p.groupOpSelect
+						});
+						$t.p_savedFilter = $.extend(true, {}, fl.jqFilter('filterData'));
+					} else {
+						filters = fl.jqFilter('filterData');
+					}
 					if(p.errorcheck) {
 						fl[0].hideError();
 						if(!p.showQuery) {fl.jqFilter('toSQLString');}
@@ -1676,7 +1714,7 @@ $.jgrid.extend({
 			if(!$t.grid) {return;}
 			var nm, sop,ruleGroup = "{\"groupOp\":\"" + p.groupOp + "\",\"rules\":[", gi=0, so;
 			val +="";
-			if(!$t.p.datatype === 'local') { return; }
+			if($t.p.datatype !== 'local') { return; }
 			$.each($t.p.colModel,function(){
 				nm = this.index || this.name;
 				sop = this.searchoptions || {};
@@ -1688,8 +1726,8 @@ $.jgrid.extend({
 					ruleGroup += "\"op\":\"" + so + "\",";
 					ruleGroup += "\"data\":\"" + val.replace(/\\/g,'\\\\').replace(/\"/g,'\\"') + "\"}";
 					gi++;
-	}
-});
+				}
+			});
 			ruleGroup += "]}";
 			$.extend($t.p.postData,{filters:ruleGroup});
 			$.each(['searchField', 'searchString', 'searchOper'], function(i, n){
