@@ -35,7 +35,9 @@ To enable the various capabilities listed above, the following Azure platform se
   * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
   
   * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
- 
+  
+* Cognitive Services - http://www.microsoft.com/cognitive-services/
+
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
   * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
@@ -46,15 +48,13 @@ To enable the various capabilities listed above, the following Azure platform se
 
 * Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
 
-* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
+* Search - http://azure.microsoft.com/en-us/services/search/
 
-* Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
+* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
 
-* Cognitive Services - http://www.microsoft.com/cognitive-services/
-
-* Search - http://azure.microsoft.com/en-us/services/search/
+* Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
 In addition to the Azure platform services listed above, the following Azure partner services are also integrated:
 
@@ -64,25 +64,23 @@ In addition to the Azure platform services listed above, the following Azure par
 
 The set of Azure Media Services processors that are integrated include the following (more are on the way):
 
-* Encoder Standard - https://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-standard-formats
+* Encoder Standard - http://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-standard-formats
 
-* Encoder Premium - https://docs.microsoft.com/en-us/azure/media-services/media-services-premium-workflow-encoder-formats
+* Encoder Premium - http://docs.microsoft.com/en-us/azure/media-services/media-services-premium-workflow-encoder-formats
 
-* Encoder Ultra - https://azure.microsoft.com/en-us/blog/encoding-and-delivery-of-uhd-content/
+* Speech To Text - http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
 
-* Speech To Text - https://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
+* Face Detection - http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection
 
-* Face Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection
+* Face Redaction - http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction
 
-* Face Redaction - https://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction
+* Video Summarization - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization
 
-* Video Summarization - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization
+* Character Recognition - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
 
-* Character Recognition - https://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
+* Motion Detection - http://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection
 
-* Motion Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection
-
-* Motion Hyperlapse - https://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
+* Motion Hyperlapse - http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
 
 If you have an enhancement suggestion or if you run into an issue, please let me know.
 
