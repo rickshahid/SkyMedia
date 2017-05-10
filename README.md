@@ -1,6 +1,6 @@
 # Azure Sky Media
 
-Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
+Welcome! This open repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
 The following set of functional capabilities are integrated and enabled with this Azure ASP.NET Core MVC web application:
 
