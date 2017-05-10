@@ -1,3 +1,4 @@
+
 # Azure Sky Media
 
 Welcome! This open repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
@@ -57,6 +58,8 @@ To enable the various capabilities listed above, the following Azure platform se
 * Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
+
+* Application Insights - http://azure.microsoft.com/en-us/services/application-insights/
 
 In addition to the Azure platform services listed above, the following Azure partner services are also integrated:
 
