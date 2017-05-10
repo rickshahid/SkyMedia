@@ -30,19 +30,19 @@ To enable the various capabilities listed above, the following Azure platform se
 
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
- * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
+  * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
   
- * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
+  * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
   
- * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
+  * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
  
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
- * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
+  * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
 
- * API App - http://azure.microsoft.com/en-us/services/app-service/api/
+  * API App - http://azure.microsoft.com/en-us/services/app-service/api/
  
- * Function App - http://azure.microsoft.com/en-us/services/functions/
+  * Function App - http://azure.microsoft.com/en-us/services/functions/
 
 * Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
 
