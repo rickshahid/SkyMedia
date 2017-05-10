@@ -1,8 +1,8 @@
 # Azure Sky Media
 
-Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
+Welcome! This repository contains the Azure media web application that is deployed at http://www.skymedia.io
 
-The following set of integrated capabilities are enabled with this Azure ASP.NET Core MVC web application:
+The following set of integrated capabilities are enabled with this sample Azure ASP.NET Core MVC web application:
 
 * Self-service user and service account management across Azure Media Services, Azure Storage, Signiant, Aspera, etc
 
