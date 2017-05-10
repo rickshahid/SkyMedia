@@ -14,7 +14,7 @@ The following set of functional capabilities are integrated and enabled with thi
 
 * Generate media metadata such as face, emotion and object detection to drive discoverability and actionable insights
 
-* Generate media subclips (either filtered views or rendered assets) via editor integration with Azure Media Player
+* Generate media subclips (either filtered views or rendered assets) via web clipper integration with Azure Media Player
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
