@@ -12,7 +12,9 @@ The following set of functional capabilities are integrated and enabled with thi
 
 * Track media workflow tasks and automatically publish outputs based on parameters specified at job submission time
 
-* Generate video asset subclips and/or dynamic streaming filters via integration of the Azure Media Video Editor plugin
+* Generate media metadata such as face, emotion and object detection to drive discoverability and actionable insights
+
+* Generate media subclips (either filtered views or rendered assets) via editor integration with Azure Media Player
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
@@ -26,7 +28,7 @@ To enable the various capabilities listed above, the following Azure platform se
 
 * Storage - http://azure.microsoft.com/en-us/services/storage/
 
-* Document DB - http://azure.microsoft.com/en-us/services/documentdb/
+* Cosmos DB - http://azure.microsoft.com/en-us/services/cosmos-db/
 
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
