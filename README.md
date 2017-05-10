@@ -22,6 +22,8 @@ To enable the various capabilities listed above, the following Azure platform se
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
+* Key Vault - http://azure.microsoft.com/en-us/services/key-vault/
+
 * Storage - http://azure.microsoft.com/en-us/services/storage/
 
 * Document DB - http://azure.microsoft.com/en-us/services/documentdb/
@@ -32,23 +34,25 @@ To enable the various capabilities listed above, the following Azure platform se
  
  * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
-* Cognitive Services (Under Construction) - http://www.microsoft.com/cognitive-services/
-
-* Search (Under Construction) - http://azure.microsoft.com/en-us/services/search/
-
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
  * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
 
  * API App - http://azure.microsoft.com/en-us/services/app-service/api/
  
- * Functions App - http://azure.microsoft.com/en-us/services/functions/
+ * Function App - http://azure.microsoft.com/en-us/services/functions/
+
+* Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
 
 * Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
 * Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
+
+* Cognitive Services - http://www.microsoft.com/cognitive-services/
+
+* Search - http://azure.microsoft.com/en-us/services/search/
 
 In addition to the Azure platform services listed above, the following Azure partner services are also integrated:
 
@@ -64,7 +68,7 @@ The set of Azure Media Services processors that are integrated include the follo
 
 * Encoder Ultra - https://azure.microsoft.com/en-us/blog/encoding-and-delivery-of-uhd-content/
 
-* Indexer - https://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
+* Speech To Text - https://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
 
 * Face Detection - https://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection
 
