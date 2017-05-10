@@ -4,9 +4,9 @@ Welcome! This repository contains the sample Azure media web application that is
 
 Here is an introductory list of capabilities that are integrated within this sample Azure ASP.NET Core MVC web application:
 
-* Self-service user and account management across Azure Media Services, Azure Storage, Signiant Flight, Aspera FASP, etc
+* Self-service user and service account management across Azure Media Services, Azure Storage, Signiant, Aspera, etc
 
-* Upload and process media files via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
+* Upload and process media via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
 * Define media workflows using multiple tasks (executed parallelly and/or sequentially) across various media processors
 
@@ -31,9 +31,11 @@ To enable the various capabilities listed above, the following Azure platform se
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
  * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
- 
+  
+ * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
+  
  * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
-
+ 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
  * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
