@@ -79,7 +79,7 @@ function SetAnalyticsMetadata() {
             withQuotes: false
         };
         switch (selectedText) {
-            case "Indexer":
+            case "Speech To Text":
                 $("#mediaSearchRow").show();
                 $("#mediaTranscript").show();
                 $.get(selectedValue, function (result) {

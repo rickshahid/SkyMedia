@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -13,37 +16,48 @@ namespace AzureSkyMedia.PlatformServices
 
         public static string GetLanguageCode(JObject processorConfig)
         {
-            string spokenLanguage = string.Empty;
+            string languageCode = string.Empty;
             if (processorConfig["Features"] != null && processorConfig["Features"].HasValues)
             {
                 JToken processorOptions = processorConfig["Features"][0]["Options"];
                 if (processorOptions != null && processorOptions["Language"] != null)
                 {
-                    spokenLanguage = processorOptions["Language"].ToString().Substring(0, 2).ToLower();
+                    languageCode = processorOptions["Language"].ToString();
                 }
             }
-            return spokenLanguage;
+            return languageCode;
         }
 
         public static JObject GetSpokenLanguages()
         {
             JObject spokenLanguages = new JObject();
-            spokenLanguages.Add("en", "English");
-            spokenLanguages.Add("es", "Spanish");
-            spokenLanguages.Add("ar", "Arabic");
-            spokenLanguages.Add("zh", "Chinese");
-            spokenLanguages.Add("fr", "French");
-            spokenLanguages.Add("de", "German");
-            spokenLanguages.Add("it", "Italian");
-            spokenLanguages.Add("jp", "Japanese");
-            spokenLanguages.Add("pt", "Portuguese");
+            spokenLanguages.Add("EnUS", "English");
+            spokenLanguages.Add("EsEs", "Spanish");
+            spokenLanguages.Add("ArEg", "Arabic");
+            spokenLanguages.Add("ZhCn", "Chinese");
+            spokenLanguages.Add("FrFr", "French");
+            spokenLanguages.Add("DeDe", "German");
+            spokenLanguages.Add("ItIt", "Italian");
+            spokenLanguages.Add("JaJp", "Japanese");
+            spokenLanguages.Add("PtBr", "Portuguese");
             return spokenLanguages;
         }
 
         public static string GetLanguageLabel(string languageCode)
         {
+            string languageLabel = string.Empty;
             JObject spokenLanguages = GetSpokenLanguages();
-            return spokenLanguages[languageCode].ToString();
+            languageCode = languageCode.Substring(0, 2);
+            IEnumerable<JProperty> properties = spokenLanguages.Properties();
+            foreach (JProperty property in properties)
+            {
+                string propertyCode = property.Name.Substring(0, 2);
+                if (string.Equals(propertyCode, languageCode, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    languageLabel = property.Value.ToString();
+                }
+            }
+            return languageLabel;
         }
     }
 }

@@ -65,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream3ProtectionTypes = "Media.Stream3.ProtectionTypes";
 
             public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
-            public const string MediaProcessorIndexerDocumentId = "Media.Processor.IndexerDocumentId";
+            public const string MediaProcessorSpeechToTextDocumentId = "Media.Processor.SpeechToTextDocumentId";
 
             public const string MediaProcessorFaceDetectionDocumentId = "Media.Processor.FaceDetectionDocumentId";
             public const string MediaProcessorFaceRedactionDocumentId = "Media.Processor.FaceRedactionDocumentId";
@@ -196,8 +196,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Database
         {
-            public const string DocumentProperties = "id,name,_rid,_self,_etag,_ts,_attachments";
-
             public struct Collection
             {
                 public const string Encoding = "Encoding";
@@ -220,7 +218,7 @@ namespace AzureSkyMedia.PlatformServices
                 public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
                 public const string EncoderPremium = "nb:mpid:UUID:77fea72a-107c-439e-b0bb-f88153b93461";
                 public const string EncoderUltra = "nb:mpid:UUID:816a4fda-76dc-463b-866b-9aa2f65deeac";
-                public const string Indexer = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
+                public const string SpeechToText = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
                 public const string FaceDetection = "nb:mpid:UUID:6a9b8239-81ea-4762-8125-66b4f45737a2";
                 public const string FaceRedaction = "nb:mpid:UUID:3806d7a6-4985-4437-b098-50e3733310e8";
                 public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";

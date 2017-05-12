@@ -16,13 +16,6 @@ function SetJobTaskParents(taskNumber) {
     }
 }
 function SetJobTaskWidgets(taskNumber) {
-    var languageCount = $("#indexerSpokenLanguages" + taskNumber + " option").length;
-    $("#indexerSpokenLanguages" + taskNumber).multiselect({
-        noneSelectedText: "0 of " + languageCount + " Spoken Languages",
-        selectedText: "# of " + languageCount + " Spoken Languages",
-        classes: "multiSelectOptions mediaProcessor",
-        header: false
-    });
     $.widget("ui.spinnerEx1", $.ui.spinner, {
         _format: function (value) {
             if (value < 10) {
@@ -70,7 +63,6 @@ function SetJobTaskWidgets(taskNumber) {
     });
 }
 function ClearJobTaskWidgets(lastTaskNumber) {
-    $("#indexerSpokenLanguages" + lastTaskNumber).multiselect("destroy");
     $("#summarizationDurationMinutes" + lastTaskNumber).spinnerEx1("destroy");
     $("#summarizationDurationSeconds" + lastTaskNumber).spinnerEx1("destroy");
     $("#hyperlapseStartFrame" + lastTaskNumber).spinner("destroy");
@@ -122,10 +114,10 @@ function GetJobTask(taskNumber) {
                 }
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
-            case "Indexer":
-                jobTask.IndexerSpokenLanguages = $("#indexerSpokenLanguages" + taskNumber).val();
-                jobTask.IndexerCaptionWebVtt = $("#indexerCaptionWebVtt" + taskNumber).prop("checked");
-                jobTask.IndexerCaptionTtml = $("#indexerCaptionTtml" + taskNumber).prop("checked");
+            case "SpeechToText":
+                jobTask.SpeechToTextLanguages = $("#speechToTextLanguages" + taskNumber).val();
+                jobTask.SpeechToTextCaptionWebVtt = $("#speechToTextcaptionWebVtt" + taskNumber).prop("checked");
+                jobTask.SpeechToTextCaptionTtml = $("#speechToTextcaptionTtml" + taskNumber).prop("checked");
                 break;
             case "FaceDetection":
                 jobTask.FaceDetectionMode = $("#faceDetectionMode" + taskNumber + ":checked").val();

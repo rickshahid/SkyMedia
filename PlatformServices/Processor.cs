@@ -37,8 +37,8 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.EncoderUltra:
                     processorId = Constant.Media.ProcessorId.EncoderUltra;
                     break;
-                case MediaProcessor.Indexer:
-                    processorId = Constant.Media.ProcessorId.Indexer;
+                case MediaProcessor.SpeechToText:
+                    processorId = Constant.Media.ProcessorId.SpeechToText;
                     break;
                 case MediaProcessor.FaceDetection:
                     processorId = Constant.Media.ProcessorId.FaceDetection;
@@ -85,8 +85,8 @@ namespace AzureSkyMedia.PlatformServices
                 case Constant.Media.ProcessorId.EncoderUltra:
                     processorType = MediaProcessor.EncoderUltra;
                     break;
-                case Constant.Media.ProcessorId.Indexer:
-                    processorType = MediaProcessor.Indexer;
+                case Constant.Media.ProcessorId.SpeechToText:
+                    processorType = MediaProcessor.SpeechToText;
                     break;
                 case Constant.Media.ProcessorId.FaceDetection:
                     processorType = MediaProcessor.FaceDetection;
@@ -132,7 +132,7 @@ namespace AzureSkyMedia.PlatformServices
                     if (!string.IsNullOrEmpty(webVtt))
                     {
                         MediaMetadata mediaMetadata = new MediaMetadata();
-                        mediaMetadata.ProcessorName = GetProcessorName(MediaProcessor.Indexer);
+                        mediaMetadata.ProcessorName = GetProcessorName(MediaProcessor.SpeechToText);
                         mediaMetadata.SourceUrl = mediaClient.GetLocatorUrl(childAsset.Asset, webVtt);
                         analyticsMetadata.Insert(0, mediaMetadata);
                     }

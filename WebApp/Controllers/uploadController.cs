@@ -67,6 +67,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             viewData["jobName"] = homeController.GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
+            viewData["spokenLanguages"] = homeController.GetSpokenLanguages();
         }
 
         public IActionResult signiant()

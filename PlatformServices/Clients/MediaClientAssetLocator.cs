@@ -29,8 +29,13 @@ namespace AzureSkyMedia.PlatformServices
 
         private ILocator CreateLocator(LocatorType locatorType, IAsset asset)
         {
-            IAccessPolicy accessPolicy = GetAccessPolicy(false);
-            return _media.Locators.CreateLocator(locatorType, asset, accessPolicy, null);
+            ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
+            if (locator == null)
+            {
+                IAccessPolicy accessPolicy = GetAccessPolicy(false);
+                locator = _media.Locators.CreateLocator(locatorType, asset, accessPolicy, null);
+            }
+            return locator;
         }
 
         private static void SetPrimaryFile(IAsset asset)

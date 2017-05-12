@@ -133,7 +133,7 @@ namespace AzureSkyMedia.PlatformServices
                         {
                             mediaProcessors.Add(mediaProcessor);
                         }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.Indexer) as IMediaProcessor;
+                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.SpeechToText) as IMediaProcessor;
                         if (mediaProcessor != null)
                         {
                             mediaProcessors.Add(mediaProcessor);

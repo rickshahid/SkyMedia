@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
+using Newtonsoft.Json.Linq;
+
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -162,6 +164,21 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
 
             return mediaProcessors.ToArray();
+        }
+
+        public static SelectListItem[] GetSpokenLanguages()
+        {
+            List<SelectListItem> spokenLanguages = new List<SelectListItem>();
+            JObject languages = Language.GetSpokenLanguages();
+            IEnumerable<JProperty> properties = languages.Properties();
+            foreach (JProperty property in properties)
+            {
+                SelectListItem spokenLanguage = new SelectListItem();
+                spokenLanguage.Text = property.Value.ToString();
+                spokenLanguage.Value = property.Name;
+                spokenLanguages.Add(spokenLanguage);
+            }
+            return spokenLanguages.ToArray();
         }
 
         public IActionResult index()

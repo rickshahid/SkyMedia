@@ -14,6 +14,35 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
+        private static void PurgeEntities()
+        {
+            EntityClient entityClient = new EntityClient();
+            string tableName = Constant.Storage.TableName.ContentProtection;
+            entityClient.PurgeEntities<ContentProtection>(tableName);
+            tableName = Constant.Storage.TableName.JobPublish;
+            entityClient.PurgeEntities<JobPublish>(tableName);
+        }
+
+        private static void PurgeMetadata()
+        {
+            DatabaseClient databaseClient = new DatabaseClient(true);
+            string collectionId = Constant.Database.Collection.Metadata;
+            JObject[] documents = databaseClient.GetDocuments(collectionId);
+            foreach (JObject document in documents)
+            {
+                string accountName = document["AccountName"].ToString();
+                string accountKey = document["AccountKey"].ToString();
+                string assetId = document["AssetId"].ToString();
+                MediaClient mediaClient = new MediaClient(accountName, accountKey);
+                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+                if (asset == null)
+                {
+                    string documentId = document["id"].ToString();
+                    databaseClient.DeleteDocument(collectionId, documentId);
+                }
+            }
+        }
+
         private static string[] GetFileNames(IAsset asset, string fileExtension)
         {
             List<string> fileNames = new List<string>();
@@ -56,9 +85,9 @@ namespace AzureSkyMedia.PlatformServices
             return entityClient.GetEntity<ContentProtection>(tableName, partitionKey, rowKey);
         }
 
-        private static void PublishIndex(MediaClient mediaClient, IJob job)
+        private static void PublishSpeech(MediaClient mediaClient, IJob job)
         {
-            string processorId = Constant.Media.ProcessorId.Indexer;
+            string processorId = Constant.Media.ProcessorId.SpeechToText;
             string[] processorIds = new string[] { processorId };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             foreach (ITask jobTask in jobTasks)
@@ -74,7 +103,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishMetadata(ITask jobTask, BlobClient blobClient, DatabaseClient databaseClient, IDictionary<string, string> docAttributes)
+        private static void PublishMetadata(ITask jobTask, BlobClient blobClient, DatabaseClient databaseClient, IDictionary<string, string> dataAttributes)
         {
             foreach (IAsset outputAsset in jobTask.OutputAssets)
             {
@@ -96,7 +125,7 @@ namespace AzureSkyMedia.PlatformServices
                         MediaProcessor processorType = Processor.GetProcessorType(jobTask.MediaProcessorId);
                         string processorName = Processor.GetProcessorName(processorType);
                         string collectionId = Constant.Database.Collection.Metadata;
-                        string documentId = databaseClient.CreateDocument(collectionId, outputFileData, docAttributes);
+                        string documentId = databaseClient.CreateDocument(collectionId, outputFileData, dataAttributes);
                         outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
                         outputAsset.Update();
                     }
@@ -133,11 +162,11 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     foreach (ITask jobTask in jobTasks)
                     {
-                        Dictionary<string, string> docAttributes = new Dictionary<string, string>();
-                        docAttributes.Add("AccountName", jobPublish.PartitionKey);
-                        docAttributes.Add("AccountKey", jobPublish.MediaAccountKey);
-                        docAttributes.Add("AssetId", assetId);
-                        PublishMetadata(jobTask, blobClient, databaseClient, docAttributes);
+                        Dictionary<string, string> dataAttributes = new Dictionary<string, string>();
+                        dataAttributes.Add("AccountName", jobPublish.PartitionKey);
+                        dataAttributes.Add("AccountKey", jobPublish.MediaAccountKey);
+                        dataAttributes.Add("AssetId", assetId);
+                        PublishMetadata(jobTask, blobClient, databaseClient, dataAttributes);
                     }
                 }
             }
@@ -150,25 +179,25 @@ namespace AzureSkyMedia.PlatformServices
             string processorId3 = Constant.Media.ProcessorId.EncoderUltra;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
-            if (jobTasks.Length == 0)
-            {
-                string assetId = job.InputMediaAssets[0].Id;
-                PublishMetadata(job, jobPublish, assetId);
-                PublishIndex(mediaClient, job);
-            }
-            else
-            {
+            //if (jobTasks.Length == 0)
+            //{
+            //    string assetId = job.InputMediaAssets[0].Id;
+            //    PublishMetadata(job, jobPublish, assetId);
+            //    PublishSpeech(mediaClient, job);
+            //}
+            //else
+            //{
                 foreach (ITask jobTask in jobTasks)
                 {
                     foreach (IAsset encoderOutput in jobTask.OutputAssets)
                     {
                         string assetId = encoderOutput.Id;
                         PublishContent(mediaClient, encoderOutput, contentProtection);
-                        PublishIndex(mediaClient, job);
+                        PublishSpeech(mediaClient, job);
                         PublishMetadata(job, jobPublish, assetId);
                     }
                 }
-            }
+            //}
         }
 
         internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
@@ -266,24 +295,10 @@ namespace AzureSkyMedia.PlatformServices
             return jobPublication;
         }
 
-        public static void PurgeMetadata()
+        public static void PurgePublish()
         {
-            DatabaseClient databaseClient = new DatabaseClient(true);
-            string collectionId = Constant.Database.Collection.Metadata;
-            JObject[] documents = databaseClient.GetDocuments(collectionId);
-            foreach (JObject document in documents)
-            {
-                string accountName = document["AccountName"].ToString();
-                string accountKey = document["AccountKey"].ToString();
-                string assetId = document["AssetId"].ToString();
-                MediaClient mediaClient = new MediaClient(accountName, accountKey);
-                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                if (asset == null)
-                {
-                    string documentId = document["id"].ToString();
-                    databaseClient.DeleteDocument(collectionId, documentId);
-                }
-            }
+            PurgeEntities();
+            PurgeMetadata();
         }
     }
 }

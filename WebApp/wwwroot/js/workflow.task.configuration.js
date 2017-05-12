@@ -21,10 +21,10 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeToken" + lastTaskNumber, "encoderContentProtectionAuthTypeToken" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSpokenLanguages" + lastTaskNumber, "indexerSpokenLanguages" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerCaptionWebVtt" + lastTaskNumber, "indexerCaptionWebVtt" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerCaptionTtml" + lastTaskNumber, "indexerCaptionTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextConfigRow" + lastTaskNumber, "speechToTextConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextLanguages" + lastTaskNumber, "speechToTextLanguages" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionWebVtt" + lastTaskNumber, "speechToTextaptionWebVtt" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionTtml" + lastTaskNumber, "speechToTextCaptionTtml" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
@@ -43,13 +43,10 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
     return taskRowHtml;
 }
-function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds, unbindDocIds) {
+function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideRowIds, unbindDocIds) {
     $("#" + encoderConfigFileId).val("");
     if (encoderConfigOptions != null) {
         encoderConfigOptions.length = 0;
-    }
-    if (indexerLanguageOptions != null) {
-        indexerLanguageOptions.length = 0;
     }
     for (var i = 0; i < hideRowIds.length; i++) {
         $("#" + hideRowIds[i]).hide();
@@ -67,18 +64,16 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var encoderConfigFileId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFile");
     var encoderOptionsRowId = mediaProcessor.id.replace("mediaProcessor", "encoderOptionsRow");
     var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
-    var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
-    var indexerLanguagesId = mediaProcessor.id.replace("mediaProcessor", "indexerSpokenLanguages");
-    var indexerLanguageOptions = $("#" + indexerLanguagesId)[0].options;
+    var speechToTextConfigRowId = mediaProcessor.id.replace("mediaProcessor", "speechToTextConfigRow");
     var faceDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionConfigRow");
     var faceRedactionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceRedactionConfigRow");
     var summarizationConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summarizationConfigRow");
     var motionDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionDetectionConfigRow");
     var motionHyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionHyperlapseConfigRow");
     var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
-    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, summarizationConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
+    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, speechToTextConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, summarizationConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
     var unbindDocIds = [encoderConfigDocId, encoderConfigFileDocId];
-    ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, indexerLanguageOptions, hideRowIds, unbindDocIds);
+    ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideRowIds, unbindDocIds);
     if (mediaProcessor.value != "None") {
         switch (mediaProcessor.value) {
             case "EncoderStandard":
@@ -124,20 +119,8 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom Configuration File (XML)", "Custom");
                 $("#" + encoderOptionsRowId).show();
                 break;
-            case "Indexer":
-                $("#indexerSpokenLanguages" + taskNumber).multiselect("destroy");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("English", "EnUs");
-                indexerLanguageOptions[indexerLanguageOptions.length - 1].selected = true;
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Spanish", "EsEs");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Arabic (Egyptian)", "ArEg");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Chinese", "ZhCn");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("French", "FrFr");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("German", "DeDe");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Italian", "ItIt");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Japanese", "JaJp");
-                indexerLanguageOptions[indexerLanguageOptions.length] = new Option("Portuguese", "PtBr");
-                SetJobTaskWidgets(taskNumber);
-                $("#" + indexerConfigRowId).show();
+            case "SpeechToText":
+                $("#" + speechToTextConfigRowId).show();
                 break;
             case "FaceDetection":
                 $("#" + faceDetectionConfigRowId).show();

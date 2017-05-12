@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 
@@ -36,6 +34,13 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
             }
             return jobPublication;
+        }
+
+        [HttpPost]
+        [Route("/purge")]
+        public void Purge()
+        {
+            MediaClient.PurgePublish();
         }
     }
 }

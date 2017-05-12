@@ -21,10 +21,10 @@
     string contentProtectionAuthTypeTokenId = string.Concat(contentProtectionIdPrefix, "AuthTypeToken" + taskNumber);
     string contentProtectionAuthTypeAddressId = string.Concat(contentProtectionIdPrefix, "AuthTypeAddress" + taskNumber);
     string contentProtectionAuthAddressRangeId = string.Concat(contentProtectionIdPrefix, "AuthAddressRange" + taskNumber);
-    string indexerConfigRowId = string.Concat("indexerConfigRow", taskNumber);
-    string indexerSpokenLanguagesId = string.Concat("indexerSpokenLanguages", taskNumber);
-    string indexerCaptionWebVttId = string.Concat("indexerCaptionWebVtt", taskNumber);
-    string indexerCaptionTtmlId = string.Concat("indexerCaptionTtml", taskNumber);
+    string speechToTextConfigRowId = string.Concat("speechToTextConfigRow", taskNumber);
+    string speechToTextLanguagesId = string.Concat("speechToTextLanguages", taskNumber);
+    string speechToTextCaptionWebVttId = string.Concat("speechToTextCaptionWebVtt", taskNumber);
+    string speechToTextCaptionTtmlId = string.Concat("speechToTextCaptionTtml", taskNumber);
     string faceDetectionConfigRowId = string.Concat("faceDetectionConfigRow", taskNumber);
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
     string faceRedactionConfigRowId = string.Concat("faceRedactionConfigRow", taskNumber);
@@ -51,14 +51,12 @@
         <table class="jobTask">
             <tr>
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-get-media-processor')">
-                        Media Processor
-                    </span>
+                    Media Processor
                 </td>
                 <td>
                     @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1)" })
                     &nbsp;
-                    <span class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-rest-encode-asset#create-a-job-with-chained-tasks')">
                         Use output from Job Task #
                     </span>
                     <select id="@taskParentId" class="jobTaskParent" disabled>
@@ -86,25 +84,25 @@
                     @Html.TextBox(encoderConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file", onchange = "SetEncoderConfig(this)" })
                 </td>
             </tr>
-            <tr id="@indexerConfigRowId" style="display: none">
+            <tr id="@speechToTextConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
-                        Indexer Config
+                        Speech Text Config
                     </span>
                 </td>
                 <td>
-                    <select id="@indexerSpokenLanguagesId" multiple="multiple"></select>
+                    @Html.DropDownList(speechToTextLanguagesId, ViewData["spokenLanguages"] as SelectListItem[], new { @class = "mediaProcessor" })
                     &nbsp;
                     <span class="inputLabel">
                         CC
                     </span>
                     &nbsp;
-                    @Html.CheckBox(indexerCaptionWebVttId, true, new { disabled = "disabled" } )
+                    @Html.CheckBox(speechToTextCaptionWebVttId, true, new { disabled = "disabled" } )
                     <span class="inputLabel">
                         WebVTT
                     </span>
                     &nbsp;
-                    @Html.CheckBox(indexerCaptionTtmlId, false)
+                    @Html.CheckBox(speechToTextCaptionTtmlId, false)
                     <span class="inputLabel">
                         TTML
                     </span>

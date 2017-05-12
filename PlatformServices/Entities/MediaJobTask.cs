@@ -31,11 +31,11 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
-        public string[] IndexerSpokenLanguages { get; set; }
+        public string[] SpeechToTextLanguages { get; set; }
 
-        public bool IndexerCaptionWebVtt { get; set; }
+        public bool SpeechToTextCaptionWebVtt { get; set; }
 
-        public bool IndexerCaptionTtml { get; set; }
+        public bool SpeechToTextCaptionTtml { get; set; }
 
         public string FaceDetectionMode { get; set; }
 

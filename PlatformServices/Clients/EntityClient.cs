@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
@@ -44,15 +45,31 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public IEnumerable<T> GetEntities<T>(string tableName, string propertyName, string filterOperation, string propertyValue) where T : StorageEntity, new()
+        public void PurgeEntities<T>(string tableName) where T : StorageEntity, new()
         {
-            CloudTable table = _storage.GetTableReference(tableName);
-            string filter = TableQuery.GenerateFilterCondition(propertyName, filterOperation, propertyValue);
-            TableQuery<T> query = new TableQuery<T>().Where(filter);
-            return table.ExecuteQuery(query);
+            T[] entities = GetEntities<T>(tableName, null);
+            for (int i = entities.Length - 1; i >= 0; i--)
+            {
+                if (entities[i].CreatedOn < DateTime.UtcNow.AddDays(-7))
+                {
+                    DeleteEntity(tableName, entities[i]);
+                }
+            }
         }
 
-        public IEnumerable<T> GetEntities<T>(string tableName, string partitionKey) where T : StorageEntity, new()
+        public T[] GetEntities<T>(string tableName, string propertyName, string filterOperation, string propertyValue) where T : StorageEntity, new()
+        {
+            string filter = string.Empty;
+            if (!string.IsNullOrEmpty(propertyValue))
+            {
+                filter = TableQuery.GenerateFilterCondition(propertyName, filterOperation, propertyValue);
+            }
+            CloudTable table = _storage.GetTableReference(tableName);
+            TableQuery<T> query = new TableQuery<T>().Where(filter);
+            return table.ExecuteQuery(query).ToArray();
+        }
+
+        public T[] GetEntities<T>(string tableName, string partitionKey) where T : StorageEntity, new()
         {
             string propertyName = Constant.Storage.TableProperty.PartitionKey;
             return GetEntities<T>(tableName, propertyName, QueryComparisons.Equal, partitionKey);

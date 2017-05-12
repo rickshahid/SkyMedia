@@ -40,16 +40,24 @@ namespace AzureSkyMedia.PlatformServices
             _database = new DocumentClient(new Uri(accountEndpoint), accountKey);
         }
 
-        private JObject GetResult(string responseData)
+        private JObject GetResult(string responseData, bool systemProperties)
         {
             JObject result = null;
             if (!string.IsNullOrEmpty(responseData))
             {
                 result = JObject.Parse(responseData);
-                string[] documentProperties = Constant.Database.DocumentProperties.Split(Constant.TextDelimiter.Application);
-                foreach (string documentProperty in documentProperties)
+                if (!systemProperties)
                 {
-                    result.Remove(documentProperty);
+                    JProperty[] properties = result.Properties().ToArray();
+                    for (int i = properties.Length - 1; i >= 0; i--)
+                    {
+                        JProperty property = properties[i];
+                        if (property.Name.StartsWith("_"))
+                        {
+                            result.Remove(property.Name);
+                        }
+                    }
+                    result.Remove("id");
                 }
             }
             return result;
@@ -62,7 +70,7 @@ namespace AzureSkyMedia.PlatformServices
             IEnumerable<Document> docs = query.AsEnumerable<Document>();
             foreach (Document doc in docs)
             {
-                JObject result = GetResult(doc.ToString());
+                JObject result = GetResult(doc.ToString(), true);
                 documents.Add(result);
             }
             return documents.ToArray();
@@ -70,6 +78,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public JObject GetDocument(string documentId)
         {
+            JObject result = null;
             string[] documentInfo = documentId.Split(Constant.TextDelimiter.Identifier);
             string collectionId = documentInfo[0];
             documentId = documentInfo[1];
@@ -77,7 +86,11 @@ namespace AzureSkyMedia.PlatformServices
                 .Where(d => d.Id == documentId);
             IEnumerable<Document> documents = query.AsEnumerable<Document>();
             Document document = documents.FirstOrDefault();
-            return (document == null) ? null : GetResult(document.ToString());
+            if (document != null)
+            {
+                result = GetResult(document.ToString(), false);
+            }
+            return result;
         }
 
         public string CreateDocument(string collectionId, string docData, IDictionary<string, string> docAttributes)
@@ -108,12 +121,17 @@ namespace AzureSkyMedia.PlatformServices
 
         public JObject ExecuteProcedure(string collectionId, string procedureId, params dynamic[] procedureParameters)
         {
+            JObject result = null;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
             Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
             procedureTask.Wait();
             JValue procesureResponse = procedureTask.Result.Response;
-            return (procesureResponse == null) ? null : GetResult(procesureResponse.ToString());
+            if (procesureResponse != null)
+            {
+                result = GetResult(procesureResponse.ToString(), false);
+            }
+            return result;
         }
     }
 }

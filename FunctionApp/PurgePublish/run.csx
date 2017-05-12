@@ -4,5 +4,5 @@ using AzureSkyMedia.PlatformServices;
 
 public static void Run(TimerInfo timer, TraceWriter log)
 {
-    MediaClient.PurgeMetadata();
+    MediaClient.PurgePublish();
 }

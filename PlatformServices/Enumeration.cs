@@ -40,7 +40,7 @@
         EncoderStandard,
         EncoderPremium,
         EncoderUltra,
-        Indexer,
+        SpeechToText,
         FaceDetection,
         FaceRedaction,
         VideoAnnotation,

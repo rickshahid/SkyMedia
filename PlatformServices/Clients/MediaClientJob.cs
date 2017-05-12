@@ -52,8 +52,8 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.EncoderUltra:
                         tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets);
                         break;
-                    case MediaProcessor.Indexer:
-                        tasks = GetIndexerTasks(mediaClient, jobTask, inputAssets);
+                    case MediaProcessor.SpeechToText:
+                        tasks = GetSpeechToTextTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.VideoAnnotation:
                         tasks = GetVideoAnnotationTasks(mediaClient, jobTask, inputAssets);

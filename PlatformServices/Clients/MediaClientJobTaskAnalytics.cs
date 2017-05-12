@@ -7,20 +7,20 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        private static MediaJobTask[] GetIndexerTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
+        private static MediaJobTask[] GetSpeechToTextTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.Indexer;
-            string settingKey = Constant.AppSettingKey.MediaProcessorIndexerDocumentId;
+            jobTask.ProcessorType = MediaProcessor.SpeechToText;
+            string settingKey = Constant.AppSettingKey.MediaProcessorSpeechToTextDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];
             JArray captionFormats = new JArray();
-            if (jobTask.IndexerCaptionWebVtt)
+            if (jobTask.SpeechToTextCaptionWebVtt)
             {
                 captionFormats.Add("WebVTT");
             }
-            if (jobTask.IndexerCaptionTtml)
+            if (jobTask.SpeechToTextCaptionTtml)
             {
                 captionFormats.Add("TTML");
             }
@@ -28,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 processorOptions["Formats"] = captionFormats;
             }
-            if (jobTask.IndexerSpokenLanguages == null)
+            if (jobTask.SpeechToTextLanguages == null)
             {
                 jobTask.ProcessorConfig = processorConfig.ToString();
                 MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
@@ -36,9 +36,9 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                foreach (string spokenLanguage in jobTask.IndexerSpokenLanguages)
+                foreach (string language in jobTask.SpeechToTextLanguages)
                 {
-                    processorOptions["Language"] = spokenLanguage;
+                    processorOptions["Language"] = language;
                     jobTask.ProcessorConfig = processorConfig.ToString();
                     MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
                     jobTasks.AddRange(mappedJobTasks);
