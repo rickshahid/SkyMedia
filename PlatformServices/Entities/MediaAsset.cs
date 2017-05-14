@@ -129,10 +129,9 @@ namespace AzureSkyMedia.PlatformServices
                 string webVtt = string.Empty;
                 if (_asset != null)
                 {
-                    string fileExtension = Constant.Media.FileExtension.WebVtt;
                     foreach (IAssetFile assetFile in _asset.AssetFiles)
                     {
-                        if (assetFile.Name.EndsWith(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                        if (assetFile.Name.EndsWith(Constant.Media.FileExtension.WebVtt, StringComparison.InvariantCultureIgnoreCase))
                         {
                             webVtt = assetFile.Name;
                         }

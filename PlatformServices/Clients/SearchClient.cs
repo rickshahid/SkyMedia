@@ -33,7 +33,6 @@ namespace AzureSkyMedia.PlatformServices
 
             SearchCredentials credentials = new SearchCredentials(accountKey);
             _search = new SearchServiceClient(accountName, credentials);
-
         }
     }
 }

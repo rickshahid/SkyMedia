@@ -32,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public DatabaseClient(bool readWrite)
         {
-            string settingKey = readWrite ? Constant.AppSettingKey.AzureNoSqlReadWrite : Constant.AppSettingKey.AzureNoSqlReadOnly;
+            string settingKey = readWrite ? Constant.AppSettingKey.AzureCosmosReadWrite : Constant.AppSettingKey.AzureCosmosReadOnly;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];

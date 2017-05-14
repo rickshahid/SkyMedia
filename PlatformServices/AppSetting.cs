@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
+using Microsoft.Azure.KeyVault;
+using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace AzureSkyMedia.PlatformServices
@@ -32,16 +35,46 @@ namespace AzureSkyMedia.PlatformServices
             return parsedConnection.ToArray();
         }
 
+        public static string[] GetValue(string settingKey, bool parseValue, bool skipCache)
+        {
+            CacheClient cacheClient = null;
+            string settingValue = string.Empty;
+            if (!skipCache)
+            {
+                cacheClient = new CacheClient();
+                settingValue = cacheClient.GetValue<string>(settingKey);
+            }
+            if (string.IsNullOrEmpty(settingValue))
+            {
+                settingValue = ConfigRoot == null ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
+                if (settingValue == null)
+                {
+                    settingValue = string.Empty;
+                }
+                else if (settingValue.Contains(Constant.KeyVaultDomain))
+                {
+                    KeyVaultClient.AuthenticationCallback vaultAuth = new KeyVaultClient.AuthenticationCallback(AuthToken.GetVaultToken);
+                    KeyVaultClient vaultClient = new KeyVaultClient(vaultAuth);
+                    Task<SecretBundle> vaultTask = vaultClient.GetSecretAsync(settingValue);
+                    SecretBundle vaultSecret = vaultTask.Result;
+                    settingValue = vaultSecret.Value;
+                }
+            }
+            if (!skipCache)
+            {
+                cacheClient.SetValue<string>(settingKey, settingValue);
+            }
+            return parseValue ? ParseConnection(settingValue) : new string[] { settingValue };
+        }
+
         public static string[] GetValue(string settingKey, bool parseValue)
         {
-            string settingValue = (ConfigRoot == null) ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
-            if (settingValue == null) settingValue = string.Empty;
-            return parseValue ? ParseConnection(settingValue) : new string[] { settingValue };
+            return GetValue(settingKey, parseValue, false);
         }
 
         public static string GetValue(string settingKey)
         {
-            string[] settingValue = GetValue(settingKey, false);
+            string[] settingValue = GetValue(settingKey, false, false);
             return settingValue.Length == 0 ? string.Empty : settingValue[0];
         }
     }

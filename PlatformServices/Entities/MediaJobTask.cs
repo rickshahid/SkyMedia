@@ -29,6 +29,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public TaskOptions Options { get; set; }
 
+        public bool GenerateThumbnails { get; set; }
+
         public ContentProtection ContentProtection { get; set; }
 
         public string[] SpeechToTextLanguages { get; set; }

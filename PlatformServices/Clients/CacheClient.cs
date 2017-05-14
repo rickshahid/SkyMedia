@@ -14,7 +14,7 @@ namespace AzureSkyMedia.PlatformServices
         private static Lazy<ConnectionMultiplexer> _service = new Lazy<ConnectionMultiplexer>(() =>
         {
             string settingKey = Constant.AppSettingKey.AzureCache;
-            string[] accountCredentials = AppSetting.GetValue(settingKey, true);
+            string[] accountCredentials = AppSetting.GetValue(settingKey, true, true);
             string accountName = accountCredentials[0];
             string accountKey = accountCredentials[1];
 
@@ -26,7 +26,13 @@ namespace AzureSkyMedia.PlatformServices
 
             return ConnectionMultiplexer.Connect(serviceOptions);
         });
+
         private string _partitionId;
+
+        public CacheClient()
+        {
+            _partitionId = Constant.AppSettingKey.AzureCache;
+        }
 
         public CacheClient(string authToken)
         {

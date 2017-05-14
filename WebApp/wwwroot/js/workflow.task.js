@@ -109,6 +109,7 @@ function GetJobTask(taskNumber) {
                 } else {
                     jobTask.ProcessorConfig = encoderConfig;
                 }
+                jobTask.GenerateThumbnails = $("#encoderGenerateThumbnails" + taskNumber).prop("checked");
                 if ($("#encoderFragmentOutput" + taskNumber).prop("checked")) {
                     jobTask.OutputAssetFormat = 1; // AssetFormatOption.AdaptiveStreaming
                 }

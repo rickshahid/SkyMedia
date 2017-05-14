@@ -122,6 +122,8 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\skyfun-uswest - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\skyfun-uswest - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\skyfun-uswest-staging - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\skyfun-uswest-staging - Web Deploy.pubxml" />
     <Content Include="PurgePublish\function.json" />
     <Content Include="PurgePublish\run.csx" />
   </ItemGroup>

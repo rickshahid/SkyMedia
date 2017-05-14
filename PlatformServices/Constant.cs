@@ -6,6 +6,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         public const string NotAvailable = "N/A";
         public const string ConfigFile = "appsettings.json";
+        public const string KeyVaultDomain = "vault.azure.net";
 
         public struct TextDelimiter
         {
@@ -104,8 +105,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string DatabaseIdPrefix = "DatabaseId=";
 
             public const string AzureStorage = "Storage";
-            public const string AzureNoSqlReadOnly = "NoSql.ReadOnly";
-            public const string AzureNoSqlReadWrite = "NoSql.ReadWrite";
+            public const string AzureCosmosReadOnly = "Cosmos.ReadOnly";
+            public const string AzureCosmosReadWrite = "Cosmos.ReadWrite";
 
             public const string AzureMedia = "Media";
             public const string AzureCache = "Cache";

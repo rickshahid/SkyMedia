@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
+
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -21,6 +24,22 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return tokenClaim;
+        }
+
+        internal static async Task<string> GetVaultToken(string authority, string resource, string scope)
+        {
+            string settingKey = Constant.AppSettingKey.DirectoryClientId;
+            string clientId = AppSetting.ConfigRoot[settingKey];
+
+            settingKey = Constant.AppSettingKey.DirectoryClientSecret;
+            string clientSecret = AppSetting.ConfigRoot[settingKey];
+
+            ClientCredential clientCredential = new ClientCredential(clientId, clientSecret);
+
+            AuthenticationContext authContext = new AuthenticationContext(authority);
+            AuthenticationResult authResult = await authContext.AcquireTokenAsync(resource, clientCredential);
+
+            return authResult.AccessToken;
         }
 
         public static string GetClaimValue(string authToken, string claimName)

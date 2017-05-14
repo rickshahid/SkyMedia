@@ -107,38 +107,39 @@ namespace AzureSkyMedia.PlatformServices
         {
             foreach (IAsset outputAsset in jobTask.OutputAssets)
             {
-                string fileExtension = Constant.Media.FileExtension.Json;
-                string[] fileNames = GetFileNames(outputAsset, fileExtension);
-                if (fileNames.Length > 0)
+                if (string.IsNullOrEmpty(outputAsset.AlternateId))
                 {
-                    string sourceContainerName = outputAsset.Uri.Segments[1];
-                    string outputFileName = fileNames[0];
-                    string outputFileData = string.Empty;
-                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, outputFileName, false);
-                    using (System.IO.Stream sourceStream = sourceBlob.OpenRead())
+                    string[] fileNames = GetFileNames(outputAsset, Constant.Media.FileExtension.Json);
+                    foreach (string fileName in fileNames)
                     {
-                        StreamReader streamReader = new StreamReader(sourceStream);
-                        outputFileData = streamReader.ReadToEnd();
+                        string fileData = string.Empty;
+                        string sourceContainerName = outputAsset.Uri.Segments[1];
+                        CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, fileName, false);
+                        using (System.IO.Stream sourceStream = sourceBlob.OpenRead())
+                        {
+                            StreamReader streamReader = new StreamReader(sourceStream);
+                            fileData = streamReader.ReadToEnd();
+                        }
+                        if (!string.IsNullOrEmpty(fileData))
+                        {
+                            MediaProcessor processorType = Processor.GetProcessorType(jobTask.MediaProcessorId);
+                            string processorName = Processor.GetProcessorName(processorType);
+                            string collectionId = Constant.Database.Collection.Metadata;
+                            string documentId = databaseClient.CreateDocument(collectionId, fileData, dataAttributes);
+                            outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
+                            outputAsset.Update();
+                        }
                     }
-                    if (!string.IsNullOrEmpty(outputFileData))
+                    JObject processorConfig = JObject.Parse(jobTask.Configuration);
+                    if (processorConfig["options"] != null &&
+                        processorConfig["options"]["mode"] != null &&
+                        processorConfig["options"]["mode"].ToString() == "analyze")
                     {
-                        MediaProcessor processorType = Processor.GetProcessorType(jobTask.MediaProcessorId);
-                        string processorName = Processor.GetProcessorName(processorType);
-                        string collectionId = Constant.Database.Collection.Metadata;
-                        string documentId = databaseClient.CreateDocument(collectionId, outputFileData, dataAttributes);
-                        outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
-                        outputAsset.Update();
-                    }
-                }
-                JObject processorConfig = JObject.Parse(jobTask.Configuration);
-                if (processorConfig["options"] != null &&
-                    processorConfig["options"]["mode"] != null &&
-                    processorConfig["options"]["mode"].ToString() == "analyze")
-                {
-                    foreach (IAsset inputAsset in jobTask.InputAssets)
-                    {
-                        string primaryFileName = GetPrimaryFile(inputAsset);
-                        blobClient.CopyFile(inputAsset, outputAsset, primaryFileName, primaryFileName, true);
+                        foreach (IAsset inputAsset in jobTask.InputAssets)
+                        {
+                            string primaryFileName = GetPrimaryFile(inputAsset);
+                            blobClient.CopyFile(inputAsset, outputAsset, primaryFileName, primaryFileName, true);
+                        }
                     }
                 }
             }
@@ -179,25 +180,26 @@ namespace AzureSkyMedia.PlatformServices
             string processorId3 = Constant.Media.ProcessorId.EncoderUltra;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
-            //if (jobTasks.Length == 0)
-            //{
-            //    string assetId = job.InputMediaAssets[0].Id;
-            //    PublishMetadata(job, jobPublish, assetId);
-            //    PublishSpeech(mediaClient, job);
-            //}
-            //else
-            //{
+            if (jobTasks.Length == 0)
+            {
+                foreach (IAsset inputAsset in job.InputMediaAssets)
+                {
+                    PublishSpeech(mediaClient, job);
+                    PublishMetadata(job, jobPublish, inputAsset.Id);
+                }
+            }
+            else
+            {
                 foreach (ITask jobTask in jobTasks)
                 {
-                    foreach (IAsset encoderOutput in jobTask.OutputAssets)
+                    foreach (IAsset outputAsset in jobTask.OutputAssets)
                     {
-                        string assetId = encoderOutput.Id;
-                        PublishContent(mediaClient, encoderOutput, contentProtection);
+                        PublishContent(mediaClient, outputAsset, contentProtection);
                         PublishSpeech(mediaClient, job);
-                        PublishMetadata(job, jobPublish, assetId);
+                        PublishMetadata(job, jobPublish, outputAsset.Id);
                     }
                 }
-            //}
+            }
         }
 
         internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
