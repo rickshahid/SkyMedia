@@ -13,9 +13,9 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Create subclips (as filtered views and/or rendered assets) via content clipper extension to the Azure Media Player
 
-* Define workflows with multiple tasks (executed parallelly and/or sequentially) across various media processors
+* Define workflows with multiple tasks (executed parallelly and/or sequentially) that utilize various media processors
 
-* Track workflow tasks and automatically publish content output via parameters specified at job submission time
+* Track workflow tasks with automatic content output publishing based upon parameters specified at job submission time
 
 * Optionally enable SMS text notification of workflow completion status via integrated user profile management
 
