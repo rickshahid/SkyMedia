@@ -4,6 +4,8 @@ Welcome! This repository contains the sample Azure media web application that is
 
 The following set of functional capabilities are integrated and enabled via this Azure ASP.NET Core MVC web application:
 
+* Dynamic detection and adaptive streaming of your content across a wide spectrum of mobile devices and platforms
+
 * Self-service user account and platform service account management across Azure Storage, Azure Media Services, etc
 
 * Upload and process media via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
