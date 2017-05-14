@@ -6,7 +6,7 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Adaptive video streaming across a broad spectrum of devices and platforms including iOS, Android and Windows
 
-* Consumer user federation and platform service account management for Azure Storage, Azure Media Services, etc
+* Consumer user identity and platform service account management for Azure Storage, Azure Media Services, etc
 
 * Securely upload and process your media via transcoding, indexing, thumbnail generation, content protection, etc
 
