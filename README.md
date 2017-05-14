@@ -10,7 +10,7 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Securely upload and process your media via transcoding, indexing, thumbnail generation, content protection, etc
 
-* Generate metadata via content analytics such as face, emotion and object detection to enable discovery and insights
+* Generate metadata via content analytics such as face, emotion and object detection to enable seach and discovery
 
 * Create subclips (as filtered views and/or new assets) via an integrated extension to the adaptive Azure Media Player
 
