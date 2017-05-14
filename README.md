@@ -8,7 +8,7 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Self-service user account and platform service account management for Azure Storage, Azure Media Services, etc
 
-* Upload and process your content via encoding, indexing, analytics, thumbnail generation, content protection, etc
+* Upload, store and process your media via transcoding, indexing, thumbnail generation, content protection, etc
 
 * Generate metadata via content analytics such as face, emotion and object detection to enable discovery and insights
 
