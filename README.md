@@ -1,4 +1,3 @@
-
 # Azure Sky Media
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
@@ -11,11 +10,11 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Generate metadata from face, emotion and object detection to drive content discoverability and actionable insights
 
-* Create subclips (as filtered views and/or rendered assets) via content clipper extension to the Azure Media Player
+* Create subclips (as filtered views and/or rendered assets) via a content clipper extension to the Azure Media Player
 
 * Define workflows with multiple tasks (executed parallelly and/or sequentially) that utilize various media processors
 
-* Track workflow tasks with automatic content output publishing based upon parameters specified at job submission time
+* Track content workflow with automatic output publishing based upon parameters specified at job submission time
 
 * Optionally enable SMS text notification of workflow completion status via integrated user profile management
 
