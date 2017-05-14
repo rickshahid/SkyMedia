@@ -12,7 +12,7 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Generate metadata via content analytics such as face, object and motion detection to enable discovery and action
 
-* Create subclips (either as filtered views or as new assets) via a standard web extension to the Azure Media Player
+* Create subclips (either as dynamic filters or as new assets) via a standard web extension to the Azure Media Player
 
 * Define workflows with multiple tasks (executed parallelly and/or sequentially) that utilize various media processors
 
