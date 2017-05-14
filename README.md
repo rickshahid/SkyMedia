@@ -1,7 +1,7 @@
 
 # Azure Sky Media
 
-Welcome! This open repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
+Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
 The following set of functional capabilities are integrated and enabled via this Azure ASP.NET Core MVC web application:
 
@@ -19,9 +19,9 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Optionally enable SMS text notification of media workflow completion status via integrated user profile management
 
-For screenshots of key application modules, take a look at https://github.com/RickShahid/SkyMedia/wiki
+For screenshots of some of the core application modules, take a look at https://github.com/RickShahid/SkyMedia/wiki
 
-To enable the various capabilities listed above, the following Azure platform services are leveraged:
+To enable the various capabilities that are listed above, the following Azure platform services are leveraged:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
