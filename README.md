@@ -44,7 +44,7 @@ To enable the various capabilities that are listed above, the following Azure pl
   
   * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
   
-* Cognitive Services - http://www.microsoft.com/cognitive-services/
+* Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
 
 * API Management - http://azure.microsoft.com/en-us/services/api-management/
 
@@ -60,13 +60,13 @@ To enable the various capabilities that are listed above, the following Azure pl
 
 * App Insights - http://azure.microsoft.com/en-us/services/application-insights/
 
-In addition to the Azure platform services listed above, the following Azure partner services are also integrated:
+In addition, the following Azure partner services have also been integrated for high-speed file transfer:
 
 * Signiant Flight - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
 
 * Aspera FASP - http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod
 
-The set of Azure Media Services processors that are integrated include the following (more are on the way):
+The set of Azure Media Services processors that have been integrated and enabled include the following:
 
 * Encoder Standard - http://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-standard-formats
 
@@ -86,7 +86,7 @@ The set of Azure Media Services processors that are integrated include the follo
 
 * Motion Hyperlapse - http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
 
-If you have an enhancement suggestion or if you run into an issue, please let me know.
+If you have any comments, enhancement suggestions or if you run into an issue, please let me know.
 
 Thanks.
 
