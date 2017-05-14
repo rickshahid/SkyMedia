@@ -46,13 +46,11 @@ To enable the various capabilities that are listed above, the following Azure pl
   
 * Cognitive Services - http://www.microsoft.com/cognitive-services/
 
+* API Management - http://azure.microsoft.com/en-us/services/api-management/
+
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
-  * Web App - http://azure.microsoft.com/en-us/services/app-service/web/
-
-  * API App - http://azure.microsoft.com/en-us/services/app-service/api/
- 
-  * Function App - http://azure.microsoft.com/en-us/services/functions/
+* Function App - http://azure.microsoft.com/en-us/services/functions/
 
 * Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
 
@@ -60,7 +58,7 @@ To enable the various capabilities that are listed above, the following Azure pl
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
-* Application Insights - http://azure.microsoft.com/en-us/services/application-insights/
+* App Insights - http://azure.microsoft.com/en-us/services/application-insights/
 
 In addition to the Azure platform services listed above, the following Azure partner services are also integrated:
 
