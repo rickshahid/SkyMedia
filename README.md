@@ -18,7 +18,7 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Track content workflow with automatic output publishing based upon parameters specified at job submission time
 
-* Optionally enable SMS text message notification of workflow completion via integrated user profile management
+* Optionally enable SMS text message notification of workflow completion via self-service user profile management
 
 For screenshots of some of the core application modules, refer to http://github.com/RickShahid/SkyMedia/wiki
 
