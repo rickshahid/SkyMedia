@@ -4,7 +4,7 @@ Welcome! This repository contains the sample Azure media web application that is
 
 The following set of functional capabilities are integrated and enabled via this Azure ASP.NET Core MVC web application:
 
-* Adaptive video streaming across a wide spectrum of devices and platforms including iOS, Andriod and Windows
+* Adaptive video streaming across a broad spectrum of devices and platforms including iOS, Android and Windows
 
 * Self-service user account and platform service account management for Azure Storage, Azure Media Services, etc
 
