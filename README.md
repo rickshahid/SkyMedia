@@ -9,17 +9,17 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Upload and process media via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
 
-* Define media workflows using multiple tasks (executed parallelly and/or sequentially) across various media processors
+* Generate metadata from face, emotion and object detection to drive content discoverability and actionable insights
 
-* Track media workflow tasks and automatically publish outputs based on parameters specified at job submission time
+* Create subclips (as filtered views and/or rendered assets) via content clipper extension to the Azure Media Player
 
-* Generate media metadata such as face, emotion and object detection to drive discoverability and actionable insights
+* Define workflows with multiple tasks (executed parallelly and/or sequentially) across various media processors
 
-* Create media subclips (as filtered views and/or rendered assets) via web clipper integration with Azure Media Player
+* Track workflow tasks and automatically publish content output via parameters specified at job submission time
 
-* Optionally enable SMS text notification of media workflow completion status via integrated user profile management
+* Optionally enable SMS text notification of workflow completion status via integrated user profile management
 
-For screenshots of some of the core application modules, take a look at https://github.com/RickShahid/SkyMedia/wiki
+For screenshots of some of the core application modules, refer to http://github.com/RickShahid/SkyMedia/wiki
 
 To enable the various capabilities that are listed above, the following Azure platform services are leveraged:
 
@@ -30,6 +30,10 @@ To enable the various capabilities that are listed above, the following Azure pl
 * Storage - http://azure.microsoft.com/en-us/services/storage/
 
 * Cosmos DB - http://azure.microsoft.com/en-us/services/cosmos-db/
+
+* Search - http://azure.microsoft.com/en-us/services/search/
+
+* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
@@ -50,10 +54,6 @@ To enable the various capabilities that are listed above, the following Azure pl
   * Function App - http://azure.microsoft.com/en-us/services/functions/
 
 * Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
-
-* Search - http://azure.microsoft.com/en-us/services/search/
-
-* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
 
