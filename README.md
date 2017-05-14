@@ -8,9 +8,9 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Self-service user account and platform service account management across Azure Storage, Azure Media Services, etc
 
-* Upload and process media via encoding, indexing, content protection, metadata generation, adaptive streaming, etc
+* Upload and process your media via encoding, indexing, content protection, analytics and metadata generation, etc
 
-* Generate metadata from face, emotion and object detection to drive content discoverability and actionable insights
+* Generate metadata from face, emotion and object detection to enable content discovery and actionable insights
 
 * Create subclips (as filtered views and/or rendered assets) via a content clipper extension to the Azure Media Player
 
