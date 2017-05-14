@@ -20,7 +20,7 @@ The following set of functional capabilities are integrated and enabled via this
 
 * Optionally enable SMS text message notification of workflow completion via self-service user profile management
 
-For screenshots of some of the core application modules, refer to http://github.com/RickShahid/SkyMedia/wiki
+For screenshots of the core application modules in action, refer to http://github.com/RickShahid/SkyMedia/wiki
 
 To enable the various capabilities that are listed above, the following Azure platform services are leveraged:
 
