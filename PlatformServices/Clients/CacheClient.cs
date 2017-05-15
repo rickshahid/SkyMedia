@@ -14,7 +14,7 @@ namespace AzureSkyMedia.PlatformServices
         private static Lazy<ConnectionMultiplexer> _service = new Lazy<ConnectionMultiplexer>(() =>
         {
             string settingKey = Constant.AppSettingKey.AzureCache;
-            string[] accountCredentials = AppSetting.GetValue(settingKey, true, true);
+            string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountName = accountCredentials[0];
             string accountKey = accountCredentials[1];
 

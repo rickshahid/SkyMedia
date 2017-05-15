@@ -35,23 +35,18 @@ namespace AzureSkyMedia.PlatformServices
             return parsedConnection.ToArray();
         }
 
-        public static string[] GetValue(string settingKey, bool parseValue, bool skipCache)
+        public static string[] GetValue(string settingKey, bool parseValue)
         {
-            CacheClient cacheClient = null;
-            string settingValue = string.Empty;
-            if (!skipCache)
+            string settingValue = ConfigRoot == null ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
+            if (settingValue == null)
             {
-                cacheClient = new CacheClient();
-                settingValue = cacheClient.GetValue<string>(settingKey);
+                settingValue = string.Empty;
             }
-            if (string.IsNullOrEmpty(settingValue))
+            else if (settingValue.Contains(Constant.KeyVaultDomain))
             {
-                settingValue = ConfigRoot == null ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
-                if (settingValue == null)
-                {
-                    settingValue = string.Empty;
-                }
-                else if (settingValue.Contains(Constant.KeyVaultDomain))
+                CacheClient cacheClient = new CacheClient();
+                settingValue = cacheClient.GetValue<string>(settingKey);
+                if (string.IsNullOrEmpty(settingValue))
                 {
                     KeyVaultClient.AuthenticationCallback vaultAuth = new KeyVaultClient.AuthenticationCallback(AuthToken.GetVaultToken);
                     KeyVaultClient vaultClient = new KeyVaultClient(vaultAuth);
@@ -59,22 +54,14 @@ namespace AzureSkyMedia.PlatformServices
                     SecretBundle vaultSecret = vaultTask.Result;
                     settingValue = vaultSecret.Value;
                 }
-            }
-            if (!skipCache)
-            {
                 cacheClient.SetValue<string>(settingKey, settingValue);
             }
             return parseValue ? ParseConnection(settingValue) : new string[] { settingValue };
         }
 
-        public static string[] GetValue(string settingKey, bool parseValue)
-        {
-            return GetValue(settingKey, parseValue, false);
-        }
-
         public static string GetValue(string settingKey)
         {
-            string[] settingValue = GetValue(settingKey, false, false);
+            string[] settingValue = GetValue(settingKey, false);
             return settingValue.Length == 0 ? string.Empty : settingValue[0];
         }
     }
