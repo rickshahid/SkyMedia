@@ -76,21 +76,28 @@ namespace AzureSkyMedia.PlatformServices
             return JsonConvert.DeserializeObject<T>(itemValue);
         }
 
-        public bool SetValue<T>(string itemKey, T itemValue)
+        public void SetValue<T>(string itemKey, T itemValue)
         {
-            return SetValue<T>(itemKey, itemValue, null);
+            SetValue<T>(itemKey, itemValue, null);
         }
 
-        public bool SetValue<T>(string itemKey, T itemValue, TimeSpan? itemExpiration)
+        public void SetValue<T>(string itemKey, T itemValue, TimeSpan? itemExpiration)
         {
             IDatabase cache = GetCache();
             itemKey = MapItemKey(itemKey);
-            if (typeof(T) == typeof(string))
+            if (itemValue == null)
             {
-                return cache.StringSet(itemKey, itemValue.ToString(), itemExpiration);
+                cache.KeyDelete(itemKey);
             }
-            string itemSerialized = JsonConvert.SerializeObject(itemValue);
-            return cache.StringSet(itemKey, itemSerialized, itemExpiration);
+            else if (typeof(T) == typeof(string))
+            {
+                cache.StringSet(itemKey, itemValue.ToString(), itemExpiration);
+            }
+            else
+            {
+                string itemSerialized = JsonConvert.SerializeObject(itemValue);
+                cache.StringSet(itemKey, itemSerialized, itemExpiration);
+            }
         }
     }
 }

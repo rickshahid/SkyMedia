@@ -10,7 +10,6 @@
     string encoderConfigFileDocId = string.Concat("encoderConfigFileDoc", taskNumber);
     string encoderConfigFileId = string.Concat("encoderConfigFile", taskNumber);
     string encoderOptionsRowId = string.Concat("encoderOptionsRow", taskNumber);
-    string encoderGenerateThumbnailsId = string.Concat("encoderGenerateThumbnails", taskNumber);
     string encoderFragmentOutputId = string.Concat("encoderFragmentOutput", taskNumber);
     string contentProtectionIdPrefix = "encoderContentProtection";
     string contentProtectionId = string.Concat(contentProtectionIdPrefix, taskNumber);
@@ -241,14 +240,9 @@
             <tr id="@encoderOptionsRowId" style="display: none">
                 <td />
                 <td>
-                    @Html.CheckBox(encoderGenerateThumbnailsId, false)
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes')">
-                        Thumbnails
-                    </span>
-                    &nbsp;
                     @Html.CheckBox(encoderFragmentOutputId, false)
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/dotnet/api/microsoft.windowsazure.mediaservices.client.assetformatoption')">
-                        Pre-Fragment
+                        Output Pre-Fragmented
                     </span>
                     &nbsp;
                     @Html.CheckBox(contentProtectionId, false, new { onclick = "ShowContentProtection(this)" })
