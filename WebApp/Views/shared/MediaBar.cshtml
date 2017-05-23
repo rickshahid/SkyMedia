@@ -2,6 +2,7 @@
 
 @{
     MediaStream[] mediaStreams = Model;
+    string mediaLiveImage = this.Context.Request.Query["live"] == "on" ? "MediaLiveOn.png" : "MediaLiveOff.png";
 }
 
 <table class="mediaBar">
@@ -42,7 +43,7 @@
         <td id="userButtonRight1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaLive", "MediaLiveOff.png", "ToggleLiveStream(this)" })
+            @Html.Partial("SiteButton", new string[] { "mediaLive", mediaLiveImage, "ToggleLiveStream(this)" })
         }
         </td>
         <td id="userButtonRight2">

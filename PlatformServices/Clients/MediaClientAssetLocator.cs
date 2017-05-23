@@ -19,9 +19,8 @@ namespace AzureSkyMedia.PlatformServices
                 string durationDays = AppSetting.GetValue(settingKey);
                 TimeSpan readPolicyDuration = new TimeSpan(int.Parse(durationDays), 0, 0, 0);
                 TimeSpan writePolicyDuration = new TimeSpan(Constant.Storage.Blob.WriteDurationHours, 0, 0);
-
-                AccessPermissions accessPermissions = writePolicy ? AccessPermissions.Write : AccessPermissions.Read;
                 TimeSpan accessDuration = writePolicy ? writePolicyDuration : readPolicyDuration;
+                AccessPermissions accessPermissions = writePolicy ? AccessPermissions.Write : AccessPermissions.Read;
                 accessPolicy = _media.AccessPolicies.Create(policyName, accessDuration, accessPermissions);
             }
             return accessPolicy;
@@ -50,7 +49,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAssetFile assetFile in asset.AssetFiles)
                 {
-                    if (assetFile.Name.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
+                    if (assetFile.Name.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase))
                     {
                         assetFile.IsPrimary = true;
                         assetFile.Update();
@@ -79,9 +78,13 @@ namespace AzureSkyMedia.PlatformServices
             return primaryFile;
         }
 
-        private string GetLocatorUrl(ILocator locator, string fileName)
+        private string GetLocatorUrl(ILocator locator, string fileName, bool includeProtocol)
         {
-            string primaryUrl = locator.BaseUri.Split(':')[1];
+            string primaryUrl = locator.BaseUri;
+            if (!includeProtocol)
+            {
+                primaryUrl = primaryUrl.Split(':')[1];
+            }
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = GetPrimaryFile(locator.Asset);
@@ -95,7 +98,7 @@ namespace AzureSkyMedia.PlatformServices
                 case LocatorType.OnDemandOrigin:
                     primaryUrl = string.Concat(primaryUrl, "/", locator.ContentAccessComponent);
                     primaryUrl = string.Concat(primaryUrl, "/", fileName);
-                    if (fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.InvariantCultureIgnoreCase))
+                    if (fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase))
                     {
                         primaryUrl = string.Concat(primaryUrl, Constant.Media.Stream.LocatorManifestSuffix);
                     }
@@ -104,12 +107,14 @@ namespace AzureSkyMedia.PlatformServices
             return primaryUrl;
         }
 
-        public string GetLocatorUrl(IAsset asset, string fileName)
+        public string GetLocatorUrl(LocatorType locatorType, IAsset asset, string fileName, bool includeProtocol)
         {
-            string locatorUrl = string.Empty;
-            LocatorType locatorType = LocatorType.OnDemandOrigin;
             ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
-            if (locator != null)
+            if (locator == null)
+            {
+                locator = CreateLocator(locatorType, asset);
+            }
+            else
             {
                 if (locator.ExpirationDateTime <= DateTime.UtcNow)
                 {
@@ -117,9 +122,13 @@ namespace AzureSkyMedia.PlatformServices
                     DateTime accessExpiration = DateTime.UtcNow.Add(accessPolicy.Duration);
                     locator.Update(accessExpiration);
                 }
-                locatorUrl = GetLocatorUrl(locator, fileName);
             }
-            return locatorUrl;
+            return GetLocatorUrl(locator, fileName, includeProtocol);
+        }
+
+        public string GetLocatorUrl(IAsset asset, string fileName)
+        {
+            return GetLocatorUrl(LocatorType.OnDemandOrigin, asset, fileName, false);
         }
 
         public string GetLocatorUrl(IAsset asset)

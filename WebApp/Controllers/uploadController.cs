@@ -36,20 +36,8 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult file(string name, int chunk, int chunks, string storageAccount, string storageContainer)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            System.IO.Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
-            string containerName = Path.GetFileName(storageContainer);
-            if (chunks == 0)
-            {
-                blobClient.UploadFile(inputStream, containerName, null, name);
-            }
-            else
-            {
-                bool lastBlock = (chunk == chunks - 1);
-                string attributeName = Constant.UserAttribute.UserId;
-                string userId = AuthToken.GetClaimValue(authToken, attributeName);
-                blobClient.UploadBlock(userId, inputStream, containerName, null, name, chunk, lastBlock);
-            }
+            Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
+            Storage.UploadBlock(authToken, storageAccount, storageContainer, inputStream, name, chunk, chunks);
             return Json(chunk);
         }
 

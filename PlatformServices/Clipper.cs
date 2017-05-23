@@ -2,7 +2,7 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public static class Editor
+    public static class Clipper
     {
         private static IAsset GetSourceAsset(MediaClient mediaClient, string sourceUrl)
         {

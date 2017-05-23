@@ -29,8 +29,13 @@ namespace AzureSkyMedia.PlatformServices
             return unitCount.ToString();
         }
 
-        private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
+        private static void DeleteAsset(string indexerKey, MediaClient mediaClient, IAsset asset)
         {
+            if (!string.IsNullOrEmpty(indexerKey) && !string.IsNullOrEmpty(asset.AlternateId))
+            {
+                IndexerClient indexerClient = new IndexerClient(indexerKey);
+                indexerClient.DeleteVideo(asset.AlternateId, true);
+            }
             foreach (ILocator locator in asset.Locators)
             {
                 locator.Delete();
@@ -74,21 +79,6 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaClient mediaClient = new MediaClient(authToken);
             return mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
-        }
-
-        public static bool IsStreamingEnabled(MediaClient mediaClient)
-        {
-            bool streamingEnabled = false;
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
-            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
-            {
-                if (streamingEndpoint.State == StreamingEndpointState.Running ||
-                    streamingEndpoint.State == StreamingEndpointState.Scaling)
-                {
-                    streamingEnabled = true;
-                }
-            }
-            return streamingEnabled;
         }
 
         public static string[][] GetEntityCounts(MediaClient mediaClient)
@@ -141,7 +131,7 @@ namespace AzureSkyMedia.PlatformServices
             return entityCounts.ToArray();
         }
 
-        public static void ClearEntities(MediaClient mediaClient, bool allEntities)
+        public static void ClearEntities(string indexerKey, MediaClient mediaClient, bool allEntities)
         {
             if (allEntities)
             {
@@ -189,7 +179,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (asset.ParentAssets.Count > 0 || allEntities)
                 {
-                    DeleteAsset(mediaClient, asset);
+                    DeleteAsset(indexerKey, mediaClient, asset);
                 }
             }
             if (allEntities)

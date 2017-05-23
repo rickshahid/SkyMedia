@@ -109,15 +109,17 @@ namespace AzureSkyMedia.PlatformServices
             public const string AzureCosmosReadWrite = "Cosmos.ReadWrite";
 
             public const string AzureMedia = "Media";
+            public const string AzureMediaIndexer = "Media.Indexer";
+
             public const string AzureCache = "Cache";
             public const string AzureSearch = "Search";
         }
 
         public struct HttpHeader
         {
-            public const string AuthPrefix = "Bearer=";
             public const string AuthHeader = "Authorization";
-            public const string ApiVersion = "x-ms-version";
+            public const string AuthPrefix = "Bearer=";
+            public const string ApiKey = "Ocp-Apim-Subscription-Key";
         }
 
         public struct HttpForm
@@ -130,18 +132,13 @@ namespace AzureSkyMedia.PlatformServices
             public const string UserAuthToken = " AzureSkyMedia.UserAuthToken";
         }
 
-        public struct ContentType
-        {
-            public const string Json = "application/json";
-            public const string Url = "application/x-www-form-urlencoded";
-        }
-
         public struct UserAttribute
         {
             public const string UserId = "emails";
             public const string MobileNumber = "extension_MobileNumber";
             public const string MediaAccountName = "extension_MediaAccountName";
             public const string MediaAccountKey = "extension_MediaAccountKey";
+            public const string VideoIndexerKey = "extension_VideoIndexerKey";
             public const string StorageAccountName = "extension_StorageAccountName";
             public const string StorageAccountKey = "extension_StorageAccountKey";
             public const string SigniantServiceGateway = "extension_SigniantServiceGateway";
@@ -185,13 +182,12 @@ namespace AzureSkyMedia.PlatformServices
                 public const string FileUpload = "FileUpload";
                 public const string JobPublish = "JobPublish";
                 public const string ContentProtection = "ContentProtection";
-                public const string LiveEvent = "LiveEvent";
             }
 
             public struct TableProperty
             {
                 public const string PartitionKey = "PartitionKey";
-                public const string OpenConcurrency = "*";
+                public const int EntityExpirationDays = 7;
             }
         }
 
@@ -301,6 +297,21 @@ namespace AzureSkyMedia.PlatformServices
                 public const string Manifest = ".ism";
                 public const string WebVtt = ".vtt";
                 public const string Json = ".json";
+                public const string Video = ".mp4";
+            }
+
+            public struct Live
+            {
+                public const string ChannelStreamingSuffix = "-Stream";
+                public const string ChannelEncodingSuffix = "-Encode";
+                public const string ChannelEncodingPreset = "Default720p";
+
+                public const string ProgramClearSuffix = "-Clear";
+                public const string ProgramAesSuffix = "-AES";
+                public const string ProgramDrmSuffix = "-DRM";
+
+                public const string AllowAllAddresses = "Allow All";
+                public const string AllowAddresses = "Allow Restricted";
             }
 
             public struct Stream
@@ -309,7 +320,6 @@ namespace AzureSkyMedia.PlatformServices
                 public const string LocatorManifestSuffix = "/manifest";
                 public const string AssetFilteredSuffix = " (Filtered)";
                 public const string TextTrackCaptions = "captions";
-                public const string AddressRangeAll = "All IP Addresses";
             }
         }
 

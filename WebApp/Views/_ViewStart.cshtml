@@ -44,14 +44,6 @@
     ViewData["storageCdnUrl"] = AppSetting.GetValue(settingKey);
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
-    if (requestUrl.Contains("live"))
-    {
-        ViewData["layoutLive"] = true;
-    }
-
-    ViewData["accountSignIn"] = "/account/signin";
-    ViewData["accountProfileEdit"] = "/account/profileEdit";
-
     if (requestUrl.Contains("signiant"))
     {
         ViewData["accountSignIn"] = string.Concat(ViewData["accountSignIn"], "?subdomain=signiant");
@@ -61,6 +53,11 @@
     {
         ViewData["accountSignIn"] = string.Concat(ViewData["accountSignIn"], "?subdomain=aspera");
         ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=aspera");
+    }
+    else
+    {
+        ViewData["accountSignIn"] = "/account/signin";
+        ViewData["accountProfileEdit"] = "/account/profileEdit";
     }
 
     Layout = "_Layout";

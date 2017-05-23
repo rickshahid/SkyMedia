@@ -13,9 +13,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             JObject metadataFragment;
             string collectionId = Constant.Database.Collection.Metadata;
             string procedureId = Constant.Database.Procedure.MetadataFragment;
-            using (DatabaseClient databaseClient = new DatabaseClient(true))
+            using (CosmosClient cosmosClient = new CosmosClient(true))
             {
-                metadataFragment = databaseClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
+                metadataFragment = cosmosClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
             }
             return Json(metadataFragment);
         }

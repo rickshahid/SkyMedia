@@ -234,7 +234,7 @@ namespace AzureSkyMedia.PlatformServices
         public object GetEntityById(MediaEntity mediaEntity, string entityId)
         {
             object entity = null;
-            StringComparison comparisonType = StringComparison.InvariantCultureIgnoreCase;
+            StringComparison comparisonType = StringComparison.OrdinalIgnoreCase;
             switch (mediaEntity)
             {
                 case MediaEntity.MonitoringConfiguration:

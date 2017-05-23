@@ -6,8 +6,13 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public static class Stream
+    public static class Media
     {
+        private static int OrderLocators(ILocator leftSide, ILocator rightSide)
+        {
+            return DateTime.Compare(leftSide.Asset.Created, rightSide.Asset.Created);
+        }
+
         private static MediaTextTrack[] GetTextTracks(MediaClient mediaClient, IAsset asset, LocatorType locatorType)
         {
             List<MediaTextTrack> textTracks = new List<MediaTextTrack>();
@@ -29,9 +34,15 @@ namespace AzureSkyMedia.PlatformServices
             return textTracks.ToArray();
         }
 
-        private static int OrderLocators(ILocator leftSide, ILocator rightSide)
+        private static MediaStream GetMediaStream(MediaClient mediaClient, IAsset asset)
         {
-            return DateTime.Compare(leftSide.Asset.Created, rightSide.Asset.Created);
+            MediaStream mediaStream = new MediaStream();
+            mediaStream.Name = asset.Name;
+            mediaStream.SourceUrl = mediaClient.GetLocatorUrl(asset);
+            mediaStream.ProtectionTypes = new string[] { };
+            mediaStream.TextTracks = new MediaTextTrack[] { };
+            mediaStream.AnalyticsMetadata = new MediaMetadata[] { };
+            return mediaStream;
         }
 
         public static MediaStream[] GetMediaStreams(MediaClient mediaClient)
@@ -82,6 +93,36 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return mediaStreams.ToArray();
+        }
+
+        public static MediaStream[] GetLiveStreams(MediaClient mediaClient)
+        {
+            List<MediaStream> mediaStreams = new List<MediaStream>();
+            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+            foreach (IChannel channel in channels)
+            {
+                foreach (IProgram program in channel.Programs)
+                {
+                    MediaStream mediaStream = GetMediaStream(mediaClient, program.Asset);
+                    mediaStreams.Add(mediaStream);
+                }
+            }
+            return mediaStreams.ToArray();
+        }
+
+        public static bool IsStreamingEnabled(MediaClient mediaClient)
+        {
+            bool streamingEnabled = false;
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
+            {
+                if (streamingEndpoint.State == StreamingEndpointState.Running ||
+                    streamingEndpoint.State == StreamingEndpointState.Scaling)
+                {
+                    streamingEnabled = true;
+                }
+            }
+            return streamingEnabled;
         }
     }
 }

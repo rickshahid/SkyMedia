@@ -15,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
         private static string[] ParseConnection(string accountConnection)
         {
             List<string> parsedConnection = new List<string>();
-            StringComparison comparisonType = StringComparison.InvariantCultureIgnoreCase;
+            StringComparison comparisonType = StringComparison.OrdinalIgnoreCase;
             string[] accountSettings = accountConnection.Split(Constant.TextDelimiter.Connection);
             foreach (string accountSetting in accountSettings)
             {

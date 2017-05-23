@@ -63,9 +63,13 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult clear(bool allEntities)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string claimName = Constant.UserAttribute.VideoIndexerKey;
+            string indexerKey = AuthToken.GetClaimValue(authToken, claimName);
+
             MediaClient mediaClient = new MediaClient(authToken);
-            Account.ClearEntities(mediaClient, allEntities);
+            Account.ClearEntities(indexerKey, mediaClient, allEntities);
             string[][] entityCounts = Account.GetEntityCounts(mediaClient);
+
             return Json(entityCounts);
         }
     }

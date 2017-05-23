@@ -7,30 +7,24 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class EntityClient
+    internal class EntityClient
     {
         private CloudTableClient _storage;
 
         public EntityClient()
         {
             CloudStorageAccount storageAccount = Storage.GetSystemAccount();
-            BindContext(storageAccount);
+            _storage = storageAccount.CreateCloudTableClient();
         }
 
         public EntityClient(string authToken, string accountName)
         {
             CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
-            BindContext(storageAccount);
-        }
-
-        private void BindContext(CloudStorageAccount storageAccount)
-        {
             _storage = storageAccount.CreateCloudTableClient();
         }
 
         private void SetProperties(StorageEntity entity)
         {
-            entity.ETag = Constant.Storage.TableProperty.OpenConcurrency;
             if (!entity.CreatedOn.HasValue)
             {
                 entity.CreatedOn = DateTime.UtcNow;
@@ -45,152 +39,162 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public void PurgeEntities<T>(string tableName) where T : StorageEntity, new()
-        {
-            T[] entities = GetEntities<T>(tableName, null);
-            for (int i = entities.Length - 1; i >= 0; i--)
-            {
-                if (entities[i].CreatedOn < DateTime.UtcNow.AddDays(-7))
-                {
-                    DeleteEntity(tableName, entities[i]);
-                }
-            }
-        }
-
         public T[] GetEntities<T>(string tableName, string propertyName, string filterOperation, string propertyValue) where T : StorageEntity, new()
         {
-            string filter = string.Empty;
-            if (!string.IsNullOrEmpty(propertyValue))
-            {
-                filter = TableQuery.GenerateFilterCondition(propertyName, filterOperation, propertyValue);
-            }
+            T[] entities = new T[] { };
             CloudTable table = _storage.GetTableReference(tableName);
-            TableQuery<T> query = new TableQuery<T>().Where(filter);
-            return table.ExecuteQuery(query).ToArray();
-        }
-
-        public T[] GetEntities<T>(string tableName, string partitionKey) where T : StorageEntity, new()
-        {
-            string propertyName = Constant.Storage.TableProperty.PartitionKey;
-            return GetEntities<T>(tableName, propertyName, QueryComparisons.Equal, partitionKey);
+            if (table.Exists())
+            {
+                TableQuery<T> query = new TableQuery<T>();
+                if (!string.IsNullOrEmpty(propertyValue))
+                {
+                    string filter = TableQuery.GenerateFilterCondition(propertyName, filterOperation, propertyValue);
+                    query = query.Where(filter);
+                }
+                entities = table.ExecuteQuery(query).ToArray();
+            }
+            return entities;
         }
 
         public T GetEntity<T>(string tableName, string partitionKey, string rowKey) where T : StorageEntity
         {
+            T entity = null;
             CloudTable table = _storage.GetTableReference(tableName);
-            TableOperation operation = TableOperation.Retrieve<T>(partitionKey, rowKey);
-            TableResult result = table.Execute(operation);
-            return (T)result.Result;
+            if (table.Exists())
+            {
+                TableOperation operation = TableOperation.Retrieve<T>(partitionKey, rowKey);
+                entity = (T)table.Execute(operation).Result;
+            }
+            return entity;
         }
 
-        public TableResult InsertEntity(string tableName, StorageEntity entity)
+        public void InsertEntity(string tableName, StorageEntity entity)
         {
-            SetProperties(entity);
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
+            SetProperties(entity);
             TableOperation operation = TableOperation.Insert(entity);
-            return table.Execute(operation);
+            table.Execute(operation);
         }
 
-        public IList<TableResult> InsertEntities(string tableName, IList<StorageEntity> entities)
+        public void InsertEntities(string tableName, IList<StorageEntity> entities)
         {
-            SetProperties(entities);
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            TableBatchOperation operation = new TableBatchOperation();
+            SetProperties(entities);
+            TableBatchOperation operations = new TableBatchOperation();
             foreach (StorageEntity entity in entities)
             {
-                operation.Insert(entity);
+                operations.Insert(entity);
             }
-            return table.ExecuteBatch(operation);
+            table.ExecuteBatch(operations);
         }
 
-        public TableResult UpdateEntity(string tableName, StorageEntity entity)
+        public void UpdateEntity(string tableName, StorageEntity entity)
         {
-            SetProperties(entity);
             CloudTable table = _storage.GetTableReference(tableName);
+            table.CreateIfNotExists();
+            SetProperties(entity);
             TableOperation operation = TableOperation.Replace(entity);
-            return table.Execute(operation);
+            table.Execute(operation);
         }
 
-        public IList<TableResult> UpdateEntities(string tableName, IList<StorageEntity> entities)
+        public void UpdateEntities(string tableName, IList<StorageEntity> entities)
         {
-            SetProperties(entities);
-            CloudTable table = _storage.GetTableReference(tableName);
-            TableBatchOperation operation = new TableBatchOperation();
-            foreach (StorageEntity entity in entities)
-            {
-                operation.Replace(entity);
-            }
-            return table.ExecuteBatch(operation);
-        }
-
-        public TableResult UpsertEntity(string tableName, StorageEntity entity)
-        {
-            SetProperties(entity);
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
+            SetProperties(entities);
+            TableBatchOperation operations = new TableBatchOperation();
+            foreach (StorageEntity entity in entities)
+            {
+                operations.Replace(entity);
+            }
+            table.ExecuteBatch(operations);
+        }
+
+        public void UpsertEntity(string tableName, StorageEntity entity)
+        {
+            CloudTable table = _storage.GetTableReference(tableName);
+            table.CreateIfNotExists();
+            SetProperties(entity);
             TableOperation operation = TableOperation.InsertOrReplace(entity);
-            return table.Execute(operation);
+            table.Execute(operation);
         }
 
-        public IList<TableResult> UpsertEntities(string tableName, IList<StorageEntity> entities)
+        public void UpsertEntities(string tableName, IList<StorageEntity> entities)
         {
-            SetProperties(entities);
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            TableBatchOperation operation = new TableBatchOperation();
+            SetProperties(entities);
+            TableBatchOperation operations = new TableBatchOperation();
             foreach (StorageEntity entity in entities)
             {
-                operation.InsertOrReplace(entity);
+                operations.InsertOrReplace(entity);
             }
-            return table.ExecuteBatch(operation);
+            table.ExecuteBatch(operations);
         }
 
-        public TableResult MergeEntity(string tableName, StorageEntity entity)
+        public void MergeEntity(string tableName, StorageEntity entity)
         {
+            CloudTable table = _storage.GetTableReference(tableName);
+            table.CreateIfNotExists();
             SetProperties(entity);
-            CloudTable table = _storage.GetTableReference(tableName);
-            table.CreateIfNotExists();
             TableOperation operation = TableOperation.Merge(entity);
-            return table.Execute(operation);
+            table.Execute(operation);
         }
 
-        public IList<TableResult> MergeEntities(string tableName, IList<StorageEntity> entities)
+        public void MergeEntities(string tableName, IList<StorageEntity> entities)
         {
-            SetProperties(entities);
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            TableBatchOperation operation = new TableBatchOperation();
+            SetProperties(entities);
+            TableBatchOperation operations = new TableBatchOperation();
             foreach (StorageEntity entity in entities)
             {
-                operation.Merge(entity);
+                operations.Merge(entity);
             }
-            return table.ExecuteBatch(operation);
+            table.ExecuteBatch(operations);
         }
 
-        public TableResult DeleteEntity(string tableName, StorageEntity entity)
+        public void DeleteEntity(string tableName, StorageEntity entity)
         {
             CloudTable table = _storage.GetTableReference(tableName);
+            table.CreateIfNotExists();
             TableOperation operation = TableOperation.Delete(entity);
-            return table.Execute(operation);
+            table.Execute(operation);
         }
 
-        public IList<TableResult> DeleteEntities(string tableName, IList<StorageEntity> entities)
+        public void DeleteEntities(string tableName, IList<StorageEntity> entities)
         {
             CloudTable table = _storage.GetTableReference(tableName);
-            TableBatchOperation operation = new TableBatchOperation();
+            table.CreateIfNotExists();
+            TableBatchOperation operations = new TableBatchOperation();
             foreach (StorageEntity entity in entities)
             {
-                operation.Delete(entity);
+                operations.Delete(entity);
             }
-            return table.ExecuteBatch(operation);
+            table.ExecuteBatch(operations);
         }
 
         public void DeleteTable(string tableName)
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.DeleteIfExists();
+        }
+
+        public void PurgeEntities<T>(string tableName) where T : StorageEntity, new()
+        {
+            string propertyName = Constant.Storage.TableProperty.PartitionKey;
+            T[] entities = GetEntities<T>(tableName, propertyName, QueryComparisons.Equal, null);
+            for (int i = entities.Length - 1; i >= 0; i--)
+            {
+                TimeSpan expirationDays = new TimeSpan(Constant.Storage.TableProperty.EntityExpirationDays, 0, 0, 0);
+                DateTime expirationDate = DateTime.UtcNow.Subtract(expirationDays);
+                if (entities[i].CreatedOn < expirationDate)
+                {
+                    DeleteEntity(tableName, entities[i]);
+                }
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -51,7 +53,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     foreach (IAsset parentAsset in asset.ParentAssets)
                     {
-                        if (string.Equals(parentAsset.Id, rootAsset.Id, StringComparison.InvariantCultureIgnoreCase))
+                        if (string.Equals(parentAsset.Id, rootAsset.Id, StringComparison.OrdinalIgnoreCase))
                         {
                             MediaAsset mediaAsset = new MediaAsset(this, asset);
                             mediaAssets.Add(mediaAsset);
@@ -75,7 +77,7 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (string fileName in fileNames)
                 {
                     CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, null, fileName, false);
-                    System.IO.Stream sourceStream = sourceBlob.OpenRead();
+                    Stream sourceStream = sourceBlob.OpenRead();
 
                     IAssetFile assetFile = asset.AssetFiles.Create(fileName);
                     assetFile.Upload(sourceStream);
@@ -97,6 +99,18 @@ namespace AzureSkyMedia.PlatformServices
             }
 
             SetPrimaryFile(asset);
+
+            string claimName = Constant.UserAttribute.VideoIndexerKey;
+            string indexerKey = AuthToken.GetClaimValue(authToken, claimName);
+            if (!string.IsNullOrEmpty(indexerKey) && asset.AssetFiles.Count() == 1)
+            {
+                string locatorUrl = GetLocatorUrl(LocatorType.Sas, asset, null, true);
+
+                IndexerClient indexerClient = new IndexerClient(indexerKey);
+                asset.AlternateId = indexerClient.UploadVideo(asset.Name, MediaPrivacy.Private, locatorUrl);
+                asset.Update();
+            }
+
             return asset;
         }
     }

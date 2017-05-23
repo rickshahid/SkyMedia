@@ -1,7 +1,9 @@
 using System;
-using System.IO;
-using System.Net;
 using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,87 +12,106 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal class WebClient
     {
+        private string _authKey;
         private string _authToken;
-        private string _apiVersion;
-        private NetworkCredential _credentials;
+        private NetworkCredential _authCredentials;
 
-        public WebClient(string apiVersion)
+        public WebClient(string authKey)
         {
-            _apiVersion = apiVersion;
+            _authKey = authKey;
         }
 
-        public WebClient(string authToken, string apiVersion) : this(apiVersion)
+        public WebClient(JwtSecurityToken authToken)
         {
-            _authToken = authToken;
+            _authToken = authToken.EncodedPayload;
         }
 
-        public WebClient(string userName, string userPassword, string apiVersion) : this(apiVersion)
+        public WebClient(string accountId, string accountKey)
         {
-            _credentials = new NetworkCredential(userName, userPassword);
+            _authCredentials = new NetworkCredential(accountId, accountKey);
         }
 
-        public HttpWebRequest GetRequest(string apiEndpoint, string requestType, string requestBody)
+        private T GetResponseData<T>(HttpResponseMessage response)
         {
-            HttpWebRequest request = WebRequest.CreateHttp(apiEndpoint);
-            request.Method = requestType.ToUpper();
-            request.Accept = Constant.ContentType.Json;
-            request.ContentType = Constant.ContentType.Json;
-            if (!string.IsNullOrEmpty(_apiVersion))
+            T responseData;
+            Task<string> responseContent = response.Content.ReadAsStringAsync();
+            string responseText = responseContent.Result;
+            if (typeof(T) == typeof(string))
             {
-                request.Headers.Add(Constant.HttpHeader.ApiVersion, _apiVersion);
+                responseText = responseText.Replace("\"", "");
+                responseData = (T)Convert.ChangeType(responseText, typeof(T));
             }
-            if (!string.IsNullOrEmpty(_authToken))
+            else if (typeof(T) == typeof(JObject))
             {
-                string authHeader = string.Concat(Constant.HttpHeader.AuthPrefix, _authToken);
-                request.Headers.Add(Constant.HttpHeader.AuthHeader, authHeader);
+                responseData = (T)Convert.ChangeType(JObject.Parse(responseText), typeof(T));
             }
-            if (_credentials != null)
+            else if (typeof(T) == typeof(JArray))
             {
-                request.Credentials = _credentials;
+                responseData = (T)Convert.ChangeType(JArray.Parse(responseText), typeof(T));
             }
-            if (!string.IsNullOrEmpty(requestBody))
+            else
             {
-                using (System.IO.Stream requestStream = request.GetRequestStream())
-                {
-                    byte[] requestBytes = Encoding.UTF8.GetBytes(requestBody);
-                    requestStream.Write(requestBytes, 0, requestBytes.Length);
-                }
+                responseData = JsonConvert.DeserializeObject<T>(responseText);
+            }
+            return responseData;
+        }
+
+        public HttpRequestMessage GetRequest(HttpMethod requestMethod, string requestUri, object requestData)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(requestMethod, requestUri);
+            if (requestData != null)
+            {
+                string requestJson = JsonConvert.SerializeObject(requestData);
+                byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
+                request.Content = new ByteArrayContent(requestBytes);
             }
             return request;
         }
 
-        public HttpWebRequest GetRequest<T>(string apiEndpoint, string requestType, T requestBody)
+        public HttpRequestMessage GetRequest(HttpMethod requestMethod, string requestUri)
         {
-            string requestJson = JsonConvert.SerializeObject(requestBody);
-            return GetRequest(apiEndpoint, requestType, requestJson);
+            return GetRequest(requestMethod, requestUri, null);
         }
 
-        public T GetResponse<T>(HttpWebRequest request, out HttpStatusCode statusCode)
+        public T GetResponse<T>(HttpRequestMessage request, out HttpStatusCode statusCode)
         {
-            string responseBody;
-            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            HttpClient client;
+            T responseData = default(T);
+            if (_authCredentials != null)
             {
-                statusCode = response.StatusCode;
-                System.IO.Stream responseStream = response.GetResponseStream();
-                StreamReader responseReader = new StreamReader(responseStream);
-                responseBody = responseReader.ReadToEnd();
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.Credentials = _authCredentials;
+                client = new HttpClient(clientHandler);
             }
-            if (typeof(T) == typeof(string))
+            else
             {
-                return (T)Convert.ChangeType(responseBody, typeof(T));
+                client = new HttpClient();
             }
-            else if (typeof(T) == typeof(JObject))
+            if (!string.IsNullOrEmpty(_authKey))
             {
-                return (T)Convert.ChangeType(JObject.Parse(responseBody), typeof(T));
+                client.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiKey, _authKey);
             }
-            else if (typeof(T) == typeof(JArray))
+            if (!string.IsNullOrEmpty(_authToken))
             {
-                return (T)Convert.ChangeType(JArray.Parse(responseBody), typeof(T));
+                string authHeader = string.Concat(Constant.HttpHeader.AuthPrefix, _authToken);
+                client.DefaultRequestHeaders.Add(Constant.HttpHeader.AuthHeader, authHeader);
             }
-            return JsonConvert.DeserializeObject<T>(responseBody);
+            using (client)
+            {
+                Task<HttpResponseMessage> task = client.SendAsync(request);
+                using (HttpResponseMessage response = task.Result)
+                {
+                    statusCode = response.StatusCode;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseData = GetResponseData<T>(response);
+                    }
+                }
+            }
+            return responseData;
         }
 
-        public T GetResponse<T>(HttpWebRequest request)
+        public T GetResponse<T>(HttpRequestMessage request)
         {
             HttpStatusCode statusCode;
             return GetResponse<T>(request, out statusCode);

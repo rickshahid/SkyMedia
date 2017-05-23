@@ -131,7 +131,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     foreach (IAssetFile assetFile in _asset.AssetFiles)
                     {
-                        if (assetFile.Name.EndsWith(Constant.Media.FileExtension.WebVtt, StringComparison.InvariantCultureIgnoreCase))
+                        if (assetFile.Name.EndsWith(Constant.Media.FileExtension.WebVtt, StringComparison.OrdinalIgnoreCase))
                         {
                             webVtt = assetFile.Name;
                         }
@@ -152,7 +152,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (_file != null)
                 {
-                    string cssClass = _file.IsPrimary ? "mediaFilePrimary" : "mediaFile";
+                    string cssClass = _file.IsPrimary ? "mediaFile primary" : "mediaFile";
                     return new { @class = cssClass, isStreamable = false };
                 }
                 else

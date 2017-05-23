@@ -52,6 +52,28 @@
         MotionStabilization
     }
 
+    public enum MediaEncoding
+    {
+        None,
+        Standard,
+        Premium
+    }
+
+    public enum MediaPrivacy
+    {
+        Private,
+        Organization,
+        Public
+    }
+
+    public enum MediaInsight
+    {
+        People,
+        Sentiments,
+        Keywords,
+        Search
+    }
+
     public enum TransferService
     {
         SigniantFlight,

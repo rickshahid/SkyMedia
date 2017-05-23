@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -72,7 +73,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 for (int i = 0; i < accountNames.Length; i++)
                 {
-                    if (string.Equals(accountNames[i], accountName, StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(accountNames[i], accountName, StringComparison.OrdinalIgnoreCase))
                     {
                         accountIndex = i;
                     }
@@ -181,6 +182,24 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return storageAccounts;
+        }
+
+        public static void UploadBlock(string authToken, string storageAccount, string storageContainer,
+                                       Stream inputStream, string fileName, int chunkIndex, int chunksCount)
+        {
+            BlobClient blobClient = new BlobClient(authToken, storageAccount);
+            string containerName = Path.GetFileName(storageContainer);
+            if (chunksCount == 0)
+            {
+                blobClient.UploadFile(inputStream, containerName, null, fileName);
+            }
+            else
+            {
+                bool lastBlock = (chunkIndex == chunksCount - 1);
+                string attributeName = Constant.UserAttribute.UserId;
+                string userId = AuthToken.GetClaimValue(authToken, attributeName);
+                blobClient.UploadBlock(userId, inputStream, containerName, null, fileName, chunkIndex, lastBlock);
+            }
         }
     }
 }

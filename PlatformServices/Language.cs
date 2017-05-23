@@ -52,7 +52,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (JProperty property in properties)
             {
                 string propertyCode = property.Name.Substring(0, 2);
-                if (string.Equals(propertyCode, languageCode, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(propertyCode, languageCode, StringComparison.OrdinalIgnoreCase))
                 {
                     languageLabel = property.Value.ToString();
                 }

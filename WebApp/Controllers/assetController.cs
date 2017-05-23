@@ -35,11 +35,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             object result;
             if (clipMode == Constant.Media.RenderedClipMode)
             {
-                result = Editor.SubmitJob(authToken, mediaClient, sourceUrl, markIn, markOut);
+                result = Clipper.SubmitJob(authToken, mediaClient, sourceUrl, markIn, markOut);
             }
             else
             {
-                result = Editor.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
+                result = Clipper.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
             }
             return Json(result);
         }

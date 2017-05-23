@@ -10,17 +10,17 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class DatabaseClient : IDisposable
+    public class CosmosClient : IDisposable
     {
+        private DocumentClient _cosmos;
         private string _databaseId;
-        private DocumentClient _database;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && _database != null)
+            if (disposing && _cosmos != null)
             {
-                _database.Dispose();
-                _database = null;
+                _cosmos.Dispose();
+                _cosmos = null;
             }
         }
 
@@ -30,14 +30,14 @@ namespace AzureSkyMedia.PlatformServices
             GC.SuppressFinalize(this);
         }
 
-        public DatabaseClient(bool readWrite)
+        public CosmosClient(bool readWrite)
         {
             string settingKey = readWrite ? Constant.AppSettingKey.AzureCosmosReadWrite : Constant.AppSettingKey.AzureCosmosReadOnly;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];
             _databaseId = accountCredentials[2];
-            _database = new DocumentClient(new Uri(accountEndpoint), accountKey);
+            _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey);
         }
 
         private JObject GetResult(string responseData, bool systemProperties)
@@ -66,7 +66,7 @@ namespace AzureSkyMedia.PlatformServices
         public JObject[] GetDocuments(string collectionId)
         {
             List<JObject> documents = new List<JObject>();
-            IQueryable<Document> query = _database.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId);
+            IQueryable<Document> query = _cosmos.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId);
             IEnumerable<Document> docs = query.AsEnumerable<Document>();
             foreach (Document doc in docs)
             {
@@ -82,7 +82,7 @@ namespace AzureSkyMedia.PlatformServices
             string[] documentInfo = documentId.Split(Constant.TextDelimiter.Identifier);
             string collectionId = documentInfo[0];
             documentId = documentInfo[1];
-            IQueryable<Document> query = _database.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId)
+            IQueryable<Document> query = _cosmos.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId)
                 .Where(d => d.Id == documentId);
             IEnumerable<Document> documents = query.AsEnumerable<Document>();
             Document document = documents.FirstOrDefault();
@@ -101,7 +101,7 @@ namespace AzureSkyMedia.PlatformServices
                 jsonDoc[docAttribute.Key] = docAttribute.Value;
             }
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            Task<ResourceResponse<Document>> createTask = _database.CreateDocumentAsync(collectionUri, jsonDoc);
+            Task<ResourceResponse<Document>> createTask = _cosmos.CreateDocumentAsync(collectionUri, jsonDoc);
             createTask.Wait();
             ResourceResponse<Document> responseDocument = createTask.Result;
             return responseDocument.Resource.Id;
@@ -114,7 +114,7 @@ namespace AzureSkyMedia.PlatformServices
             if (jsonDoc != null)
             {
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri);
+                Task<ResourceResponse<Document>> deleteTask = _cosmos.DeleteDocumentAsync(documentUri);
                 deleteTask.Wait();
             }
         }
@@ -124,7 +124,7 @@ namespace AzureSkyMedia.PlatformServices
             JObject result = null;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
-            Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
+            Task<StoredProcedureResponse<JValue>> procedureTask = _cosmos.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
             procedureTask.Wait();
             JValue procesureResponse = procedureTask.Result.Response;
             if (procesureResponse != null)

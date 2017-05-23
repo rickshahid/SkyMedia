@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+
+using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 
@@ -21,17 +23,28 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JobPublication Publish(string jobMessage, bool poisonQueue)
         {
             JobPublication jobPublication = null;
-            if (string.IsNullOrEmpty(jobMessage))
+            try
             {
-                jobPublication = MediaClient.PublishJob(poisonQueue);
-            }
-            else
-            {
-                MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(jobMessage);
-                if (jobNotification != null)
+                if (string.IsNullOrEmpty(jobMessage))
                 {
-                    jobPublication = MediaClient.PublishJob(jobNotification, false);
+                    jobPublication = MediaClient.PublishJob(poisonQueue);
                 }
+                else
+                {
+                    MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(jobMessage);
+                    if (jobNotification != null)
+                    {
+                        jobPublication = MediaClient.PublishJob(jobNotification, false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (jobPublication == null)
+                {
+                    jobPublication = new JobPublication();
+                }
+                jobPublication.StatusMessage = ex.ToString();
             }
             return jobPublication;
         }

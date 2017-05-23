@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -9,7 +10,7 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class BlobClient
+    internal class BlobClient
     {
         private CloudBlobClient _storage;
         private EntityClient _tracker;
@@ -17,7 +18,7 @@ namespace AzureSkyMedia.PlatformServices
         public BlobClient(string authToken, string accountName)
         {
             CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
-            BindContext(storageAccount);
+            _storage = storageAccount.CreateCloudBlobClient();
             _tracker = new EntityClient(authToken, accountName);
         }
 
@@ -27,11 +28,6 @@ namespace AzureSkyMedia.PlatformServices
             string accountKey = accountCredentials[1];
             StorageCredentials storageCredentials = new StorageCredentials(accountName, accountKey);
             CloudStorageAccount storageAccount = new CloudStorageAccount(storageCredentials, true);
-            BindContext(storageAccount);
-        }
-
-        private void BindContext(CloudStorageAccount storageAccount)
-        {
             _storage = storageAccount.CreateCloudBlobClient();
         }
 
@@ -147,13 +143,13 @@ namespace AzureSkyMedia.PlatformServices
             return operationId;
         }
 
-        public void UploadFile(System.IO.Stream inputStream, string containerName, string directoryPath, string fileName)
+        public void UploadFile(Stream inputStream, string containerName, string directoryPath, string fileName)
         {
             CloudBlockBlob blob = GetBlob(containerName, directoryPath, fileName);
             blob.UploadFromStream(inputStream);
         }
 
-        public void UploadBlock(string userId, System.IO.Stream inputStream, string containerName, string directoryPath,
+        public void UploadBlock(string userId, Stream inputStream, string containerName, string directoryPath,
                                 string fileName, int blockIndex, bool lastBlock)
         {
             string blockId = Convert.ToBase64String(BitConverter.GetBytes(blockIndex));

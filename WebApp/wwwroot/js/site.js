@@ -12,7 +12,7 @@ function SetLayout() {
     CreateTipRight("mediaStreaming", "Azure Media Services<br /><br />Streaming");
     CreateTipRight("mediaEncoding", "Azure Media Services<br /><br />Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br /><br />Content Protection");
-    CreateTipRight("mediaAnalytics", "Azure Media Services<br /><br />Media Analytics");
+    CreateTipRight("videoIndexer", "Azure Media Services<br /><br />Video Indexer");
     CreateTipRight("appServiceBot", "Azure Bot Service");
     CreateTipLeft("appService", "Azure App Service");
     CreateTipLeft("appServiceWeb", "Azure App Service<br /><br />Web Apps");
@@ -23,9 +23,9 @@ function SetLayout() {
     CreateTipLeft("appServiceInsights", "Azure Application Insights");
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
-    CreateTipTop("mediaStreamLeft", "Azure Media Services<br /><br />Stream Tuner Left");
-    CreateTipTop("mediaStreamRight", "Azure Media Services<br /><br />Stream Tuner Right");
-    CreateTipTop("mediaLive", "Azure Media Services<br /><br />Live Stream");
+    CreateTipTop("mediaStreamLeft", "Azure Media Stream<br /><br />Tuner Left");
+    CreateTipTop("mediaStreamRight", "Azure Media Stream<br /><br />Tuner Right");
+    CreateTipTop("mediaLive", "Azure Media Services<br /><br />Live Streams");
     CreateTipTop("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
@@ -166,29 +166,28 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
         }
     }
 }
-function SetAnalyticsHeight() {
-    var mediaPlayer = GetMediaPlayer(false);
-    var playerHeight = mediaPlayer.el().clientHeight;
-    $("#mediaTranscript").height(playerHeight);
-    $("#mediaMetadata").height(playerHeight);
-}
-function ToggleAnalyticsPanel() {
+function ToggleAIPanel() {
     ClearVideoOverlay();
-    var analyticsPanelImage = document.getElementById("analyticsPanelImage");
-    if ($("#analyticsPanel").is(":visible")) {
-        analyticsPanelImage.src = analyticsPanelImage.src.replace("Out", "In");
-        $("#analyticsPanel").hide();
+    var aiPanelImage = document.getElementById("aiPanelImage");
+    if ($("#aiPanel").is(":visible")) {
+        aiPanelImage.src = aiPanelImage.src.replace("Close", "Open");
+        $("#aiPanel").hide();
     } else {
-        analyticsPanelImage.src = analyticsPanelImage.src.replace("In", "Out");
-        $("#analyticsPanel").show();
-        SetAnalyticsHeight();
+        var mediaPlayer = GetMediaPlayer(false);
+        var playerHeight = mediaPlayer.el().clientHeight;
+        $("#mediaTranscript").height(playerHeight);
+        $("#mediaMetadata").height(playerHeight);
+        aiPanelImage.src = aiPanelImage.src.replace("Open", "Close");
+        $("#aiPanel").show();
     }
 }
 function ToggleLiveStream(button) {
     var buttonImage = button.children[0];
     if (buttonImage.src.indexOf("MediaLiveOn") > -1) {
         buttonImage.src = buttonImage.src.replace("On", "Off");
+        window.location.href = "/?live=off";
     } else {
         buttonImage.src = buttonImage.src.replace("Off", "On");
+        window.location.href = "/?live=on";
     }
 }

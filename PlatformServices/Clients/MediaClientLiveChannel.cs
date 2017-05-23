@@ -8,86 +8,101 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        private void CreateProgram(IChannel channel)
+        private void CreateProgram(IChannel channel, IAsset asset)
         {
-            string assetName = channel.Name;
-            AssetCreationOptions assetEncryption = AssetCreationOptions.None;
-            IAsset asset = _media.Assets.Create(assetName, assetEncryption);
+            ProgramCreationOptions programOptions = new ProgramCreationOptions();
+            programOptions.Name = asset.Name;
+            programOptions.AssetId = asset.Id;
 
-            ProgramCreationOptions creationOptions = new ProgramCreationOptions();
-            creationOptions.Name = channel.Name;
-            creationOptions.AssetId = asset.Id;
-
-            int archiveMinutesInt;
+            int archiveMinutes;
             string settingKey = Constant.AppSettingKey.MediaChannelProgramArchiveMinutes;
-            string archiveMinutes = AppSetting.GetValue(settingKey);
-            if (int.TryParse(archiveMinutes, out archiveMinutesInt))
+            string settingValue = AppSetting.GetValue(settingKey);
+            if (int.TryParse(settingValue, out archiveMinutes))
             {
-                creationOptions.ArchiveWindowLength = new TimeSpan(0, archiveMinutesInt, 0);
+                programOptions.ArchiveWindowLength = new TimeSpan(0, archiveMinutes, 0);
             }
-            channel.Programs.Create(creationOptions);
+
+            channel.Programs.Create(programOptions);
         }
 
-        private IChannel CreateChannel(string channelName, ChannelEncodingType channelType, StreamingProtocol ingestProtocol)
+        private void CreatePrograms(IChannel channel)
+        {
+            string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramClearSuffix);
+            IAsset assetClear = _media.Assets.Create(assetName, AssetCreationOptions.None);
+
+            ContentProtection contentProtectionAes = new ContentProtection();
+            contentProtectionAes.ContentAuthTypeToken = true;
+            contentProtectionAes.Aes = true;
+
+            assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramAesSuffix);
+            IAsset assetAes = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+            AddDeliveryPolicies(assetAes, contentProtectionAes);
+
+            ContentProtection contentProtectionDrm = new ContentProtection();
+            contentProtectionDrm.ContentAuthTypeToken = true;
+            contentProtectionDrm.DrmPlayReady = true;
+            contentProtectionDrm.DrmWidevine = true;
+
+            assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramDrmSuffix);
+            IAsset assetDrm = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+            AddDeliveryPolicies(assetDrm, contentProtectionDrm);
+
+            CreateProgram(channel, assetClear);
+            CreateProgram(channel, assetAes);
+            CreateProgram(channel, assetDrm);
+        }
+
+        private IChannel CreateChannel(string channelName, ChannelEncodingType channelType, StreamingProtocol ingestProtocol, string allowedAddresses)
         {
             ChannelCreationOptions creationOptions = new ChannelCreationOptions();
-            creationOptions.Name = channelName;
             creationOptions.EncodingType = channelType;
+            if (channelType == ChannelEncodingType.None)
+            {
+                creationOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelStreamingSuffix);
+            }
+            else
+            {
+                creationOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelEncodingSuffix);
+                creationOptions.Encoding = new ChannelEncoding();
+                creationOptions.Encoding.SystemPreset = Constant.Media.Live.ChannelEncodingPreset;
+            }
 
-            IPRange allAddresses = new IPRange();
-            allAddresses.Address = new IPAddress(0);
-            allAddresses.Name = Constant.Media.Stream.AddressRangeAll;
-            allAddresses.SubnetPrefixLength = 0;
+            IPRange allowedAddressRange = new IPRange();
+            if (string.IsNullOrEmpty(allowedAddresses))
+            {
+                allowedAddressRange.Name = Constant.Media.Live.AllowAllAddresses;
+                allowedAddressRange.Address = new IPAddress(0);
+                allowedAddressRange.SubnetPrefixLength = 0;
+            }
+            else
+            {
+                allowedAddressRange.Name = Constant.Media.Live.AllowAddresses;
+                allowedAddressRange.Address = IPAddress.Parse(allowedAddresses);
+            }
 
             creationOptions.Input = new ChannelInput();
             creationOptions.Input.AccessControl = new ChannelAccessControl();
             creationOptions.Input.AccessControl.IPAllowList = new List<IPRange>();
-            creationOptions.Input.AccessControl.IPAllowList.Add(allAddresses);
+            creationOptions.Input.AccessControl.IPAllowList.Add(allowedAddressRange);
             creationOptions.Input.StreamingProtocol = ingestProtocol;
 
             creationOptions.Preview = new ChannelPreview();
             creationOptions.Preview.AccessControl = new ChannelAccessControl();
             creationOptions.Preview.AccessControl.IPAllowList = new List<IPRange>();
-            creationOptions.Preview.AccessControl.IPAllowList.Add(allAddresses);
+            creationOptions.Preview.AccessControl.IPAllowList.Add(allowedAddressRange);
 
-            IChannel channel = _media.Channels.Create(creationOptions);
-            CreateProgram(channel);
-            return channel;
+            return _media.Channels.Create(creationOptions);
         }
 
-        public void CreateChannel(string channelName)
+        public void CreateChannel(string channelName, MediaEncoding encodingType, string allowedAddresses)
         {
-            ChannelEncodingType channelType = ChannelEncodingType.None;
+            ChannelEncodingType channelType = (ChannelEncodingType)Enum.Parse(typeof(ChannelEncodingType), encodingType.ToString());
             StreamingProtocol ingestProtocol = StreamingProtocol.RTMP;
-            IChannel channel = CreateChannel(channelName, channelType, ingestProtocol);
+            IChannel channel = CreateChannel(channelName, channelType, ingestProtocol, allowedAddresses);
+            CreatePrograms(channel);
             foreach (IProgram program in channel.Programs)
             {
                 CreateLocator(LocatorType.OnDemandOrigin, program.Asset);
-            }
-        }
-
-        public void SignalChannel(string channelName, int cueId)
-        {
-            string settingKey = Constant.AppSettingKey.MediaChannelAdvertisementSeconds;
-            string timeSeconds = AppSetting.GetValue(settingKey);
-            TimeSpan timeSpan = new TimeSpan(0, 0, int.Parse(timeSeconds));
-
-            IChannel[] channels;
-            if (string.IsNullOrEmpty(channelName))
-            {
-                IChannel channel = GetEntityByName(MediaEntity.Channel, channelName, false) as IChannel;
-                channels = new IChannel[] { channel };
-            }
-            else
-            {
-                channels = GetEntities(MediaEntity.Channel) as IChannel[];
-            }
-            foreach (IChannel channel in channels)
-            {
-                if (channel.EncodingType != ChannelEncodingType.None)
-                {
-                    channel.StartAdvertisement(timeSpan, cueId, true);
-                }
             }
         }
     }

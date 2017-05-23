@@ -79,25 +79,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaStreams.ToArray();
         }
 
-        private void SetLiveView(string channelName, string queryString)
-        {
-            bool livePreview = false;
-            string settingKey = Constant.AppSettingKey.AzureMedia;
-            string[] accountCredentials = AppSetting.GetValue(settingKey, true);
-            if (accountCredentials.Length > 0 && !string.IsNullOrEmpty(channelName))
-            {
-                string accountName = accountCredentials[0];
-                DateTime? eventStart = Live.GetEventStart(accountName, channelName);
-                if (eventStart.HasValue)
-                {
-                    livePreview = this.Request.Host.Value.Contains("preview") || queryString.Contains("preview");
-                    ViewData["liveEventStart"] = eventStart.Value.ToString();
-                    ViewData["liveSourceUrl"] = Live.GetSourceUrl(channelName, livePreview);
-                }
-            }
-            ViewData["livePreview"] = livePreview;
-        }
-
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = null;
@@ -216,17 +197,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     return RedirectToAction("signin", "account");
                 }
-                else if (this.Request.Host.Value.Contains("live.") || queryString.Contains("live"))
-                {
-                    string channelName = this.Request.Query["channel"];
-                    SetLiveView(channelName, queryString);
-                    if (ViewData["liveSourceUrl"] == null)
-                    {
-                        string settingKey = Constant.AppSettingKey.MediaStream3SourceUrl;
-                        ViewData["liveSourceUrl"] = AppSetting.GetValue(settingKey);
-                    }
-                    return View("live");
-                }
 
                 MediaClient mediaClient = null;
                 if (!string.IsNullOrEmpty(authToken))
@@ -245,13 +215,17 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     mediaStreams = GetMediaStreams();
                 }
-                else if (!Account.IsStreamingEnabled(mediaClient))
+                else if (!Media.IsStreamingEnabled(mediaClient))
                 {
                     accountMessage = Constant.Message.StreamingEndpointNotRunning;
                 }
+                else if (this.Request.Host.Value.Contains("live.") || queryString.Contains("live=on"))
+                {
+                    mediaStreams = Media.GetLiveStreams(mediaClient);
+                }
                 else
                 {
-                    mediaStreams = Stream.GetMediaStreams(mediaClient);
+                    mediaStreams = Media.GetMediaStreams(mediaClient);
                 }
             }
             catch (Exception ex)

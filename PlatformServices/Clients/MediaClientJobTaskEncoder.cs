@@ -9,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static bool IsPremiumWorkflow(string fileName)
         {
-            return fileName.EndsWith(Constant.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.InvariantCulture);
+            return fileName.EndsWith(Constant.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.OrdinalIgnoreCase);
         }
 
         private static int OrderByWorkflow(MediaAssetInput leftSide, MediaAssetInput rightSide)
@@ -37,13 +37,13 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                if (string.Equals(jobTask.ProcessorConfig, Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset, StringComparison.InvariantCultureIgnoreCase))
+                if (string.Equals(jobTask.ProcessorConfig, Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset, StringComparison.OrdinalIgnoreCase))
                 {
                     string settingKey = Constant.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
                     string documentId = AppSetting.GetValue(settingKey);
-                    using (DatabaseClient databaseClient = new DatabaseClient(false))
+                    using (CosmosClient cosmosClient = new CosmosClient(false))
                     {
-                        JObject processorConfig = databaseClient.GetDocument(documentId);
+                        JObject processorConfig = cosmosClient.GetDocument(documentId);
                         jobTask.ProcessorConfig = processorConfig.ToString();
                     }
                 }
@@ -57,11 +57,11 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 if (inputSubclipped && !jobTask.ProcessorConfig.StartsWith("{"))
                 {
-                    using (DatabaseClient databaseClient = new DatabaseClient(true))
+                    using (CosmosClient cosmosClient = new CosmosClient(true))
                     {
                         string collectionId = Constant.Database.Collection.Encoding;
                         string procedureId = Constant.Database.Procedure.EncoderConfig;
-                        JObject encoderConfig = databaseClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
+                        JObject encoderConfig = cosmosClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
                         jobTask.ProcessorConfig = encoderConfig.ToString();
                     }
                 }

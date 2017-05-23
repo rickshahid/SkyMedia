@@ -17,7 +17,7 @@ namespace AzureSkyMedia.PlatformServices
                 JwtSecurityToken token = new JwtSecurityToken(authToken);
                 foreach (Claim claim in token.Claims)
                 {
-                    if (string.Equals(claim.Type, claimName, StringComparison.InvariantCultureIgnoreCase))
+                    if (string.Equals(claim.Type, claimName, StringComparison.OrdinalIgnoreCase))
                     {
                         tokenClaim = claim;
                     }

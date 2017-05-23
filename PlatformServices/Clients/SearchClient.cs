@@ -5,7 +5,7 @@ using Microsoft.Azure.Search;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class SearchClient : IDisposable
+    internal class SearchClient : IDisposable
     {
         private SearchServiceClient _search;
 

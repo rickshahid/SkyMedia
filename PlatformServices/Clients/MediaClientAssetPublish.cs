@@ -14,41 +14,12 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        private static void PurgeEntities()
-        {
-            EntityClient entityClient = new EntityClient();
-            string tableName = Constant.Storage.TableName.ContentProtection;
-            entityClient.PurgeEntities<ContentProtection>(tableName);
-            tableName = Constant.Storage.TableName.JobPublish;
-            entityClient.PurgeEntities<JobPublish>(tableName);
-        }
-
-        private static void PurgeMetadata()
-        {
-            DatabaseClient databaseClient = new DatabaseClient(true);
-            string collectionId = Constant.Database.Collection.Metadata;
-            JObject[] documents = databaseClient.GetDocuments(collectionId);
-            foreach (JObject document in documents)
-            {
-                string accountName = document["AccountName"].ToString();
-                string accountKey = document["AccountKey"].ToString();
-                string assetId = document["AssetId"].ToString();
-                MediaClient mediaClient = new MediaClient(accountName, accountKey);
-                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                if (asset == null)
-                {
-                    string documentId = document["id"].ToString();
-                    databaseClient.DeleteDocument(collectionId, documentId);
-                }
-            }
-        }
-
         private static string[] GetFileNames(IAsset asset, string fileExtension)
         {
             List<string> fileNames = new List<string>();
             foreach (IAssetFile assetFile in asset.AssetFiles)
             {
-                if (assetFile.Name.EndsWith(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                if (assetFile.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     fileNames.Add(assetFile.Name);
                 }
@@ -61,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
             List<ITask> jobTasks = new List<ITask>();
             foreach (ITask jobTask in job.Tasks)
             {
-                if (processorIds.Contains(jobTask.MediaProcessorId))
+                if (processorIds.Contains(jobTask.MediaProcessorId, StringComparer.OrdinalIgnoreCase))
                 {
                     jobTasks.Add(jobTask);
                 }
@@ -103,7 +74,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishMetadata(ITask jobTask, BlobClient blobClient, DatabaseClient databaseClient, IDictionary<string, string> dataAttributes)
+        private static void PublishMetadata(ITask jobTask, BlobClient blobClient, CosmosClient cosmosClient, IDictionary<string, string> dataAttributes)
         {
             foreach (IAsset outputAsset in jobTask.OutputAssets)
             {
@@ -115,7 +86,7 @@ namespace AzureSkyMedia.PlatformServices
                         string fileData = string.Empty;
                         string sourceContainerName = outputAsset.Uri.Segments[1];
                         CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, fileName, false);
-                        using (System.IO.Stream sourceStream = sourceBlob.OpenRead())
+                        using (Stream sourceStream = sourceBlob.OpenRead())
                         {
                             StreamReader streamReader = new StreamReader(sourceStream);
                             fileData = streamReader.ReadToEnd();
@@ -125,7 +96,7 @@ namespace AzureSkyMedia.PlatformServices
                             MediaProcessor processorType = Processor.GetProcessorType(jobTask.MediaProcessorId);
                             string processorName = Processor.GetProcessorName(processorType);
                             string collectionId = Constant.Database.Collection.Metadata;
-                            string documentId = databaseClient.CreateDocument(collectionId, fileData, dataAttributes);
+                            string documentId = cosmosClient.CreateDocument(collectionId, fileData, dataAttributes);
                             outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
                             outputAsset.Update();
                         }
@@ -159,7 +130,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string[] accountCredentials = new string[] { jobPublish.StorageAccountName, jobPublish.StorageAccountKey };
                 BlobClient blobClient = new BlobClient(accountCredentials);
-                using (DatabaseClient databaseClient = new DatabaseClient(true))
+                using (CosmosClient cosmosClient = new CosmosClient(true))
                 {
                     foreach (ITask jobTask in jobTasks)
                     {
@@ -167,7 +138,7 @@ namespace AzureSkyMedia.PlatformServices
                         dataAttributes.Add("AccountName", jobPublish.PartitionKey);
                         dataAttributes.Add("AccountKey", jobPublish.MediaAccountKey);
                         dataAttributes.Add("AssetId", assetId);
-                        PublishMetadata(jobTask, blobClient, databaseClient, dataAttributes);
+                        PublishMetadata(jobTask, blobClient, cosmosClient, dataAttributes);
                     }
                 }
             }
@@ -299,8 +270,28 @@ namespace AzureSkyMedia.PlatformServices
 
         public static void PurgePublish()
         {
-            PurgeEntities();
-            PurgeMetadata();
+            EntityClient entityClient = new EntityClient();
+            string tableName = Constant.Storage.TableName.ContentProtection;
+            entityClient.PurgeEntities<ContentProtection>(tableName);
+            tableName = Constant.Storage.TableName.JobPublish;
+            entityClient.PurgeEntities<JobPublish>(tableName);
+
+            CosmosClient cosmosClient = new CosmosClient(true);
+            string collectionId = Constant.Database.Collection.Metadata;
+            JObject[] documents = cosmosClient.GetDocuments(collectionId);
+            foreach (JObject document in documents)
+            {
+                string accountName = document["AccountName"].ToString();
+                string accountKey = document["AccountKey"].ToString();
+                string assetId = document["AssetId"].ToString();
+                MediaClient mediaClient = new MediaClient(accountName, accountKey);
+                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+                if (asset == null)
+                {
+                    string documentId = document["id"].ToString();
+                    cosmosClient.DeleteDocument(collectionId, documentId);
+                }
+            }
         }
     }
 }

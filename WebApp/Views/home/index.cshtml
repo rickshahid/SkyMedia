@@ -74,16 +74,16 @@
                         DisplayVideoClipper("@languageCode");
                     });
                     if (mediaStream.analyticsMetadata.length > 0) {
-                        var analyticsPanelImage = document.createElement("img");
-                        analyticsPanelImage.id = "analyticsPanelImage";
-                        analyticsPanelImage.src = "@storageCdnUrl" + "/MediaAnalyticsIn.png";
-                        var analyticsPanelButton = document.createElement("button");
-                        analyticsPanelButton.id = "analyticsPanelButton";
-                        analyticsPanelButton.className = controlButtonCss;
-                        analyticsPanelButton.appendChild(analyticsPanelImage);
-                        controlBarRight.appendChild(analyticsPanelButton);
-                        $("#analyticsPanelButton").click(function () {
-                            ToggleAnalyticsPanel();
+                        var aiPanelImage = document.createElement("img");
+                        aiPanelImage.id = "aiPanelImage";
+                        aiPanelImage.src = "@storageCdnUrl" + "/IntelligencePanelOpen.png";
+                        var aiPanelButton = document.createElement("button");
+                        aiPanelButton.id = "aiPanelButton";
+                        aiPanelButton.className = controlButtonCss;
+                        aiPanelButton.appendChild(aiPanelImage);
+                        controlBarRight.appendChild(aiPanelButton);
+                        $("#aiPanelButton").click(function () {
+                            ToggleAIPanel();
                         });
                     }
                 }
@@ -99,7 +99,7 @@
                 ClearVideoOverlay();
             });
             mediaPlayer.addEventListener(amp.eventName.pause, function () {
-                if ($("#analyticsPanel").is(":visible")) {
+                if ($("#aiPanel").is(":visible")) {
                     SetAnalyticsMetadata();
                 }
             });
@@ -129,12 +129,12 @@
         <td class="mediaContent">
             @Html.Partial("MediaPlayer", false)
         </td>
-        <td id="analyticsPanel" class="analyticsPanel">
+        <td id="aiPanel" class="aiPanel">
             <table>
                 <tr>
                     <td class="inputLabel">
-                        <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/media-services/media-analytics/')">
-                            Azure Media Analytics
+                        <span class="siteLink" onclick="window.open('http://www.microsoft.com/ai/')">
+                            Azure Video AI
                         </span>
                     </td>
                     <td>

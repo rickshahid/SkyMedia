@@ -25,13 +25,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             inputAssets = Workflow.GetInputAssets(mediaClient, inputAssets);
             if (mediaJob.Tasks != null)
             {
-                using (DatabaseClient databaseClient = new DatabaseClient(false))
+                using (CosmosClient cosmosClient = new CosmosClient(false))
                 {
                     foreach (MediaJobTask jobTask in mediaJob.Tasks)
                     {
                         if (!string.IsNullOrEmpty(jobTask.ProcessorDocumentId))
                         {
-                            JObject processorConfig = databaseClient.GetDocument(jobTask.ProcessorDocumentId);
+                            JObject processorConfig = cosmosClient.GetDocument(jobTask.ProcessorDocumentId);
                             jobTask.ProcessorConfig = processorConfig.ToString();
                         }
                     }
