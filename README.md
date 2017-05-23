@@ -38,13 +38,13 @@ To enable the various capabilities that are listed above, the following Azure pl
 
   * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
 
-  * Media Indexer - http://azure.microsoft.com/en-us/services/media-services/media-indexer/
+  * Media Indexer - http://azure.microsoft.com/en-us/services/media-services/media-indexer/
 
-    * Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
+  * Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
 
-    * Search - http://azure.microsoft.com/en-us/services/search/
+  * Search - http://azure.microsoft.com/en-us/services/search/
 
-  * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
+  * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
 
   * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
