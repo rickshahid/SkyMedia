@@ -32,19 +32,21 @@ To enable the various capabilities that are listed above, the following Azure pl
 
 * Cosmos DB - http://azure.microsoft.com/en-us/services/cosmos-db/
 
-* Search - http://azure.microsoft.com/en-us/services/search/
-
 * Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
   * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
-  
-  * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
-  
+
+  * Media Indexer - http://azure.microsoft.com/en-us/services/media-services/media-indexer/
+
+    * Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
+
+    * Search - http://azure.microsoft.com/en-us/services/search/
+
+  * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
+
   * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
-  
-* Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
 
 * API Management - http://azure.microsoft.com/en-us/services/api-management/
 
