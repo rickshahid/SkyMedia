@@ -32,8 +32,6 @@ To enable the various capabilities that are listed above, the following Azure pl
 
 * Cosmos DB - http://azure.microsoft.com/en-us/services/cosmos-db/
 
-* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
-
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
   * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
@@ -55,6 +53,8 @@ To enable the various capabilities that are listed above, the following Azure pl
 * Function App - http://azure.microsoft.com/en-us/services/functions/
 
 * Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
+
+* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
 
 * Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
 
