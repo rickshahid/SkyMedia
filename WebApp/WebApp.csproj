@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\cdn\MediaAnalyticsIn.png" />
     <Content Include="wwwroot\cdn\Snip1.AzureActiveDirectoryB2CSignUpIn.png" />
     <Content Include="wwwroot\cdn\Snip2.AzureMediaFileUploadWorkflow.png" />
     <Content Include="wwwroot\cdn\Snip3.AzureMediaAnalyticsStream.png" />

@@ -12,7 +12,7 @@ function SetLayout() {
     CreateTipRight("mediaStreaming", "Azure Media Services<br /><br />Streaming");
     CreateTipRight("mediaEncoding", "Azure Media Services<br /><br />Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br /><br />Content Protection");
-    CreateTipRight("videoIndexer", "Azure Media Services<br /><br />Video Indexer");
+    CreateTipRight("mediaIndexer", "Azure Media Services<br /><br />Video Indexer");
     CreateTipRight("appServiceBot", "Azure Bot Service");
     CreateTipLeft("appService", "Azure App Service");
     CreateTipLeft("appServiceWeb", "Azure App Service<br /><br />Web Apps");
@@ -77,7 +77,7 @@ function DisplayMessage(title, message, buttons, width, onClose) {
 }
 function DisplayWorkflow(result) {
     var title, message = "", onClose = null;
-    if (result.id.indexOf("jid") > -1 || result.id.indexOf("jtid") > -1) {
+    if (result.id != null && (result.id.indexOf("jid") > -1 || result.id.indexOf("jtid") > -1)) {
         title = "Azure Media Services Job";
         if (result.id.indexOf("jtid") > -1) {
             title = title + " Template";

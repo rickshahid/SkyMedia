@@ -10,6 +10,8 @@ namespace AzureSkyMedia.PlatformServices
         private WebClient _indexer;
         private string _serviceUri;
 
+        public delegate string UploadVideo(string name, MediaPrivacy privacy, string locatorUrl);
+
         public IndexerClient(string authKey)
         {
             _indexer = new WebClient(authKey);
@@ -59,7 +61,7 @@ namespace AzureSkyMedia.PlatformServices
             return response;
         }
 
-        public string UploadVideo(string name, MediaPrivacy privacy, string locatorUrl)
+        public string GetIndexId(string name, MediaPrivacy privacy, string locatorUrl)
         {
             string response;
             string requestUri = string.Concat(_serviceUri, "/Breakdowns");

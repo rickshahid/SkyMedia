@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -10,6 +11,15 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
+        private static void SetIndexId(IAsyncResult result)
+        {
+            AsyncResult asyncResult = (AsyncResult)result;
+            IndexerClient.UploadVideo uploadVideo = asyncResult.AsyncDelegate as IndexerClient.UploadVideo;
+            IAsset asset = asyncResult.AsyncState as IAsset;
+            asset.AlternateId = uploadVideo.EndInvoke(result);
+            asset.Update();
+        }
+
         private IAsset[] GetAssets(string[] assetIds)
         {
             List<IAsset> assets = new List<IAsset>();
@@ -102,13 +112,16 @@ namespace AzureSkyMedia.PlatformServices
 
             string claimName = Constant.UserAttribute.VideoIndexerKey;
             string indexerKey = AuthToken.GetClaimValue(authToken, claimName);
-            if (!string.IsNullOrEmpty(indexerKey) && asset.AssetFiles.Count() == 1)
+            if (!string.IsNullOrEmpty(indexerKey))
             {
-                string locatorUrl = GetLocatorUrl(LocatorType.Sas, asset, null, true);
-
                 IndexerClient indexerClient = new IndexerClient(indexerKey);
-                asset.AlternateId = indexerClient.UploadVideo(asset.Name, MediaPrivacy.Private, locatorUrl);
-                asset.Update();
+                AsyncCallback indexerCallback = new AsyncCallback(SetIndexId);
+                if (asset.AssetFiles.Count() == 1)
+                {
+                    IndexerClient.UploadVideo uploadVideo = indexerClient.GetIndexId;
+                    string locatorUrl = GetLocatorUrl(LocatorType.Sas, asset, null, true);
+                    uploadVideo.BeginInvoke(asset.Name, MediaPrivacy.Private, locatorUrl, indexerCallback, asset);
+                }
             }
 
             return asset;
