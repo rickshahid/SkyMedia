@@ -116,12 +116,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="PublishMedia\function.json" />
-    <Content Include="PublishMedia\run.csx" />
+    <Content Include="PublishJobOutput\function.json" />
+    <Content Include="PublishJobOutput\run.csx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="PurgePublish\function.json" />
-    <Content Include="PurgePublish\run.csx" />
+    <Content Include="PurgeJobOutput\function.json" />
+    <Content Include="PurgeJobOutput\run.csx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\skyfun-uswest - FTP.pubxml" />
