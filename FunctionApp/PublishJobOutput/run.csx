@@ -16,7 +16,7 @@ public static async Task<object> Run(HttpRequestMessage req, TraceWriter log)
         MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(webMessage);
         if (jobNotification != null)
         {
-            JobPublication jobPublication = MediaClient.PublishJob(jobNotification, true);
+            MediaJobPublication jobPublication = MediaClient.PublishJob(jobNotification, true);
             log.Info($"Job Publication: {jobPublication.StatusMessage}");
         }
     }

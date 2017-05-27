@@ -1,6 +1,6 @@
 ﻿namespace AzureSkyMedia.PlatformServices
 {
-    public class JobPublish : StorageEntity
+    public class MediaJobPublish : StorageEntity
     {
         public string MediaAccountKey { get; set; }
 
@@ -13,7 +13,7 @@
         public string MobileNumber { get; set; }
     }
 
-    public class JobPublication
+    public class MediaJobPublication
     {
         public string UserId { get; set; }
 

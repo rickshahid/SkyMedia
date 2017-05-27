@@ -40,15 +40,15 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static JobPublish GetJobPublish(EntityClient entityClient, MediaJobNotification jobNotification)
+        private static MediaJobPublish GetJobPublish(EntityClient entityClient, MediaJobNotification jobNotification)
         {
             string tableName = Constant.Storage.TableName.JobPublish;
             string partitionKey = jobNotification.Properties.AccountName;
             string rowKey = jobNotification.Properties.JobId;
-            return entityClient.GetEntity<JobPublish>(tableName, partitionKey, rowKey);
+            return entityClient.GetEntity<MediaJobPublish>(tableName, partitionKey, rowKey);
         }
 
-        private static ContentProtection GetContentProtection(EntityClient entityClient, JobPublish jobPublish)
+        private static ContentProtection GetContentProtection(EntityClient entityClient, MediaJobPublish jobPublish)
         {
             string tableName = Constant.Storage.TableName.ContentProtection;
             string partitionKey = jobPublish.PartitionKey;
@@ -116,7 +116,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishMetadata(IJob job, JobPublish jobPublish, string assetId)
+        private static void PublishMetadata(IJob job, MediaJobPublish jobPublish, string assetId)
         {
             string processorId1 = Constant.Media.ProcessorId.FaceDetection;
             string processorId2 = Constant.Media.ProcessorId.FaceRedaction;
@@ -144,7 +144,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishContent(MediaClient mediaClient, IJob job, JobPublish jobPublish, ContentProtection contentProtection)
+        private static void PublishContent(MediaClient mediaClient, IJob job, MediaJobPublish jobPublish, ContentProtection contentProtection)
         {
             string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
             string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
@@ -197,9 +197,9 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static JobPublication PublishJob(MediaJobNotification jobNotification, bool webHook)
+        public static MediaJobPublication PublishJob(MediaJobNotification jobNotification, bool webHook)
         {
-            JobPublication jobPublication = new JobPublication();
+            MediaJobPublication jobPublication = new MediaJobPublication();
             if (jobNotification != null && jobNotification.EventType == MediaJobNotificationEvent.JobStateChange &&
                 (jobNotification.Properties.NewState == JobState.Error ||
                  jobNotification.Properties.NewState == JobState.Canceled ||
@@ -215,7 +215,7 @@ namespace AzureSkyMedia.PlatformServices
                 else
                 {
                     EntityClient entityClient = new EntityClient();
-                    JobPublish jobPublish = GetJobPublish(entityClient, jobNotification);
+                    MediaJobPublish jobPublish = GetJobPublish(entityClient, jobNotification);
                     if (jobPublish != null)
                     {
                         jobPublication.UserId = jobPublish.UserId;
@@ -247,9 +247,9 @@ namespace AzureSkyMedia.PlatformServices
             return jobPublication;
         }
 
-        public static JobPublication PublishJob(bool poisonQueue)
+        public static MediaJobPublication PublishJob(bool poisonQueue)
         {
-            JobPublication jobPublication = null;
+            MediaJobPublication jobPublication = null;
             string settingKey = Constant.AppSettingKey.MediaJobNotificationStorageQueueName;
             string queueName = AppSetting.GetValue(settingKey);
             if (poisonQueue)
@@ -274,7 +274,7 @@ namespace AzureSkyMedia.PlatformServices
             string tableName = Constant.Storage.TableName.ContentProtection;
             entityClient.PurgeEntities<ContentProtection>(tableName);
             tableName = Constant.Storage.TableName.JobPublish;
-            entityClient.PurgeEntities<JobPublish>(tableName);
+            entityClient.PurgeEntities<MediaJobPublish>(tableName);
 
             CosmosClient cosmosClient = new CosmosClient(true);
             string collectionId = Constant.Database.Collection.Metadata;

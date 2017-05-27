@@ -55,7 +55,7 @@ namespace AzureSkyMedia.PlatformServices
                 storageAccount = job.InputMediaAssets[0].StorageAccountName;
             }
 
-            JobPublish jobPublish = new JobPublish();
+            MediaJobPublish jobPublish = new MediaJobPublish();
             jobPublish.PartitionKey = accountName;
             jobPublish.RowKey = job.Id;
             jobPublish.MediaAccountKey = accountKey;

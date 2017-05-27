@@ -20,9 +20,9 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         [HttpPost]
         [Route("/publish")]
-        public JobPublication Publish(string jobMessage, bool poisonQueue)
+        public MediaJobPublication Publish(string jobMessage, bool poisonQueue)
         {
-            JobPublication jobPublication = null;
+            MediaJobPublication jobPublication = null;
             try
             {
                 if (string.IsNullOrEmpty(jobMessage))
@@ -42,7 +42,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 if (jobPublication == null)
                 {
-                    jobPublication = new JobPublication();
+                    jobPublication = new MediaJobPublication();
                 }
                 jobPublication.StatusMessage = ex.ToString();
             }

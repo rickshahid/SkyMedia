@@ -62,6 +62,26 @@
       "metadata": {
         "description": "The shared storage key of your storage account"
       }
+    },
+    "twilio_1_Connection_Name": {
+      "type": "string",
+      "defaultValue": "twilio"
+    },
+    "twilio_1_Connection_DisplayName": {
+      "type": "string",
+      "defaultValue": "Twilio Live"
+    },
+    "twilio_1_sid": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Twilio Account Id"
+      }
+    },
+    "twilio_1_token": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Twilio Access Token"
+      }
     }
   },
   "variables": {},
@@ -143,7 +163,29 @@
                 "Condition": {
                   "type": "If",
                   "expression": "@and(not(equals(body('PublishPost')?['mobileNumber'], null)),not(equals(body('PublishPost')?['statusMessage'], null)))",
-                  "actions": {},
+                  "actions": {
+                    "Send_Text_Message_(SMS)": {
+                      "type": "ApiConnection",
+                      "inputs": {
+                        "host": {
+                          "api": {
+                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/twilio"
+                          },
+                          "connection": {
+                            "name": "@parameters('$connections')['twilio']['connectionId']"
+                          }
+                        },
+                        "method": "post",
+                        "path": "/Messages.json",
+                        "body": {
+                          "from": "+13109058223",
+                          "to": "@{body('PublishPost')?['mobileNumber']}",
+                          "body": "@{body('PublishPost')?['statusMessage']}"
+                        }
+                      },
+                      "runAfter": {}
+                    }
+                  },
                   "runAfter": {
                     "Delete_message": [
                       "Succeeded"
@@ -198,13 +240,19 @@
                 "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'azurequeues')]",
                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('azurequeues_1_Connection_Name'))]",
                 "connectionName": "[parameters('azurequeues_1_Connection_Name')]"
+              },
+              "twilio": {
+                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'twilio')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('twilio_1_Connection_Name'))]",
+                "connectionName": "[parameters('twilio_1_Connection_Name')]"
               }
             }
           }
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/connections', parameters('azurequeues_1_Connection_Name'))]"
+        "[resourceId('Microsoft.Web/connections', parameters('azurequeues_1_Connection_Name'))]",
+        "[resourceId('Microsoft.Web/connections', parameters('twilio_1_Connection_Name'))]"
       ]
     },
     {
@@ -220,6 +268,22 @@
         "parameterValues": {
           "storageaccount": "[parameters('azurequeues_1_storageaccount')]",
           "sharedkey": "[parameters('azurequeues_1_sharedkey')]"
+        }
+      }
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2016-06-01",
+      "name": "[parameters('twilio_1_Connection_Name')]",
+      "location": "[parameters('logicAppLocation')]",
+      "properties": {
+        "api": {
+          "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', parameters('logicAppLocation'), '/managedApis/', 'twilio')]"
+        },
+        "displayName": "[parameters('twilio_1_Connection_DisplayName')]",
+        "parameterValues": {
+          "sid": "[parameters('twilio_1_sid')]",
+          "token": "[parameters('twilio_1_token')]"
         }
       }
     }
