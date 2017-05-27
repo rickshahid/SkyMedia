@@ -246,5 +246,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["languageCode"] = this.Request.Query["language"];
             return View();
         }
+
+        public IActionResult indexer()
+        {
+            return View();
+        }
     }
 }
