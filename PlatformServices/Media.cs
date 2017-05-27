@@ -69,9 +69,10 @@ namespace AzureSkyMedia.PlatformServices
             foreach (ILocator locator in locators)
             {
                 IAsset asset = locator.Asset;
-                if (asset.IsStreamable && asset.AssetFiles.Count() > 1)
+                if (asset.IsStreamable && asset.AssetType != AssetType.SmoothStreaming) // Live Streaming
                 {
                     MediaStream mediaStream = GetMediaStream(mediaClient, asset);
+                    mediaStreams.Add(mediaStream);
                     if (!string.IsNullOrEmpty(mediaStream.SourceUrl))
                     {
                         foreach (IStreamingAssetFilter filter in asset.AssetFilters)
@@ -85,10 +86,10 @@ namespace AzureSkyMedia.PlatformServices
                             mediaStreams.Add(mediaStream);
                         }
                     }
-                }
-                if (mediaStreams.Count == maxStreamCount)
-                {
-                    break;
+                    if (mediaStreams.Count == maxStreamCount)
+                    {
+                        break;
+                    }
                 }
             }
             return mediaStreams.ToArray();

@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class IndexerClient
+    public class IndexerClient
     {
         private WebClient _indexer;
         private string _serviceUri;
@@ -31,17 +31,21 @@ namespace AzureSkyMedia.PlatformServices
             return response;
         }
 
-        public JObject GetIndex(string indexId, bool processingState)
+        public string GetWidgetUrl(string indexId, MediaInsight? insightType)
         {
-            JObject response;
+            string response;
             string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId);
-            if (processingState)
+            if (!insightType.HasValue)
             {
-                requestUri = string.Concat(requestUri, "/State");
+                requestUri = string.Concat(requestUri, "/PlayerWidgetUrl");
+            }
+            else
+            {
+                requestUri = string.Concat(requestUri, "/InsightsWidgetUrl?", insightType.ToString());
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
-                response = _indexer.GetResponse<JObject>(request);
+                response = _indexer.GetResponse<string>(request);
             }
             return response;
         }
@@ -57,6 +61,21 @@ namespace AzureSkyMedia.PlatformServices
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
                 response = _indexer.GetResponse<string>(request);
+            }
+            return response;
+        }
+
+        public JObject GetIndex(string indexId, bool processingState)
+        {
+            JObject response;
+            string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId);
+            if (processingState)
+            {
+                requestUri = string.Concat(requestUri, "/State");
+            }
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
+            {
+                response = _indexer.GetResponse<JObject>(request);
             }
             return response;
         }
@@ -99,25 +118,6 @@ namespace AzureSkyMedia.PlatformServices
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
                 response = _indexer.GetResponse<JArray>(request);
-            }
-            return response;
-        }
-
-        public string GetWidgetUrl(string indexId, MediaInsight? insightType)
-        {
-            string response;
-            string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId);
-            if (!insightType.HasValue)
-            {
-                requestUri = string.Concat(requestUri, "/PlayerWidgetUrl");
-            }
-            else
-            {
-                requestUri = string.Concat(requestUri, "/InsightsWidgetUrl?", insightType.ToString());
-            }
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
-            {
-                response = _indexer.GetResponse<string>(request);
             }
             return response;
         }
