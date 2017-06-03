@@ -213,6 +213,7 @@
     <Compile Include="Clients\MediaClientAssetLocator.cs" />
     <Compile Include="Clients\MediaClientAssetProtection.cs" />
     <Compile Include="Clients\MediaClientAssetPublish.cs" />
+    <Compile Include="Clients\MediaClientIngestManfiest.cs" />
     <Compile Include="Clients\MediaClientJob.cs" />
     <Compile Include="Clients\MediaClientJobTask.cs" />
     <Compile Include="Clients\MediaClientJobTaskAnalytics.cs" />

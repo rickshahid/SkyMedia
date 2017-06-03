@@ -1,17 +1,4 @@
 ﻿var _asperaUploader, _asperaUploaderStartTime, _transferApi, _transferId;
-function GetElapsedTime() {
-    var elapsedTime = new Date() - _asperaUploaderStartTime;
-    return MapElapsedTime(elapsedTime);
-}
-function GetCurrentTransfer(data) {
-    var transfer = null;
-    for (var i = 0; i < data.transfers.length; i++) {
-        if (data.transfers[i].uuid == _transferId) {
-            transfer = data.transfers[i];
-        }
-    }
-    return transfer;
-}
 function InitializeUploader(transferApi) {
     _transferApi = transferApi;
     $("#transferProgress").progressbar({
@@ -50,35 +37,43 @@ function ConnectHandler(event, data) {
 }
 function TransferHandler(event, data) {
     if (event == AW4.Connect.EVENT.TRANSFER && data.transfers.length > 0) {
-        var transfer = GetCurrentTransfer(data);
+        var transfer = GetTransfer(data);
         if (transfer != null) {
             switch (transfer.status) {
                 case AW4.Connect.TRANSFER_STATUS.FAILED:
-                    $("#transferMessage").text(_statusLabel + transfer.error_desc);
+                    $("#transferMessage").text(_fileTransferStatusLabel + transfer.error_desc);
                     break;
                 case AW4.Connect.TRANSFER_STATUS.RUNNING:
                     var transferProgress = Math.floor(transfer.percentage * 100);
                     $("#transferProgress").progressbar("value", transferProgress);
-                    $("#transferMessage").text(_statusLabel + "Transfer Running (" + transfer.calculated_rate_kbps.toLocaleString() + " Kbps)");
+                    $("#transferMessage").text(_fileTransferStatusLabel + "Transfer Running (" + transfer.calculated_rate_kbps.toLocaleString() + " Kbps)");
                     break;
                 case AW4.Connect.TRANSFER_STATUS.COMPLETED:
-                    var elapsedTime = GetElapsedTime();
+                    var elapsedTime = GetElapsedTime(_asperaUploaderStartTime);
                     var uploaderFiles = GetUploaderFiles(true);
                     $("#transferProgress").progressbar("value", 100);
-                    $("#transferMessage").text(_statusLabel + "Transfer Completed (" + elapsedTime + ")");
-                    UploadWorkflow(uploaderFiles);
+                    $("#transferMessage").text(_fileTransferStatusLabel + "Transfer Completed (" + elapsedTime + ")");
+                    IngestAssets(uploaderFiles);
                     break;
             }
         }
     }
 }
+function GetTransfer(data) {
+    var transfer = null;
+    for (var i = 0; i < data.transfers.length; i++) {
+        if (data.transfers[i].uuid == _transferId) {
+            transfer = data.transfers[i];
+        }
+    }
+    return transfer;
+}
 function StartUpload() {
     $.post("/upload/storage",
         {
             transferService: "AsperaFasp",
-            filePaths: GetUploaderFiles(false),
             storageAccount: $("#storageAccount").val(),
-            containerName: _storageContainer
+            filePaths: GetUploaderFiles(false)
         },
         function (transferSpecs) {
             _asperaUploaderStartTime = new Date();

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
 
@@ -14,10 +16,14 @@ namespace AzureSkyMedia.PlatformServices
         private static void SetIndexId(IAsyncResult result)
         {
             AsyncResult asyncResult = (AsyncResult)result;
-            IndexerClient.UploadVideo uploadVideo = asyncResult.AsyncDelegate as IndexerClient.UploadVideo;
-            IAsset asset = asyncResult.AsyncState as IAsset;
+            IndexerClient.UploadVideo uploadVideo = (IndexerClient.UploadVideo)asyncResult.AsyncDelegate;
+            IAsset asset = (IAsset)asyncResult.AsyncState;
             asset.AlternateId = uploadVideo.EndInvoke(result);
             asset.Update();
+            foreach (ILocator locator in asset.Locators)
+            {
+                locator.Delete();
+            }
         }
 
         private IAsset[] GetAssets(string[] assetIds)
@@ -36,7 +42,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaAsset[] GetAssets(string assetId)
         {
-            List<MediaAsset> mediaAssets = new List<MediaAsset>();
+            List<MediaAsset> assets = new List<MediaAsset>();
             if (string.IsNullOrEmpty(assetId))
             {
                 foreach (IAsset asset in _media.Assets)
@@ -44,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
                     if (asset.ParentAssets.Count == 0)
                     {
                         MediaAsset mediaAsset = new MediaAsset(this, asset);
-                        mediaAssets.Add(mediaAsset);
+                        assets.Add(mediaAsset);
                     }
                 }
             }
@@ -56,7 +62,7 @@ namespace AzureSkyMedia.PlatformServices
                     foreach (IAssetFile assetFile in rootAsset.AssetFiles)
                     {
                         MediaAsset mediaFile = new MediaAsset(this, assetFile);
-                        mediaAssets.Add(mediaFile);
+                        assets.Add(mediaFile);
                     }
                 }
                 foreach (IAsset asset in _media.Assets)
@@ -66,62 +72,60 @@ namespace AzureSkyMedia.PlatformServices
                         if (string.Equals(parentAsset.Id, rootAsset.Id, StringComparison.OrdinalIgnoreCase))
                         {
                             MediaAsset mediaAsset = new MediaAsset(this, asset);
-                            mediaAssets.Add(mediaAsset);
+                            assets.Add(mediaAsset);
                         }
                     }
                 }
             }
-            return mediaAssets.ToArray();
+            return assets.ToArray();
         }
 
         public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames)
         {
-            AssetCreationOptions creationOptions = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
-            IAsset asset = _media.Assets.Create(assetName, storageAccount, creationOptions);
+            AssetCreationOptions assetOptions = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
+            IAsset asset = _media.Assets.Create(assetName, storageAccount, assetOptions);
 
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            string sourceContainerName = Constant.Storage.Blob.Container.Upload;
+            string containerName = Constant.Storage.Blob.Container.Upload;
 
-            if (storageEncryption)
+            if (fileNames.Length == 1)
             {
-                foreach (string fileName in fileNames)
-                {
-                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, null, fileName, false);
-                    Stream sourceStream = sourceBlob.OpenRead();
+                string fileName = fileNames[0];
+                CloudBlockBlob sourceBlob = blobClient.GetBlob(containerName, null, fileName, false);
+                Stream sourceStream = sourceBlob.OpenRead();
 
-                    IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-                    assetFile.Upload(sourceStream);
-                }
+                IAssetFile assetFile = asset.AssetFiles.Create(fileName);
+                assetFile.Upload(sourceStream);
             }
             else
             {
-                string destinationContainerName = asset.Uri.Segments[1];
+                List<Task> uploadTasks = new List<Task>();
+                BlobTransferClient transferClient = new BlobTransferClient();
+                ILocator sasLocator = CreateLocator(LocatorType.Sas, asset, true);
                 foreach (string fileName in fileNames)
                 {
-                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, null, fileName, true);
-                    CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, null, fileName, false);
-                    blobClient.CopyBlob(sourceBlob, destinationBlob, false);
+                    CloudBlockBlob sourceBlob = blobClient.GetBlob(containerName, null, fileName, false);
+                    Stream sourceStream = sourceBlob.OpenRead();
 
                     IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-                    assetFile.ContentFileSize = sourceBlob.Properties.Length;
-                    assetFile.Update();
+                    Task uploadTask = assetFile.UploadAsync(sourceStream, transferClient, sasLocator, CancellationToken.None);
+                    uploadTasks.Add(uploadTask);
                 }
+                Task.WaitAll(uploadTasks.ToArray());
+                sasLocator.Delete();
             }
 
             SetPrimaryFile(asset);
 
-            string claimName = Constant.UserAttribute.VideoIndexerKey;
-            string indexerKey = AuthToken.GetClaimValue(authToken, claimName);
-            if (!string.IsNullOrEmpty(indexerKey))
+            string attributeName = Constant.UserAttribute.VideoIndexerKey;
+            string indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
+            if (!string.IsNullOrEmpty(indexerKey) && asset.AssetFiles.Count() == 1)
             {
                 IndexerClient indexerClient = new IndexerClient(indexerKey);
                 AsyncCallback indexerCallback = new AsyncCallback(SetIndexId);
-                if (asset.AssetFiles.Count() == 1)
-                {
-                    IndexerClient.UploadVideo uploadVideo = indexerClient.GetIndexId;
-                    string locatorUrl = GetLocatorUrl(LocatorType.Sas, asset, null, true);
-                    uploadVideo.BeginInvoke(asset.Name, MediaPrivacy.Private, locatorUrl, indexerCallback, asset);
-                }
+                IndexerClient.UploadVideo uploadVideo = indexerClient.GetIndexId;
+                string locatorUrl = GetLocatorUrl(LocatorType.Sas, asset, null, true);
+                uploadVideo.BeginInvoke(asset.Name, MediaPrivacy.Private, locatorUrl, indexerCallback, asset);
             }
 
             return asset;

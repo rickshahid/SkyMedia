@@ -6,9 +6,9 @@
     $("#mediaWorkflowTaskRemove").hide();
     if (uploadView) {
         var currentUrl = window.location.href;
-        if (currentUrl.indexOf("signiant") > -1) {
+        if (currentUrl.indexOf("signiant.") > -1) {
             $("#uploadSigniantFlight").show();
-        } else if (currentUrl.indexOf("aspera") > -1) {
+        } else if (currentUrl.indexOf("aspera.") > -1) {
             $("#uploadAsperaFasp").show();
         } else {
             $("#uploadSigniantFlight").show();
@@ -45,16 +45,10 @@ function ValidWorkflowInput(uploadView, saveWorkflow) {
             SetTipVisible("fileUploader_browse", true);
             validInput = false;
         }
-        if ($("#multipleFileAsset").prop("checked") && $("#inputAssetName").val() == "") {
-            CreateTipTop("inputAssetName", "Set New Asset Name");
-            SetTipVisible("inputAssetName", true);
-            $("#inputAssetName").focus();
-            validInput = false;
-        }
     } else {
         _inputAssets = GetInputAssets();
         if (_inputAssets.length == 0) {
-            CreateTipTopLeft("mediaAssets", "Select Media Assets", 48, 8);
+            CreateTipTopLeft("mediaAssets", "Select Media Assets", 48, 0);
             SetTipVisible("mediaAssets", true);
             validInput = false;
         }
@@ -72,7 +66,7 @@ function ValidWorkflowTasks(validInput) {
     do {
         var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
         if (mediaProcessor != null) {
-            if (mediaProcessor == "None") {
+            if (mediaProcessor == "") {
                 CreateTipTop("mediaProcessor" + taskNumber, "Select Media Processor");
                 SetTipVisible("mediaProcessor" + taskNumber, true);
                 validInput = false;
@@ -89,7 +83,7 @@ function ValidWorkflowTasks(validInput) {
             taskNumber = taskNumber + 1;
         }
     } while (mediaProcessor != null);
-    return validInput
+    return validInput;
 }
 function ValidWorkflowTaskClear(taskNumber) {
     SetTipVisible("mediaProcessor" + taskNumber, false);
@@ -123,31 +117,13 @@ function GetInputAssets() {
     }
     return inputAssets;
 }
-function GetFileNames(files) {
-    var fileNames = new Array();
-    if (files != null) {
-        for (var i = 0; i < files.length; i++) {
-            var fileName = files[i];
-            if (files[i].name != null) {
-                fileName = files[i].name;
-            }
-            if (fileName.indexOf("/") > -1) {
-                var fileInfo = fileName.split("/");
-                fileName = fileInfo[fileInfo.length - 1];
-            }
-            fileNames.push(fileName);
-        }
-    }
-    return fileNames;
-}
-function UploadWorkflow(files) {
-    $.post("/workflow/upload",
+function IngestAssets(files) {
+    $.post("/workflow/ingest",
         {
-            fileNames: GetFileNames(files),
+            fileNames: GetUploaderFiles(true),
             storageAccount: $("#storageAccount").val(),
             storageEncryption: $("#storageEncryption").prop("checked"),
             inputAssetName: $("#inputAssetName").val(),
-            multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             publishInputAsset: $("#publishInputAsset").prop("checked"),
             inputAssets: _inputAssets,
             mediaJob: GetJob()

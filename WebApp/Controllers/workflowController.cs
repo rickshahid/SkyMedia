@@ -8,12 +8,12 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class workflowController : Controller
     {
-        public JsonResult upload(string[] fileNames, string storageAccount, bool storageEncryption, string inputAssetName,
-                                 bool multipleFileAsset, bool publishInputAsset, MediaAssetInput[] inputAssets, MediaJob mediaJob)
+        public JsonResult ingest(string[] fileNames, string storageAccount, bool storageEncryption, string inputAssetName,
+                                 bool publishInputAsset, MediaAssetInput[] inputAssets, MediaJob mediaJob)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            inputAssets = Workflow.CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, publishInputAsset, fileNames);
+            inputAssets = Workflow.CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, publishInputAsset, fileNames);
             object result = Workflow.SubmitJob(authToken, mediaClient, storageAccount, inputAssets, mediaJob);
             return Json(result);
         }
@@ -44,7 +44,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult index()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            uploadController.SetViewData(authToken, this.ViewData);
+            homeController.SetViewData(authToken, this.ViewData);
             return View();
         }
     }

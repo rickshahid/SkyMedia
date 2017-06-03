@@ -13,9 +13,8 @@
         $(function () {
             var signiantAccountKey = "@ViewData["signiantAccountKey"]";
             var asperaAccountKey = "@ViewData["asperaAccountKey"]";
-            var storageContainer = "@ViewData["storageContainer"]";
             SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
-            CreateUploader(storageContainer);
+            CreateUploader();
         })
     </script>
 }

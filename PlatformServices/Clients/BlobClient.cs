@@ -111,8 +111,8 @@ namespace AzureSkyMedia.PlatformServices
             string operationId;
             if (asyncMode)
             {
-                Task<string> operation = destinationBlob.StartCopyAsync(sourceBlobUri);
-                operationId = operation.Id.ToString();
+                Task<string> operationTask = destinationBlob.StartCopyAsync(sourceBlobUri);
+                operationId = operationTask.Id.ToString();
             }
             else
             {

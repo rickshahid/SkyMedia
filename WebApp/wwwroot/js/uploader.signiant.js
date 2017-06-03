@@ -1,8 +1,4 @@
 ﻿var _signiantUploader, _signiantUploaderStartTime;
-function GetElapsedTime() {
-    var elapsedTime = new Date() - _signiantUploaderStartTime;
-    return MapElapsedTime(elapsedTime);
-}
 function InitializeUploader(serviceGateway, accountKey) {
     detectPlugin({
         success: InitializeSuccess(serviceGateway, accountKey),
@@ -28,11 +24,10 @@ function StartUpload() {
     $.post("/upload/storage",
         {
             transferService: "SigniantFlight",
-            storageAccount: $("#storageAccount").val(),
-            containerName: _storageContainer
+            storageAccount: $("#storageAccount").val()
         },
-        function (result) {
-            _signiantUploader.setStorageConfig(result);
+        function (storageContainer) {
+            _signiantUploader.setStorageConfig(storageContainer);
             _signiantUploaderStartTime = new Date();
             _signiantUploader.startUpload();
         }
@@ -43,13 +38,13 @@ function StopUpload() {
 }
 function UploadEvent(uploader, eventCode, eventMessage, eventData) {
     if (eventCode != "TRANSFER_PRE_FILE_EVENT") {
-        $("#transferMessage").text(_statusLabel + eventMessage);
+        $("#transferMessage").text(_fileTransferStatusLabel + eventMessage);
     }
     if (eventCode == "TRANSFER_COMPLETED") {
-        var elapsedTime = GetElapsedTime();
+        var elapsedTime = GetElapsedTime(_signiantUploaderStartTime);
         var uploaderFiles = GetUploaderFiles(true);
-        $("#transferMessage").text(_statusLabel + eventMessage + " (" + elapsedTime + ")");
-        UploadWorkflow(uploaderFiles);
+        $("#transferMessage").text(_fileTransferStatusLabel + eventMessage + " (" + elapsedTime + ")");
+        IngestAssets(uploaderFiles);
     }
 }
 function UploadError(uploader, eventCode, eventMessage, eventData) {

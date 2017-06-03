@@ -1,4 +1,4 @@
-﻿var _fileUploader, _fileUploaderStartTime, _manifestId, _storageContainer, _statusLabel = "Status: ";
+﻿var _fileUploader, _fileUploaderStartTime, _fileTransferStatusLabel = "Status: ";
 function SetUploadService(transferService) {
     switch (transferService.value) {
         case "signiantFlight":
@@ -12,33 +12,8 @@ function SetUploadService(transferService) {
             break;
     }
 }
-function SetUploadManifest(storageContainer) {
-    $.post("/upload/manifest",
-        {
-            manifestId: _manifestId,
-            assetName: $("#inputAssetName").val(),
-            storageAccount: $("#storageAccount").val(),
-            storageEncryption: $("#storageEncryption").prop("checked"),
-            multipleFileAsset: $("#multipleFileAsset").prop("checked"),
-            uploadBulkIngest: $("#uploadBulkIngest").prop("checked"),
-            fileNames: GetFileNames(_fileUploader.files)
-        },
-        function (result) {
-            if (result == null) {
-                _manifestId = null;
-                _storageContainer = storageContainer;
-            } else {
-                _manifestId = result.id;
-                _storageContainer = result.blobStorageUriForUpload;
-            }
-        }
-    );
-}
-function GetElapsedTime() {
-    var elapsedTime = new Date() - _fileUploaderStartTime;
-    return MapElapsedTime(elapsedTime);
-}
-function MapElapsedTime(elapsedTime) {
+function GetElapsedTime(startTime) {
+    var elapsedTime = new Date() - startTime;
     var elapsedSeconds = Math.floor(elapsedTime / 1000);
     if (elapsedSeconds == 1)
         return elapsedSeconds + " Second";
@@ -101,11 +76,7 @@ function SigniantEnabled() {
 function AsperaEnabled() {
     return $("#uploadService[value='asperaFasp']").prop("checked");
 }
-function UploadBulkEnabled() {
-    return $("#uploadBulkIngest").prop("checked");
-}
-function CreateUploader(storageContainer) {
-    _storageContainer = storageContainer;
+function CreateUploader() {
     var eventHandlers = {
         PostInit: function (uploader) {
             _fileUploader = uploader;
@@ -113,19 +84,18 @@ function CreateUploader(storageContainer) {
         Browse: function (uploader) {
             if (SigniantEnabled() || AsperaEnabled()) {
                 $("input[type=file][id^='html5']").prop("disabled", true);
-            }
-            if (SigniantEnabled()) {
-                _signiantUploader.chooseUploadFiles(AddSigniantFiles);
-            } else if (AsperaEnabled()) {
-                _asperaUploader.showSelectFileDialog(
-                    { success: AddAsperaFiles }
-                );
+                if (SigniantEnabled()) {
+                    _signiantUploader.chooseUploadFiles(AddSigniantFiles);
+                } else {
+                    _asperaUploader.showSelectFileDialog(
+                        { success: AddAsperaFiles }
+                    );
+                }
             }
         },
         BeforeUpload: function (uploader, file) {
             uploader.settings.multipart_params = {
-                storageAccount: $("#storageAccount").val(),
-                storageContainer: _storageContainer
+                storageAccount: $("#storageAccount").val()
             };
         },
         StateChanged: function (uploader) {
@@ -141,25 +111,10 @@ function CreateUploader(storageContainer) {
         UploadComplete: function (uploader, files) {
             if (uploader.total.failed == 0) {
                 if (!SigniantEnabled() && !AsperaEnabled()) {
-                    var elapsedTime = GetElapsedTime();
+                    var elapsedTime = GetElapsedTime(_fileUploaderStartTime);
                     $("#transferMessage").text("Elapsed Time: " + elapsedTime);
                 }
-                if (!UploadBulkEnabled()) {
-                    UploadWorkflow(files);
-                }
-            }
-        },
-        FilesAdded: function (uploader, files) {
-            if (UploadBulkEnabled()) {
-                SetUploadManifest(storageContainer);
-            }
-        },
-        FilesRemoved: function (uploader, files) {
-            if (UploadBulkEnabled()) {
-                SetUploadManifest(storageContainer);
-            }
-            if (!SigniantEnabled() && !AsperaEnabled()) {
-                $("#transferMessage").html("<br />");
+                IngestAssets(files);
             }
         },
         Error: function (uploader, error) {

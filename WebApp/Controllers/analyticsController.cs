@@ -14,8 +14,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
-                string claimName = Constant.UserAttribute.VideoIndexerKey;
-                indexerKey = AuthToken.GetClaimValue(authToken, claimName);
+                string attributeName = Constant.UserAttribute.VideoIndexerKey;
+                indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
             }
             return indexerKey;
         }

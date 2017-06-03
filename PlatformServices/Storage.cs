@@ -184,11 +184,10 @@ namespace AzureSkyMedia.PlatformServices
             return storageAccounts;
         }
 
-        public static void UploadBlock(string authToken, string storageAccount, string storageContainer,
+        public static void UploadBlock(string authToken, string storageAccount, string containerName,
                                        Stream inputStream, string fileName, int chunkIndex, int chunksCount)
         {
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            string containerName = Path.GetFileName(storageContainer);
             if (chunksCount == 0)
             {
                 blobClient.UploadFile(inputStream, containerName, null, fileName);

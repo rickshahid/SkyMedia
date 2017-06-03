@@ -33,7 +33,7 @@
             Azure Storage:
         </td>
         <td>
-            @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage", onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')" })
+            @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage" })
             &nbsp;
             @Html.CheckBox("storageEncryption")
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-rest-storage-encryption')">
@@ -46,22 +46,12 @@
             Input Asset:
         </td>
         <td>
-            @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Asset Name]" })
-            &nbsp;
-            @Html.CheckBox("multipleFileAsset")
-            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files')">
-                Multiple File Asset
-            </span>
+            @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Azure Media Asset Name]" })
             &nbsp;
             @Html.CheckBox("publishInputAsset")
             <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-deliver-streaming-content')">
                 Publish Input Asset
             </span>
-            @*&nbsp;
-            @Html.CheckBox("uploadBulkIngest", null, new { onchange = "SetUploadManifest('" + ViewData["storageContainer"] + "')", disabled = "disabled" })
-            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files#ingest_in_bulk')">
-                Bulk Upload
-            </span>*@
         </td>
     </tr>
 </table>

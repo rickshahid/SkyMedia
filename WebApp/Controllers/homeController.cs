@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 using Newtonsoft.Json.Linq;
 
@@ -79,6 +80,21 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaStreams.ToArray();
         }
 
+        internal static void SetViewData(string authToken, ViewDataDictionary viewData)
+        {
+            string attributeName = Constant.UserAttribute.SigniantAccountKey;
+            viewData["signiantAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
+
+            attributeName = Constant.UserAttribute.AsperaAccountKey;
+            viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
+
+            viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
+            viewData["jobName"] = homeController.GetJobTemplates(authToken);
+            viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
+            viewData["encoderConfig1"] = new List<SelectListItem>();
+            viewData["spokenLanguages"] = homeController.GetSpokenLanguages();
+        }
+
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = null;
@@ -132,7 +148,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             SelectListItem mediaProcessor = new SelectListItem();
             mediaProcessor.Text = string.Empty;
-            mediaProcessor.Value = MediaProcessor.None.ToString();
+            mediaProcessor.Value = string.Empty;
             mediaProcessors.Add(mediaProcessor);
 
             NameValueCollection processors = Account.GetMediaProcessors(authToken, false) as NameValueCollection;

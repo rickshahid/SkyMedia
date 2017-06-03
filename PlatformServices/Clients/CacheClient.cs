@@ -56,8 +56,11 @@ namespace AzureSkyMedia.PlatformServices
             List<MediaProcessor> processorList = new List<MediaProcessor>();
             foreach (IMediaProcessor mediaProcessor in mediaProcessors)
             {
-                MediaProcessor processorType = Processor.GetProcessorType(mediaProcessor.Id);
-                processorList.Add(processorType);
+                MediaProcessor? processorType = Processor.GetProcessorType(mediaProcessor.Id);
+                if (processorType.HasValue)
+                {
+                    processorList.Add(processorType.Value);
+                }
             }
             MediaProcessor[] processorTypes = processorList.ToArray();
             SetValue<MediaProcessor[]>(Constant.Cache.ItemKey.MediaProcessors, processorTypes);

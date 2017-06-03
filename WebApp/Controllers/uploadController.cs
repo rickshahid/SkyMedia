@@ -1,10 +1,7 @@
 ﻿using System.IO;
 using System.Net;
-using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -12,10 +9,11 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class uploadController : Controller
     {
-        public JsonResult storage(TransferService transferService, string[] filePaths, string storageAccount, string containerName)
+        public JsonResult storage(TransferService transferService, string storageAccount, string[] filePaths)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             string accountKey = Storage.GetUserAccountKey(authToken, storageAccount);
+            string containerName = Constant.Storage.Blob.Container.Upload;
             Storage.CreateContainer(authToken, storageAccount, containerName);
             object result = null;
             switch (transferService)
@@ -33,29 +31,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(result);
         }
 
-        public JsonResult file(string name, int chunk, int chunks, string storageAccount, string storageContainer)
+        public JsonResult file(string name, int chunk, int chunks, string storageAccount)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string containerName = Constant.Storage.Blob.Container.Upload;
             Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
-            Storage.UploadBlock(authToken, storageAccount, storageContainer, inputStream, name, chunk, chunks);
+            Storage.UploadBlock(authToken, storageAccount, containerName, inputStream, name, chunk, chunks);
             return Json(chunk);
-        }
-
-        internal static void SetViewData(string authToken, ViewDataDictionary viewData)
-        {
-            viewData["storageContainer"] = Constant.Storage.Blob.Container.Upload;
-
-            string attributeName = Constant.UserAttribute.SigniantAccountKey;
-            viewData["signiantAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.AsperaAccountKey;
-            viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
-
-            viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
-            viewData["jobName"] = homeController.GetJobTemplates(authToken);
-            viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
-            viewData["encoderConfig1"] = new List<SelectListItem>();
-            viewData["spokenLanguages"] = homeController.GetSpokenLanguages();
         }
 
         public IActionResult signiant()
@@ -68,7 +50,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string attributeName = Constant.UserAttribute.SigniantServiceGateway;
             ViewData["signiantServiceGateway"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            SetViewData(authToken, this.ViewData);
+            homeController.SetViewData(authToken, this.ViewData);
             return View();
         }
 
@@ -85,14 +67,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             attributeName = Constant.UserAttribute.AsperaAccountId;
             ViewData["asperaAccountId"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            SetViewData(authToken, this.ViewData);
+            homeController.SetViewData(authToken, this.ViewData);
             return View();
         }
 
         public IActionResult index()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            SetViewData(authToken, this.ViewData);
+            homeController.SetViewData(authToken, this.ViewData);
             return View();
         }
     }

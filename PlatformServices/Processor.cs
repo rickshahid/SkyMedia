@@ -71,9 +71,9 @@ namespace AzureSkyMedia.PlatformServices
             return processorId;
         }
 
-        public static MediaProcessor GetProcessorType(string processorId)
+        public static MediaProcessor? GetProcessorType(string processorId)
         {
-            MediaProcessor processorType = MediaProcessor.None;
+            MediaProcessor? processorType = null;
             switch (processorId)
             {
                 case Constant.Media.ProcessorId.EncoderStandard:

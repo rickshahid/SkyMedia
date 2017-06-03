@@ -54,17 +54,17 @@ namespace AzureSkyMedia.PlatformServices
 
         private IChannel CreateChannel(string channelName, ChannelEncodingType channelType, StreamingProtocol ingestProtocol, string allowedAddresses)
         {
-            ChannelCreationOptions creationOptions = new ChannelCreationOptions();
-            creationOptions.EncodingType = channelType;
+            ChannelCreationOptions channelOptions = new ChannelCreationOptions();
+            channelOptions.EncodingType = channelType;
             if (channelType == ChannelEncodingType.None)
             {
-                creationOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelStreamingSuffix);
+                channelOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelStreamingSuffix);
             }
             else
             {
-                creationOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelEncodingSuffix);
-                creationOptions.Encoding = new ChannelEncoding();
-                creationOptions.Encoding.SystemPreset = Constant.Media.Live.ChannelEncodingPreset;
+                channelOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelEncodingSuffix);
+                channelOptions.Encoding = new ChannelEncoding();
+                channelOptions.Encoding.SystemPreset = Constant.Media.Live.ChannelEncodingPreset;
             }
 
             IPRange allowedAddressRange = new IPRange();
@@ -80,18 +80,18 @@ namespace AzureSkyMedia.PlatformServices
                 allowedAddressRange.Address = IPAddress.Parse(allowedAddresses);
             }
 
-            creationOptions.Input = new ChannelInput();
-            creationOptions.Input.AccessControl = new ChannelAccessControl();
-            creationOptions.Input.AccessControl.IPAllowList = new List<IPRange>();
-            creationOptions.Input.AccessControl.IPAllowList.Add(allowedAddressRange);
-            creationOptions.Input.StreamingProtocol = ingestProtocol;
+            channelOptions.Input = new ChannelInput();
+            channelOptions.Input.AccessControl = new ChannelAccessControl();
+            channelOptions.Input.AccessControl.IPAllowList = new List<IPRange>();
+            channelOptions.Input.AccessControl.IPAllowList.Add(allowedAddressRange);
+            channelOptions.Input.StreamingProtocol = ingestProtocol;
 
-            creationOptions.Preview = new ChannelPreview();
-            creationOptions.Preview.AccessControl = new ChannelAccessControl();
-            creationOptions.Preview.AccessControl.IPAllowList = new List<IPRange>();
-            creationOptions.Preview.AccessControl.IPAllowList.Add(allowedAddressRange);
+            channelOptions.Preview = new ChannelPreview();
+            channelOptions.Preview.AccessControl = new ChannelAccessControl();
+            channelOptions.Preview.AccessControl.IPAllowList = new List<IPRange>();
+            channelOptions.Preview.AccessControl.IPAllowList.Add(allowedAddressRange);
 
-            return _media.Channels.Create(creationOptions);
+            return _media.Channels.Create(channelOptions);
         }
 
         public void CreateChannel(string channelName, MediaEncoding encodingType, string allowedAddresses)

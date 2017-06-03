@@ -8,6 +8,28 @@ namespace AzureSkyMedia.PlatformServices
 {
     public static class Workflow
     {
+        private static bool IsMultipleFileAsset(string[] fileNames)
+        {
+            bool multipleFileAsset = false;
+            string multipleFileExtension = string.Empty;
+            if (fileNames.Length > 1)
+            {
+                foreach (string fileName in fileNames)
+                {
+                    string fileExtension = Path.GetExtension(fileName);
+                    if (string.IsNullOrEmpty(multipleFileExtension))
+                    {
+                        multipleFileExtension = fileExtension;
+                    }
+                    else if (!string.Equals(fileExtension, multipleFileExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        multipleFileAsset = true;
+                    }
+                }
+            }
+            return multipleFileAsset;
+        }
+
         private static MediaAssetInput GetInputAsset(IAsset asset)
         {
             MediaAssetInput inputAsset = new MediaAssetInput();
@@ -120,10 +142,10 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public static MediaAssetInput[] CreateInputAssets(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
-                                                          string inputAssetName, bool multipleFileAsset, bool publishInputAsset, string[] fileNames)
+                                                          string inputAssetName, bool publishInputAsset, string[] fileNames)
         {
             List<MediaAssetInput> inputAssets = new List<MediaAssetInput>();
-            if (multipleFileAsset)
+            if (IsMultipleFileAsset(fileNames))
             {
                 IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
                 if (publishInputAsset)

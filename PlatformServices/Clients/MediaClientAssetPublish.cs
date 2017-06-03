@@ -93,12 +93,15 @@ namespace AzureSkyMedia.PlatformServices
                         }
                         if (!string.IsNullOrEmpty(fileData))
                         {
-                            MediaProcessor processorType = Processor.GetProcessorType(jobTask.MediaProcessorId);
-                            string processorName = Processor.GetProcessorName(processorType);
-                            string collectionId = Constant.Database.Collection.Metadata;
-                            string documentId = cosmosClient.CreateDocument(collectionId, fileData, dataAttributes);
-                            outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
-                            outputAsset.Update();
+                            MediaProcessor? processorType = Processor.GetProcessorType(jobTask.MediaProcessorId);
+                            if (processorType.HasValue)
+                            {
+                                string processorName = Processor.GetProcessorName(processorType.Value);
+                                string collectionId = Constant.Database.Collection.Metadata;
+                                string documentId = cosmosClient.CreateDocument(collectionId, fileData, dataAttributes);
+                                outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
+                                outputAsset.Update();
+                            }
                         }
                     }
                     JObject processorConfig = JObject.Parse(jobTask.Configuration);
