@@ -65,15 +65,10 @@ namespace AzureSkyMedia.PlatformServices
             return processorTypes;
         }
 
-        public static object GetMediaProcessors(string authToken, bool gridView)
+        public static object GetMediaProcessors(string authToken, bool filteredView)
         {
             object mediaProcessors = null;
-            if (gridView)
-            {
-                MediaClient mediaClient = new MediaClient(authToken);
-                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor, gridView) as IMediaProcessor[];
-            }
-            else
+            if (filteredView)
             {
                 CacheClient cacheClient = new CacheClient(authToken);
                 string itemKey = Constant.Cache.ItemKey.MediaProcessors;
@@ -89,6 +84,11 @@ namespace AzureSkyMedia.PlatformServices
                     processors.Add(processorName, processorType.ToString());
                 }
                 mediaProcessors = processors;
+            }
+            else
+            {
+                MediaClient mediaClient = new MediaClient(authToken);
+                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor, filteredView) as IMediaProcessor[];
             }
             return mediaProcessors;
         }

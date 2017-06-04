@@ -119,6 +119,20 @@ namespace AzureSkyMedia.PlatformServices
             return processorType;
         }
 
+        public static IMediaProcessor[] GetMediaProcessors(MediaClient mediaClient, IMediaProcessor[] processors)
+        {
+            List<IMediaProcessor> mediaProcessors = new List<IMediaProcessor>();
+            foreach (IMediaProcessor processor in processors)
+            {
+                IMediaProcessor mediaProcessor = mediaClient.GetEntityById(MediaEntity.Processor, processor.Id) as IMediaProcessor;
+                if (mediaProcessor != null)
+                {
+                    mediaProcessors.Add(mediaProcessor);
+                }
+            }
+            return mediaProcessors.ToArray();
+        }
+
         public static MediaMetadata[] GetAnalyticsMetadata(MediaClient mediaClient, IAsset asset)
         {
             List<MediaMetadata> analyticsMetadata = new List<MediaMetadata>();

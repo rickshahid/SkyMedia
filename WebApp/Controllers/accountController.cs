@@ -41,7 +41,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult processors()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            ViewData["mediaProcessors"] = Account.GetMediaProcessors(authToken, true);
+            ViewData["mediaProcessors"] = Account.GetMediaProcessors(authToken, false);
             return View();
         }
 

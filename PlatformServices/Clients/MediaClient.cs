@@ -40,10 +40,10 @@ namespace AzureSkyMedia.PlatformServices
             get { return _media.DefaultStorageAccount; }
         }
 
-        public object GetEntities(MediaEntity mediaEntity, bool gridView)
+        public object GetEntities(MediaEntity entityType, bool filteredView)
         {
             object entities = null;
-            switch (mediaEntity)
+            switch (entityType)
             {
                 case MediaEntity.MonitoringConfiguration:
                     entities = (from x in _media.MonitoringConfigurations
@@ -94,80 +94,11 @@ namespace AzureSkyMedia.PlatformServices
                                 select x).ToArray();
                     break;
                 case MediaEntity.Processor:
-                    if (gridView)
+                    entities = (from x in _media.MediaProcessors
+                                select x).ToArray();
+                    if (filteredView)
                     {
-                        entities = (from x in _media.MediaProcessors
-                                    select x).ToArray();
-                    }
-                    else
-                    {
-                        List<IMediaProcessor> mediaProcessors = new List<IMediaProcessor>();
-                        IMediaProcessor mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.EncoderStandard) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.EncoderPremium) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.EncoderUltra) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.SpeechToText) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.FaceDetection) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.FaceRedaction) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.VideoAnnotation) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.VideoSummarization) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.CharacterRecognition) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.ContentModeration) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.MotionDetection) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.MotionHyperlapse) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        mediaProcessor = GetEntityById(MediaEntity.Processor, Constant.Media.ProcessorId.MotionStabilization) as IMediaProcessor;
-                        if (mediaProcessor != null)
-                        {
-                            mediaProcessors.Add(mediaProcessor);
-                        }
-                        entities = mediaProcessors.ToArray();
+                        entities = Processor.GetMediaProcessors(this, entities as IMediaProcessor[]);
                     }
                     break;
                 case MediaEntity.ProcessorUnit:
@@ -210,16 +141,16 @@ namespace AzureSkyMedia.PlatformServices
             return entities;
         }
 
-        public object GetEntities(MediaEntity mediaEntity)
+        public object GetEntities(MediaEntity entityType)
         {
-            return GetEntities(mediaEntity, false);
+            return GetEntities(entityType, false);
         }
 
-        public object GetEntityById(MediaEntity mediaEntity, string entityId)
+        public object GetEntityById(MediaEntity entityType, string entityId)
         {
             object entity = null;
             StringComparison comparisonType = StringComparison.OrdinalIgnoreCase;
-            switch (mediaEntity)
+            switch (entityType)
             {
                 case MediaEntity.MonitoringConfiguration:
                     entity = _media.MonitoringConfigurations.Where(x => x.NotificationEndPointId.Equals(entityId, comparisonType)).SingleOrDefault();
@@ -291,10 +222,10 @@ namespace AzureSkyMedia.PlatformServices
             return entity;
         }
 
-        public object GetEntityByName(MediaEntity mediaEntity, string entityName, bool requireUnique)
+        public object GetEntityByName(MediaEntity entityType, string entityName, bool requireUnique)
         {
             object entity = null;
-            switch (mediaEntity)
+            switch (entityType)
             {
                 case MediaEntity.MonitoringConfiguration:
                     IQueryable<IMonitoringConfiguration> monitoringConfigs = _media.MonitoringConfigurations.Where(x => x.NotificationEndPointId.Contains(entityName));
