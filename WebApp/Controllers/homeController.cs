@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
@@ -193,19 +192,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (!string.IsNullOrEmpty(requestError) && requestError.Contains("AADB2C90118"))
                     {
                         return RedirectToAction("passwordreset", "account");
-                    }
-
-                    try
-                    {
-                        CacheClient cacheClient = new CacheClient(authToken);
-                        cacheClient.Initialize(authToken);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (Debugger.IsAttached)
-                        {
-                            throw ex;
-                        }
                     }
                 }
 

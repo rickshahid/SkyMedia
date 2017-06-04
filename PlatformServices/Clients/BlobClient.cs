@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -29,16 +27,16 @@ namespace AzureSkyMedia.PlatformServices
             StorageCredentials storageCredentials = new StorageCredentials(accountName, accountKey);
             CloudStorageAccount storageAccount = new CloudStorageAccount(storageCredentials, true);
             _storage = storageAccount.CreateCloudBlobClient();
+            _tracker = new EntityClient();
         }
 
-        private CloudBlobContainer GetContainer(string containerName, BlobContainerPublicAccessType? publicAccess)
+        private CloudBlobContainer GetContainer(string containerName, BlobContainerPublicAccessType publicAccess)
         {
             CloudBlobContainer container = _storage.GetContainerReference(containerName);
-            container.CreateIfNotExists();
-            if (publicAccess.HasValue)
+            if (container.CreateIfNotExists())
             {
                 BlobContainerPermissions permissions = container.GetPermissions();
-                permissions.PublicAccess = publicAccess.Value;
+                permissions.PublicAccess = publicAccess;
                 container.SetPermissions(permissions);
             }
             return container;
@@ -46,7 +44,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public CloudBlobContainer GetContainer(string containerName)
         {
-            return GetContainer(containerName, null);
+            return GetContainer(containerName, BlobContainerPublicAccessType.Off);
         }
 
         private CloudBlobDirectory GetDirectory(CloudBlobContainer container, string directoryPath)
@@ -56,27 +54,6 @@ namespace AzureSkyMedia.PlatformServices
                 directoryPath = directoryPath.Remove(0, 1);
             }
             return container.GetDirectoryReference(directoryPath);
-        }
-
-        public IEnumerable<IListBlobItem> ListItems(string containerName, string directoryPath, bool flatListing, BlobListingDetails listingDetails)
-        {
-            IEnumerable<IListBlobItem> blobs;
-            CloudBlobContainer container = GetContainer(containerName);
-            if (string.IsNullOrEmpty(directoryPath))
-            {
-                blobs = container.ListBlobs(null, flatListing, listingDetails);
-            }
-            else
-            {
-                CloudBlobDirectory directory = GetDirectory(container, directoryPath);
-                blobs = directory.ListBlobs(flatListing, listingDetails);
-            }
-            return blobs;
-        }
-
-        public IEnumerable<IListBlobItem> ListItems(string containerName, string directoryPath)
-        {
-            return ListItems(containerName, directoryPath, false, BlobListingDetails.Metadata);
         }
 
         public CloudBlockBlob GetBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
@@ -104,53 +81,14 @@ namespace AzureSkyMedia.PlatformServices
             return GetBlob(containerName, directoryPath, fileName, false);
         }
 
-        public string CopyBlob(CloudBlockBlob sourceBlob, CloudBlockBlob destinationBlob, bool asyncMode)
-        {
-            TimeSpan expirationTime = new TimeSpan(Constant.Storage.Blob.WriteDurationHours, 0, 0);
-            Uri sourceBlobUri = Storage.GetAccessSignature(sourceBlob, expirationTime, false);
-            string operationId;
-            if (asyncMode)
-            {
-                Task<string> operationTask = destinationBlob.StartCopyAsync(sourceBlobUri);
-                operationId = operationTask.Id.ToString();
-            }
-            else
-            {
-                operationId = destinationBlob.StartCopy(sourceBlobUri);
-            }
-            return operationId;
-        }
-
-        public string MoveBlob(CloudBlockBlob sourceBlob, CloudBlockBlob destinationBlob)
-        {
-            string operationId = CopyBlob(sourceBlob, destinationBlob, false);
-            sourceBlob.Delete();
-            return operationId;
-        }
-
-        public string CopyFile(IAsset sourceAsset, IAsset destinationAsset, string sourceFileName, string destinationFileName, bool primaryFile)
-        {
-            string sourceContainerName = sourceAsset.Uri.Segments[1];
-            CloudBlockBlob sourceBlob = GetBlob(sourceContainerName, string.Empty, sourceFileName, true);
-            string destinationContainerName = destinationAsset.Uri.Segments[1];
-            CloudBlockBlob destinationBlob = GetBlob(destinationContainerName, string.Empty, destinationFileName, false);
-            string operationId = CopyBlob(sourceBlob, destinationBlob, false);
-            IAssetFile assetFile = destinationAsset.AssetFiles.Create(destinationFileName);
-            assetFile.ContentFileSize = sourceBlob.Properties.Length;
-            assetFile.MimeType = sourceBlob.Properties.ContentType;
-            assetFile.IsPrimary = primaryFile;
-            assetFile.Update();
-            return operationId;
-        }
-
         public void UploadFile(Stream inputStream, string containerName, string directoryPath, string fileName)
         {
             CloudBlockBlob blob = GetBlob(containerName, directoryPath, fileName);
             blob.UploadFromStream(inputStream);
         }
 
-        public void UploadBlock(string userId, Stream inputStream, string containerName, string directoryPath,
-                                string fileName, int blockIndex, bool lastBlock)
+        public void UploadBlock(Stream inputStream, string containerName, string directoryPath, string fileName,
+                                int blockIndex, bool lastBlock, string userId)
         {
             string blockId = Convert.ToBase64String(BitConverter.GetBytes(blockIndex));
 

@@ -36,7 +36,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             string containerName = Constant.Storage.Blob.Container.Upload;
             Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
-            Storage.UploadBlock(authToken, storageAccount, containerName, inputStream, name, chunk, chunks);
+            Storage.UploadFile(authToken, storageAccount, containerName, inputStream, name, chunk, chunks);
             return Json(chunk);
         }
 

@@ -47,9 +47,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string StorageCdnUrl = "Storage.CdnUrl";
 
-            public const string MediaConcurrentTransferCount = "Media.ConcurrentTransferCount";
-            public const string MediaParallelTransferThreadCount = "Media.ParallelTransferThreadCount";
-
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
             public const string MediaStream1TextTracks = "Media.Stream1.TextTracks";
@@ -87,6 +84,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
 
+            public const string MediaLocatorWriteDurationMinutes = "Media.Locator.WriteDurationMinutes";
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
             public const string MediaLocatorMaxStreamCount = "Media.Locator.MaxStreamCount";
 
@@ -164,8 +162,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Blob
             {
-                public const int WriteDurationHours = 1;
-
                 public struct Container
                 {
                     public const string Upload = "upload";

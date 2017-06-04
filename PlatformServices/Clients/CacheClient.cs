@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-
-using Microsoft.WindowsAzure.MediaServices.Client;
 
 using Newtonsoft.Json;
 
@@ -26,13 +23,7 @@ namespace AzureSkyMedia.PlatformServices
 
             return ConnectionMultiplexer.Connect(serviceOptions);
         });
-
         private string _partitionId;
-
-        public CacheClient()
-        {
-            _partitionId = Constant.AppSettingKey.AzureCache;
-        }
 
         public CacheClient(string authToken)
         {
@@ -49,34 +40,21 @@ namespace AzureSkyMedia.PlatformServices
             return string.Concat(_partitionId, Constant.TextDelimiter.Identifier, itemKey);
         }
 
-        public MediaProcessor[] Initialize(string authToken)
-        {
-            MediaClient mediaClient = new MediaClient(authToken);
-            IMediaProcessor[] mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-            List<MediaProcessor> processorList = new List<MediaProcessor>();
-            foreach (IMediaProcessor mediaProcessor in mediaProcessors)
-            {
-                MediaProcessor? processorType = Processor.GetProcessorType(mediaProcessor.Id);
-                if (processorType.HasValue)
-                {
-                    processorList.Add(processorType.Value);
-                }
-            }
-            MediaProcessor[] processorTypes = processorList.ToArray();
-            SetValue<MediaProcessor[]>(Constant.Cache.ItemKey.MediaProcessors, processorTypes);
-            return processorTypes;
-        }
-
         public T GetValue<T>(string itemKey)
         {
+            T value;
             IDatabase cache = GetCache();
             itemKey = MapItemKey(itemKey);
             string itemValue = cache.StringGet(itemKey);
             if (typeof(T) == typeof(string))
             {
-                return (T)Convert.ChangeType(itemValue, typeof(T));
+                value = (T)Convert.ChangeType(itemValue, typeof(T));
             }
-            return JsonConvert.DeserializeObject<T>(itemValue);
+            else
+            {
+                value = JsonConvert.DeserializeObject<T>(itemValue);
+            }
+            return value;
         }
 
         public void SetValue<T>(string itemKey, T itemValue)

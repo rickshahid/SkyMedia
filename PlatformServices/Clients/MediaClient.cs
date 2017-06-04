@@ -32,22 +32,6 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaServicesCredentials credentials = new MediaServicesCredentials(accountName, accountKey);
             _media = new CloudMediaContext(credentials);
-
-            int settingValue;
-            string settingKey = Constant.AppSettingKey.MediaConcurrentTransferCount;
-            string concurrentTransferCount = AppSetting.GetValue(settingKey);
-            if (int.TryParse(concurrentTransferCount, out settingValue))
-            {
-                _media.NumberOfConcurrentTransfers = settingValue;
-            }
-
-            settingKey = Constant.AppSettingKey.MediaParallelTransferThreadCount;
-            string parallelTransferThreadCount = AppSetting.GetValue(settingKey);
-            if (int.TryParse(parallelTransferThreadCount, out settingValue))
-            {
-                _media.ParallelTransferThreadCount = settingValue;
-            }
-
             IStorageAccount storageAccount = this.DefaultStorageAccount;
         }
 

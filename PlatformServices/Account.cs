@@ -47,6 +47,24 @@ namespace AzureSkyMedia.PlatformServices
             asset.Delete();
         }
 
+        private static MediaProcessor[] CacheMediaProcessors(string authToken, CacheClient cacheClient)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            IMediaProcessor[] mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+            List<MediaProcessor> processorList = new List<MediaProcessor>();
+            foreach (IMediaProcessor mediaProcessor in mediaProcessors)
+            {
+                MediaProcessor? processorType = Processor.GetProcessorType(mediaProcessor.Id);
+                if (processorType.HasValue)
+                {
+                    processorList.Add(processorType.Value);
+                }
+            }
+            MediaProcessor[] processorTypes = processorList.ToArray();
+            cacheClient.SetValue<MediaProcessor[]>(Constant.Cache.ItemKey.MediaProcessors, processorTypes);
+            return processorTypes;
+        }
+
         public static object GetMediaProcessors(string authToken, bool gridView)
         {
             object mediaProcessors = null;
@@ -62,7 +80,7 @@ namespace AzureSkyMedia.PlatformServices
                 MediaProcessor[] processorTypes = cacheClient.GetValue<MediaProcessor[]>(itemKey);
                 if (processorTypes == null)
                 {
-                    processorTypes = cacheClient.Initialize(authToken);
+                    processorTypes = CacheMediaProcessors(authToken, cacheClient);
                 }
                 NameValueCollection processors = new NameValueCollection();
                 foreach (MediaProcessor processorType in processorTypes)

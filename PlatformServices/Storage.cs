@@ -94,20 +94,6 @@ namespace AzureSkyMedia.PlatformServices
             return string.IsNullOrEmpty(storageAccount) ? null : CloudStorageAccount.Parse(storageAccount);
         }
 
-        internal static Uri GetAccessSignature(ICloudBlob storageBlob, TimeSpan policyDuration, bool readWrite)
-        {
-            SharedAccessBlobPolicy accessPolicy = new SharedAccessBlobPolicy();
-            accessPolicy.Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.List;
-            if (readWrite)
-            {
-                accessPolicy.Permissions = accessPolicy.Permissions | SharedAccessBlobPermissions.Write;
-            }
-            accessPolicy.SharedAccessExpiryTime = DateTime.UtcNow.Add(policyDuration);
-            string accessSignature = storageBlob.GetSharedAccessSignature(accessPolicy);
-            string signatureUrl = string.Concat(storageBlob.Uri.AbsoluteUri, accessSignature);
-            return new Uri(signatureUrl);
-        }
-
         internal static CloudStorageAccount GetSystemAccount()
         {
             string settingKey = Constant.AppSettingKey.AzureStorage;
@@ -184,8 +170,8 @@ namespace AzureSkyMedia.PlatformServices
             return storageAccounts;
         }
 
-        public static void UploadBlock(string authToken, string storageAccount, string containerName,
-                                       Stream inputStream, string fileName, int chunkIndex, int chunksCount)
+        public static void UploadFile(string authToken, string storageAccount, string containerName,
+                                      Stream inputStream, string fileName, int chunkIndex, int chunksCount)
         {
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             if (chunksCount == 0)
@@ -197,7 +183,7 @@ namespace AzureSkyMedia.PlatformServices
                 bool lastBlock = (chunkIndex == chunksCount - 1);
                 string attributeName = Constant.UserAttribute.UserId;
                 string userId = AuthToken.GetClaimValue(authToken, attributeName);
-                blobClient.UploadBlock(userId, inputStream, containerName, null, fileName, chunkIndex, lastBlock);
+                blobClient.UploadBlock(inputStream, containerName, null, fileName, chunkIndex, lastBlock, userId);
             }
         }
     }

@@ -15,10 +15,12 @@ namespace AzureSkyMedia.PlatformServices
             IAccessPolicy accessPolicy = GetEntityByName(MediaEntity.AccessPolicy, policyName, true) as IAccessPolicy;
             if (accessPolicy == null)
             {
-                string settingKey = Constant.AppSettingKey.MediaLocatorReadDurationDays;
-                string durationDays = AppSetting.GetValue(settingKey);
-                TimeSpan readPolicyDuration = new TimeSpan(int.Parse(durationDays), 0, 0, 0);
-                TimeSpan writePolicyDuration = new TimeSpan(Constant.Storage.Blob.WriteDurationHours, 0, 0);
+                string settingKey = Constant.AppSettingKey.MediaLocatorWriteDurationMinutes;
+                string writeDurationMinutes = AppSetting.GetValue(settingKey);
+                settingKey = Constant.AppSettingKey.MediaLocatorReadDurationDays;
+                string readDurationDays = AppSetting.GetValue(settingKey);
+                TimeSpan writePolicyDuration = new TimeSpan(0, int.Parse(writeDurationMinutes), 0);
+                TimeSpan readPolicyDuration = new TimeSpan(int.Parse(readDurationDays), 0, 0, 0);
                 TimeSpan accessDuration = writePolicy ? writePolicyDuration : readPolicyDuration;
                 AccessPermissions accessPermissions = writePolicy ? AccessPermissions.Write : AccessPermissions.Read;
                 accessPolicy = _media.AccessPolicies.Create(policyName, accessDuration, accessPermissions);

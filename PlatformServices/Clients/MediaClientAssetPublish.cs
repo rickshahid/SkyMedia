@@ -104,17 +104,6 @@ namespace AzureSkyMedia.PlatformServices
                             }
                         }
                     }
-                    JObject processorConfig = JObject.Parse(jobTask.Configuration);
-                    if (processorConfig["options"] != null &&
-                        processorConfig["options"]["mode"] != null &&
-                        processorConfig["options"]["mode"].ToString() == "analyze")
-                    {
-                        foreach (IAsset inputAsset in jobTask.InputAssets)
-                        {
-                            string primaryFileName = GetPrimaryFile(inputAsset);
-                            blobClient.CopyFile(inputAsset, outputAsset, primaryFileName, primaryFileName, true);
-                        }
-                    }
                 }
             }
         }
