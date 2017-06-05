@@ -48,8 +48,13 @@
         <td>
             @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Azure Media Asset Name]" })
             &nbsp;
+            @Html.CheckBox("multipleFileAsset")
+            <span class="inputLabel">
+                Multiple File Asset
+            </span>
+            &nbsp;
             @Html.CheckBox("publishInputAsset")
-            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-deliver-streaming-content')">
+            <span class="inputLabel">
                 Publish Input Asset
             </span>
         </td>

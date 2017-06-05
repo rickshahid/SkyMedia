@@ -76,6 +76,22 @@ function SigniantEnabled() {
 function AsperaEnabled() {
     return $("#uploadService[value='asperaFasp']").prop("checked");
 }
+function SetMultipleFileAsset() {
+    var multipleFileAsset = false;
+    var multipleFileExtension = "";
+    var files = GetUploaderFiles(true);
+    for (var i = 0; i < files.length; i++) {
+        var fileName = files[i];
+        var fileExtension = fileName.split(".").pop();
+        fileExtension = fileExtension.toLowerCase();
+        if (multipleFileExtension == "") {
+            multipleFileExtension = fileExtension.toLowerCase();
+        } else if (fileExtension != multipleFileExtension) {
+            multipleFileAsset = true;
+        }
+    }
+    $("#multipleFileAsset").prop("checked", multipleFileAsset);
+}
 function CreateUploader() {
     var eventHandlers = {
         PostInit: function (uploader) {
@@ -92,6 +108,12 @@ function CreateUploader() {
                     );
                 }
             }
+        },
+        FilesAdded: function (uploader, files) {
+            SetMultipleFileAsset();
+        },
+        FilesRemoved: function (uploader, files) {
+            SetMultipleFileAsset();
         },
         BeforeUpload: function (uploader, file) {
             uploader.settings.multipart_params = {

@@ -8,29 +8,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     public static class Workflow
     {
-        private static bool IsMultipleFileAsset(string[] fileNames)
-        {
-            bool multipleFileAsset = false;
-            string multipleFileExtension = string.Empty;
-            if (fileNames.Length > 1)
-            {
-                foreach (string fileName in fileNames)
-                {
-                    string fileExtension = Path.GetExtension(fileName);
-                    if (string.IsNullOrEmpty(multipleFileExtension))
-                    {
-                        multipleFileExtension = fileExtension;
-                    }
-                    else if (!string.Equals(fileExtension, multipleFileExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        multipleFileAsset = true;
-                    }
-                }
-            }
-            return multipleFileAsset;
-        }
-
-        private static MediaAssetInput GetInputAsset(IAsset asset)
+         private static MediaAssetInput GetInputAsset(IAsset asset)
         {
             MediaAssetInput inputAsset = new MediaAssetInput();
             inputAsset.AssetId = asset.Id;
@@ -142,10 +120,10 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public static MediaAssetInput[] CreateInputAssets(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
-                                                          string inputAssetName, bool publishInputAsset, string[] fileNames)
+                                                          string inputAssetName, bool multipleFileAsset, bool publishInputAsset, string[] fileNames)
         {
             List<MediaAssetInput> inputAssets = new List<MediaAssetInput>();
-            if (IsMultipleFileAsset(fileNames))
+            if (multipleFileAsset)
             {
                 IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
                 if (publishInputAsset)

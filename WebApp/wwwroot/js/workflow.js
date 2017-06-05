@@ -124,8 +124,8 @@ function IngestAssets(files) {
             storageAccount: $("#storageAccount").val(),
             storageEncryption: $("#storageEncryption").prop("checked"),
             inputAssetName: $("#inputAssetName").val(),
+            multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             publishInputAsset: $("#publishInputAsset").prop("checked"),
-            inputAssets: _inputAssets,
             mediaJob: GetJob()
         },
         function (result) {
