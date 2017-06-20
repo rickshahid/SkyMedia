@@ -2,6 +2,8 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
+![](http://skystorage.azureedge.net/Snip0.AzureSkyMedia.png)
+
 The following set of baseline functionality is integrated and enabled via this Azure ASP.NET Core MVC web application:
 
 * Adaptive video streaming across a broad spectrum of devices and platforms including iOS, Android and Windows
@@ -34,19 +36,19 @@ To enable the various capabilities that are listed above, the following Azure pl
 
 * Media Services - http://azure.microsoft.com/en-us/services/media-services/
 
-  * Media Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
+  * Encoding - http://azure.microsoft.com/en-us/services/media-services/encoding/
 
-  * Media Indexer - http://azure.microsoft.com/en-us/services/media-services/media-indexer/
+  * Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
+  
+  * Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
+
+  * Indexer - http://azure.microsoft.com/en-us/services/cognitive-services/video-indexer/
 
     * Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
 
     * Search - http://azure.microsoft.com/en-us/services/search/
 
-  * Media Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
-
-  * Media Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
-
-* API Management - http://azure.microsoft.com/en-us/services/api-management/
+  * Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
