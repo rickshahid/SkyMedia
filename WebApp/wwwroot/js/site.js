@@ -2,7 +2,7 @@
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");
-    CreateTipBottom("accountInventory", "Azure Media Services<br /><br />Account Inventory");
+    CreateTipBottom("siteBot", "Azure Sky Media<br /><br />Bot Service");
     CreateTipBottom("userDirectory", "Azure B2C<br /><br />Active Directory");
     CreateTipBottom("userSignIn", "Azure Sky Media<br /><br />User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
@@ -12,21 +12,20 @@ function SetLayout() {
     CreateTipRight("mediaStreaming", "Azure Media Services<br /><br />Streaming");
     CreateTipRight("mediaEncoding", "Azure Media Services<br /><br />Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br /><br />Content Protection");
-    CreateTipRight("mediaIndexer", "Azure Media Services<br /><br />Video Indexer");
-    CreateTipRight("appServiceBot", "Azure Bot Service");
-    CreateTipLeft("appService", "Azure App Service");
+    CreateTipRight("mediaIndexer", "Azure Cognitive Services<br /><br />Video Indexer");
+    CreateTipLeft("cognitiveServices", "Azure Cognitive Services");
     CreateTipLeft("appServiceWeb", "Azure App Service<br /><br />Web Apps");
-    CreateTipLeft("appServiceMobile", "Azure App Service<br /><br />Mobile Apps");
+    CreateTipLeft("appServiceMobile", "Azure App Service<br /><br />Mobile Center");
     CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Function Apps");
-    CreateTipLeft("appServiceApi", "Azure App Service<br /><br />API Apps");
     CreateTipLeft("appServiceLogic", "Azure Logic Apps");
-    CreateTipLeft("appServiceInsights", "Azure Application Insights");
+    CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipTop("mediaFileUpload", "Azure Media Services<br /><br />File Uploader");
     CreateTipTop("mediaAssetWorkflow", "Azure Media Services<br /><br />Asset Workflow");
     CreateTipTop("mediaStreamLeft", "Azure Media Stream<br /><br />Tuner Left");
     CreateTipTop("mediaStreamRight", "Azure Media Stream<br /><br />Tuner Right");
     CreateTipTop("mediaLive", "Azure Media Services<br /><br />Live Streams");
     CreateTipTop("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
+    CreateTipTop("accountInventory", "Azure Media Services<br /><br />Account Inventory");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });
@@ -38,7 +37,7 @@ function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signout";
 }
-function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose) {
+function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose, modal) {
     if (buttons == null) {
         buttons = {
             OK: function () {
@@ -57,14 +56,14 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
         width = "auto";
     }
     $("#" + dialogId).dialog({
+        resizable: false,
         buttons: buttons,
         height: height,
         width: width,
         title: title,
         open: onOpen,
         close: onClose,
-        resizable: false,
-        modal: true
+        modal: modal
     });
     if (jQuery.isEmptyObject(buttons)) {
         $(".ui-dialog-titlebar-close").show();
@@ -73,7 +72,7 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
 }
 function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
-    DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose);
+    DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose, true);
 }
 function DisplayWorkflow(result) {
     var title, message = "", onClose = null;
@@ -125,11 +124,11 @@ function GetProtectionInfo(protectionTypes) {
     return protectionInfo;
 }
 function GetMediaPlayer(clipMode) {
-    var videoTagId = clipMode ? "videoClipper" : "videoPlayer";
+    var indexId = clipMode ? "1" : "0";
     var plugins = {};
     if (clipMode) {
         plugins.AMVE = {
-            containerId: "mediaClipper",
+            containerId: "videoClipper" + indexId,
             clipdataCallback: CreateVideoClip
         };
     }
@@ -139,7 +138,8 @@ function GetMediaPlayer(clipMode) {
             enabled: true
         }
     };
-    return amp(videoTagId, playerOptions);
+    var videoPlayerId = "videoPlayer" + indexId;
+    return amp(videoPlayerId, playerOptions);
 }
 function SetPlayerSpinner(visible) {
     if (visible) {
@@ -166,19 +166,26 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
         }
     }
 }
-function ToggleAIPanel() {
+function OpenInsightsDialog(mediaStream) {
+    var dialogId = "insightsDialog";
+    var title = "Azure Video Indexer";
+    var html = "<iframe width='600' height='400' frameborder='0' src='" + mediaStream.insightsUrl + "'></iframe>";
+    var buttons = {};
+    var modal = false;
+    DisplayDialog(dialogId, title, html, buttons, null, null, null, null, modal);
+}
+function ToggleMetadataPanel() {
     ClearVideoOverlay();
-    var aiPanelImage = document.getElementById("aiPanelImage");
-    if ($("#aiPanel").is(":visible")) {
-        aiPanelImage.src = aiPanelImage.src.replace("Close", "Open");
-        $("#aiPanel").hide();
+    var metadataImage = document.getElementById("metadataImage");
+    if ($("#metadataPanel").is(":visible")) {
+        metadataImage.src = metadataImage.src.replace("Close", "Open");
+        $("#metadataPanel").hide();
     } else {
+        metadataImage.src = metadataImage.src.replace("Open", "Close");
         var mediaPlayer = GetMediaPlayer(false);
         var playerHeight = mediaPlayer.el().clientHeight;
-        $("#mediaTranscript").height(playerHeight);
         $("#mediaMetadata").height(playerHeight);
-        aiPanelImage.src = aiPanelImage.src.replace("Open", "Close");
-        $("#aiPanel").show();
+        $("#metadataPanel").show();
     }
 }
 function ToggleLiveStream(button) {

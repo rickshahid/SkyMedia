@@ -28,7 +28,7 @@
                     $(this).dialog("close");
                 }
             };
-            DisplayMessage(title, message, buttons, null, null);
+            DisplayMessage(title, message, buttons);
         }
         function SetEntity(innerHtml, entityCount) {
             innerHtml = innerHtml + "<tr><td>";
@@ -54,7 +54,6 @@
         $(function () {
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
             SetInventory(entityCounts);
-            CreateTipTop("accountDashboard", "Live Monitoring Dashboard");
             CreateTipTop("accountClear", "Clear Media Account");
         })
     </script>
@@ -76,7 +75,6 @@
 </table>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "accountDashboard", "AccountDashboard.png", "window.open('http://azure.microsoft.com/en-us/blog/azure-media-services-live-monitoring-dashboard-open-source-release/')" })
     @if (Debugger.IsAttached)
     {
         @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })

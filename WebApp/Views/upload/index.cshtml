@@ -13,7 +13,8 @@
         $(function () {
             var signiantAccountKey = "@ViewData["signiantAccountKey"]";
             var asperaAccountKey = "@ViewData["asperaAccountKey"]";
-            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
+            var videoIndexerKey = "@ViewData["videoIndexerKey"]";
+            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey, videoIndexerKey);
             CreateUploader();
         })
     </script>

@@ -1,11 +1,11 @@
 ﻿function DisplayVideoClipper(languageCode) {
     var dialogId = "clipperDialog";
-    var title = "Azure Media Video Clipper";
+    var title = "Azure Video Clipper";
     var buttons = {};
     var mediaPlayer = GetMediaPlayer(true);
     var mediaStream = _mediaStreams[_streamNumber - 1];
     SetPlayerContent(mediaPlayer, mediaStream, languageCode, true);
-    DisplayDialog(dialogId, title, null, buttons, null, null, null, null);
+    DisplayDialog(dialogId, title, null, buttons, null, null, null, null, true);
 }
 function CreateVideoClip(clipData) {
     if (clipData != null) {

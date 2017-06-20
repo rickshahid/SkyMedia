@@ -48,18 +48,37 @@ namespace AzureSkyMedia.PlatformServices
             return textTracks.ToArray();
         }
 
-        private static MediaStream GetMediaStream(MediaClient mediaClient, IAsset asset)
+        private static string GetIndexId(IAsset asset)
+        {
+            string indexId = string.Empty;
+            foreach(IAsset parentAsset in asset.ParentAssets)
+            {
+                if (string.IsNullOrEmpty(indexId) && !string.IsNullOrEmpty(parentAsset.AlternateId))
+                {
+                    indexId = parentAsset.AlternateId;
+                }
+            }
+            return indexId;
+        }
+
+        private static MediaStream GetMediaStream(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             MediaStream mediaStream = new MediaStream();
             mediaStream.Name = asset.Name;
             mediaStream.SourceUrl = mediaClient.GetLocatorUrl(asset);
+            mediaStream.InsightsUrl = string.Empty;
             mediaStream.ProtectionTypes = GetProtectionTypes(mediaClient, asset);
             mediaStream.TextTracks = GetTextTracks(mediaClient, asset);
-            mediaStream.AnalyticsMetadata = new MediaMetadata[] { };
+            mediaStream.AnalyticsMetadata = Processor.GetAnalyticsMetadata(mediaClient, asset);
+            string indexId = GetIndexId(asset);
+            if (!string.IsNullOrEmpty(indexId) && indexerClient != null)
+            {
+                mediaStream.InsightsUrl = indexerClient.GetInsightsUrl(indexId, null, null);
+            }
             return mediaStream;
         }
 
-        public static MediaStream[] GetMediaStreams(MediaClient mediaClient)
+        public static MediaStream[] GetMediaStreams(MediaClient mediaClient, IndexerClient indexerClient)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
             string settingKey = Constant.AppSettingKey.MediaLocatorMaxStreamCount;
@@ -71,19 +90,16 @@ namespace AzureSkyMedia.PlatformServices
                 IAsset asset = locator.Asset;
                 if (asset.IsStreamable && asset.AssetType != AssetType.SmoothStreaming) // Live Streaming
                 {
-                    MediaStream mediaStream = GetMediaStream(mediaClient, asset);
+                    MediaStream mediaStream = GetMediaStream(mediaClient, indexerClient, asset);
                     mediaStreams.Add(mediaStream);
                     if (!string.IsNullOrEmpty(mediaStream.SourceUrl))
                     {
                         foreach (IStreamingAssetFilter filter in asset.AssetFilters)
                         {
-                            mediaStream = new MediaStream();
-                            mediaStream.Name = string.Concat(asset.Name, Constant.Media.Stream.AssetFilteredSuffix);
-                            mediaStream.SourceUrl = string.Concat(mediaStream.SourceUrl, "(filter=", filter.Name, ")");
-                            mediaStream.ProtectionTypes = new string[] { };
-                            mediaStream.TextTracks = new MediaTextTrack[] { };
-                            mediaStream.AnalyticsMetadata = new MediaMetadata[] { };
-                            mediaStreams.Add(mediaStream);
+                            MediaStream streamFilter = mediaStream;
+                            streamFilter.Name = string.Concat(streamFilter.Name, Constant.Media.Stream.AssetFilteredSuffix);
+                            streamFilter.SourceUrl = string.Concat(streamFilter.SourceUrl, "(filter=", filter.Name, ")");
+                            mediaStreams.Add(streamFilter);
                         }
                     }
                     if (mediaStreams.Count == maxStreamCount)
@@ -95,7 +111,7 @@ namespace AzureSkyMedia.PlatformServices
             return mediaStreams.ToArray();
         }
 
-        public static MediaStream[] GetLiveStreams(MediaClient mediaClient)
+        public static MediaStream[] GetLiveStreams(MediaClient mediaClient, IndexerClient indexerClient)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
             IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
@@ -103,7 +119,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IProgram program in channel.Programs)
                 {
-                    MediaStream mediaStream = GetMediaStream(mediaClient, program.Asset);
+                    MediaStream mediaStream = GetMediaStream(mediaClient, indexerClient, program.Asset);
                     mediaStreams.Add(mediaStream);
                 }
             }

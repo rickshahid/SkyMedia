@@ -4,10 +4,16 @@
     string imageFile = model[1];
     string onClick = model[2];
 
+    string cssClass = "siteButton";
+    if (model.Length > 3)
+    {
+        cssClass = string.Concat(cssClass, " ", model[3]);
+    }
+
     string cdnUrl = ViewData["storageCdnUrl"].ToString();
     string imageUrl = string.Concat(cdnUrl, "/", imageFile);
 }
 
-<button id="@buttonId" class="siteButton" onclick="@onClick">
+<button id="@buttonId" class="@cssClass" onclick="@onClick">
     <img src="@imageUrl" />
 </button>

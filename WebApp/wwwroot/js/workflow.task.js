@@ -91,7 +91,7 @@ function GetJobTaskOptions(taskNumber) {
 function GetJobTask(taskNumber) {
     var jobTask = null;
     var mediaProcessor = $("#mediaProcessor" + taskNumber).val();
-    if (mediaProcessor != null && mediaProcessor != "None") {
+    if (mediaProcessor != null && mediaProcessor != "") {
         var taskParent = $("#taskParent" + taskNumber).val();
         jobTask = {
             ProcessorType: mediaProcessor,

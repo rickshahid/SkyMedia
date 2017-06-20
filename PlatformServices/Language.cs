@@ -28,25 +28,43 @@ namespace AzureSkyMedia.PlatformServices
             return languageCode;
         }
 
-        public static JObject GetSpokenLanguages()
+        public static JObject GetSpokenLanguages(bool videoIndexer)
         {
             JObject spokenLanguages = new JObject();
-            spokenLanguages.Add("EnUS", "English");
-            spokenLanguages.Add("EsEs", "Spanish");
-            spokenLanguages.Add("ArEg", "Arabic");
-            spokenLanguages.Add("ZhCn", "Chinese");
-            spokenLanguages.Add("FrFr", "French");
-            spokenLanguages.Add("DeDe", "German");
-            spokenLanguages.Add("ItIt", "Italian");
-            spokenLanguages.Add("JaJp", "Japanese");
-            spokenLanguages.Add("PtBr", "Portuguese");
+            if (videoIndexer)
+            {
+                spokenLanguages.Add("English", "English");
+                spokenLanguages.Add("Spanish", "Spanish");
+                spokenLanguages.Add("French", "French");
+                spokenLanguages.Add("German", "German");
+                spokenLanguages.Add("Italian", "Italian");
+                spokenLanguages.Add("Chinese", "Chinese (Simplified)");
+                spokenLanguages.Add("Portuguese", "Portuguese (Brazilian)");
+                spokenLanguages.Add("Japanese", "Japanese");
+                spokenLanguages.Add("Russian", "Russian");
+            }
+            else
+            {
+                spokenLanguages.Add("EnUs", "English");
+                spokenLanguages.Add("EnGb", "English (British)");
+                spokenLanguages.Add("EsEs", "Spanish");
+                spokenLanguages.Add("EsMx", "Spanish (Mexican)");
+                spokenLanguages.Add("ArEg", "Arabic (Egyptian)");
+                spokenLanguages.Add("ZhCn", "Chinese (Mandarin)");
+                spokenLanguages.Add("FrFr", "French");
+                spokenLanguages.Add("DeDe", "German");
+                spokenLanguages.Add("ItIt", "Italian");
+                spokenLanguages.Add("JaJp", "Japanese");
+                spokenLanguages.Add("PtBr", "Portuguese");
+                spokenLanguages.Add("RuRu", "Russian");
+            }
             return spokenLanguages;
         }
 
         public static string GetLanguageLabel(string languageCode)
         {
             string languageLabel = string.Empty;
-            JObject spokenLanguages = GetSpokenLanguages();
+            JObject spokenLanguages = GetSpokenLanguages(false);
             languageCode = languageCode.Substring(0, 2);
             IEnumerable<JProperty> properties = spokenLanguages.Properties();
             foreach (JProperty property in properties)

@@ -1,4 +1,4 @@
-﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
+﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey, videoIndexerKey) {
     CreateTipRight("mediaWorkflowSave", "Save Workflow");
     CreateTipLeft("mediaWorkflowStart", "Start Workflow");
     CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
@@ -20,6 +20,10 @@
         if (asperaAccountKey != "") {
             $("#uploadService[value='asperaFasp']").prop("disabled", false);
         }
+        if (videoIndexerKey != "") {
+            $("#indexInputAsset").prop("disabled", false);
+            $("#indexInputAsset").prop("checked", true);
+       }
     } else {
         $("#mediaAssetsRow").show();
     }
@@ -125,7 +129,9 @@ function IngestAssets(files) {
             storageEncryption: $("#storageEncryption").prop("checked"),
             inputAssetName: $("#inputAssetName").val(),
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
-            publishInputAsset: $("#publishInputAsset").prop("checked"),
+            indexInputAsset: $("#indexInputAsset").prop("checked"),
+            indexerLanguage: $("#indexerLanguage").val(),
+            indexerPrivacyPublic: $("#indexerPrivacyPublic").prop("checked"),
             mediaJob: GetJob()
         },
         function (result) {

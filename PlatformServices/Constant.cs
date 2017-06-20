@@ -78,8 +78,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
             public const string MediaProcessorContentModerationDocumentId = "Media.Processor.ContentModerationDocumentId";
 
-            public const string MediaJobNotificationStorageQueueName = "Media.Job.Notification.StorageQueueName";
-            public const string MediaJobNotificationWebHookUrl = "Media.Job.Notification.WebHookUrl";
+            public const string MediaNotificationStorageQueueName = "Media.Notification.StorageQueueName";
+            public const string MediaNotificationWebHookUrl = "Media.Notification.WebHookUrl";
+            public const string MediaNotificationIndexerCallbackUrl = "Media.Notification.IndexerCallbackUrl";
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
@@ -90,6 +91,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
+
+            public const string MediaClipperEncoderPreset = "Media.Clipper.EncoderPreset";
 
             public const string SigniantTransferApi = "Signiant.TransferApi";
 
@@ -177,6 +180,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string FileUpload = "FileUpload";
                 public const string JobPublish = "JobPublish";
+                public const string IndexPublish = "IndexPublish";
                 public const string ContentProtection = "ContentProtection";
             }
 
@@ -225,7 +229,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct ProcessorConfig
             {
-                public const string EncoderStandardDefaultPreset = "H264 Multiple Bitrate 720p Audio 5.1";
                 public const string EncoderStandardThumbnailsPreset = "Thumbnails";
                 public const string EncoderStandardThumbnailsFormat = "PngImage";
                 public const string EncoderPremiumWorkflowExtension = ".workflow";

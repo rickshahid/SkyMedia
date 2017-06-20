@@ -24,7 +24,7 @@
     string settingKey = Constant.AppSettingKey.AppRegion;
     ViewData["appRegion"] = AppSetting.GetValue(settingKey);
 
-    string ampVersion = this.Context.Request.Query["amp-version"];
+    string ampVersion = this.Context.Request.Query["amp.version"];
     if (string.IsNullOrEmpty(ampVersion))
     {
         settingKey = Constant.AppSettingKey.MediaPlayerVersion;
@@ -32,7 +32,7 @@
     }
     ViewData["mediaPlayerVersion"] = ampVersion;
 
-    string ampSkin = this.Context.Request.Query["amp-skin"];
+    string ampSkin = this.Context.Request.Query["amp.skin"];
     if (string.IsNullOrEmpty(ampSkin))
     {
         settingKey = Constant.AppSettingKey.MediaPlayerSkin;

@@ -3,6 +3,8 @@ using System.Net.Http;
 
 using Newtonsoft.Json.Linq;
 
+using Microsoft.WindowsAzure.MediaServices.Client;
+
 namespace AzureSkyMedia.PlatformServices
 {
     public class IndexerClient
@@ -10,88 +12,135 @@ namespace AzureSkyMedia.PlatformServices
         private WebClient _indexer;
         private string _serviceUri;
 
-        public delegate string UploadVideo(string name, MediaPrivacy privacy, string locatorUrl);
-
-        public IndexerClient(string authKey)
+        public IndexerClient(string indexerKey)
         {
-            _indexer = new WebClient(authKey);
-
+            _indexer = new WebClient(indexerKey);
             string settingKey = Constant.AppSettingKey.AzureMediaIndexer;
             _serviceUri = AppSetting.GetValue(settingKey);
         }
 
+        public static string PublishIndex(string indexId)
+        {
+            EntityClient entityClient = new EntityClient();
+            string tableName = Constant.Storage.TableName.IndexPublish;
+            string partitionKey = Constant.Storage.TableProperty.PartitionKey;
+            MediaIndexPublish indexPublish = entityClient.GetEntity<MediaIndexPublish>(tableName, partitionKey, indexId);
+
+            IndexerClient indexerClient = new IndexerClient(indexPublish.IndexerAccountKey);
+            JObject index = indexerClient.GetIndex(indexId, null, false);
+            string assetId = index["breakdowns"]["externalId"].ToString();
+
+            MediaClient mediaClient = new MediaClient(indexPublish.MediaAccountName, indexPublish.MediaAccountKey);
+            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+            if (asset != null)
+            {
+                asset.AlternateId = indexId;
+                asset.Update();
+            }
+            return assetId;
+        }
+
         public JArray GetAccounts()
         {
-            JArray response;
+            JArray accounts;
             string requestUri = string.Concat(_serviceUri, "/Accounts");
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
-                response = _indexer.GetResponse<JArray>(request);
+                accounts = _indexer.GetResponse<JArray>(request);
             }
-            return response;
+            return accounts;
         }
 
-        public string GetWidgetUrl(string indexId, MediaInsight? insightType)
+        public string GetInsightsUrl(string indexId, string assetId, MediaInsight? insightType)
         {
-            string response;
-            string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId);
-            if (!insightType.HasValue)
+            string insightsUrl;
+            string requestUri = _serviceUri;
+            if (!string.IsNullOrEmpty(assetId))
             {
-                requestUri = string.Concat(requestUri, "/PlayerWidgetUrl");
+                requestUri = string.Concat(requestUri, "/Breakdowns/GetInsightsWidgetUrlByExternalId?", assetId, "&");
             }
             else
             {
-                requestUri = string.Concat(requestUri, "/InsightsWidgetUrl?", insightType.ToString());
+                requestUri = string.Concat(requestUri, "/Breakdowns/", indexId, "/InsightsWidgetUrl?");
+            }
+            if (insightType.HasValue)
+            {
+                requestUri = string.Concat(requestUri, insightType.ToString());
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
-                response = _indexer.GetResponse<string>(request);
+                insightsUrl = _indexer.GetResponse<string>(request);
             }
-            return response;
+            return insightsUrl;
         }
 
-        public string GetWebVttUrl(string indexId, string languageCode)
+        public string GetWebVttUrl(string indexId, string spokenLanguage)
         {
-            string response;
+            string webVttUrl;
             string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId, "/VttUrl");
-            if (!string.IsNullOrEmpty(languageCode))
+            if (!string.IsNullOrEmpty(spokenLanguage))
             {
-                requestUri = string.Concat(requestUri, "?", languageCode);
+                requestUri = string.Concat(requestUri, "?", spokenLanguage);
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
-                response = _indexer.GetResponse<string>(request);
+                webVttUrl = _indexer.GetResponse<string>(request);
             }
-            return response;
+            return webVttUrl;
         }
 
-        public JObject GetIndex(string indexId, bool processingState)
+        public JObject GetIndex(string indexId, string spokenLanguage, bool processingState)
         {
-            JObject response;
+            JObject index;
             string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId);
-            if (processingState)
+            if (!string.IsNullOrEmpty(spokenLanguage))
+            {
+                requestUri = string.Concat(requestUri, "?", spokenLanguage);
+            }
+            else if (processingState)
             {
                 requestUri = string.Concat(requestUri, "/State");
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
-                response = _indexer.GetResponse<JObject>(request);
+                index = _indexer.GetResponse<JObject>(request);
             }
-            return response;
+            return index;
         }
 
-        public string GetIndexId(string name, MediaPrivacy privacy, string locatorUrl)
+        public void ResetIndex(string indexId, string assetId, string callbackUrl)
         {
-            string response;
+            string requestUri = _serviceUri;
+            if (!string.IsNullOrEmpty(assetId))
+            {
+                requestUri = string.Concat(requestUri, "/Breakdowns/reindexbyexternalid/", assetId);
+            }
+            else
+            {
+                requestUri = string.Concat(requestUri, "/Breakdowns/reindex/", indexId);
+            }
+            requestUri = string.Concat(requestUri, "?", callbackUrl);
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Put, requestUri))
+            {
+                _indexer.GetResponse<JObject>(request);
+            }
+        }
+
+        public string UploadVideo(string videoName, MediaPrivacy videoPrivacy, string indexerLanguage, string locatorUrl, string callbackUrl, string externalId)
+        {
+            string indexId;
             string requestUri = string.Concat(_serviceUri, "/Breakdowns");
-            requestUri = string.Concat(requestUri, "?name=", name);
-            requestUri = string.Concat(requestUri, "&privacy=", privacy.ToString());
+            requestUri = string.Concat(requestUri, "?name=", videoName);
+            requestUri = string.Concat(requestUri, "&privacy=", videoPrivacy.ToString());
+            requestUri = string.Concat(requestUri, "&language=", indexerLanguage);
             requestUri = string.Concat(requestUri, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
+            requestUri = string.Concat(requestUri, "&callbackUrl=", WebUtility.UrlEncode(callbackUrl));
+            requestUri = string.Concat(requestUri, "&externalId=", externalId);
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUri))
             {
-                response = _indexer.GetResponse<string>(request);
+                indexId = _indexer.GetResponse<string>(request);
             }
-            return response;
+            return indexId;
         }
 
         public void DeleteVideo(string indexId, bool deleteInsights)
@@ -109,7 +158,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public JArray Search(MediaPrivacy privacy, string indexId)
         {
-            JArray response;
+            JArray searchResults;
             string requestUri = string.Concat(_serviceUri, "/Breakdowns/Search?privacy=", privacy.ToString());
             if (!string.IsNullOrEmpty(indexId))
             {
@@ -117,9 +166,9 @@ namespace AzureSkyMedia.PlatformServices
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
-                response = _indexer.GetResponse<JArray>(request);
+                searchResults = _indexer.GetResponse<JArray>(request);
             }
-            return response;
+            return searchResults;
         }
     }
 }

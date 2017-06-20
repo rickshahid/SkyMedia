@@ -4,21 +4,25 @@
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
     int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
 
-    string autoPlay = ViewData["autoPlay"] as string;
+    string ampVersion = ViewData["mediaPlayerVersion"] as string;
+    string ampSkin = ViewData["mediaPlayerSkin"] as string;
+
     string authToken = ViewData["authToken"] as string;
-    string languageCode = ViewData["languageCode"] as string;
-    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
     string accountMessage = ViewData["accountMessage"] as string;
+
+    string languageCode = ViewData["languageCode"] as string;
+    string autoPlay = ViewData["autoPlay"] as string;
+
+    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
 }
 
 @section head {
-    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/skins/@ViewData["mediaPlayerSkin"]/azuremediaplayer.min.css" />
+    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
     <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
-    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ViewData["mediaPlayerVersion"]/azuremediaplayer.min.js"></script>
+    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="~/js/amve.min.js"></script>
     <script type="text/javascript" src="~/js/metadata.js"></script>
     <script type="text/javascript" src="~/js/clipper.js"></script>
-    <script type="text/javascript" src="~/js/grid.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
         $(function () {
@@ -60,29 +64,44 @@
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
-                    var videoClipperImage = document.createElement("img");
-                    videoClipperImage.id = "videoClipperImage";
-                    videoClipperImage.src = "@storageCdnUrl" + "/MediaClipper.png";
-                    var videoClipperButton = document.createElement("button");
-                    videoClipperButton.id = "videoClipperButton";
-                    videoClipperButton.className = controlButtonCss;
-                    videoClipperButton.appendChild(videoClipperImage);
-                    controlBarRight.appendChild(videoClipperButton);
-                    $("#videoClipperButton").click(function () {
-                        mediaPlayer.pause();
-                        DisplayVideoClipper("@languageCode");
-                    });
+                    if (@int.Parse(ampVersion.Replace(".", "")) <= 183) {
+                        var clipperImage = document.createElement("img");
+                        clipperImage.id = "clipperImage";
+                        clipperImage.src = "@storageCdnUrl" + "/MediaClipper.png";
+                        var clipperButton = document.createElement("button");
+                        clipperButton.id = "clipperButton";
+                        clipperButton.className = controlButtonCss;
+                        clipperButton.appendChild(clipperImage);
+                        controlBarRight.appendChild(clipperButton);
+                        $("#clipperButton").click(function () {
+                            mediaPlayer.pause();
+                            DisplayVideoClipper("@languageCode");
+                        });
+                    }
+                    if (mediaStream.insightsUrl != "") {
+                        var insightsImage = document.createElement("img");
+                        insightsImage.id = "insightsImage";
+                        insightsImage.src = "@storageCdnUrl" + "/MediaInsights.png";
+                        var insightsButton = document.createElement("button");
+                        insightsButton.id = "insightsButton";
+                        insightsButton.className = controlButtonCss;
+                        insightsButton.appendChild(insightsImage);
+                        controlBarRight.appendChild(insightsButton);
+                        $("#insightsButton").click(function () {
+                            OpenInsightsDialog(mediaStream);
+                        });
+                    }
                     if (mediaStream.analyticsMetadata.length > 0) {
-                        var aiPanelImage = document.createElement("img");
-                        aiPanelImage.id = "aiPanelImage";
-                        aiPanelImage.src = "@storageCdnUrl" + "/IntelligencePanelOpen.png";
-                        var aiPanelButton = document.createElement("button");
-                        aiPanelButton.id = "aiPanelButton";
-                        aiPanelButton.className = controlButtonCss;
-                        aiPanelButton.appendChild(aiPanelImage);
-                        controlBarRight.appendChild(aiPanelButton);
-                        $("#aiPanelButton").click(function () {
-                            ToggleAIPanel();
+                        var metadataImage = document.createElement("img");
+                        metadataImage.id = "metadataImage";
+                        metadataImage.src = "@storageCdnUrl" + "/MediaMetadataOpen.png";
+                        var metadataButton = document.createElement("button");
+                        metadataButton.id = "metadataButton";
+                        metadataButton.className = controlButtonCss + " mediaMetadata";
+                        metadataButton.appendChild(metadataImage);
+                        controlBarRight.appendChild(metadataButton);
+                        $("#metadataButton").click(function () {
+                            ToggleMetadataPanel();
                         });
                     }
                 }
@@ -93,12 +112,14 @@
                 for (var i = streamUrl.length - 2; i > streamUrl.length - 5; i--) {
                     streamUrl[i] = streamUrl[i] + "<br />";
                 }
+                var manifestIndex = streamUrl.length - 1;
+                streamUrl[manifestIndex] = streamUrl[manifestIndex].replace(",", "<br />,");
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
                 ClearVideoOverlay();
             });
             mediaPlayer.addEventListener(amp.eventName.pause, function () {
-                if ($("#aiPanel").is(":visible")) {
+                if ($("#metadataPanel").is(":visible")) {
                     SetAnalyticsMetadata();
                 }
             });
@@ -126,35 +147,22 @@
 <table>
     <tr>
         <td class="mediaContent">
-            @Html.Partial("MediaPlayer", false)
+            @Html.Partial("MediaPlayer", 0)
         </td>
-        <td id="aiPanel" class="aiPanel">
+        <td id="metadataPanel" class="metadataPanel">
             <table>
                 <tr>
                     <td class="inputLabel">
-                        <span class="siteLink" onclick="window.open('http://www.microsoft.com/ai/')">
-                            Azure Video AI
+                        <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/media-services/media-analytics/')">
+                            Azure Media Analytics
                         </span>
                     </td>
                     <td>
                         <select id="analyticsProcessors" class="analyticsProcessors" onchange="SetAnalyticsMetadata()"></select>
                     </td>
                 </tr>
-                <tr id="mediaSearchRow" style="display: none">
-                    <td class="inputLabel">
-                        <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/search/')">
-                            Azure Media Search
-                        </span>
-                    </td>
-                    <td>
-                        <input id="mediaSearch" class="mediaSearch" type="text" />
-                    </td>
-                </tr>
                 <tr>
                     <td colspan="2">
-                        <div id="mediaTranscript" style="display: none">
-                            <table id="transcriptGrid" class="mediaTranscript"></table>
-                        </div>
                         <div id="mediaMetadata" class="mediaMetadata"></div>
                     </td>
                 </tr>
@@ -163,10 +171,10 @@
     </tr>
 </table>
 
-@Html.Partial("MediaBar", mediaStreams)
+@Html.Partial("MediaControls", mediaStreams)
 
 <div id="clipperDialog" style="display: none">
-    @Html.Partial("MediaPlayer", true)
+    @Html.Partial("MediaPlayer", 1)
 </div>
 
 <div class="streamInfo">

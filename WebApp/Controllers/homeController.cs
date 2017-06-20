@@ -87,11 +87,15 @@ namespace AzureSkyMedia.WebApp.Controllers
             attributeName = Constant.UserAttribute.AsperaAccountKey;
             viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
 
+            attributeName = Constant.UserAttribute.VideoIndexerKey;
+            viewData["videoIndexerKey"] = AuthToken.GetClaimValue(authToken, attributeName);
+
             viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
             viewData["jobName"] = homeController.GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
-            viewData["spokenLanguages"] = homeController.GetSpokenLanguages();
+            viewData["speechToTextLanguages"] = homeController.GetSpokenLanguages(false);
+            viewData["indexerLanguages"] = homeController.GetSpokenLanguages(true);
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
@@ -162,10 +166,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaProcessors.ToArray();
         }
 
-        public static SelectListItem[] GetSpokenLanguages()
+        public static SelectListItem[] GetSpokenLanguages(bool videoIndexer)
         {
             List<SelectListItem> spokenLanguages = new List<SelectListItem>();
-            JObject languages = Language.GetSpokenLanguages();
+            JObject languages = Language.GetSpokenLanguages(videoIndexer);
             IEnumerable<JProperty> properties = languages.Properties();
             foreach (JProperty property in properties)
             {
@@ -201,11 +205,19 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
 
                 MediaClient mediaClient = null;
+                IndexerClient indexerClient = null;
                 if (!string.IsNullOrEmpty(authToken))
                 {
                     try
                     {
                         mediaClient = new MediaClient(authToken);
+
+                        string attributeName = Constant.UserAttribute.VideoIndexerKey;
+                        string indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
+                        if (!string.IsNullOrEmpty(indexerKey))
+                        {
+                            indexerClient = new IndexerClient(indexerKey);
+                        }
                     }
                     catch
                     {
@@ -223,11 +235,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 else if (this.Request.Host.Value.Contains("live.") || queryString.Contains("live=on"))
                 {
-                    mediaStreams = Media.GetLiveStreams(mediaClient);
+                    mediaStreams = Media.GetLiveStreams(mediaClient, indexerClient);
                 }
                 else
                 {
-                    mediaStreams = Media.GetMediaStreams(mediaClient);
+                    mediaStreams = Media.GetMediaStreams(mediaClient, indexerClient);
                 }
             }
             catch (Exception ex)
@@ -246,11 +258,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
 
             ViewData["languageCode"] = this.Request.Query["language"];
-            return View();
-        }
-
-        public IActionResult indexer()
-        {
             return View();
         }
     }

@@ -3,12 +3,12 @@
 }
 
 @media all and (max-width: 320px) {
-    #siteHome, #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #siteBot, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
     .banner, .mediaPlayer {
-        width: 280px !important;
+        width: 300px !important;
     }
 
     .viewTitle, .accountContext, .streamInfo {
@@ -21,12 +21,12 @@
 }
 
 @media all and (min-width: 321px) and (max-width: 480px) {
-    #siteHome, #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
+    #siteHome, #siteBot, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonRight1, #userButtonRight2 {
         display: none !important;
     }
 
     .banner, .mediaPlayer {
-        width: 300px !important;
+        width: 350px !important;
     }
 
     .viewTitle, .accountContext, .streamInfo {
@@ -100,6 +100,15 @@ body {
     cursor: pointer;
 }
 
+.siteButton.layoutButton {
+    height: 70px;
+    width: 70px;
+}
+
+.siteButton.layoutButton.sideTop {
+    height: 50px !important;
+}
+
 .siteLink {
     text-decoration: none;
     color: deepskyblue;
@@ -128,19 +137,12 @@ body {
     padding-bottom: 4px;
 }
 
-.aiPanel {
+.metadataPanel {
     display: none;
 }
 
-.aiProcessors {
+.analyticsProcessors {
     width: 100%;
-}
-
-.mediaSearch {
-    width: 185px;
-}
-
-.mediaTranscript {
 }
 
 .mediaMetadata {
@@ -162,11 +164,16 @@ body {
 }
 
 .mediaPlayerButton {
+    padding-top: 4px !important;
     background: none;
     border: none;
 }
 
-.mediaBar {
+.mediaPlayerButton.mediaMetadata {
+    padding-top: 8px !important;
+}
+
+.mediaControls {
     margin: 10px auto;
 }
 
@@ -590,12 +597,16 @@ body {
 
 .inputAssetName {
     font-weight: bold;
-    width: 240px;
+    width: 405px;
 }
 
 .outputAssetName {
     font-weight: bold;
     width: 191px;
+}
+
+.indexerLanguage {
+    width: 165px;
 }
 
 .jobName {

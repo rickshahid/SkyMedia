@@ -6,6 +6,8 @@
 
         public string SourceUrl { get; set; }
 
+        public string InsightsUrl { get; set; }
+
         public string[] ProtectionTypes { get; set; }
 
         public MediaTextTrack[] TextTracks { get; set; }

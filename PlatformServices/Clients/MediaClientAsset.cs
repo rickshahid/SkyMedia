@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -11,19 +9,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
-        private static void SetIndexId(IAsyncResult result)
-        {
-            AsyncResult asyncResult = (AsyncResult)result;
-            IndexerClient.UploadVideo uploadVideo = (IndexerClient.UploadVideo)asyncResult.AsyncDelegate;
-            IAsset asset = (IAsset)asyncResult.AsyncState;
-            asset.AlternateId = uploadVideo.EndInvoke(result);
-            asset.Update();
-            foreach (ILocator locator in asset.Locators)
-            {
-                locator.Delete();
-            }
-        }
-
         private IAsset[] GetAssets(string[] assetIds)
         {
             List<IAsset> assets = new List<IAsset>();
@@ -87,7 +72,8 @@ namespace AzureSkyMedia.PlatformServices
             return blob;
         }
 
-        public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames)
+        public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames,
+                                  bool indexInputAsset, string indexerLanguage, bool indexerPrivacyPublic)
         {
             AssetCreationOptions assetOptions = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
             IAsset asset = _media.Assets.Create(assetName, storageAccount, assetOptions);
@@ -120,13 +106,27 @@ namespace AzureSkyMedia.PlatformServices
 
             string attributeName = Constant.UserAttribute.VideoIndexerKey;
             string indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
-            if (!string.IsNullOrEmpty(indexerKey) && asset.AssetFiles.Count() == 1)
+            if (!string.IsNullOrEmpty(indexerKey) && indexInputAsset)
             {
-                IndexerClient indexerClient = new IndexerClient(indexerKey);
-                AsyncCallback indexerCallback = new AsyncCallback(SetIndexId);
-                IndexerClient.UploadVideo uploadVideo = indexerClient.GetIndexId;
                 string locatorUrl = GetLocatorUrl(LocatorType.Sas, asset, null, true);
-                uploadVideo.BeginInvoke(asset.Name, MediaPrivacy.Private, locatorUrl, indexerCallback, asset);
+
+                string settingKey = Constant.AppSettingKey.MediaNotificationIndexerCallbackUrl;
+                string callbackUrl = AppSetting.GetValue(settingKey);
+
+                IndexerClient indexerClient = new IndexerClient(indexerKey);
+                MediaPrivacy videoPrivacy = indexerPrivacyPublic ? MediaPrivacy.Public : MediaPrivacy.Private;
+                string indexId = indexerClient.UploadVideo(asset.Name, videoPrivacy, indexerLanguage, locatorUrl, callbackUrl, asset.Id);
+
+                MediaIndexPublish indexPublish = new MediaIndexPublish();
+                indexPublish.PartitionKey = Constant.Storage.TableProperty.PartitionKey;
+                indexPublish.RowKey = indexId;
+                indexPublish.IndexerAccountKey = indexerKey;
+                indexPublish.MediaAccountName = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountName);
+                indexPublish.MediaAccountKey = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountKey);
+
+                EntityClient entityClient = new EntityClient();
+                string tableName = Constant.Storage.TableName.IndexPublish;
+                entityClient.InsertEntity(tableName, indexPublish);
             }
 
             return asset;

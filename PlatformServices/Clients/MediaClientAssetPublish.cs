@@ -165,7 +165,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        internal static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
+        private static void PublishContent(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
         {
             if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
             {
@@ -199,7 +199,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (webHook)
                 {
-                    string settingKey = Constant.AppSettingKey.MediaJobNotificationStorageQueueName;
+                    string settingKey = Constant.AppSettingKey.MediaNotificationStorageQueueName;
                     string queueName = AppSetting.GetValue(settingKey);
                     MessageClient messageClient = new MessageClient();
                     messageClient.AddMessage(queueName, jobNotification);
@@ -242,7 +242,7 @@ namespace AzureSkyMedia.PlatformServices
         public static MediaJobPublication PublishJob(bool poisonQueue)
         {
             MediaJobPublication jobPublication = null;
-            string settingKey = Constant.AppSettingKey.MediaJobNotificationStorageQueueName;
+            string settingKey = Constant.AppSettingKey.MediaNotificationStorageQueueName;
             string queueName = AppSetting.GetValue(settingKey);
             if (poisonQueue)
             {

@@ -120,16 +120,13 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public static MediaAssetInput[] CreateInputAssets(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
-                                                          string inputAssetName, bool multipleFileAsset, bool publishInputAsset, string[] fileNames)
+                                                          string inputAssetName, bool multipleFileAsset, bool indexInputAsset, string indexerLanguage,
+                                                          bool indexerPrivacyPublic, string[] fileNames)
         {
             List<MediaAssetInput> inputAssets = new List<MediaAssetInput>();
             if (multipleFileAsset)
             {
-                IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
-                if (publishInputAsset)
-                {
-                    MediaClient.PublishContent(mediaClient, asset, null);
-                }
+                IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames, indexInputAsset, indexerLanguage, indexerPrivacyPublic);
                 MediaAssetInput inputAsset = GetInputAsset(asset);
                 inputAssets.Add(inputAsset);
             }
@@ -139,11 +136,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     string fileName = fileNames[i];
                     string assetName = Path.GetFileNameWithoutExtension(fileName);
-                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
-                    if (publishInputAsset)
-                    {
-                        MediaClient.PublishContent(mediaClient, asset, null);
-                    }
+                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName }, indexInputAsset, indexerLanguage, indexerPrivacyPublic);
                     MediaAssetInput inputAsset = GetInputAsset(asset);
                     inputAssets.Add(inputAsset);
                 }

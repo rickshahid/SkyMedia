@@ -92,6 +92,10 @@ function SetMultipleFileAsset() {
     }
     $("#multipleFileAsset").prop("checked", multipleFileAsset);
 }
+function SetVideoIndexerOptions(checkbox) {
+    $("#indexerLanguage").prop("disabled", !checkbox.checked);
+    $("#indexerPrivacyPublic").prop("disabled", !checkbox.checked);
+}
 function CreateUploader() {
     var eventHandlers = {
         PostInit: function (uploader) {

@@ -1,16 +1,9 @@
 ﻿@{
-    bool clipMode = Model;
+    int index = Model;
+    string videoClipperId = string.Concat("videoClipper", index);
+    string videoPlayerId = string.Concat("videoPlayer", index);
 }
 
-@if (clipMode)
-{
-    <div id="mediaClipper" class="mediaPlayer">
-        <video id="videoClipper" class="azuremediaplayer @ViewData["mediaPlayerSkin"]-skin amp-big-play-centered" controls height="auto" width="100%" />
-    </div>
-}
-else
-{
-    <div class="mediaPlayer">
-        <video id="videoPlayer" class="azuremediaplayer @ViewData["mediaPlayerSkin"]-skin amp-big-play-centered" controls height="auto" width="100%" />
-    </div>
-}
+<div id="@videoClipperId" class="mediaPlayer">
+    <video id="@videoPlayerId" class="azuremediaplayer @ViewData["mediaPlayerSkin"]-skin amp-big-play-centered" controls height="auto" width="100%" />
+</div>

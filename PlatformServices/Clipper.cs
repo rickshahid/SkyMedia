@@ -30,9 +30,12 @@ namespace AzureSkyMedia.PlatformServices
             MediaAssetInput[] inputAssets = new MediaAssetInput[] { inputAsset };
             inputAssets = Workflow.GetInputAssets(mediaClient, inputAssets);
 
+            string settingKey = Constant.AppSettingKey.MediaClipperEncoderPreset;
+            string processorConfig = AppSetting.GetValue(settingKey);
+
             MediaJobTask jobTask = new MediaJobTask();
             jobTask.ProcessorType = MediaProcessor.EncoderStandard;
-            jobTask.ProcessorConfig = Constant.Media.ProcessorConfig.EncoderStandardDefaultPreset;
+            jobTask.ProcessorConfig = processorConfig;
 
             MediaJob mediaJob = new MediaJob();
             mediaJob.Tasks = new MediaJobTask[] { jobTask };

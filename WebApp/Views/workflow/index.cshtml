@@ -9,7 +9,8 @@
     <script type="text/javascript" src="~/js/workflow.task.protection.js"></script>
     <script type="text/javascript">
         $(function () {
-            SetWorkflowInputs(false, null, null);
+            var videoIndexerKey = "@ViewData["videoIndexerKey"]";
+            SetWorkflowInputs(false, null, null, videoIndexerKey);
             LoadTreeNodes(true);
         })
     </script>

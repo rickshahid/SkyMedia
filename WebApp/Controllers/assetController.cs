@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -30,7 +28,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             MediaClient mediaClient = new MediaClient(authToken);
             if (string.IsNullOrEmpty(clipName))
             {
-                clipName = Guid.NewGuid().ToString();
+                clipName = string.Concat(markIn.ToString(), markOut.ToString());
             }
             object result;
             if (clipMode == Constant.Media.RenderedClipMode)

@@ -36,7 +36,6 @@
 
     public enum MediaProcessor
     {
-        None,
         EncoderStandard,
         EncoderPremium,
         EncoderUltra,
@@ -62,16 +61,15 @@
     public enum MediaPrivacy
     {
         Private,
-        Organization,
         Public
     }
 
     public enum MediaInsight
     {
+        Search,
         People,
-        Sentiments,
         Keywords,
-        Search
+        Sentiments
     }
 
     public enum TransferService

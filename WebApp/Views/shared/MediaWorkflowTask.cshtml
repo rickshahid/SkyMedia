@@ -91,7 +91,7 @@
                     </span>
                 </td>
                 <td>
-                    @Html.DropDownList(speechToTextLanguagesId, ViewData["spokenLanguages"] as SelectListItem[], new { @class = "mediaProcessor" })
+                    @Html.DropDownList(speechToTextLanguagesId, ViewData["speechToTextLanguages"] as SelectListItem[], new { @class = "mediaProcessor" })
                     &nbsp;
                     <span class="inputLabel">
                         CC
@@ -268,7 +268,7 @@
                                         </td>
                                         <td>
                                             @Html.CheckBox(contentProtectionAesId, false, new { onchange = "SetContentProtection(this)" })
-                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-aes128')">
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-aes128')">
                                                 AES
                                             </span>
                                             <span class="contentProtectionOptionsEncryption">
@@ -276,17 +276,17 @@
                                             </span>
                                             <span class="contentProtectionOptionsEncryptionDrm">
                                                 @Html.CheckBox(contentProtectionDrmPlayReadyId, false, new { onchange = "SetContentProtection(this)" })
-                                                <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
                                                     PlayReady
                                                 </span>
                                                 &nbsp;
                                                 @Html.CheckBox(contentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)" })
-                                                <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
                                                     Widevine
                                                 </span>
                                                 &nbsp;
                                                 @Html.CheckBox(contentProtectionDrmFairPlayId, false, new { onchange = "SetContentProtection(this)", disabled = "disabled" })
-                                                <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-hls-with-fairplay')">
+                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-hls-with-fairplay')">
                                                     FairPlay
                                                 </span>
                                             </span>
@@ -294,7 +294,7 @@
                                     </tr>
                                     <tr>
                                         <td class="inputLabel">
-                                            <span class="inputLabel siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
                                                 User Auth
                                             </span>
                                         </td>

@@ -37,5 +37,5 @@ function FormatColumn(value, grid, row) {
                 break;
         }
     }
-    return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "', null, 600, null)\">" + value + "</span>";
+    return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "', null, 600)\">" + value + "</span>";
 }

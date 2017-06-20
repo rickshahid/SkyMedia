@@ -5,18 +5,18 @@
     string mediaLiveImage = this.Context.Request.Query["live"] == "on" ? "MediaLiveOn.png" : "MediaLiveOff.png";
 }
 
-<table class="mediaBar">
+<table class="mediaControls">
     <tr>
         <td id="userButtonLeft1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaFileUpload", "MediaUpload.png", "window.location.href = '/upload'" })
+            @Html.Partial("SiteButton", new string[] { "mediaFileUpload", "MediaUpload.png", "window.location.href = '/upload'", "layoutButton" })
         }
         </td>
         <td id="userButtonLeft2">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'" })
+            @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'", "layoutButton" })
         }
         </td>
         <td>
@@ -43,13 +43,13 @@
         <td id="userButtonRight1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaLive", mediaLiveImage, "ToggleLiveStream(this)" })
+            @Html.Partial("SiteButton", new string[] { "mediaLive", mediaLiveImage, "ToggleLiveStream(this)", "layoutButton" })
         }
         </td>
         <td id="userButtonRight2">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaLibrary", "MediaLibrary.png", "window.location.href = '/asset'" })
+            @Html.Partial("SiteButton", new string[] { "mediaLibrary", "MediaLibrary.png", "window.location.href = '/asset'", "layoutButton" })
         }
         </td>
     </tr>

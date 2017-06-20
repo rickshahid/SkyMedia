@@ -14,7 +14,7 @@ namespace AzureSkyMedia.PlatformServices
             if (notificationEndpoint == null)
             {
                 NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
-                string settingKey = Constant.AppSettingKey.MediaJobNotificationWebHookUrl;
+                string settingKey = Constant.AppSettingKey.MediaNotificationWebHookUrl;
                 string endpointAddress = AppSetting.GetValue(settingKey);
                 notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
             }

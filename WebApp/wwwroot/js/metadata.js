@@ -61,14 +61,9 @@ function SetAnalyticsProcessors(mediaStream) {
     }
 }
 function SetAnalyticsMetadata() {
+    $("#mediaMetadata").empty();
     var selectedText = $("#analyticsProcessors option:selected").text();
-    $("#mediaSearchRow").hide();
-    $("#mediaTranscript").hide();
-    $("#mediaMetadata").hide();
-    if (selectedText == "") {
-        $("#mediaMetadata").show();
-        $("#mediaMetadata").empty();
-    } else {
+    if (selectedText != "") {
         var selectedValue = $("#analyticsProcessors").val();
         var mediaPlayer = GetMediaPlayer(false);
         var playerHeight = mediaPlayer.el().clientHeight;
@@ -79,33 +74,7 @@ function SetAnalyticsMetadata() {
             withQuotes: false
         };
         switch (selectedText) {
-            case "Speech To Text":
-                $("#mediaSearchRow").show();
-                $("#mediaTranscript").show();
-                $.get(selectedValue, function (result) {
-                    var transcriptLines = result.split("\r\n");
-                    var columns = [{
-                        name: "data",
-                        editable: true,
-                        width: 344
-                    }];
-                    var rows = new Array();
-                    for (var i = 0; i < transcriptLines.length; i++) {
-                        var data = transcriptLines[i];
-                        if (data != "") {
-                            var row = {
-                                id: i,
-                                data: data
-                            };
-                            rows.push(row);
-                        }
-                    }
-                    LoadGrid("transcriptGrid", columns, rows, playerHeight);
-                    $("#transcriptGrid_data").hide();
-                });
-                break;
             case "Face Detection":
-                $("#mediaMetadata").show();
                 $.post("/analytics/metadata",
                     {
                         documentId: selectedValue,

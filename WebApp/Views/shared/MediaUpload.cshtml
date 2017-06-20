@@ -11,18 +11,18 @@
         </td>
         <td>
             @Html.RadioButton("uploadService", "azureStorage", true, new { @class = "mediaUploadLeft", onchange = "SetUploadService(this)" })
-            <span class="inputLabel siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/storage/')">
+            <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/storage/')">
                 Azure Object Storage (HTTP)
             </span>
             <span id="uploadSigniantFlight" style="display: none">
                 @Html.RadioButton("uploadService", "signiantFlight", signiantFlight, new { @class = "mediaUploadRight", onchange = "SetUploadService(this)", disabled = "disabled" })
-                <span class="inputLabel siteLink" onclick="window.open('http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/')">
+                <span class="siteLink" onclick="window.open('http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/')">
                     Signiant Flight (UDP)
                 </span>
             </span>
             <span id="uploadAsperaFasp" style="display: none">
                 @Html.RadioButton("uploadService", "asperaFasp", asperaFasp, new { @class = "mediaUploadRight", onchange = "SetUploadService(this)", disabled = "disabled" })
-                <span class="inputLabel siteLink" onclick="window.open('http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod')">
+                <span class="siteLink" onclick="window.open('http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod')">
                     Aspera FASP (UDP)
                 </span>
             </span>
@@ -46,16 +46,34 @@
             Input Asset:
         </td>
         <td>
-            @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Azure Media Asset Name]" })
+            @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Asset Name]" })
             &nbsp;
             @Html.CheckBox("multipleFileAsset")
             <span class="inputLabel">
                 Multiple File Asset
             </span>
-            &nbsp;
-            @Html.CheckBox("publishInputAsset")
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                Video Indexer:
+            </span>
+        </td>
+        <td>
+            @Html.CheckBox("indexInputAsset", false, new { onchange = "SetVideoIndexerOptions(this)", disabled = "disabled" })
             <span class="inputLabel">
-                Publish Input Asset
+                Index Input
+            </span>
+            &nbsp;
+            <span class="inputLabel">
+                Spoken Language
+            </span>
+            @Html.DropDownList("indexerLanguage", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "indexerLanguage" })
+            &nbsp;
+            @Html.CheckBox("indexerPrivacyPublic")
+            <span class="inputLabel">
+                Public Privacy
             </span>
         </td>
     </tr>
