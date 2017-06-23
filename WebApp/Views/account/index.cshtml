@@ -1,36 +1,6 @@
-﻿@using System.Diagnostics;
-
-@section head {
+﻿@section head {
     <script type="text/javascript">
-        function ClearAccount(allEntities) {
-            $.post("/account/clear",
-                {
-                    allEntities: allEntities,
-                },
-                function (entityCounts) {
-                    SetInventory(entityCounts);
-                }
-            );
-        }
-        function ConfirmClear() {
-            var title = "Confirm Media Account Clear (Permanent Media Entity Deletion)";
-            var message = "Do you want to delete all entities or only child assets in your media account?";
-            var buttons = {
-                "All Entities": function () {
-                    ClearAccount(true);
-                    $(this).dialog("close");
-                },
-                "Child Assets": function () {
-                    ClearAccount(false);
-                    $(this).dialog("close");
-                },
-                Cancel: function () {
-                    $(this).dialog("close");
-                }
-            };
-            DisplayMessage(title, message, buttons);
-        }
-        function SetEntity(innerHtml, entityCount) {
+         function SetEntity(innerHtml, entityCount) {
             innerHtml = innerHtml + "<tr><td>";
             if (entityCount.length > 2) {
                 innerHtml = innerHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
@@ -54,7 +24,6 @@
         $(function () {
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
             SetInventory(entityCounts);
-            CreateTipTop("accountClear", "Clear Media Account");
         })
     </script>
 }
@@ -74,9 +43,3 @@
     </tr>
 </table>
 
-<div class="viewButtons">
-    @if (Debugger.IsAttached)
-    {
-        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
-    }
-</div>

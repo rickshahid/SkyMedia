@@ -79,6 +79,70 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaStreams.ToArray();
         }
 
+        private static SelectListItem[] GetStorageAccounts(string authToken)
+        {
+            List<SelectListItem> storageAccounts = new List<SelectListItem>();
+            NameValueCollection accounts = Storage.GetAccounts(authToken);
+            foreach (string accountKey in accounts.Keys)
+            {
+                SelectListItem storageAccount = new SelectListItem();
+                storageAccount.Text = accountKey;
+                storageAccount.Value = accounts[accountKey];
+                storageAccounts.Add(storageAccount);
+            }
+            return storageAccounts.ToArray();
+        }
+
+        private static SelectListItem[] GetJobTemplates(string authToken)
+        {
+            List<SelectListItem> jobTemplates = new List<SelectListItem>();
+            NameValueCollection templates = MediaClient.GetJobTemplates(authToken);
+            foreach (string templateKey in templates.Keys)
+            {
+                SelectListItem jobTemplate = new SelectListItem();
+                jobTemplate.Text = templateKey;
+                jobTemplate.Value = templates[templateKey];
+                jobTemplates.Add(jobTemplate);
+            }
+            return jobTemplates.ToArray();
+        }
+
+        private static SelectListItem[] GetMediaProcessors(string authToken)
+        {
+            List<SelectListItem> mediaProcessors = new List<SelectListItem>();
+
+            SelectListItem mediaProcessor = new SelectListItem();
+            mediaProcessor.Text = string.Empty;
+            mediaProcessor.Value = string.Empty;
+            mediaProcessors.Add(mediaProcessor);
+
+            NameValueCollection processors = Processor.GetMediaProcessors(authToken) as NameValueCollection;
+            foreach (string processor in processors)
+            {
+                mediaProcessor = new SelectListItem();
+                mediaProcessor.Text = processor;
+                mediaProcessor.Value = processors[processor];
+                mediaProcessors.Add(mediaProcessor);
+            }
+
+            return mediaProcessors.ToArray();
+        }
+
+        private static SelectListItem[] GetSpokenLanguages(bool videoIndexer)
+        {
+            List<SelectListItem> spokenLanguages = new List<SelectListItem>();
+            JObject languages = Language.GetSpokenLanguages(videoIndexer);
+            IEnumerable<JProperty> properties = languages.Properties();
+            foreach (JProperty property in properties)
+            {
+                SelectListItem spokenLanguage = new SelectListItem();
+                spokenLanguage.Text = property.Value.ToString();
+                spokenLanguage.Value = property.Name;
+                spokenLanguages.Add(spokenLanguage);
+            }
+            return spokenLanguages.ToArray();
+        }
+
         internal static void SetViewData(string authToken, ViewDataDictionary viewData)
         {
             string attributeName = Constant.UserAttribute.SigniantAccountKey;
@@ -115,70 +179,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 authToken = request.Cookies[cookieKey];
             }
             return authToken;
-        }
-
-        public static SelectListItem[] GetStorageAccounts(string authToken)
-        {
-            List<SelectListItem> storageAccounts = new List<SelectListItem>();
-            NameValueCollection accounts = Storage.GetAccounts(authToken);
-            foreach (string accountKey in accounts.Keys)
-            {
-                SelectListItem storageAccount = new SelectListItem();
-                storageAccount.Text = accountKey;
-                storageAccount.Value = accounts[accountKey];
-                storageAccounts.Add(storageAccount);
-            }
-            return storageAccounts.ToArray();
-        }
-
-        public static SelectListItem[] GetJobTemplates(string authToken)
-        {
-            List<SelectListItem> jobTemplates = new List<SelectListItem>();
-            NameValueCollection templates = MediaClient.GetJobTemplates(authToken);
-            foreach (string templateKey in templates.Keys)
-            {
-                SelectListItem jobTemplate = new SelectListItem();
-                jobTemplate.Text = templateKey;
-                jobTemplate.Value = templates[templateKey];
-                jobTemplates.Add(jobTemplate);
-            }
-            return jobTemplates.ToArray();
-        }
-
-        public static SelectListItem[] GetMediaProcessors(string authToken)
-        {
-            List<SelectListItem> mediaProcessors = new List<SelectListItem>();
-
-            SelectListItem mediaProcessor = new SelectListItem();
-            mediaProcessor.Text = string.Empty;
-            mediaProcessor.Value = string.Empty;
-            mediaProcessors.Add(mediaProcessor);
-
-            NameValueCollection processors = Account.GetMediaProcessors(authToken, true) as NameValueCollection;
-            foreach (string processor in processors)
-            {
-                mediaProcessor = new SelectListItem();
-                mediaProcessor.Text = processor;
-                mediaProcessor.Value = processors[processor];
-                mediaProcessors.Add(mediaProcessor);
-            }
-
-            return mediaProcessors.ToArray();
-        }
-
-        public static SelectListItem[] GetSpokenLanguages(bool videoIndexer)
-        {
-            List<SelectListItem> spokenLanguages = new List<SelectListItem>();
-            JObject languages = Language.GetSpokenLanguages(videoIndexer);
-            IEnumerable<JProperty> properties = languages.Properties();
-            foreach (JProperty property in properties)
-            {
-                SelectListItem spokenLanguage = new SelectListItem();
-                spokenLanguage.Text = property.Value.ToString();
-                spokenLanguage.Value = property.Name;
-                spokenLanguages.Add(spokenLanguage);
-            }
-            return spokenLanguages.ToArray();
         }
 
         public IActionResult index()

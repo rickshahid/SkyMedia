@@ -25,13 +25,13 @@
                     <td>
                         @Html.Partial("SiteButton", new string[] { "mediaStreamLeft", "MediaStreamLeft.png", "SlideStreamNumber('left')" })
                     </td>
-                    <td class="streamNumber left">
+                    <td class="streamNumber sideLeft">
                         <span>@(mediaStreams.Length == 0 ? 0 : 1)</span>
                     </td>
                     <td>
                         <div id="streamSlider" class="streamSlider"></div>
                     </td>
-                    <td class="streamNumber right">
+                    <td class="streamNumber sideRight">
                         @mediaStreams.Length
                     </td>
                     <td>

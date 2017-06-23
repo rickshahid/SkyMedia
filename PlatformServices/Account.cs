@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
@@ -29,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             return unitCount.ToString();
         }
 
-        private static void DeleteAsset(string indexerKey, MediaClient mediaClient, IAsset asset)
+        private static void DeleteAsset(MediaClient mediaClient, IAsset asset, string indexerKey)
         {
             if (!string.IsNullOrEmpty(indexerKey) && !string.IsNullOrEmpty(asset.AlternateId))
             {
@@ -45,52 +44,6 @@ namespace AzureSkyMedia.PlatformServices
                 asset.DeliveryPolicies.RemoveAt(i);
             }
             asset.Delete();
-        }
-
-        private static MediaProcessor[] CacheMediaProcessors(string authToken, CacheClient cacheClient)
-        {
-            MediaClient mediaClient = new MediaClient(authToken);
-            IMediaProcessor[] mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-            List<MediaProcessor> processorList = new List<MediaProcessor>();
-            foreach (IMediaProcessor mediaProcessor in mediaProcessors)
-            {
-                MediaProcessor? processorType = Processor.GetProcessorType(mediaProcessor.Id);
-                if (processorType.HasValue)
-                {
-                    processorList.Add(processorType.Value);
-                }
-            }
-            MediaProcessor[] processorTypes = processorList.ToArray();
-            cacheClient.SetValue<MediaProcessor[]>(Constant.Cache.ItemKey.MediaProcessors, processorTypes);
-            return processorTypes;
-        }
-
-        public static object GetMediaProcessors(string authToken, bool filteredView)
-        {
-            object mediaProcessors = null;
-            if (filteredView)
-            {
-                CacheClient cacheClient = new CacheClient(authToken);
-                string itemKey = Constant.Cache.ItemKey.MediaProcessors;
-                MediaProcessor[] processorTypes = cacheClient.GetValue<MediaProcessor[]>(itemKey);
-                if (processorTypes == null)
-                {
-                    processorTypes = CacheMediaProcessors(authToken, cacheClient);
-                }
-                NameValueCollection processors = new NameValueCollection();
-                foreach (MediaProcessor processorType in processorTypes)
-                {
-                    string processorName = Processor.GetProcessorName(processorType);
-                    processors.Add(processorName, processorType.ToString());
-                }
-                mediaProcessors = processors;
-            }
-            else
-            {
-                MediaClient mediaClient = new MediaClient(authToken);
-                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor, filteredView) as IMediaProcessor[];
-            }
-            return mediaProcessors;
         }
 
         public static object GetNotificationEndpoints(string authToken)
@@ -112,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
             IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
             IAssetFile[] files = mediaClient.GetEntities(MediaEntity.File) as IAssetFile[];
             IEncodingReservedUnit[] processorUnits = mediaClient.GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor, true) as IMediaProcessor[];
+            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
             IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
             IJobTemplate[] jobTemplates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
             IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
@@ -149,7 +102,7 @@ namespace AzureSkyMedia.PlatformServices
             return entityCounts.ToArray();
         }
 
-        public static void ClearEntities(string indexerKey, MediaClient mediaClient, bool allEntities)
+        public static void ClearEntities(MediaClient mediaClient, bool allEntities, string indexerKey)
         {
             if (allEntities)
             {
@@ -197,7 +150,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (asset.ParentAssets.Count > 0 || allEntities)
                 {
-                    DeleteAsset(indexerKey, mediaClient, asset);
+                    DeleteAsset(mediaClient, asset, indexerKey);
                 }
             }
             if (allEntities)

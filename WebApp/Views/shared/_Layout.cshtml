@@ -64,7 +64,7 @@
         </table>
         <table class="layout">
             <tr>
-                <td class="layoutSide">
+                <td>
                     <div>
                         @Html.Partial("SiteButton", new string[] { "amsPlatform", "MediaServices.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/')", "layoutButton sideTop" })
                     </div>
@@ -84,10 +84,10 @@
                         @Html.Partial("SiteButton", new string[] { "mediaIndexer", "MediaIndexer.png", "window.open('http://azure.microsoft.com/en-us/services/cognitive-services/video-indexer/')", "layoutButton" })
                     </div>
                 </td>
-                <td class="layoutBody">
+                <td>
                     @RenderBody()
                 </td>
-                <td class="layoutSide">
+                <td>
                     <div>
                         @Html.Partial("SiteButton", new string[] { "cognitiveServices", "CognitiveServices.png", "window.open('http://azure.microsoft.com/en-us/services/cognitive-services/')", "layoutButton sideTop" })
                     </div>

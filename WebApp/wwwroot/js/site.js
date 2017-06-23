@@ -25,7 +25,6 @@ function SetLayout() {
     CreateTipTop("mediaStreamRight", "Azure Media Stream<br /><br />Tuner Right");
     CreateTipTop("mediaLive", "Azure Media Services<br /><br />Live Streams");
     CreateTipTop("mediaLibrary", "Azure Media Services<br /><br />Asset Library");
-    CreateTipTop("accountInventory", "Azure Media Services<br /><br />Account Inventory");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });

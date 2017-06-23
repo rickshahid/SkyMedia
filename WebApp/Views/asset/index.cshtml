@@ -1,10 +1,42 @@
-﻿@section head {
+﻿@using System.Diagnostics;
+
+@section head {
     <link type="text/css" rel="stylesheet" href="~/lib/jstree/dist/themes/default/style.min.css" />
     <script type="text/javascript" src="~/lib/jstree/dist/jstree.min.js"></script>
     <script type="text/javascript" src="~/js/tree.js"></script>
     <script type="text/javascript">
+        function ClearAccount(allEntities) {
+            $.post("/account/clear",
+                {
+                    allEntities: allEntities,
+                },
+                function (entityCounts) {
+                    SetInventory(entityCounts);
+                }
+            );
+        }
+        function ConfirmClear() {
+            var title = "Confirm Media Account Clear (Permanent Media Entity Deletion)";
+            var message = "Do you want to delete all entities or only child assets in your media account?";
+            var buttons = {
+                "All Entities": function () {
+                    ClearAccount(true);
+                    $(this).dialog("close");
+                },
+                "Child Assets": function () {
+                    ClearAccount(false);
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            };
+            DisplayMessage(title, message, buttons);
+        }
         $(function () {
             LoadTreeNodes(false);
+            CreateTipTop("accountInventory", "Media Account Inventory");
+            CreateTipTop("accountClear", "Clear Media Account");
         })
     </script>
 }
@@ -17,4 +49,8 @@
 
 <div class="viewButtons">
     @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", "window.location.href = '/account'" })
+    @if (Debugger.IsAttached)
+    {
+        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
+    }
 </div>

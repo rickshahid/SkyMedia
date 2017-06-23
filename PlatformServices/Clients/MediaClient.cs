@@ -40,7 +40,7 @@ namespace AzureSkyMedia.PlatformServices
             get { return _media.DefaultStorageAccount; }
         }
 
-        public object GetEntities(MediaEntity entityType, bool filteredView)
+        public object GetEntities(MediaEntity entityType)
         {
             object entities = null;
             switch (entityType)
@@ -96,10 +96,20 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.Processor:
                     entities = (from x in _media.MediaProcessors
                                 select x).ToArray();
-                    if (filteredView)
+                    IMediaProcessor[] mediaEntities = entities as IMediaProcessor[];
+                    List<IMediaProcessor> mediaProcessors = new List<IMediaProcessor>();
+                    string[] processorIds = Processor.GetProcessorIds();
+                    foreach (string processorId in processorIds)
                     {
-                        entities = Processor.GetMediaProcessors(this, entities as IMediaProcessor[]);
+                        foreach (IMediaProcessor mediaEntity in mediaEntities)
+                        {
+                            if (string.Equals(processorId, mediaEntity.Id, StringComparison.OrdinalIgnoreCase))
+                            {
+                                mediaProcessors.Add(mediaEntity);
+                            }
+                        }
                     }
+                    entities = mediaProcessors.ToArray();
                     break;
                 case MediaEntity.ProcessorUnit:
                     entities = (from x in _media.EncodingReservedUnits
@@ -139,11 +149,6 @@ namespace AzureSkyMedia.PlatformServices
                     break;
             }
             return entities;
-        }
-
-        public object GetEntities(MediaEntity entityType)
-        {
-            return GetEntities(entityType, false);
         }
 
         public object GetEntityById(MediaEntity entityType, string entityId)

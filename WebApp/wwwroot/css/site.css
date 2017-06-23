@@ -47,7 +47,7 @@
         width: 450px !important;
     }
 
-    .viewTitle, .accountContext, .streamInfo {
+    .viewTitle, .streamInfo {
         font-size: large !important;
     }
 }
@@ -60,11 +60,7 @@ body {
     margin: 0px auto;
 }
 
-.layoutSide {
-    vertical-align: top;
-}
-
-.layoutBody {
+.layout > tbody > tr > td {
     vertical-align: top;
 }
 
@@ -75,7 +71,6 @@ body {
 
 .bannerSide {
     white-space: nowrap;
-    text-align: center;
 }
 
 .bannerCenter {
@@ -132,51 +127,6 @@ body {
     font-size: large;
 }
 
-.mediaContent {
-    vertical-align: bottom;
-    padding-bottom: 4px;
-}
-
-.metadataPanel {
-    display: none;
-}
-
-.analyticsProcessors {
-    width: 100%;
-}
-
-.mediaMetadata {
-    white-space: pre-line;
-    background: azure;
-    overflow: auto;
-    width: 350px;
-}
-
-.mediaOverlay {
-    border: 1px dashed yellow;
-    position: absolute;
-    display: none;
-    z-index: 100;
-}
-
-.mediaPlayer {
-    width: 700px;
-}
-
-.mediaPlayerButton {
-    padding-top: 4px !important;
-    background: none;
-    border: none;
-}
-
-.mediaPlayerButton.mediaMetadata {
-    padding-top: 8px !important;
-}
-
-.mediaControls {
-    margin: 10px auto;
-}
-
 .streamSlider {
     width: 200px;
 }
@@ -193,18 +143,18 @@ body {
     color: azure;
 }
 
-.streamNumber.left {
+.streamNumber.sideLeft {
     padding-right: 15px;
 }
 
-.streamNumber.right {
+.streamNumber.sideRight {
     padding-left: 15px;
 }
 
 .streamInfo {
-    color: deepskyblue;
-    text-align: center;
     font-size: x-large;
+    text-align: center;
+    color: deepskyblue;
 }
 
 .streamName {
@@ -217,38 +167,15 @@ body {
 }
 
 .viewTitle {
-    margin: 10px 5px 10px 5px;
-    white-space: nowrap;
     color: deepskyblue;
-    text-align: center;
     font-size: x-large;
     font-weight: bold;
+    margin: 5px;
 }
 
 .viewButtons {
     text-align: center;
     margin-top: 20px;
-}
-
-.faceDetectionMode {
-    margin-right: 10px;
-}
-
-.faceRedactionMode {
-    margin-right: 6px;
-}
-
-.motionSensitivityLevel {
-    font-weight: bold;
-    width: 120px;
-}
-
-.motionDetectLightChange {
-    margin-left: 8px;
-}
-
-.spinnerConfig td {
-    padding: 0px 5px 0px 0px !important;
 }
 
 .ui-spinner-input {
@@ -264,14 +191,14 @@ body {
     width: 28px;
 }
 
-.spinner.d4 {
-    width: 42px;
-}
-
 .spinner.d7 {
     margin-right: 40px;
     text-align: right;
     width: 55px;
+}
+
+.spinnerConfig td {
+    padding: 0px 5px 0px 0px !important;
 }
 
 .ui-slider {
@@ -738,4 +665,66 @@ body {
 
 .entityCount {
     color: azure;
+}
+
+.mediaContent {
+    vertical-align: bottom;
+    padding-bottom: 4px;
+}
+
+.metadataPanel {
+    display: none;
+}
+
+.analyticsProcessors {
+    width: 100%;
+}
+
+.mediaMetadata {
+    white-space: pre-line;
+    background: azure;
+    overflow: auto;
+    width: 350px;
+}
+
+.mediaOverlay {
+    border: 1px dashed yellow;
+    position: absolute;
+    display: none;
+    z-index: 100;
+}
+
+.mediaPlayer {
+    width: 700px;
+}
+
+.mediaPlayerButton {
+    padding-top: 4px !important;
+    background: none;
+    border: none;
+}
+
+    .mediaPlayerButton.mediaMetadata {
+        padding-top: 8px !important;
+    }
+
+.mediaControls {
+    margin: 10px auto;
+}
+
+.faceDetectionMode {
+    margin-right: 10px;
+}
+
+.faceRedactionMode {
+    margin-right: 6px;
+}
+
+.motionSensitivityLevel {
+    font-weight: bold;
+    width: 120px;
+}
+
+.motionDetectLightChange {
+    margin-left: 8px;
 }

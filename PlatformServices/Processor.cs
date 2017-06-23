@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal static class Processor
+    public static class Processor
     {
         private static string GetProcessorName(string processorName, string fileName)
         {
@@ -18,12 +19,12 @@ namespace AzureSkyMedia.PlatformServices
             return Regex.Replace(processorName, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
         }
 
-        public static string GetProcessorName(MediaProcessor processorType)
+        internal static string GetProcessorName(MediaProcessor processorType)
         {
             return GetProcessorName(processorType.ToString(), null);
         }
 
-        public static string GetProcessorId(MediaProcessor processorType)
+        internal static string GetProcessorId(MediaProcessor processorType)
         {
             string processorId = null;
             switch (processorType)
@@ -71,7 +72,26 @@ namespace AzureSkyMedia.PlatformServices
             return processorId;
         }
 
-        public static MediaProcessor? GetProcessorType(string processorId)
+        internal static string[] GetProcessorIds()
+        {
+            List<string> processorIds = new List<string>();
+            processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
+            processorIds.Add(Constant.Media.ProcessorId.EncoderPremium);
+            processorIds.Add(Constant.Media.ProcessorId.EncoderUltra);
+            processorIds.Add(Constant.Media.ProcessorId.SpeechToText);
+            processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
+            processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
+            processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
+            processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
+            processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
+            processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
+            processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
+            processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
+            processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
+            return processorIds.ToArray();
+        }
+
+        internal static MediaProcessor? GetProcessorType(string processorId)
         {
             MediaProcessor? processorType = null;
             switch (processorId)
@@ -119,18 +139,44 @@ namespace AzureSkyMedia.PlatformServices
             return processorType;
         }
 
-        public static IMediaProcessor[] GetMediaProcessors(MediaClient mediaClient, IMediaProcessor[] processors)
+        public static NameValueCollection GetMediaProcessors(string authToken)
         {
-            List<IMediaProcessor> mediaProcessors = new List<IMediaProcessor>();
+            //object mediaProcessors = null;
+            //if (filteredView)
+            //{
+            //    CacheClient cacheClient = new CacheClient(authToken);
+            //    string itemKey = Constant.Cache.ItemKey.MediaProcessors;
+            //    MediaProcessor[] processorTypes = cacheClient.GetValue<MediaProcessor[]>(itemKey);
+            //    if (processorTypes == null)
+            //    {
+            //        processorTypes = CacheMediaProcessors(authToken, cacheClient);
+            //    }
+            //    NameValueCollection processors = new NameValueCollection();
+            //    foreach (MediaProcessor processorType in processorTypes)
+            //    {
+            //        string processorName = Processor.GetProcessorName(processorType);
+            //        processors.Add(processorName, processorType.ToString());
+            //    }
+            //    mediaProcessors = processors;
+            //}
+            //else
+            //{
+            MediaClient mediaClient = new MediaClient(authToken);
+            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+            //}
+
+            NameValueCollection mediaProcessors = new NameValueCollection();
             foreach (IMediaProcessor processor in processors)
             {
-                IMediaProcessor mediaProcessor = mediaClient.GetEntityById(MediaEntity.Processor, processor.Id) as IMediaProcessor;
-                if (mediaProcessor != null)
+                MediaProcessor? processorType = Processor.GetProcessorType(processor.Id);
+                if (processorType.HasValue)
                 {
-                    mediaProcessors.Add(mediaProcessor);
+                    string processorName = Processor.GetProcessorName(processorType.Value);
+                    mediaProcessors.Add(processorName, processorType.ToString());
                 }
             }
-            return mediaProcessors.ToArray();
+
+            return mediaProcessors;
         }
 
         public static MediaMetadata[] GetAnalyticsMetadata(MediaClient mediaClient, IAsset asset)
