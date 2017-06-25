@@ -42,7 +42,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public T GetValue<T>(string itemKey)
         {
-            T value;
+            T value = default(T);
             IDatabase cache = GetCache();
             itemKey = MapItemKey(itemKey);
             string itemValue = cache.StringGet(itemKey);
@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 value = (T)Convert.ChangeType(itemValue, typeof(T));
             }
-            else
+            else if (itemValue != null)
             {
                 value = JsonConvert.DeserializeObject<T>(itemValue);
             }

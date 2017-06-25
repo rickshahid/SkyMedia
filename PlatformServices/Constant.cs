@@ -332,6 +332,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Message
         {
+            public const string UserPasswordForgotten = "AADB2C90118";
             public const string StreamingEndpointNotRunning = "Your media account does not have a streaming endpoint running!";
         }
     }

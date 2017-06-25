@@ -192,10 +192,10 @@ namespace AzureSkyMedia.WebApp.Controllers
 
                 if (this.Request.HasFormContentType)
                 {
-                    string requestError = this.Request.Form["error_description"];
-                    if (!string.IsNullOrEmpty(requestError) && requestError.Contains("AADB2C90118"))
+                    RedirectToActionResult redirectAction = Startup.OnSignIn(authToken, this);
+                    if (redirectAction != null)
                     {
-                        return RedirectToAction("passwordreset", "account");
+                        return redirectAction;
                     }
                 }
 

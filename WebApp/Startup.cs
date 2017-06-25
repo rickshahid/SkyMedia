@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using System.Collections.Specialized;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,7 +36,6 @@ namespace AzureSkyMedia.WebApp
             if (!string.IsNullOrEmpty(appInsightsKey))
             {
                 configBuilder.AddApplicationInsightsSettings(instrumentationKey: appInsightsKey);
-                AppSetting.ConfigRoot = configBuilder.Build();
             }
         }
 
@@ -122,6 +123,21 @@ namespace AzureSkyMedia.WebApp
                 context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http:", "https:");
             }
             return Task.FromResult(0);
+        }
+
+        public static RedirectToActionResult OnSignIn(string authToken, ControllerBase controller)
+        {
+            CacheClient cacheClient = new CacheClient(authToken);
+            string itemKey = Constant.Cache.ItemKey.MediaProcessors;
+            cacheClient.SetValue<NameValueCollection>(itemKey, null);
+
+            RedirectToActionResult redirectAction = null;
+            string requestError = controller.Request.Form["error_description"];
+            if (!string.IsNullOrEmpty(requestError) && requestError.Contains(Constant.Message.UserPasswordForgotten))
+            {
+                redirectAction = controller.RedirectToAction("passwordreset", "account");
+            }
+            return redirectAction;
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory log)

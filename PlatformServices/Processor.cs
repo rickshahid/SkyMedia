@@ -141,41 +141,25 @@ namespace AzureSkyMedia.PlatformServices
 
         public static NameValueCollection GetMediaProcessors(string authToken)
         {
-            //object mediaProcessors = null;
-            //if (filteredView)
-            //{
-            //    CacheClient cacheClient = new CacheClient(authToken);
-            //    string itemKey = Constant.Cache.ItemKey.MediaProcessors;
-            //    MediaProcessor[] processorTypes = cacheClient.GetValue<MediaProcessor[]>(itemKey);
-            //    if (processorTypes == null)
-            //    {
-            //        processorTypes = CacheMediaProcessors(authToken, cacheClient);
-            //    }
-            //    NameValueCollection processors = new NameValueCollection();
-            //    foreach (MediaProcessor processorType in processorTypes)
-            //    {
-            //        string processorName = Processor.GetProcessorName(processorType);
-            //        processors.Add(processorName, processorType.ToString());
-            //    }
-            //    mediaProcessors = processors;
-            //}
-            //else
-            //{
-            MediaClient mediaClient = new MediaClient(authToken);
-            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-            //}
-
-            NameValueCollection mediaProcessors = new NameValueCollection();
-            foreach (IMediaProcessor processor in processors)
+            CacheClient cacheClient = new CacheClient(authToken);
+            string itemKey = Constant.Cache.ItemKey.MediaProcessors;
+            NameValueCollection mediaProcessors = cacheClient.GetValue<NameValueCollection>(itemKey);
+            if (mediaProcessors == null)
             {
-                MediaProcessor? processorType = Processor.GetProcessorType(processor.Id);
-                if (processorType.HasValue)
+                mediaProcessors = new NameValueCollection();
+                MediaClient mediaClient = new MediaClient(authToken);
+                IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+                foreach (IMediaProcessor processor in processors)
                 {
-                    string processorName = Processor.GetProcessorName(processorType.Value);
-                    mediaProcessors.Add(processorName, processorType.ToString());
+                    MediaProcessor? processorType = Processor.GetProcessorType(processor.Id);
+                    if (processorType.HasValue)
+                    {
+                        string processorName = Processor.GetProcessorName(processorType.Value);
+                        mediaProcessors.Add(processorName, processorType.ToString());
+                    }
                 }
+                cacheClient.SetValue<NameValueCollection>(itemKey, mediaProcessors);
             }
-
             return mediaProcessors;
         }
 
