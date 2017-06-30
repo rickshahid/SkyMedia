@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using StackExchange.Redis;
 
@@ -55,6 +57,24 @@ namespace AzureSkyMedia.PlatformServices
                 value = JsonConvert.DeserializeObject<T>(itemValue);
             }
             return value;
+        }
+
+        public List<T> GetValues<T>(string itemKey)
+        {
+            List<T> values = new List<T>();
+            IDatabase cache = GetCache();
+            itemKey = MapItemKey(itemKey);
+            string itemValue = cache.StringGet(itemKey);
+            if (!string.IsNullOrEmpty(itemValue))
+            {
+                JArray itemValues = JArray.Parse(itemValue);
+                foreach (JToken itemToken in itemValues)
+                {
+                    T value = JsonConvert.DeserializeObject<T>(itemToken.ToString());
+                    values.Add(value);
+                }
+            }
+            return values;
         }
 
         public void SetValue<T>(string itemKey, T itemValue)

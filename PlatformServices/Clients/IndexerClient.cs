@@ -28,14 +28,19 @@ namespace AzureSkyMedia.PlatformServices
 
             IndexerClient indexerClient = new IndexerClient(indexPublish.IndexerAccountKey);
             JObject index = indexerClient.GetIndex(indexId, null, false);
-            string assetId = index["breakdowns"]["externalId"].ToString();
+            JToken externalId = index["breakdowns"]["externalId"];
 
-            MediaClient mediaClient = new MediaClient(indexPublish.MediaAccountName, indexPublish.MediaAccountKey);
-            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-            if (asset != null)
+            string assetId = string.Empty;
+            if (externalId != null)
             {
-                asset.AlternateId = indexId;
-                asset.Update();
+                assetId = externalId.ToString();
+                MediaClient mediaClient = new MediaClient(indexPublish.MediaAccountName, indexPublish.MediaAccountKey);
+                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+                if (asset != null)
+                {
+                    asset.AlternateId = indexId;
+                    asset.Update();
+                }
             }
             return assetId;
         }

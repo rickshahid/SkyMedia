@@ -61,6 +61,36 @@ namespace AzureSkyMedia.PlatformServices
             return indexId;
         }
 
+        private static MediaMetadata[] GetAnalyticsMetadata(MediaClient mediaClient, IAsset asset)
+        {
+            List<MediaMetadata> analyticsMetadata = new List<MediaMetadata>();
+            if (asset.ParentAssets.Count > 0)
+            {
+                string parentAssetId = asset.ParentAssets[0].Id;
+                MediaAsset[] childAssets = mediaClient.GetAssets(parentAssetId);
+                foreach (MediaAsset childAsset in childAssets)
+                {
+                    string webVtt = childAsset.WebVtt;
+                    if (!string.IsNullOrEmpty(webVtt))
+                    {
+                        MediaMetadata mediaMetadata = new MediaMetadata();
+                        mediaMetadata.ProcessorName = Processor.GetProcessorName(MediaProcessor.SpeechToText);
+                        mediaMetadata.SourceUrl = mediaClient.GetLocatorUrl(childAsset.Asset, webVtt);
+                        analyticsMetadata.Insert(0, mediaMetadata);
+                    }
+                    else if (!string.IsNullOrEmpty(childAsset.AlternateId))
+                    {
+                        string[] assetMetadata = childAsset.AlternateId.Split(Constant.TextDelimiter.Identifier);
+                        MediaMetadata mediaMetadata = new MediaMetadata();
+                        mediaMetadata.ProcessorName = assetMetadata[0];
+                        mediaMetadata.DocumentId = assetMetadata[1];
+                        analyticsMetadata.Add(mediaMetadata);
+                    }
+                }
+            }
+            return analyticsMetadata.ToArray();
+        }
+
         private static MediaStream GetMediaStream(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             MediaStream mediaStream = new MediaStream();
@@ -69,7 +99,7 @@ namespace AzureSkyMedia.PlatformServices
             mediaStream.InsightsUrl = string.Empty;
             mediaStream.ProtectionTypes = GetProtectionTypes(mediaClient, asset);
             mediaStream.TextTracks = GetTextTracks(mediaClient, asset);
-            mediaStream.AnalyticsMetadata = Processor.GetAnalyticsMetadata(mediaClient, asset);
+            mediaStream.AnalyticsMetadata = GetAnalyticsMetadata(mediaClient, asset);
             string indexId = GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId) && indexerClient != null)
             {

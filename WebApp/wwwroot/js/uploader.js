@@ -155,14 +155,15 @@ function CreateUploader() {
     $("#fileUploader").plupload({
         url: "/upload/file",
         runtimes: "html5",
-        chunk_size: "10MB",
+        chunk_size: "20MB",
         max_retries: 3,
         multipart: true,
         dragdrop: false,
         sortable: true,
         rename: true,
         filters: {
-            prevent_duplicates: true
+            prevent_duplicates: true,
+            max_file_size: "100GB"
         },
         init: eventHandlers
     });
