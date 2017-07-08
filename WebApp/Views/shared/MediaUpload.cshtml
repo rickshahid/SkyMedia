@@ -54,27 +54,4 @@
             </span>
         </td>
     </tr>
-    <tr>
-        <td class="inputLabel">
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/cognitive-services/video-indexer/video-indexer-overview')">
-                Video Indexer:
-            </span>
-        </td>
-        <td>
-            @Html.CheckBox("indexInputAsset", false, new { onchange = "SetVideoIndexerOptions(this)", disabled = "disabled" })
-            <span class="inputLabel">
-                Index Input
-            </span>
-            &nbsp;
-            <span class="inputLabel">
-                Spoken Language
-            </span>
-            @Html.DropDownList("indexerLanguage", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "indexerLanguage" })
-            &nbsp;
-            @Html.CheckBox("indexerPrivacyPublic")
-            <span class="inputLabel">
-                Public Privacy
-            </span>
-        </td>
-    </tr>
 </table>

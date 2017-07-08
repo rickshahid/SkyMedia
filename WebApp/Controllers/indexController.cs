@@ -52,7 +52,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/publish")]
         public string PublishIndex(string indexId)
         {
-            return IndexerClient.PublishIndex(indexId);
+            return MediaClient.PublishIndex(indexId);
         }
 
         [HttpGet]

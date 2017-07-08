@@ -36,7 +36,7 @@ function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signout";
 }
-function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose, modal) {
+function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose) {
     if (buttons == null) {
         buttons = {
             OK: function () {
@@ -71,7 +71,7 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
 }
 function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
-    DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose, true);
+    DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose);
 }
 function DisplayWorkflow(result) {
     var title, message = "", onClose = null;
@@ -124,7 +124,9 @@ function GetProtectionInfo(protectionTypes) {
 }
 function GetMediaPlayer(clipMode) {
     var indexId = clipMode ? "1" : "0";
-    var plugins = {};
+    var plugins = {
+        videobreakdown: {}
+    };
     if (clipMode) {
         plugins.AMVE = {
             containerId: "videoClipper" + indexId,
@@ -138,7 +140,13 @@ function GetMediaPlayer(clipMode) {
         }
     };
     var videoPlayerId = "videoPlayer" + indexId;
-    return amp(videoPlayerId, playerOptions);
+    var mediaPlayer = amp(videoPlayerId, playerOptions, function () {
+        this.videobreakdown({
+            syncTranscript: true,
+            syncLanguage: true
+        });
+    });
+    return mediaPlayer;
 }
 function SetPlayerSpinner(visible) {
     if (visible) {
@@ -165,13 +173,12 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
         }
     }
 }
-function OpenInsightsDialog(mediaStream) {
-    var dialogId = "insightsDialog";
-    var title = "Azure Video Indexer";
-    var html = "<iframe width='600' height='400' frameborder='0' src='" + mediaStream.insightsUrl + "'></iframe>";
-    var buttons = {};
-    var modal = false;
-    DisplayDialog(dialogId, title, html, buttons, null, null, null, null, modal);
+function OpenIndexerInsights(mediaStream) {
+    var title = "Azure Video Indexer Insights";
+    var html = "<iframe width='100%' height='100%' frameborder='0' src='" + mediaStream.insightsUrl + "'></iframe>";
+    var insights = window.open("", "_blank", "width=900,height=600");
+    insights.document.write(html); 
+    insights.document.title = title;
 }
 function ToggleMetadataPanel() {
     ClearVideoOverlay();

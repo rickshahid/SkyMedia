@@ -120,13 +120,12 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public static MediaAssetInput[] CreateInputAssets(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
-                                                          string inputAssetName, bool multipleFileAsset, bool indexInputAsset, string indexerLanguage,
-                                                          bool indexerPrivacyPublic, string[] fileNames)
+                                                          string inputAssetName, bool multipleFileAsset, string[] fileNames)
         {
             List<MediaAssetInput> inputAssets = new List<MediaAssetInput>();
             if (multipleFileAsset)
             {
-                IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames, indexInputAsset, indexerLanguage, indexerPrivacyPublic);
+                IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
                 MediaAssetInput inputAsset = GetInputAsset(asset);
                 inputAssets.Add(inputAsset);
             }
@@ -136,7 +135,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     string fileName = fileNames[i];
                     string assetName = Path.GetFileNameWithoutExtension(fileName);
-                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName }, indexInputAsset, indexerLanguage, indexerPrivacyPublic);
+                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
                     MediaAssetInput inputAsset = GetInputAsset(asset);
                     inputAssets.Add(inputAsset);
                 }
@@ -151,7 +150,7 @@ namespace AzureSkyMedia.PlatformServices
             ContentProtection contentProtection = null;
             if (mediaJob.Tasks != null)
             {
-                mediaJob = MediaClient.GetJob(mediaClient, mediaJob, inputAssets);
+                mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, inputAssets);
                 contentProtection = GetContentProtection(mediaJob.Tasks);
                 job = mediaClient.CreateJob(mediaJob, inputAssets, out jobTemplate);
             }

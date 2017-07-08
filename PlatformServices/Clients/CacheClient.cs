@@ -59,7 +59,7 @@ namespace AzureSkyMedia.PlatformServices
             return value;
         }
 
-        public List<T> GetValues<T>(string itemKey)
+        public T[] GetValues<T>(string itemKey)
         {
             List<T> values = new List<T>();
             IDatabase cache = GetCache();
@@ -74,7 +74,7 @@ namespace AzureSkyMedia.PlatformServices
                     values.Add(value);
                 }
             }
-            return values;
+            return values.ToArray();
         }
 
         public void SetValue<T>(string itemKey, T itemValue)

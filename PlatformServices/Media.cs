@@ -103,7 +103,7 @@ namespace AzureSkyMedia.PlatformServices
             string indexId = GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId) && indexerClient != null)
             {
-                mediaStream.InsightsUrl = indexerClient.GetInsightsUrl(indexId, null, null);
+                mediaStream.InsightsUrl = indexerClient.GetInsightsUrl(indexId, null);
             }
             return mediaStream;
         }

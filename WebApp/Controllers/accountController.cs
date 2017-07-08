@@ -68,9 +68,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             MediaClient mediaClient = new MediaClient(authToken);
             Account.ClearEntities(mediaClient, allEntities, indexerKey);
-            string[][] entityCounts = Account.GetEntityCounts(mediaClient);
-
-            return Json(entityCounts);
+            return Json(true);
         }
     }
 }

@@ -34,13 +34,13 @@ namespace AzureSkyMedia.PlatformServices
             string processorConfig = AppSetting.GetValue(settingKey);
 
             MediaJobTask jobTask = new MediaJobTask();
-            jobTask.ProcessorType = MediaProcessor.EncoderStandard;
+            jobTask.MediaProcessor = MediaProcessor.EncoderStandard;
             jobTask.ProcessorConfig = processorConfig;
 
             MediaJob mediaJob = new MediaJob();
             mediaJob.Tasks = new MediaJobTask[] { jobTask };
             mediaJob.NodeType = ReservedUnitType.Premium;
-            mediaJob = MediaClient.GetJob(mediaClient, mediaJob, inputAssets);
+            mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, inputAssets);
 
             IJobTemplate jobTemplate;
             IJob job = mediaClient.CreateJob(mediaJob, inputAssets, out jobTemplate);

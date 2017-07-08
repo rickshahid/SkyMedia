@@ -30,30 +30,35 @@ namespace AzureSkyMedia.PlatformServices
             return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constant.TextFormatter.ClockTime));
         }
 
-        private void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType scale)
+        private void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType nodeType)
         {
             int taskCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
             processorUnits[0].CurrentReservedUnits = (job.State == JobState.Queued) ? taskCount : 0;
-            processorUnits[0].ReservedUnitType = scale;
+            processorUnits[0].ReservedUnitType = nodeType;
             processorUnits[0].Update();
         }
 
-        internal static MediaJob GetJob(MediaClient mediaClient, MediaJob mediaJob, MediaAssetInput[] inputAssets)
+        internal static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> taskList = new List<MediaJobTask>();
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
                 MediaJobTask[] tasks = null;
-                switch (jobTask.ProcessorType)
+                switch (jobTask.MediaProcessor)
                 {
                     case MediaProcessor.EncoderStandard:
                     case MediaProcessor.EncoderPremium:
                     case MediaProcessor.EncoderUltra:
                         tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets);
                         break;
-                    case MediaProcessor.SpeechToText:
-                        tasks = GetSpeechToTextTasks(mediaClient, jobTask, inputAssets);
+                    case MediaProcessor.VideoIndexer:
+                        foreach(MediaAssetInput inputAsset in inputAssets)
+                        {
+                            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, inputAsset.AssetId) as IAsset;
+                            string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, true);
+                            MediaClient.UploadVideo(authToken, asset, locatorUrl, jobTask);
+                        }
                         break;
                     case MediaProcessor.VideoAnnotation:
                         tasks = GetVideoAnnotationTasks(mediaClient, jobTask, inputAssets);
@@ -61,17 +66,14 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, inputAssets);
                         break;
+                    case MediaProcessor.SpeechToText:
+                        tasks = GetSpeechToTextTasks(mediaClient, jobTask, inputAssets);
+                        break;
                     case MediaProcessor.FaceDetection:
                         tasks = GetFaceDetectionTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.FaceRedaction:
                         tasks = GetFaceRedactionTasks(mediaClient, jobTask, inputAssets);
-                        break;
-                    case MediaProcessor.CharacterRecognition:
-                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets);
-                        break;
-                    case MediaProcessor.ContentModeration:
-                        tasks = GetContentModerationTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.MotionDetection:
                         tasks = GetMotionDetectionTasks(mediaClient, jobTask, inputAssets);
@@ -81,6 +83,12 @@ namespace AzureSkyMedia.PlatformServices
                         break;
                     case MediaProcessor.MotionStabilization:
                         tasks = GetMotionStabilizationTasks(mediaClient, jobTask, inputAssets);
+                        break;
+                    case MediaProcessor.CharacterRecognition:
+                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, inputAssets);
+                        break;
+                    case MediaProcessor.ContentModeration:
+                        tasks = GetContentModerationTasks(mediaClient, jobTask, inputAssets);
                         break;
                 }
                 if (tasks != null)
@@ -119,7 +127,7 @@ namespace AzureSkyMedia.PlatformServices
                 job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
                 foreach (MediaJobTask jobTask in mediaJob.Tasks)
                 {
-                    string processorId = Processor.GetProcessorId(jobTask.ProcessorType);
+                    string processorId = Processor.GetProcessorId(jobTask.MediaProcessor);
                     IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
                     ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
                     if (jobTask.ParentIndex.HasValue)

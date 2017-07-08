@@ -1,4 +1,6 @@
-﻿using Microsoft.WindowsAzure.MediaServices.Client;
+﻿using System.Collections.Generic;
+
+using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -6,7 +8,23 @@ namespace AzureSkyMedia.PlatformServices
     {
         public MediaJobTask CreateCopy()
         {
-            return (MediaJobTask)this.MemberwiseClone();
+            MediaJobTask newTask = (MediaJobTask)this.MemberwiseClone();
+            newTask.ProcessorConfigBoolean = new Dictionary<MediaProcessorConfig, bool>();
+            foreach (KeyValuePair<MediaProcessorConfig, bool> keyValue in this.ProcessorConfigBoolean)
+            {
+                newTask.ProcessorConfigBoolean.Add(keyValue.Key, keyValue.Value);
+            }
+            newTask.ProcessorConfigInteger = new Dictionary<MediaProcessorConfig, int>();
+            foreach (KeyValuePair<MediaProcessorConfig, int> keyValue in this.ProcessorConfigInteger)
+            {
+                newTask.ProcessorConfigInteger.Add(keyValue.Key, keyValue.Value);
+            }
+            newTask.ProcessorConfigString = new Dictionary<MediaProcessorConfig, string>();
+            foreach (KeyValuePair<MediaProcessorConfig, string> keyValue in this.ProcessorConfigString)
+            {
+                newTask.ProcessorConfigString.Add(keyValue.Key, keyValue.Value);
+            }
+            return newTask;
         }
 
         public int? ParentIndex { get; set; }
@@ -15,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] InputAssetIds { get; set; }
 
-        public MediaProcessor ProcessorType { get; set; }
+        public MediaProcessor MediaProcessor { get; set; }
 
         public string ProcessorConfig { get; set; }
 
@@ -31,26 +49,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
-        public string[] SpeechToTextLanguages { get; set; }
+        public Dictionary<MediaProcessorConfig, bool> ProcessorConfigBoolean { get; set; }
 
-        public bool SpeechToTextCaptionWebVtt { get; set; }
+        public Dictionary<MediaProcessorConfig, int> ProcessorConfigInteger { get; set; }
 
-        public bool SpeechToTextCaptionTtml { get; set; }
-
-        public string FaceDetectionMode { get; set; }
-
-        public string FaceRedactionMode { get; set; }
-
-        public int SummarizationDurationSeconds { get; set; }
-
-        public string MotionDetectionSensitivityLevel { get; set; }
-
-        public bool MotionDetectionLightChange { get; set; }
-
-        public int MotionHyperlapseStartFrame { get; set; }
-
-        public int MotionHyperlapseFrameCount { get; set; }
-
-        public int MotionHyperlapseSpeed { get; set; }
+        public Dictionary<MediaProcessorConfig, string> ProcessorConfigString { get; set; }
     }
 }

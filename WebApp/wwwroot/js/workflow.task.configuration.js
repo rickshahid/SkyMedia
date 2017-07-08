@@ -21,16 +21,20 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeToken" + lastTaskNumber, "encoderContentProtectionAuthTypeToken" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerTranscriptLanguage" + lastTaskNumber, "indexerTranscriptLanguage" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerPrivacyPublic" + lastTaskNumber, "indexerPrivacyPublic" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSearchPartition" + lastTaskNumber, "indexerSearchPartition" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationConfigRow" + lastTaskNumber, "summarizationConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationSeconds" + lastTaskNumber, "summarizationDurationSeconds" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextConfigRow" + lastTaskNumber, "speechToTextConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextLanguages" + lastTaskNumber, "speechToTextLanguages" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextLanguage" + lastTaskNumber, "speechToTextLanguage" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionWebVtt" + lastTaskNumber, "speechToTextaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionTtml" + lastTaskNumber, "speechToTextCaptionTtml" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionMode" + lastTaskNumber, "faceRedactionMode" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationConfigRow" + lastTaskNumber, "summarizationConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationSeconds" + lastTaskNumber, "summarizationDurationSeconds" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectionConfigRow" + lastTaskNumber, "motionDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectionSensitivityLevel" + lastTaskNumber, "motionDetectionSensitivityLevel" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectionLightChange" + lastTaskNumber, "motionDetectionLightChange" + newTaskNumber);
@@ -64,14 +68,15 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var encoderConfigFileId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFile");
     var encoderOptionsRowId = mediaProcessor.id.replace("mediaProcessor", "encoderOptionsRow");
     var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
+    var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
+    var summarizationConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summarizationConfigRow");
     var speechToTextConfigRowId = mediaProcessor.id.replace("mediaProcessor", "speechToTextConfigRow");
     var faceDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionConfigRow");
     var faceRedactionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceRedactionConfigRow");
-    var summarizationConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summarizationConfigRow");
     var motionDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionDetectionConfigRow");
     var motionHyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionHyperlapseConfigRow");
     var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
-    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, speechToTextConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, summarizationConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
+    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, summarizationConfigRowId, speechToTextConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
     var unbindDocIds = [encoderConfigDocId, encoderConfigFileDocId];
     ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideRowIds, unbindDocIds);
     if (mediaProcessor.value != "None") {
@@ -119,6 +124,12 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom Configuration File (XML)", "Custom");
                 $("#" + encoderOptionsRowId).show();
                 break;
+            case "VideoIndexer":
+                $("#" + indexerConfigRowId).show();
+                break;
+            case "VideoSummarization":
+                $("#" + summarizationConfigRowId).show();
+                break;
             case "SpeechToText":
                 $("#" + speechToTextConfigRowId).show();
                 break;
@@ -129,15 +140,11 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 $("#" + faceRedactionConfigRowId).show();
                 break;
             case "MotionDetection":
-                $("#" + motionConfigRowId).show();
+                $("#" + motionDetectionConfigRowId).show();
                 break;
             case "MotionHyperlapse":
-                $("#" + hyperlapseConfigRowId).show();
-                break;
-            case "VideoSummarization":
-                $("#" + summaryConfigRowId).show();
-                break;
-        }
+                $("#" + motionHyperlapseConfigRowId).show();
+                break;        }
         if (encoderConfigOptions.length > 0) {
             $("#" + encoderConfigRowId).show();
             $("#" + encoderConfigId).change();

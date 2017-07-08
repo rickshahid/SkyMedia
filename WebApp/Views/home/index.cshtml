@@ -20,6 +20,7 @@
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
     <link type="text/css" rel="stylesheet" href="~/css/amve.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
+    <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
     <script type="text/javascript" src="~/js/amve.min.js"></script>
     <script type="text/javascript" src="~/js/metadata.js"></script>
     <script type="text/javascript" src="~/js/clipper.js"></script>
@@ -61,6 +62,7 @@
             });
             var mediaPlayer = GetMediaPlayer(false);
             mediaPlayer.ready(function () {
+                //mediaPlayer.videobreakdown();
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
@@ -88,7 +90,7 @@
                         insightsButton.appendChild(insightsImage);
                         controlBarRight.appendChild(insightsButton);
                         $("#insightsButton").click(function () {
-                            OpenInsightsDialog(mediaStream);
+                            OpenIndexerInsights(mediaStream);
                         });
                     }
                     if (mediaStream.analyticsMetadata.length > 0) {

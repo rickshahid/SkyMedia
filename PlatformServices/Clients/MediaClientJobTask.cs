@@ -28,27 +28,27 @@ namespace AzureSkyMedia.PlatformServices
             return processorConfig;
         }
 
-        private static MediaJobTask MapJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
+        private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
         {
-            jobTask.Name = Processor.GetProcessorName(jobTask.ProcessorType);
-            if (jobTask.ProcessorConfig.Contains(Constant.Media.ProcessorConfig.EncoderStandardThumbnailsFormat))
-            {
-                jobTask.Name = string.Concat(jobTask.Name, " ", Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset);
-            }
+            jobTask.Name = Processor.GetProcessorName(jobTask.MediaProcessor);
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {
                 jobTask.OutputAssetName = string.Concat(assetName, " - ", jobTask.Name);
             }
-            jobTask.OutputAssetEncryption = jobTask.ContentProtection != null ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
+            jobTask.OutputAssetEncryption = AssetCreationOptions.None;
+            if (jobTask.ContentProtection != null)
+            {
+                jobTask.OutputAssetEncryption = AssetCreationOptions.StorageEncrypted;
+            }
             return jobTask;
         }
 
-        private static MediaJobTask[] MapJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, bool multipleInputTask)
+        private static MediaJobTask[] SetJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, bool multipleInputTask)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             if (multipleInputTask)
             {
-                jobTask = MapJobTask(mediaClient, jobTask, inputAssets[0].AssetName);
+                jobTask = SetJobTask(mediaClient, jobTask, inputAssets[0].AssetName);
                 jobTask.InputAssetIds = GetAssetIds(inputAssets);
                 jobTasks.Add(jobTask);
             }
@@ -56,10 +56,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (MediaAssetInput inputAsset in inputAssets)
                 {
-                    MediaJobTask newJobTask = jobTask.CreateCopy();
-                    newJobTask = MapJobTask(mediaClient, newJobTask, inputAsset.AssetName);
-                    newJobTask.InputAssetIds = new string[] { inputAsset.AssetId };
-                    jobTasks.Add(newJobTask);
+                    MediaJobTask newTask = jobTask.CreateCopy();
+                    newTask = SetJobTask(mediaClient, newTask, inputAsset.AssetName);
+                    newTask.InputAssetIds = new string[] { inputAsset.AssetId };
+                    jobTasks.Add(newTask);
                 }
             }
             return jobTasks.ToArray();

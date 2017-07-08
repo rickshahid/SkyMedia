@@ -72,8 +72,7 @@ namespace AzureSkyMedia.PlatformServices
             return blob;
         }
 
-        public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames,
-                                  bool indexInputAsset, string indexerLanguage, bool indexerPrivacyPublic)
+        public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames)
         {
             AssetCreationOptions assetOptions = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
             IAsset asset = _media.Assets.Create(assetName, storageAccount, assetOptions);
@@ -103,32 +102,6 @@ namespace AzureSkyMedia.PlatformServices
             }
 
             SetPrimaryFile(asset);
-
-            string attributeName = Constant.UserAttribute.VideoIndexerKey;
-            string indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
-            if (!string.IsNullOrEmpty(indexerKey) && indexInputAsset)
-            {
-                string locatorUrl = GetLocatorUrl(LocatorType.Sas, asset, null, true);
-
-                string settingKey = Constant.AppSettingKey.MediaNotificationIndexerCallbackUrl;
-                string callbackUrl = AppSetting.GetValue(settingKey);
-
-                IndexerClient indexerClient = new IndexerClient(indexerKey);
-                MediaPrivacy videoPrivacy = indexerPrivacyPublic ? MediaPrivacy.Public : MediaPrivacy.Private;
-                string indexId = indexerClient.UploadVideo(asset.Name, videoPrivacy, indexerLanguage, locatorUrl, callbackUrl, asset.Id);
-
-                MediaIndexPublish indexPublish = new MediaIndexPublish();
-                indexPublish.PartitionKey = Constant.Storage.TableProperty.PartitionKey;
-                indexPublish.RowKey = indexId;
-                indexPublish.IndexerAccountKey = indexerKey;
-                indexPublish.MediaAccountName = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountName);
-                indexPublish.MediaAccountKey = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountKey);
-
-                EntityClient entityClient = new EntityClient();
-                string tableName = Constant.Storage.TableName.IndexPublish;
-                entityClient.InsertEntity(tableName, indexPublish);
-            }
-
             return asset;
         }
     }

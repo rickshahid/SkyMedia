@@ -151,15 +151,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             attributeName = Constant.UserAttribute.AsperaAccountKey;
             viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
 
-            attributeName = Constant.UserAttribute.VideoIndexerKey;
-            viewData["videoIndexerKey"] = AuthToken.GetClaimValue(authToken, attributeName);
-
             viewData["storageAccount"] = homeController.GetStorageAccounts(authToken);
             viewData["jobName"] = homeController.GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = homeController.GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
-            viewData["speechToTextLanguages"] = homeController.GetSpokenLanguages(false);
             viewData["indexerLanguages"] = homeController.GetSpokenLanguages(true);
+            viewData["speechToTextLanguages"] = homeController.GetSpokenLanguages(false);
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)

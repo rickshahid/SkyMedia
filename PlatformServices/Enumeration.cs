@@ -39,16 +39,34 @@
         EncoderStandard,
         EncoderPremium,
         EncoderUltra,
+        VideoIndexer,
+        VideoAnnotation,
+        VideoSummarization,
         SpeechToText,
         FaceDetection,
         FaceRedaction,
-        VideoAnnotation,
-        VideoSummarization,
-        CharacterRecognition,
-        ContentModeration,
         MotionDetection,
         MotionHyperlapse,
-        MotionStabilization
+        MotionStabilization,
+        CharacterRecognition,
+        ContentModeration
+    }
+
+    public enum MediaProcessorConfig
+    {
+        PublicVideo,
+        SearchPartition,
+        TranscriptLanguage,
+        CaptionFormatWebVtt,
+        CaptionFormatTtml,
+        SummarizationDurationSeconds,
+        FaceDetectionMode,
+        FaceRedactionMode,
+        MotionDetectionSensitivityLevel,
+        MotionDetectionLightChange,
+        MotionHyperlapseStartFrame,
+        MotionHyperlapseFrameCount,
+        MotionHyperlapseSpeed
     }
 
     public enum MediaEncoding
@@ -62,14 +80,6 @@
     {
         Private,
         Public
-    }
-
-    public enum MediaInsight
-    {
-        Search,
-        People,
-        Keywords,
-        Sentiments
     }
 
     public enum TransferService

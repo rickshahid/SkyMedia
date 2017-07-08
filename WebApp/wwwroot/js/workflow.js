@@ -1,4 +1,4 @@
-﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey, videoIndexerKey) {
+﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
     CreateTipRight("mediaWorkflowSave", "Save Workflow");
     CreateTipLeft("mediaWorkflowStart", "Start Workflow");
     CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
@@ -20,10 +20,6 @@
         if (asperaAccountKey != "") {
             $("#uploadService[value='asperaFasp']").prop("disabled", false);
         }
-        if (videoIndexerKey != "") {
-            $("#indexInputAsset").prop("disabled", false);
-            $("#indexInputAsset").prop("checked", true);
-       }
     } else {
         $("#mediaAssetsRow").show();
     }

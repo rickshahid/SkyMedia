@@ -178,13 +178,18 @@ body {
     margin-top: 20px;
 }
 
+.processorConfig td {
+    padding: 0px !important;
+}
+
 .ui-spinner-input {
     margin-top: 0px;
     margin-bottom: 0px;
 }
 
 .spinner {
-    font-size: small !important;
+    font-size: medium !important;
+    font-weight: bold;
 }
 
 .spinner.d2 {
@@ -192,13 +197,7 @@ body {
 }
 
 .spinner.d7 {
-    margin-right: 40px;
-    text-align: right;
-    width: 55px;
-}
-
-.spinnerConfig td {
-    padding: 0px 5px 0px 0px !important;
+    width: 69px;
 }
 
 .ui-slider {
@@ -211,17 +210,8 @@ body {
     border-radius: 10px;
 }
 
-.slider {
-    display: inline-block;
-    margin-left: 15px;
-}
-
-.slider.jobPriority {
-    width: 108px;
-}
-
-.slider.durationSeconds {
-    width: 205px;
+.sliderHandle {
+    height: 15px !important;
 }
 
 .sliderLabel {
@@ -230,8 +220,13 @@ body {
     color: azure;
 }
 
-.sliderHandle {
-    height: 15px !important;
+.slider {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.slider.jobPriority {
+    width: 110px;
 }
 
 .ui-dialog-title {
@@ -309,7 +304,7 @@ body {
 }
 
 .plupload_progress {
-    margin-right: 238px;
+    margin-right: 256px;
 }
 
 .signiantUploader {
@@ -532,8 +527,18 @@ body {
     width: 191px;
 }
 
-.indexerLanguage {
-    width: 165px;
+.spokenLanguage {
+    font-weight: bold;
+    width: 193px;
+}
+
+.indexerSearchPartition {
+    width: 108px;
+}
+
+.motionSensitivityLevel {
+    font-weight: bold;
+    width: 112px;
 }
 
 .jobName {
@@ -604,8 +609,12 @@ body {
     padding: 3px 4px 3px 3px;
 }
 
+.contentProtectionOptionsEncryptionDrmOption {
+    margin-left: 5px;
+}
+
 .contentAuthAddressRange {
-    width: 141px;
+    width: 126px;
 }
 
 .ui-jqgrid {
@@ -704,27 +713,10 @@ body {
     border: none;
 }
 
-    .mediaPlayerButton.mediaMetadata {
-        padding-top: 8px !important;
-    }
+.mediaPlayerButton.mediaMetadata {
+    padding-top: 8px !important;
+}
 
 .mediaControls {
     margin: 10px auto;
-}
-
-.faceDetectionMode {
-    margin-right: 10px;
-}
-
-.faceRedactionMode {
-    margin-right: 6px;
-}
-
-.motionSensitivityLevel {
-    font-weight: bold;
-    width: 120px;
-}
-
-.motionDetectLightChange {
-    margin-left: 8px;
 }

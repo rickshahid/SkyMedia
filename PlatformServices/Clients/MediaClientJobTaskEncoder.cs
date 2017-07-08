@@ -29,7 +29,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetEncoderTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            if (jobTask.ProcessorType != MediaProcessor.EncoderStandard)
+            if (jobTask.MediaProcessor != MediaProcessor.EncoderStandard)
             {
                 List<MediaAssetInput> assets = new List<MediaAssetInput>(inputAssets);
                 assets.Sort(OrderByWorkflow);
@@ -93,9 +93,9 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 jobTask.ProcessorConfig = newConfig.ToString();
             }
-            bool multipleInputTask = jobTask.ProcessorType != MediaProcessor.EncoderStandard;
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, multipleInputTask);
-            jobTasks.AddRange(mappedJobTasks);
+            bool multipleInputTask = jobTask.MediaProcessor != MediaProcessor.EncoderStandard;
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, multipleInputTask);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
     }

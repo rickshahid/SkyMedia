@@ -113,7 +113,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string AzureMediaIndexer = "Media.Indexer";
 
             public const string AzureCache = "Cache";
-            public const string AzureSearch = "Search";
         }
 
         public struct HttpHeader
@@ -212,25 +211,26 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct ProcessorId
             {
+                public const string Prefix = "nb:mpid:";
                 public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
                 public const string EncoderPremium = "nb:mpid:UUID:77fea72a-107c-439e-b0bb-f88153b93461";
                 public const string EncoderUltra = "nb:mpid:UUID:816a4fda-76dc-463b-866b-9aa2f65deeac";
+                public const string VideoIndexer = "VideoIndexer";
+                public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";
+                public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
                 public const string SpeechToText = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
                 public const string FaceDetection = "nb:mpid:UUID:6a9b8239-81ea-4762-8125-66b4f45737a2";
                 public const string FaceRedaction = "nb:mpid:UUID:3806d7a6-4985-4437-b098-50e3733310e8";
-                public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";
-                public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
-                public const string CharacterRecognition = "nb:mpid:UUID:074c3899-d9fb-448f-9ae1-4ebcbe633056";
-                public const string ContentModeration = "nb:mpid:UUID:bb312589-3bd4-4f2e-af26-2df8a984b395";
                 public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
                 public const string MotionHyperlapse = "nb:mpid:UUID:db657ff0-fc6e-407c-a03a-80fdca3b81cd";
                 public const string MotionStabilization = "nb:mpid:UUID:73845a7d-8505-421d-9af9-d4bdc7838bdf";
+                public const string CharacterRecognition = "nb:mpid:UUID:074c3899-d9fb-448f-9ae1-4ebcbe633056";
+                public const string ContentModeration = "nb:mpid:UUID:bb312589-3bd4-4f2e-af26-2df8a984b395";
             }
 
             public struct ProcessorConfig
             {
                 public const string EncoderStandardThumbnailsPreset = "Thumbnails";
-                public const string EncoderStandardThumbnailsFormat = "PngImage";
                 public const string EncoderPremiumWorkflowExtension = ".workflow";
             }
 

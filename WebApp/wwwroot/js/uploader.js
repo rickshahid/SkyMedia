@@ -92,10 +92,6 @@ function SetMultipleFileAsset() {
     }
     $("#multipleFileAsset").prop("checked", multipleFileAsset);
 }
-function SetVideoIndexerOptions(checkbox) {
-    $("#indexerLanguage").prop("disabled", !checkbox.checked);
-    $("#indexerPrivacyPublic").prop("disabled", !checkbox.checked);
-}
 function CreateUploader() {
     var eventHandlers = {
         PostInit: function (uploader) {
@@ -163,7 +159,7 @@ function CreateUploader() {
         rename: true,
         filters: {
             prevent_duplicates: true,
-            max_file_size: "100GB"
+            max_file_size: "4GB"
         },
         init: eventHandlers
     });

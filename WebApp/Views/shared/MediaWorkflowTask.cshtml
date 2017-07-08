@@ -21,17 +21,21 @@
     string contentProtectionAuthTypeTokenId = string.Concat(contentProtectionIdPrefix, "AuthTypeToken" + taskNumber);
     string contentProtectionAuthTypeAddressId = string.Concat(contentProtectionIdPrefix, "AuthTypeAddress" + taskNumber);
     string contentProtectionAuthAddressRangeId = string.Concat(contentProtectionIdPrefix, "AuthAddressRange" + taskNumber);
+    string indexerConfigRowId = string.Concat("indexerConfigRow", taskNumber);
+    string indexerTranscriptLanguageId = string.Concat("indexerTranscriptLanguage", taskNumber);
+    string indexerPrivacyPublicId = string.Concat("indexerPrivacyPublic", taskNumber);
+    string indexerSearchPartitionId = string.Concat("indexerSearchPartition", taskNumber);
+    string summarizationConfigRowId = string.Concat("summarizationConfigRow", taskNumber);
+    string summarizationDurationMinutesId = string.Concat("summarizationDurationMinutes", taskNumber);
+    string summarizationDurationSecondsId = string.Concat("summarizationDurationSeconds", taskNumber);
     string speechToTextConfigRowId = string.Concat("speechToTextConfigRow", taskNumber);
-    string speechToTextLanguagesId = string.Concat("speechToTextLanguages", taskNumber);
+    string speechToTextLanguageId = string.Concat("speechToTextLanguage", taskNumber);
     string speechToTextCaptionWebVttId = string.Concat("speechToTextCaptionWebVtt", taskNumber);
     string speechToTextCaptionTtmlId = string.Concat("speechToTextCaptionTtml", taskNumber);
     string faceDetectionConfigRowId = string.Concat("faceDetectionConfigRow", taskNumber);
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
     string faceRedactionConfigRowId = string.Concat("faceRedactionConfigRow", taskNumber);
     string faceRedactionModeId = string.Concat("faceRedactionMode", taskNumber);
-    string summarizationConfigRowId = string.Concat("summarizationonfigRow", taskNumber);
-    string summarizationDurationMinutesId = string.Concat("summarizationDurationMinutes", taskNumber);
-    string summarizationDurationSecondsId = string.Concat("summarizationDurationSeconds", taskNumber);
     string motionDetectionConfigRowId = string.Concat("motionDetectionConfigRow", taskNumber);
     string motionDetectionSensitivityLevelId = string.Concat("motionDetectionSensitivityLevel", taskNumber);
     string motionDetectionLightChangeId = string.Concat("motionDetectionLightChange", taskNumber);
@@ -84,70 +88,31 @@
                     @Html.TextBox(encoderConfigFileId, null, new { @class = "mediaProcessorConfig", type = "file", onchange = "SetEncoderConfig(this)" })
                 </td>
             </tr>
-            <tr id="@speechToTextConfigRowId" style="display: none">
+            <tr id="@indexerConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
-                        Speech Text Config
+                    <span class="siteLink" onclick="window.open('https://docs.microsoft.com/en-us/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                        Video Indexer
                     </span>
                 </td>
                 <td>
-                    @Html.DropDownList(speechToTextLanguagesId, ViewData["speechToTextLanguages"] as SelectListItem[], new { @class = "mediaProcessor" })
-                    &nbsp;
-                    <span class="inputLabel">
-                        CC
-                    </span>
-                    &nbsp;
-                    @Html.CheckBox(speechToTextCaptionWebVttId, true, new { disabled = "disabled" } )
-                    <span class="inputLabel">
-                        WebVTT
-                    </span>
-                    &nbsp;
-                    @Html.CheckBox(speechToTextCaptionTtmlId, false)
-                    <span class="inputLabel">
-                        TTML
-                    </span>
-                </td>
-            </tr>
-            <tr id="@faceDetectionConfigRowId" style="display: none">
-                <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection')">
-                        Face Detection
-                    </span>
-                </td>
-                <td>
-                    @Html.RadioButton(faceDetectionModeId, "faces", true)
-                    <span class="inputLabel faceDetectionMode">
-                        Faces Only
-                    </span>
-                    @Html.RadioButton(faceDetectionModeId, "aggregateEmotion", false)
-                    <span class="inputLabel faceDetectionMode">
-                        Aggregate Emotion
-                    </span>
-                    @Html.RadioButton(faceDetectionModeId, "perFaceEmotion", false)
-                    <span class="inputLabel">
-                        Per Face Emotion
-                    </span>
-                </td>
-            </tr>
-            <tr id="@faceRedactionConfigRowId" style="display: none">
-                <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction')">
-                        Face Redaction
-                    </span>
-                </td>
-                <td>
-                    @Html.RadioButton(faceRedactionModeId, "analyze", true)
-                    <span class="inputLabel faceRedactionMode">
-                        Analyze Only
-                    </span>
-                    @Html.RadioButton(faceRedactionModeId, "redact", false)
-                    <span class="inputLabel faceRedactionMode">
-                        Apply Redaction
-                    </span>
-                    @Html.RadioButton(faceRedactionModeId, "combined", false)
-                    <span class="inputLabel">
-                        Combined Mode
-                    </span>
+                    <table class="processorConfig">
+                        <tr>
+                            <td>
+                                @Html.DropDownList(indexerTranscriptLanguageId, ViewData["indexerLanguages"] as SelectListItem[], new { @class = "spokenLanguage" })
+                            </td>
+                            <td>
+                                &nbsp;
+                                @Html.CheckBox(indexerPrivacyPublicId)
+                            </td>
+                            <td class="inputLabel">
+                                Public Video
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                @Html.TextBox(indexerSearchPartitionId, null, new { @class = "indexerSearchPartition", placeholder = "[Search Partition]" })
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
             <tr id="@summarizationConfigRowId" style="display: none">
@@ -157,7 +122,7 @@
                     </span>
                 </td>
                 <td>
-                    <table class="spinnerConfig">
+                    <table class="processorConfig">
                         <tr>
                             <td class="inputLabel">
                                 Output Duration
@@ -165,12 +130,114 @@
                             <td class="inputLabel">
                                 &nbsp;
                                 <input id="@summarizationDurationMinutesId" value="1" class="spinner d2" />
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
                                 Minutes
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
                                 <input id="@summarizationDurationSecondsId" value="0" class="spinner d2" />
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
                                 Seconds
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="@speechToTextConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
+                        Speech To Text
+                    </span>
+                </td>
+                <td>
+                    <table class="processorConfig">
+                        <tr>
+                            <td class="inputLabel">
+                                @Html.DropDownList(speechToTextLanguageId, ViewData["speechToTextLanguages"] as SelectListItem[], new { @class = "spokenLanguage" })
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                Caption
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                @Html.CheckBox(speechToTextCaptionWebVttId, true, new { disabled = "disabled" })
+                                WebVTT
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                @Html.CheckBox(speechToTextCaptionTtmlId, false)
+                                TTML
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="@faceDetectionConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection')">
+                        Face Detection
+                    </span>
+                </td>
+                <td>
+                    <table class="processorConfig">
+                        <tr>
+                            <td>
+                                @Html.RadioButton(faceDetectionModeId, "faces", true)
+                            </td>
+                            <td class="inputLabel">
+                                Faces Only
+                            </td>
+                            <td>
+                                &nbsp;
+                                @Html.RadioButton(faceDetectionModeId, "aggregateEmotion", false)
+                            </td>
+                            <td class="inputLabel">
+                                Aggregate Emotion
+                            </td>
+                            <td>
+                                &nbsp;
+                                @Html.RadioButton(faceDetectionModeId, "perFaceEmotion", false)
+                            </td>
+                            <td class="inputLabel">
+                                Per Face Emotion
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="@faceRedactionConfigRowId" style="display: none">
+                <td class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction')">
+                        Face Redaction
+                    </span>
+                </td>
+                <td>
+                    <table class="processorConfig">
+                        <tr>
+                            <td>
+                                @Html.RadioButton(faceRedactionModeId, "analyze", true)
+                            </td>
+                            <td class="inputLabel">
+                                Analyze Only
+                            </td>
+                            <td>
+                                &nbsp;
+                                @Html.RadioButton(faceRedactionModeId, "redact", false)
+                            </td>
+                            <td class="inputLabel">
+                                Apply Redaction
+                            </td>
+                            <td>
+                                &nbsp;
+                                @Html.RadioButton(faceRedactionModeId, "combined", false)
+                            </td>
+                            <td class="inputLabel">
+                                Combined Mode
                             </td>
                         </tr>
                     </table>
@@ -183,18 +250,28 @@
                     </span>
                 </td>
                 <td>
-                    <span class="inputLabel">
-                        Sensitivity
-                    </span>
-                    <select id="@motionDetectionSensitivityLevelId" class="motionSensitivityLevel">
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                    @Html.CheckBox(motionDetectionLightChangeId, false, new { @class = "motionDetectLightChange" })
-                    <span class="inputLabel">
-                        Detect Light Change
-                    </span>
+                    <table class="processorConfig">
+                        <tr>
+                            <td class="inputLabel">
+                                Sensitivity
+                            </td>
+                            <td>
+                                &nbsp;
+                                <select id="@motionDetectionSensitivityLevelId" class="motionSensitivityLevel">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </td>
+                            <td>
+                                &nbsp;
+                                @Html.CheckBox(motionDetectionLightChangeId, false)
+                            </td>
+                            <td class="inputLabel">
+                                Detect Light Change
+                            </td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
             <tr id="@motionHyperlapseConfigRowId" style="display: none">
@@ -204,20 +281,30 @@
                     </span>
                 </td>
                 <td>
-                    <table class="spinnerConfig">
+                    <table class="processorConfig">
                         <tr>
                             <td class="inputLabel">
-                                <input id="@motionHyperlapseStartFrameId" value="0" class="spinner d7" />
-                                -
-                            </td>
-                            <td class="inputLabel">
-                                <input id="@motionHyperlapseFrameCountId" value="10000" class="spinner d7" />
                                 Frames
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
-                                <input id="@motionHyperlapseSpeedId" value="2" class="spinner d2" />
+                                <input id="@motionHyperlapseStartFrameId" value="0" class="spinner d7" />
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                -
+                                &nbsp;
+                            </td>
+                            <td class="inputLabel">
+                                <input id="@motionHyperlapseFrameCountId" value="10000" class="spinner d7" />
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
                                 Speed
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                <input id="@motionHyperlapseSpeedId" value="2" class="spinner d2" />
                             </td>
                         </tr>
                     </table>
@@ -256,9 +343,9 @@
                     <table>
                         <tr>
                             <td class="contentProtectionLabel">
-                                <div class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
+                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
                                     Content<br />Protection
-                                </div>
+                                </span>
                             </td>
                             <td>
                                 <table class="contentProtectionOptions">
@@ -279,13 +366,11 @@
                                                 <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
                                                     PlayReady
                                                 </span>
-                                                &nbsp;
-                                                @Html.CheckBox(contentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)" })
+                                                @Html.CheckBox(contentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)", @class = "contentProtectionOptionsEncryptionDrmOption" })
                                                 <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
                                                     Widevine
                                                 </span>
-                                                &nbsp;
-                                                @Html.CheckBox(contentProtectionDrmFairPlayId, false, new { onchange = "SetContentProtection(this)", disabled = "disabled" })
+                                                @Html.CheckBox(contentProtectionDrmFairPlayId, false, new { onchange = "SetContentProtection(this)", @class = "contentProtectionOptionsEncryptionDrmOption", disabled = "disabled" })
                                                 <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-hls-with-fairplay')">
                                                     FairPlay
                                                 </span>
@@ -295,7 +380,7 @@
                                     <tr>
                                         <td class="inputLabel">
                                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
-                                                User Auth
+                                                Authorization
                                             </span>
                                         </td>
                                         <td>

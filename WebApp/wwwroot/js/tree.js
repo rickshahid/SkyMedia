@@ -1,13 +1,6 @@
 ﻿function LoadTreeNodes(workflowView) {
     $("#mediaAssets").jstree({
         "core": {
-            "check_callback": function (operation, node, node_parent, node_position, more) {
-                var operationAllowed = false;
-                if (operation == "rename_node") {
-                    operationAllowed = true;
-                }
-                return operationAllowed;
-            },
             "themes": {
                 "variant": "large"
             },

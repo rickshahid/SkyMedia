@@ -93,10 +93,10 @@ namespace AzureSkyMedia.PlatformServices
                         }
                         if (!string.IsNullOrEmpty(fileData))
                         {
-                            MediaProcessor? processorType = Processor.GetProcessorType(jobTask.MediaProcessorId);
-                            if (processorType.HasValue)
+                            MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(jobTask.MediaProcessorId);
+                            if (mediaProcessor.HasValue)
                             {
-                                string processorName = Processor.GetProcessorName(processorType.Value);
+                                string processorName = Processor.GetProcessorName(mediaProcessor.Value);
                                 string collectionId = Constant.Database.Collection.Metadata;
                                 string documentId = cosmosClient.CreateDocument(collectionId, fileData, dataAttributes);
                                 outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);

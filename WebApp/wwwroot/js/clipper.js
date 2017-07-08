@@ -5,7 +5,7 @@
     var mediaPlayer = GetMediaPlayer(true);
     var mediaStream = _mediaStreams[_streamNumber - 1];
     SetPlayerContent(mediaPlayer, mediaStream, languageCode, true);
-    DisplayDialog(dialogId, title, null, buttons, null, null, null, null, true);
+    DisplayDialog(dialogId, title, null, buttons, null, null, null, null);
 }
 function CreateVideoClip(clipData) {
     if (clipData != null) {

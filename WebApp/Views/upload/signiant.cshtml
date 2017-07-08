@@ -18,8 +18,7 @@
             var signiantAccountKey = "@ViewData["signiantAccountKey"]";
             var asperaAccountKey = "@ViewData["asperaAccountKey"]";
             var serviceGateway = "@ViewData["signiantServiceGateway"]";
-            var videoIndexerKey = "@ViewData["videoIndexerKey"]";
-            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey, videoIndexerKey);
+            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
             InitializeUploader(serviceGateway, signiantAccountKey);
             CreateUploader();
         })

@@ -7,20 +7,48 @@ namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
     {
+        private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
+        {
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
+            string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
+            string documentId = AppSetting.GetValue(settingKey);
+            JObject processorConfig = GetProcessorConfig(documentId);
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
+            return jobTasks.ToArray();
+        }
+
+        private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
+        {
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            jobTask.MediaProcessor = MediaProcessor.VideoSummarization;
+            string settingKey = Constant.AppSettingKey.MediaProcessorVideoSummarizationDocumentId;
+            string documentId = AppSetting.GetValue(settingKey);
+            JObject processorConfig = GetProcessorConfig(documentId);
+            JToken processorOptions = processorConfig["options"];
+            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.SummarizationDurationSeconds];
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
+            return jobTasks.ToArray();
+        }
+
         private static MediaJobTask[] GetSpeechToTextTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.SpeechToText;
+            jobTask.MediaProcessor = MediaProcessor.SpeechToText;
             string settingKey = Constant.AppSettingKey.MediaProcessorSpeechToTextDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];
             JArray captionFormats = new JArray();
-            if (jobTask.SpeechToTextCaptionWebVtt)
+            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatWebVtt])
             {
                 captionFormats.Add("WebVTT");
             }
-            if (jobTask.SpeechToTextCaptionTtml)
+            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatTtml])
             {
                 captionFormats.Add("TTML");
             }
@@ -28,151 +56,113 @@ namespace AzureSkyMedia.PlatformServices
             {
                 processorOptions["Formats"] = captionFormats;
             }
-            if (jobTask.SpeechToTextLanguages == null)
-            {
-                jobTask.ProcessorConfig = processorConfig.ToString();
-                MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-                jobTasks.AddRange(mappedJobTasks);
-            }
-            else
-            {
-                foreach (string language in jobTask.SpeechToTextLanguages)
-                {
-                    processorOptions["Language"] = language;
-                    jobTask.ProcessorConfig = processorConfig.ToString();
-                    MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-                    jobTasks.AddRange(mappedJobTasks);
-                }
-            }
-            return jobTasks.ToArray();
-        }
-
-        private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.VideoAnnotation;
-            string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
-            JObject processorConfig = GetProcessorConfig(documentId);
+            processorOptions["Language"] = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage];
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
-            return jobTasks.ToArray();
-        }
-
-        private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.VideoSummarization;
-            string settingKey = Constant.AppSettingKey.MediaProcessorVideoSummarizationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
-            JObject processorConfig = GetProcessorConfig(documentId);
-            JToken processorOptions = processorConfig["options"];
-            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.SummarizationDurationSeconds;
-            jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
+            string mode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode];
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.FaceDetection;
+            jobTask.MediaProcessor = MediaProcessor.FaceDetection;
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
-            processorOptions["mode"] = jobTask.FaceDetectionMode;
+            processorOptions["mode"] = mode;
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetFaceRedactionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
+            string mode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceRedactionMode];
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.FaceRedaction;
-            jobTask.Name = string.Concat(jobTask.Name, " ", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jobTask.FaceRedactionMode));
+            jobTask.MediaProcessor = MediaProcessor.FaceRedaction;
+            jobTask.Name = string.Concat(jobTask.Name, " ", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(mode));
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceRedactionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
-            processorOptions["mode"] = jobTask.FaceRedactionMode;
+            processorOptions["mode"] = mode;
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetMotionDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.MotionDetection;
+            jobTask.MediaProcessor = MediaProcessor.MotionDetection;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetMotionHyperlapseTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.MotionHyperlapse;
+            jobTask.MediaProcessor = MediaProcessor.MotionHyperlapse;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionHyperlapseDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorSources = processorConfig["Sources"][0];
-            processorSources["StartFrame"] = jobTask.MotionHyperlapseStartFrame;
-            processorSources["NumFrames"] = jobTask.MotionHyperlapseFrameCount;
+            processorSources["StartFrame"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseStartFrame];
+            processorSources["NumFrames"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameCount];
             JToken processorOptions = processorConfig["Options"];
-            processorOptions["Speed"] = jobTask.MotionHyperlapseSpeed;
+            processorOptions["Speed"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseSpeed];
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetMotionStabilizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.MotionStabilization;
+            jobTask.MediaProcessor = MediaProcessor.MotionStabilization;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionStabilizationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetCharacterRecognitionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.CharacterRecognition;
+            jobTask.MediaProcessor = MediaProcessor.CharacterRecognition;
             string settingKey = Constant.AppSettingKey.MediaProcessorCharacterRecognitionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetContentModerationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.ProcessorType = MediaProcessor.ContentModeration;
+            jobTask.MediaProcessor = MediaProcessor.ContentModeration;
             string settingKey = Constant.AppSettingKey.MediaProcessorContentModerationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] mappedJobTasks = MapJobTasks(mediaClient, jobTask, inputAssets, false);
-            jobTasks.AddRange(mappedJobTasks);
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
+            jobTasks.AddRange(tasks);
             return jobTasks.ToArray();
         }
     }

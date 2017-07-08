@@ -43,15 +43,15 @@ function SetJobTaskWidgets(taskNumber) {
         min: 0,
         max: 59
     });
-    $("#hyperlapseStartFrame" + taskNumber).spinner({
+    $("#motionHyperlapseStartFrame" + taskNumber).spinner({
         min: 0,
         max: 9999999
     });
-    $("#hyperlapseFrameCount" + taskNumber).spinner({
+    $("#motionHyperlapseFrameCount" + taskNumber).spinner({
         min: 0,
         max: 9999999
     });
-    $("#hyperlapseSpeed" + taskNumber).spinnerEx2({
+    $("#motionHyperlapseSpeed" + taskNumber).spinnerEx2({
         min: 1,
         max: 9
     });
@@ -65,9 +65,9 @@ function SetJobTaskWidgets(taskNumber) {
 function ClearJobTaskWidgets(lastTaskNumber) {
     $("#summarizationDurationMinutes" + lastTaskNumber).spinnerEx1("destroy");
     $("#summarizationDurationSeconds" + lastTaskNumber).spinnerEx1("destroy");
-    $("#hyperlapseStartFrame" + lastTaskNumber).spinner("destroy");
-    $("#hyperlapseFrameCount" + lastTaskNumber).spinner("destroy");
-    $("#hyperlapseSpeed" + lastTaskNumber).spinnerEx2("destroy");
+    $("#motionHyperlapseStartFrame" + lastTaskNumber).spinner("destroy");
+    $("#motionHyperlapseFrameCount" + lastTaskNumber).spinner("destroy");
+    $("#motionHyperlapseSpeed" + lastTaskNumber).spinnerEx2("destroy");
     $("#taskOptions" + lastTaskNumber).multiselect("destroy");
 }
 function SetEncoderConfig(fileInput) {
@@ -94,12 +94,15 @@ function GetJobTask(taskNumber) {
     if (mediaProcessor != null && mediaProcessor != "") {
         var taskParent = $("#taskParent" + taskNumber).val();
         jobTask = {
-            ProcessorType: mediaProcessor,
+            MediaProcessor: mediaProcessor,
             ParentIndex: (taskParent == "") ? null : taskParent - 1,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
-            Options: GetJobTaskOptions(taskNumber)
+            Options: GetJobTaskOptions(taskNumber),
+            ProcessorConfigBoolean: new Array(),
+            ProcessorConfigInteger: new Array(),
+            ProcessorConfigString: new Array()
         };
-        switch (jobTask.ProcessorType) {
+        switch (jobTask.MediaProcessor) {
             case "EncoderStandard":
             case "EncoderPremium":
             case "EncoderUltra":
@@ -114,30 +117,35 @@ function GetJobTask(taskNumber) {
                 }
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
-            case "SpeechToText":
-                jobTask.SpeechToTextLanguages = $("#speechToTextLanguages" + taskNumber).val();
-                jobTask.SpeechToTextCaptionWebVtt = $("#speechToTextcaptionWebVtt" + taskNumber).prop("checked");
-                jobTask.SpeechToTextCaptionTtml = $("#speechToTextcaptionTtml" + taskNumber).prop("checked");
-                break;
-            case "FaceDetection":
-                jobTask.FaceDetectionMode = $("#faceDetectionMode" + taskNumber + ":checked").val();
-                break;
-            case "FaceRedaction":
-                jobTask.FaceRedactionMode = $("#faceRedactionMode" + taskNumber + ":checked").val();
+            case "VideoIndexer":
+                jobTask.ProcessorConfigBoolean["PublicVideo"] = $("#indexerPrivacyPublic" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigString["TranscriptLanguage"] = $("#indexerTranscriptLanguage" + taskNumber).val();
+                jobTask.ProcessorConfigString["SearchPartition"] = $("#indexerSearchPartition" + taskNumber).val();
                 break;
             case "VideoSummarization":
                 var durationMinutes = $("#summarizationDurationMinutes" + taskNumber).val();
                 var durationSeconds = $("#summarizationDurationSeconds" + taskNumber).val();
-                jobTask.SummarizationDurationSeconds = (durationMinutes * 60) + durationSeconds;
+                jobTask.ProcessorConfigInteger["SummarizationDurationSeconds"] = (durationMinutes * 60) + durationSeconds;
+                break;
+            case "SpeechToText":
+                jobTask.ProcessorConfigString["TranscriptLanguage"] = $("#speechToTextLanguage" + taskNumber).val();
+                jobTask.ProcessorConfigBoolean["CaptionFormatWebVtt"] = $("#speechToTextCaptionWebVtt" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["CaptionFormatTtml"] = $("#speechToTextCaptionTtml" + taskNumber).prop("checked");
+                break;
+            case "FaceDetection":
+                jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();
+                break;
+            case "FaceRedaction":
+                jobTask.ProcessorConfigString["FaceRedactionMode"] = $("#faceRedactionMode" + taskNumber + ":checked").val();
                 break;
             case "MotionDetection":
-                jobTask.MotionDetectionSensitivityLevel = $("#motionDetectionSensitivityLevel" + taskNumber).val();
-                jobTask.MotionDetectionLightChange = $("#motionDetectionLightChange" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigString["MotionDetectionSensitivityLevel"] = $("#motionDetectionSensitivityLevel" + taskNumber).val();
+                jobTask.ProcessorConfigBoolean["MotionDetectionLightChange"] = $("#motionDetectionLightChange" + taskNumber).prop("checked");
                 break;
             case "MotionHyperlapse":
-                jobTask.MotionHyperlapseStartFrame = $("#hyperlapseStartFrame" + taskNumber).val();
-                jobTask.MotionHyperlapseFrameCount = $("#hyperlapseFrameCount" + taskNumber).val();
-                jobTask.MotionHyperlapseSpeed = $("#hyperlapseSpeed" + taskNumber).val().substr(0, 1);
+                jobTask.ProcessorConfigInteger["MotionHyperlapseStartFrame"] = $("#motionHyperlapseStartFrame" + taskNumber).val();
+                jobTask.ProcessorConfigInteger["MotionHyperlapseFrameCount"] = $("#motionHyperlapseFrameCount" + taskNumber).val();
+                jobTask.ProcessorConfigInteger["MotionHyperlapseSpeed"] = $("#motionHyperlapseSpeed" + taskNumber).val().substr(0, 1);
                 break;
         }
     }

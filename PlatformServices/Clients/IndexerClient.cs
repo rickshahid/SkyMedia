@@ -3,8 +3,6 @@ using System.Net.Http;
 
 using Newtonsoft.Json.Linq;
 
-using Microsoft.WindowsAzure.MediaServices.Client;
-
 namespace AzureSkyMedia.PlatformServices
 {
     public class IndexerClient
@@ -19,32 +17,6 @@ namespace AzureSkyMedia.PlatformServices
             _serviceUri = AppSetting.GetValue(settingKey);
         }
 
-        public static string PublishIndex(string indexId)
-        {
-            EntityClient entityClient = new EntityClient();
-            string tableName = Constant.Storage.TableName.IndexPublish;
-            string partitionKey = Constant.Storage.TableProperty.PartitionKey;
-            MediaIndexPublish indexPublish = entityClient.GetEntity<MediaIndexPublish>(tableName, partitionKey, indexId);
-
-            IndexerClient indexerClient = new IndexerClient(indexPublish.IndexerAccountKey);
-            JObject index = indexerClient.GetIndex(indexId, null, false);
-            JToken externalId = index["breakdowns"]["externalId"];
-
-            string assetId = string.Empty;
-            if (externalId != null)
-            {
-                assetId = externalId.ToString();
-                MediaClient mediaClient = new MediaClient(indexPublish.MediaAccountName, indexPublish.MediaAccountKey);
-                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                if (asset != null)
-                {
-                    asset.AlternateId = indexId;
-                    asset.Update();
-                }
-            }
-            return assetId;
-        }
-
         public JArray GetAccounts()
         {
             JArray accounts;
@@ -56,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             return accounts;
         }
 
-        public string GetInsightsUrl(string indexId, string assetId, MediaInsight? insightType)
+        public string GetInsightsUrl(string indexId, string assetId)
         {
             string insightsUrl;
             string requestUri = _serviceUri;
@@ -67,10 +39,6 @@ namespace AzureSkyMedia.PlatformServices
             else
             {
                 requestUri = string.Concat(requestUri, "/Breakdowns/", indexId, "/InsightsWidgetUrl?");
-            }
-            if (insightType.HasValue)
-            {
-                requestUri = string.Concat(requestUri, insightType.ToString());
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
             {
@@ -131,16 +99,18 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string UploadVideo(string videoName, MediaPrivacy videoPrivacy, string indexerLanguage, string locatorUrl, string callbackUrl, string externalId)
+        public string UploadVideo(string videoName, MediaPrivacy videoPrivacy, string transcriptLanguage, string searchPartition,
+                                  string externalId, string locatorUrl, string callbackUrl)
         {
             string indexId;
             string requestUri = string.Concat(_serviceUri, "/Breakdowns");
             requestUri = string.Concat(requestUri, "?name=", videoName);
             requestUri = string.Concat(requestUri, "&privacy=", videoPrivacy.ToString());
-            requestUri = string.Concat(requestUri, "&language=", indexerLanguage);
+            requestUri = string.Concat(requestUri, "&language=", transcriptLanguage);
+            requestUri = string.Concat(requestUri, "&partition=", searchPartition);
+            requestUri = string.Concat(requestUri, "&externalId=", externalId);
             requestUri = string.Concat(requestUri, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
             requestUri = string.Concat(requestUri, "&callbackUrl=", WebUtility.UrlEncode(callbackUrl));
-            requestUri = string.Concat(requestUri, "&externalId=", externalId);
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUri))
             {
                 indexId = _indexer.GetResponse<string>(request);

@@ -9,7 +9,7 @@
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-editable-select/dist/jquery-editable-select.min.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
-        <link type="text/css" rel="stylesheet" href="http://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.css" />
+        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.css" />
         <link type="text/css" rel="stylesheet" href="~/css/site.css" />
         @Html.Raw(javaScriptSnippet.FullScript)
         <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -20,7 +20,7 @@
         <script type="text/javascript" src="~/lib/jquery.scrollTo/jquery.scrollTo.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
         <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
-        <script type="text/javascript" src="http://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/qtip2/3.0.3/jquery.qtip.min.js"></script>
         <script type="text/javascript" src="~/js/grid.js"></script>
         <script type="text/javascript" src="~/js/qtip.js"></script>
         <script type="text/javascript" src="~/js/site.js"></script>
@@ -64,7 +64,7 @@
         </table>
         <table class="layout">
             <tr>
-                <td>
+                <td class="layoutSide">
                     <div>
                         @Html.Partial("SiteButton", new string[] { "amsPlatform", "MediaServices.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/')", "layoutButton sideTop" })
                     </div>
@@ -87,7 +87,7 @@
                 <td>
                     @RenderBody()
                 </td>
-                <td>
+                <td class="layoutSide">
                     <div>
                         @Html.Partial("SiteButton", new string[] { "cognitiveServices", "CognitiveServices.png", "window.open('http://azure.microsoft.com/en-us/services/cognitive-services/')", "layoutButton sideTop" })
                     </div>
@@ -110,6 +110,5 @@
             </tr>                            
         </table>
         <div id="messageDialog"></div>
-        <div id="insightsDialog"></div>
     </body>
 </html>
