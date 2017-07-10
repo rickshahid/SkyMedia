@@ -42,9 +42,8 @@ function UploadEvent(uploader, eventCode, eventMessage, eventData) {
     }
     if (eventCode == "TRANSFER_COMPLETED") {
         var elapsedTime = GetElapsedTime(_signiantUploaderStartTime);
-        var uploaderFiles = GetUploaderFiles(true);
         $("#transferMessage").text(_fileTransferStatusLabel + eventMessage + " (" + elapsedTime + ")");
-        IngestAssets(uploaderFiles);
+        IngestAssets();
     }
 }
 function UploadError(uploader, eventCode, eventMessage, eventData) {

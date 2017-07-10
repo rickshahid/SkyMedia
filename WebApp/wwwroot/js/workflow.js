@@ -1,9 +1,4 @@
 ﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
-    CreateTipRight("mediaWorkflowSave", "Save Workflow");
-    CreateTipLeft("mediaWorkflowStart", "Start Workflow");
-    CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
-    CreateTipRight("mediaWorkflowTaskRemove", "Remove Job Task");
-    $("#mediaWorkflowTaskRemove").hide();
     if (uploadView) {
         var currentUrl = window.location.href;
         if (currentUrl.indexOf("signiant.") > -1) {
@@ -35,6 +30,11 @@
             $("#jobPriorityLabel").text(ui.value);
         }
     });
+    CreateTipRight("mediaWorkflowSave", "Save Workflow");
+    CreateTipLeft("mediaWorkflowStart", "Start Workflow");
+    CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
+    CreateTipRight("mediaWorkflowTaskRemove", "Remove Job Task");
+    $("#mediaWorkflowTaskRemove").hide();
     SetJobTaskWidgets(1);
 }
 function ValidWorkflowInput(uploadView, saveWorkflow) {
@@ -117,18 +117,17 @@ function GetInputAssets() {
     }
     return inputAssets;
 }
-function IngestAssets(files) {
+function IngestAssets() {
+    var job = GetJob();
+    var files = GetUploaderFiles(true);
     $.post("/workflow/ingest",
         {
-            fileNames: GetUploaderFiles(true),
+            fileNames: files,
             storageAccount: $("#storageAccount").val(),
             storageEncryption: $("#storageEncryption").prop("checked"),
             inputAssetName: $("#inputAssetName").val(),
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
-            indexInputAsset: $("#indexInputAsset").prop("checked"),
-            indexerLanguage: $("#indexerLanguage").val(),
-            indexerPrivacyPublic: $("#indexerPrivacyPublic").prop("checked"),
-            mediaJob: GetJob()
+            mediaJob: job
         },
         function (result) {
             DisplayWorkflow(result);
@@ -136,10 +135,11 @@ function IngestAssets(files) {
     );
 }
 function StartWorkflow() {
+    var job = GetJob();
     $.post("/workflow/start",
         {
             inputAssets: _inputAssets,
-            mediaJob: GetJob()
+            mediaJob: job
         },
         function (result) {
             DisplayWorkflow(result);

@@ -5,7 +5,7 @@
     } else {
         $("#" + contentProtectionRowId).hide();
     }
-    EnsureVisibility();
+    ScrollToButtons();
 }
 function GetContentProtection(taskNumber) {
     var contentProtection = null;

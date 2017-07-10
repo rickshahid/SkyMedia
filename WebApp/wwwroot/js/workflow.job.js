@@ -1,25 +1,16 @@
-﻿function EnsureVisibility() {
+﻿function ScrollToButtons() {
     $.scrollTo("#mediaWorkflowTaskAdd");
     $.scrollTo("#mediaWorkflowTaskRemove");
 }
-function GetJobTemplateId() {
-    var templateId = "";
-    var jobName = $("#jobName").val();
-    var jobTemplates = document.getElementsByClassName("es-visible");
-    for (var i = 0; i < jobTemplates.length; i++) {
-        if (jobName == jobTemplates[i].textContent) {
-            templateId = jobTemplates[i].attributes["value"].value;
-        }
-    }
-    return templateId;
-}
 function GetJob() {
+    var jobTasks = GetJobTasks();
+    var jobTemplateId = GetJobTemplateId();
     var job = {
         Name: $("#jobName").val(),
         NodeType: $("#jobNode").val(),
         Priority: $("#jobPriorityLabel").text(),
-        Tasks: GetJobTasks(),
-        TemplateId: GetJobTemplateId(),
+        Tasks: jobTasks,
+        TemplateId: jobTemplateId,
         SaveWorkflow: _saveWorkflow
     };
     return job;
@@ -36,6 +27,17 @@ function GetJobTasks() {
     } while (jobTask != null)
     return jobTasks;
 }
+function GetJobTemplateId() {
+    var jobTemplateId = "";
+    var jobName = $("#jobName").val();
+    var jobTemplates = document.getElementsByClassName("es-visible");
+    for (var i = 0; i < jobTemplates.length; i++) {
+        if (jobName == jobTemplates[i].textContent) {
+            jobTemplateId = jobTemplates[i].attributes["value"].value;
+        }
+    }
+    return jobTemplateId;
+}
 function AddJobTaskLink(workflowTable, taskRowIndex) {
     var taskLinkRow = workflowTable.insertRow(taskRowIndex);
     var rowCell0 = taskLinkRow.insertCell(0);
@@ -47,7 +49,7 @@ function AddJobTask(taskButton) {
     var workflowTable = document.getElementById("mediaWorkflow");
     var taskRowIndex = GetTaskRowIndex(taskButton);
     var lastTaskRow = workflowTable.rows[taskRowIndex - 1];
-    var lastTaskNumber = GetLastTaskNumber(lastTaskRow);
+    var lastTaskNumber = GetTaskNumber(lastTaskRow);
     var newTaskRow = workflowTable.insertRow(taskRowIndex);
     var newTaskNumber = lastTaskNumber + 1;
     ClearJobTaskWidgets(lastTaskNumber);
@@ -62,13 +64,13 @@ function AddJobTask(taskButton) {
     if (lastTaskNumber == 4) {
         $("#mediaWorkflowTaskAdd").hide();
     }
-    EnsureVisibility();
+    ScrollToButtons();
 }
 function RemoveJobTask(taskButton) {
     var workflowTable = document.getElementById("mediaWorkflow");
     var taskRowIndex = GetTaskRowIndex(taskButton);
     var lastTaskRow = workflowTable.rows[taskRowIndex - 1];
-    var lastTaskNumber = GetLastTaskNumber(lastTaskRow);
+    var lastTaskNumber = GetTaskNumber(lastTaskRow);
     ValidWorkflowTaskClear(lastTaskNumber);
     workflowTable.deleteRow(lastTaskRow.rowIndex - 1);
     workflowTable.deleteRow(lastTaskRow.rowIndex);

@@ -136,7 +136,7 @@ function CreateUploader() {
                     var elapsedTime = GetElapsedTime(_fileUploaderStartTime);
                     $("#transferMessage").text("Elapsed Time: " + elapsedTime);
                 }
-                IngestAssets(files);
+                IngestAssets();
             }
         },
         Error: function (uploader, error) {

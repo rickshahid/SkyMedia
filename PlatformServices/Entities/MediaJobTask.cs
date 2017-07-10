@@ -6,20 +6,24 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaJobTask
     {
+        public MediaJobTask()
+        {
+            this.ProcessorConfigBoolean = new Dictionary<MediaProcessorConfig, bool>();
+            this.ProcessorConfigInteger = new Dictionary<MediaProcessorConfig, int>();
+            this.ProcessorConfigString = new Dictionary<MediaProcessorConfig, string>();
+        }
+
         public MediaJobTask CreateCopy()
         {
             MediaJobTask newTask = (MediaJobTask)this.MemberwiseClone();
-            newTask.ProcessorConfigBoolean = new Dictionary<MediaProcessorConfig, bool>();
             foreach (KeyValuePair<MediaProcessorConfig, bool> keyValue in this.ProcessorConfigBoolean)
             {
                 newTask.ProcessorConfigBoolean.Add(keyValue.Key, keyValue.Value);
             }
-            newTask.ProcessorConfigInteger = new Dictionary<MediaProcessorConfig, int>();
             foreach (KeyValuePair<MediaProcessorConfig, int> keyValue in this.ProcessorConfigInteger)
             {
                 newTask.ProcessorConfigInteger.Add(keyValue.Key, keyValue.Value);
             }
-            newTask.ProcessorConfigString = new Dictionary<MediaProcessorConfig, string>();
             foreach (KeyValuePair<MediaProcessorConfig, string> keyValue in this.ProcessorConfigString)
             {
                 newTask.ProcessorConfigString.Add(keyValue.Key, keyValue.Value);

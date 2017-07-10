@@ -61,8 +61,7 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
         width: width,
         title: title,
         open: onOpen,
-        close: onClose,
-        modal: modal
+        close: onClose
     });
     if (jQuery.isEmptyObject(buttons)) {
         $(".ui-dialog-titlebar-close").show();

@@ -50,10 +50,9 @@ function TransferHandler(event, data) {
                     break;
                 case AW4.Connect.TRANSFER_STATUS.COMPLETED:
                     var elapsedTime = GetElapsedTime(_asperaUploaderStartTime);
-                    var uploaderFiles = GetUploaderFiles(true);
                     $("#transferProgress").progressbar("value", 100);
                     $("#transferMessage").text(_fileTransferStatusLabel + "Transfer Completed (" + elapsedTime + ")");
-                    IngestAssets(uploaderFiles);
+                    IngestAssets();
                     break;
             }
         }

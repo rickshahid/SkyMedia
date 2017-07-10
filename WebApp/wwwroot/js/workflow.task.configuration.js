@@ -150,7 +150,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
             $("#" + encoderConfigId).change();
         }
     }
-    EnsureVisibility();
+    ScrollToButtons();
 }
 function SetEncoderConfigOptions(encoderConfig) {
     var mediaProcessorId = encoderConfig.id.replace("encoderConfig", "mediaProcessor");
@@ -174,5 +174,5 @@ function SetEncoderConfigOptions(encoderConfig) {
     } else {
         $("#" + encoderConfigFileRowId).hide();
     }
-    EnsureVisibility();
+    ScrollToButtons();
 }
