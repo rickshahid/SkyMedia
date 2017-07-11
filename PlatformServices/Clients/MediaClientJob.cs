@@ -53,11 +53,24 @@ namespace AzureSkyMedia.PlatformServices
                         tasks = GetEncoderTasks(mediaClient, jobTask, inputAssets);
                         break;
                     case MediaProcessor.VideoIndexer:
-                        foreach(MediaAssetInput inputAsset in inputAssets)
+                        string attributeName = Constant.UserAttribute.VideoIndexerKey;
+                        string indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
+                        if (!string.IsNullOrEmpty(indexerKey))
                         {
-                            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, inputAsset.AssetId) as IAsset;
-                            string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, true);
-                            MediaClient.UploadVideo(authToken, asset, locatorUrl, jobTask);
+                            IndexerClient indexerClient = new IndexerClient(indexerKey);
+                            foreach (MediaAssetInput inputAsset in inputAssets)
+                            {
+                                if (!string.IsNullOrEmpty(inputAsset.AlternateId))
+                                {
+                                    indexerClient.ResetIndex(inputAsset.AssetId, inputAsset.AlternateId);
+                                }
+                                else
+                                {
+                                    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, inputAsset.AssetId) as IAsset;
+                                    string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, true);
+                                    MediaClient.UploadVideo(authToken, indexerKey, indexerClient, asset, locatorUrl, jobTask);
+                                }
+                            }
                         }
                         break;
                     case MediaProcessor.VideoAnnotation:

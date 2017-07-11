@@ -81,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
             return index;
         }
 
-        public void ResetIndex(string indexId, string assetId, string callbackUrl)
+        public void ResetIndex(string assetId, string indexId)
         {
             string requestUri = _serviceUri;
             if (!string.IsNullOrEmpty(assetId))
@@ -92,7 +92,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 requestUri = string.Concat(requestUri, "/Breakdowns/reindex/", indexId);
             }
-            requestUri = string.Concat(requestUri, "?", callbackUrl);
+            //requestUri = string.Concat(requestUri, "?", callbackUrl);
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Put, requestUri))
             {
                 _indexer.GetResponse<JObject>(request);

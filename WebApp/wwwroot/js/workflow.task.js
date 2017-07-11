@@ -17,9 +17,9 @@ function GetJobTask(taskNumber) {
             ParentIndex: (taskParent == "") ? null : taskParent - 1,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
             Options: taskOptions,
-            ProcessorConfigBoolean: new Array(),
-            ProcessorConfigInteger: new Array(),
-            ProcessorConfigString: new Array()
+            ProcessorConfigBoolean: {},
+            ProcessorConfigInteger: {},
+            ProcessorConfigString: {}
         };
         switch (jobTask.MediaProcessor) {
             case "EncoderStandard":

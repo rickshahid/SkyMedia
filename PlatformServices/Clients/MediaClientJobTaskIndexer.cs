@@ -5,33 +5,27 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
-    {
-        public static void UploadVideo(string authToken, IAsset asset, string locatorUrl, MediaJobTask jobTask)
+    { 
+        public static void UploadVideo(string authToken, string indexerKey, IndexerClient indexerClient, IAsset asset, string locatorUrl, MediaJobTask jobTask)
         {
-            string attributeName = Constant.UserAttribute.VideoIndexerKey;
-            string indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
-            if (!string.IsNullOrEmpty(indexerKey))
-            {
-                string settingKey = Constant.AppSettingKey.MediaNotificationIndexerCallbackUrl;
-                string callbackUrl = AppSetting.GetValue(settingKey);
+            string settingKey = Constant.AppSettingKey.MediaNotificationIndexerCallbackUrl;
+            string callbackUrl = AppSetting.GetValue(settingKey);
 
-                IndexerClient indexerClient = new IndexerClient(indexerKey);
-                MediaPrivacy videoPrivacy = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.PublicVideo] ? MediaPrivacy.Public : MediaPrivacy.Private;
-                string transcriptLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage];
-                string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition];
-                string indexId = indexerClient.UploadVideo(asset.Name, videoPrivacy, transcriptLanguage, searchPartition, asset.Id, locatorUrl, callbackUrl);
+            MediaPrivacy videoPrivacy = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.PublicVideo.ToString()] ? MediaPrivacy.Public : MediaPrivacy.Private;
+            string transcriptLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage.ToString()];
+            string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
+            string indexId = indexerClient.UploadVideo(asset.Name, videoPrivacy, transcriptLanguage, searchPartition, asset.Id, locatorUrl, callbackUrl);
 
-                MediaIndexPublish indexPublish = new MediaIndexPublish();
-                indexPublish.PartitionKey = Constant.Storage.TableProperty.PartitionKey;
-                indexPublish.RowKey = indexId;
-                indexPublish.IndexerAccountKey = indexerKey;
-                indexPublish.MediaAccountName = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountName);
-                indexPublish.MediaAccountKey = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountKey);
+            MediaIndexPublish indexPublish = new MediaIndexPublish();
+            indexPublish.PartitionKey = Constant.Storage.TableProperty.PartitionKey;
+            indexPublish.RowKey = indexId;
+            indexPublish.IndexerAccountKey = indexerKey;
+            indexPublish.MediaAccountName = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountName);
+            indexPublish.MediaAccountKey = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountKey);
 
-                EntityClient entityClient = new EntityClient();
-                string tableName = Constant.Storage.TableName.IndexPublish;
-                entityClient.InsertEntity(tableName, indexPublish);
-            }
+            EntityClient entityClient = new EntityClient();
+            string tableName = Constant.Storage.TableName.IndexPublish;
+            entityClient.InsertEntity(tableName, indexPublish);
         }
 
         public static string PublishIndex(string indexId)

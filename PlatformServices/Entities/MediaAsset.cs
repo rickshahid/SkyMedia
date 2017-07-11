@@ -177,6 +177,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public string AssetName { get; set; }
 
+        public string AlternateId { get; set; }
+
         public string PrimaryFile { get; set; }
 
         public int MarkInSeconds { get; set; }

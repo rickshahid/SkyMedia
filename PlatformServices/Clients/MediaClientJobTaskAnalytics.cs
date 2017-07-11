@@ -28,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
-            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.SummarizationDurationSeconds];
+            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.SummarizationDurationSeconds.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
             jobTasks.AddRange(tasks);
@@ -44,11 +44,11 @@ namespace AzureSkyMedia.PlatformServices
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];
             JArray captionFormats = new JArray();
-            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatWebVtt])
+            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatWebVtt.ToString()])
             {
                 captionFormats.Add("WebVTT");
             }
-            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatTtml])
+            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatTtml.ToString()])
             {
                 captionFormats.Add("TTML");
             }
@@ -56,7 +56,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 processorOptions["Formats"] = captionFormats;
             }
-            processorOptions["Language"] = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage];
+            processorOptions["Language"] = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
             jobTasks.AddRange(tasks);
@@ -65,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
-            string mode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode];
+            string mode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceDetection;
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
@@ -81,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask[] GetFaceRedactionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets)
         {
-            string mode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceRedactionMode];
+            string mode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceRedactionMode.ToString()];
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceRedaction;
             jobTask.Name = string.Concat(jobTask.Name, " ", CultureInfo.CurrentCulture.TextInfo.ToTitleCase(mode));
@@ -117,10 +117,10 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorSources = processorConfig["Sources"][0];
-            processorSources["StartFrame"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseStartFrame];
-            processorSources["NumFrames"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameCount];
+            processorSources["StartFrame"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseStartFrame.ToString()];
+            processorSources["NumFrames"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameCount.ToString()];
             JToken processorOptions = processorConfig["Options"];
-            processorOptions["Speed"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseSpeed];
+            processorOptions["Speed"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseSpeed.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, inputAssets, false);
             jobTasks.AddRange(tasks);

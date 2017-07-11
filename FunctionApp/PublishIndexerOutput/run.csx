@@ -11,7 +11,7 @@ public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceW
     log.Info($"Index Id: {indexId}");
     if (!string.IsNullOrEmpty(indexId))
     {
-        string assetId = IndexerClient.PublishIndex(indexId);
+        string assetId = MediaClient.PublishIndex(indexId);
         log.Info($"Asset Id: {assetId}");
     }
     return req.CreateResponse(HttpStatusCode.OK);

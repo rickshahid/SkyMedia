@@ -8,23 +8,23 @@ namespace AzureSkyMedia.PlatformServices
     {
         public MediaJobTask()
         {
-            this.ProcessorConfigBoolean = new Dictionary<MediaProcessorConfig, bool>();
-            this.ProcessorConfigInteger = new Dictionary<MediaProcessorConfig, int>();
-            this.ProcessorConfigString = new Dictionary<MediaProcessorConfig, string>();
+            this.ProcessorConfigBoolean = new Dictionary<string, bool>();
+            this.ProcessorConfigInteger = new Dictionary<string, int>();
+            this.ProcessorConfigString = new Dictionary<string, string>();
         }
 
         public MediaJobTask CreateCopy()
         {
             MediaJobTask newTask = (MediaJobTask)this.MemberwiseClone();
-            foreach (KeyValuePair<MediaProcessorConfig, bool> keyValue in this.ProcessorConfigBoolean)
+            foreach (KeyValuePair<string, bool> keyValue in this.ProcessorConfigBoolean)
             {
                 newTask.ProcessorConfigBoolean.Add(keyValue.Key, keyValue.Value);
             }
-            foreach (KeyValuePair<MediaProcessorConfig, int> keyValue in this.ProcessorConfigInteger)
+            foreach (KeyValuePair<string, int> keyValue in this.ProcessorConfigInteger)
             {
                 newTask.ProcessorConfigInteger.Add(keyValue.Key, keyValue.Value);
             }
-            foreach (KeyValuePair<MediaProcessorConfig, string> keyValue in this.ProcessorConfigString)
+            foreach (KeyValuePair<string, string> keyValue in this.ProcessorConfigString)
             {
                 newTask.ProcessorConfigString.Add(keyValue.Key, keyValue.Value);
             }
@@ -53,10 +53,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
-        public Dictionary<MediaProcessorConfig, bool> ProcessorConfigBoolean { get; set; }
+        public Dictionary<string, bool> ProcessorConfigBoolean { get; set; }
 
-        public Dictionary<MediaProcessorConfig, int> ProcessorConfigInteger { get; set; }
+        public Dictionary<string, int> ProcessorConfigInteger { get; set; }
 
-        public Dictionary<MediaProcessorConfig, string> ProcessorConfigString { get; set; }
+        public Dictionary<string, string> ProcessorConfigString { get; set; }
     }
 }
