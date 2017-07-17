@@ -9,14 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="wwwroot\cdn\Snip1.AzureActiveDirectoryB2CSignUpIn.png" />
-    <Content Include="wwwroot\cdn\Snip2.AzureMediaFileUploadWorkflow.png" />
-    <Content Include="wwwroot\cdn\Snip3.AzureMediaAnalyticsStream.png" />
-    <Content Include="wwwroot\cdn\Snip4.AzureMediaProcessors.png" />
-    <Content Include="wwwroot\cdn\Snip5.AzureMediaVideoClipper.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.2" />

@@ -14,7 +14,7 @@ function GetJobTask(taskNumber) {
         var taskOptions = GetJobTaskOptions(taskNumber);
         jobTask = {
             MediaProcessor: mediaProcessor,
-            ParentIndex: (taskParent == "") ? null : taskParent - 1,
+            ParentIndex: taskParent == "" ? null : taskParent - 1,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
             Options: taskOptions,
             ProcessorConfigBoolean: {},
