@@ -12,7 +12,7 @@ The following set of application functionality is integrated and enabled via thi
 
 * Secure upload, storage and media processing via transcoding, indexing, content protection, dynamic packaging, etc
 
-* Discover and extract actionable insights from your video content using various artificial intelligence technologies
+* Discover and extract actionable insights from your video content using various Artificial Intelligence (AI) technologies
 
 * Create subclips (either as dynamic filters or as new assets) via an Azure Media Player extension (Under Construction)
 
