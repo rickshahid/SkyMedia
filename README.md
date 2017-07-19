@@ -4,7 +4,7 @@ Welcome! This repository contains the sample Azure media web application that is
 
 ![](http://skystorage.azureedge.net/Snip0.AzureSkyMedia.png)
 
-The following set of application functionality is integrated and enabled via this sample Azure ASP.NET Core MVC web app:
+The following set of application functionality is enabled and integrated in this sample Azure ASP.NET Core MVC web app:
 
 * Adaptive and scalable video streaming across a broad spectrum of devices with iOS / macOS, Android, Windows, etc
 
