@@ -8,7 +8,7 @@ The following set of application functionality is integrated and enabled via thi
 
 * Adaptive and scalable video streaming across a broad spectrum of devices including iOS, Android and Windows
 
-* Consumer user identity and platform service account management for Azure Storage, Azure Media Services, etc
+* Federated user account registration and self-service profile management for Azure Storage & Azure Media Services
 
 * Securely upload and process your media via transcoding, indexing, thumbnail generation, content protection, etc
 
