@@ -12,9 +12,9 @@ The following set of application functionality is integrated and enabled via thi
 
 * Secure upload, storage and media processing via transcoding, indexing, content protection, dynamic packaging, etc
 
-* Generate metadata via content analytics such as face, object and motion detection to enable discovery and action
+* Discover and extract actionable insights from your video content using various artificial intelligence technologies
 
-* Create subclips (either as dynamic filters or as new assets) via a standard web extension to the Azure Media Player
+* Create subclips (either as dynamic filters or as new assets) via an Azure Media Player extension (Under Construction)
 
 * Define workflows with multiple tasks (executed parallelly and/or sequentially) that utilize various media processors
 
