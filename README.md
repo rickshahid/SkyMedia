@@ -6,7 +6,7 @@ Welcome! This repository contains the sample Azure media web application that is
 
 For additional screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
-The following set of media application functionality is enabled and integrated in this Azure ASP.NET Core MVC web app:
+The following set of media application functionality is enabled and integrated within this Azure ASP.NET Core MVC web app:
 
 * Adaptive and scalable video streaming across a broad spectrum of devices with iOS / macOS, Android, Windows, etc
 
