@@ -18,7 +18,7 @@ The following set of application functionality is enabled and integrated in this
 
 * Create subclips (either as dynamic filters or as new assets) via an Azure Media Player extension (Under Construction)
 
-* Define workflows with multiple tasks (executed parallelly and/or sequentially) that integrate various media processors
+* Define workflows with multiple tasks (executed parallelly and/or sequentially) that utilize various media processors
 
 * Track content workflow with automatic output publishing based upon parameters specified at job submission time
 
