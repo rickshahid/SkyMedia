@@ -22,7 +22,7 @@ The following set of media application functionality is enabled and integrated w
 
 * Publish workflow outputs automatically based upon key input parameters that are specified at job submission time
 
-* (Optional) Enable SMS text message notification of workflow completion via integrated user profile management
+* Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
 To enable the various capabilities that are listed above, the following Azure platform services are leveraged:
 
