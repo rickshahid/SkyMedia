@@ -4,7 +4,7 @@ Welcome! This repository contains the sample Azure media web application that is
 
 ![](http://skystorage.azureedge.net/Snip1.AzureSkyMedia.png)
 
-For additional screenshots of core application functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
+For additional screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
 The following set of application functionality is enabled and integrated in this sample Azure ASP.NET Core MVC web app:
 
