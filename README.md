@@ -2,7 +2,9 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-![](http://skystorage.azureedge.net/Snip0.AzureSkyMedia.png)
+![](http://skystorage.azureedge.net/Snip1.AzureSkyMedia.png)
+
+For additional screenshots of core application functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
 The following set of application functionality is enabled and integrated in this sample Azure ASP.NET Core MVC web app:
 
@@ -21,8 +23,6 @@ The following set of application functionality is enabled and integrated in this
 * Track content workflow with automatic output publishing based upon parameters specified at job submission time
 
 * Optionally enable SMS text message notification of workflow completion via self-service user profile management
-
-For screenshots of the core application modules in action, refer to http://github.com/RickShahid/SkyMedia/wiki
 
 To enable the various capabilities that are listed above, the following Azure platform services are leveraged:
 
