@@ -48,6 +48,8 @@ To enable the core application functionality that is listed above, the following
 
   * Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
+* App Insights - http://azure.microsoft.com/en-us/services/application-insights/
+
 * App Service - http://azure.microsoft.com/en-us/services/app-service/
 
 * Function App - http://azure.microsoft.com/en-us/services/functions/
@@ -60,9 +62,7 @@ To enable the core application functionality that is listed above, the following
 
 * Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
 
-* App Insights - http://azure.microsoft.com/en-us/services/application-insights/
-
-In addition, the following Azure partner services have also been integrated for high-speed file transfer:
+In addition, the following Azure partner services have been integrated for high-speed file transfer into Azure Storage:
 
 * Signiant Flight - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
 
