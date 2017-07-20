@@ -24,7 +24,7 @@ The following set of media application functionality is enabled and integrated w
 
 * Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
-To enable the various capabilities that are listed above, the following Azure platform services are leveraged:
+To enable the various application functionality that is listed above, the following Azure platform services are leveraged:
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
