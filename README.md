@@ -20,7 +20,7 @@ The following set of application functionality is enabled and integrated in this
 
 * Define workflows with multiple tasks (executed parallelly and/or sequentially) that utilize various media processors
 
-* Publish workflow outputs automatically based upon key input parameters that are specified at job submission time
+* Publish workflow outputs automatically based upon input parameters that are specified at workflow submission time
 
 * Optionally enable SMS text message notification of workflow completion via self-service user profile management
 
