@@ -264,11 +264,8 @@ body {
 
 .plupload_container {
     border: 1px solid deepskyblue;
-    min-height: 200px !important;
-    height: 250px !important;
     border-radius: 20px;
     margin-top: 10px;
-    width: 720px;
 }
 
 .plupload_header {
@@ -282,29 +279,30 @@ body {
 }
 
 .plupload_file_status {
-    text-align: left !important;
-}
-
-.plupload_upload_status {
-    margin-top: 10px;
-}
-
-.plupload_total_file_size {
-    margin-right: 8px;
+    text-align: center !important;
 }
 
 .plupload_file_size {
     white-space: nowrap;
+    padding-left: 15px;
+}
+
+.plupload_total_file_size {
+    display: inline-block;
+    padding-right: 15px;
 }
 
 .plupload_progress_container {
-    margin-top: 10px;    
-    height: 25px;
-    width: 130px;
+    height: 10px;
+    width: 115px;
 }
 
 .plupload_progress {
-    margin-right: 256px;
+    margin-right: 95px;
+}
+
+.plupload_buttons {
+    margin-top: 5px;
 }
 
 .signiantUploader {
