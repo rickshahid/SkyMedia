@@ -28,8 +28,6 @@ To enable the core application functionality that is listed above, the following
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
-* Key Vault - http://azure.microsoft.com/en-us/services/key-vault/
-
 * Storage - http://azure.microsoft.com/en-us/services/storage/
 
 * Cosmos DB - http://azure.microsoft.com/en-us/services/cosmos-db/
