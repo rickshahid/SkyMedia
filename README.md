@@ -66,7 +66,7 @@ In addition, the following Azure partner services have been integrated for high-
 
 * Signiant Flight - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
 
-* Aspera FASP - http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod
+* Aspera FASP Server On Demand - http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod
 
 The set of Azure Media Services processors that have been integrated and enabled include the following:
 
