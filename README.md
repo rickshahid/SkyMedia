@@ -74,19 +74,21 @@ The set of Azure Media Services processors that have been integrated and enabled
 
 * Encoder Premium - http://docs.microsoft.com/en-us/azure/media-services/media-services-premium-workflow-encoder-formats
 
+* Video Indexer - http://docs.microsoft.com/en-us/azure/cognitive-services/video-indexer/video-indexer-overview
+
+* Video Summarization - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization
+
 * Speech To Text - http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
 
 * Face Detection - http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection
 
 * Face Redaction - http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction
 
-* Video Summarization - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization
-
-* Character Recognition - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
-
 * Motion Detection - http://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection
 
 * Motion Hyperlapse - http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
+
+* Character Recognition - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
 
 If you have any comments, enhancement suggestions or if you run into an issue, please let me know.
 
