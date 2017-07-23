@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-![](http://skystorage.azureedge.net/Snip1.AzureSkyMedia.png)
+![](http://skystorage.azureedge.net/Snip1.AzureSkyMediaIntro.png)
 
 For additional screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
