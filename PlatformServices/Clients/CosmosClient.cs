@@ -93,18 +93,26 @@ namespace AzureSkyMedia.PlatformServices
             return result;
         }
 
-        public string CreateDocument(string collectionId, string docData, IDictionary<string, string> docAttributes)
+        public string CreateDocument(string collectionId, JObject jsonDoc)
         {
-            JObject jsonDoc = JObject.Parse(docData);
-            foreach (KeyValuePair<string, string> docAttribute in docAttributes)
-            {
-                jsonDoc[docAttribute.Key] = docAttribute.Value;
-            }
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Task<ResourceResponse<Document>> createTask = _cosmos.CreateDocumentAsync(collectionUri, jsonDoc);
             createTask.Wait();
             ResourceResponse<Document> responseDocument = createTask.Result;
             return responseDocument.Resource.Id;
+        }
+
+        public string CreateDocument(string collectionId, string jsonData, IDictionary<string, string> docAttributes)
+        {
+            JObject jsonDoc = JObject.Parse(jsonData);
+            if (docAttributes != null)
+            {
+                foreach (KeyValuePair<string, string> docAttribute in docAttributes)
+                {
+                    jsonDoc[docAttribute.Key] = docAttribute.Value;
+                }
+            }
+            return CreateDocument(collectionId, jsonDoc);
         }
 
         public void DeleteDocument(string collectionId, string documentId)

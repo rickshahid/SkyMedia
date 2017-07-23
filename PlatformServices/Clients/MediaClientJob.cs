@@ -62,7 +62,11 @@ namespace AzureSkyMedia.PlatformServices
                             {
                                 if (!string.IsNullOrEmpty(inputAsset.AlternateId))
                                 {
-                                    indexerClient.ResetIndex(inputAsset.AssetId, inputAsset.AlternateId);
+                                    string indexId = MediaClient.GetIndexId(inputAsset.AlternateId);
+                                    if (!string.IsNullOrEmpty(indexId))
+                                    {
+                                        indexerClient.ResetIndex(inputAsset.AssetId, indexId);
+                                    }
                                 }
                                 else
                                 {

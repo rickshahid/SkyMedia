@@ -175,7 +175,7 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
 function OpenIndexerInsights(mediaStream) {
     var title = "Azure Video Indexer Insights";
     var html = "<iframe width='100%' height='100%' frameborder='0' src='" + mediaStream.insightsUrl + "'></iframe>";
-    var insights = window.open("", "_blank", "width=900,height=600");
+    var insights = window.open("", "_blank", "width=900,height=600,resizable=yes");
     insights.document.write(html); 
     insights.document.title = title;
 }

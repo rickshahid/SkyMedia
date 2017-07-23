@@ -4,9 +4,10 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
+    [Route("[controller]")]
     public class channelController : Controller
     {
-        [HttpPost]
+        [HttpPut]
         [Route("/create")]
         public void Create(string channelName, MediaEncoding encodingType, string allowedAddresses)
         {

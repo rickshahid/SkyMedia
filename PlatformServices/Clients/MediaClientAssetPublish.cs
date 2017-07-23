@@ -56,23 +56,23 @@ namespace AzureSkyMedia.PlatformServices
             return entityClient.GetEntity<ContentProtection>(tableName, partitionKey, rowKey);
         }
 
-        private static void PublishSpeech(MediaClient mediaClient, IJob job)
-        {
-            string processorId = Constant.Media.ProcessorId.SpeechToText;
-            string[] processorIds = new string[] { processorId };
-            ITask[] jobTasks = GetJobTasks(job, processorIds);
-            foreach (ITask jobTask in jobTasks)
-            {
-                JObject processorConfig = JObject.Parse(jobTask.Configuration);
-                string languageCode = Language.GetLanguageCode(processorConfig);
-                foreach (IAsset outputAsset in jobTask.OutputAssets)
-                {
-                    outputAsset.AlternateId = languageCode;
-                    outputAsset.Update();
-                    mediaClient.CreateLocator(LocatorType.OnDemandOrigin, outputAsset);
-                }
-            }
-        }
+        //private static void PublishSpeech(MediaClient mediaClient, IJob job)
+        //{
+        //    string processorId = Constant.Media.ProcessorId.SpeechToText;
+        //    string[] processorIds = new string[] { processorId };
+        //    ITask[] jobTasks = GetJobTasks(job, processorIds);
+        //    foreach (ITask jobTask in jobTasks)
+        //    {
+        //        JObject processorConfig = JObject.Parse(jobTask.Configuration);
+        //        string languageCode = Language.GetLanguageCode(processorConfig);
+        //        foreach (IAsset outputAsset in jobTask.OutputAssets)
+        //        {
+        //            outputAsset.AlternateId = languageCode;
+        //            outputAsset.Update();
+        //            mediaClient.CreateLocator(LocatorType.OnDemandOrigin, outputAsset);
+        //        }
+        //    }
+        //}
 
         private static void PublishMetadata(ITask jobTask, BlobClient blobClient, CosmosClient cosmosClient, IDictionary<string, string> dataAttributes)
         {
@@ -83,22 +83,22 @@ namespace AzureSkyMedia.PlatformServices
                     string[] fileNames = GetFileNames(outputAsset, Constant.Media.FileExtension.Json);
                     foreach (string fileName in fileNames)
                     {
-                        string fileData = string.Empty;
+                        string jsonData = string.Empty;
                         string sourceContainerName = outputAsset.Uri.Segments[1];
                         CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainerName, string.Empty, fileName, false);
                         using (Stream sourceStream = sourceBlob.OpenRead())
                         {
                             StreamReader streamReader = new StreamReader(sourceStream);
-                            fileData = streamReader.ReadToEnd();
+                            jsonData = streamReader.ReadToEnd();
                         }
-                        if (!string.IsNullOrEmpty(fileData))
+                        if (!string.IsNullOrEmpty(jsonData))
                         {
                             MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(jobTask.MediaProcessorId);
                             if (mediaProcessor.HasValue)
                             {
                                 string processorName = Processor.GetProcessorName(mediaProcessor.Value);
                                 string collectionId = Constant.Database.Collection.Metadata;
-                                string documentId = cosmosClient.CreateDocument(collectionId, fileData, dataAttributes);
+                                string documentId = cosmosClient.CreateDocument(collectionId, jsonData, dataAttributes);
                                 outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
                                 outputAsset.Update();
                             }
@@ -113,9 +113,9 @@ namespace AzureSkyMedia.PlatformServices
             string processorId1 = Constant.Media.ProcessorId.FaceDetection;
             string processorId2 = Constant.Media.ProcessorId.FaceRedaction;
             string processorId3 = Constant.Media.ProcessorId.VideoAnnotation;
-            string processorId4 = Constant.Media.ProcessorId.CharacterRecognition;
-            string processorId5 = Constant.Media.ProcessorId.ContentModeration;
-            string processorId6 = Constant.Media.ProcessorId.MotionDetection;
+            string processorId4 = Constant.Media.ProcessorId.MotionDetection;
+            string processorId5 = Constant.Media.ProcessorId.CharacterRecognition;
+            string processorId6 = Constant.Media.ProcessorId.ContentModeration;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             if (jobTasks.Length > 0)
@@ -147,7 +147,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAsset inputAsset in job.InputMediaAssets)
                 {
-                    PublishSpeech(mediaClient, job);
+                    //PublishSpeech(mediaClient, job);
                     PublishMetadata(job, jobPublish, inputAsset.Id);
                 }
             }
@@ -158,7 +158,7 @@ namespace AzureSkyMedia.PlatformServices
                     foreach (IAsset outputAsset in jobTask.OutputAssets)
                     {
                         PublishContent(mediaClient, outputAsset, contentProtection);
-                        PublishSpeech(mediaClient, job);
+                        //PublishSpeech(mediaClient, job);
                         PublishMetadata(job, jobPublish, outputAsset.Id);
                     }
                 }
@@ -273,15 +273,22 @@ namespace AzureSkyMedia.PlatformServices
             JObject[] documents = cosmosClient.GetDocuments(collectionId);
             foreach (JObject document in documents)
             {
-                string accountName = document["AccountName"].ToString();
-                string accountKey = document["AccountKey"].ToString();
-                string assetId = document["AssetId"].ToString();
-                MediaClient mediaClient = new MediaClient(accountName, accountKey);
-                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                if (asset == null)
+                string documentId = document["id"].ToString();
+                if (document["AccountName"] == null)
                 {
-                    string documentId = document["id"].ToString();
                     cosmosClient.DeleteDocument(collectionId, documentId);
+                }
+                else
+                {
+                    string accountName = document["AccountName"].ToString();
+                    string accountKey = document["AccountKey"].ToString();
+                    string assetId = document["AssetId"].ToString();
+                    MediaClient mediaClient = new MediaClient(accountName, accountKey);
+                    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+                    if (asset == null)
+                    {
+                        cosmosClient.DeleteDocument(collectionId, documentId);
+                    }
                 }
             }
         }

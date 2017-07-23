@@ -32,8 +32,12 @@ namespace AzureSkyMedia.PlatformServices
         {
             if (!string.IsNullOrEmpty(indexerKey) && !string.IsNullOrEmpty(asset.AlternateId))
             {
-                IndexerClient indexerClient = new IndexerClient(indexerKey);
-                indexerClient.DeleteVideo(asset.AlternateId, true);
+                string indexId = MediaClient.GetIndexId(asset.AlternateId);
+                if (!string.IsNullOrEmpty(indexId))
+                {
+                    IndexerClient indexerClient = new IndexerClient(indexerKey);
+                    indexerClient.DeleteVideo(indexId, true);
+                }
             }
             foreach (ILocator locator in asset.Locators)
             {

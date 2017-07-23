@@ -121,10 +121,10 @@
               "type": "Foreach",
               "foreach": "@body('Get_messages')?['QueueMessagesList']?['QueueMessage']",
               "actions": {
-                "PublishPost": {
+                "PublishPut": {
                   "type": "Http",
                   "inputs": {
-                    "method": "post",
+                    "method": "put",
                     "queries": {
                       "jobMessage": "@{item()?['MessageText']}",
                       "poisonQueue": false
@@ -155,14 +155,14 @@
                     }
                   },
                   "runAfter": {
-                    "PublishPost": [
+                    "PublishPut": [
                       "Succeeded"
                     ]
                   }
                 },
                 "Condition": {
                   "type": "If",
-                  "expression": "@and(not(equals(body('PublishPost')?['mobileNumber'], null)),not(equals(body('PublishPost')?['statusMessage'], null)))",
+                  "expression": "@and(not(equals(body('PublishPut')?['mobileNumber'], null)),not(equals(body('PublishPut')?['statusMessage'], null)))",
                   "actions": {
                     "Send_Text_Message_(SMS)": {
                       "type": "ApiConnection",
@@ -175,12 +175,12 @@
                             "name": "@parameters('$connections')['twilio']['connectionId']"
                           }
                         },
-                        "method": "post",
+                        "method": "put",
                         "path": "/Messages.json",
                         "body": {
                           "from": "+13109058223",
-                          "to": "@{body('PublishPost')?['mobileNumber']}",
-                          "body": "@{body('PublishPost')?['statusMessage']}"
+                          "to": "@{body('PublishPut')?['mobileNumber']}",
+                          "body": "@{body('PublishPut')?['statusMessage']}"
                         }
                       },
                       "runAfter": {}

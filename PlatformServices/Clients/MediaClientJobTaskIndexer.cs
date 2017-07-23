@@ -5,7 +5,18 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 namespace AzureSkyMedia.PlatformServices
 {
     public partial class MediaClient
-    { 
+    {
+        public static string GetIndexId(string alternateId)
+        {
+            string indexId = string.Empty;
+            string[] idInfo = alternateId.Split(Constant.TextDelimiter.Identifier);
+            if (idInfo.Length > 2)
+            {
+                indexId = idInfo[2];
+            }
+            return indexId;
+        }
+
         public static void UploadVideo(string authToken, string indexerKey, IndexerClient indexerClient, IAsset asset, string locatorUrl, MediaJobTask jobTask)
         {
             string settingKey = Constant.AppSettingKey.MediaNotificationIndexerCallbackUrl;
@@ -40,16 +51,26 @@ namespace AzureSkyMedia.PlatformServices
             {
                 IndexerClient indexerClient = new IndexerClient(indexPublish.IndexerAccountKey);
                 JObject index = indexerClient.GetIndex(indexId, null, false);
-                JToken externalId = index["breakdowns"][0]["externalId"];
-                if (externalId != null)
+                if (index != null)
                 {
-                    assetId = externalId.ToString();
-                    MediaClient mediaClient = new MediaClient(indexPublish.MediaAccountName, indexPublish.MediaAccountKey);
-                    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                    if (asset != null)
+                    index.Remove("id");
+                    index["indexId"] = indexId;
+                    CosmosClient cosmosClient = new CosmosClient(true);
+                    string collectionId = Constant.Database.Collection.Metadata;
+                    string documentId = cosmosClient.CreateDocument(collectionId, index);
+                    string alternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, documentId);
+
+                    JToken externalId = index["breakdowns"][0]["externalId"];
+                    if (externalId != null)
                     {
-                        asset.AlternateId = indexId;
-                        asset.Update();
+                        assetId = externalId.ToString();
+                        MediaClient mediaClient = new MediaClient(indexPublish.MediaAccountName, indexPublish.MediaAccountKey);
+                        IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+                        if (asset != null)
+                        {
+                            asset.AlternateId = string.Concat(alternateId, Constant.TextDelimiter.Identifier, indexId);
+                            asset.Update();
+                        }
                     }
                 }
                 entityClient.DeleteEntity(tableName, indexPublish);

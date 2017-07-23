@@ -287,22 +287,13 @@ body {
     padding-left: 15px;
 }
 
-.plupload_total_file_size {
-    display: inline-block;
-    padding-right: 15px;
-}
-
 .plupload_progress_container {
     height: 10px;
-    width: 115px;
+    width: 100px;
 }
 
 .plupload_progress {
-    margin-right: 95px;
-}
-
-.plupload_buttons {
-    margin-top: 5px;
+    margin-right: 85px;
 }
 
 .signiantUploader {

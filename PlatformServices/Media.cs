@@ -55,7 +55,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (string.IsNullOrEmpty(indexId) && !string.IsNullOrEmpty(parentAsset.AlternateId))
                 {
-                    indexId = parentAsset.AlternateId;
+                    indexId = MediaClient.GetIndexId(parentAsset.AlternateId);
                 }
             }
             return indexId;

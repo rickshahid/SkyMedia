@@ -8,8 +8,11 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
+    [Route("[controller]")]
     public class jobController : Controller
     {
+        [HttpGet]
+        [Route("/template")]
         public JsonResult template(string templateId)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
@@ -18,7 +21,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(jobTemplate);
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("/publish")]
         public MediaJobPublication Publish(string jobMessage, bool poisonQueue)
         {
@@ -49,7 +52,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return jobPublication;
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("/purge")]
         public void Purge()
         {

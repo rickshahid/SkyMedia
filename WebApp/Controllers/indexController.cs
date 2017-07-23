@@ -6,6 +6,7 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
+    [Route("[controller]")]
     public class indexController : Controller
     {
         private string GetIndexerKey()
@@ -48,11 +49,23 @@ namespace AzureSkyMedia.WebApp.Controllers
             return index;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("/publish")]
         public string PublishIndex(string indexId)
         {
             return MediaClient.PublishIndex(indexId);
+        }
+
+        [HttpPut]
+        [Route("/refresh")]
+        public void ResetIndex(string assetId, string indexId)
+        {
+            string indexerKey = GetIndexerKey();
+            if (!string.IsNullOrEmpty(indexerKey))
+            {
+                IndexerClient indexerClient = new IndexerClient(indexerKey);
+                indexerClient.ResetIndex(assetId, indexId);
+            }
         }
 
         [HttpGet]
@@ -69,19 +82,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return webVttUrl;
         }
 
-        [HttpPost]
-        [Route("/delete")]
-        public void DeleteVideo(string indexId, bool deleteInsights)
-        {
-            string indexerKey = GetIndexerKey();
-            if (!string.IsNullOrEmpty(indexerKey))
-            {
-                IndexerClient indexerClient = new IndexerClient(indexerKey);
-                indexerClient.DeleteVideo(indexId, deleteInsights);
-            }
-        }
-
-        [HttpPost]
+        [HttpGet]
         [Route("/search")]
         public JArray SearchVideo(string indexId, MediaPrivacy privacy)
         {
@@ -93,6 +94,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 results = indexerClient.Search(privacy, indexId);
             }
             return results;
+        }
+
+        [HttpDelete]
+        [Route("/delete")]
+        public void DeleteVideo(string indexId, bool deleteInsights)
+        {
+            string indexerKey = GetIndexerKey();
+            if (!string.IsNullOrEmpty(indexerKey))
+            {
+                IndexerClient indexerClient = new IndexerClient(indexerKey);
+                indexerClient.DeleteVideo(indexId, deleteInsights);
+            }
         }
     }
 }
