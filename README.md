@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-![](http://skystorage.azureedge.net/Snip1.AzureSkyMediaIntro.png)
+![](http://skystorage.azureedge.net/Snip1.AzureSkyMediaIntroduction.png)
 
 For additional screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
@@ -25,6 +25,8 @@ The following set of media application functionality is enabled and integrated w
 * Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
 To enable the core application functionality that is listed above, the following Azure platform services are leveraged:
+
+![](http://skystorage.azureedge.net/Snip2.AzureSkyMediaArchitecture.png)
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
