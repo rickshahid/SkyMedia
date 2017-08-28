@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class AsperaClient
+    internal class AsperaClient
     {
         private string _serviceNode;
         private string _serviceStats;
@@ -87,17 +87,22 @@ namespace AzureSkyMedia.PlatformServices
             }
             transferRequest.Paths = transferPaths.ToArray();
 
-            TransferRequestItem requestItem = new TransferRequestItem();
-            requestItem.TransferRequest = transferRequest;
-
             AsperaRequest asperaRequest = new AsperaRequest();
-            asperaRequest.TransferRequests = new TransferRequestItem[] { requestItem };
+            asperaRequest.TransferRequest = transferRequest;
 
-            SetSecurityProtocol();
+            AsperaTransfer asperaTransfer = new AsperaTransfer();
+            asperaTransfer.TransferRequests = new AsperaRequest[] { asperaRequest };
+
+            ServicePointManager.ServerCertificateValidationCallback += delegate
+                (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors policyErrors)
+            {
+                return true;
+            };
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             JObject webResponse;
             JToken transferSettings;
-            using (HttpRequestMessage request = _serviceClient.GetRequest(HttpMethod.Post, transferApi, asperaRequest))
+            using (HttpRequestMessage request = _serviceClient.GetRequest(HttpMethod.Post, transferApi, asperaTransfer))
             {
                 webResponse = _serviceClient.GetResponse<JObject>(request);
                 transferSettings = webResponse["transfer_specs"][0];
@@ -114,16 +119,6 @@ namespace AzureSkyMedia.PlatformServices
 
             transferSettings["aspera_connect_settings"] = connectSpec;
             return webResponse;
-        }
-
-        private static void SetSecurityProtocol()
-        {
-            ServicePointManager.ServerCertificateValidationCallback += delegate
-                (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors policyErrors)
-            {
-                return true;
-            };
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
     }
 }

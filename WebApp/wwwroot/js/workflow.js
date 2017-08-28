@@ -10,10 +10,10 @@
             $("#uploadAsperaFasp").show();
         }
         if (signiantAccountKey != "") {
-            $("#uploadService[value='signiantFlight']").prop("disabled", false);
+            $(":radio[name='uploadService'][value='signiantFlight']").prop("disabled", false);
         }
         if (asperaAccountKey != "") {
-            $("#uploadService[value='asperaFasp']").prop("disabled", false);
+            $(":radio[name='uploadService'][value='asperaFasp']").prop("disabled", false);
         }
     } else {
         $("#mediaAssetsRow").show();
@@ -46,8 +46,8 @@ function ValidWorkflowInput(uploadView, saveWorkflow) {
             validInput = false;
         }
     } else {
-        _inputAssets = GetInputAssets();
-        if (_inputAssets.length == 0) {
+        _jobInputs = GetJobInputs(uploadView);
+        if (_jobInputs.length == 0) {
             CreateTipTopLeft("mediaAssets", "Select Media Assets", 48, 0);
             SetTipVisible("mediaAssets", true);
             validInput = false;
@@ -104,18 +104,19 @@ function ValidWorkflow(uploadView, saveWorkflow) {
         }
     }
 }
-function GetInputAssets() {
-    var inputAssets = new Array();
+function GetJobInputs(uploadView) {
+    var jobInputs = new Array();
     if ($("#mediaAssets").children.length > 0) {
         var mediaAssets = $("#mediaAssets").jstree(true).get_checked();
         for (var i = 0; i < mediaAssets.length; i++) {
-            var inputAsset = {
-                AssetId: mediaAssets[i]
+            var jobInput = {
+                AssetId: mediaAssets[i],
+                WorkflowView: !uploadView
             };
-            inputAssets.push(inputAsset);
+            jobInputs.push(jobInput);
         }
     }
-    return inputAssets;
+    return jobInputs;
 }
 function IngestAssets() {
     var job = GetJob();
@@ -138,7 +139,7 @@ function StartWorkflow() {
     var job = GetJob();
     $.post("/workflow/start",
         {
-            inputAssets: _inputAssets,
+            jobInputs: _jobInputs,
             mediaJob: job
         },
         function (result) {

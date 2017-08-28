@@ -6,12 +6,10 @@
 
         public string SourceUrl { get; set; }
 
-        public string InsightsUrl { get; set; }
+        public MediaTrack[] TextTracks { get; set; }
 
-        public string[] ProtectionTypes { get; set; }
+        public MediaInsight[] CognitiveInsights { get; set; }
 
-        public MediaTextTrack[] TextTracks { get; set; }
-
-        public MediaMetadata[] AnalyticsMetadata { get; set; }
+        public MediaProtection[] ContentProtection { get; set; }
     }
 }

@@ -14,12 +14,12 @@
             for (var i = 0; i < 11; i++) {
                 innerHtml = SetEntity(innerHtml, entityCounts[i]);
             }
-            $("#inventory1").html(innerHtml);
+            $("#inventoryLeft").html(innerHtml);
             innerHtml = "";
             for (var i = 11; i < entityCounts.length; i++) {
                 innerHtml = SetEntity(innerHtml, entityCounts[i]);
             }
-            $("#inventory2").html(innerHtml);
+            $("#inventoryRight").html(innerHtml);
         }
         $(function () {
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
@@ -35,11 +35,10 @@
 <table class="accountInventory">
     <tr>
         <td>
-            <table id="inventory1" class="entityCounts"></table>
+            <table id="inventoryLeft" class="entityCounts"></table>
         </td>
         <td>
-            <table id="inventory2" class="entityCounts"></table>
+            <table id="inventoryRight" class="entityCounts"></table>
         </td>
     </tr>
 </table>
-

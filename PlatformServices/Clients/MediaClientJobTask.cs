@@ -6,14 +6,14 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public partial class MediaClient
+    internal partial class MediaClient
     {
-        private static string[] GetAssetIds(MediaAssetInput[] inputAssets)
+        private static string[] GetAssetIds(MediaJobInput[] jobInputs)
         {
             List<string> assetIds = new List<string>();
-            foreach (MediaAssetInput inputAsset in inputAssets)
+            foreach (MediaJobInput jobInput in jobInputs)
             {
-                assetIds.Add(inputAsset.AssetId);
+                assetIds.Add(jobInput.AssetId);
             }
             return assetIds.ToArray();
         }
@@ -43,22 +43,22 @@ namespace AzureSkyMedia.PlatformServices
             return jobTask;
         }
 
-        private static MediaJobTask[] SetJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaAssetInput[] inputAssets, bool multipleInputTask)
+        private static MediaJobTask[] SetJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs, bool multipleInputTask)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             if (multipleInputTask)
             {
-                jobTask = SetJobTask(mediaClient, jobTask, inputAssets[0].AssetName);
-                jobTask.InputAssetIds = GetAssetIds(inputAssets);
+                jobTask = SetJobTask(mediaClient, jobTask, jobInputs[0].AssetName);
+                jobTask.InputAssetIds = GetAssetIds(jobInputs);
                 jobTasks.Add(jobTask);
             }
             else
             {
-                foreach (MediaAssetInput inputAsset in inputAssets)
+                foreach (MediaJobInput jobInput in jobInputs)
                 {
                     MediaJobTask newTask = jobTask.CreateCopy();
-                    newTask = SetJobTask(mediaClient, newTask, inputAsset.AssetName);
-                    newTask.InputAssetIds = new string[] { inputAsset.AssetId };
+                    newTask = SetJobTask(mediaClient, newTask, jobInput.AssetName);
+                    newTask.InputAssetIds = new string[] { jobInput.AssetId };
                     jobTasks.Add(newTask);
                 }
             }

@@ -6,7 +6,7 @@ using Microsoft.WindowsAzure.MediaServices.Client.ContentKeyAuthorization;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public static class Account
+    internal static class Account
     {
         private static string GetProcessorUnitCount(IEncodingReservedUnit[] processorUnits)
         {
@@ -28,16 +28,13 @@ namespace AzureSkyMedia.PlatformServices
             return unitCount.ToString();
         }
 
-        private static void DeleteAsset(MediaClient mediaClient, IAsset asset, string indexerKey)
+        private static void DeleteAsset(string authToken, IAsset asset)
         {
-            if (!string.IsNullOrEmpty(indexerKey) && !string.IsNullOrEmpty(asset.AlternateId))
+            IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+            string indexId = indexerClient.GetIndexId(asset.Id);
+            if (!string.IsNullOrEmpty(indexId))
             {
-                string indexId = MediaClient.GetIndexId(asset.AlternateId);
-                if (!string.IsNullOrEmpty(indexId))
-                {
-                    IndexerClient indexerClient = new IndexerClient(indexerKey);
-                    indexerClient.DeleteVideo(indexId, true);
-                }
+                indexerClient.DeleteVideo(indexId, true);
             }
             foreach (ILocator locator in asset.Locators)
             {
@@ -50,64 +47,9 @@ namespace AzureSkyMedia.PlatformServices
             asset.Delete();
         }
 
-        public static object GetNotificationEndpoints(string authToken)
+        public static void DeleteEntities(string authToken, bool allEntities)
         {
             MediaClient mediaClient = new MediaClient(authToken);
-            return mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
-        }
-
-        public static string[][] GetEntityCounts(MediaClient mediaClient)
-        {
-            IStorageAccount[] storageAccounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
-            IContentKey[] contentKeys = mediaClient.GetEntities(MediaEntity.ContentKey) as IContentKey[];
-            IContentKeyAuthorizationPolicy[] contentKeyPolicies = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
-            IContentKeyAuthorizationPolicyOption[] contentKeyPolicyOptions = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
-            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
-            IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
-            IIngestManifestAsset[] manifestAssets = mediaClient.GetEntities(MediaEntity.ManifestAsset) as IIngestManifestAsset[];
-            IIngestManifestFile[] manifestFiles = mediaClient.GetEntities(MediaEntity.ManifestFile) as IIngestManifestFile[];
-            IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
-            IAssetFile[] files = mediaClient.GetEntities(MediaEntity.File) as IAssetFile[];
-            IEncodingReservedUnit[] processorUnits = mediaClient.GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            MediaProcessor?[] processors = mediaClient.GetEntities(MediaEntity.Processor) as MediaProcessor?[];
-            IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
-            IJobTemplate[] jobTemplates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
-            IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
-            INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
-            IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
-            IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(MediaEntity.DeliveryPolicy) as IAssetDeliveryPolicy[];
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
-            IStreamingFilter[] streamingFilters = mediaClient.GetEntities(MediaEntity.StreamingFilter) as IStreamingFilter[];
-            ILocator[] locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
-
-            List<string[]> entityCounts = new List<string[]>();
-            entityCounts.Add(new string[] { "Storage Accounts", storageAccounts.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Keys", contentKeys.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicies.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Key Policy Options", contentKeyPolicyOptions.Length.ToString() });
-            entityCounts.Add(new string[] { "Channels", channels.Length.ToString() });
-            entityCounts.Add(new string[] { "Ingest Manifests", manifests.Length.ToString() });
-            entityCounts.Add(new string[] { "Ingest Manifest Assets", manifestAssets.Length.ToString() });
-            entityCounts.Add(new string[] { "Ingest Manifest Files", manifestFiles.Length.ToString() });
-            entityCounts.Add(new string[] { "Assets", assets.Length.ToString() });
-            entityCounts.Add(new string[] { "Asset Files", files.Length.ToString() });
-            entityCounts.Add(new string[] { "Processor Units", GetProcessorUnitCount(processorUnits) });
-            entityCounts.Add(new string[] { "Media Processors", processors.Length.ToString(), "/account/processors" });
-            entityCounts.Add(new string[] { "Channel Programs", programs.Length.ToString() });
-            entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
-            entityCounts.Add(new string[] { "Jobs", jobs.Length.ToString() });
-            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString(), "/account/endpoints" });
-            entityCounts.Add(new string[] { "Access Policies", accessPolicies.Length.ToString() });
-            entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString() });
-            entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
-            entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints) });
-            entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString() });
-            entityCounts.Add(new string[] { "Locators", locators.Length.ToString() });
-            return entityCounts.ToArray();
-        }
-
-        public static void ClearEntities(MediaClient mediaClient, bool allEntities, string indexerKey)
-        {
             if (allEntities)
             {
                 IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
@@ -154,7 +96,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (asset.ParentAssets.Count > 0 || allEntities)
                 {
-                    DeleteAsset(mediaClient, asset, indexerKey);
+                    DeleteAsset(authToken, asset);
                 }
             }
             if (allEntities)
@@ -185,6 +127,62 @@ namespace AzureSkyMedia.PlatformServices
                     contentKey.Delete();
                 }
             }
+        }
+
+        public static object GetNotificationEndpoints(string authToken)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            return mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+        }
+
+        public static string[][] GetEntityCounts(MediaClient mediaClient)
+        {
+            IStorageAccount[] storageAccounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
+            IContentKey[] contentKeys = mediaClient.GetEntities(MediaEntity.ContentKey) as IContentKey[];
+            IContentKeyAuthorizationPolicy[] contentKeyPolicies = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
+            IContentKeyAuthorizationPolicyOption[] contentKeyPolicyOptions = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
+            IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
+            IIngestManifestAsset[] manifestAssets = mediaClient.GetEntities(MediaEntity.ManifestAsset) as IIngestManifestAsset[];
+            IIngestManifestFile[] manifestFiles = mediaClient.GetEntities(MediaEntity.ManifestFile) as IIngestManifestFile[];
+            IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
+            IAssetFile[] files = mediaClient.GetEntities(MediaEntity.File) as IAssetFile[];
+            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+            IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
+            MediaProcessor?[] processors = mediaClient.GetEntities(MediaEntity.Processor, true) as MediaProcessor?[];
+            IEncodingReservedUnit[] processorUnits = mediaClient.GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
+            IJobTemplate[] jobTemplates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
+            IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
+            INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+            IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
+            IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(MediaEntity.DeliveryPolicy) as IAssetDeliveryPolicy[];
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            IStreamingFilter[] streamingFilters = mediaClient.GetEntities(MediaEntity.StreamingFilter) as IStreamingFilter[];
+            ILocator[] locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
+
+            List<string[]> entityCounts = new List<string[]>();
+            entityCounts.Add(new string[] { "Storage Accounts", storageAccounts.Length.ToString() });
+            entityCounts.Add(new string[] { "Content Keys", contentKeys.Length.ToString() });
+            entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicies.Length.ToString() });
+            entityCounts.Add(new string[] { "Content Key Policy Options", contentKeyPolicyOptions.Length.ToString() });
+            entityCounts.Add(new string[] { "Ingest Manifests", manifests.Length.ToString() });
+            entityCounts.Add(new string[] { "Ingest Manifest Assets", manifestAssets.Length.ToString() });
+            entityCounts.Add(new string[] { "Ingest Manifest Files", manifestFiles.Length.ToString() });
+            entityCounts.Add(new string[] { "Assets", assets.Length.ToString() });
+            entityCounts.Add(new string[] { "Asset Files", files.Length.ToString() });
+            entityCounts.Add(new string[] { "Processors", processors.Length.ToString(), "/account/processors" });
+            entityCounts.Add(new string[] { "Processor Units", GetProcessorUnitCount(processorUnits) });
+            entityCounts.Add(new string[] { "Channels", channels.Length.ToString() });
+            entityCounts.Add(new string[] { "Channel Programs", programs.Length.ToString() });
+            entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
+            entityCounts.Add(new string[] { "Jobs", jobs.Length.ToString() });
+            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString(), "/account/endpoints" });
+            entityCounts.Add(new string[] { "Access Policies", accessPolicies.Length.ToString() });
+            entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString() });
+            entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
+            entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints) });
+            entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString() });
+            entityCounts.Add(new string[] { "Locators", locators.Length.ToString() });
+            return entityCounts.ToArray();
         }
     }
 }

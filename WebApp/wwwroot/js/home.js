@@ -3,9 +3,9 @@
     if (!streamSlider) {
         streamName = streamName.replace("<br /><br />", " ");
     }
-    if (mediaStream.protectionTypes.length > 0) {
+    if (mediaStream.contentProtection.length > 0) {
         var lineBreak = streamSlider ? "<br /><br />" : "<br />";
-        streamName = streamName + lineBreak + "(" + mediaStream.protectionTypes.join(", ") + ")";
+        streamName = streamName + lineBreak + "(" + mediaStream.contentProtection.join(", ") + ")";
     }
     return streamName;
 }

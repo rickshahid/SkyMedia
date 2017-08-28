@@ -14,10 +14,14 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class StorageEntity : TableEntity
     {
+        public string UserId { get; set; }
+
+        public string MobileNumber { get; set; }
+
         public DateTime? CreatedOn { get; set; }
     }
 
-    public static class Storage
+    internal static class Storage
     {
         private static string GetCapacityUsed(string authToken, string accountName)
         {
@@ -82,7 +86,13 @@ namespace AzureSkyMedia.PlatformServices
             return accountIndex;
         }
 
-        private static CloudStorageAccount GetAccount(string authToken, string accountName, out string accountKey)
+        internal static string GetAccountKey(string authToken, string accountName)
+        {
+            Storage.GetAccount(authToken, accountName, out string accountKey);
+            return accountKey;
+        }
+
+        internal static CloudStorageAccount GetAccount(string authToken, string accountName, out string accountKey)
         {
             accountKey = string.Empty;
             string storageAccount = string.Empty;
@@ -103,8 +113,19 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static CloudStorageAccount GetUserAccount(string authToken, string accountName)
         {
-            string accountKey;
-            return GetAccount(authToken, accountName, out accountKey);
+            return GetAccount(authToken, accountName, out string accountKey);
+        }
+
+        internal static long GetAssetBytes(IAsset asset, out int fileCount)
+        {
+            fileCount = 0;
+            long assetBytes = 0;
+            foreach (IAssetFile file in asset.AssetFiles)
+            {
+                fileCount = fileCount + 1;
+                assetBytes = assetBytes + file.ContentFileSize;
+            }
+            return assetBytes;
         }
 
         internal static string MapByteCount(long byteCount)
@@ -137,13 +158,6 @@ namespace AzureSkyMedia.PlatformServices
             return mappedCount;
         }
 
-        public static string GetUserAccountKey(string authToken, string accountName)
-        {
-            string accountKey;
-            GetAccount(authToken, accountName, out accountKey);
-            return accountKey;
-        }
- 
         public static void CreateContainer(string authToken, string storageAccount, string containerName)
         {
             BlobClient blobClient = new BlobClient(authToken, storageAccount);

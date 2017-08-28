@@ -22,8 +22,8 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
     <script type="text/javascript" src="~/js/amve.min.js"></script>
-    <script type="text/javascript" src="~/js/metadata.js"></script>
     <script type="text/javascript" src="~/js/clipper.js"></script>
+    <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
         $(function () {
@@ -62,7 +62,10 @@
             });
             var mediaPlayer = GetMediaPlayer(false);
             mediaPlayer.ready(function () {
-                //mediaPlayer.videobreakdown();
+                this.videobreakdown({
+                    syncTranscript: true,
+                    syncLanguage: true
+                });
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
@@ -83,17 +86,17 @@
                     if (mediaStream.insightsUrl != "") {
                         var insightsImage = document.createElement("img");
                         insightsImage.id = "insightsImage";
-                        insightsImage.src = "@storageCdnUrl" + "/MediaInsights.png";
+                        insightsImage.src = "@storageCdnUrl" + "/MediaInsightsOpen.png";
                         var insightsButton = document.createElement("button");
                         insightsButton.id = "insightsButton";
                         insightsButton.className = controlButtonCss;
                         insightsButton.appendChild(insightsImage);
                         controlBarRight.appendChild(insightsButton);
                         $("#insightsButton").click(function () {
-                            OpenIndexerInsights(mediaStream);
+                            ToggleIndexerInsights(mediaStream);
                         });
                     }
-                    if (mediaStream.analyticsMetadata.length > 0) {
+                    @*if (mediaStream.analyticsMetadata.length > 0) {
                         var metadataImage = document.createElement("img");
                         metadataImage.id = "metadataImage";
                         metadataImage.src = "@storageCdnUrl" + "/MediaMetadataOpen.png";
@@ -105,7 +108,7 @@
                         $("#metadataButton").click(function () {
                             ToggleMetadataPanel();
                         });
-                    }
+                    }*@
                 }
             });
             mediaPlayer.addEventListener(amp.eventName.play, function () {
@@ -129,7 +132,7 @@
                 SetPlayerSpinner(false);
             } else {
                 SetPlayerContent(mediaPlayer, mediaStream, "@languageCode", @autoPlay);
-                SetAnalyticsProcessors(mediaStream);
+                //SetAnalyticsProcessors(mediaStream);
                 SetStreamNumber(_streamNumber);
                 SetStreamName(mediaStream);
             }
@@ -172,6 +175,10 @@
         </td>
     </tr>
 </table>
+
+<div id="indexerInsights" class="indexerInsights">
+    <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
+</div>
 
 @Html.Partial("MediaControls", mediaStreams)
 

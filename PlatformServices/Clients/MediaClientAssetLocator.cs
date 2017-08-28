@@ -5,43 +5,49 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public partial class MediaClient
+    internal partial class MediaClient
     {
-        private IAccessPolicy GetAccessPolicy(bool writePolicy)
+        private IAccessPolicy GetAccessPolicy()
         {
-            string readPolicyName = Constant.Media.AccessPolicy.ReadPolicyName;
-            string writePolicyName = Constant.Media.AccessPolicy.WritePolicyName;
-            string policyName = writePolicy ? writePolicyName : readPolicyName;
+            string policyName = Constant.Media.AccessPolicy.ReadPolicyName;
             IAccessPolicy accessPolicy = GetEntityByName(MediaEntity.AccessPolicy, policyName, true) as IAccessPolicy;
             if (accessPolicy == null)
             {
-                string settingKey = Constant.AppSettingKey.MediaLocatorWriteDurationMinutes;
-                string writeDurationMinutes = AppSetting.GetValue(settingKey);
-                settingKey = Constant.AppSettingKey.MediaLocatorReadDurationDays;
+                string settingKey = Constant.AppSettingKey.MediaLocatorReadDurationDays;
                 string readDurationDays = AppSetting.GetValue(settingKey);
-                TimeSpan writePolicyDuration = new TimeSpan(0, int.Parse(writeDurationMinutes), 0);
-                TimeSpan readPolicyDuration = new TimeSpan(int.Parse(readDurationDays), 0, 0, 0);
-                TimeSpan accessDuration = writePolicy ? writePolicyDuration : readPolicyDuration;
-                AccessPermissions accessPermissions = writePolicy ? AccessPermissions.Write : AccessPermissions.Read;
-                accessPolicy = _media.AccessPolicies.Create(policyName, accessDuration, accessPermissions);
+                TimeSpan policyDuration = new TimeSpan(int.Parse(readDurationDays), 0, 0, 0);
+                accessPolicy = _media.AccessPolicies.Create(policyName, policyDuration, AccessPermissions.Read);
             }
             return accessPolicy;
         }
 
-        private ILocator CreateLocator(LocatorType locatorType, IAsset asset, bool writePolicy)
+        private string GetPrimaryUrl(ILocator locator, string fileName, bool excludeProtocol)
         {
-            ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
-            if (locator == null)
+            string primaryUrl = locator.BaseUri;
+            if (excludeProtocol)
             {
-                IAccessPolicy accessPolicy = GetAccessPolicy(writePolicy);
-                locator = _media.Locators.CreateLocator(locatorType, asset, accessPolicy, null);
+                primaryUrl = primaryUrl.Split(':')[1];
             }
-            return locator;
-        }
-
-        private ILocator CreateLocator(LocatorType locatorType, IAsset asset)
-        {
-            return CreateLocator(locatorType, asset, false);
+            if (string.IsNullOrEmpty(fileName))
+            {
+                fileName = GetPrimaryFile(locator.Asset);
+            }
+            switch (locator.Type)
+            {
+                case LocatorType.Sas:
+                    primaryUrl = string.Concat(primaryUrl, "/", fileName);
+                    primaryUrl = string.Concat(primaryUrl, locator.ContentAccessComponent);
+                    break;
+                case LocatorType.OnDemandOrigin:
+                    primaryUrl = string.Concat(primaryUrl, "/", locator.ContentAccessComponent);
+                    primaryUrl = string.Concat(primaryUrl, "/", fileName);
+                    if (fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase))
+                    {
+                        primaryUrl = string.Concat(primaryUrl, Constant.Media.Stream.LocatorManifestSuffix);
+                    }
+                    break;
+            }
+            return primaryUrl;
         }
 
         private static void SetPrimaryFile(IAsset asset)
@@ -68,53 +74,17 @@ namespace AzureSkyMedia.PlatformServices
         internal static string GetPrimaryFile(IAsset asset)
         {
             string primaryFile = string.Empty;
-            if (asset.AssetFiles.Count() == 1)
+            foreach (IAssetFile assetFile in asset.AssetFiles)
             {
-                primaryFile = asset.AssetFiles.Single().Name;
-            }
-            else
-            {
-                foreach (IAssetFile assetFile in asset.AssetFiles)
+                if (assetFile.IsPrimary)
                 {
-                    if (assetFile.IsPrimary)
-                    {
-                        primaryFile = assetFile.Name;
-                    }
+                    primaryFile = assetFile.Name;
                 }
             }
             return primaryFile;
         }
 
-        private string GetLocatorUrl(ILocator locator, string fileName, bool includeProtocol)
-        {
-            string primaryUrl = locator.BaseUri;
-            if (!includeProtocol)
-            {
-                primaryUrl = primaryUrl.Split(':')[1];
-            }
-            if (string.IsNullOrEmpty(fileName))
-            {
-                fileName = GetPrimaryFile(locator.Asset);
-            }
-            switch (locator.Type)
-            {
-                case LocatorType.Sas:
-                    primaryUrl = string.Concat(primaryUrl, "/", fileName);
-                    primaryUrl = string.Concat(primaryUrl, locator.ContentAccessComponent);
-                    break;
-                case LocatorType.OnDemandOrigin:
-                    primaryUrl = string.Concat(primaryUrl, "/", locator.ContentAccessComponent);
-                    primaryUrl = string.Concat(primaryUrl, "/", fileName);
-                    if (fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase))
-                    {
-                        primaryUrl = string.Concat(primaryUrl, Constant.Media.Stream.LocatorManifestSuffix);
-                    }
-                    break;
-            }
-            return primaryUrl;
-        }
-
-        public string GetLocatorUrl(LocatorType locatorType, IAsset asset, string fileName, bool includeProtocol)
+        public string GetLocatorUrl(LocatorType locatorType, IAsset asset, string fileName, bool excludeProtocol)
         {
             ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
             if (locator == null)
@@ -125,22 +95,46 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (locator.ExpirationDateTime <= DateTime.UtcNow)
                 {
-                    IAccessPolicy accessPolicy = GetAccessPolicy(false);
+                    IAccessPolicy accessPolicy = GetAccessPolicy();
                     DateTime accessExpiration = DateTime.UtcNow.Add(accessPolicy.Duration);
                     locator.Update(accessExpiration);
                 }
             }
-            return GetLocatorUrl(locator, fileName, includeProtocol);
+            return GetPrimaryUrl(locator, fileName, excludeProtocol);
         }
 
         public string GetLocatorUrl(IAsset asset, string fileName)
         {
-            return GetLocatorUrl(LocatorType.OnDemandOrigin, asset, fileName, false);
+            return GetLocatorUrl(LocatorType.OnDemandOrigin, asset, fileName, true);
         }
 
         public string GetLocatorUrl(IAsset asset)
         {
             return GetLocatorUrl(asset, null);
+        }
+
+        public string GetWebVttUrl(IAsset asset)
+        {
+            string webVttUrl = string.Empty;
+            foreach (IAssetFile assetFile in asset.AssetFiles)
+            {
+                if (assetFile.Name.EndsWith(Constant.Media.FileExtension.WebVtt, StringComparison.OrdinalIgnoreCase))
+                {
+                    webVttUrl = GetLocatorUrl(asset, assetFile.Name);
+                }
+            }
+            return webVttUrl;
+        }
+
+        public ILocator CreateLocator(LocatorType locatorType, IAsset asset)
+        {
+            ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
+            if (locator == null)
+            {
+                IAccessPolicy accessPolicy = GetAccessPolicy();
+                locator = _media.Locators.CreateLocator(locatorType, asset, accessPolicy, null);
+            }
+            return locator;
         }
     }
 }

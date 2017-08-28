@@ -28,36 +28,26 @@ namespace AzureSkyMedia.PlatformServices
             return queue.GetMessage();
         }
 
-        public string GetMessage(string queueName, out string messageId, out string popReceipt)
+        public T GetMessage<T>(string queueName, out string messageId, out string popReceipt)
         {
-            string message = string.Empty;
+            T message = default(T);
             messageId = string.Empty;
             popReceipt = string.Empty;
             CloudQueueMessage queueMessage = GetQueueMessage(queueName);
             if (queueMessage != null)
             {
-                message = queueMessage.AsString;
                 messageId = queueMessage.Id;
                 popReceipt = queueMessage.PopReceipt;
+                message = JsonConvert.DeserializeObject<T>(queueMessage.AsString);
             }
             return message;
         }
 
-        public string GetMessage(string queueName, out CloudQueueMessage queueMessage)
+        public T GetMessage<T>(string queueName)
         {
-            string message = string.Empty;
-            queueMessage = GetQueueMessage(queueName);
-            if (queueMessage != null)
-            {
-                message = queueMessage.AsString;
-            }
-            return message;
-        }
-
-        public string GetMessage(string queueName)
-        {
-            CloudQueueMessage queueMessage;
-            return GetMessage(queueName, out queueMessage);
+            string messageId;
+            string popReceipt;
+            return GetMessage<T>(queueName, out messageId, out popReceipt);
         }
 
         public string AddMessage(string queueName, object message)
@@ -67,12 +57,6 @@ namespace AzureSkyMedia.PlatformServices
             CloudQueueMessage queueMessage = new CloudQueueMessage(messageContent);
             queue.AddMessage(queueMessage);
             return queueMessage.AsString;
-        }
-
-        public void DeleteMessage(string queueName, CloudQueueMessage queueMessage)
-        {
-            CloudQueue queue = GetQueue(queueName);
-            queue.DeleteMessage(queueMessage);
         }
 
         public void DeleteMessage(string queueName, string messageId, string popReceipt)

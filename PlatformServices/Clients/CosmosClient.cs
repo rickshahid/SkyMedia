@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class CosmosClient : IDisposable
+    internal class CosmosClient : IDisposable
     {
         private DocumentClient _cosmos;
         private string _databaseId;
@@ -22,12 +22,6 @@ namespace AzureSkyMedia.PlatformServices
                 _cosmos.Dispose();
                 _cosmos = null;
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         public CosmosClient(bool readWrite)
@@ -93,26 +87,16 @@ namespace AzureSkyMedia.PlatformServices
             return result;
         }
 
-        public string CreateDocument(string collectionId, JObject jsonDoc)
+        public string UpsertDocument(string collectionId, JObject jsonDoc, string accountName, string accountKey, string assetId)
         {
+            jsonDoc["accountName"] = accountName;
+            jsonDoc["accountKey"] = accountKey;
+            jsonDoc["assetId"] = assetId;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            Task<ResourceResponse<Document>> createTask = _cosmos.CreateDocumentAsync(collectionUri, jsonDoc);
+            Task<ResourceResponse<Document>> createTask = _cosmos.UpsertDocumentAsync(collectionUri, jsonDoc);
             createTask.Wait();
             ResourceResponse<Document> responseDocument = createTask.Result;
             return responseDocument.Resource.Id;
-        }
-
-        public string CreateDocument(string collectionId, string jsonData, IDictionary<string, string> docAttributes)
-        {
-            JObject jsonDoc = JObject.Parse(jsonData);
-            if (docAttributes != null)
-            {
-                foreach (KeyValuePair<string, string> docAttribute in docAttributes)
-                {
-                    jsonDoc[docAttribute.Key] = docAttribute.Value;
-                }
-            }
-            return CreateDocument(collectionId, jsonDoc);
         }
 
         public void DeleteDocument(string collectionId, string documentId)
@@ -140,6 +124,12 @@ namespace AzureSkyMedia.PlatformServices
                 result = GetResult(procesureResponse.ToString(), false);
             }
             return result;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

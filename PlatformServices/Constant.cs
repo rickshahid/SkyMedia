@@ -5,8 +5,8 @@ namespace AzureSkyMedia.PlatformServices
     public struct Constant
     {
         public const string NotAvailable = "N/A";
-        public const string ConfigFile = "appsettings.json";
         public const string KeyVaultDomain = "vault.azure.net";
+        public const string AppSettingFile = "appsettings.json";
 
         public struct TextDelimiter
         {
@@ -51,17 +51,17 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
             public const string MediaStream1TextTracks = "Media.Stream1.TextTracks";
-            public const string MediaStream1ProtectionTypes = "Media.Stream1.ProtectionTypes";
+            public const string MediaStream1ContentProtection = "Media.Stream1.ContentProtection";
 
             public const string MediaStream2Name = "Media.Stream2.Name";
             public const string MediaStream2SourceUrl = "Media.Stream2.SourceUrl";
             public const string MediaStream2TextTracks = "Media.Stream2.TextTracks";
-            public const string MediaStream2ProtectionTypes = "Media.Stream2.ProtectionTypes";
+            public const string MediaStream2ContentProtection = "Media.Stream2.ContentProtection";
 
             public const string MediaStream3Name = "Media.Stream3.Name";
             public const string MediaStream3SourceUrl = "Media.Stream3.SourceUrl";
             public const string MediaStream3TextTracks = "Media.Stream3.TextTracks";
-            public const string MediaStream3ProtectionTypes = "Media.Stream3.ProtectionTypes";
+            public const string MediaStream3ContentProtection = "Media.Stream3.ContentProtection";
 
             public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
             public const string MediaProcessorSpeechToTextDocumentId = "Media.Processor.SpeechToTextDocumentId";
@@ -79,14 +79,15 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
             public const string MediaProcessorContentModerationDocumentId = "Media.Processor.ContentModerationDocumentId";
 
-            public const string MediaNotificationStorageQueueName = "Media.Notification.StorageQueueName";
-            public const string MediaNotificationWebHookUrl = "Media.Notification.WebHookUrl";
-            public const string MediaNotificationIndexerCallbackUrl = "Media.Notification.IndexerCallbackUrl";
+            public const string MediaPublishContentUrl = "Media.Publish.ContentUrl";
+            public const string MediaPublishContentQueue = "Media.Publish.ContentQueue";
+
+            public const string MediaPublishInsightsUrl = "Media.Publish.InsightsUrl";
+            public const string MediaPublishInsightsQueue = "Media.Publish.InsightsQueue";
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
 
-            public const string MediaLocatorWriteDurationMinutes = "Media.Locator.WriteDurationMinutes";
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
             public const string MediaLocatorMaxStreamCount = "Media.Locator.MaxStreamCount";
 
@@ -94,6 +95,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaPlayerSkin = "Media.Player.Skin";
 
             public const string MediaClipperEncoderPreset = "Media.Clipper.EncoderPreset";
+            public const string MediaIndexerServiceUrl = "Media.Indexer.ServiceUrl";
 
             public const string SigniantTransferApi = "Signiant.TransferApi";
 
@@ -111,8 +113,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string AzureCosmosReadWrite = "Cosmos.ReadWrite";
 
             public const string AzureMedia = "Media";
-            public const string AzureMediaIndexer = "Media.Indexer";
-
             public const string AzureCache = "Cache";
         }
 
@@ -179,15 +179,9 @@ namespace AzureSkyMedia.PlatformServices
             public struct TableName
             {
                 public const string FileUpload = "FileUpload";
-                public const string JobPublish = "JobPublish";
-                public const string IndexPublish = "IndexPublish";
                 public const string ContentProtection = "ContentProtection";
-            }
-
-            public struct TableProperty
-            {
-                public const string PartitionKey = "PartitionKey";
-                public const int EntityExpirationDays = 7;
+                public const string ContentPublish = "ContentPublish";
+                public const string InsightPublish = "InsightPublish";
             }
         }
 
@@ -195,8 +189,8 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
-                public const string Encoding = "Encoding";
-                public const string Metadata = "Metadata";
+                public const string ProcessorConfig = "ProcessorConfig";
+                public const string ContentInsight = "ContentInsight";
             }
 
             public struct Procedure
@@ -278,7 +272,6 @@ namespace AzureSkyMedia.PlatformServices
             public struct AccessPolicy
             {
                 public const string ReadPolicyName = "Default Read Access Policy";
-                public const string WritePolicyName = "Default Write Access Policy";
             }
 
             public struct JobNotification

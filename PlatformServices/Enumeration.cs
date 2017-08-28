@@ -1,14 +1,9 @@
-﻿namespace AzureSkyMedia.PlatformServices
-{
-    public enum MediaProtection
-    {
-        AES,
-        PlayReady,
-        Widevine,
-        FairPlay
-    }
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
-    public enum MediaEntity
+namespace AzureSkyMedia.PlatformServices
+{
+    internal enum MediaEntity
     {
         MonitoringConfiguration,
         StorageAccount,
@@ -34,6 +29,23 @@
         Locator
     }
 
+    internal enum MediaProcessorConfig
+    {
+        PublicVideo,
+        SearchPartition,
+        TranscriptLanguage,
+        CaptionFormatWebVtt,
+        CaptionFormatTtml,
+        SummarizationDurationSeconds,
+        FaceDetectionMode,
+        FaceRedactionMode,
+        MotionDetectionSensitivityLevel,
+        MotionDetectionLightChange,
+        MotionHyperlapseStartFrame,
+        MotionHyperlapseFrameCount,
+        MotionHyperlapseSpeed
+    }
+
     public enum MediaProcessor
     {
         EncoderStandard,
@@ -52,23 +64,7 @@
         ContentModeration
     }
 
-    public enum MediaProcessorConfig
-    {
-        PublicVideo,
-        SearchPartition,
-        TranscriptLanguage,
-        CaptionFormatWebVtt,
-        CaptionFormatTtml,
-        SummarizationDurationSeconds,
-        FaceDetectionMode,
-        FaceRedactionMode,
-        MotionDetectionSensitivityLevel,
-        MotionDetectionLightChange,
-        MotionHyperlapseStartFrame,
-        MotionHyperlapseFrameCount,
-        MotionHyperlapseSpeed
-    }
-
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaEncoding
     {
         None,
@@ -76,10 +72,13 @@
         Premium
     }
 
-    public enum MediaPrivacy
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaProtection
     {
-        Private,
-        Public
+        AES,
+        PlayReady,
+        Widevine,
+        FairPlay
     }
 
     public enum TransferService

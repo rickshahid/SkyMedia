@@ -56,9 +56,9 @@ namespace AzureSkyMedia.PlatformServices
             return responseData;
         }
 
-        public HttpRequestMessage GetRequest(HttpMethod requestMethod, string requestUri, object requestData)
+        public HttpRequestMessage GetRequest(HttpMethod requestMethod, string requestUrl, object requestData)
         {
-            HttpRequestMessage request = new HttpRequestMessage(requestMethod, requestUri);
+            HttpRequestMessage request = new HttpRequestMessage(requestMethod, requestUrl);
             if (requestData != null)
             {
                 string requestJson = JsonConvert.SerializeObject(requestData);
@@ -68,9 +68,9 @@ namespace AzureSkyMedia.PlatformServices
             return request;
         }
 
-        public HttpRequestMessage GetRequest(HttpMethod requestMethod, string requestUri)
+        public HttpRequestMessage GetRequest(HttpMethod requestMethod, string requestUrl)
         {
-            return GetRequest(requestMethod, requestUri, null);
+            return GetRequest(requestMethod, requestUrl, null);
         }
 
         public T GetResponse<T>(HttpRequestMessage request, out HttpStatusCode statusCode)

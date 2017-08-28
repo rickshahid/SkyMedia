@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+using Newtonsoft.Json.Linq;
+
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -10,7 +12,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            MediaAsset[] assets = mediaClient.GetAssets(null);
+            Asset[] assets = mediaClient.GetAssets(null);
             return Json(assets);
         }
 
@@ -18,8 +20,31 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            MediaAsset[] assets = mediaClient.GetAssets(assetId);
+            Asset[] assets = mediaClient.GetAssets(assetId);
             return Json(assets);
+        }
+
+        public JsonResult metadata(string documentId, double timeSeconds)
+        {
+            JObject metadata;
+            string collectionId = Constant.Database.Collection.ContentInsight;
+            if (timeSeconds == 0)
+            {
+                documentId = string.Concat(collectionId, Constant.TextDelimiter.Identifier, documentId);
+                using (CosmosClient cosmosClient = new CosmosClient(false))
+                {
+                    metadata = cosmosClient.GetDocument(documentId);
+                }
+            }
+            else
+            {
+                string procedureId = Constant.Database.Procedure.MetadataFragment;
+                using (CosmosClient cosmosClient = new CosmosClient(true))
+                {
+                    metadata = cosmosClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
+                }
+            }
+            return Json(metadata);
         }
 
         public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
@@ -33,11 +58,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             object result;
             if (clipMode == Constant.Media.RenderedClipMode)
             {
-                result = Clipper.SubmitJob(authToken, mediaClient, sourceUrl, markIn, markOut);
+                result = MediaClient.SubmitJob(authToken, mediaClient, sourceUrl, markIn, markOut);
             }
             else
             {
-                result = Clipper.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
+                result = MediaClient.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
             }
             return Json(result);
         }

@@ -12,16 +12,16 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            MediaAssetInput[] inputAssets = Workflow.CreateInputAssets(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, fileNames);
-            object result = Workflow.SubmitJob(authToken, mediaClient, storageAccount, inputAssets, mediaJob);
-            return Json(result);
+            MediaJobInput[] jobInputs = Workflow.CreateJobInputs(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, fileNames);
+            object output = Workflow.SubmitJob(authToken, mediaClient, storageAccount, jobInputs, mediaJob);
+            return Json(output);
         }
 
-        public JsonResult start(MediaAssetInput[] inputAssets, MediaJob mediaJob)
+        public JsonResult start(MediaJobInput[] jobInputs, MediaJob mediaJob)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            inputAssets = Workflow.GetInputAssets(mediaClient, inputAssets);
+            jobInputs = Workflow.GetJobInputs(mediaClient, jobInputs);
             if (mediaJob.Tasks != null)
             {
                 using (CosmosClient cosmosClient = new CosmosClient(false))
@@ -31,13 +31,16 @@ namespace AzureSkyMedia.WebApp.Controllers
                         if (!string.IsNullOrEmpty(jobTask.ProcessorDocumentId))
                         {
                             JObject processorConfig = cosmosClient.GetDocument(jobTask.ProcessorDocumentId);
-                            jobTask.ProcessorConfig = processorConfig.ToString();
+                            if (processorConfig != null)
+                            {
+                                jobTask.ProcessorConfig = processorConfig.ToString();
+                            }
                         }
                     }
                 }
             }
-            object result = Workflow.SubmitJob(authToken, mediaClient, null, inputAssets, mediaJob);
-            return Json(result);
+            object output = Workflow.SubmitJob(authToken, mediaClient, null, jobInputs, mediaJob);
+            return Json(output);
         }
 
         public IActionResult index()

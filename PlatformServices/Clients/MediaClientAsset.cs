@@ -7,8 +7,17 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public partial class MediaClient
+    internal partial class MediaClient
     {
+        private CloudBlockBlob CreateAssetFile(IAsset asset, BlobClient blobClient, string containerName, string fileName)
+        {
+            CloudBlockBlob blob = blobClient.GetBlob(containerName, null, fileName, true);
+            IAssetFile assetFile = asset.AssetFiles.Create(fileName);
+            assetFile.ContentFileSize = blob.Properties.Length;
+            assetFile.Update();
+            return blob;
+        }
+
         private IAsset[] GetAssets(string[] assetIds)
         {
             List<IAsset> assets = new List<IAsset>();
@@ -23,17 +32,17 @@ namespace AzureSkyMedia.PlatformServices
             return assets.ToArray();
         }
 
-        public MediaAsset[] GetAssets(string assetId)
+        public Asset[] GetAssets(string assetId)
         {
-            List<MediaAsset> assets = new List<MediaAsset>();
+            List<Asset> assets = new List<Asset>();
             if (string.IsNullOrEmpty(assetId))
             {
                 foreach (IAsset asset in _media.Assets)
                 {
                     if (asset.ParentAssets.Count == 0)
                     {
-                        MediaAsset mediaAsset = new MediaAsset(this, asset);
-                        assets.Add(mediaAsset);
+                        Asset assetNode = new Asset(this, asset);
+                        assets.Add(assetNode);
                     }
                 }
             }
@@ -44,8 +53,8 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     foreach (IAssetFile assetFile in rootAsset.AssetFiles)
                     {
-                        MediaAsset mediaFile = new MediaAsset(this, assetFile);
-                        assets.Add(mediaFile);
+                        Asset fileNode = new Asset(this, assetFile);
+                        assets.Add(fileNode);
                     }
                 }
                 foreach (IAsset asset in _media.Assets)
@@ -54,22 +63,13 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         if (string.Equals(parentAsset.Id, rootAsset.Id, StringComparison.OrdinalIgnoreCase))
                         {
-                            MediaAsset mediaAsset = new MediaAsset(this, asset);
-                            assets.Add(mediaAsset);
+                            Asset assetNode = new Asset(this, asset);
+                            assets.Add(assetNode);
                         }
                     }
                 }
             }
             return assets.ToArray();
-        }
-
-        private CloudBlockBlob CreateAssetFile(IAsset asset, BlobClient blobClient, string containerName, string fileName)
-        {
-            CloudBlockBlob blob = blobClient.GetBlob(containerName, null, fileName, true);
-            IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-            assetFile.ContentFileSize = blob.Properties.Length;
-            assetFile.Update();
-            return blob;
         }
 
         public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames)

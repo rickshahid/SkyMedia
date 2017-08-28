@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
@@ -9,39 +9,42 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
-        private string _authScheme = OpenIdConnectDefaults.AuthenticationScheme;
-
         public void signin(string subdomain)
         {
             AuthenticationProperties authProperties = new AuthenticationProperties();
             authProperties.Items.Add("SubDomain", subdomain);
-            HttpContext.Authentication.ChallengeAsync(_authScheme, authProperties).Wait();
+            HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
         public void profileedit(string subdomain)
         {
             AuthenticationProperties authProperties = new AuthenticationProperties();
             authProperties.Items.Add("SubDomain", subdomain);
-            HttpContext.Authentication.ChallengeAsync(_authScheme, authProperties).Wait();
+            HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
         public void passwordreset()
         {
-            AuthenticationProperties authProperties = new AuthenticationProperties();
-            HttpContext.Authentication.ChallengeAsync(_authScheme, authProperties).Wait();
+            HttpContext.ChallengeAsync().Wait();
+        }
+
+        public JsonResult clear(bool allEntities)
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            Account.DeleteEntities(authToken, allEntities);
+            return Json(true);
         }
 
         public IActionResult signout()
         {
-            HttpContext.Authentication.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme).Wait();
-            HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).Wait();
+            this.SignOut(OpenIdConnectDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("index", "home");
         }
 
         public IActionResult processors()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            ViewData["mediaProcessors"] = Processor.GetMediaProcessors(authToken, true);
+            ViewData["mediaProcessors"] = Processor.GetMediaProcessors(authToken, false);
             return View();
         }
 
@@ -58,17 +61,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             MediaClient mediaClient = new MediaClient(authToken);
             ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);
             return View();
-        }
-
-        public JsonResult clear(bool allEntities)
-        {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            string attributeName = Constant.UserAttribute.VideoIndexerKey;
-            string indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
-
-            MediaClient mediaClient = new MediaClient(authToken);
-            Account.ClearEntities(mediaClient, allEntities, indexerKey);
-            return Json(true);
         }
     }
 }

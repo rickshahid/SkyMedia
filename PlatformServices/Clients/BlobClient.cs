@@ -30,6 +30,15 @@ namespace AzureSkyMedia.PlatformServices
             _tracker = new EntityClient();
         }
 
+        private CloudBlobDirectory GetDirectory(CloudBlobContainer container, string directoryPath)
+        {
+            if (directoryPath.StartsWith("/"))
+            {
+                directoryPath = directoryPath.Remove(0, 1);
+            }
+            return container.GetDirectoryReference(directoryPath);
+        }
+
         private CloudBlobContainer GetContainer(string containerName, BlobContainerPublicAccessType publicAccess)
         {
             CloudBlobContainer container = _storage.GetContainerReference(containerName);
@@ -45,15 +54,6 @@ namespace AzureSkyMedia.PlatformServices
         public CloudBlobContainer GetContainer(string containerName)
         {
             return GetContainer(containerName, BlobContainerPublicAccessType.Off);
-        }
-
-        private CloudBlobDirectory GetDirectory(CloudBlobContainer container, string directoryPath)
-        {
-            if (directoryPath.StartsWith("/"))
-            {
-                directoryPath = directoryPath.Remove(0, 1);
-            }
-            return container.GetDirectoryReference(directoryPath);
         }
 
         public CloudBlockBlob GetBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)

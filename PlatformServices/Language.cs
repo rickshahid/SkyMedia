@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public static class Language
+    internal static class Language
     {
         public static string GetLanguageCode(string sourceUrl)
         {
@@ -28,9 +28,9 @@ namespace AzureSkyMedia.PlatformServices
             return languageCode;
         }
 
-        public static JObject GetSpokenLanguages(bool videoIndexer)
+        public static NameValueCollection GetSpokenLanguages(bool videoIndexer)
         {
-            JObject spokenLanguages = new JObject();
+            NameValueCollection spokenLanguages = new NameValueCollection();
             if (videoIndexer)
             {
                 spokenLanguages.Add("English", "English");
@@ -38,25 +38,25 @@ namespace AzureSkyMedia.PlatformServices
                 spokenLanguages.Add("French", "French");
                 spokenLanguages.Add("German", "German");
                 spokenLanguages.Add("Italian", "Italian");
-                spokenLanguages.Add("Chinese", "Chinese (Simplified)");
-                spokenLanguages.Add("Portuguese", "Portuguese (Brazilian)");
+                spokenLanguages.Add("Chinese", "Chinese");
+                spokenLanguages.Add("Portuguese", "Portuguese");
                 spokenLanguages.Add("Japanese", "Japanese");
                 spokenLanguages.Add("Russian", "Russian");
             }
             else
             {
-                spokenLanguages.Add("EnUs", "English");
-                spokenLanguages.Add("EnGb", "English (British)");
-                spokenLanguages.Add("EsEs", "Spanish");
-                spokenLanguages.Add("EsMx", "Spanish (Mexican)");
-                spokenLanguages.Add("ArEg", "Arabic (Egyptian)");
-                spokenLanguages.Add("ZhCn", "Chinese (Mandarin)");
-                spokenLanguages.Add("FrFr", "French");
-                spokenLanguages.Add("DeDe", "German");
-                spokenLanguages.Add("ItIt", "Italian");
-                spokenLanguages.Add("JaJp", "Japanese");
-                spokenLanguages.Add("PtBr", "Portuguese");
-                spokenLanguages.Add("RuRu", "Russian");
+                spokenLanguages.Add("English", "EnUs");
+                spokenLanguages.Add("English (British)", "EnGb");
+                spokenLanguages.Add("Spanish", "EsEs");
+                spokenLanguages.Add("Spanish (Mexican)", "EsMx");
+                spokenLanguages.Add("Arabic (Egyptian)", "ArEg");
+                spokenLanguages.Add("Chinese (Mandarin)", "ZhCn");
+                spokenLanguages.Add("French", "FrFr");
+                spokenLanguages.Add("German", "DeDe");
+                spokenLanguages.Add("Italian", "ItIt");
+                spokenLanguages.Add("Japanese", "JaJp");
+                spokenLanguages.Add("Portuguese", "PtBr");
+                spokenLanguages.Add("Russian", "RuRu");
             }
             return spokenLanguages;
         }
@@ -64,15 +64,13 @@ namespace AzureSkyMedia.PlatformServices
         public static string GetLanguageLabel(string languageCode)
         {
             string languageLabel = string.Empty;
-            JObject spokenLanguages = GetSpokenLanguages(false);
+            NameValueCollection languages = GetSpokenLanguages(false);
             languageCode = languageCode.Substring(0, 2);
-            IEnumerable<JProperty> properties = spokenLanguages.Properties();
-            foreach (JProperty property in properties)
+            foreach (string language in languages.Keys)
             {
-                string propertyCode = property.Name.Substring(0, 2);
-                if (string.Equals(propertyCode, languageCode, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(language.Substring(0, 2), languageCode, StringComparison.OrdinalIgnoreCase))
                 {
-                    languageLabel = property.Value.ToString();
+                    languageLabel = languages[language];
                 }
             }
             return languageLabel;

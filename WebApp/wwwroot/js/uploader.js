@@ -71,10 +71,10 @@ function AddAsperaFiles(e) {
     AddSelectedFiles(files);
 }
 function SigniantEnabled() {
-    return $("#uploadService[value='signiantFlight']").prop("checked");
+    return $(":radio[name='uploadService'][value='signiantFlight']").prop("checked");
 }
 function AsperaEnabled() {
-    return $("#uploadService[value='asperaFasp']").prop("checked");
+    return $(":radio[name='uploadService'][value='asperaFasp']").prop("checked");
 }
 function SetMultipleFileAsset() {
     var multipleFileAsset = false;

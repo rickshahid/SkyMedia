@@ -46,7 +46,7 @@ namespace AzureSkyMedia.PlatformServices
             if (table.Exists())
             {
                 TableQuery<T> query = new TableQuery<T>();
-                if (!string.IsNullOrEmpty(propertyValue))
+                if (!string.IsNullOrEmpty(propertyName))
                 {
                     string filter = TableQuery.GenerateFilterCondition(propertyName, filterOperation, propertyValue);
                     query = query.Where(filter);
@@ -182,14 +182,12 @@ namespace AzureSkyMedia.PlatformServices
             table.DeleteIfExists();
         }
 
-        public void PurgeEntities<T>(string tableName) where T : StorageEntity, new()
+        public void PurgeEntities<T>(string tableName, TimeSpan expirationTime) where T : StorageEntity, new()
         {
-            string propertyName = Constant.Storage.TableProperty.PartitionKey;
-            T[] entities = GetEntities<T>(tableName, propertyName, QueryComparisons.Equal, null);
+            T[] entities = GetEntities<T>(tableName, null, QueryComparisons.Equal, null);
             for (int i = entities.Length - 1; i >= 0; i--)
             {
-                TimeSpan expirationDays = new TimeSpan(Constant.Storage.TableProperty.EntityExpirationDays, 0, 0, 0);
-                DateTime expirationDate = DateTime.UtcNow.Subtract(expirationDays);
+                DateTime expirationDate = DateTime.UtcNow.Subtract(expirationTime);
                 if (entities[i].CreatedOn < expirationDate)
                 {
                     DeleteEntity(tableName, entities[i]);

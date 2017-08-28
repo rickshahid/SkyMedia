@@ -1,0 +1,102 @@
+﻿@section head {
+    <script type="text/javascript">
+        function GetCriteria() {
+            var searchCriteria = {
+                IndexId: $("#indexId").val(),
+                AssetId: $("#assetId").val(),
+                PublicVideo: $("#publicVideo").prop("checked"),
+                SearchPartition: $("#searchPartition").val(),
+                TextScope: $("#textScope").val(),
+                TextQuery: $("#textQuery").val(),
+                Owner: $("#owner").val(),
+                Face: $("#face").val(),
+                Language: $("#language").val(),
+                PageSize: 0,
+                SkipCount: 0
+            };
+            return searchCriteria;
+        }
+        function SubmitSearch() {
+            $.post("/search/library",
+                {
+                    searchCriteria: GetCriteria()
+                },
+                function (results) {
+                }
+            );
+        }
+        $(function () {
+            $("#indexId").focus();
+        })
+    </script>
+}
+
+@section title {
+    Media Library Search
+}
+
+<table class="librarySearch">
+    <tr>
+        <td class="inputLabel">
+            Index Id
+        </td>
+        <td>
+            @Html.TextBox("indexId")
+        </td>
+        <td class="inputLabel">
+            Asset Id
+        </td>
+        <td>
+            @Html.TextBox("assetId")
+        </td>
+        <td class="inputLabel">
+            Public Video
+        </td>
+        <td>
+            @Html.CheckBox("publicVideo")
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Search Partition
+        </td>
+        <td>
+            @Html.TextBox("searchPartition")
+        </td>
+        <td class="inputLabel">
+            Text Scope
+        </td>
+        <td>
+            @Html.TextBox("textScope")
+        </td>
+        <td class="inputLabel">
+            Text Query
+        </td>
+        <td>
+            @Html.TextBox("textQuery")
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Owner
+        </td>
+        <td>
+            @Html.TextBox("owner")
+        </td>
+        <td class="inputLabel">
+            Face
+        </td>
+        <td>
+            @Html.TextBox("face")
+        </td>
+        <td class="inputLabel">
+            Language
+        </td>
+        <td>
+            @Html.DropDownList("language", ViewData["indexerLanguages"] as SelectListItem[])
+        </td>
+    </tr>
+</table>
+<div class="viewButtons">
+    @Html.Partial("SiteButton", new string[] { "mediaLibrarySearch", "MediaSearch.png", "SubmitSearch()" })
+</div>

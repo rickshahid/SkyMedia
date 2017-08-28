@@ -16,7 +16,7 @@
             );
         }
         function ConfirmClear() {
-            var title = "Confirm Media Account Clear (Permanent Media Entity Deletion)";
+            var title = "Confirm Media Account Clear (Permanent Content Deletion)";
             var message = "Do you want to delete all entities or only child assets in your media account?";
             var buttons = {
                 "All Entities": function () {
@@ -34,7 +34,7 @@
             DisplayMessage(title, message, buttons);
         }
         $(function () {
-            LoadTreeNodes(false);
+            LoadTreeNodes(true);
             CreateTipTop("accountInventory", "Media Account Inventory");
             CreateTipTop("accountClear", "Clear Media Account");
         })

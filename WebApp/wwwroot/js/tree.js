@@ -1,4 +1,4 @@
-﻿function LoadTreeNodes(workflowView) {
+﻿function LoadTreeNodes(libraryView) {
     $("#mediaAssets").jstree({
         "core": {
             "themes": {
@@ -13,7 +13,7 @@
                 }
             }
         },
-        "plugins": workflowView ? ["checkbox"] : [],
+        "plugins": libraryView ? [] : ["checkbox"],
         "checkbox": {
             "keep_selected_style": false,
             "tie_selection": false,

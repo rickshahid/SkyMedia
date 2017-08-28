@@ -6,7 +6,7 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public partial class MediaClient
+    internal partial class MediaClient
     {
         private void CreateProgram(IChannel channel, IAsset asset)
         {
@@ -94,9 +94,9 @@ namespace AzureSkyMedia.PlatformServices
             return _media.Channels.Create(channelOptions);
         }
 
-        public void CreateChannel(string channelName, MediaEncoding encodingType, string allowedAddresses)
+        public string CreateChannel(string channelName, MediaEncoding channelEncoding, string allowedAddresses)
         {
-            ChannelEncodingType channelType = (ChannelEncodingType)Enum.Parse(typeof(ChannelEncodingType), encodingType.ToString());
+            ChannelEncodingType channelType = (ChannelEncodingType)Enum.Parse(typeof(ChannelEncodingType), channelEncoding.ToString());
             StreamingProtocol ingestProtocol = StreamingProtocol.RTMP;
             IChannel channel = CreateChannel(channelName, channelType, ingestProtocol, allowedAddresses);
             CreatePrograms(channel);
@@ -104,6 +104,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 CreateLocator(LocatorType.OnDemandOrigin, program.Asset);
             }
+            return channel.Id;
         }
     }
 }

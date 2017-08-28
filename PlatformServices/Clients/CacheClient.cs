@@ -8,7 +8,7 @@ using StackExchange.Redis;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class CacheClient
+    internal class CacheClient
     {
         private static Lazy<ConnectionMultiplexer> _service = new Lazy<ConnectionMultiplexer>(() =>
         {

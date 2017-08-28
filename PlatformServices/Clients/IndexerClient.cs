@@ -5,145 +5,234 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class IndexerClient
+    internal class IndexerClient
     {
         private WebClient _indexer;
-        private string _serviceUri;
+        private string _serviceUrl;
+        private string _accountName;
 
-        public IndexerClient(string indexerKey)
+        public IndexerClient(string authToken, string accountName, string indexerKey)
         {
-            _indexer = new WebClient(indexerKey);
-            string settingKey = Constant.AppSettingKey.AzureMediaIndexer;
-            _serviceUri = AppSetting.GetValue(settingKey);
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                string attributeName = Constant.UserAttribute.MediaAccountName;
+                accountName = AuthToken.GetClaimValue(authToken, attributeName);
+
+                attributeName = Constant.UserAttribute.VideoIndexerKey;
+                indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
+            }
+
+            if (!string.IsNullOrEmpty(indexerKey))
+            {
+                _indexer = new WebClient(indexerKey);
+            }
+
+            string settingKey = Constant.AppSettingKey.MediaIndexerServiceUrl;
+            _serviceUrl = AppSetting.GetValue(settingKey);
+            _accountName = accountName;
+        }
+
+        private string GetPrivacy(bool publicVideo)
+        {
+            return publicVideo ? "public" : "private";
+        }
+
+        private string GetCallbackUrl()
+        {
+            string settingKey = Constant.AppSettingKey.MediaPublishInsightsUrl;
+            string callbackUrl = AppSetting.GetValue(settingKey);
+            callbackUrl = string.Format(callbackUrl, _accountName);
+            return WebUtility.UrlEncode(callbackUrl);
         }
 
         public JArray GetAccounts()
         {
-            JArray accounts;
-            string requestUri = string.Concat(_serviceUri, "/Accounts");
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
+            JArray accounts = null;
+            if (_indexer != null)
             {
-                accounts = _indexer.GetResponse<JArray>(request);
+                string requestUrl = string.Concat(_serviceUrl, "/Accounts");
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+                {
+                    accounts = _indexer.GetResponse<JArray>(request);
+                }
             }
             return accounts;
         }
 
-        public string GetInsightsUrl(string indexId, string assetId)
+        public string GetInsightsUrl(string indexId)
         {
-            string insightsUrl;
-            string requestUri = _serviceUri;
-            if (!string.IsNullOrEmpty(assetId))
+            string url = string.Empty;
+            if (_indexer != null)
             {
-                requestUri = string.Concat(requestUri, "/Breakdowns/GetInsightsWidgetUrlByExternalId?", assetId, "&");
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/InsightsWidgetUrl");
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+                {
+                    url = _indexer.GetResponse<string>(request);
+                }
             }
-            else
-            {
-                requestUri = string.Concat(requestUri, "/Breakdowns/", indexId, "/InsightsWidgetUrl?");
-            }
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
-            {
-                insightsUrl = _indexer.GetResponse<string>(request);
-            }
-            return insightsUrl;
+            return url;
         }
 
         public string GetWebVttUrl(string indexId, string spokenLanguage)
         {
-            string webVttUrl;
-            string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId, "/VttUrl");
-            if (!string.IsNullOrEmpty(spokenLanguage))
+            string url = string.Empty;
+            if (_indexer != null)
             {
-                requestUri = string.Concat(requestUri, "?", spokenLanguage);
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/VttUrl");
+                if (!string.IsNullOrEmpty(spokenLanguage))
+                {
+                    requestUrl = string.Concat(requestUrl, "?", spokenLanguage);
+                }
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+                {
+                    url = _indexer.GetResponse<string>(request);
+                }
             }
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
+            return url;
+        }
+
+        public string GetIndexId(string assetId)
+        {
+            string indexId = string.Empty;
+            if (_indexer != null)
             {
-                webVttUrl = _indexer.GetResponse<string>(request);
+                MediaSearchCriteria searchCriteria = new MediaSearchCriteria()
+                {
+                    AssetId = assetId
+                };
+                JObject results = Search(searchCriteria);
+                if (results != null)
+                {
+
+                }
             }
-            return webVttUrl;
+            return indexId;
         }
 
         public JObject GetIndex(string indexId, string spokenLanguage, bool processingState)
         {
-            JObject index;
-            string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId);
-            if (!string.IsNullOrEmpty(spokenLanguage))
+            JObject index = null;
+            if (_indexer != null)
             {
-                requestUri = string.Concat(requestUri, "?", spokenLanguage);
-            }
-            else if (processingState)
-            {
-                requestUri = string.Concat(requestUri, "/State");
-            }
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
-            {
-                index = _indexer.GetResponse<JObject>(request);
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId);
+                if (!string.IsNullOrEmpty(spokenLanguage))
+                {
+                    requestUrl = string.Concat(requestUrl, "?", spokenLanguage);
+                }
+                else if (processingState)
+                {
+                    requestUrl = string.Concat(requestUrl, "/State");
+                }
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+                {
+                    index = _indexer.GetResponse<JObject>(request);
+                }
             }
             return index;
         }
 
-        public void ResetIndex(string assetId, string indexId)
+        public void ResetIndex(string indexId)
         {
-            string requestUri = _serviceUri;
-            if (!string.IsNullOrEmpty(assetId))
+            if (_indexer != null)
             {
-                requestUri = string.Concat(requestUri, "/Breakdowns/reindexbyexternalid/", assetId);
-            }
-            else
-            {
-                requestUri = string.Concat(requestUri, "/Breakdowns/reindex/", indexId);
-            }
-            //requestUri = string.Concat(requestUri, "?", callbackUrl);
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Put, requestUri))
-            {
-                _indexer.GetResponse<JObject>(request);
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/reindex/", indexId);
+                requestUrl = string.Concat(requestUrl, "?callbackUrl=", GetCallbackUrl());
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Put, requestUrl))
+                {
+                    _indexer.GetResponse<object>(request);
+                }
             }
         }
 
-        public string UploadVideo(string videoName, MediaPrivacy videoPrivacy, string transcriptLanguage, string searchPartition,
-                                  string externalId, string locatorUrl, string callbackUrl)
+        public string UploadVideo(string displayName, bool publicVideo, string transcriptLanguage, string searchPartition, string externalId, string locatorUrl)
         {
-            string indexId;
-            string requestUri = string.Concat(_serviceUri, "/Breakdowns");
-            requestUri = string.Concat(requestUri, "?name=", videoName);
-            requestUri = string.Concat(requestUri, "&privacy=", videoPrivacy.ToString());
-            requestUri = string.Concat(requestUri, "&language=", transcriptLanguage);
-            requestUri = string.Concat(requestUri, "&partition=", searchPartition);
-            requestUri = string.Concat(requestUri, "&externalId=", externalId);
-            requestUri = string.Concat(requestUri, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
-            requestUri = string.Concat(requestUri, "&callbackUrl=", WebUtility.UrlEncode(callbackUrl));
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUri))
+            string indexId = string.Empty;
+            if (_indexer != null)
             {
-                indexId = _indexer.GetResponse<string>(request);
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
+                requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(displayName));
+                requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(publicVideo));
+                requestUrl = string.Concat(requestUrl, "&language=", transcriptLanguage);
+                requestUrl = string.Concat(requestUrl, "&partition=", searchPartition);
+                requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(externalId));
+                requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
+                requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUrl))
+                {
+                    indexId = _indexer.GetResponse<string>(request);
+                }
             }
             return indexId;
         }
 
         public void DeleteVideo(string indexId, bool deleteInsights)
         {
-            string requestUri = string.Concat(_serviceUri, "/Breakdowns/", indexId);
-            if (deleteInsights)
+            if (_indexer != null)
             {
-                requestUri = string.Concat(requestUri, "?deleteInsights");
-            }
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Delete, requestUri))
-            {
-                _indexer.GetResponse<string>(request);
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId);
+                if (deleteInsights)
+                {
+                    requestUrl = string.Concat(requestUrl, "?deleteInsights");
+                }
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Delete, requestUrl))
+                {
+                    _indexer.GetResponse<object>(request);
+                }
             }
         }
 
-        public JArray Search(MediaPrivacy privacy, string indexId)
+        public JObject Search(MediaSearchCriteria serviceCriteria)
         {
-            JArray searchResults;
-            string requestUri = string.Concat(_serviceUri, "/Breakdowns/Search?privacy=", privacy.ToString());
-            if (!string.IsNullOrEmpty(indexId))
+            JObject results = null;
+            if (_indexer != null)
             {
-                requestUri = string.Concat(requestUri, "&id=", indexId);
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/Search?privacy=", GetPrivacy(serviceCriteria.PublicVideo));
+                if (!string.IsNullOrEmpty(serviceCriteria.IndexId))
+                {
+                    requestUrl = string.Concat(requestUrl, "&id=", serviceCriteria.IndexId);
+                }
+                if (!string.IsNullOrEmpty(serviceCriteria.AssetId))
+                {
+                    requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(serviceCriteria.AssetId));
+                }
+                if (!string.IsNullOrEmpty(serviceCriteria.SearchPartition))
+                {
+                    requestUrl = string.Concat(requestUrl, "&partition=", serviceCriteria.SearchPartition);
+                }
+                if (!string.IsNullOrEmpty(serviceCriteria.TextScope))
+                {
+                    requestUrl = string.Concat(requestUrl, "&textScope=", serviceCriteria.TextScope);
+                }
+                if (!string.IsNullOrEmpty(serviceCriteria.TextQuery))
+                {
+                    requestUrl = string.Concat(requestUrl, "&query=", serviceCriteria.TextQuery);
+                }
+                if (!string.IsNullOrEmpty(serviceCriteria.Owner))
+                {
+                    requestUrl = string.Concat(requestUrl, "&owner=", serviceCriteria.Owner);
+                }
+                if (!string.IsNullOrEmpty(serviceCriteria.Face))
+                {
+                    requestUrl = string.Concat(requestUrl, "&face=", serviceCriteria.Face);
+                }
+                if (!string.IsNullOrEmpty(serviceCriteria.Language))
+                {
+                    requestUrl = string.Concat(requestUrl, "&language=", serviceCriteria.Language);
+                }
+                if (serviceCriteria.PageSize > 0)
+                {
+                    requestUrl = string.Concat(requestUrl, "&pageSize=", serviceCriteria.PageSize.ToString());
+                }
+                if (serviceCriteria.SkipCount > 0)
+                {
+                    requestUrl = string.Concat(requestUrl, "&skip=", serviceCriteria.SkipCount.ToString());
+                }
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+                {
+                    results = _indexer.GetResponse<JObject>(request);
+                }
             }
-            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUri))
-            {
-                searchResults = _indexer.GetResponse<JArray>(request);
-            }
-            return searchResults;
+            return results;
         }
     }
 }

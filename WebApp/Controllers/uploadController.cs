@@ -11,24 +11,24 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         public JsonResult storage(TransferService transferService, string storageAccount, string[] filePaths)
         {
+            object storage = null;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            string accountKey = Storage.GetUserAccountKey(authToken, storageAccount);
             string containerName = Constant.Storage.Blob.Container.Upload;
             Storage.CreateContainer(authToken, storageAccount, containerName);
-            object result = null;
+            string storageAccountKey = Storage.GetAccountKey(authToken, storageAccount);
             switch (transferService)
             {
                 case TransferService.SigniantFlight:
-                    string storageContainer = string.Format(Constant.Storage.Partner.SigniantContainer, storageAccount, accountKey, containerName);
-                    result = string.Concat("{", storageContainer, "}");
+                    string storageContainer = string.Format(Constant.Storage.Partner.SigniantContainer, storageAccount, storageAccountKey, containerName);
+                    storage = string.Concat("{", storageContainer, "}");
                     break;
                 case TransferService.AsperaFasp:
                     AsperaClient asperaClient = new AsperaClient(authToken);
-                    storageContainer = string.Format(Constant.Storage.Partner.AsperaContainer, storageAccount, WebUtility.UrlEncode(accountKey));
-                    result = asperaClient.GetTransferSpecs(storageContainer, containerName, filePaths, false);
+                    storageContainer = string.Format(Constant.Storage.Partner.AsperaContainer, storageAccount, WebUtility.UrlEncode(storageAccountKey));
+                    storage = asperaClient.GetTransferSpecs(storageContainer, containerName, filePaths, false);
                     break;
             } 
-            return Json(result);
+            return Json(storage);
         }
 
         public JsonResult file(string name, int chunk, int chunks, string storageAccount)

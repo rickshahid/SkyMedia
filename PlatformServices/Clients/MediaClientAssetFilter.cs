@@ -4,7 +4,7 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public partial class MediaClient
+    internal partial class MediaClient
     {
         public IStreamingAssetFilter CreateFilter(IAsset asset, string filterName, int markIn, int markOut)
         {

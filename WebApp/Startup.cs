@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,7 @@ namespace AzureSkyMedia.WebApp
         {
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.SetBasePath(env.ContentRootPath);
-            configBuilder.AddJsonFile(Constant.ConfigFile, false, true);
+            configBuilder.AddJsonFile(Constant.AppSettingFile, false, true);
             configBuilder.AddEnvironmentVariables();
             if (env.IsDevelopment())
             {
@@ -36,10 +37,11 @@ namespace AzureSkyMedia.WebApp
             if (!string.IsNullOrEmpty(appInsightsKey))
             {
                 configBuilder.AddApplicationInsightsSettings(instrumentationKey: appInsightsKey);
+                AppSetting.ConfigRoot = configBuilder.Build();
             }
         }
 
-        private Info GetApiInfo()
+        private void SetSwaggerOptions(SwaggerGenOptions options)
         {
             Info apiInfo = new Info();
             string settingKey = Constant.AppSettingKey.AppApiTitle;
@@ -48,16 +50,10 @@ namespace AzureSkyMedia.WebApp
             apiInfo.Description = AppSetting.GetValue(settingKey);
             settingKey = Constant.AppSettingKey.AppApiVersion;
             apiInfo.Version = AppSetting.GetValue(settingKey);
-            return apiInfo;
-        }
-
-        private void SetApiOptions(SwaggerGenOptions options)
-        {
-            Info apiInfo = GetApiInfo();
             options.SwaggerDoc(apiInfo.Version, apiInfo);
         }
 
-        private void SetApiOptions(SwaggerUIOptions options)
+        private void SetSwaggerOptions(SwaggerUIOptions options)
         {
             string settingKey = Constant.AppSettingKey.AppApiEndpointUrl;
             string endpointUrl = AppSetting.GetValue(settingKey);
@@ -68,18 +64,10 @@ namespace AzureSkyMedia.WebApp
             options.ShowJsonEditor();
         }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddApplicationInsightsTelemetry(AppSetting.ConfigRoot);
-            services.AddAuthentication(options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
-            services.AddMvc();
-            services.AddSwaggerGen(SetApiOptions);
-        }
-
         private static string GetPolicyId(RedirectContext context)
         {
-            string settingKey = null;
             string policyId = string.Empty;
+            string settingKey = string.Empty;
             string[] requestPath = context.Request.Path.Value.Split('/');
             string requestAction = requestPath[requestPath.Length - 1].ToLower();
             switch (requestAction)
@@ -102,7 +90,7 @@ namespace AzureSkyMedia.WebApp
                     string subDomain = context.Properties.Items["SubDomain"];
                     if (!string.IsNullOrEmpty(subDomain))
                     {
-                        subDomain = char.ToUpper(subDomain[0]) + subDomain.Substring(1);
+                        subDomain = string.Concat(char.ToUpper(subDomain[0]), subDomain.Substring(1));
                         policyId = string.Concat(policyId, subDomain);
                     }
                 }
@@ -125,7 +113,7 @@ namespace AzureSkyMedia.WebApp
             return Task.FromResult(0);
         }
 
-        public static RedirectToActionResult OnSignIn(string authToken, ControllerBase controller)
+        internal static RedirectToActionResult OnSignIn(string authToken, ControllerBase controller)
         {
             CacheClient cacheClient = new CacheClient(authToken);
             string itemKey = Constant.Cache.ItemKey.MediaProcessors;
@@ -140,41 +128,48 @@ namespace AzureSkyMedia.WebApp
             return redirectAction;
         }
 
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddApplicationInsightsTelemetry(AppSetting.ConfigRoot);
+            AuthenticationBuilder authBuilder = services.AddAuthentication(authOptions =>
+            {
+                authOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            });
+            authBuilder.AddOpenIdConnect(openIdOptions =>
+            {
+                string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+                openIdOptions.Authority = AppSetting.ConfigRoot[settingKey];
+
+                settingKey = Constant.AppSettingKey.DirectoryClientId;
+                openIdOptions.ClientId = AppSetting.ConfigRoot[settingKey];
+
+                settingKey = Constant.AppSettingKey.DirectoryClientSecret;
+                openIdOptions.ClientSecret = AppSetting.ConfigRoot[settingKey];
+
+                openIdOptions.Events = new OpenIdConnectEvents
+                {
+                    OnRedirectToIdentityProvider = OnAuthenticationRedirect
+                };
+            });
+            services.AddMvc();
+            services.AddSwaggerGen(SetSwaggerOptions);
+        }
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory log)
         {
             IConfigurationSection loggingSection = AppSetting.ConfigRoot.GetSection("Logging");
             log.AddConsole(loggingSection);
             log.AddDebug();
-
-            OpenIdConnectOptions openIdOptions = new OpenIdConnectOptions();
-            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-            openIdOptions.Authority = AppSetting.ConfigRoot[settingKey];
-
-            settingKey = Constant.AppSettingKey.DirectoryClientId;
-            openIdOptions.ClientId = AppSetting.ConfigRoot[settingKey];
-
-            settingKey = Constant.AppSettingKey.DirectoryClientSecret;
-            openIdOptions.ClientSecret = AppSetting.ConfigRoot[settingKey];
-
-            openIdOptions.Events = new OpenIdConnectEvents
-            {
-                OnRedirectToIdentityProvider = OnAuthenticationRedirect
-            };
-
             if (!env.IsProduction())
             {
                 app.UseDeveloperExceptionPage();
             }
-            if (env.IsDevelopment())
-            {
-                app.UseBrowserLink();
-            }
             app.UseStaticFiles();
-            app.UseCookieAuthentication();
-            app.UseOpenIdConnectAuthentication(openIdOptions);
+            app.UseAuthentication();
             app.UseMvcWithDefaultRoute();
             app.UseSwagger();
-            app.UseSwaggerUI(SetApiOptions);
+            app.UseSwaggerUI(SetSwaggerOptions);
         }
     }
 }

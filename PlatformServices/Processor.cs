@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public static class Processor
+    internal static class Processor
     {
         private static MediaProcessor?[] GetMediaProcessors(string authToken)
         {
@@ -14,67 +14,10 @@ namespace AzureSkyMedia.PlatformServices
             if (mediaProcessors.Length == 0)
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor, authToken) as MediaProcessor?[];
+                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor) as MediaProcessor?[];
                 cacheClient.SetValue<MediaProcessor?[]>(itemKey, mediaProcessors);
             }
             return mediaProcessors;
-        }
-
-        internal static MediaProcessor? GetMediaProcessor(string processorId)
-        {
-            MediaProcessor? mediaProcessor = null;
-            switch (processorId)
-            {
-                case Constant.Media.ProcessorId.EncoderStandard:
-                    mediaProcessor = MediaProcessor.EncoderStandard;
-                    break;
-                case Constant.Media.ProcessorId.EncoderPremium:
-                    mediaProcessor = MediaProcessor.EncoderPremium;
-                    break;
-                case Constant.Media.ProcessorId.EncoderUltra:
-                    mediaProcessor = MediaProcessor.EncoderUltra;
-                    break;
-                case Constant.Media.ProcessorId.VideoIndexer:
-                    mediaProcessor = MediaProcessor.VideoIndexer;
-                    break;
-                case Constant.Media.ProcessorId.VideoAnnotation:
-                    mediaProcessor = MediaProcessor.VideoAnnotation;
-                    break;
-                case Constant.Media.ProcessorId.VideoSummarization:
-                    mediaProcessor = MediaProcessor.VideoSummarization;
-                    break;
-                case Constant.Media.ProcessorId.SpeechToText:
-                    mediaProcessor = MediaProcessor.SpeechToText;
-                    break;
-                case Constant.Media.ProcessorId.FaceDetection:
-                    mediaProcessor = MediaProcessor.FaceDetection;
-                    break;
-                case Constant.Media.ProcessorId.FaceRedaction:
-                    mediaProcessor = MediaProcessor.FaceRedaction;
-                    break;
-                case Constant.Media.ProcessorId.MotionDetection:
-                    mediaProcessor = MediaProcessor.MotionDetection;
-                    break;
-                case Constant.Media.ProcessorId.MotionHyperlapse:
-                    mediaProcessor = MediaProcessor.MotionHyperlapse;
-                    break;
-                case Constant.Media.ProcessorId.MotionStabilization:
-                    mediaProcessor = MediaProcessor.MotionStabilization;
-                    break;
-                case Constant.Media.ProcessorId.CharacterRecognition:
-                    mediaProcessor = MediaProcessor.CharacterRecognition;
-                    break;
-                case Constant.Media.ProcessorId.ContentModeration:
-                    mediaProcessor = MediaProcessor.ContentModeration;
-                    break;
-            }
-            return mediaProcessor;
-        }
-
-        internal static string GetProcessorName(MediaProcessor mediaProcessor)
-        {
-            string processorName = mediaProcessor.ToString();
-            return Regex.Replace(processorName, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
         }
 
         internal static string GetProcessorId(MediaProcessor mediaProcessor)
@@ -128,23 +71,13 @@ namespace AzureSkyMedia.PlatformServices
             return processorId;
         }
 
-        internal static string[] GetProcessorIds(string authToken)
+        internal static string[] GetProcessorIds()
         {
-            string indexerKey = string.Empty;
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                string attributeName = Constant.UserAttribute.VideoIndexerKey;
-                indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
-            }
-
             List<string> processorIds = new List<string>();
             processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
             processorIds.Add(Constant.Media.ProcessorId.EncoderPremium);
             processorIds.Add(Constant.Media.ProcessorId.EncoderUltra);
-            if (!string.IsNullOrEmpty(indexerKey))
-            {
-                processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
-            }
+            processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
             processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
             processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
             processorIds.Add(Constant.Media.ProcessorId.SpeechToText);
@@ -158,13 +91,19 @@ namespace AzureSkyMedia.PlatformServices
             return processorIds.ToArray();
         }
 
-        public static object GetMediaProcessors(string authToken, bool inventoryView)
+        public static string GetProcessorName(MediaProcessor mediaProcessor)
+        {
+            string processorName = mediaProcessor.ToString();
+            return Regex.Replace(processorName, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
+        }
+
+        public static object GetMediaProcessors(string authToken, bool mappedView)
         {
             object mediaProcessors;
-            if (inventoryView)
+            if (mappedView)
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor);
+                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor, mappedView);
             }
             else
             {
@@ -181,6 +120,57 @@ namespace AzureSkyMedia.PlatformServices
                 mediaProcessors = processorNames;
             }
             return mediaProcessors;
+        }
+
+        public static MediaProcessor? GetMediaProcessor(string processorId)
+        {
+            MediaProcessor? mediaProcessor = null;
+            switch (processorId)
+            {
+                case Constant.Media.ProcessorId.EncoderStandard:
+                    mediaProcessor = MediaProcessor.EncoderStandard;
+                    break;
+                case Constant.Media.ProcessorId.EncoderPremium:
+                    mediaProcessor = MediaProcessor.EncoderPremium;
+                    break;
+                case Constant.Media.ProcessorId.EncoderUltra:
+                    mediaProcessor = MediaProcessor.EncoderUltra;
+                    break;
+                case Constant.Media.ProcessorId.VideoIndexer:
+                    mediaProcessor = MediaProcessor.VideoIndexer;
+                    break;
+                case Constant.Media.ProcessorId.VideoAnnotation:
+                    mediaProcessor = MediaProcessor.VideoAnnotation;
+                    break;
+                case Constant.Media.ProcessorId.VideoSummarization:
+                    mediaProcessor = MediaProcessor.VideoSummarization;
+                    break;
+                case Constant.Media.ProcessorId.SpeechToText:
+                    mediaProcessor = MediaProcessor.SpeechToText;
+                    break;
+                case Constant.Media.ProcessorId.FaceDetection:
+                    mediaProcessor = MediaProcessor.FaceDetection;
+                    break;
+                case Constant.Media.ProcessorId.FaceRedaction:
+                    mediaProcessor = MediaProcessor.FaceRedaction;
+                    break;
+                case Constant.Media.ProcessorId.MotionDetection:
+                    mediaProcessor = MediaProcessor.MotionDetection;
+                    break;
+                case Constant.Media.ProcessorId.MotionHyperlapse:
+                    mediaProcessor = MediaProcessor.MotionHyperlapse;
+                    break;
+                case Constant.Media.ProcessorId.MotionStabilization:
+                    mediaProcessor = MediaProcessor.MotionStabilization;
+                    break;
+                case Constant.Media.ProcessorId.CharacterRecognition:
+                    mediaProcessor = MediaProcessor.CharacterRecognition;
+                    break;
+                case Constant.Media.ProcessorId.ContentModeration:
+                    mediaProcessor = MediaProcessor.ContentModeration;
+                    break;
+            }
+            return mediaProcessor;
         }
     }
 }

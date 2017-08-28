@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c6b96a12-465b-4ef5-a148-a0e4690fb75e")]
+[assembly: Guid("1740662d-ca82-40f4-9623-5f86fda9c109")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -33,3 +34,6 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+[assembly: InternalsVisibleTo("AzureSkyMedia.WebApp")]
+[assembly: InternalsVisibleTo("AzureSkyMedia.FunctionApp")]

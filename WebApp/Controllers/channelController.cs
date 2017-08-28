@@ -4,19 +4,20 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    [Route("[controller]")]
     public class channelController : Controller
     {
-        [HttpPut]
-        [Route("/create")]
-        public void Create(string channelName, MediaEncoding encodingType, string allowedAddresses)
+        [HttpPost]
+        [Route("/channel/create")]
+        public string Create(string channelName, MediaEncoding channelEncoding, string allowedAddresses)
         {
+            string channelId = string.Empty;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                mediaClient.CreateChannel(channelName, encodingType, allowedAddresses);
+                channelId = mediaClient.CreateChannel(channelName, channelEncoding, allowedAddresses);
             }
+            return channelId;
         }
     }
 }

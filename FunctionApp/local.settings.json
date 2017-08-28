@@ -1,7 +1,7 @@
 {
-    "IsEncrypted": false,
-    "Values": {
-        "AzureWebJobsStorage": "",
-        "AzureWebJobsDashboard": ""
-    }
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=skystorageuswest0;AccountKey=OtoHg2Rcxpf0m2szz+dCg9q7QhWC459c1QeLejUaDuMUrIDhUl5La8jwSJJX21ch+9vWvue5Q8yYCqVStjwChA==",
+    "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=skystorageuswest0;AccountKey=OtoHg2Rcxpf0m2szz+dCg9q7QhWC459c1QeLejUaDuMUrIDhUl5La8jwSJJX21ch+9vWvue5Q8yYCqVStjwChA=="
+  }
 }
