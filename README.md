@@ -1,6 +1,6 @@
 # Azure Sky Media
 
-Welcome! This repository contains the multi-tenant sample Azure media solution that is deployed at http://www.skymedia.io
+Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.io
 
 As an example, here is an introductory Azure Media Services stream playing within the site via Azure Media Player integration.
 
