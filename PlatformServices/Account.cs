@@ -148,7 +148,7 @@ namespace AzureSkyMedia.PlatformServices
             IAssetFile[] files = mediaClient.GetEntities(MediaEntity.File) as IAssetFile[];
             IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
             IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
-            MediaProcessor?[] processors = mediaClient.GetEntities(MediaEntity.Processor, true) as MediaProcessor?[];
+            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
             IEncodingReservedUnit[] processorUnits = mediaClient.GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
             IJobTemplate[] jobTemplates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
             IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];

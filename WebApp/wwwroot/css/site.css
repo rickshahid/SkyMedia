@@ -92,6 +92,10 @@ body {
     width: 60px;
 }
 
+.siteButton.layoutButton.sideTop {
+    margin-top: -10px;
+}
+
 .siteLink {
     text-decoration: none;
     color: deepskyblue;

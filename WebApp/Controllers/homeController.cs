@@ -38,7 +38,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 Value = string.Empty
             };
             mediaProcessors.Add(mediaProcessor);
-            NameValueCollection processors = Processor.GetMediaProcessors(authToken, true) as NameValueCollection;
+            NameValueCollection processors = Processor.GetMediaProcessors(authToken, false) as NameValueCollection;
             foreach (string processor in processors)
             {
                 mediaProcessor = new SelectListItem()

@@ -21,14 +21,14 @@ function SetLayout() {
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("botService", "Azure Bot Service");
     CreateTipLeft("batchRendering", "Azure Batch Rendering");
-    CreateTipTop("mediaUpload", "Media File Upload");
-    CreateTipTop("mediaWorkflow", "Media Asset Workflow");
-    CreateTipTop("mediaLibrary", "Media Asset Library");
+    CreateTipTop("mediaFileUpload", "Media File Upload");
+    CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
+    CreateTipTop("mediaAssetLibrary", "Media Asset Library");
     CreateTipTop("mediaStreamLeft", "Stream Tuner Left");
     CreateTipTop("mediaStreamRight", "Stream Tuner Right");
-    CreateTipTop("mediaSearch", "Media Library Search");
-    CreateTipTop("mediaLive", "Media Live Stream");
-    CreateTipTop("mediaBot", "Viddy Media Bot");
+    CreateTipTop("mediaSearchLibrary", "Media Library Search");
+    CreateTipTop("mediaStreamLive", "Media Live Stream");
+    CreateTipTop("mediaBotViddy", "Viddy Media Bot");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
@@ -10,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public object GetEntities(MediaEntity entityType, bool mappedView)
+        public object GetEntities(MediaEntity entityType)
         {
             object entities = null;
             switch (entityType)
@@ -66,32 +65,6 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.Processor:
                     entities = (from x in _media.MediaProcessors
                                 select x).ToArray();
-                    if (mappedView)
-                    {
-                        IMediaProcessor[] mediaEntities = entities as IMediaProcessor[];
-                        List<MediaProcessor?> mediaProcessors = new List<MediaProcessor?>();
-                        string[] processorIds = Processor.GetProcessorIds();
-                        foreach (string processorId in processorIds)
-                        {
-                            if (!processorId.StartsWith(Constant.Media.ProcessorId.Prefix, StringComparison.OrdinalIgnoreCase))
-                            {
-                                MediaProcessor mediaProcessor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), processorId);
-                                mediaProcessors.Add(mediaProcessor);
-                            }
-                            else
-                            {
-                                foreach (IMediaProcessor mediaEntity in mediaEntities)
-                                {
-                                    if (string.Equals(processorId, mediaEntity.Id, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(mediaEntity.Id);
-                                        mediaProcessors.Add(mediaProcessor);
-                                    }
-                                }
-                            }
-                        }
-                        entities = mediaProcessors.ToArray();
-                    }
                     break;
                 case MediaEntity.ProcessorUnit:
                     entities = (from x in _media.EncodingReservedUnits
@@ -131,11 +104,6 @@ namespace AzureSkyMedia.PlatformServices
                     break;
             }
             return entities;
-        }
-
-        public object GetEntities(MediaEntity entityType)
-        {
-            return GetEntities(entityType, false);
         }
 
         public object GetEntityById(MediaEntity entityType, string entityId)
