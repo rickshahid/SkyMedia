@@ -2,9 +2,9 @@
 
 Welcome! This repository contains the sample Azure media web application that is deployed at http://www.skymedia.io
 
-Here is an intro Azure Media Services stream playing with Azure Media Player. Note the HTTP manifest url at the bottom.
+As an example, here is an introductory Azure Media Services stream playing within the site via Azure Media Player.
 
-![](http://skystorage.azureedge.net/Snip1.AzureSkyMediaIntroduction.png)
+![](http://skystorage.azureedge.net/Snip1.Introduction.png)
 
 For additional screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
