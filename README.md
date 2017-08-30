@@ -6,7 +6,7 @@ As an example, here is an introductory Azure Media Services stream playing withi
 
 ![](http://skystorage.azureedge.net/Snip1.AppIntroduction.png)
 
-For additional screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
+For more screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
 The following set of media application functionality is enabled and integrated within this Azure ASP.NET Core MVC web app:
 
