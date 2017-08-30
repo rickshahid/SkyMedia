@@ -4,7 +4,7 @@ Welcome! This repository contains the multi-tenant Azure media solution sample t
 
 As an example, here is an introductory Azure Media Services stream playing within the site via Azure Media Player integration.
 
-![](http://skystorage.azureedge.net/Snip1.SiteIntroduction.png)
+![](http://skystorage.azureedge.net/Snip1.AppIntroduction.png)
 
 For additional screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
@@ -28,7 +28,7 @@ The following set of media application functionality is enabled and integrated w
 
 To enable the core application functionality that is listed above, the following Azure platform services are leveraged:
 
-![](http://skystorage.azureedge.net/Snip2.AzureSkyMediaArchitecture.png)
+![](http://skystorage.azureedge.net/Snip2.AppArchitecture.png)
 
 * Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
