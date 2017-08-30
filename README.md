@@ -8,7 +8,7 @@ As an example, here is an introductory Azure Media Services stream playing withi
 
 For more screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
-The following set of media application functionality is enabled and integrated within this Azure ASP.NET Core MVC web app:
+The following set of media functionality has been integrated and enabled within this Azure ASP.NET Core MVC web app:
 
 * Adaptive and scalable video streaming across a broad spectrum of devices with iOS / macOS, Android, Windows, etc
 
