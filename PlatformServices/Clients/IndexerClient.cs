@@ -172,7 +172,7 @@ namespace AzureSkyMedia.PlatformServices
                 string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId);
                 if (deleteInsights)
                 {
-                    requestUrl = string.Concat(requestUrl, "?deleteInsights");
+                    requestUrl = string.Concat(requestUrl, "?deleteInsights=true");
                 }
                 using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Delete, requestUrl))
                 {

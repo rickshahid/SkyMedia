@@ -195,7 +195,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Procedure
             {
-                public const string EncoderConfig = "getEncoderConfig";
+                public const string ProcessorConfig = "getProcessorConfig";
                 public const string MetadataFragment = "getTimecodeFragment";
             }
         }

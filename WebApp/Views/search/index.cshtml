@@ -1,6 +1,6 @@
 ﻿@section head {
     <script type="text/javascript">
-        function GetCriteria() {
+        function GetSearchCriteria() {
             var searchCriteria = {
                 IndexId: $("#indexId").val(),
                 AssetId: $("#assetId").val(),
@@ -16,17 +16,23 @@
             };
             return searchCriteria;
         }
-        function SubmitSearch() {
+        function SubmitSearchRequest() {
+            var options = {
+                collapsed: true,
+                withQuotes: false
+            };
             $.post("/search/library",
                 {
-                    searchCriteria: GetCriteria()
+                    searchCriteria: GetSearchCriteria()
                 },
                 function (results) {
+                    $("#insightsData").jsonBrowse(results, options);
                 }
             );
         }
         $(function () {
             $("#indexId").focus();
+            CreateTipTop("mediaLibrarySearch", "Submit Search Request");
         })
     </script>
 }
@@ -93,10 +99,13 @@
             Language
         </td>
         <td>
-            @Html.DropDownList("language", ViewData["indexerLanguages"] as SelectListItem[])
+            @Html.DropDownList("language", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "searchLanguage" })
         </td>
     </tr>
 </table>
+
+<div id="insightsData" class="insightsData"></div>
+
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "mediaLibrarySearch", "MediaSearch.png", "SubmitSearch()" })
+    @Html.Partial("SiteButton", new string[] { "mediaLibrarySearch", "MediaSearch.png", "SubmitSearchRequest()" })
 </div>

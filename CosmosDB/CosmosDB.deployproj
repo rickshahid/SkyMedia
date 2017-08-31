@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>54ba727b-055f-40ae-b595-768d6d8ea261</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworkIdentifier>Deployment</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>1.0</TargetFrameworkVersion>
+    <PrepareForBuildDependsOn>
+    </PrepareForBuildDependsOn>
+  </PropertyGroup>
+  <Import Condition=" Exists('Deployment.targets') " Project="Deployment.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <!-- vertag<:>start tokens<:>maj.min -->
+  <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
+  <!-- vertag<:>end -->
+  <ItemGroup>
+    <None Include="ContentInsight\Functions\isTimecodeFragment.js" />
+    <None Include="ContentInsight\Procedures\getTimecodeFragment.js" />
+    <None Include="Deployment.targets">
+      <Visible>False</Visible>
+    </None>
+    <Content Include="Deploy-AzureResourceGroup.ps1" />
+    <Content Include="DocumentDB.json" />
+    <Content Include="DocumentDB.parameters.json" />
+    <None Include="ProcessorConfig\Documents\07183b8a-1b0b-c537-e615-ac4ab8b01d4f.json" />
+    <None Include="ProcessorConfig\Documents\0bbacec3-c050-d947-199f-3af4256c7b9b.json" />
+    <None Include="ProcessorConfig\Documents\0c04deb3-c14d-f40f-83cb-4d92a4d7cc41.json" />
+    <None Include="ProcessorConfig\Documents\0e6e77fa-be62-19bf-80b0-f9e33fb89eb9.json" />
+    <None Include="ProcessorConfig\Documents\11e84e82-18ae-9c5c-a432-b966230a2834.json" />
+    <None Include="ProcessorConfig\Documents\13b36c1f-15ea-55f8-35b8-c4c5dfa48edd.json" />
+    <None Include="ProcessorConfig\Documents\1508c60f-3794-2740-9873-f0a7dec11b90.json" />
+    <None Include="ProcessorConfig\Documents\175576c5-dd65-2155-0768-e42a78140c85.json" />
+    <None Include="ProcessorConfig\Documents\1fb21ba6-d69c-7b3d-73b5-c9e4d4b4fb79.json" />
+    <None Include="ProcessorConfig\Documents\28f987e3-f7fd-e79a-2b23-c79a573bbd80.json" />
+    <None Include="ProcessorConfig\Documents\294505b8-0a3e-d20b-ffe7-99ad072a0126.json" />
+    <None Include="ProcessorConfig\Documents\2df4274e-3b96-5904-87b5-c248a743ab86.json" />
+    <None Include="ProcessorConfig\Documents\301a3fa9-0fa3-0131-c361-d76cb590254a.json" />
+    <None Include="ProcessorConfig\Documents\42d0f562-605d-5e4e-5cca-55f742b49349.json" />
+    <None Include="ProcessorConfig\Documents\44a6d581-6832-23df-ac14-1b5cc004c624.json" />
+    <None Include="ProcessorConfig\Documents\49369dc4-800b-3f87-1b45-5b31693b6c9f.json" />
+    <None Include="ProcessorConfig\Documents\633488b3-e78d-2b13-c08e-a567dacff303.json" />
+    <None Include="ProcessorConfig\Documents\6f54bc97-1d8e-2531-2f8e-1358a6716733.json" />
+    <None Include="ProcessorConfig\Documents\7b27c9ec-c1d6-24b3-fb22-7f2f387dd5cc.json" />
+    <None Include="ProcessorConfig\Documents\7cf350d7-4080-5521-864e-6413429a7071.json" />
+    <None Include="ProcessorConfig\Documents\8735a3a3-d1a6-6885-2330-4dafb97b04d5.json" />
+    <None Include="ProcessorConfig\Documents\955ae3bf-52c2-fec1-eba8-6b5c25e32617.json" />
+    <None Include="ProcessorConfig\Documents\a15ce651-9d80-8b4b-e1d3-6fb7f01e602f.json" />
+    <None Include="ProcessorConfig\Documents\a3a0e880-7ae2-cc0d-f1df-7dff3999d70f.json" />
+    <None Include="ProcessorConfig\Documents\a610b640-419d-d69a-09e1-03e91430c96b.json" />
+    <None Include="ProcessorConfig\Documents\b5ddf260-c28a-ab13-6a1a-55a486a9156a.json" />
+    <None Include="ProcessorConfig\Documents\bb174b7f-0f55-992a-ea8e-6eed9051ce38.json" />
+    <None Include="ProcessorConfig\Documents\d523176d-4293-01e6-778f-1c6188a6928d.json" />
+    <None Include="ProcessorConfig\Documents\d755d301-f1eb-90d6-9d10-f453f8ab3cd5.json" />
+    <None Include="ProcessorConfig\Documents\d84fe1db-c88c-107b-df39-68d996917f71.json" />
+    <None Include="ProcessorConfig\Documents\e96ad7da-62bf-8551-162b-fd5dd6ec14a8.json" />
+    <None Include="ProcessorConfig\Documents\fbe415d5-e343-35da-5085-c0bceee1ac85.json" />
+    <None Include="ProcessorConfig\Documents\fe57761e-7f48-8bf3-0d2b-3a91c5a6148e.json" />
+    <None Include="ProcessorConfig\Documents\fec10796-ea8f-95e9-67aa-0a76d80c852f.json" />
+    <None Include="ProcessorConfig\Procedures\getProcessorConfig.js" />
+  </ItemGroup>
+  <Target Name="GetReferenceAssemblyPaths" />
+</Project>

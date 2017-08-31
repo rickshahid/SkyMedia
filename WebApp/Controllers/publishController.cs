@@ -2,6 +2,8 @@
 
 using AzureSkyMedia.PlatformServices;
 
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.WebApp.Controllers
 {
     public class publishController : Controller
@@ -30,6 +32,32 @@ namespace AzureSkyMedia.WebApp.Controllers
                 queueName = string.Concat(queueName, Constant.Storage.Queue.PoisonSuffix);
             }
             return MediaClient.PublishInsights(queueName);
+        }
+
+        [HttpGet]
+        [Route("/insight/get")]
+        public JObject GetInsight(string indexId, string spokenLanguage, bool processingState)
+        {
+            JObject insight = null;
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+                insight = indexerClient.GetIndex(indexId, spokenLanguage, processingState);
+            }
+            return insight;
+        }
+
+        [HttpDelete]
+        [Route("/insight/delete")]
+        public void DeleteInsight(string indexId)
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+                indexerClient.DeleteVideo(indexId, true);
+            }
         }
     }
 }

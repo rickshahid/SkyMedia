@@ -34,7 +34,23 @@ namespace AzureSkyMedia.PlatformServices
             _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey);
         }
 
-        private JObject GetResult(string responseData, bool systemProperties)
+        private RequestOptions GetRequestOptions(string accountName)
+        {
+            RequestOptions requestOptions = new RequestOptions();
+            requestOptions.PartitionKey = new PartitionKey(accountName);
+            return requestOptions;
+        }
+
+        private IQueryable<Document> GetDocumentQuery(string collectionId)
+        {
+            FeedOptions feedOptions = new FeedOptions()
+            {
+                EnableCrossPartitionQuery = true
+            };
+            return _cosmos.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId, feedOptions);
+        }
+
+        private JObject GetResponseResult(string responseData, bool systemProperties)
         {
             JObject result = null;
             if (!string.IsNullOrEmpty(responseData))
@@ -60,11 +76,11 @@ namespace AzureSkyMedia.PlatformServices
         public JObject[] GetDocuments(string collectionId)
         {
             List<JObject> documents = new List<JObject>();
-            IQueryable<Document> query = _cosmos.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId);
+            IQueryable<Document> query = GetDocumentQuery(collectionId);
             IEnumerable<Document> docs = query.AsEnumerable<Document>();
             foreach (Document doc in docs)
             {
-                JObject result = GetResult(doc.ToString(), true);
+                JObject result = GetResponseResult(doc.ToString(), true);
                 documents.Add(result);
             }
             return documents.ToArray();
@@ -76,13 +92,13 @@ namespace AzureSkyMedia.PlatformServices
             string[] documentInfo = documentId.Split(Constant.TextDelimiter.Identifier);
             string collectionId = documentInfo[0];
             documentId = documentInfo[1];
-            IQueryable<Document> query = _cosmos.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId)
-                .Where(d => d.Id == documentId);
+            IQueryable<Document> query = GetDocumentQuery(collectionId);
+            query = query.Where(d => d.Id == documentId);
             IEnumerable<Document> documents = query.AsEnumerable<Document>();
             Document document = documents.FirstOrDefault();
             if (document != null)
             {
-                result = GetResult(document.ToString(), false);
+                result = GetResponseResult(document.ToString(), false);
             }
             return result;
         }
@@ -93,7 +109,8 @@ namespace AzureSkyMedia.PlatformServices
             jsonDoc["accountKey"] = accountKey;
             jsonDoc["assetId"] = assetId;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            Task<ResourceResponse<Document>> createTask = _cosmos.UpsertDocumentAsync(collectionUri, jsonDoc);
+            RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountName) : null;
+            Task<ResourceResponse<Document>> createTask = _cosmos.UpsertDocumentAsync(collectionUri, jsonDoc, requestOptions);
             createTask.Wait();
             ResourceResponse<Document> responseDocument = createTask.Result;
             return responseDocument.Resource.Id;
@@ -105,8 +122,10 @@ namespace AzureSkyMedia.PlatformServices
             JObject jsonDoc = GetDocument(docId);
             if (jsonDoc != null)
             {
+                string accountName = jsonDoc["accountName"].ToString();
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                Task<ResourceResponse<Document>> deleteTask = _cosmos.DeleteDocumentAsync(documentUri);
+                RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountName) : null;
+                Task<ResourceResponse<Document>> deleteTask = _cosmos.DeleteDocumentAsync(documentUri, requestOptions);
                 deleteTask.Wait();
             }
         }
@@ -121,7 +140,7 @@ namespace AzureSkyMedia.PlatformServices
             JValue procesureResponse = procedureTask.Result.Response;
             if (procesureResponse != null)
             {
-                result = GetResult(procesureResponse.ToString(), false);
+                result = GetResponseResult(procesureResponse.ToString(), false);
             }
             return result;
         }

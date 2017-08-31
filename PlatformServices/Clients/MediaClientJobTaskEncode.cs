@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
                     using (CosmosClient cosmosClient = new CosmosClient(true))
                     {
                         string collectionId = Constant.Database.Collection.ProcessorConfig;
-                        string procedureId = Constant.Database.Procedure.EncoderConfig;
+                        string procedureId = Constant.Database.Procedure.ProcessorConfig;
                         JObject encoderConfig = cosmosClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
                         encoderConfig.Remove("name");
                         jobTask.ProcessorConfig = encoderConfig.ToString();

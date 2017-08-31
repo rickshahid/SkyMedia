@@ -712,6 +712,15 @@ body {
     width: 700px;
 }
 
+.insightsData {
+    background-color: deepskyblue;
+    margin: 0px auto;
+    margin-top: 10px;
+    overflow: auto;
+    height: 300px;
+    width: 800px;
+}
+
 .librarySearch {
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -720,4 +729,12 @@ body {
 
 .librarySearch td {
     padding: 5px;
+}
+
+.searchLanguage {
+    width: 100%;
+}
+
+a.json-placeholder {
+    color: yellow;
 }

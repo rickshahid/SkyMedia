@@ -19,8 +19,8 @@ function SetLayout() {
     CreateTipLeft("appServiceFunctions", "Azure App Service<br /><br />Function Apps");
     CreateTipLeft("appServiceLogic", "Azure App Service<br /><br />Logic Apps");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
-    CreateTipLeft("botService", "Azure Bot Service");
     CreateTipLeft("batchRendering", "Azure Batch Rendering");
+    CreateTipLeft("botService", "Azure Bot Service");
     CreateTipTop("mediaFileUpload", "Media File Upload");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
     CreateTipTop("mediaAssetLibrary", "Media Asset Library");
