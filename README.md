@@ -18,8 +18,6 @@ The following set of media functionality has been integrated and enabled within 
 
 * Discover and extract actionable insights from your video content via Cognitive Services and Artificial Intelligence (AI)
 
-* Create subclips (either as dynamic filters or as new assets) via an Azure Media Player extension (Under Construction)
-
 * Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
 * Publish workflow outputs automatically based upon key input parameters that are specified at job submission time
