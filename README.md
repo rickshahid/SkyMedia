@@ -10,7 +10,7 @@ For more screenshots of key application modules and functionality, refer to http
 
 The following set of media functionality has been integrated and enabled within this Azure ASP.NET Core MVC web app:
 
-* Scalable and secure video streaming across a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
+* Scalable and secure video streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
 
 * User account registration and self-service profile management with linked Azure Storage, Azure Media Services, etc
 
