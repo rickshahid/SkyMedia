@@ -12,7 +12,7 @@ The following set of media functionality has been integrated and enabled within 
 
 * Scalable video (adaptive) streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
 
-* User account registration and self-service profile management with linked Azure Storage, Azure Media Services, etc
+* Self-service user account registration and profile management with storage, transfer and media services accounts
 
 * Secure upload, storage and media processing via transcoding, indexing, content protection, dynamic packaging, etc
 
