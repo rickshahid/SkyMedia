@@ -10,15 +10,13 @@ For more screenshots of key application modules and functionality, refer to http
 
 The following set of media functionality has been integrated and enabled within this Azure ASP.NET Core MVC web app:
 
-* Scalable and secure video streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
+* Scalable video (adaptive) streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
 
-* User account registration and self-service profile management with linked Azure Storage, Azure Media Services, etc
+* Self-service user account registration and profile management across storage, transfer and media services accounts
 
-* Secure upload, storage and media processing via transcoding, indexing, content protection, dynamic packaging, etc
+* Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
 
 * Discover and extract actionable insights from your video content via Cognitive Services and Artificial Intelligence (AI)
-
-* Create subclips (either as dynamic filters or as new assets) via an Azure Media Player extension (Under Construction)
 
 * Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
