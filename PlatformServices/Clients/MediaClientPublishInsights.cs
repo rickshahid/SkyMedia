@@ -32,12 +32,14 @@ namespace AzureSkyMedia.PlatformServices
                 JToken externalId = GetExternalId(index);
                 if (externalId != null)
                 {
-                    string accountKey = insightsPublish.MediaAccountKey;
+                    string accountUrl = insightsPublish.MediaAccountUrl;
+                    string clientId = insightsPublish.MediaClientId;
+                    string clientKey = insightsPublish.MediaClientKey;
                     string assetId = externalId.ToString();
 
                     CosmosClient cosmosClient = new CosmosClient(true);
                     string collectionId = Constant.Database.Collection.ContentInsight;
-                    string documentId = cosmosClient.UpsertDocument(collectionId, index, accountName, accountKey, assetId);
+                    string documentId = cosmosClient.UpsertDocument(collectionId, index, accountUrl, clientId, clientKey, assetId);
 
                     mediaPublish = new MediaPublish
                     {

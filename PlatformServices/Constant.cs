@@ -4,9 +4,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     public struct Constant
     {
+        public const string AppSettings = "appsettings.json";
         public const string NotAvailable = "N/A";
-        public const string KeyVaultDomain = "vault.azure.net";
-        public const string AppSettingFile = "appsettings.json";
 
         public struct TextDelimiter
         {
@@ -35,7 +34,9 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AppInsightsInstrumentationKey = "App.Insights.InstrumentationKey";
 
-            public const string DirectoryDomainName = "Directory.DomainName";
+            public const string DirectoryDomainMedia = "Directory.DomainMedia";
+            public const string DirectoryDomainUser = "Directory.DomainUser";
+
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
 
@@ -133,21 +134,21 @@ namespace AzureSkyMedia.PlatformServices
             public const string UserAuthToken = " AzureSkyMedia.UserAuthToken";
         }
 
-        public struct UserAttribute
-        {
-            public const string UserId = "emails";
-            public const string MobileNumber = "extension_MobileNumber";
-            public const string MediaAccountName = "extension_MediaAccountName";
-            public const string MediaAccountKey = "extension_MediaAccountKey";
-            public const string VideoIndexerKey = "extension_VideoIndexerKey";
-            public const string StorageAccountName = "extension_StorageAccountName";
-            public const string StorageAccountKey = "extension_StorageAccountKey";
-            public const string SigniantServiceGateway = "extension_SigniantServiceGateway";
-            public const string SigniantAccountKey = "extension_SigniantAccountKey";
-            public const string AsperaServiceGateway = "extension_AsperaServiceGateway";
-            public const string AsperaAccountId = "extension_AsperaAccountId";
-            public const string AsperaAccountKey = "extension_AsperaAccountKey";
-        }
+        //public struct UserAttribute
+        //{
+        //    public const string UserId = "emails";
+        //    public const string MobileNumber = "extension_MobileNumber";
+        //    public const string MediaAccountName = "extension_MediaAccountName";
+        //    public const string MediaAccountKey = "extension_MediaAccountKey";
+        //    public const string VideoIndexerKey = "extension_VideoIndexerKey";
+        //    public const string StorageAccountName = "extension_StorageAccountName";
+        //    public const string StorageAccountKey = "extension_StorageAccountKey";
+        //    public const string SigniantServiceGateway = "extension_SigniantServiceGateway";
+        //    public const string SigniantAccountKey = "extension_SigniantAccountKey";
+        //    public const string AsperaServiceGateway = "extension_AsperaServiceGateway";
+        //    public const string AsperaAccountId = "extension_AsperaAccountId";
+        //    public const string AsperaAccountKey = "extension_AsperaAccountKey";
+        //}
 
         public struct Storage
         {
@@ -295,8 +296,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Live
             {
-                public const string ChannelStreamingSuffix = "-Stream";
-                public const string ChannelEncodingSuffix = "-Encode";
                 public const string ChannelEncodingPreset = "Default720p";
 
                 public const string ProgramClearSuffix = "-Clear";
@@ -320,7 +319,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct ItemKey
             {
-                public const string MediaProcessors = "AzureMediaProcessors";
+                public const string MediaProcessors = "MediaProcessors";
             }
         }
 

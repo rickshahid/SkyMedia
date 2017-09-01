@@ -56,13 +56,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             ChannelCreationOptions channelOptions = new ChannelCreationOptions();
             channelOptions.EncodingType = channelType;
-            if (channelType == ChannelEncodingType.None)
+            channelOptions.Name = channelName;
+
+            if (channelType != ChannelEncodingType.None)
             {
-                channelOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelStreamingSuffix);
-            }
-            else
-            {
-                channelOptions.Name = string.Concat(channelName, Constant.Media.Live.ChannelEncodingSuffix);
                 channelOptions.Encoding = new ChannelEncoding();
                 channelOptions.Encoding.SystemPreset = Constant.Media.Live.ChannelEncodingPreset;
             }

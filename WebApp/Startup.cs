@@ -25,7 +25,7 @@ namespace AzureSkyMedia.WebApp
         {
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.SetBasePath(env.ContentRootPath);
-            configBuilder.AddJsonFile(Constant.AppSettingFile, false, true);
+            configBuilder.AddJsonFile(Constant.AppSettings, false, true);
             configBuilder.AddEnvironmentVariables();
             if (env.IsDevelopment())
             {

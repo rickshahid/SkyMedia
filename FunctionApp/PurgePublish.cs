@@ -30,12 +30,13 @@ namespace AzureSkyMedia.FunctionApp
             JObject[] documents = cosmosClient.GetDocuments(collectionId);
             foreach (JObject document in documents)
             {
-                if (document["accountName"] != null)
+                if (document["accountUrl"] != null)
                 {
-                    string accountName = document["accountName"].ToString();
-                    string accountKey = document["accountKey"].ToString();
+                    string accountUrl = document["accountUrl"].ToString();
+                    string clientId = document["clientId"].ToString();
+                    string clientKey = document["clientKey"].ToString();
                     string assetId = document["assetId"].ToString();
-                    MediaClient mediaClient = new MediaClient(accountName, accountKey);
+                    MediaClient mediaClient = new MediaClient(accountUrl, clientId, clientKey);
                     IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
                     if (asset == null)
                     {

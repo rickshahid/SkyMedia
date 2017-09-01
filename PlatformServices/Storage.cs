@@ -95,13 +95,13 @@ namespace AzureSkyMedia.PlatformServices
         internal static CloudStorageAccount GetAccount(string authToken, string accountName, out string accountKey)
         {
             accountKey = string.Empty;
-            string storageAccount = string.Empty;
-            string[] accountNames = AuthToken.GetClaimValues(authToken, Constant.UserAttribute.StorageAccountName);
-            string[] accountKeys = AuthToken.GetClaimValues(authToken, Constant.UserAttribute.StorageAccountKey);
+            User authUser = new User(authToken);
+            string[] accountNames = authUser.StorageAccountNames;
+            string[] accountKeys = authUser.StorageAccountKeys;
             int accountIndex = GetAccountIndex(accountNames, accountName);
             accountKey = accountKeys[accountIndex];
-            storageAccount = string.Format(Constant.Storage.Account.Connection, accountName, accountKeys[accountIndex]);
-            return string.IsNullOrEmpty(storageAccount) ? null : CloudStorageAccount.Parse(storageAccount);
+            string storageAccount = string.Format(Constant.Storage.Account.Connection, accountName, accountKeys[accountIndex]);
+            return CloudStorageAccount.Parse(storageAccount);
         }
 
         internal static CloudStorageAccount GetSystemAccount()
@@ -194,10 +194,10 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
+                User authUser = new User(authToken);
+                string partitionKey = authUser.Id;
                 bool lastBlock = (chunkIndex == chunksCount - 1);
-                string attributeName = Constant.UserAttribute.UserId;
-                string userId = AuthToken.GetClaimValue(authToken, attributeName);
-                blobClient.UploadBlock(inputStream, containerName, null, fileName, chunkIndex, lastBlock, userId);
+                blobClient.UploadBlock(inputStream, containerName, null, fileName, partitionKey, chunkIndex, lastBlock);
             }
         }
     }

@@ -21,8 +21,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public AsperaClient(string authToken)
         {
-            string attributeName = Constant.UserAttribute.AsperaServiceGateway;
-            _serviceNode = AuthToken.GetClaimValue(authToken, attributeName);
+            User authUser = new User(authToken);
+
+            _serviceNode = authUser.AsperaServiceGateway;
             if (!_serviceNode.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
                 _serviceNode = string.Concat("https://", _serviceNode);
@@ -36,12 +37,8 @@ namespace AzureSkyMedia.PlatformServices
                 _serviceStats = string.Concat("https://", _serviceStats);
             }
 
-            attributeName = Constant.UserAttribute.AsperaAccountId;
-            _accountId = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.AsperaAccountKey;
-            _accountKey = AuthToken.GetClaimValue(authToken, attributeName);
-
+            _accountId = authUser.AsperaAccountId;
+            _accountKey = authUser.AsperaAccountKey;
             _serviceClient = new WebClient(_accountId, _accountKey);
 
             string settingKey = Constant.AppSettingKey.AsperaTransferInfo;
@@ -77,21 +74,27 @@ namespace AzureSkyMedia.PlatformServices
                 transferRequest.DestinationRoot = storageRoot;
             }
 
-            List<TransferPath> transferPaths = new List<TransferPath>(); 
+            List<TransferPath> transferPaths = new List<TransferPath>();
             foreach (string filePath in filePaths)
             {
-                TransferPath transferPath = new TransferPath();
-                transferPath.Source = filePath;
-                transferPath.Destination = string.Concat("/", containerName, "/", Path.GetFileName(filePath));
+                TransferPath transferPath = new TransferPath()
+                {
+                    Source = filePath,
+                    Destination = string.Concat("/", containerName, "/", Path.GetFileName(filePath))
+                };
                 transferPaths.Add(transferPath);
             }
             transferRequest.Paths = transferPaths.ToArray();
 
-            AsperaRequest asperaRequest = new AsperaRequest();
-            asperaRequest.TransferRequest = transferRequest;
+            AsperaRequest asperaRequest = new AsperaRequest()
+            {
+                TransferRequest = transferRequest
+            };
 
-            AsperaTransfer asperaTransfer = new AsperaTransfer();
-            asperaTransfer.TransferRequests = new AsperaRequest[] { asperaRequest };
+            AsperaTransfer asperaTransfer = new AsperaTransfer()
+            {
+                TransferRequests = new AsperaRequest[] { asperaRequest }
+            };
 
             ServicePointManager.ServerCertificateValidationCallback += delegate
                 (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors policyErrors)

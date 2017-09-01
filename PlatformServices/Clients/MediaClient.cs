@@ -1,4 +1,6 @@
-﻿using Microsoft.WindowsAzure.MediaServices.Client;
+﻿using System;
+
+using Microsoft.WindowsAzure.MediaServices.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -8,50 +10,36 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaClient(string authToken)
         {
-            string attributeName = Constant.UserAttribute.MediaAccountName;
-            string accountName = AuthToken.GetClaimValue(authToken, attributeName);
+            string settingKey = Constant.AppSettingKey.DirectoryDomainMedia;
+            string mediaDomain = AppSetting.GetValue(settingKey);
 
-            attributeName = Constant.UserAttribute.MediaAccountKey;
-            string accountKey = AuthToken.GetClaimValue(authToken, attributeName);
+            User authUser = new User(authToken);
+            AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(mediaDomain, AzureEnvironments.AzureCloudEnvironment);
 
-            BindContext(accountName, accountKey);
+            BindContext(authUser.MediaAccountUrl, tokenCredentials);
         }
 
-        public MediaClient(string accountName, string accountKey)
+        public MediaClient(string accountUrl, string clientId, string clientKey)
         {
-            BindContext(accountName, accountKey);
+            string settingKey = Constant.AppSettingKey.DirectoryDomainMedia;
+            string mediaDomain = AppSetting.GetValue(settingKey);
+
+            AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(clientId, clientKey);
+            AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(mediaDomain, symmetricKey, AzureEnvironments.AzureCloudEnvironment);
+
+            BindContext(accountUrl, tokenCredentials);
         }
 
-        private void BindContext(string accountName, string accountKey)
+        private void BindContext(string accountUrl, AzureAdTokenCredentials tokenCredentials)
         {
-            MediaServicesCredentials credentials = new MediaServicesCredentials(accountName, accountKey);
-            _media = new CloudMediaContext(credentials);
+            AzureAdTokenProvider tokenProvider = new AzureAdTokenProvider(tokenCredentials);
+            _media = new CloudMediaContext(new Uri(accountUrl), tokenProvider);
             IStorageAccount storageAccount = this.DefaultStorageAccount;
         }
 
         public IStorageAccount DefaultStorageAccount
         {
             get { return _media.DefaultStorageAccount; }
-        }
-
-        public static void UploadVideo(string authToken, IndexerClient indexerClient, IAsset asset, string locatorUrl, MediaJobTask jobTask)
-        {
-            bool publicVideo = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.PublicVideo.ToString()];
-            string transcriptLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage.ToString()];
-            string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
-            string indexId = indexerClient.UploadVideo(asset.Name, publicVideo, transcriptLanguage, searchPartition, asset.Id, locatorUrl);
-
-            MediaInsightsPublish insightsPublish = new MediaInsightsPublish
-            {
-                PartitionKey = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountName),
-                RowKey = indexId,
-                MediaAccountKey = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountKey),
-                IndexerAccountKey = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.VideoIndexerKey),
-            };
-
-            EntityClient entityClient = new EntityClient();
-            string tableName = Constant.Storage.TableName.InsightPublish;
-            entityClient.InsertEntity(tableName, insightsPublish);
         }
     }
 }

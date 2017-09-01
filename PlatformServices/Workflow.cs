@@ -21,8 +21,13 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobInput GetJobInput(MediaClient mediaClient, string assetId)
         {
+            MediaJobInput jobInput = null;
             IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-            return GetJobInput(asset);
+            if (asset != null)
+            {
+                jobInput = GetJobInput(asset);
+            }
+            return jobInput;
         }
 
         private static ContentProtection GetContentProtection(MediaJobTask[] jobTasks)
@@ -30,7 +35,7 @@ namespace AzureSkyMedia.PlatformServices
             ContentProtection contentProtection = null;
             foreach (MediaJobTask jobTask in jobTasks)
             {
-                if (jobTask.ContentProtection != null)
+                if (contentProtection == null && jobTask.ContentProtection != null)
                 {
                     contentProtection = jobTask.ContentProtection;
                 }
@@ -40,17 +45,7 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection contentProtection)
         {
-            string attributeName = Constant.UserAttribute.MediaAccountName;
-            string accountName = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.MediaAccountKey;
-            string accountKey = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.UserId;
-            string userId = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.MobileNumber;
-            string mobileNumber = AuthToken.GetClaimValue(authToken, attributeName);
+            User authUser = new User(authToken);
 
             if (string.IsNullOrEmpty(storageAccount))
             {
@@ -59,13 +54,13 @@ namespace AzureSkyMedia.PlatformServices
 
             MediaContentPublish contentPublish = new MediaContentPublish()
             {
-                PartitionKey = accountName,
+                PartitionKey = authUser.MediaAccountName,
                 RowKey = job.Id,
-                MediaAccountKey = accountKey,
+                MediaAccountUrl = authUser.MediaAccountUrl,
                 StorageAccountName = storageAccount,
                 StorageAccountKey = Storage.GetAccountKey(authToken, storageAccount),
-                UserId = userId,
-                MobileNumber = mobileNumber
+                UserId = authUser.Id,
+                MobileNumber = authUser.MobileNumber
             };
 
             EntityClient entityClient = new EntityClient();

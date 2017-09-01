@@ -29,7 +29,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public CacheClient(string authToken)
         {
-            _partitionId = AuthToken.GetClaimValue(authToken, Constant.UserAttribute.MediaAccountName);
+            User authUser = new User(authToken);
+            _partitionId = authUser.Id;
         }
 
         private IDatabase GetCache()

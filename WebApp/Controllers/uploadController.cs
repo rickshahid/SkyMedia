@@ -43,12 +43,11 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult signiant()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            User authUser = new User(authToken);
+            ViewData["signiantServiceGateway"] = authUser.SigniantServiceGateway;
 
             string settingKey = Constant.AppSettingKey.SigniantTransferApi;
             ViewData["signiantTransferApi"] = AppSetting.GetValue(settingKey);
-
-            string attributeName = Constant.UserAttribute.SigniantServiceGateway;
-            ViewData["signiantServiceGateway"] = AuthToken.GetClaimValue(authToken, attributeName);
 
             homeController.SetViewData(authToken, this.ViewData);
             return View();
@@ -57,15 +56,12 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult aspera()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            User authUser = new User(authToken);
+            ViewData["asperaServiceGateway"] = authUser.AsperaServiceGateway;
+            ViewData["asperaAccountId"] = authUser.AsperaAccountId;
 
             string settingKey = Constant.AppSettingKey.AsperaTransferApi;
             ViewData["asperaTransferApi"] = AppSetting.GetValue(settingKey);
-
-            string attributeName = Constant.UserAttribute.AsperaServiceGateway;
-            ViewData["asperaServiceGateway"] = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.AsperaAccountId;
-            ViewData["asperaAccountId"] = AuthToken.GetClaimValue(authToken, attributeName);
 
             homeController.SetViewData(authToken, this.ViewData);
             return View();

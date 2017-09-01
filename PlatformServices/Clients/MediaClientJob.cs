@@ -7,6 +7,29 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private static void IndexVideo(string authToken, IndexerClient indexerClient, IAsset asset, string locatorUrl, MediaJobTask jobTask)
+        {
+            bool publicVideo = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.PublicVideo.ToString()];
+            string transcriptLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage.ToString()];
+            string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
+            string indexId = indexerClient.UploadVideo(asset.Name, publicVideo, transcriptLanguage, searchPartition, asset.Id, locatorUrl);
+
+            User authUser = new User(authToken);
+            MediaInsightsPublish insightsPublish = new MediaInsightsPublish
+            {
+                PartitionKey = authUser.MediaAccountName,
+                RowKey = indexId,
+                MediaAccountUrl = authUser.MediaAccountUrl,
+                MediaClientId = authUser.MediaClientId,
+                MediaClientKey = authUser.MediaClientKey,
+                IndexerAccountKey = authUser.VideoIndexerKey,
+            };
+
+            EntityClient entityClient = new EntityClient();
+            string tableName = Constant.Storage.TableName.InsightPublish;
+            entityClient.InsertEntity(tableName, insightsPublish);
+        }
+
         private INotificationEndPoint GetNotificationEndpoint()
         {
             string endpointName = Constant.Media.JobNotification.EndpointName;
@@ -50,7 +73,7 @@ namespace AzureSkyMedia.PlatformServices
                             {
                                 IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
                                 string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
-                                MediaClient.UploadVideo(authToken, indexerClient, asset, locatorUrl, jobTask);
+                                IndexVideo(authToken, indexerClient, asset, locatorUrl, jobTask);
                             }
                         }
                         break;

@@ -95,12 +95,12 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (contentProtection.ContentAuthTypeToken)
             {
-                string settingKey = Constant.AppSettingKey.DirectoryDomainName;
-                string domainName = AppSetting.GetValue(settingKey);
+                string settingKey = Constant.AppSettingKey.DirectoryDomainUser;
+                string userDomain = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryDiscoveryUrl;
                 string discoveryUrl = AppSetting.GetValue(settingKey);
-                discoveryUrl = string.Format(discoveryUrl, domainName);
+                discoveryUrl = string.Format(discoveryUrl, userDomain);
 
                 settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
                 string issuerUrl = AppSetting.GetValue(settingKey);

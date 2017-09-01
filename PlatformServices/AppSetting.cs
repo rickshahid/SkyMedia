@@ -1,9 +1,6 @@
 ﻿using System;
-//using System.Threading.Tasks;
 using System.Collections.Generic;
 
-//using Microsoft.Azure.KeyVault;
-//using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace AzureSkyMedia.PlatformServices
@@ -41,20 +38,6 @@ namespace AzureSkyMedia.PlatformServices
             if (settingValue == null)
             {
                 settingValue = string.Empty;
-            }
-            else if (settingValue.Contains(Constant.KeyVaultDomain))
-            {
-                //CacheClient cacheClient = new CacheClient();
-                //settingValue = cacheClient.GetValue<string>(settingKey);
-                //if (string.IsNullOrEmpty(settingValue))
-                //{
-                //    KeyVaultClient.AuthenticationCallback vaultAuth = new KeyVaultClient.AuthenticationCallback(AuthToken.GetVaultToken);
-                //    KeyVaultClient vaultClient = new KeyVaultClient(vaultAuth);
-                //    Task<SecretBundle> vaultTask = vaultClient.GetSecretAsync(settingValue);
-                //    SecretBundle vaultSecret = vaultTask.Result;
-                //    settingValue = vaultSecret.Value;
-                //}
-                //cacheClient.SetValue<string>(settingKey, settingValue);
             }
             return parseValue ? ParseConnection(settingValue) : new string[] { settingValue };
         }

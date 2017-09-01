@@ -88,7 +88,7 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public void UploadBlock(Stream inputStream, string containerName, string directoryPath, string fileName,
-                                int blockIndex, bool lastBlock, string userId)
+                                string partitionKey, int blockIndex, bool lastBlock)
         {
             string blockId = Convert.ToBase64String(BitConverter.GetBytes(blockIndex));
 
@@ -96,15 +96,16 @@ namespace AzureSkyMedia.PlatformServices
             blob.PutBlock(blockId, inputStream, null);
 
             string tableName = Constant.Storage.TableName.FileUpload;
-            string partitionKey = userId;
             string rowKey = blob.Name;
 
             if (blockIndex == 0)
             {
-                BlockUpload blockUpload = new BlockUpload();
-                blockUpload.PartitionKey = partitionKey;
-                blockUpload.RowKey = rowKey;
-                blockUpload.BlockIds = new string[] { blockId };
+                BlockUpload blockUpload = new BlockUpload()
+                {
+                    PartitionKey = partitionKey,
+                    RowKey = rowKey,
+                    BlockIds = new string[] { blockId }
+                };
                 _tracker.UpsertEntity(tableName, blockUpload);
             }
             else

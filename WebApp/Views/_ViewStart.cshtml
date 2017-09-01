@@ -12,13 +12,8 @@
 
     if (!string.IsNullOrEmpty(authToken))
     {
-        string attributeName = Constant.UserAttribute.UserId;
-        string userId = AuthToken.GetClaimValue(authToken, attributeName);
-
-        attributeName = Constant.UserAttribute.MediaAccountName;
-        string accountName = AuthToken.GetClaimValue(authToken, attributeName);
-
-        ViewData["accountContext"] = string.Concat(userId, " (", accountName, ")");
+        User authUser = new User(authToken);
+        ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccountName, ")");
     }
 
     string settingKey = Constant.AppSettingKey.AppRegion;

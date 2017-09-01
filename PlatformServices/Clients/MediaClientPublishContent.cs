@@ -72,7 +72,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAsset inputAsset in job.InputMediaAssets)
                 {
-                    PublishAnalytics(mediaClient, job, contentPublish, inputAsset.Id);
+                    //PublishAnalytics(mediaClient, job, contentPublish, inputAsset.Id);
                 }
             }
             else
@@ -83,7 +83,7 @@ namespace AzureSkyMedia.PlatformServices
                     foreach (IAsset outputAsset in jobTask.OutputAssets)
                     {
                         PublishAsset(mediaClient, outputAsset, contentProtection);
-                        PublishAnalytics(mediaClient, job, contentPublish, outputAsset.Id);
+                        //PublishAnalytics(mediaClient, job, contentPublish, outputAsset.Id);
                     }
                 }
             }
@@ -98,10 +98,9 @@ namespace AzureSkyMedia.PlatformServices
             if (contentPublish != null)
             {
                 string accountName = contentPublish.PartitionKey;
-                string accountKey = contentPublish.MediaAccountKey;
                 string jobId = contentPublish.RowKey;
 
-                MediaClient mediaClient = new MediaClient(accountName, accountKey);
+                MediaClient mediaClient = new MediaClient(contentPublish.MediaAccountUrl, contentPublish.ClientId, contentPublish.ClientKey);
                 IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
                 if (job != null)
                 {

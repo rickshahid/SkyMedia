@@ -15,11 +15,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             if (!string.IsNullOrEmpty(authToken))
             {
-                string attributeName = Constant.UserAttribute.MediaAccountName;
-                accountName = AuthToken.GetClaimValue(authToken, attributeName);
-
-                attributeName = Constant.UserAttribute.VideoIndexerKey;
-                indexerKey = AuthToken.GetClaimValue(authToken, attributeName);
+                User authUser = new User(authToken);
+                accountName = authUser.MediaAccountName;
+                indexerKey = authUser.VideoIndexerKey;
             }
 
             if (!string.IsNullOrEmpty(indexerKey))

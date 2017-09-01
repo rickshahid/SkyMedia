@@ -85,12 +85,9 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         internal static void SetViewData(string authToken, ViewDataDictionary viewData)
         {
-            string attributeName = Constant.UserAttribute.SigniantAccountKey;
-            viewData["signiantAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
-
-            attributeName = Constant.UserAttribute.AsperaAccountKey;
-            viewData["asperaAccountKey"] = AuthToken.GetClaimValue(authToken, attributeName);
-
+            User authUser = new User(authToken);
+            viewData["signiantAccountKey"] = authUser.SigniantAccountKey;
+            viewData["asperaAccountKey"] = authUser.AsperaAccountKey;
             viewData["storageAccount"] = GetStorageAccounts(authToken);
             viewData["jobName"] = GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = GetMediaProcessors(authToken);
@@ -150,9 +147,9 @@ namespace AzureSkyMedia.WebApp.Controllers
                         mediaClient = new MediaClient(authToken);
                         indexerClient = new IndexerClient(authToken, null, null);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        return RedirectToAction("profileedit", "account");
+                        accountMessage = ex.ToString();
                     }
                 }
 
