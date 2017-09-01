@@ -12,7 +12,7 @@ The following set of media functionality has been integrated and enabled within 
 
 * Scalable video (adaptive) streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
 
-* Self-service user account registration and profile management with storage, transfer and media services accounts
+* Self-service user account registration and profile management across storage, transfer and media services accounts
 
 * Secure upload, storage and media processing via transcoding, indexing, content protection, dynamic packaging, etc
 
