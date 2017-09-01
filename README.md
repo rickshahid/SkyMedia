@@ -14,7 +14,7 @@ The following set of media functionality has been integrated and enabled within 
 
 * Self-service user account registration and profile management across storage, transfer and media services accounts
 
-* Secure upload, storage and media processing via transcoding, indexing, content protection, dynamic packaging, etc
+* Secure media content upload, storage and processing including transcoding, indexing, dynamic packaging and publishing
 
 * Discover and extract actionable insights from your video content via Cognitive Services and Artificial Intelligence (AI)
 
