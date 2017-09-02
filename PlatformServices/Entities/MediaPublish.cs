@@ -2,11 +2,11 @@
 {
     internal class MediaContentPublish : StorageEntity
     {
-        public string MediaAccountUrl { get; set; }
+        public string MediaAccountKey { get; set; }
 
-        public string ClientId { get; set; }
+        //public string MediaClientId { get; set; }
 
-        public string ClientKey { get; set; }
+        //public string MediaClientKey { get; set; }
 
         public string StorageAccountName { get; set; }
 
@@ -15,11 +15,11 @@
 
     internal class MediaInsightsPublish : StorageEntity
     {
-        public string MediaAccountUrl { get; set; }
+        public string MediaAccountKey { get; set; }
 
-        public string MediaClientId { get; set; }
+        //public string MediaClientId { get; set; }
 
-        public string MediaClientKey { get; set; }
+        //public string MediaClientKey { get; set; }
 
         public string IndexerAccountKey { get; set; }
     }

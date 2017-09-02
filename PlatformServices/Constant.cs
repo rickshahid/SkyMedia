@@ -34,9 +34,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AppInsightsInstrumentationKey = "App.Insights.InstrumentationKey";
 
-            public const string DirectoryDomainMedia = "Directory.DomainMedia";
-            public const string DirectoryDomainUser = "Directory.DomainUser";
-
+            public const string DirectoryDomainTenant = "Directory.DomainTenant";
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
 

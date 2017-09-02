@@ -13,7 +13,7 @@
     if (!string.IsNullOrEmpty(authToken))
     {
         User authUser = new User(authToken);
-        ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccountName, ")");
+        ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccountId, ")");
     }
 
     string settingKey = Constant.AppSettingKey.AppRegion;
@@ -52,5 +52,8 @@
         ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=aspera");
     }
 
-    Layout = "_Layout";
+    if (!requestUrl.Contains("/account/"))
+    {
+        Layout = "_Layout";
+    }
 }

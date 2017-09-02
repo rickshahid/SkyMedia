@@ -22,24 +22,22 @@ namespace AzureSkyMedia.PlatformServices
             MediaPublish mediaPublish = null;
             if (insightsPublish != null)
             {
-                string accountName = insightsPublish.PartitionKey;
+                string accountId = insightsPublish.PartitionKey;
                 string indexerKey = insightsPublish.IndexerAccountKey;
                 string indexId = insightsPublish.RowKey;
 
-                IndexerClient indexerClient = new IndexerClient(null, accountName, indexerKey);
+                IndexerClient indexerClient = new IndexerClient(null, accountId, indexerKey);
                 JObject index = indexerClient.GetIndex(indexId, null, false);
 
                 JToken externalId = GetExternalId(index);
                 if (externalId != null)
                 {
-                    string accountUrl = insightsPublish.MediaAccountUrl;
-                    string clientId = insightsPublish.MediaClientId;
-                    string clientKey = insightsPublish.MediaClientKey;
+                    string accountKey = insightsPublish.MediaAccountKey;
                     string assetId = externalId.ToString();
 
                     CosmosClient cosmosClient = new CosmosClient(true);
                     string collectionId = Constant.Database.Collection.ContentInsight;
-                    string documentId = cosmosClient.UpsertDocument(collectionId, index, accountUrl, clientId, clientKey, assetId);
+                    string documentId = cosmosClient.UpsertDocument(collectionId, index, accountId, accountKey, assetId);
 
                     mediaPublish = new MediaPublish
                     {

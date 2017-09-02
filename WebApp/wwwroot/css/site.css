@@ -160,6 +160,7 @@ body {
 
 .viewTitle {
     color: deepskyblue;
+    text-align: center;
     font-size: x-large;
     font-weight: bold;
     margin: 5px;

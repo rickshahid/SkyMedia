@@ -54,9 +54,9 @@ namespace AzureSkyMedia.PlatformServices
 
             MediaContentPublish contentPublish = new MediaContentPublish()
             {
-                PartitionKey = authUser.MediaAccountName,
+                PartitionKey = authUser.MediaAccountId,
                 RowKey = job.Id,
-                MediaAccountUrl = authUser.MediaAccountUrl,
+                MediaAccountKey = authUser.MediaAccountKey,
                 StorageAccountName = storageAccount,
                 StorageAccountKey = Storage.GetAccountKey(authToken, storageAccount),
                 UserId = authUser.Id,

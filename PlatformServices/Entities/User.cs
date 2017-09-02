@@ -25,39 +25,47 @@
             }
         }
 
-        public string MediaAccountName
+        public string MediaAccountId
         {
             get
             {
-                string accountUrl = this.MediaAccountUrl;
-                accountUrl = accountUrl.Split('/')[2];
-                return accountUrl.Split('.')[0];
+                return AuthToken.GetClaimValue(_authToken, "extension_MediaAccountId");
             }
         }
 
-        public string MediaAccountUrl
+        //public string MediaAccountName
+        //{
+        //    get
+        //    {
+        //        string accountId = this.MediaAccountId;
+        //        accountId = accountId.Split('/')[2];
+        //        return accountId.Split('.')[0];
+        //    }
+        //}
+
+        public string MediaAccountKey
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_MediaAccountUrl");
+                return AuthToken.GetClaimValue(_authToken, "extension_MediaAccountKey");
             }
         }
 
-        public string MediaClientId
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, "extension_MediaClientId");
-            }
-        }
+        //public string MediaClientId
+        //{
+        //    get
+        //    {
+        //        return AuthToken.GetClaimValue(_authToken, "extension_MediaClientId");
+        //    }
+        //}
 
-        public string MediaClientKey
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, "extension_MediaClientKey");
-            }
-        }
+        //public string MediaClientKey
+        //{
+        //    get
+        //    {
+        //        return AuthToken.GetClaimValue(_authToken, "extension_MediaClientKey");
+        //    }
+        //}
 
         public string VideoIndexerKey
         {

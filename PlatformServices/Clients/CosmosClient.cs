@@ -34,11 +34,11 @@ namespace AzureSkyMedia.PlatformServices
             _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey);
         }
 
-        private RequestOptions GetRequestOptions(string clientId)
+        private RequestOptions GetRequestOptions(string accountId)
         {
             RequestOptions requestOptions = new RequestOptions()
             {
-                PartitionKey = new PartitionKey(clientId)
+                PartitionKey = new PartitionKey(accountId)
             };
             return requestOptions;
         }
@@ -105,14 +105,13 @@ namespace AzureSkyMedia.PlatformServices
             return result;
         }
 
-        public string UpsertDocument(string collectionId, JObject jsonDoc, string accountUrl, string clientId, string clientKey, string assetId)
+        public string UpsertDocument(string collectionId, JObject jsonDoc, string accountId, string accountKey, string assetId)
         {
-            jsonDoc["accountUrl"] = accountUrl;
-            jsonDoc["clientId"] = clientId;
-            jsonDoc["clientKey"] = clientKey;
+            jsonDoc["accountId"] = accountId;
+            jsonDoc["accountKey"] = accountKey;
             jsonDoc["assetId"] = assetId;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(clientId) : null;
+            RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountId) : null;
             Task<ResourceResponse<Document>> createTask = _cosmos.UpsertDocumentAsync(collectionUri, jsonDoc, requestOptions);
             createTask.Wait();
             ResourceResponse<Document> responseDocument = createTask.Result;

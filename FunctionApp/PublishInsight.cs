@@ -16,11 +16,11 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static class PublishInsights
     {
-        private static MediaInsightsPublish EnqueuePublish(string accountName, string indexId)
+        private static MediaInsightsPublish EnqueuePublish(string accountId, string indexId)
         {
             EntityClient entityClient = new EntityClient();
             string tableName = Constant.Storage.TableName.InsightPublish;
-            string partitionKey = accountName;
+            string partitionKey = accountId;
             string rowKey = indexId;
             MediaInsightsPublish insightsPublish = entityClient.GetEntity<MediaInsightsPublish>(tableName, partitionKey, rowKey);
             if (insightsPublish != null)
@@ -38,13 +38,13 @@ namespace AzureSkyMedia.FunctionApp
         {
             StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
             IEnumerable<KeyValuePair<string, string>> urlParameters = req.GetQueryNameValuePairs();
-            string accountName = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "account", stringComparison)).Value;
+            string accountId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "account", stringComparison)).Value;
             string indexId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "id", stringComparison)).Value;
-            log.Info($"Account Name: {accountName}");
+            log.Info($"Account Id: {accountId}");
             log.Info($"Index Id: {indexId}");
-            if (!string.IsNullOrEmpty(accountName) && !string.IsNullOrEmpty(indexId))
+            if (!string.IsNullOrEmpty(accountId) && !string.IsNullOrEmpty(indexId))
             {
-                MediaInsightsPublish insightsPublish = EnqueuePublish(accountName, indexId);
+                MediaInsightsPublish insightsPublish = EnqueuePublish(accountId, indexId);
                 log.Info($"Insights Publish: {JsonConvert.SerializeObject(insightsPublish)}");
             }
             return req.CreateResponse(HttpStatusCode.OK);

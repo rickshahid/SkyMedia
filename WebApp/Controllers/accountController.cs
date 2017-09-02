@@ -55,6 +55,16 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
+        public IActionResult register()
+        {
+            return View();
+        }
+
+        public IActionResult edit()
+        {
+            return View();
+        }
+
         public IActionResult index()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);

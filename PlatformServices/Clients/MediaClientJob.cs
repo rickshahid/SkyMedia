@@ -17,11 +17,9 @@ namespace AzureSkyMedia.PlatformServices
             User authUser = new User(authToken);
             MediaInsightsPublish insightsPublish = new MediaInsightsPublish
             {
-                PartitionKey = authUser.MediaAccountName,
+                PartitionKey = authUser.MediaAccountId,
                 RowKey = indexId,
-                MediaAccountUrl = authUser.MediaAccountUrl,
-                MediaClientId = authUser.MediaClientId,
-                MediaClientKey = authUser.MediaClientKey,
+                MediaAccountKey = authUser.MediaAccountKey,
                 IndexerAccountKey = authUser.VideoIndexerKey,
             };
 

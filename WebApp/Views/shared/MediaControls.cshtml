@@ -55,13 +55,14 @@
         <td id="userButtonRight2">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaStreamLive", "MediaLive.png", "SetLiveMode()", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaStreamLive", "MediaLive.png", "DisplayMessage('Live Media Stream', 'Under Construction')", "layoutButton" })
+            @*@Html.Partial("SiteButton", new string[] { "mediaStreamLive", "MediaLive.png", "SetLiveMode()", "layoutButton" })*@
         }
         </td>
         <td id="userButtonRight3">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaBotViddy", "MediaBot.png", "alert('Under Construction')", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaBotViddy", "MediaBot.png", "DisplayMessage('Viddy Media Bot', 'Under Construction')", "layoutButton" })
         }
         </td>
     </tr>

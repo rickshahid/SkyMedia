@@ -9,14 +9,14 @@ namespace AzureSkyMedia.PlatformServices
     {
         private WebClient _indexer;
         private string _serviceUrl;
-        private string _accountName;
+        private string _accountId;
 
-        public IndexerClient(string authToken, string accountName, string indexerKey)
+        public IndexerClient(string authToken, string accountId, string indexerKey)
         {
             if (!string.IsNullOrEmpty(authToken))
             {
                 User authUser = new User(authToken);
-                accountName = authUser.MediaAccountName;
+                accountId = authUser.MediaAccountId;
                 indexerKey = authUser.VideoIndexerKey;
             }
 
@@ -27,7 +27,7 @@ namespace AzureSkyMedia.PlatformServices
 
             string settingKey = Constant.AppSettingKey.MediaIndexerServiceUrl;
             _serviceUrl = AppSetting.GetValue(settingKey);
-            _accountName = accountName;
+            _accountId = accountId;
         }
 
         private string GetPrivacy(bool publicVideo)
@@ -39,7 +39,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string settingKey = Constant.AppSettingKey.MediaPublishInsightsUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
-            callbackUrl = string.Format(callbackUrl, _accountName);
+            callbackUrl = string.Format(callbackUrl, _accountId);
             return WebUtility.UrlEncode(callbackUrl);
         }
 

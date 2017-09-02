@@ -28,12 +28,12 @@ namespace AzureSkyMedia.PlatformServices
             return entityClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
         }
 
-        private static string GetNotificationMessage(string accountName, IJob job)
+        private static string GetNotificationMessage(string accountId, IJob job)
         {
             string messageText = string.Concat("Azure Media Services Job ", job.State.ToString(), ".");
-            messageText = string.Concat(messageText, " Account Name: ", accountName);
+            messageText = string.Concat(messageText, " Account Id: ", accountId);
+            messageText = string.Concat(messageText, ", Job Id: ", job.Id);
             messageText = string.Concat(messageText, ", Job Name: ", job.Name);
-            messageText = string.Concat(messageText, ", Job ID: ", job.Id);
             return string.Concat(messageText, ", Job Running Duration: ", job.RunningDuration.ToString(Constant.TextFormatter.ClockTime));
         }
 
@@ -97,10 +97,11 @@ namespace AzureSkyMedia.PlatformServices
             MediaPublish mediaPublish = null;
             if (contentPublish != null)
             {
-                string accountName = contentPublish.PartitionKey;
+                string accountId = contentPublish.PartitionKey;
+                string accountKey = contentPublish.MediaAccountKey;
                 string jobId = contentPublish.RowKey;
 
-                MediaClient mediaClient = new MediaClient(contentPublish.MediaAccountUrl, contentPublish.ClientId, contentPublish.ClientKey);
+                MediaClient mediaClient = new MediaClient(accountId, accountKey);
                 IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
                 if (job != null)
                 {
@@ -111,7 +112,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         UserId = contentPublish.UserId,
                         MobileNumber = contentPublish.MobileNumber,
-                        StatusMessage = GetNotificationMessage(accountName, job)
+                        StatusMessage = GetNotificationMessage(accountId, job)
                     };
                 }
                 messageClient.DeleteMessage(queueName, messageId, popReceipt);
