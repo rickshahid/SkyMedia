@@ -31,11 +31,11 @@
             <tr>
                 <td class="bannerSide">
                     @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
-                    @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
                     @if (ViewData.ContainsKey("accountContext"))
                     {
-                        @Html.Partial("SiteButton", new string[] { "siteMail", "SiteMail.png", "window.location.href = 'mailto:rick.shahid@live.com'" })
+                        @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
                     }
+                    @Html.Partial("SiteButton", new string[] { "mediaBlog", "MediaBlog.png", "window.open('http://azure.microsoft.com/blog/topics/media-services/')" })
                 </td>
                 <td class="bannerCenter">
                     <div class="viewTitle">

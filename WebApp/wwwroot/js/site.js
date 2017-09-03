@@ -2,7 +2,7 @@
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br /><br />Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br /><br />Open Source");
-    CreateTipBottom("siteMail", "Azure Sky Media<br /><br />Site Mail");
+    CreateTipBottom("mediaBlog", "Azure Media Services<br /><br />Blog");
     CreateTipBottom("userDirectory", "Azure B2C<br /><br />Active Directory");
     CreateTipBottom("userSignIn", "Azure Sky Media<br /><br />User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br /><br />User Sign Out");
@@ -23,11 +23,11 @@ function SetLayout() {
     CreateTipLeft("botService", "Azure Bot Service");
     CreateTipTop("mediaFileUpload", "Media File Upload");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
-    CreateTipTop("mediaAssetLibrary", "Media Asset Library");
+    CreateTipTop("mediaAssetBrowser", "Media Asset Browser");
     CreateTipTop("mediaStreamLeft", "Stream Tuner Left");
     CreateTipTop("mediaStreamRight", "Stream Tuner Right");
-    CreateTipTop("mediaSearchLibrary", "Media Library Search");
-    CreateTipTop("mediaStreamLive", "Media Live Stream");
+    CreateTipTop("mediaInsightsSearch", "Media Insights Search");
+    CreateTipTop("mediaStreamLive", "Live Media Stream");
     CreateTipTop("mediaBotViddy", "Viddy Media Bot");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
@@ -169,33 +169,4 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
             }
         }
     }
-}
-function ToggleIndexerInsights(mediaStream) {
-    var insightsImage = document.getElementById("insightsImage");
-    if ($("#indexerInsights").is(":visible")) {
-        insightsImage.src = insightsImage.src.replace("Close", "Open");
-        $("#indexerInsights").hide();
-    } else {
-        insightsImage.src = insightsImage.src.replace("Open", "Close");
-        var indexerFrame = document.getElementById("indexerFrame");
-        indexerFrame.src = mediaStream.insightsUrl;
-        $("#indexerInsights").show();
-    }
-}
-function ToggleMetadataPanel() {
-    ClearVideoOverlay();
-    var metadataImage = document.getElementById("metadataImage");
-    if ($("#metadataPanel").is(":visible")) {
-        metadataImage.src = metadataImage.src.replace("Close", "Open");
-        $("#metadataPanel").hide();
-    } else {
-        metadataImage.src = metadataImage.src.replace("Open", "Close");
-        var mediaPlayer = GetMediaPlayer(false);
-        var playerHeight = mediaPlayer.el().clientHeight;
-        $("#mediaMetadata").height(playerHeight);
-        $("#metadataPanel").show();
-    }
-}
-function SetLiveMode() {
-    window.location.href = "/?mode=live";
 }

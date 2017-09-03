@@ -437,9 +437,9 @@ body {
     overflow: auto;
 }
 
-.mediaAssets.libraryView {
-    height: 400px;
-    width: 720px;
+.mediaAssets.browserView {
+    height: 450px;
+    width: 750px;
 }
 
 .mediaAssets.workflowView {
@@ -718,17 +718,17 @@ body {
     margin: 0px auto;
     margin-top: 10px;
     overflow: auto;
-    height: 300px;
+    height: 400px;
     width: 800px;
 }
 
-.librarySearch {
+.insightsSearch {
     border: 1px solid deepskyblue;
     border-radius: 20px;
     padding: 5px;
 }
 
-.librarySearch td {
+.insightsSearch td {
     padding: 5px;
 }
 

@@ -124,9 +124,9 @@ namespace AzureSkyMedia.PlatformServices
             JObject jsonDoc = GetDocument(docId);
             if (jsonDoc != null)
             {
-                string accountName = jsonDoc["accountName"].ToString();
+                string accountId = jsonDoc["accountId"].ToString();
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountName) : null;
+                RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountId) : null;
                 Task<ResourceResponse<Document>> deleteTask = _cosmos.DeleteDocumentAsync(documentUri, requestOptions);
                 deleteTask.Wait();
             }

@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http;
 
+using Microsoft.WindowsAzure.MediaServices.Client;
+
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -33,6 +35,16 @@ namespace AzureSkyMedia.PlatformServices
         private string GetPrivacy(bool publicVideo)
         {
             return publicVideo ? "public" : "private";
+        }
+
+        private string GetAssetId(IAsset asset)
+        {
+            string assetId = asset.Id;
+            if (asset.ParentAssets.Count > 0)
+            {
+                assetId = asset.ParentAssets[0].Id;
+            }
+            return assetId;
         }
 
         private string GetCallbackUrl()
@@ -89,6 +101,12 @@ namespace AzureSkyMedia.PlatformServices
             return url;
         }
 
+        public string GetIndexId(IAsset asset)
+        {
+            string assetId = GetAssetId(asset);
+            return GetIndexId(assetId);
+        }
+
         public string GetIndexId(string assetId)
         {
             string indexId = string.Empty;
@@ -98,10 +116,11 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     AssetId = assetId
                 };
-                JObject results = Search(searchCriteria);
-                if (results != null)
+                JObject searchResults = Search(searchCriteria);
+                JArray results = searchResults["results"] as JArray;
+                if (results.HasValues)
                 {
-
+                    indexId = results.First["id"].ToString();
                 }
             }
             return indexId;

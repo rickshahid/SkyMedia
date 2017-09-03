@@ -1,4 +1,30 @@
-﻿function GetFragmentEvent(fragment, timeScale, timeSeconds) {
+﻿function ToggleIndexerInsights(contentInsight) {
+    var insightsImage = document.getElementById("insightsImage");
+    if ($("#indexerInsights").is(":visible")) {
+        insightsImage.src = insightsImage.src.replace("Close", "Open");
+        $("#indexerInsights").hide();
+    } else {
+        insightsImage.src = insightsImage.src.replace("Open", "Close");
+        var indexerFrame = document.getElementById("indexerFrame");
+        indexerFrame.src = contentInsight.sourceUrl;
+        $("#indexerInsights").show();
+    }
+}
+function ToggleMetadataPanel() {
+    ClearVideoOverlay();
+    var metadataImage = document.getElementById("metadataImage");
+    if ($("#metadataPanel").is(":visible")) {
+        metadataImage.src = metadataImage.src.replace("Close", "Open");
+        $("#metadataPanel").hide();
+    } else {
+        metadataImage.src = metadataImage.src.replace("Open", "Close");
+        var mediaPlayer = GetMediaPlayer(false);
+        var playerHeight = mediaPlayer.el().clientHeight;
+        $("#mediaMetadata").height(playerHeight);
+        $("#metadataPanel").show();
+    }
+}
+function GetFragmentEvent(fragment, timeScale, timeSeconds) {
     var ticksPerMillisecond = timeScale / 1000;
     var millisecondsPerInterval = fragment.interval / ticksPerMillisecond;
     var millisecondsOffset = (timeSeconds - (fragment.start / timeScale)) * 1000;

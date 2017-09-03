@@ -8,7 +8,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class searchController : Controller
     {
-        public JsonResult library(MediaSearchCriteria searchCriteria)
+        public JsonResult insights(MediaSearchCriteria searchCriteria)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             IndexerClient indexerClient = new IndexerClient(authToken, null, null);
@@ -18,7 +18,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult index()
         {
-            ViewData["indexerLanguages"] = homeController.GetSpokenLanguages(true);
+            ViewData["indexerLanguages"] = homeController.GetSpokenLanguages(true, true);
             return View();
         }
     }

@@ -113,7 +113,7 @@ namespace AzureSkyMedia.WebApp
             return Task.FromResult(0);
         }
 
-        internal static RedirectToActionResult OnSignIn(string authToken, ControllerBase controller)
+        internal static RedirectToActionResult OnSignIn(ControllerBase controller, string authToken)
         {
             CacheClient cacheClient = new CacheClient(authToken);
             string itemKey = Constant.Cache.ItemKey.MediaProcessors;

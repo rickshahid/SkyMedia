@@ -52,7 +52,7 @@
         ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=aspera");
     }
 
-    if (!requestUrl.Contains("/account/"))
+    if (!requestUrl.Contains("/account/register") && !requestUrl.Contains("/account/edit"))
     {
         Layout = "_Layout";
     }

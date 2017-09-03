@@ -21,7 +21,7 @@
                 collapsed: true,
                 withQuotes: false
             };
-            $.post("/search/library",
+            $.post("/search/insights",
                 {
                     searchCriteria: GetSearchCriteria()
                 },
@@ -32,16 +32,16 @@
         }
         $(function () {
             $("#indexId").focus();
-            CreateTipTop("mediaLibrarySearch", "Submit Search Request");
+            CreateTipTop("mediaInsightsSearch", "Submit Search Request");
         })
     </script>
 }
 
 @section title {
-    Media Library Search
+    Media Insights Search
 }
 
-<table class="librarySearch">
+<table class="insightsSearch">
     <tr>
         <td class="inputLabel">
             Index Id
@@ -107,5 +107,5 @@
 <div id="insightsData" class="insightsData"></div>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "mediaLibrarySearch", "MediaSearch.png", "SubmitSearchRequest()" })
+    @Html.Partial("SiteButton", new string[] { "mediaInsightsSearch", "MediaSearch.png", "SubmitSearchRequest()" })
 </div>

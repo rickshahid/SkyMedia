@@ -1,4 +1,4 @@
-﻿function LoadTreeNodes(libraryView) {
+﻿function LoadTreeNodes(browserView) {
     $("#mediaAssets").jstree({
         "core": {
             "themes": {
@@ -13,7 +13,7 @@
                 }
             }
         },
-        "plugins": libraryView ? [] : ["checkbox"],
+        "plugins": browserView ? [] : ["checkbox"],
         "checkbox": {
             "keep_selected_style": false,
             "tie_selection": false,

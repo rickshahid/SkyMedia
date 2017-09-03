@@ -69,7 +69,7 @@
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
-                    if (@int.Parse(ampVersion.Replace(".", "")) <= 183) {
+                    @*if (@int.Parse(ampVersion.Replace(".", "")) <= 183) {
                         var clipperImage = document.createElement("img");
                         clipperImage.id = "clipperImage";
                         clipperImage.src = "@storageCdnUrl" + "/MediaClipper.png";
@@ -82,33 +82,35 @@
                             mediaPlayer.pause();
                             DisplayVideoClipper("@languageCode");
                         });
-                    }
-                    if (mediaStream.insightsUrl != "") {
-                        var insightsImage = document.createElement("img");
-                        insightsImage.id = "insightsImage";
-                        insightsImage.src = "@storageCdnUrl" + "/MediaInsightsOpen.png";
-                        var insightsButton = document.createElement("button");
-                        insightsButton.id = "insightsButton";
-                        insightsButton.className = controlButtonCss;
-                        insightsButton.appendChild(insightsImage);
-                        controlBarRight.appendChild(insightsButton);
-                        $("#insightsButton").click(function () {
-                            ToggleIndexerInsights(mediaStream);
-                        });
-                    }
-                    @*if (mediaStream.analyticsMetadata.length > 0) {
-                        var metadataImage = document.createElement("img");
-                        metadataImage.id = "metadataImage";
-                        metadataImage.src = "@storageCdnUrl" + "/MediaMetadataOpen.png";
-                        var metadataButton = document.createElement("button");
-                        metadataButton.id = "metadataButton";
-                        metadataButton.className = controlButtonCss + " mediaMetadata";
-                        metadataButton.appendChild(metadataImage);
-                        controlBarRight.appendChild(metadataButton);
-                        $("#metadataButton").click(function () {
-                            ToggleMetadataPanel();
-                        });
                     }*@
+                    for (var i = 0; i < mediaStream.contentInsights.length; i++) {
+                        var contentInsight = mediaStream.contentInsights[i];
+                        if (contentInsight.processor == "VideoIndexer") {
+                            var insightsImage = document.createElement("img");
+                            insightsImage.id = "insightsImage";
+                            insightsImage.src = "@storageCdnUrl" + "/MediaInsightsOpen.png";
+                            var insightsButton = document.createElement("button");
+                            insightsButton.id = "insightsButton";
+                            insightsButton.className = controlButtonCss;
+                            insightsButton.appendChild(insightsImage);
+                            controlBarRight.appendChild(insightsButton);
+                            $("#insightsButton").click(function () {
+                                ToggleIndexerInsights(contentInsight);
+                            });
+                        } else {
+                            var metadataImage = document.createElement("img");
+                            metadataImage.id = "metadataImage";
+                            metadataImage.src = "@storageCdnUrl" + "/MediaMetadataOpen.png";
+                            var metadataButton = document.createElement("button");
+                            metadataButton.id = "metadataButton";
+                            metadataButton.className = controlButtonCss + " mediaMetadata";
+                            metadataButton.appendChild(metadataImage);
+                            controlBarRight.appendChild(metadataButton);
+                            $("#metadataButton").click(function () {
+                                ToggleMetadataPanel();
+                            });
+                        }
+                    }
                 }
             });
             mediaPlayer.addEventListener(amp.eventName.play, function () {

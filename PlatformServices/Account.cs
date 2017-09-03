@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
         private static void DeleteAsset(string authToken, IAsset asset)
         {
             IndexerClient indexerClient = new IndexerClient(authToken, null, null);
-            string indexId = indexerClient.GetIndexId(asset.Id);
+            string indexId = indexerClient.GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId))
             {
                 indexerClient.DeleteVideo(indexId, true);

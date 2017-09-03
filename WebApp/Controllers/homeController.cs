@@ -67,9 +67,18 @@ namespace AzureSkyMedia.WebApp.Controllers
             return jobTemplates.ToArray();
         }
 
-        internal static SelectListItem[] GetSpokenLanguages(bool videoIndexer)
+        internal static SelectListItem[] GetSpokenLanguages(bool videoIndexer, bool defaultEmpty)
         {
             List<SelectListItem> spokenLanguages = new List<SelectListItem>();
+            if (defaultEmpty)
+            {
+                SelectListItem spokenLanguage = new SelectListItem()
+                {
+                    Text = string.Empty,
+                    Value = string.Empty
+                };
+                spokenLanguages.Add(spokenLanguage);
+            }
             NameValueCollection languages = Language.GetSpokenLanguages(videoIndexer);
             foreach (string languageName in languages.Keys)
             {
@@ -92,8 +101,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             viewData["jobName"] = GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
-            viewData["indexerLanguages"] = GetSpokenLanguages(true);
-            viewData["speechToTextLanguages"] = GetSpokenLanguages(false);
+            viewData["indexerLanguages"] = GetSpokenLanguages(true, false);
+            viewData["speechToTextLanguages"] = GetSpokenLanguages(false, false);
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
@@ -118,56 +127,39 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult index()
         {
             string accountMessage = string.Empty;
-            string queryString = this.Request.QueryString.Value.ToLower();
             MediaStream[] mediaStreams = new MediaStream[] { };
+
+            string authToken = GetAuthToken(this.Request, this.Response);
+            string queryString = this.Request.QueryString.Value.ToLower();
+
+            if (this.Request.HasFormContentType)
+            {
+                RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
+                if (redirectAction != null)
+                {
+                    return redirectAction;
+                }
+            }
+
             try
             {
-                string authToken = GetAuthToken(this.Request, this.Response);
-
-                if (this.Request.HasFormContentType)
-                {
-                    RedirectToActionResult redirectAction = Startup.OnSignIn(authToken, this);
-                    if (redirectAction != null)
-                    {
-                        return redirectAction;
-                    }
-                }
-
-                if (this.Request.Host.Value.Contains("account."))
-                {
-                    return RedirectToAction("signin", "account");
-                }
-
-                MediaClient mediaClient = null;
-                IndexerClient indexerClient = null;
-                if (!string.IsNullOrEmpty(authToken))
-                {
-                    try
-                    {
-                        mediaClient = new MediaClient(authToken);
-                        indexerClient = new IndexerClient(authToken, null, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        accountMessage = ex.ToString();
-                    }
-                }
-
-                if (mediaClient == null)
+                if (string.IsNullOrEmpty(authToken))
                 {
                     mediaStreams = Media.GetMediaStreams();
                 }
-                else if (!Media.IsStreamingEnabled(mediaClient))
-                {
-                    accountMessage = Constant.Message.StreamingEndpointNotRunning;
-                }
-                else if (this.Request.Host.Value.Contains("live.") || queryString.Contains("mode=live"))
-                {
-                    mediaStreams = Media.GetLiveStreams(mediaClient, indexerClient);
-                }
                 else
                 {
-                    mediaStreams = Media.GetMediaStreams(mediaClient, indexerClient);
+                    MediaClient mediaClient = new MediaClient(authToken);
+                    if (!Media.IsStreamingEnabled(mediaClient))
+                    {
+                        accountMessage = Constant.Message.StreamingEndpointNotRunning;
+                    }
+                    else
+                    {
+                        IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+                        bool liveStreams = this.Request.Host.Value.Contains("live.") || queryString.Contains("live=on");
+                        mediaStreams = Media.GetMediaStreams(mediaClient, indexerClient, liveStreams);
+                    }
                 }
             }
             catch (Exception ex)

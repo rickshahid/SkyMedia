@@ -2,7 +2,7 @@
 
 @{
     MediaStream[] mediaStreams = Model;
-    string mediaLiveImage = this.Context.Request.Query["live"] == "on" ? "MediaLiveOn.png" : "MediaLiveOff.png";
+    string liveStreamImage = this.Context.Request.Query["live"] == "on" ? "MediaLiveStreamOn.png" : "MediaLiveStreamOff.png";
 }
 
 <table class="mediaControls">
@@ -22,7 +22,7 @@
         <td id="userButtonLeft3">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaAssetLibrary", "MediaLibrary.png", "window.location.href = '/asset'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaAssetBrowser", "MediaBrowser.png", "window.location.href = '/asset'", "layoutButton" })
         }
         </td>
         <td>
@@ -49,14 +49,13 @@
         <td id="userButtonRight1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaSearchLibrary", "MediaSearch.png", "window.location.href = '/search'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaInsightsSearch", "MediaSearch.png", "window.location.href = '/search'", "layoutButton" })
         }
         </td>
         <td id="userButtonRight2">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaStreamLive", "MediaLive.png", "DisplayMessage('Live Media Stream', 'Under Construction')", "layoutButton" })
-            @*@Html.Partial("SiteButton", new string[] { "mediaStreamLive", "MediaLive.png", "SetLiveMode()", "layoutButton" })*@
+            @Html.Partial("SiteButton", new string[] { "mediaStreamLive", liveStreamImage, "ToggleLiveStream(this)", "layoutButton" })
         }
         </td>
         <td id="userButtonRight3">

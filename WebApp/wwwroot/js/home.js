@@ -30,3 +30,13 @@ function SetStreamName(mediaStream) {
     var streamName = GetStreamName(mediaStream, false);
     $("#streamName").html(streamName);
 }
+function ToggleLiveStream(liveButton) {
+    var buttonImage = liveButton.children[0];
+    if (buttonImage.src.indexOf("LiveStreamOn") > -1) {
+        buttonImage.src = buttonImage.src.replace("On", "Off");
+        window.location.href = "/?live=off";
+    } else {
+        buttonImage.src = buttonImage.src.replace("Off", "On");
+        window.location.href = "/?live=on";
+    }
+}

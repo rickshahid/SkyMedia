@@ -57,7 +57,7 @@ namespace AzureSkyMedia.PlatformServices
                     Name = streamName,
                     SourceUrl = sourceUrl,
                     TextTracks = MapTextTracks(textTracks),
-                    CognitiveInsights = new MediaInsight[] { },
+                    ContentInsights = new MediaInsight[] { },
                     ContentProtection = GetContentProtection(protectionTypes)
                 };
                 mediaStreams.Add(mediaStream);
@@ -74,7 +74,7 @@ namespace AzureSkyMedia.PlatformServices
             List<MediaTrack> textTracks = new List<MediaTrack>();
 
             string webVttUrl = mediaClient.GetWebVttUrl(asset);
-            string indexId = indexerClient.GetIndexId(asset.Id);
+            string indexId = indexerClient.GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId))
             {
                 webVttUrl = indexerClient.GetWebVttUrl(indexId, null);
@@ -143,24 +143,54 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaStream GetMediaStream(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
+            List<MediaInsight> contentInsights = new List<MediaInsight>();
+
+            string indexId = indexerClient.GetIndexId(asset);
+            if (!string.IsNullOrEmpty(indexId) && indexerClient != null)
+            {
+                MediaInsight contentInsight = new MediaInsight()
+                {
+                    Processor = MediaProcessor.VideoIndexer,
+                    SourceUrl = indexerClient.GetInsightsUrl(indexId)
+                };
+                contentInsights.Add(contentInsight);
+            }
+
+            //AnalyticsMetadata = GetAnalyticsMetadata(mediaClient, asset),
+
             MediaStream mediaStream = new MediaStream()
             {
                 Name = asset.Name,
                 SourceUrl = mediaClient.GetLocatorUrl(asset),
                 TextTracks = GetTextTracks(mediaClient, indexerClient, asset),
-                //AnalyticsMetadata = GetAnalyticsMetadata(mediaClient, asset),
+                ContentInsights = contentInsights.ToArray(),
                 ContentProtection = mediaClient.GetContentProtection(asset)
             };
-            string indexId = indexerClient.GetIndexId(asset.Id);
-            if (!string.IsNullOrEmpty(indexId) && indexerClient != null)
-            {
-                //mediaStream.InsightsUrl = indexerClient.GetInsightsUrl(indexId);
-            }
             return mediaStream;
         }
 
-        public static MediaStream[] GetMediaStreams(MediaClient mediaClient, IndexerClient indexerClient)
+        private static MediaStream[] GetLiveStreams(MediaClient mediaClient, IndexerClient indexerClient)
         {
+            List<MediaStream> mediaStreams = new List<MediaStream>();
+            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+            foreach (IChannel channel in channels)
+            {
+                foreach (IProgram program in channel.Programs)
+                {
+                    MediaStream mediaStream = GetMediaStream(mediaClient, indexerClient, program.Asset);
+                    mediaStreams.Add(mediaStream);
+                }
+            }
+            return mediaStreams.ToArray();
+        }
+
+        public static MediaStream[] GetMediaStreams(MediaClient mediaClient, IndexerClient indexerClient, bool liveStreams)
+        {
+            if (liveStreams)
+            {
+                return GetLiveStreams(mediaClient, indexerClient);
+            }
+
             List<MediaStream> mediaStreams = new List<MediaStream>();
             string settingKey = Constant.AppSettingKey.MediaLocatorMaxStreamCount;
             int maxStreamCount = int.Parse(AppSetting.GetValue(settingKey));
@@ -214,21 +244,6 @@ namespace AzureSkyMedia.PlatformServices
             settingKey4 = Constant.AppSettingKey.MediaStream3ContentProtection;
             AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3, settingKey4);
 
-            return mediaStreams.ToArray();
-        }
-
-        public static MediaStream[] GetLiveStreams(MediaClient mediaClient, IndexerClient indexerClient)
-        {
-            List<MediaStream> mediaStreams = new List<MediaStream>();
-            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
-            foreach (IChannel channel in channels)
-            {
-                foreach (IProgram program in channel.Programs)
-                {
-                    MediaStream mediaStream = GetMediaStream(mediaClient, indexerClient, program.Asset);
-                    mediaStreams.Add(mediaStream);
-                }
-            }
             return mediaStreams.ToArray();
         }
 
