@@ -16,7 +16,7 @@ The following set of media functionality has been integrated and enabled within 
 
 * Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
 
-* Discover and extract actionable insights from your video content via Cognitive Services and Artificial Intelligence (AI)
+* Discover and extract actionable insights from your video content across a spectrum of cognitive and analytic services
 
 * Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
@@ -28,13 +28,13 @@ To enable the core application functionality that is listed above, the following
 
 ![](http://skystorage.azureedge.net/Snip2.ApplicationArchitecture.png)
 
-* Active Directory B2C - http://azure.microsoft.com/en-us/services/active-directory-b2c/
+* **Active Directory B2C** - http://azure.microsoft.com/en-us/services/active-directory-b2c/
 
-* Storage - http://azure.microsoft.com/en-us/services/storage/
+* **Storage** - http://azure.microsoft.com/en-us/services/storage/
 
-* Cosmos DB - http://azure.microsoft.com/en-us/services/cosmos-db/
+* **Cosmos DB** - http://azure.microsoft.com/en-us/services/cosmos-db/
 
-* Media Services - http://azure.microsoft.com/en-us/services/media-services/
+* **Media Services** - http://azure.microsoft.com/en-us/services/media-services/
 
   * Encoding - http://azure.microsoft.com/en-us/services/media-services/encoding/
 
