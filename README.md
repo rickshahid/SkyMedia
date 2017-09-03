@@ -48,49 +48,27 @@ To enable the core application functionality that is listed above, the following
 
   * **Player** - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
-* App Insights - http://azure.microsoft.com/en-us/services/application-insights/
+* **App Insights** - http://azure.microsoft.com/en-us/services/application-insights/
 
-* App Service - http://azure.microsoft.com/en-us/services/app-service/
+* **App Service** - http://azure.microsoft.com/en-us/services/app-service/
 
-* Function App - http://azure.microsoft.com/en-us/services/functions/
+* **Function App** - http://azure.microsoft.com/en-us/services/functions/
 
-* Logic App - http://azure.microsoft.com/en-us/services/logic-apps/
+* **Logic App** - http://azure.microsoft.com/en-us/services/logic-apps/
 
-* Redis Cache - http://azure.microsoft.com/en-us/services/cache/
+* **Redis Cache** - http://azure.microsoft.com/en-us/services/cache/
 
-* Content Delivery Network - http://azure.microsoft.com/en-us/services/cdn/
+* **Content Delivery Network** - http://azure.microsoft.com/en-us/services/cdn/
 
-* Traffic Manager - http://azure.microsoft.com/en-us/services/traffic-manager/
+* **Traffic Manager** - http://azure.microsoft.com/en-us/services/traffic-manager/
 
 In addition, the following Azure partner services have been integrated for high-speed file transfer into Azure Storage:
 
-* Signiant Flight - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
+* **Signiant Flight** - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
 
-* Aspera Server On Demand - http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod
+* **Aspera Server On Demand** - http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod
 
-The set of Azure Media Services processors that have been integrated and enabled include the following:
-
-* Encoder Standard - http://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-standard-formats
-
-* Encoder Premium - http://docs.microsoft.com/en-us/azure/media-services/media-services-premium-workflow-encoder-formats
-
-* Video Indexer - http://docs.microsoft.com/en-us/azure/cognitive-services/video-indexer/video-indexer-overview
-
-* Video Summarization - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization
-
-* Speech To Text - http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2
-
-* Face Detection - http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection
-
-* Face Redaction - http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction
-
-* Motion Detection - http://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection
-
-* Motion Hyperlapse - http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content
-
-* Character Recognition - http://docs.microsoft.com/en-us/azure/media-services/media-services-video-optical-character-recognition
-
-If you have any comments, enhancement suggestions or if you run into an issue, please let me know.
+If you have any feedback, suggestions or if you run into an issue, please let me know.
 
 Thanks.
 
