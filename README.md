@@ -20,8 +20,6 @@ The following set of media functionality has been integrated and enabled within 
 
 * Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
-* Publish workflow outputs automatically based upon key input parameters that are specified at job submission time
-
 * Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
 To enable the core application functionality that is listed above, the following Azure platform services are leveraged:
@@ -36,19 +34,19 @@ To enable the core application functionality that is listed above, the following
 
 * **Media Services** - http://azure.microsoft.com/en-us/services/media-services/
 
-  * Encoding - http://azure.microsoft.com/en-us/services/media-services/encoding/
+  * **Encoding** - http://azure.microsoft.com/en-us/services/media-services/encoding/
 
-  * Streaming - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
+  * **Streaming** - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
   
-  * Analytics - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
+  * **Analytics** - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
 
-  * Indexer - http://azure.microsoft.com/en-us/services/cognitive-services/video-indexer/
+  * **Indexer** - http://azure.microsoft.com/en-us/services/cognitive-services/video-indexer/
 
-    * Cognitive Services - http://azure.microsoft.com/en-us/services/cognitive-services/
+    * **Cognitive Services** - http://azure.microsoft.com/en-us/services/cognitive-services/
 
-    * Search - http://azure.microsoft.com/en-us/services/search/
+    * **Search** - http://azure.microsoft.com/en-us/services/search/
 
-  * Player - http://azure.microsoft.com/en-us/services/media-services/media-player/
+  * **Player** - http://azure.microsoft.com/en-us/services/media-services/media-player/
 
 * App Insights - http://azure.microsoft.com/en-us/services/application-insights/
 
