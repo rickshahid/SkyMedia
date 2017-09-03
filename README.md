@@ -26,47 +26,49 @@ To enable the core application functionality that is listed above, the following
 
 ![](http://skystorage.azureedge.net/Snip2.ApplicationArchitecture.png)
 
-* **Active Directory B2C** - http://azure.microsoft.com/en-us/services/active-directory-b2c/
+* **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
 
-* **Storage** - http://azure.microsoft.com/en-us/services/storage/
+* **Storage** - http://azure.microsoft.com/services/storage/
 
-* **Cosmos DB** - http://azure.microsoft.com/en-us/services/cosmos-db/
+* **Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
-* **Media Services** - http://azure.microsoft.com/en-us/services/media-services/
+* **Media Services** - http://azure.microsoft.com/services/media-services/
 
-  * **Encoding** - http://azure.microsoft.com/en-us/services/media-services/encoding/
+  * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
 
-  * **Streaming** - https://azure.microsoft.com/en-us/services/media-services/live-on-demand/
+  * **Streaming** - https://azure.microsoft.com/services/media-services/live-on-demand/
   
-  * **Analytics** - http://azure.microsoft.com/en-us/services/media-services/media-analytics/
+  * **Analytics** - http://azure.microsoft.com/services/media-services/media-analytics/
 
-  * **Indexer** - http://azure.microsoft.com/en-us/services/cognitive-services/video-indexer/
+  * **Indexer** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
 
-    * **Cognitive Services** - http://azure.microsoft.com/en-us/services/cognitive-services/
+    * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
 
-    * **Search** - http://azure.microsoft.com/en-us/services/search/
+    * **Search** - http://azure.microsoft.com/services/search/
 
-  * **Player** - http://azure.microsoft.com/en-us/services/media-services/media-player/
+  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
-* **App Insights** - http://azure.microsoft.com/en-us/services/application-insights/
+* **App Insights** - http://azure.microsoft.com/services/application-insights/
 
-* **App Service** - http://azure.microsoft.com/en-us/services/app-service/
+* **App Service** - http://azure.microsoft.com/services/app-service/
 
-* **Function App** - http://azure.microsoft.com/en-us/services/functions/
+* **Bot Service** - http://azure.microsoft.com/services/bot-service/
 
-* **Logic App** - http://azure.microsoft.com/en-us/services/logic-apps/
+* **Function App** - http://azure.microsoft.com/services/functions/
 
-* **Redis Cache** - http://azure.microsoft.com/en-us/services/cache/
+* **Logic App** - http://azure.microsoft.com/services/logic-apps/
 
-* **Content Delivery Network** - http://azure.microsoft.com/en-us/services/cdn/
+* **Redis Cache** - http://azure.microsoft.com/services/cache/
 
-* **Traffic Manager** - http://azure.microsoft.com/en-us/services/traffic-manager/
+* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
+
+* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
 In addition, the following Azure partner services have been integrated for high-speed file transfer into Azure Storage:
 
 * **Signiant Flight** - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
 
-* **Aspera Server On Demand** - http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod
+* **Aspera Server On Demand** - http://azuremarketplace.microsoft.com/marketplace/apps/aspera.sod
 
 If you have any feedback, suggestions or if you run into an issue, please let me know.
 
