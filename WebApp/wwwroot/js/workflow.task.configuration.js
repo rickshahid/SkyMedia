@@ -85,7 +85,8 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 $("#" + encoderConfigDocId).click(function () {
                     window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-presets-overview");
                 });
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR Adaptive Streaming Bitrate Ladder", "Adaptive Streaming");
+                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR Adaptive Streaming Ladder (Interleaved)", "Content Adaptive Multiple Bitrate MP4");
+                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR Adaptive Streaming Ladder (Uninterleaved)", "Adaptive Streaming");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 4K (12 levels, 1000 - 20000 kbps) AAC 5.1", "H264 Multiple Bitrate 4K Audio 5.1");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 4K (12 levels, 1000 - 20000 kbps) AAC", "H264 Multiple Bitrate 4K");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 1080p (8 levels, 400 - 6000 kbps) AAC 5.1", "H264 Multiple Bitrate 1080p Audio 5.1");

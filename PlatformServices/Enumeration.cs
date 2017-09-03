@@ -46,7 +46,6 @@ namespace AzureSkyMedia.PlatformServices
         MotionHyperlapseSpeed
     }
 
-    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaProcessor
     {
         EncoderStandard,

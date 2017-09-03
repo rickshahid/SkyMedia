@@ -85,7 +85,7 @@
                     }*@
                     for (var i = 0; i < mediaStream.contentInsights.length; i++) {
                         var contentInsight = mediaStream.contentInsights[i];
-                        if (contentInsight.processor == "VideoIndexer") {
+                        if (contentInsight.processor == 3) { // Video Indexer
                             var insightsImage = document.createElement("img");
                             insightsImage.id = "insightsImage";
                             insightsImage.src = "@storageCdnUrl" + "/MediaInsightsOpen.png";

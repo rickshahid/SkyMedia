@@ -28,7 +28,7 @@ function SetLayout() {
     CreateTipTop("mediaStreamRight", "Stream Tuner Right");
     CreateTipTop("mediaInsightsSearch", "Media Insights Search");
     CreateTipTop("mediaStreamLive", "Live Media Stream");
-    CreateTipTop("mediaBotViddy", "Viddy Media Bot");
+    CreateTipTop("mediaBotViddy", "Viddy Media Bot<br /><br />(Under Construction)");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });
