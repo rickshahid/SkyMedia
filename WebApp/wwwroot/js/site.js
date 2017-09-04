@@ -21,9 +21,9 @@ function SetLayout() {
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("batchRendering", "Azure Batch Rendering");
     CreateTipLeft("botService", "Azure Bot Service");
-    CreateTipTop("mediaFileUpload", "Media File Upload");
+    CreateTipTop("mediaFileWorkflow", "Media File Workflow");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
-    CreateTipTop("mediaAssetBrowser", "Media Asset Browser");
+    CreateTipTop("mediaAssetBrowse", "Media Asset Browse");
     CreateTipTop("mediaStreamLeft", "Stream Tuner Left");
     CreateTipTop("mediaStreamRight", "Stream Tuner Right");
     CreateTipTop("mediaInsightsSearch", "Media Insights Search");

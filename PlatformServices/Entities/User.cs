@@ -13,7 +13,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "emails");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.UserId);
             }
         }
 
@@ -21,7 +21,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_MobileNumber");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MobileNumber);
             }
         }
 
@@ -29,7 +29,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_MediaAccountId");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountName);
             }
         }
 
@@ -47,7 +47,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_MediaAccountKey");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountKey);
             }
         }
 
@@ -71,7 +71,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_VideoIndexerKey");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey);
             }
         }
 
@@ -79,7 +79,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValues(_authToken, "extension_StorageAccountName");
+                return AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.StorageAccountName);
             }
         }
 
@@ -87,7 +87,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValues(_authToken, "extension_StorageAccountKey");
+                return AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.StorageAccountKey);
             }
         }
 
@@ -95,7 +95,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_SigniantServiceGateway");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.SigniantServiceGateway);
             }
         }
 
@@ -103,7 +103,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_SigniantAccountKey");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.SigniantAccountKey);
             }
         }
 
@@ -111,7 +111,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_AsperaServiceGateway");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.AsperaServiceGateway);
             }
         }
 
@@ -119,7 +119,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_AsperaAccountId");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.AsperaAccountId);
             }
         }
 
@@ -127,7 +127,7 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, "extension_AsperaAccountKey");
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.AsperaAccountKey);
             }
         }
     }

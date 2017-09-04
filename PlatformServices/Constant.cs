@@ -132,21 +132,21 @@ namespace AzureSkyMedia.PlatformServices
             public const string UserAuthToken = " AzureSkyMedia.UserAuthToken";
         }
 
-        //public struct UserAttribute
-        //{
-        //    public const string UserId = "emails";
-        //    public const string MobileNumber = "extension_MobileNumber";
-        //    public const string MediaAccountName = "extension_MediaAccountName";
-        //    public const string MediaAccountKey = "extension_MediaAccountKey";
-        //    public const string VideoIndexerKey = "extension_VideoIndexerKey";
-        //    public const string StorageAccountName = "extension_StorageAccountName";
-        //    public const string StorageAccountKey = "extension_StorageAccountKey";
-        //    public const string SigniantServiceGateway = "extension_SigniantServiceGateway";
-        //    public const string SigniantAccountKey = "extension_SigniantAccountKey";
-        //    public const string AsperaServiceGateway = "extension_AsperaServiceGateway";
-        //    public const string AsperaAccountId = "extension_AsperaAccountId";
-        //    public const string AsperaAccountKey = "extension_AsperaAccountKey";
-        //}
+        public struct UserAttribute
+        {
+            public const string UserId = "emails";
+            public const string MobileNumber = "extension_MobileNumber";
+            public const string MediaAccountName = "extension_MediaAccountName";
+            public const string MediaAccountKey = "extension_MediaAccountKey";
+            public const string VideoIndexerKey = "extension_VideoIndexerKey";
+            public const string StorageAccountName = "extension_StorageAccountName";
+            public const string StorageAccountKey = "extension_StorageAccountKey";
+            public const string SigniantServiceGateway = "extension_SigniantServiceGateway";
+            public const string SigniantAccountKey = "extension_SigniantAccountKey";
+            public const string AsperaServiceGateway = "extension_AsperaServiceGateway";
+            public const string AsperaAccountId = "extension_AsperaAccountId";
+            public const string AsperaAccountKey = "extension_AsperaAccountKey";
+        }
 
         public struct Storage
         {

@@ -16,10 +16,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public static MediaPublish PublishInsights(string queueName)
         {
+            MediaPublish mediaPublish = null;
             MessageClient messageClient = new MessageClient();
             MediaInsightsPublish insightsPublish = messageClient.GetMessage<MediaInsightsPublish>(queueName, out string messageId, out string popReceipt);
-
-            MediaPublish mediaPublish = null;
             if (insightsPublish != null)
             {
                 string accountId = insightsPublish.PartitionKey;

@@ -437,13 +437,13 @@ body {
     overflow: auto;
 }
 
-.mediaAssets.browserView {
+.mediaAssets.browseView {
     height: 450px;
     width: 750px;
 }
 
 .mediaAssets.workflowView {
-    height: 250px;
+    height: 300px;
     width: 605px;
 }
 

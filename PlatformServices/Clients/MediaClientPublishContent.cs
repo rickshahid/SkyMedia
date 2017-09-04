@@ -21,14 +21,7 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static ContentProtection GetContentProtection(MediaContentPublish contentPublish)
-        {
-            EntityClient entityClient = new EntityClient();
-            string tableName = Constant.Storage.TableName.ContentProtection;
-            return entityClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
-        }
-
-        private static string GetNotificationMessage(string accountId, IJob job)
+         private static string GetNotificationMessage(string accountId, IJob job)
         {
             string messageText = string.Concat("Azure Media Services Job ", job.State.ToString(), ".");
             messageText = string.Concat(messageText, " Account Id: ", accountId);
@@ -72,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAsset inputAsset in job.InputMediaAssets)
                 {
-                    //PublishAnalytics(mediaClient, job, contentPublish, inputAsset.Id);
+                    PublishAnalytics(mediaClient, job, contentPublish, inputAsset.Id);
                 }
             }
             else
@@ -83,7 +76,7 @@ namespace AzureSkyMedia.PlatformServices
                     foreach (IAsset outputAsset in jobTask.OutputAssets)
                     {
                         PublishAsset(mediaClient, outputAsset, contentProtection);
-                        //PublishAnalytics(mediaClient, job, contentPublish, outputAsset.Id);
+                        PublishAnalytics(mediaClient, job, contentPublish, outputAsset.Id);
                     }
                 }
             }

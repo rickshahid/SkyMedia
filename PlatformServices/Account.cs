@@ -35,6 +35,9 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(indexId))
             {
                 indexerClient.DeleteVideo(indexId, true);
+                string collectionId = Constant.Database.Collection.ContentInsight;
+                CosmosClient cosmosClient = new CosmosClient(true);
+                cosmosClient.DeleteDocument(collectionId, indexId);
             }
             foreach (ILocator locator in asset.Locators)
             {

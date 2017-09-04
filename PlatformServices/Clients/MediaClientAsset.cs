@@ -9,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private CloudBlockBlob CreateAssetFile(IAsset asset, BlobClient blobClient, string containerName, string fileName)
+        private CloudBlockBlob CreateFile(IAsset asset, BlobClient blobClient, string containerName, string fileName)
         {
             CloudBlockBlob blob = blobClient.GetBlob(containerName, null, fileName, true);
             IAssetFile assetFile = asset.AssetFiles.Create(fileName);
@@ -84,7 +84,7 @@ namespace AzureSkyMedia.PlatformServices
             if (fileNames.Length == 1)
             {
                 string fileName = fileNames[0];
-                CloudBlockBlob sourceBlob = CreateAssetFile(asset, blobClient, sourceContainerName, fileName);
+                CloudBlockBlob sourceBlob = CreateFile(asset, blobClient, sourceContainerName, fileName);
                 CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, null, fileName, false);
                 destinationBlob.StartCopy(sourceBlob);
             }
@@ -93,7 +93,7 @@ namespace AzureSkyMedia.PlatformServices
                 List<Task> copyTasks = new List<Task>();
                 foreach (string fileName in fileNames)
                 {
-                    CloudBlockBlob sourceBlob = CreateAssetFile(asset, blobClient, sourceContainerName, fileName);
+                    CloudBlockBlob sourceBlob = CreateFile(asset, blobClient, sourceContainerName, fileName);
                     CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, null, fileName, false);
                     Task copyTask = destinationBlob.StartCopyAsync(sourceBlob);
                     copyTasks.Add(copyTask);
