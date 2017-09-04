@@ -70,7 +70,7 @@ In addition, the following Azure partner services have been integrated for high-
 
 * **Aspera Server On Demand** - http://azuremarketplace.microsoft.com/marketplace/apps/aspera.sod
 
-If you have any feedback, suggestions or if you run into an issue, please let me know.
+If you have any issues or suggestions, please let me know.
 
 Thanks.
 
