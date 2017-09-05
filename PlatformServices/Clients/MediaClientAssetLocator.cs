@@ -126,15 +126,20 @@ namespace AzureSkyMedia.PlatformServices
             return webVttUrl;
         }
 
-        public ILocator CreateLocator(LocatorType locatorType, IAsset asset)
+        public ILocator CreateLocator(string locatorId, LocatorType locatorType, IAsset asset)
         {
             ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
             if (locator == null)
             {
                 IAccessPolicy accessPolicy = GetAccessPolicy();
-                locator = _media.Locators.CreateLocator(locatorType, asset, accessPolicy, null);
+                locator = _media.Locators.CreateLocator(locatorId, locatorType, asset, accessPolicy, null);
             }
             return locator;
+        }
+
+        public ILocator CreateLocator(LocatorType locatorType, IAsset asset)
+        {
+            return CreateLocator(null, locatorType, asset);
         }
     }
 }

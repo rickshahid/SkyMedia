@@ -15,20 +15,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaJobTask CreateCopy()
         {
-            MediaJobTask newTask = (MediaJobTask)this.MemberwiseClone();
-            foreach (KeyValuePair<string, bool> keyValue in this.ProcessorConfigBoolean)
-            {
-                newTask.ProcessorConfigBoolean.Add(keyValue.Key, keyValue.Value);
-            }
-            foreach (KeyValuePair<string, int> keyValue in this.ProcessorConfigInteger)
-            {
-                newTask.ProcessorConfigInteger.Add(keyValue.Key, keyValue.Value);
-            }
-            foreach (KeyValuePair<string, string> keyValue in this.ProcessorConfigString)
-            {
-                newTask.ProcessorConfigString.Add(keyValue.Key, keyValue.Value);
-            }
-            return newTask;
+            return (MediaJobTask)this.MemberwiseClone();
         }
 
         public int? ParentIndex { get; set; }

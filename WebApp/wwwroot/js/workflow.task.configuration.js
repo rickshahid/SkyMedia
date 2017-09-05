@@ -29,7 +29,7 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationSeconds" + lastTaskNumber, "summarizationDurationSeconds" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextConfigRow" + lastTaskNumber, "speechToTextConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextLanguage" + lastTaskNumber, "speechToTextLanguage" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionWebVtt" + lastTaskNumber, "speechToTextaptionWebVtt" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionWebVtt" + lastTaskNumber, "speechToTextCaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionTtml" + lastTaskNumber, "speechToTextCaptionTtml" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
+using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -21,7 +22,7 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-         private static string GetNotificationMessage(string accountId, IJob job)
+        private static string GetNotificationMessage(string accountId, IJob job)
         {
             string messageText = string.Concat("Azure Media Services Job ", job.State.ToString(), ".");
             messageText = string.Concat(messageText, " Account Id: ", accountId);
@@ -34,23 +35,27 @@ namespace AzureSkyMedia.PlatformServices
         {
             if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
             {
+                string locatorId = null;
                 LocatorType locatorType = LocatorType.OnDemandOrigin;
-                for (int i = asset.Locators.Count - 1; i >= 0; i--)
+                List<ILocator> locators = asset.Locators.Where(l => l.Type == locatorType).ToList();
+                foreach (ILocator locator in locators)
                 {
-                    if (asset.Locators[i].Type == locatorType)
+                    if (string.IsNullOrEmpty(locatorId))
                     {
-                        asset.Locators[i].Delete();
+                        locatorId = locator.Id;
                     }
+                    locator.Delete();
                 }
-                for (int i = asset.DeliveryPolicies.Count - 1; i >= 0; i--)
+                List<IAssetDeliveryPolicy> deliveryPolicies = asset.DeliveryPolicies.ToList();
+                foreach (IAssetDeliveryPolicy deliveryPolicy in deliveryPolicies)
                 {
-                    asset.DeliveryPolicies.RemoveAt(i);
+                    asset.DeliveryPolicies.Remove(deliveryPolicy);
                 }
                 if (contentProtection != null)
                 {
                     mediaClient.AddDeliveryPolicies(asset, contentProtection);
                 }
-                mediaClient.CreateLocator(locatorType, asset);
+                mediaClient.CreateLocator(locatorId, locatorType, asset);
             }
         }
 
@@ -84,10 +89,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public static MediaPublish PublishContent(string queueName)
         {
+            MediaPublish mediaPublish = null;
             MessageClient messageClient = new MessageClient();
             MediaContentPublish contentPublish = messageClient.GetMessage<MediaContentPublish>(queueName, out string messageId, out string popReceipt);
-
-            MediaPublish mediaPublish = null;
             if (contentPublish != null)
             {
                 string accountId = contentPublish.PartitionKey;
@@ -98,7 +102,7 @@ namespace AzureSkyMedia.PlatformServices
                 IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
                 if (job != null)
                 {
-                    mediaClient.SetProcessorUnits(job, null, ReservedUnitType.Basic);
+                    mediaClient.SetProcessorUnits(job, null, ReservedUnitType.Basic, false);
                     PublishJob(mediaClient, job, contentPublish);
 
                     mediaPublish = new MediaPublish()

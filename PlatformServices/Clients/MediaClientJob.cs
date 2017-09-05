@@ -172,7 +172,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 else
                 {
-                    SetProcessorUnits(job, jobTemplate, mediaJob.NodeType);
+                    SetProcessorUnits(job, jobTemplate, mediaJob.NodeType, true);
                     job.Submit();
                 }
             }
@@ -191,12 +191,19 @@ namespace AzureSkyMedia.PlatformServices
             return jobTemplates;
         }
 
-        public void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType nodeType)
+        public void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType nodeType, bool newJob)
         {
-            int taskCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
+            int unitCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            processorUnits[0].CurrentReservedUnits = (job.State == JobState.Queued) ? taskCount : 0;
             processorUnits[0].ReservedUnitType = nodeType;
+            if (newJob)
+            {
+                processorUnits[0].CurrentReservedUnits += unitCount;
+            }
+            else
+            {
+                processorUnits[0].CurrentReservedUnits -= unitCount;
+            }
             processorUnits[0].Update();
         }
     }
