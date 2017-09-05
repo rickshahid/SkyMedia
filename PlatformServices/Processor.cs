@@ -10,10 +10,45 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Processor
     {
-        private static MediaProcessor?[] GetMediaProcessors(IMediaProcessor[] processors)
+        private static string[] GetProcessorIds()
         {
-            List<MediaProcessor?> mediaProcessors = new List<MediaProcessor?>();
-            string[] processorIds = Processor.GetProcessorIds();
+            List<string> processorIds = new List<string>();
+            processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
+            processorIds.Add(Constant.Media.ProcessorId.EncoderPremium);
+            processorIds.Add(Constant.Media.ProcessorId.EncoderUltra);
+            processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
+            processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
+            processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
+            processorIds.Add(Constant.Media.ProcessorId.SpeechToText);
+            processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
+            processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
+            processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
+            processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
+            processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
+            processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
+            processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
+            return processorIds.ToArray();
+        }
+
+        private static MediaProcessor[] GetMediaProcessors(string authToken)
+        {
+            CacheClient cacheClient = new CacheClient(authToken);
+            string itemKey = Constant.Cache.ItemKey.MediaProcessors;
+            MediaProcessor[] mediaProcessors = cacheClient.GetValues<MediaProcessor>(itemKey);
+            if (mediaProcessors.Length == 0)
+            {
+                MediaClient mediaClient = new MediaClient(authToken);
+                IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+                mediaProcessors = GetMediaProcessors(processors);
+                cacheClient.SetValue<MediaProcessor[]>(itemKey, mediaProcessors);
+            }
+            return mediaProcessors;
+        }
+
+        private static MediaProcessor[] GetMediaProcessors(IMediaProcessor[] processors)
+        {
+            List<MediaProcessor> mediaProcessors = new List<MediaProcessor>();
+            string[] processorIds = GetProcessorIds();
             foreach (string processorId in processorIds)
             {
                 if (!processorId.StartsWith(Constant.Media.ProcessorId.Prefix, StringComparison.OrdinalIgnoreCase))
@@ -27,28 +62,16 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         if (string.Equals(processorId, processor.Id, StringComparison.OrdinalIgnoreCase))
                         {
-                            MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(processor.Id);
-                            mediaProcessors.Add(mediaProcessor);
+                            MediaProcessor? mediaProcessor = GetMediaProcessor(processor.Id);
+                            if (mediaProcessor.HasValue)
+                            {
+                                mediaProcessors.Add(mediaProcessor.Value);
+                            }
                         }
                     }
                 }
             }
             return mediaProcessors.ToArray();
-        }
-
-        private static MediaProcessor?[] GetMediaProcessors(string authToken)
-        {
-            CacheClient cacheClient = new CacheClient(authToken);
-            string itemKey = Constant.Cache.ItemKey.MediaProcessors;
-            MediaProcessor?[] mediaProcessors = cacheClient.GetValues<MediaProcessor?>(itemKey);
-            if (mediaProcessors.Length == 0)
-            {
-                MediaClient mediaClient = new MediaClient(authToken);
-                IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-                mediaProcessors = GetMediaProcessors(processors);
-                cacheClient.SetValue<MediaProcessor?[]>(itemKey, mediaProcessors);
-            }
-            return mediaProcessors;
         }
 
         internal static string GetProcessorId(MediaProcessor mediaProcessor)
@@ -102,55 +125,10 @@ namespace AzureSkyMedia.PlatformServices
             return processorId;
         }
 
-        internal static string[] GetProcessorIds()
-        {
-            List<string> processorIds = new List<string>();
-            processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
-            processorIds.Add(Constant.Media.ProcessorId.EncoderPremium);
-            processorIds.Add(Constant.Media.ProcessorId.EncoderUltra);
-            processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
-            processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
-            processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
-            processorIds.Add(Constant.Media.ProcessorId.SpeechToText);
-            processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
-            processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
-            processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
-            processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
-            processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
-            processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
-            processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
-            return processorIds.ToArray();
-        }
-
         public static string GetProcessorName(MediaProcessor mediaProcessor)
         {
             string processorName = mediaProcessor.ToString();
             return Regex.Replace(processorName, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
-        }
-
-        public static object GetMediaProcessors(string authToken, bool allProperties)
-        {
-            object mediaProcessors;
-            if (allProperties)
-            {
-                MediaClient mediaClient = new MediaClient(authToken);
-                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor);
-            }
-            else
-            {
-                NameValueCollection processorNames = new NameValueCollection();
-                MediaProcessor?[] processors = GetMediaProcessors(authToken);
-                foreach (MediaProcessor? processor in processors)
-                {
-                    if (processor.HasValue)
-                    {
-                        string processorName = GetProcessorName(processor.Value);
-                        processorNames.Add(processorName, processor.ToString());
-                    }
-                }
-                mediaProcessors = processorNames;
-            }
-            return mediaProcessors;
         }
 
         public static MediaProcessor? GetMediaProcessor(string processorId)
@@ -202,6 +180,28 @@ namespace AzureSkyMedia.PlatformServices
                     break;
             }
             return mediaProcessor;
+        }
+
+        public static object GetMediaProcessors(string authToken, bool getEntities)
+        {
+            object mediaProcessors;
+            if (getEntities)
+            {
+                MediaClient mediaClient = new MediaClient(authToken);
+                mediaProcessors = mediaClient.GetEntities(MediaEntity.Processor);
+            }
+            else
+            {
+                NameValueCollection processorNames = new NameValueCollection();
+                MediaProcessor[] processors = GetMediaProcessors(authToken);
+                foreach (MediaProcessor processor in processors)
+                {
+                    string processorName = GetProcessorName(processor);
+                    processorNames.Add(processorName, processor.ToString());
+                }
+                mediaProcessors = processorNames;
+            }
+            return mediaProcessors;
         }
     }
 }

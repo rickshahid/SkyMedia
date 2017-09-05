@@ -8,9 +8,9 @@ namespace AzureSkyMedia.PlatformServices
     {
         public MediaJobTask()
         {
+            this.ProcessorConfigString = new Dictionary<string, string>();
             this.ProcessorConfigBoolean = new Dictionary<string, bool>();
             this.ProcessorConfigInteger = new Dictionary<string, int>();
-            this.ProcessorConfigString = new Dictionary<string, string>();
         }
 
         public MediaJobTask CreateCopy()
@@ -32,18 +32,18 @@ namespace AzureSkyMedia.PlatformServices
 
         public string OutputAssetName { get; set; }
 
-        public AssetCreationOptions OutputAssetEncryption { get; set; }
-
         public AssetFormatOption OutputAssetFormat { get; set; }
 
-        public TaskOptions Options { get; set; }
+        public AssetCreationOptions OutputAssetEncryption { get; set; }
 
-        public ContentProtection ContentProtection { get; set; }
+        public Dictionary<string, string> ProcessorConfigString { get; set; }
 
         public Dictionary<string, bool> ProcessorConfigBoolean { get; set; }
 
         public Dictionary<string, int> ProcessorConfigInteger { get; set; }
 
-        public Dictionary<string, string> ProcessorConfigString { get; set; }
+        public ContentProtection ContentProtection { get; set; }
+
+        public TaskOptions Options { get; set; }
     }
 }

@@ -203,6 +203,14 @@ namespace AzureSkyMedia.PlatformServices
             JObject results = null;
             if (_indexer != null)
             {
+                if (!string.IsNullOrEmpty(serviceCriteria.IndexId))
+                {
+                    JObject index = GetIndex(serviceCriteria.IndexId, serviceCriteria.Language, false);
+                    if (index != null)
+                    {
+                        return index;
+                    }
+                }
                 string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/Search?privacy=", GetPrivacy(serviceCriteria.PublicVideo));
                 if (!string.IsNullOrEmpty(serviceCriteria.IndexId))
                 {

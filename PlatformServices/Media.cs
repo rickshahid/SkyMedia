@@ -1,8 +1,9 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
+
+using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -64,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-         private static int OrderLocators(ILocator leftSide, ILocator rightSide)
+        private static int OrderLocators(ILocator leftSide, ILocator rightSide)
         {
             return DateTime.Compare(leftSide.Asset.Created, rightSide.Asset.Created);
         }
@@ -72,21 +73,22 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
-
             string webVttUrl = mediaClient.GetWebVttUrl(asset);
+            string languageLabel = Language.GetLanguageLabel(webVttUrl);
             string indexId = indexerClient.GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId))
             {
                 webVttUrl = indexerClient.GetWebVttUrl(indexId, null);
+                JObject index = indexerClient.GetIndex(indexId, null, false);
+                languageLabel = Language.GetLanguageLabel(index);
             }
             if (!string.IsNullOrEmpty(webVttUrl))
             {
                 MediaTrack textTrack = new MediaTrack()
                 {
                     Type = Constant.Media.Stream.TextTrackCaptions,
+                    Label = languageLabel,
                     SourceUrl = webVttUrl,
-                    //LanguageCode = childAsset.AlternateId,
-                    //Label = Language.GetLanguageLabel(textTrack.LanguageCode)
                 };
                 textTracks.Add(textTrack);
             }

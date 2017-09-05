@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Specialized;
 
 using Newtonsoft.Json.Linq;
@@ -7,6 +8,20 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Language
     {
+        private static string GetLanguageLabel(string languageCode, bool videoIndexer)
+        {
+            string languageLabel = string.Empty;
+            NameValueCollection languages = GetSpokenLanguages(videoIndexer);
+            foreach (string language in languages.Keys)
+            {
+                if (string.Equals(languages[language], languageCode, StringComparison.OrdinalIgnoreCase))
+                {
+                    languageLabel = language;
+                }
+            }
+            return languageLabel;
+        }
+
         public static string GetLanguageCode(string sourceUrl)
         {
             string[] sourceInfo = sourceUrl.Split('.');
@@ -61,19 +76,17 @@ namespace AzureSkyMedia.PlatformServices
             return spokenLanguages;
         }
 
-        public static string GetLanguageLabel(string languageCode)
+        public static string GetLanguageLabel(string webVttUrl)
         {
-            string languageLabel = string.Empty;
-            NameValueCollection languages = GetSpokenLanguages(false);
-            languageCode = languageCode.Substring(0, 2);
-            foreach (string language in languages.Keys)
-            {
-                if (string.Equals(language.Substring(0, 2), languageCode, StringComparison.OrdinalIgnoreCase))
-                {
-                    languageLabel = languages[language];
-                }
-            }
-            return languageLabel;
+            string languageCode = Path.GetFileNameWithoutExtension(webVttUrl);
+            return GetLanguageLabel(languageCode, false);
+        }
+
+        public static string GetLanguageLabel(JObject index)
+        {
+            string languageCode = index["breakdowns"][0]["language"].ToString();
+            languageCode = languageCode.Replace("-", string.Empty);
+            return GetLanguageLabel(languageCode, false);
         }
     }
 }
