@@ -43,7 +43,7 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         private static void PublishAnalytics(ITask jobTask, BlobClient blobClient, CosmosClient cosmosClient,
-                                             string accountName, string accountKey, string assetId)
+                                             MediaContentPublish contentPublish, string assetId)
         {
             foreach (IAsset outputAsset in jobTask.OutputAssets)
             {
@@ -67,7 +67,14 @@ namespace AzureSkyMedia.PlatformServices
                             {
                                 string collectionId = Constant.Database.Collection.ContentInsight;
                                 JObject jsonDoc = JObject.Parse(jsonData);
-                                string documentId = cosmosClient.UpsertDocument(collectionId, jsonDoc, accountName, accountKey, assetId);
+
+                                string accountId = contentPublish.PartitionKey;
+                                string accountDomain = contentPublish.MediaAccountDomainName;
+                                string accountUrl = contentPublish.MediaAccountEndpointUrl;
+                                string clientId = contentPublish.MediaAccountClientId;
+                                string clientKey = contentPublish.MediaAccountClientKey;
+
+                                string documentId = cosmosClient.UpsertDocument(collectionId, jsonDoc, accountId, accountDomain, accountUrl, clientId, clientKey, assetId);
 
                                 string processorName = Processor.GetProcessorName(mediaProcessor.Value);
                                 outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
@@ -97,9 +104,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     foreach (ITask jobTask in jobTasks)
                     {
-                        string accountName = contentPublish.PartitionKey;
-                        string accountKey = contentPublish.MediaAccountKey;
-                        PublishAnalytics(jobTask, blobClient, cosmosClient, accountName, accountKey, assetId);
+                        PublishAnalytics(jobTask, blobClient, cosmosClient, contentPublish, assetId);
                     }
                 }
             }

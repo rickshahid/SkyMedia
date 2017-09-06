@@ -2,11 +2,13 @@
 {
     internal class MediaContentPublish : StorageEntity
     {
-        public string MediaAccountKey { get; set; }
+        public string MediaAccountDomainName { get; set; }
 
-        //public string MediaClientId { get; set; }
+        public string MediaAccountEndpointUrl { get; set; }
 
-        //public string MediaClientKey { get; set; }
+        public string MediaAccountClientId { get; set; }
+
+        public string MediaAccountClientKey { get; set; }
 
         public string StorageAccountName { get; set; }
 
@@ -15,11 +17,13 @@
 
     internal class MediaInsightsPublish : StorageEntity
     {
-        public string MediaAccountKey { get; set; }
+        public string MediaAccountDomainName { get; set; }
 
-        //public string MediaClientId { get; set; }
+        public string MediaAccountEndpointUrl { get; set; }
 
-        //public string MediaClientKey { get; set; }
+        public string MediaAccountClientId { get; set; }
+
+        public string MediaAccountClientKey { get; set; }
 
         public string IndexerAccountKey { get; set; }
     }

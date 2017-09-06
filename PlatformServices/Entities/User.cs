@@ -29,43 +29,43 @@
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountName);
+                string accountId = this.MediaAccountEndpointUrl;
+                accountId = accountId.Split('/')[2];
+                return accountId.Split('.')[0];
             }
         }
 
-        //public string MediaAccountName
-        //{
-        //    get
-        //    {
-        //        string accountId = this.MediaAccountId;
-        //        accountId = accountId.Split('/')[2];
-        //        return accountId.Split('.')[0];
-        //    }
-        //}
-
-        public string MediaAccountKey
+        public string MediaAccountDomainName
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountKey);
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName);
             }
         }
 
-        //public string MediaClientId
-        //{
-        //    get
-        //    {
-        //        return AuthToken.GetClaimValue(_authToken, "extension_MediaClientId");
-        //    }
-        //}
+        public string MediaAccountEndpointUrl
+        {
+            get
+            {
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl);
+            }
+        }
 
-        //public string MediaClientKey
-        //{
-        //    get
-        //    {
-        //        return AuthToken.GetClaimValue(_authToken, "extension_MediaClientKey");
-        //    }
-        //}
+        public string MediaAccountClientId
+        {
+            get
+            {
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientId);
+            }
+        }
+
+        public string MediaAccountClientKey
+        {
+            get
+            {
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientKey);
+            }
+        }
 
         public string VideoIndexerKey
         {

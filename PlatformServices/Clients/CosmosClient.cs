@@ -105,10 +105,13 @@ namespace AzureSkyMedia.PlatformServices
             return result;
         }
 
-        public string UpsertDocument(string collectionId, JObject jsonDoc, string accountId, string accountKey, string assetId)
+        public string UpsertDocument(string collectionId, JObject jsonDoc, string accountId, string accountDomain, string accountUrl, string clientId, string clientKey, string assetId)
         {
             jsonDoc["accountId"] = accountId;
-            jsonDoc["accountKey"] = accountKey;
+            jsonDoc["accountDomain"] = accountDomain;
+            jsonDoc["accountUrl"] = accountUrl;
+            jsonDoc["clientId"] = clientId;
+            jsonDoc["clientKey"] = clientKey;
             jsonDoc["assetId"] = assetId;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountId) : null;

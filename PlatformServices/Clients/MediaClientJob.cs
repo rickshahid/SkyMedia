@@ -19,7 +19,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 PartitionKey = authUser.MediaAccountId,
                 RowKey = indexId,
-                MediaAccountKey = authUser.MediaAccountKey,
+                MediaAccountDomainName = authUser.MediaAccountDomainName,
+                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
+                MediaAccountClientId = authUser.MediaAccountClientId,
+                MediaAccountClientKey = authUser.MediaAccountClientKey,
                 IndexerAccountKey = authUser.VideoIndexerKey,
             };
 

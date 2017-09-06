@@ -34,7 +34,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AppInsightsInstrumentationKey = "App.Insights.InstrumentationKey";
 
-            public const string DirectoryDomainTenant = "Directory.DomainTenant";
+            public const string DirectoryUserDomain = "Directory.UserDomain";
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
 
@@ -136,8 +136,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string UserId = "emails";
             public const string MobileNumber = "extension_MobileNumber";
-            public const string MediaAccountName = "extension_MediaAccountName";
-            public const string MediaAccountKey = "extension_MediaAccountKey";
+            public const string MediaAccountDomainName = "extension_MediaAccountDomainName";
+            public const string MediaAccountEndpointUrl = "extension_MediaAccountEndpointUrl";
+            public const string MediaAccountClientId = "extension_MediaAccountClientId";
+            public const string MediaAccountClientKey = "extension_MediaAccountClientKey";
             public const string VideoIndexerKey = "extension_VideoIndexerKey";
             public const string StorageAccountName = "extension_StorageAccountName";
             public const string StorageAccountKey = "extension_StorageAccountKey";

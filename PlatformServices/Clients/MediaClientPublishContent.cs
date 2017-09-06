@@ -95,10 +95,13 @@ namespace AzureSkyMedia.PlatformServices
             if (contentPublish != null)
             {
                 string accountId = contentPublish.PartitionKey;
-                string accountKey = contentPublish.MediaAccountKey;
+                string accountDomain = contentPublish.MediaAccountDomainName;
+                string accountUrl = contentPublish.MediaAccountEndpointUrl;
+                string clientId = contentPublish.MediaAccountClientId;
+                string clientKey = contentPublish.MediaAccountClientKey;
                 string jobId = contentPublish.RowKey;
 
-                MediaClient mediaClient = new MediaClient(accountId, accountKey);
+                MediaClient mediaClient = new MediaClient(accountDomain, accountUrl, clientId, clientKey);
                 IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
                 if (job != null)
                 {

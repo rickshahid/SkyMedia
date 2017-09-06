@@ -56,7 +56,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 PartitionKey = authUser.MediaAccountId,
                 RowKey = job.Id,
-                MediaAccountKey = authUser.MediaAccountKey,
+                MediaAccountDomainName = authUser.MediaAccountDomainName,
+                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
+                MediaAccountClientId = authUser.MediaAccountClientId,
+                MediaAccountClientKey = authUser.MediaAccountClientKey,
                 StorageAccountName = storageAccount,
                 StorageAccountKey = Storage.GetAccountKey(authToken, storageAccount),
                 UserId = authUser.Id,
