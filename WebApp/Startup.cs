@@ -72,7 +72,7 @@ namespace AzureSkyMedia.WebApp
             string requestAction = requestPath[requestPath.Length - 1].ToLower();
             switch (requestAction)
             {
-                case "signin":
+                case "signupin":
                     settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
                     break;
                 case "profileedit":

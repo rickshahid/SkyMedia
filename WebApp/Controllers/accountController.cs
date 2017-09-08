@@ -9,7 +9,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
-        public void signin(string subdomain)
+        public void signupin(string subdomain)
         {
             AuthenticationProperties authProperties = new AuthenticationProperties();
             authProperties.Items.Add("SubDomain", subdomain);
@@ -23,22 +23,18 @@ namespace AzureSkyMedia.WebApp.Controllers
             HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
-        public void passwordreset()
+        public void passwordreset(string subdomain)
         {
-            HttpContext.ChallengeAsync().Wait();
+            AuthenticationProperties authProperties = new AuthenticationProperties();
+            authProperties.Items.Add("SubDomain", subdomain);
+            HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
         public JsonResult clear(bool allEntities)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             Account.DeleteEntities(authToken, allEntities);
-            return Json(true);
-        }
-
-        public IActionResult signout()
-        {
-            this.SignOut(OpenIdConnectDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("index", "home");
+            return Json(allEntities);
         }
 
         public IActionResult processors()
@@ -55,12 +51,18 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult register()
+        public IActionResult signout()
+        {
+            this.SignOut(OpenIdConnectDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("index", "home");
+        }
+
+        public IActionResult signup()
         {
             return View();
         }
 
-        public IActionResult edit()
+        public IActionResult profile()
         {
             return View();
         }

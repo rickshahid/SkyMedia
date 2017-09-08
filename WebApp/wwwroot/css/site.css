@@ -46,6 +46,7 @@
 
 body {
     background-color: black;
+    color: deepskyblue;
 }
 
 .layout {
@@ -72,7 +73,6 @@ body {
 
 .accountContext {
     margin-bottom: 10px;
-    color: deepskyblue;
     font-style: italic;
     font-weight: bold;
     font-size: large;
@@ -98,7 +98,6 @@ body {
 
 .siteLink {
     text-decoration: none;
-    color: deepskyblue;
     font-weight: bold;
 }
 
@@ -146,7 +145,6 @@ body {
 .streamInfo {
     font-size: x-large;
     text-align: center;
-    color: deepskyblue;
 }
 
 .streamName {
@@ -159,7 +157,6 @@ body {
 }
 
 .viewTitle {
-    color: deepskyblue;
     text-align: center;
     font-size: x-large;
     font-weight: bold;
@@ -325,7 +322,6 @@ body {
 
 .transferMessage {
     position: relative;
-    color: deepskyblue;
     left: 430px;
 }
 
@@ -496,7 +492,6 @@ body {
 .inputLabel {
     padding-right: 0px !important;
     white-space: nowrap;
-    color: deepskyblue;
     font-weight: bold;
     text-align: right;
     width: 0px;
@@ -584,7 +579,6 @@ body {
 }
 
 .contentProtectionOptionsEncryption {
-    color: deepskyblue;
     margin-right: 5px;
     margin-left: 5px;
 }
@@ -635,7 +629,6 @@ body {
 }
 
 .jqgrow:hover td {
-    color: deepskyblue;
     cursor: pointer;
 }
 
@@ -645,7 +638,6 @@ body {
 }
 
 .entityCounts {
-    color: deepskyblue;
     font-style: italic;
     font-weight: bold;
     font-size: large;
