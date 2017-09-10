@@ -90,10 +90,6 @@ function SetAnalyticsMetadata() {
         var playerHeight = mediaPlayer.el().clientHeight;
         var playerWidth = mediaPlayer.el().clientWidth;
         var timeSeconds = mediaPlayer.currentTime();
-        var jsonOptions = {
-            collapsed: false,
-            withQuotes: false
-        };
         switch (selectedText) {
             case "Video Indexer":
                 $.get("/asset/metadata",
@@ -101,7 +97,7 @@ function SetAnalyticsMetadata() {
                         documentId: selectedValue
                     },
                     function (result) {
-                        $("#mediaMetadata").jsonBrowse(result, jsonOptions);
+                        $("#mediaMetadata").jsonBrowse(result);
                     }
                 );
                 break;

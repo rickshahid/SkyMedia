@@ -92,14 +92,14 @@
     },
     "azurequeues_1_Connection_DisplayName": {
       "type": "string",
-      "defaultValue": "Azure Storage US West 0"
+      "defaultValue": "Azure Storage US West"
     },
     "azurequeues_1_storageaccount": {
       "type": "string",
       "metadata": {
         "description": "The name of your storage account"
       },
-      "defaultValue": "skystorageuswest0"
+      "defaultValue": "skystorageuswest"
     },
     "azurequeues_1_sharedkey": {
       "type": "securestring",

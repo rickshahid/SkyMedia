@@ -17,16 +17,12 @@
             return searchCriteria;
         }
         function SubmitSearchRequest() {
-            var options = {
-                collapsed: true,
-                withQuotes: false
-            };
             $.post("/search/insights",
                 {
                     searchCriteria: GetSearchCriteria()
                 },
                 function (results) {
-                    $("#insightsData").jsonBrowse(results, options);
+                    $("#insightsData").jsonBrowse(results);
                 }
             );
         }

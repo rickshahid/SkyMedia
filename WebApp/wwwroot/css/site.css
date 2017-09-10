@@ -430,6 +430,7 @@ body {
 .mediaAssets {
     background-color: deepskyblue;
     border-radius: 20px;
+    color: darkblue;
     overflow: auto;
 }
 
@@ -709,6 +710,7 @@ body {
     background-color: deepskyblue;
     margin: 0px auto;
     margin-top: 10px;
+    color: darkblue;
     overflow: auto;
     height: 400px;
     width: 800px;

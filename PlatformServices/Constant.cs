@@ -32,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string AppApiDescription = "App.Api.Description";
             public const string AppApiEndpointUrl = "App.Api.EndpointUrl";
 
-            public const string AppInsightsInstrumentationKey = "App.Insights.InstrumentationKey";
+            public const string AppInsightsInstrumentationKey = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
             public const string DirectoryUserDomain = "Directory.UserDomain";
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
