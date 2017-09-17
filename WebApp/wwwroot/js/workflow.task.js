@@ -37,19 +37,24 @@ function GetJobTask(taskNumber) {
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "VideoIndexer":
-                jobTask.ProcessorConfigBoolean["PublicVideo"] = $("#indexerPrivacyPublic" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigString["TranscriptLanguage"] = $("#indexerTranscriptLanguage" + taskNumber).val();
+                jobTask.ProcessorConfigString["SpokenLanguage"] = $("#indexerLanguage" + taskNumber).val();
                 jobTask.ProcessorConfigString["SearchPartition"] = $("#indexerSearchPartition" + taskNumber).val();
+                jobTask.ProcessorConfigString["VideoDescription"] = $("#indexerVideoDescription" + taskNumber).val();
+                jobTask.ProcessorConfigString["VideoMetadata"] = $("#indexerVideoMetadata" + taskNumber).val();
+                jobTask.ProcessorConfigBoolean["VideoPublic"] = $("#indexerVideoPublic" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["AudioOnly"] = $("#indexerAudioOnly" + taskNumber).prop("checked");
                 break;
             case "VideoSummarization":
                 var durationMinutes = $("#summarizationDurationMinutes" + taskNumber).val();
                 var durationSeconds = $("#summarizationDurationSeconds" + taskNumber).val();
                 jobTask.ProcessorConfigInteger["SummarizationDurationSeconds"] = (durationMinutes * 60) + durationSeconds;
+                jobTask.ProcessorConfigBoolean["SummarizationFadeTransitions"] = $("#summarizationFadeTransitions" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["VideoOnly"] = !$("#summarizationIncludeAudio" + taskNumber).prop("checked");
                 break;
             case "SpeechToText":
-                jobTask.ProcessorConfigString["TranscriptLanguage"] = $("#speechToTextLanguage" + taskNumber).val();
-                jobTask.ProcessorConfigBoolean["CaptionFormatWebVtt"] = $("#speechToTextCaptionWebVtt" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigString["SpokenLanguage"] = $("#speechToTextLanguage" + taskNumber).val();
                 jobTask.ProcessorConfigBoolean["CaptionFormatTtml"] = $("#speechToTextCaptionTtml" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["CaptionFormatWebVtt"] = $("#speechToTextCaptionWebVtt" + taskNumber).prop("checked");
                 break;
             case "FaceDetection":
                 jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();

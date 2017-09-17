@@ -63,6 +63,10 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream3ContentProtection = "Media.Stream3.ContentProtection";
 
             public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
+
+            public const string MediaProcessorVideoSummarizationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
+            public const string MediaProcessorVideoAnnotationDocumentId = "Media.Processor.VideoAnnotationDocumentId";
+
             public const string MediaProcessorSpeechToTextDocumentId = "Media.Processor.SpeechToTextDocumentId";
 
             public const string MediaProcessorFaceDetectionDocumentId = "Media.Processor.FaceDetectionDocumentId";
@@ -71,9 +75,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaProcessorMotionDetectionDocumentId = "Media.Processor.MotionDetectionDocumentId";
             public const string MediaProcessorMotionHyperlapseDocumentId = "Media.Processor.MotionHyperlapseDocumentId";
             public const string MediaProcessorMotionStabilizationDocumentId = "Media.Processor.MotionStabilizationDocumentId";
-
-            public const string MediaProcessorVideoAnnotationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
-            public const string MediaProcessorVideoSummarizationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
 
             public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
             public const string MediaProcessorContentModerationDocumentId = "Media.Processor.ContentModerationDocumentId";
@@ -326,7 +327,8 @@ namespace AzureSkyMedia.PlatformServices
         public struct Message
         {
             public const string UserPasswordForgotten = "AADB2C90118";
-            public const string StreamingEndpointNotRunning = "Your media account does not have a streaming endpoint running!";
+            public const string StreamingEndpointNotRunning = "AMS01";
+            public const string StreamingEndpointStarting = "AMS02";
         }
     }
 }

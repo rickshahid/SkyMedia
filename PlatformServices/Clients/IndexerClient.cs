@@ -32,9 +32,9 @@ namespace AzureSkyMedia.PlatformServices
             _accountId = accountId;
         }
 
-        private string GetPrivacy(bool publicVideo)
+        private string GetPrivacy(bool videoPublic)
         {
-            return publicVideo ? "public" : "private";
+            return videoPublic ? "public" : "private";
         }
 
         private string GetAssetId(IAsset asset)
@@ -161,19 +161,26 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string UploadVideo(string displayName, bool publicVideo, string transcriptLanguage, string searchPartition, string externalId, string locatorUrl)
+        public string UploadVideo(IAsset asset, string description, string metadata, string spokenLanguage,
+                                  string searchPartition, string locatorUrl, bool videoPublic, bool audioOnly)
         {
             string indexId = string.Empty;
             if (_indexer != null)
             {
                 string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
-                requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(displayName));
-                requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(publicVideo));
-                requestUrl = string.Concat(requestUrl, "&language=", transcriptLanguage);
-                requestUrl = string.Concat(requestUrl, "&partition=", searchPartition);
-                requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(externalId));
+                requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(asset.Name));
+                requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(description));
+                requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(metadata));
+                requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
                 requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
+                requestUrl = string.Concat(requestUrl, "&language=", spokenLanguage);
+                requestUrl = string.Concat(requestUrl, "&partition=", searchPartition);
                 requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
+                requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(videoPublic));
+                if (audioOnly)
+                {
+                    requestUrl = string.Concat(requestUrl, "&indexingPreset=audioOnly");
+                }
                 using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUrl))
                 {
                     indexId = _indexer.GetResponse<string>(request);
@@ -198,63 +205,62 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public JObject Search(MediaSearchCriteria serviceCriteria)
+        public JObject Search(MediaSearchCriteria searchCriteria)
         {
             JObject results = null;
             if (_indexer != null)
             {
-                if (!string.IsNullOrEmpty(serviceCriteria.IndexId))
+                if (!string.IsNullOrEmpty(searchCriteria.IndexId))
                 {
-                    JObject index = GetIndex(serviceCriteria.IndexId, serviceCriteria.Language, false);
-                    if (index != null)
+                    results = GetIndex(searchCriteria.IndexId, searchCriteria.SpokenLanguage, false);
+                }
+                else
+                {
+                    string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/Search?privacy=", GetPrivacy(searchCriteria.VideoPublic));
+                    if (!string.IsNullOrEmpty(searchCriteria.IndexId))
                     {
-                        return index;
+                        requestUrl = string.Concat(requestUrl, "&id=", searchCriteria.IndexId);
                     }
-                }
-                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/Search?privacy=", GetPrivacy(serviceCriteria.PublicVideo));
-                if (!string.IsNullOrEmpty(serviceCriteria.IndexId))
-                {
-                    requestUrl = string.Concat(requestUrl, "&id=", serviceCriteria.IndexId);
-                }
-                if (!string.IsNullOrEmpty(serviceCriteria.AssetId))
-                {
-                    requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(serviceCriteria.AssetId));
-                }
-                if (!string.IsNullOrEmpty(serviceCriteria.SearchPartition))
-                {
-                    requestUrl = string.Concat(requestUrl, "&partition=", serviceCriteria.SearchPartition);
-                }
-                if (!string.IsNullOrEmpty(serviceCriteria.TextScope))
-                {
-                    requestUrl = string.Concat(requestUrl, "&textScope=", serviceCriteria.TextScope);
-                }
-                if (!string.IsNullOrEmpty(serviceCriteria.TextQuery))
-                {
-                    requestUrl = string.Concat(requestUrl, "&query=", serviceCriteria.TextQuery);
-                }
-                if (!string.IsNullOrEmpty(serviceCriteria.Owner))
-                {
-                    requestUrl = string.Concat(requestUrl, "&owner=", serviceCriteria.Owner);
-                }
-                if (!string.IsNullOrEmpty(serviceCriteria.Face))
-                {
-                    requestUrl = string.Concat(requestUrl, "&face=", serviceCriteria.Face);
-                }
-                if (!string.IsNullOrEmpty(serviceCriteria.Language))
-                {
-                    requestUrl = string.Concat(requestUrl, "&language=", serviceCriteria.Language);
-                }
-                if (serviceCriteria.PageSize > 0)
-                {
-                    requestUrl = string.Concat(requestUrl, "&pageSize=", serviceCriteria.PageSize.ToString());
-                }
-                if (serviceCriteria.SkipCount > 0)
-                {
-                    requestUrl = string.Concat(requestUrl, "&skip=", serviceCriteria.SkipCount.ToString());
-                }
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
-                {
-                    results = _indexer.GetResponse<JObject>(request);
+                    if (!string.IsNullOrEmpty(searchCriteria.AssetId))
+                    {
+                        requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(searchCriteria.AssetId));
+                    }
+                    if (!string.IsNullOrEmpty(searchCriteria.SpokenLanguage))
+                    {
+                        requestUrl = string.Concat(requestUrl, "&language=", searchCriteria.SpokenLanguage);
+                    }
+                    if (!string.IsNullOrEmpty(searchCriteria.TextScope))
+                    {
+                        requestUrl = string.Concat(requestUrl, "&textScope=", WebUtility.UrlEncode(searchCriteria.TextScope));
+                    }
+                    if (!string.IsNullOrEmpty(searchCriteria.TextQuery))
+                    {
+                        requestUrl = string.Concat(requestUrl, "&query=", WebUtility.UrlEncode(searchCriteria.TextQuery));
+                    }
+                    if (!string.IsNullOrEmpty(searchCriteria.SearchPartition))
+                    {
+                        requestUrl = string.Concat(requestUrl, "&partition=", searchCriteria.SearchPartition);
+                    }
+                    if (!string.IsNullOrEmpty(searchCriteria.Owner))
+                    {
+                        requestUrl = string.Concat(requestUrl, "&owner=", searchCriteria.Owner);
+                    }
+                    if (!string.IsNullOrEmpty(searchCriteria.Face))
+                    {
+                        requestUrl = string.Concat(requestUrl, "&face=", searchCriteria.Face);
+                    }
+                    if (searchCriteria.PageSize > 0)
+                    {
+                        requestUrl = string.Concat(requestUrl, "&pageSize=", searchCriteria.PageSize.ToString());
+                    }
+                    if (searchCriteria.SkipCount > 0)
+                    {
+                        requestUrl = string.Concat(requestUrl, "&skip=", searchCriteria.SkipCount.ToString());
+                    }
+                    using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+                    {
+                        results = _indexer.GetResponse<JObject>(request);
+                    }
                 }
             }
             return results;

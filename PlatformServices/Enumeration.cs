@@ -31,19 +31,24 @@ namespace AzureSkyMedia.PlatformServices
 
     internal enum MediaProcessorConfig
     {
-        PublicVideo,
+        SpokenLanguage,
         SearchPartition,
-        TranscriptLanguage,
-        CaptionFormatWebVtt,
-        CaptionFormatTtml,
-        SummarizationDurationSeconds,
         FaceDetectionMode,
         FaceRedactionMode,
+        CaptionFormatTtml,
+        CaptionFormatWebVtt,
+        SummarizationDurationSeconds,
+        SummarizationFadeTransitions,
         MotionDetectionSensitivityLevel,
         MotionDetectionLightChange,
         MotionHyperlapseStartFrame,
         MotionHyperlapseFrameCount,
-        MotionHyperlapseSpeed
+        MotionHyperlapseSpeed,
+        VideoDescription,
+        VideoMetadata,
+        VideoPublic,
+        VideoOnly,
+        AudioOnly
     }
 
     public enum MediaProcessor

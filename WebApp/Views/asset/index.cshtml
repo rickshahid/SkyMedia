@@ -9,6 +9,7 @@
             $.post("/account/clear",
                 {
                     allEntities: allEntities,
+                    includeLive: $("#includeLive").prop("checked")
                 },
                 function (result) {
                     window.location = window.location.href;
@@ -48,9 +49,21 @@
 <div id="mediaAssets" class="mediaAssets browseView"></div>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", "window.location.href = '/account'" })
-    @if (Debugger.IsAttached)
-    {
-        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
-    }
+    <table class="accountClear">
+        <tr>
+            <td>
+                @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", "window.location.href = '/account'" })
+            </td>
+        @if (Debugger.IsAttached)
+        {
+            <td>
+                @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
+            </td>
+            <td>
+                @Html.CheckBox("includeLive")
+                Include Live
+            </td>
+        }
+        </tr>
+    </table>
 </div>

@@ -255,13 +255,41 @@ namespace AzureSkyMedia.PlatformServices
             IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
             foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
             {
-                if (streamingEndpoint.State == StreamingEndpointState.Running ||
+                if (streamingEndpoint.State == StreamingEndpointState.Starting ||
+                    streamingEndpoint.State == StreamingEndpointState.Running ||
                     streamingEndpoint.State == StreamingEndpointState.Scaling)
                 {
                     streamingEnabled = true;
                 }
             }
             return streamingEnabled;
+        }
+
+        public static bool IsStreamingStarting(MediaClient mediaClient)
+        {
+            bool streamingStarting = false;
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
+            {
+                if (streamingEndpoint.State == StreamingEndpointState.Starting)
+                {
+                    streamingStarting = true;
+                }
+            }
+            return streamingStarting;
+        }
+
+        public static string StartStreamingEndpoint(MediaClient mediaClient)
+        {
+            string endpointName = string.Empty;
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            if (streamingEndpoints.Length > 0)
+            {
+                IStreamingEndpoint streamingEndpoint = streamingEndpoints[0];
+                streamingEndpoint.StartAsync();
+                endpointName = streamingEndpoint.Name;
+            }
+            return endpointName;
         }
     }
 }

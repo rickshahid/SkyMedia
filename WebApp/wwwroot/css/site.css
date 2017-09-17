@@ -168,7 +168,19 @@ body {
     margin-top: 20px;
 }
 
-.processorConfig td {
+.processorConfigTable {
+    border: 2px dotted deepskyblue;
+}
+
+.processorConfigTable td {
+    padding: 5px;
+}
+
+.processorConfigRow {
+    padding-left: 3px !important;
+}
+
+.processorConfigRow td {
     padding: 0px !important;
 }
 
@@ -452,6 +464,10 @@ body {
     color: blueviolet !important;
 }
 
+.mediaLock {
+    vertical-align: text-bottom;
+}
+
 .jstree-hovered {
   background: deepskyblue !important;
   box-shadow: none !important;
@@ -487,7 +503,12 @@ body {
 
 .mediaProcessorConfig {
     font-weight: bold;
-    width: 437px;
+    width: 420px;
+}
+
+.mediaEncoderConfig {
+    display: inline-block;
+    text-align: center;
 }
 
 .inputLabel {
@@ -496,6 +517,18 @@ body {
     font-weight: bold;
     text-align: right;
     width: 0px;
+}
+
+.inputCheckbox {
+    margin-left: 0px;
+}
+
+.inputCheckboxContentProtection {
+    margin-left: 24px;
+}
+
+.inputCheckboxLabel {
+    vertical-align: top;
 }
 
 .inputAssetName {
@@ -508,13 +541,25 @@ body {
     width: 191px;
 }
 
-.spokenLanguage {
+.indexerLanguage {
     font-weight: bold;
-    width: 193px;
+    width: 187px;
 }
 
 .indexerSearchPartition {
-    width: 108px;
+    font-weight: bold;
+    width: 183px;
+}
+
+.indexerVideoMetadata {
+    font-weight: bold;
+    width: 218px;
+}
+
+.speechToTextLanguage {
+    margin-right: 10px;
+    font-weight: bold;
+    width: 195px;
 }
 
 .motionSensitivityLevel {
@@ -560,11 +605,6 @@ body {
 }
 
 .contentProtectionRow > td {
-    padding-bottom: 0px;
-    padding-top: 0px;
-}
-
-.contentProtectionRow > td > table td {
     padding-top: 0px;
 }
 
@@ -574,7 +614,7 @@ body {
 }
 
 .contentProtectionOptions {
-    border: 1px dotted deepskyblue;
+    border: 2px dotted deepskyblue;
     white-space: nowrap;
     padding-top: 5px;
 }
@@ -636,6 +676,10 @@ body {
 .accountInventory {
     border: 1px solid deepskyblue;
     border-radius: 20px;
+}
+
+.accountClear {
+    display: inline;
 }
 
 .entityCounts {

@@ -124,6 +124,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             return authToken;
         }
 
+        public JsonResult endpoint()
+        {
+            string authToken = GetAuthToken(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
+            string endpointName = Media.StartStreamingEndpoint(mediaClient);
+            return Json(endpointName);
+        }
+
         public IActionResult index()
         {
             string accountMessage = string.Empty;
@@ -153,6 +161,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (!Media.IsStreamingEnabled(mediaClient))
                     {
                         accountMessage = Constant.Message.StreamingEndpointNotRunning;
+                    }
+                    else if (Media.IsStreamingStarting(mediaClient))
+                    {
+                        accountMessage = Constant.Message.StreamingEndpointStarting;
                     }
                     else
                     {

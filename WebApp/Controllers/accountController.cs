@@ -30,10 +30,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
-        public JsonResult clear(bool allEntities)
+        public JsonResult clear(bool allEntities, bool includeLive)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            Account.DeleteEntities(authToken, allEntities);
+            Account.DeleteEntities(authToken, allEntities, includeLive);
             return Json(allEntities);
         }
 

@@ -43,14 +43,11 @@ namespace AzureSkyMedia.PlatformServices
             return contentProtection;
         }
 
-        internal static void TrackJob(string authToken, IJob job, string storageAccount, ContentProtection contentProtection)
+        internal static void TrackJob(string authToken, IJob job, ContentProtection contentProtection)
         {
             User authUser = new User(authToken);
-
-            if (string.IsNullOrEmpty(storageAccount))
-            {
-                storageAccount = job.InputMediaAssets[0].StorageAccountName;
-            }
+            string storageAccountName = job.InputMediaAssets[0].StorageAccountName;
+            string storageAccountKey = Storage.GetAccountKey(authToken, storageAccountName);
 
             MediaContentPublish contentPublish = new MediaContentPublish()
             {
@@ -60,8 +57,8 @@ namespace AzureSkyMedia.PlatformServices
                 MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
                 MediaAccountClientId = authUser.MediaAccountClientId,
                 MediaAccountClientKey = authUser.MediaAccountClientKey,
-                StorageAccountName = storageAccount,
-                StorageAccountKey = Storage.GetAccountKey(authToken, storageAccount),
+                StorageAccountName = storageAccountName,
+                StorageAccountKey = storageAccountKey,
                 UserId = authUser.Id,
                 MobileNumber = authUser.MobileNumber
             };
@@ -145,7 +142,7 @@ namespace AzureSkyMedia.PlatformServices
             return jobInputs.ToArray();
         }
 
-        public static object SubmitJob(string authToken, MediaClient mediaClient, string storageAccount, MediaJobInput[] jobInputs, MediaJob mediaJob)
+        public static object SubmitJob(string authToken, MediaClient mediaClient, MediaJobInput[] jobInputs, MediaJob mediaJob)
         {
             IJob job = null;
             IJobTemplate jobTemplate = null;
@@ -162,7 +159,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (job != null && !string.IsNullOrEmpty(job.Id))
             {
-                TrackJob(authToken, job, storageAccount, contentProtection);
+                TrackJob(authToken, job, contentProtection);
             }
             return GetJobOutput(mediaClient, job, jobTemplate, jobInputs);
         }

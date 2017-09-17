@@ -9,9 +9,9 @@ namespace AzureSkyMedia.PlatformServices
         private IAssetFile _file;
         private string _storageCdnUrl;
 
-        private MediaProtection[] _contentProtection;
-        private string _locatorUrl;
-        private string _webVttUrl;
+        //private MediaProtection[] _contentProtection;
+        //private string _locatorUrl;
+        //private string _webVttUrl;
 
         private Asset(MediaClient mediaClient)
         {
@@ -19,9 +19,9 @@ namespace AzureSkyMedia.PlatformServices
             string settingKey = Constant.AppSettingKey.StorageCdnUrl;
             _storageCdnUrl = AppSetting.GetValue(settingKey);
 
-            _contentProtection = new MediaProtection[] { };
-            _locatorUrl = string.Empty;
-            _webVttUrl = string.Empty;
+            //_contentProtection = new MediaProtection[] { };
+            //_locatorUrl = string.Empty;
+            //_webVttUrl = string.Empty;
         }
 
         public Asset(MediaClient mediaClient, IAsset asset) : this(mediaClient)
@@ -39,10 +39,10 @@ namespace AzureSkyMedia.PlatformServices
             get { return _file != null ? _file.Id : _asset.Id; }
         }
 
-        //public IAsset Asset
-        //{
-        //    get { return _file != null ? null : _asset; }
-        //}
+        public string ClientId
+        {
+            get { string id = this.Id; return id.Replace(":", "").Replace("-", ""); }
+        }
 
         public bool IsStreamable
         {
@@ -67,28 +67,7 @@ namespace AzureSkyMedia.PlatformServices
                     string assetInfo = string.Concat(" (", fileCount, filesLabel, ", ", assetSize, ")");
                     if (_asset.Options == AssetCreationOptions.StorageEncrypted)
                     {
-
-                        string protectionLabel = " Storage";
-                        if (this.ContentProtection.Length > 0)
-                        {
-                            switch (this.ContentProtection[0])
-                            {
-                                case MediaProtection.AES:
-                                    protectionLabel = string.Concat(protectionLabel, " & Envelope (AES)");
-                                    break;
-                                case MediaProtection.PlayReady:
-                                    protectionLabel = string.Concat(protectionLabel, " & DRM (PlayReady)");
-                                    break;
-                                case MediaProtection.Widevine:
-                                    protectionLabel = string.Concat(protectionLabel, " & DRM (Widevine)");
-                                    break;
-                                case MediaProtection.FairPlay:
-                                    protectionLabel = string.Concat(protectionLabel, " & DRM (FairPlay)");
-                                    break;
-                            }
-                        }
-                        protectionLabel = string.Concat(protectionLabel, " Encryption");
-                        assetInfo = string.Concat(assetInfo, " <img title='", protectionLabel, "' src='", _storageCdnUrl, "/MediaLock.png' />");
+                        assetInfo = string.Concat(assetInfo, " <img id='", this.ClientId, "' class='mediaLock' src='", _storageCdnUrl, "/MediaLock.png' />");
                     }
                     return string.Concat(_asset.Name, assetInfo);
                 }
@@ -104,41 +83,74 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public MediaProtection[] ContentProtection
+        //public MediaProtection[] ContentProtection
+        //{
+        //    get
+        //    {
+        //        if (_contentProtection.Length == 0 && _asset != null)
+        //        {
+        //            _contentProtection = _mediaClient.GetContentProtection(_asset);
+        //        }
+        //        return _contentProtection;
+        //    }
+        //}
+
+        public string ContentProtectionTip
         {
             get
             {
-                if (_contentProtection.Length == 0 && _asset != null)
+                string protectionTip = string.Empty;
+                if (_asset != null && _asset.Options == AssetCreationOptions.StorageEncrypted)
                 {
-                    _contentProtection = _mediaClient.GetContentProtection(_asset);
+                    protectionTip = "Storage";
+                    MediaProtection[] contentProtection = _mediaClient.GetContentProtection(_asset);
+                    if (contentProtection.Length > 0)
+                    {
+                        switch (contentProtection[0])
+                        {
+                            case MediaProtection.AES:
+                                protectionTip = string.Concat(protectionTip, " & Envelope (AES)");
+                                break;
+                            case MediaProtection.PlayReady:
+                                protectionTip = string.Concat(protectionTip, " & DRM (PlayReady)");
+                                break;
+                            case MediaProtection.Widevine:
+                                protectionTip = string.Concat(protectionTip, " & DRM (Widevine)");
+                                break;
+                            case MediaProtection.FairPlay:
+                                protectionTip = string.Concat(protectionTip, " & DRM (FairPlay)");
+                                break;
+                        }
+                    }
+                    protectionTip = string.Concat(protectionTip, " Encryption");
                 }
-                return _contentProtection;
+                return protectionTip;
             }
         }
 
-        public string LocatorUrl
-        {
-            get
-            {
-                if (_asset != null)
-                {
-                    _locatorUrl = _mediaClient.GetLocatorUrl(_asset);
-                }
-                return _locatorUrl;
-            }
-        }
+        //public string LocatorUrl
+        //{
+        //    get
+        //    {
+        //        if (_asset != null)
+        //        {
+        //            _locatorUrl = _mediaClient.GetLocatorUrl(_asset);
+        //        }
+        //        return _locatorUrl;
+        //    }
+        //}
 
-        public string WebVttUrl
-        {
-            get
-            {
-                if (_asset != null)
-                {
-                    _webVttUrl = _mediaClient.GetWebVttUrl(_asset);
-                }
-                return _webVttUrl;
-            }
-        }
+        //public string WebVttUrl
+        //{
+        //    get
+        //    {
+        //        if (_asset != null)
+        //        {
+        //            _webVttUrl = _mediaClient.GetWebVttUrl(_asset);
+        //        }
+        //        return _webVttUrl;
+        //    }
+        //}
 
         public bool Children
         {
@@ -152,7 +164,7 @@ namespace AzureSkyMedia.PlatformServices
                 if (_file != null)
                 {
                     string cssClass = _file.IsPrimary ? "mediaFile primary" : "mediaFile";
-                    return new { @class = cssClass, isStreamable = false };
+                    return new { @class = cssClass, isStreamable = false, };
                 }
                 else
                 {
@@ -166,9 +178,11 @@ namespace AzureSkyMedia.PlatformServices
             get
             {
                 return new {
-                    contentProtection = this.ContentProtection,
-                    locatorUrl = this.LocatorUrl,
-                    webVttUrl = this.WebVttUrl
+                    clientId = this.ClientId,
+                    //contentProtection = this.ContentProtection,
+                    contentProtectionTip = this.ContentProtectionTip,
+                    //locatorUrl = this.LocatorUrl,
+                    //webVttUrl = this.WebVttUrl
                 };
             }
         }

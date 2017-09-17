@@ -14,6 +14,7 @@ namespace AzureSkyMedia.PlatformServices
 
             AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(authUser.MediaAccountClientId, authUser.MediaAccountClientKey);
             AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccountDomainName, symmetricKey, AzureEnvironments.AzureCloudEnvironment);
+            //AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccountDomainName, AzureEnvironments.AzureCloudEnvironment);
 
             BindContext(authUser.MediaAccountEndpointUrl, tokenCredentials);
         }

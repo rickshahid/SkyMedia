@@ -7,19 +7,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
-            string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
-            JObject processorConfig = GetProcessorConfig(documentId);
-            jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
-            jobTasks.AddRange(tasks);
-            return jobTasks.ToArray();
-        }
-
         private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
@@ -29,6 +16,21 @@ namespace AzureSkyMedia.PlatformServices
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
             processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.SummarizationDurationSeconds.ToString()];
+            processorOptions["fadeInFadeOut"] = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.SummarizationFadeTransitions.ToString()];
+            processorOptions["outputAudio"] = !jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoOnly.ToString()];
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
+            jobTasks.AddRange(tasks);
+            return jobTasks.ToArray();
+        }
+
+        private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        {
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
+            string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
+            string documentId = AppSetting.GetValue(settingKey);
+            JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);
@@ -44,19 +46,20 @@ namespace AzureSkyMedia.PlatformServices
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];
             JArray captionFormats = new JArray();
-            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatWebVtt.ToString()])
-            {
-                captionFormats.Add("WebVTT");
-            }
             if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatTtml.ToString()])
             {
                 captionFormats.Add("TTML");
+            }
+            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.CaptionFormatWebVtt.ToString()])
+            {
+                captionFormats.Add("WebVTT");
             }
             if (captionFormats.Count > 0)
             {
                 processorOptions["Formats"] = captionFormats;
             }
-            processorOptions["Language"] = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage.ToString()];
+            string spokenLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.SpokenLanguage.ToString()];
+            processorOptions["Language"] = spokenLanguage.Replace("-", string.Empty); ;
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);

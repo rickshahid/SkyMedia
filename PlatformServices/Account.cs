@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -28,42 +29,96 @@ namespace AzureSkyMedia.PlatformServices
             return unitCount.ToString();
         }
 
-        private static void DeleteAsset(string authToken, IAsset asset)
+        private static bool IsLiveAsset(MediaClient mediaClient, IAsset asset)
         {
-            IndexerClient indexerClient = new IndexerClient(authToken, null, null);
-            string indexId = indexerClient.GetIndexId(asset);
-            if (!string.IsNullOrEmpty(indexId))
+            bool liveAsset = false;
+            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+            foreach (IChannel channel in channels)
             {
-                indexerClient.DeleteVideo(indexId, true);
-                string collectionId = Constant.Database.Collection.ContentInsight;
-                CosmosClient cosmosClient = new CosmosClient(true);
-                cosmosClient.DeleteDocument(collectionId, indexId);
+                foreach (IProgram program in channel.Programs)
+                {
+                    if (string.Equals(program.Asset.Id, asset.Id, StringComparison.OrdinalIgnoreCase))
+                    {
+                        liveAsset = true;
+                    }
+                }
             }
-            foreach (ILocator locator in asset.Locators)
-            {
-                locator.Delete();
-            }
-            for (int i = asset.DeliveryPolicies.Count - 1; i >= 0; i--)
-            {
-                asset.DeliveryPolicies.RemoveAt(i);
-            }
-            asset.Delete();
+            return liveAsset;
         }
 
-        public static void DeleteEntities(string authToken, bool allEntities)
+        private static void DeleteAsset(string authToken, MediaClient mediaClient, string accountId, IAsset asset, bool includeLive)
         {
+            if (includeLive || !IsLiveAsset(mediaClient, asset))
+            {
+                IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+                string indexId = indexerClient.GetIndexId(asset);
+                if (!string.IsNullOrEmpty(indexId))
+                {
+                    indexerClient.DeleteVideo(indexId, true);
+
+                    string collectionId = Constant.Database.Collection.ContentInsight;
+                    CosmosClient cosmosClient = new CosmosClient(true);
+                    cosmosClient.DeleteDocument(collectionId, indexId);
+
+                    EntityClient entityClient = new EntityClient();
+                    string tableName = Constant.Storage.TableName.InsightPublish;
+                    MediaInsightsPublish insightsPublish = entityClient.GetEntity<MediaInsightsPublish>(tableName, accountId, indexId);
+                    if (insightsPublish != null)
+                    {
+                        entityClient.DeleteEntity(tableName, insightsPublish);
+                    }
+                }
+                foreach (ILocator locator in asset.Locators)
+                {
+                    locator.Delete();
+                }
+                for (int i = asset.DeliveryPolicies.Count - 1; i >= 0; i--)
+                {
+                    asset.DeliveryPolicies.RemoveAt(i);
+                }
+                asset.Delete();
+            }
+        }
+
+        private static void DeleteJob(string accountId, IJob job)
+        {
+            EntityClient entityClient = new EntityClient();
+
+            string tableName = Constant.Storage.TableName.ContentPublish;
+            MediaContentPublish contentPublish = entityClient.GetEntity<MediaContentPublish>(tableName, accountId, job.Id);
+            if (contentPublish != null)
+            {
+                entityClient.DeleteEntity(tableName, contentPublish);
+            }
+
+            tableName = Constant.Storage.TableName.ContentProtection;
+            ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, accountId, job.Id);
+            if (contentProtection != null)
+            {
+                entityClient.DeleteEntity(tableName, contentProtection);
+            }
+
+            job.Delete();
+        }
+
+        public static void DeleteEntities(string authToken, bool allEntities, bool includeLive)
+        {
+            User authUser = new User(authToken);
             MediaClient mediaClient = new MediaClient(authToken);
             if (allEntities)
             {
-                IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
-                foreach (IProgram program in programs)
+                if (includeLive)
                 {
-                    program.Delete();
-                }
-                IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
-                foreach (IChannel channel in channels)
-                {
-                    channel.Delete();
+                    IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
+                    foreach (IProgram program in programs)
+                    {
+                        program.Delete();
+                    }
+                    IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+                    foreach (IChannel channel in channels)
+                    {
+                        channel.Delete();
+                    }
                 }
                 IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
                 foreach (IIngestManifest manifest in manifests)
@@ -79,7 +134,7 @@ namespace AzureSkyMedia.PlatformServices
             IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
             foreach (IJob job in jobs)
             {
-                job.Delete();
+                DeleteJob(authUser.MediaAccountId, job);
             }
             INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
             foreach (INotificationEndPoint notificationEndpoint in notificationEndpoints)
@@ -99,10 +154,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (asset.ParentAssets.Count > 0 || allEntities)
                 {
-                    DeleteAsset(authToken, asset);
+                    DeleteAsset(authToken, mediaClient, authUser.MediaAccountId, asset, includeLive);
                 }
             }
-            if (allEntities)
+            if (allEntities && includeLive)
             {
                 IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
                 foreach (IAccessPolicy accessPolicy in accessPolicies)

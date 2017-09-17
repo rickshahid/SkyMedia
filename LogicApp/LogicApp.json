@@ -86,6 +86,48 @@
         "description": "Location of the Logic App."
       }
     },
+    "PurgePublishName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "metadata": {
+        "description": "Name of the Logic App."
+      }
+    },
+    "PurgePublishLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "allowedValues": [
+        "[resourceGroup().location]",
+        "eastasia",
+        "southeastasia",
+        "centralus",
+        "eastus",
+        "eastus2",
+        "westus",
+        "northcentralus",
+        "southcentralus",
+        "northeurope",
+        "westeurope",
+        "japanwest",
+        "japaneast",
+        "brazilsouth",
+        "australiaeast",
+        "australiasoutheast",
+        "southindia",
+        "centralindia",
+        "westindia",
+        "canadacentral",
+        "canadaeast",
+        "uksouth",
+        "ukwest",
+        "westcentralus",
+        "westus2"
+      ],
+      "metadata": {
+        "description": "Location of the Logic App."
+      }
+    },
     "azurequeues_1_Connection_Name": {
       "type": "string",
       "defaultValue": "azurequeues"
@@ -101,12 +143,6 @@
       },
       "defaultValue": "skystorageuswest"
     },
-    "azurequeues_1_sharedkey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The shared storage key of your storage account"
-      }
-    },
     "twilio_1_Connection_Name": {
       "type": "string",
       "defaultValue": "twilio"
@@ -114,18 +150,6 @@
     "twilio_1_Connection_DisplayName": {
       "type": "string",
       "defaultValue": "Twilio Live"
-    },
-    "twilio_1_sid": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Twilio Account Id"
-      }
-    },
-    "twilio_1_token": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Twilio Access Token"
-      }
     }
   },
   "variables": {},
@@ -135,10 +159,6 @@
       "type": "Microsoft.Logic/workflows",
       "location": "[parameters('PublishContentLocation')]",
       "apiVersion": "2016-06-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/connections', parameters('azurequeues_1_Connection_Name'))]",
-        "[resourceId('Microsoft.Web/connections', parameters('twilio_1_Connection_Name'))]"
-      ],
       "tags": {
         "displayName": "PublishContent"
       },
@@ -244,9 +264,6 @@
       "type": "Microsoft.Logic/workflows",
       "location": "[parameters('PublishInsightsLocation')]",
       "apiVersion": "2016-06-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/connections', parameters('azurequeues_1_Connection_Name'))]"
-      ],
       "tags": {
         "displayName": "PublishInsights"
       },
@@ -314,35 +331,47 @@
       }
     },
     {
-      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "name": "[parameters('PurgePublishName')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[parameters('PurgePublishLocation')]",
       "apiVersion": "2016-06-01",
-      "name": "[parameters('azurequeues_1_Connection_Name')]",
-      "location": "[parameters('PublishContentLocation')]",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "PurgePublish"
+      },
       "properties": {
-        "api": {
-          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('PublishContentLocation'), '/managedApis/', 'azurequeues')]"
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "actions": {
+            "PublishPurgeDelete": {
+              "type": "Http",
+              "inputs": {
+                "method": "delete",
+                "uri": "https://skyweb-uswest.azurewebsites.net/publish/purge"
+              },
+              "runAfter": {},
+              "metadata": {
+                "apiDefinitionUrl": "https://skyweb-uswest.azurewebsites.net/swagger/v1/swagger.json",
+                "swaggerSource": "custom"
+              }
+            }
+          },
+          "parameters": {},
+          "triggers": {
+            "Recurrence": {
+              "type": "Recurrence",
+              "recurrence": {
+                "frequency": "Hour",
+                "interval": 24,
+                "timeZone": "Pacific Standard Time",
+                "startTime": "2017-09-15T00:00:00Z"
+              }
+            }
+          },
+          "contentVersion": "1.0.0.0",
+          "outputs": {}
         },
-        "displayName": "[parameters('azurequeues_1_Connection_DisplayName')]",
-        "parameterValues": {
-          "storageaccount": "[parameters('azurequeues_1_storageaccount')]",
-          "sharedkey": "[parameters('azurequeues_1_sharedkey')]"
-        }
-      }
-    },
-    {
-      "type": "MICROSOFT.WEB/CONNECTIONS",
-      "apiVersion": "2016-06-01",
-      "name": "[parameters('twilio_1_Connection_Name')]",
-      "location": "[parameters('PublishContentLocation')]",
-      "properties": {
-        "api": {
-          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', parameters('PublishContentLocation'), '/managedApis/', 'twilio')]"
-        },
-        "displayName": "[parameters('twilio_1_Connection_DisplayName')]",
-        "parameterValues": {
-          "sid": "[parameters('twilio_1_sid')]",
-          "token": "[parameters('twilio_1_token')]"
-        }
+        "parameters": {}
       }
     }
   ],

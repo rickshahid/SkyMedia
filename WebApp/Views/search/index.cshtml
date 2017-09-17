@@ -4,13 +4,13 @@
             var searchCriteria = {
                 IndexId: $("#indexId").val(),
                 AssetId: $("#assetId").val(),
-                PublicVideo: $("#publicVideo").prop("checked"),
+                SpokenLanguage: $("#language").val(),
                 SearchPartition: $("#searchPartition").val(),
                 TextScope: $("#textScope").val(),
                 TextQuery: $("#textQuery").val(),
                 Owner: $("#owner").val(),
                 Face: $("#face").val(),
-                Language: $("#language").val(),
+                VideoPublic: $("#videoPublic").prop("checked"),
                 PageSize: 0,
                 SkipCount: 0
             };
@@ -52,10 +52,10 @@
             @Html.TextBox("assetId")
         </td>
         <td class="inputLabel">
-            Public Video
+            Language
         </td>
         <td>
-            @Html.CheckBox("publicVideo")
+            @Html.DropDownList("language", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "searchLanguage" })
         </td>
     </tr>
     <tr>
@@ -92,10 +92,10 @@
             @Html.TextBox("face")
         </td>
         <td class="inputLabel">
-            Language
+            Public Video
         </td>
         <td>
-            @Html.DropDownList("language", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "searchLanguage" })
+            @Html.CheckBox("videoPublic")
         </td>
     </tr>
 </table>

@@ -56,6 +56,11 @@ namespace AzureSkyMedia.PlatformServices
             return entities;
         }
 
+        public T[] GetEntities<T>(string tableName) where T : StorageEntity, new()
+        {
+            return GetEntities<T>(tableName, null, QueryComparisons.Equal, null);
+        }
+
         public T GetEntity<T>(string tableName, string partitionKey, string rowKey) where T : StorageEntity
         {
             T entity = null;
@@ -180,19 +185,6 @@ namespace AzureSkyMedia.PlatformServices
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.DeleteIfExists();
-        }
-
-        public void PurgeEntities<T>(string tableName, TimeSpan expirationTime) where T : StorageEntity, new()
-        {
-            T[] entities = GetEntities<T>(tableName, null, QueryComparisons.Equal, null);
-            for (int i = entities.Length - 1; i >= 0; i--)
-            {
-                DateTime expirationDate = DateTime.UtcNow.Subtract(expirationTime);
-                if (entities[i].CreatedOn < expirationDate)
-                {
-                    DeleteEntity(tableName, entities[i]);
-                }
-            }
         }
     }
 }

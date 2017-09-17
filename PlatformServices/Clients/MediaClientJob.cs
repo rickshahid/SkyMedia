@@ -9,10 +9,14 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static void IndexVideo(string authToken, IndexerClient indexerClient, IAsset asset, string locatorUrl, MediaJobTask jobTask)
         {
-            bool publicVideo = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.PublicVideo.ToString()];
-            string transcriptLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.TranscriptLanguage.ToString()];
+            string spokenLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.SpokenLanguage.ToString()];
             string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
-            string indexId = indexerClient.UploadVideo(asset.Name, publicVideo, transcriptLanguage, searchPartition, asset.Id, locatorUrl);
+            string videoDescription = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoDescription.ToString()];
+            string videoMetadata = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoMetadata.ToString()];
+            bool videoPublic = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoPublic.ToString()];
+            bool audioOnly = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.AudioOnly.ToString()];
+
+            string indexId = indexerClient.UploadVideo(asset, videoDescription, videoMetadata, spokenLanguage, searchPartition, locatorUrl, videoPublic, audioOnly);
 
             User authUser = new User(authToken);
             MediaInsightsPublish insightsPublish = new MediaInsightsPublish
@@ -43,6 +47,22 @@ namespace AzureSkyMedia.PlatformServices
                 notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
             }
             return notificationEndpoint;
+        }
+
+        private void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType nodeType, bool newJob)
+        {
+            int unitCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
+            IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
+            processorUnits[0].ReservedUnitType = nodeType;
+            if (newJob)
+            {
+                processorUnits[0].CurrentReservedUnits += unitCount;
+            }
+            else
+            {
+                processorUnits[0].CurrentReservedUnits -= unitCount;
+            }
+            processorUnits[0].Update();
         }
 
         internal static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
@@ -192,22 +212,6 @@ namespace AzureSkyMedia.PlatformServices
                 jobTemplates.Add(template.Name, template.Id);
             }
             return jobTemplates;
-        }
-
-        public void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType nodeType, bool newJob)
-        {
-            int unitCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
-            IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            processorUnits[0].ReservedUnitType = nodeType;
-            if (newJob)
-            {
-                processorUnits[0].CurrentReservedUnits += unitCount;
-            }
-            else
-            {
-                processorUnits[0].CurrentReservedUnits -= unitCount;
-            }
-            processorUnits[0].Update();
         }
     }
 }

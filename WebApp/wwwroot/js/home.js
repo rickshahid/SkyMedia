@@ -40,3 +40,23 @@ function ToggleLiveStream(liveButton) {
         window.location.href = "/?live=on";
     }
 }
+function StartStreamingEndpoint(title) {
+    var message = "Your media account does not have a streaming endpoint running.<br /><br />Do you want to start your streaming endpoint?"
+    var buttons = {
+        Yes: function () {
+            $(this).dialog("close");
+            $.post("/home/endpoint", { },
+                function (endpointName) {
+                    if (endpointName != "") {
+                        message = "A request to start the " + endpointName + " streaming endpoint has been submitted.";
+                        DisplayMessage(title, message);
+                    }
+                }
+            );
+        },
+        No: function () {
+            $(this).dialog("close");
+        }
+    };
+    DisplayMessage(title, message, buttons);
+}

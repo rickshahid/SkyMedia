@@ -6,7 +6,7 @@
         
         public string AssetId { get; set; }
 
-        public bool PublicVideo { get; set; }
+        public string SpokenLanguage { get; set; }
 
         public string SearchPartition { get; set; }
 
@@ -18,7 +18,7 @@
 
         public string Face { get; set; }
 
-        public string Language { get; set; }
+        public bool VideoPublic { get; set; }
 
         public int PageSize { get; set; }
 

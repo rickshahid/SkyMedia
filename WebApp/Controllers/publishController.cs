@@ -34,6 +34,15 @@ namespace AzureSkyMedia.WebApp.Controllers
             return MediaClient.PublishInsights(queueName);
         }
 
+        [HttpDelete]
+        [Route("/publish/purge")]
+        public void PurgePublish()
+        {
+            EntityClient entityClient = new EntityClient();
+            MediaClient.PurgePublishContent(entityClient);
+            MediaClient.PurgePublishInsights(entityClient);
+        }
+
         [HttpGet]
         [Route("/insight/get")]
         public JObject GetInsight(string indexId, string spokenLanguage, bool processingState)

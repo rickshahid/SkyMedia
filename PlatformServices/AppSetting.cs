@@ -7,7 +7,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     public static class AppSetting
     {
-        public static IConfigurationRoot ConfigRoot;
+        internal static IConfigurationRoot ConfigRoot;
 
         private static string[] ParseConnection(string accountConnection)
         {
@@ -32,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
             return parsedConnection.ToArray();
         }
 
-        public static string[] GetValue(string settingKey, bool parseValue)
+        internal static string[] GetValue(string settingKey, bool parseValue)
         {
             string settingValue = ConfigRoot == null ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
             if (settingValue == null)

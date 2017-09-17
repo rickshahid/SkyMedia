@@ -42,17 +42,6 @@ namespace AzureSkyMedia.PlatformServices
             return authResult.AccessToken;
         }
 
-        public static string GetClaimValue(string authToken, string claimName)
-        {
-            string claimValue = string.Empty;
-            Claim tokenClaim = GetTokenClaim(authToken, claimName);
-            if (tokenClaim != null)
-            {
-                claimValue = tokenClaim.Value.Trim();
-            }
-            return claimValue;
-        }
-
         public static string[] GetClaimValues(string authToken, string claimName)
         {
             string[] claimValues = new string[] { };
@@ -73,6 +62,17 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return claimValues;
+        }
+
+        public static string GetClaimValue(string authToken, string claimName)
+        {
+            string claimValue = string.Empty;
+            Claim tokenClaim = GetTokenClaim(authToken, claimName);
+            if (tokenClaim != null)
+            {
+                claimValue = tokenClaim.Value.Trim();
+            }
+            return claimValue;
         }
     }
 }

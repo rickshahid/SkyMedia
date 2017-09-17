@@ -22,10 +22,12 @@ namespace AzureSkyMedia.PlatformServices
         {
             IAsset asset = GetSourceAsset(mediaClient, sourceUrl);
 
-            MediaJobInput jobInput = new MediaJobInput();
-            jobInput.AssetId = asset.Id;
-            jobInput.MarkInSeconds = markIn;
-            jobInput.MarkOutSeconds = markOut;
+            MediaJobInput jobInput = new MediaJobInput()
+            {
+                AssetId = asset.Id,
+                MarkInSeconds = markIn,
+                MarkOutSeconds = markOut
+            };
 
             MediaJobInput[] jobInputs = new MediaJobInput[] { jobInput };
             jobInputs = Workflow.GetJobInputs(mediaClient, jobInputs);
@@ -33,21 +35,23 @@ namespace AzureSkyMedia.PlatformServices
             string settingKey = Constant.AppSettingKey.MediaClipperEncoderPreset;
             string processorConfig = AppSetting.GetValue(settingKey);
 
-            MediaJobTask jobTask = new MediaJobTask();
-            jobTask.MediaProcessor = MediaProcessor.EncoderStandard;
-            jobTask.ProcessorConfig = processorConfig;
+            MediaJobTask jobTask = new MediaJobTask()
+            {
+                MediaProcessor = MediaProcessor.EncoderStandard,
+                ProcessorConfig = processorConfig
+            };
 
-            MediaJob mediaJob = new MediaJob();
-            mediaJob.Tasks = new MediaJobTask[] { jobTask };
-            mediaJob.NodeType = ReservedUnitType.Premium;
+            MediaJob mediaJob = new MediaJob()
+            {
+                Tasks = new MediaJobTask[] { jobTask },
+                NodeType = ReservedUnitType.Premium
+            };
             mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
 
-            IJobTemplate jobTemplate;
-            IJob job = mediaClient.CreateJob(mediaJob, jobInputs, out jobTemplate);
+            IJob job = mediaClient.CreateJob(mediaJob, jobInputs, out IJobTemplate jobTemplate);
             if (job != null && !string.IsNullOrEmpty(job.Id))
             {
-                string storageAccount = mediaClient.DefaultStorageAccount.Name;
-                Workflow.TrackJob(authToken, job, storageAccount, null);
+                Workflow.TrackJob(authToken, job, null);
             }
             return Workflow.GetJobOutput(mediaClient, job, jobTemplate, null);
         }

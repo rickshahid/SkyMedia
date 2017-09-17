@@ -8,6 +8,8 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "mediaProcessor" + lastTaskNumber, "mediaProcessor" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "taskParent" + lastTaskNumber, "taskParent" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigRow" + lastTaskNumber, "encoderConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigDoc" + lastTaskNumber, "encoderConfigDoc" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigDocSchema" + lastTaskNumber, "encoderConfigDocSchema" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfig" + lastTaskNumber, "encoderConfig" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFileRow" + lastTaskNumber, "encoderConfigFileRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFile" + lastTaskNumber, "encoderConfigFile" + newTaskNumber);
@@ -22,15 +24,21 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerTranscriptLanguage" + lastTaskNumber, "indexerTranscriptLanguage" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerPrivacyPublic" + lastTaskNumber, "indexerPrivacyPublic" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerLanguage" + lastTaskNumber, "indexerLanguage" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSearchPartition" + lastTaskNumber, "indexerSearchPartition" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoDescription" + lastTaskNumber, "indexerVideoDescription" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoMetadata" + lastTaskNumber, "indexerVideoMetadata" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoPublic" + lastTaskNumber, "indexerVideoPublic" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerAudioOnly" + lastTaskNumber, "indexerAudioOnly" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationConfigRow" + lastTaskNumber, "summarizationConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationMinutes" + lastTaskNumber, "summarizationDurationMinutes" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationSeconds" + lastTaskNumber, "summarizationDurationSeconds" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationFadeTransitions" + lastTaskNumber, "summarizationFadeTransitions" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationIncludeAudio" + lastTaskNumber, "summarizationIncludeAudio" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextConfigRow" + lastTaskNumber, "speechToTextConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextLanguage" + lastTaskNumber, "speechToTextLanguage" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionWebVtt" + lastTaskNumber, "speechToTextCaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionTtml" + lastTaskNumber, "speechToTextCaptionTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionWebVtt" + lastTaskNumber, "speechToTextCaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionConfigRow" + lastTaskNumber, "faceRedactionConfigRow" + newTaskNumber);
@@ -47,24 +55,24 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
     return taskRowHtml;
 }
-function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideRowIds, unbindDocIds) {
+function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds, unbindIds) {
     $("#" + encoderConfigFileId).val("");
     if (encoderConfigOptions != null) {
         encoderConfigOptions.length = 0;
     }
-    for (var i = 0; i < hideRowIds.length; i++) {
-        $("#" + hideRowIds[i]).hide();
+    for (var i = 0; i < hideIds.length; i++) {
+        $("#" + hideIds[i]).hide();
     }
-    for (var i = 0; i < unbindDocIds.length; i++) {
-        $("#" + unbindDocIds[i]).unbind("click");
+    for (var i = 0; i < unbindIds.length; i++) {
+        $("#" + unbindIds[i]).unbind("click");
     }
 }
 function SetProcessorConfig(mediaProcessor, taskNumber) {
     var encoderConfigRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigRow");
     var encoderConfigDocId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigDoc");
+    var encoderConfigDocSchemaId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigDocSchema");
     var encoderConfigId = mediaProcessor.id.replace("mediaProcessor", "encoderConfig");
     var encoderConfigFileRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFileRow");
-    var encoderConfigFileDocId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFileDoc");
     var encoderConfigFileId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFile");
     var encoderOptionsRowId = mediaProcessor.id.replace("mediaProcessor", "encoderOptionsRow");
     var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
@@ -76,9 +84,9 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var motionDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionDetectionConfigRow");
     var motionHyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionHyperlapseConfigRow");
     var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
-    var hideRowIds = [encoderConfigRowId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, summarizationConfigRowId, speechToTextConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
-    var unbindDocIds = [encoderConfigDocId, encoderConfigFileDocId];
-    ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideRowIds, unbindDocIds);
+    var hideIds = [encoderConfigRowId, encoderConfigDocSchemaId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, summarizationConfigRowId, speechToTextConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
+    var unbindIds = [encoderConfigDocId, encoderConfigDocSchemaId];
+    ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds, unbindIds);
     if (mediaProcessor.value != "None") {
         switch (mediaProcessor.value) {
             case "EncoderStandard":
@@ -155,20 +163,21 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
 }
 function SetEncoderConfigOptions(encoderConfig) {
     var mediaProcessorId = encoderConfig.id.replace("encoderConfig", "mediaProcessor");
+    var encoderConfigDocSchemaId = encoderConfig.id.replace("encoderConfig", "encoderConfigDocSchema");
     var encoderConfigFileRowId = encoderConfig.id.replace("encoderConfig", "encoderConfigFileRow");
-    var encoderConfigFileDocId = encoderConfig.id.replace("encoderConfig", "encoderConfigFileDoc");
     if (encoderConfig.value == "Custom") {
+        $("#" + encoderConfigDocSchemaId).show();
         $("#" + encoderConfigFileRowId).show();
         switch ($("#" + mediaProcessorId).val()) {
             case "EncoderStandard":
-                $("#" + encoderConfigFileDocId).click(function () {
+                $("#" + encoderConfigDocSchemaId).click(function () {
                     window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-schema");
                 });
                 break;
             case "EncoderPremium":
             case "EncoderUltra":
-                $("#" + encoderConfigFileDocId).click(function () {
-                    window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-media-encoder-premium-workflow-multiplefilesinput");
+                $("#" + encoderConfigDocSchemaId).click(function () {
+                    window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-workflow-designer");
                 });
                 break;
         }

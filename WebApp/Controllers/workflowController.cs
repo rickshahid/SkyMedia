@@ -13,7 +13,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             MediaJobInput[] jobInputs = Workflow.CreateJobInputs(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, fileNames);
-            object output = Workflow.SubmitJob(authToken, mediaClient, storageAccount, jobInputs, mediaJob);
+            object output = Workflow.SubmitJob(authToken, mediaClient, jobInputs, mediaJob);
             return Json(output);
         }
 
@@ -39,7 +39,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                 }
             }
-            object output = Workflow.SubmitJob(authToken, mediaClient, null, jobInputs, mediaJob);
+            object output = Workflow.SubmitJob(authToken, mediaClient, jobInputs, mediaJob);
             return Json(output);
         }
 

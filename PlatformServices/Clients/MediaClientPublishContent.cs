@@ -119,5 +119,33 @@ namespace AzureSkyMedia.PlatformServices
             }
             return mediaPublish;
         }
+
+        public static void PurgePublishContent(EntityClient entityClient)
+        {
+            string tableName = Constant.Storage.TableName.ContentPublish;
+            MediaContentPublish[] contentPublishes = entityClient.GetEntities<MediaContentPublish>(tableName);
+            foreach (MediaContentPublish contentPublish in contentPublishes)
+            {
+                string accountDomain = contentPublish.MediaAccountDomainName;
+                string accountUrl = contentPublish.MediaAccountEndpointUrl;
+                string clientId = contentPublish.MediaAccountClientId;
+                string clientKey = contentPublish.MediaAccountClientKey;
+                string jobId = contentPublish.RowKey;
+
+                MediaClient mediaClient = new MediaClient(accountDomain, accountUrl, clientId, clientKey);
+                IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
+                if (job == null)
+                {
+                    entityClient.DeleteEntity(tableName, contentPublish);
+
+                    tableName = Constant.Storage.TableName.ContentProtection;
+                    ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
+                    if (contentProtection != null)
+                    {
+                        entityClient.DeleteEntity(tableName, contentProtection);
+                    }
+                }
+            }
+        }
     }
 }
