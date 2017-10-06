@@ -27,6 +27,7 @@ To enable the core application functionality that is listed above, the following
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
 
+
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
 
 * **Storage** - http://azure.microsoft.com/services/storage/
@@ -80,10 +81,13 @@ Rick Shahid
 rick.shahid@live.com
 
 **Data Tier**
+
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.DataTier.json)
 
 **App Tier**
+
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.AppTier.json)
 
 **Web Tier**
+
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.WebTier.json)
