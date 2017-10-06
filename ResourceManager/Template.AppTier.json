@@ -1,0 +1,242 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string"
+    },
+    "appDomain": {
+      "type": "string"
+    },
+    "regionName": {
+      "type": "string"
+    },
+    "regionCentral": {
+      "type": "bool"
+    },
+    "cacheServiceTier": {
+      "type": "string"
+    },
+    "cacheServiceSize": {
+      "type": "string"
+    },
+    "appServicePlanTier": {
+      "type": "string"
+    },
+    "appServicePlanNodeSize": {
+      "type": "string"
+    },
+    "appServicePlanNodeCountMinimum": {
+      "type": "int"
+    },
+    "appServicePlanNodeCountMaximum": {
+      "type": "int"
+    }
+  },
+  "variables": {
+    "dataTierResourceGroup": "[replace(resourceGroup().name, 'App', 'Data')]",
+    "storageAccountName": "[toLower(concat(parameters('appName'), parameters('regionName')))]",
+    "batchAccountName": "[toLower(parameters('appName'))]",
+    "mediaAccountName": "[concat('sky', toLower(parameters('regionName')))]",
+    "cacheServiceName": "[toLower(concat(parameters('appName'), '-', parameters('regionName')))]",
+    "functionAppName": "[concat('skyfunction-', toLower(parameters('regionName')))]",
+    "hostingPlanName": "[concat(parameters('appName'), '-', parameters('regionName'))]",
+    "appInsightsName": "[concat(parameters('appName'), '-AppInsights')]",
+    "appServicePlanUri": "[resourceId('Microsoft.Web/serverFarms', variables('hostingPlanName'))]",
+    "appServicePlanAutoscaleSettingName": "[concat(variables('hostingPlanName'), '-AutoScale')]"
+  },
+  "resources": [
+    {
+      "condition": "[not(parameters('regionCentral'))]",
+      "apiVersion": "2017-05-01",
+      "type": "Microsoft.Batch/batchAccounts",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('batchAccountName')]",
+      "properties": {
+        "autoStorage": {
+          "storageAccountId": "[resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+        }
+      }
+    },
+    {
+      "condition": "[not(parameters('regionCentral'))]",
+      "apiVersion": "2015-10-01",
+      "type": "Microsoft.Media/mediaServices",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('mediaAccountName')]",
+      "properties": {
+        "storageAccounts": [
+          {
+            "id": "[resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '1'))]",
+            "isPrimary": true
+          },
+          {
+            "id": "[resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '2'))]",
+            "isPrimary": false
+          },
+          {
+            "id": "[resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '3'))]",
+            "isPrimary": false
+          }
+        ]
+      }
+    },
+    {
+      "condition": "[not(parameters('regionCentral'))]",
+      "apiVersion": "2017-02-01",
+      "type": "Microsoft.Cache/redis",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('cacheServiceName')]",
+      "properties": {
+        "sku": {
+          "family": "[first(parameters('cacheServiceSize'))]",
+          "name": "[parameters('cacheServiceTier')]",
+          "capacity": "[last(parameters('cacheServiceSize'))]"
+        }
+      }
+    },
+    {
+      "condition": "[equals(parameters('regionName'), 'USWest')]",
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('functionAppName')]",
+      "kind": "functionapp",
+      "properties": {
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~1"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "6.5.0"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[variables('functionAppName')]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2017-06-01').keys[0].value, ';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2017-06-01').keys[0].value, ';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2017-06-01').keys[0].value, ';EndpointSuffix=core.windows.net')]"
+            }
+          ]
+        },
+        "clientAffinityEnabled": false
+      }
+    },
+    {
+      "condition": "[not(parameters('regionCentral'))]",
+      "apiVersion": "2016-09-01",
+      "type": "Microsoft.Web/serverFarms",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('hostingPlanName')]",
+      "sku": {
+        "tier": "[parameters('appServicePlanTier')]",
+        "name": "[parameters('appServicePlanNodeSize')]",
+        "capacity": "[parameters('appServicePlanNodeCountMinimum')]"
+      }
+    },
+    {
+      "condition": "[equals(parameters('regionName'), 'USWest')]",
+      "name": "[concat(variables('hostingPlanName'), '-Publish-Content')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-07-01",
+      "properties": {
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "actions": {},
+          "outputs": {},
+          "parameters": {},
+          "triggers": {}
+        },
+        "parameters": {}
+      }
+    },
+    {
+      "condition": "[equals(parameters('regionName'), 'USWest')]",
+      "name": "[concat(variables('hostingPlanName'), '-Publish-Insight')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-07-01",
+      "properties": {
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "actions": {},
+          "outputs": {},
+          "parameters": {},
+          "triggers": {}
+        },
+        "parameters": {}
+      }
+    },
+    {
+      "condition": "[equals(parameters('regionName'), 'USWest')]",
+      "name": "[concat(variables('hostingPlanName'), '-Purge-Publish')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-07-01",
+      "properties": {
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "actions": {},
+          "outputs": {},
+          "parameters": {},
+          "triggers": {}
+        },
+        "parameters": {}
+      }
+    }
+    //{
+    //  "condition": "[parameters('regionCentral')]",
+    //  "apiVersion": "2015-05-01",
+    //  "type": "Microsoft.Insights/components",
+    //  "name": "[variables('appInsightsName')]",
+    //  "location": "[resourceGroup().location]",
+    //  "kind": "web",
+    //  "properties": {
+    //  }
+    //},
+    //{
+    //  "condition": "[not(parameters('regionCentral'))]",
+    //  "apiVersion": "2015-04-01",
+    //  "type": "Microsoft.Insights/autoscaleSettings",
+    //  "location": "[resourceGroup().location]",
+    //  "name": "[variables('appServicePlanAutoscaleSettingName')]",
+    //  "dependsOn": [
+    //    "[variables('appServicePlanUri')]"
+    //  ],
+    //  "properties": {
+    //    "profiles": [
+    //      {
+    //        "name": "Default Autoscale Profile",
+    //        "capacity": {
+    //          "minimum": "[parameters('appServicePlanNodeCountMinimum')]",
+    //          "maximum": "[parameters('appServicePlanNodeCountMaximum')]",
+    //          "default": "[parameters('appServicePlanNodeCountMinimum')]"
+    //        },
+    //        "rules": [
+    //        ]
+    //      }
+    //    ],
+    //    "targetResourceUri": "[variables('appServicePlanUri')]",
+    //    "enabled": true
+    //  }
+    //}
+  ],
+  "outputs": {
+  }
+}
