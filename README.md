@@ -81,17 +81,14 @@ rick.shahid@live.com
 <table>
   <tr>
     <td>
-      <b>All Tiers (Under Construction)</b>
+      <b>All Tiers</b>
     </td>
     <td>
-      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AllTiers.json" title="All Tiers" target="_blank">
-        <img src="http://azuredeploy.net/deploybutton.png">
-      </a>
     </td>
   </tr>
   <tr>
     <td>
-      &nbsp;&nbsp;<b>Data Tier</b>
+      &nbsp;&nbsp;&nbsp;<b>Data Tier</b>
     </td>
     <td>
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Data Tier" target="_blank">
@@ -101,12 +98,16 @@ rick.shahid@live.com
   </tr>
   <tr>
     <td>
-      &nbsp;&nbsp;<b>App Tier</b>
+      &nbsp;&nbsp;&nbsp;<b>App Tier</b>
     </td>
     <td>
-      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AppTier.json" title="App Tier" target="_blank">
-        <img src="http://azuredeploy.net/deploybutton.png">
-      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;&nbsp;&nbsp;<b>Web Tier</b>
+    </td>
+    <td>
     </td>
   </tr>
 </table>
