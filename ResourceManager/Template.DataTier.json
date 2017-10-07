@@ -16,7 +16,7 @@
       "minLength": 3,
       "maxLength": 25,
       "metadata": {
-        "description": "Database account name must be between 3 and 25 characters (letters, numbers and hyphens only). Leave default value to skip database deployment."
+        "description": "Database account name must be between 3 and 25 characters (letters, numbers and hyphens only). Leave the default value to skip database account deployment."
       }
     }
   },
