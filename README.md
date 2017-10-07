@@ -76,26 +76,27 @@ Thanks.
 
 Rick Shahid
 
-<table>
- <tr>
-  <td>
-   All Tiers
-  </td>
-  <td>
-   <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AllTiers.json" title="All Tiers" target="_blank">
-    <img src="http://azuredeploy.net/deploybutton.png">
-   </a>
-  </td>
- </tr>
-</table>
-
-
 rick.shahid@live.com
 
-**All Tiers (Under Construction)** - [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AllTiers.json)
-
-* **Data Tier** - [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json)
-
-* **App Tier (Under Construction)** - [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.AppTier.json)
-
-* **Web Tier (Under Construction)** - [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.WebTier.json)
+<table>
+  <tr>
+    <td>
+      **All Tiers (Under Construction)**
+    </td>
+    <td>
+      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AllTiers.json" title="All Tiers" target="_blank">
+        <img src="http://azuredeploy.net/deploybutton.png">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      * **Data Tier**
+    </td>
+    <td>
+      * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Data Tier" target="_blank">
+        <img src="http://azuredeploy.net/deploybutton.png">
+      </a>
+    </td>
+  </tr>
+</table>
