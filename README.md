@@ -81,7 +81,7 @@ rick.shahid@live.com
 <table>
   <tr>
     <td>
-      **All Tiers (Under Construction)**
+      <b>All Tiers (Under Construction)</b>
     </td>
     <td>
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AllTiers.json" title="All Tiers" target="_blank">
@@ -91,10 +91,20 @@ rick.shahid@live.com
   </tr>
   <tr>
     <td>
-      * **Data Tier**
+      &nbsp;&nbsp;<b>Data Tier</b>
     </td>
     <td>
-      * <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Data Tier" target="_blank">
+      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Data Tier" target="_blank">
+        <img src="http://azuredeploy.net/deploybutton.png">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;&nbsp;<b>App Tier</b>
+    </td>
+    <td>
+      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AppTier.json" title="App Tier" target="_blank">
         <img src="http://azuredeploy.net/deploybutton.png">
       </a>
     </td>
