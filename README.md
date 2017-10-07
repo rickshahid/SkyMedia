@@ -25,7 +25,6 @@ The following set of media functionality has been integrated and enabled within 
 To enable the core application functionality that is listed above, the following Azure platform services are leveraged:
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
-
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
 
 * **Storage** - http://azure.microsoft.com/services/storage/
@@ -78,9 +77,7 @@ Rick Shahid
 
 rick.shahid@live.com
 
-**All Tiers (Under Construction)**
-
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AllTiers.json)
+**All Tiers (Under Construction)** - [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AllTiers.json)
 
 * **Data Tier** - [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json)
 
