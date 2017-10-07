@@ -26,7 +26,7 @@ The following application architecture diagram represents the deployment of http
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
 
-To deploy this sample solution to your Azure subscription, click the "Deploy to Azure" button below:
+To deploy this sample media application to your Azure subscription, click the "Deploy to Azure" button below:
 
 <table>
   <tr>
@@ -65,7 +65,7 @@ To deploy this sample solution to your Azure subscription, click the "Deploy to 
   </tr>
 </table>
 
-The following Azure platform services were leveraged to create this solution sample:
+The following Azure platform services were leveraged to create this sample media application:
 
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
 
