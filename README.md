@@ -42,7 +42,7 @@ To deploy this sample media application to your Azure subscription, click the "D
   </tr>
   <tr>
     <td>
-      &nbsp;<b>* Data Tier</b>
+      &nbsp;<b>&bull; Data Tier</b>
     </td>
     <td>
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Deploy Data Tier" target="_blank">
@@ -57,7 +57,7 @@ To deploy this sample media application to your Azure subscription, click the "D
   </tr>
   <tr>
     <td>
-      &nbsp;<b>* App Tier</b>
+      &nbsp;<b>&bull; App Tier</b>
     </td>
     <td>
       <i>Under Construction</i>
@@ -68,7 +68,7 @@ To deploy this sample media application to your Azure subscription, click the "D
   </tr>
   <tr>
     <td>
-      &nbsp;<b>* Web Tier</b>
+      &nbsp;<b>&bull; Web Tier</b>
     </td>
     <td>
       <i>Under Construction</i>
