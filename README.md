@@ -22,9 +22,11 @@ The following set of media functionality has been integrated and enabled within 
 
 * Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
-To enable the core application functionality that is listed above, the following Azure platform services are leveraged:
+The following application architecture diagram represents the deployment of http://www.skymedia.io
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
+
+To deploy this sample solution to your Azure subscription, click the "Deploy to Azure" button below:
 
 <table>
   <tr>
@@ -62,6 +64,8 @@ To enable the core application functionality that is listed above, the following
     </td>
   </tr>
 </table>
+
+The following Azure platform services were leveraged to create this solution sample:
 
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
 
