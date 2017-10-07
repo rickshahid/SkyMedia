@@ -20,13 +20,11 @@ The following set of media functionality has been integrated and enabled within 
 
 * Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
-
 * Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
 To enable the core application functionality that is listed above, the following Azure platform services are leveraged:
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
-
 
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
 
@@ -82,12 +80,12 @@ rick.shahid@live.com
 
 **Data Tier**
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.DataTier.json)
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json)
 
-**App Tier**
+**App Tier (Under Construction)**
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.AppTier.json)
 
-**Web Tier**
+**Web Tier (Under Construction) **
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FTemplate.WebTier.json)
