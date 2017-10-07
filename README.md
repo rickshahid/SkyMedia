@@ -26,6 +26,43 @@ To enable the core application functionality that is listed above, the following
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
 
+<table>
+  <tr>
+    <td>
+      <b>All Tiers</b>
+    </td>
+    <td>
+      <i>Under Construction</i>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;&nbsp;&nbsp;<b>Data Tier</b>
+    </td>
+    <td>
+      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Data Tier" target="_blank">
+        <img src="http://azuredeploy.net/deploybutton.png">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;&nbsp;&nbsp;<b>App Tier</b>
+    </td>
+    <td>
+      <i>Under Construction</i>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;&nbsp;&nbsp;<b>Web Tier</b>
+    </td>
+    <td>
+      <i>Under Construction</i>
+    </td>
+  </tr>
+</table>
+
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
 
 * **Storage** - http://azure.microsoft.com/services/storage/
@@ -77,37 +114,3 @@ Thanks.
 Rick Shahid
 
 rick.shahid@live.com
-
-<table>
-  <tr>
-    <td>
-      <b>All Tiers</b>
-    </td>
-    <td>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      &nbsp;&nbsp;&nbsp;<b>Data Tier</b>
-    </td>
-    <td>
-      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Data Tier" target="_blank">
-        <img src="http://azuredeploy.net/deploybutton.png">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      &nbsp;&nbsp;&nbsp;<b>App Tier</b>
-    </td>
-    <td>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      &nbsp;&nbsp;&nbsp;<b>Web Tier</b>
-    </td>
-    <td>
-    </td>
-  </tr>
-</table>
