@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.io
 
-As an illustration, here is an introductory Azure Media Services stream that is playing via Azure Media Player integration. Azure Media Services content is adaptively scaled and consumable across a broad spectrum of devices and platforms.
+As an illustration, here is an introductory Azure Media Services stream that is playing via Azure Media Player integration. Azure Media Services content is adaptively scaled and globally consumable across a wide range of devices and platforms.
 
 ![](http://skystorage.azureedge.net/Snip01.ApplicationHome.png)
 
