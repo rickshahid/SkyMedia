@@ -59,7 +59,7 @@ To deploy this sample media application to your Azure subscription, click the "D
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Deploy Data Tier" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"></a>
     </td>
     <td>
-      <a href="http://armviz.io/?load=https://raw.githubusercontent.com/RickShahid/SkyMedia/master/ResourceManager/Template.DataTier.json" title="Visualize Data Tier" target="_blank"><img src="http://armviz.io/visualizebutton.png"></a>
+      <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Visualize Data Tier" target="_blank"><img src="http://armviz.io/visualizebutton.png"></a>
     </td>
   </tr>
 </table>
