@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.io
 
-As a demonstration, here is an introductory Azure Media Services stream that is playing via Azure Media Player integration. Azure Media Services content can be adaptively scaled and consumed across a broad spectrum of devices and platforms.
+As a illustration, here is an introductory Azure Media Services stream that is playing via Azure Media Player integration. Azure Media Services content can be adaptively scaled and consumed across a broad spectrum of devices and platforms.
 
 ![](http://skystorage.azureedge.net/Snip01.ApplicationHome.png)
 
@@ -31,7 +31,7 @@ To deploy this sample media application to your Azure subscription, click the "D
 <table>
   <tr>
     <td>
-      <b>All Tiers</b>
+      <b>Web, App & Data Tiers</b>
     </td>
     <td>
       <i>Under Construction</i>
@@ -42,7 +42,18 @@ To deploy this sample media application to your Azure subscription, click the "D
   </tr>
   <tr>
     <td>
-      <b>&bull;&nbsp;&nbsp;Data Tier</b>
+      <b>App & Data Tiers</b>
+    </td>
+    <td>
+      <i>Under Construction</i>
+    </td>
+    <td>
+      <i>Under Construction</i>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <b>Data Tier</b>
     </td>
     <td>
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Deploy Data Tier" target="_blank">
@@ -53,28 +64,6 @@ To deploy this sample media application to your Azure subscription, click the "D
       <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Visualize Data Tier" target="_blank">
         <img src="http://armviz.io/visualizebutton.png">
       </a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <b>&bull;&nbsp;&nbsp;App Tier</b>
-    </td>
-    <td>
-      <i>Under Construction</i>
-    </td>
-    <td>
-      <i>Under Construction</i>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <b>&bull;&nbsp;&nbsp;Web Tier</b>
-    </td>
-    <td>
-      <i>Under Construction</i>
-    </td>
-    <td>
-      <i>Under Construction</i>
     </td>
   </tr>
 </table>
