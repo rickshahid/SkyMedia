@@ -22,11 +22,11 @@ The following set of media functionality has been integrated and enabled within 
 
 * Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
-The following application architecture diagram represents the deployment of http://www.skymedia.io
+The following application architecture diagram represents the deployment at http://www.skymedia.io
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
 
-To deploy this sample media application to your Azure subscription, click the "Deploy to Azure" button below:
+To deploy the Azure Sky Media sample to your Azure subscription, choose from the "Deploy to Azure" buttons below:
 
 <table>
   <tr>
