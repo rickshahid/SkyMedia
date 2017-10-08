@@ -22,9 +22,7 @@
   },
   "variables": {
     "storageAccountName": "[toLower(parameters('storageAccountName'))]",
-    "databaseAccountName": "[toLower(parameters('databaseAccountName'))]",
-    "databaseAccountNameDocument": "[variables('databaseAccountName')]",
-    "databaseAccountNameTable": "[concat(variables('databaseAccountName'), '-table')]"
+    "databaseAccountName": "[toLower(parameters('databaseAccountName'))]"
   },
   "resources": [
     {
@@ -77,28 +75,13 @@
       "condition": "[not(equals(parameters('databaseAccountName'), '---'))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2016-03-31",
-      "name": "[variables('databaseAccountNameDocument')]",
+      "name": "[variables('databaseAccountName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "name": "[variables('databaseAccountNameDocument')]",
         "databaseAccountOfferType": "Standard"
       },
       "tags": {
         "defaultExperience": "DocumentDB"
-      }
-    },
-    {
-      "condition": "[not(equals(parameters('databaseAccountName'), '---'))]",
-      "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2016-03-31",
-      "name": "[variables('databaseAccountNameTable')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "name": "[variables('databaseAccountNameTable')]",
-        "databaseAccountOfferType": "Standard"
-      },
-      "tags": {
-        "defaultExperience": "Table"
       }
     }
   ],
