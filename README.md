@@ -76,7 +76,7 @@ The following Azure platform services were leveraged to create this sample media
 
   * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
 
-  * **Streaming** - https://azure.microsoft.com/services/media-services/live-on-demand/
+  * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
   
   * **Analytics** - http://azure.microsoft.com/services/media-services/media-analytics/
 
