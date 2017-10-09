@@ -4,10 +4,11 @@
   "parameters": {
     "storageAccountName": {
       "type": "string",
+      "defaultValue": "---",
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
-        "description": "Storage account name must be between 3 and 23 characters (letters and numbers only)."
+        "description": "Storage account name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip storage account deployment."
       }
     },
     "databaseAccountName": {
@@ -26,6 +27,7 @@
   },
   "resources": [
     {
+      "condition": "[not(equals(parameters('storageAccountName'), '---'))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[variables('storageAccountName')]",
@@ -36,6 +38,7 @@
       }
     },
     {
+      "condition": "[not(equals(parameters('storageAccountName'), '---'))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('storageAccountName'), '1')]",
@@ -46,6 +49,7 @@
       }
     },
     {
+      "condition": "[not(equals(parameters('storageAccountName'), '---'))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('storageAccountName'), '2')]",
@@ -59,6 +63,7 @@
       }
     },
     {
+      "condition": "[not(equals(parameters('storageAccountName'), '---'))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('storageAccountName'), '3')]",
