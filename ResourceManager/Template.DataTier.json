@@ -30,7 +30,7 @@
   },
   "resources": [
     {
-      "condition": "[not(equals(parameters('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[variables('storageAccountName')]",
@@ -41,7 +41,7 @@
       }
     },
     {
-      "condition": "[not(equals(parameters('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[concat(variables('storageAccountName'), '1')]",
@@ -52,7 +52,7 @@
       }
     },
     {
-      "condition": "[not(equals(parameters('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[concat(variables('storageAccountName'), '2')]",
@@ -66,7 +66,7 @@
       }
     },
     {
-      "condition": "[not(equals(parameters('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[concat(variables('storageAccountName'), '3')]",
@@ -80,7 +80,7 @@
       }
     },
     {
-      "condition": "[not(equals(parameters('databaseAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('databaseAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "[variables('databaseApiVersion')]",
       "name": "[variables('databaseAccountName')]",
