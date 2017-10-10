@@ -90,5 +90,30 @@
       }
     }
   ],
-  "outputs": {}
+  "outputs": {
+    "storageAccountKey": {
+      "type": "string",
+      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2017-06-01').keys[0].value"
+    },
+    "storageAccount1Key": {
+      "type": "string",
+      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '1')), '2017-06-01').keys[0].value"
+    },
+    "storageAccount2Key": {
+      "type": "string",
+      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '2')), '2017-06-01').keys[0].value"
+    },
+    "storageAccount3Key": {
+      "type": "string",
+      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '3')), '2017-06-01').keys[0].value"
+    },
+    "databaseAccountKeyReadOnly": {
+      "type": "string",
+      "value": ""
+    },
+    "databaseAccountKeyReadWrite": {
+      "type": "string",
+      "value": ""
+    }
+  }
 }
