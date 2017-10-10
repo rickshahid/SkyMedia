@@ -23,16 +23,14 @@
   },
   "variables": {
     "defaultAccountName": "---",
-    "storageApiVersion": "2017-06-01",
     "storageAccountName": "[toLower(parameters('storageAccountName'))]",
-    "databaseApiVersion": "2016-03-31",
     "databaseAccountName": "[toLower(parameters('databaseAccountName'))]"
   },
   "resources": [
     {
       "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
+      "apiVersion": "2017-06-01",
       "name": "[variables('storageAccountName')]",
       "location": "[resourceGroup().location]",
       "kind": "Storage",
@@ -43,7 +41,7 @@
     {
       "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
+      "apiVersion": "2017-06-01",
       "name": "[concat(variables('storageAccountName'), '1')]",
       "location": "[resourceGroup().location]",
       "kind": "Storage",
@@ -54,7 +52,7 @@
     {
       "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
+      "apiVersion": "2017-06-01",
       "name": "[concat(variables('storageAccountName'), '2')]",
       "location": "[resourceGroup().location]",
       "kind": "BlobStorage",
@@ -68,7 +66,7 @@
     {
       "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
+      "apiVersion": "2017-06-01",
       "name": "[concat(variables('storageAccountName'), '3')]",
       "location": "[resourceGroup().location]",
       "kind": "BlobStorage",
@@ -82,7 +80,7 @@
     {
       "condition": "[not(equals(variables('databaseAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "[variables('databaseApiVersion')]",
+      "apiVersion": "2016-03-31",
       "name": "[variables('databaseAccountName')]",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -94,29 +92,5 @@
     }
   ],
   "outputs": {
-    "storageAccountKey": {
-      "type": "string",
-      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '[variables('storageApiVersion')]').keys[0].value"
-    },
-    "storageAccount1Key": {
-      "type": "string",
-      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '1')), '[variables('storageApiVersion')]').keys[0].value"
-    },
-    "storageAccount2Key": {
-      "type": "string",
-      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '2')), '[variables('storageApiVersion')]').keys[0].value"
-    },
-    "storageAccount3Key": {
-      "type": "string",
-      "value": "listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageAccountName'), '3')), '[variables('storageApiVersion')]').keys[0].value"
-    },
-    "databaseAccountKeyReadOnly": {
-      "type": "string",
-      "value": "listReadOnlyKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountName')), '[variables('databaseApiVersion')]').primaryReadonlyMasterKey"
-    },
-    "databaseAccountKeyReadWrite": {
-      "type": "string",
-      "value": "listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountName')), '[variables('databaseApiVersion')]').primaryMasterKey"
-    }
   }
 }
