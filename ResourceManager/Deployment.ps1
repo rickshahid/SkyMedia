@@ -67,12 +67,12 @@ $templateParametersWeb.Add("appServicePlanNodeCountMinimum", 2)
 $templateParametersWeb.Add("appServicePlanNodeCountMaximum", 5)
 $templateParametersWeb.Add("webSiteName", "SkyMedia-USWest")
 
-$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
-if (!$resourceGroup)
-{
-	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
-}
-New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#if (!$resourceGroup)
+#{
+#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#}
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
 
 $regionLocation = "East US 2"
 
@@ -114,12 +114,12 @@ $templateParametersWeb.Add("appServicePlanNodeCountMinimum", 2)
 $templateParametersWeb.Add("appServicePlanNodeCountMaximum", 5)
 $templateParametersWeb.Add("webSiteName", "SkyMedia-USEast")
 
-$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
-if (!$resourceGroup)
-{
-	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
-}
-New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#if (!$resourceGroup)
+#{
+#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#}
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
 
 $regionLocation = "South Central US"
 

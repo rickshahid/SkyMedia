@@ -61,7 +61,7 @@
       "type": "string",
       "defaultValue": "[variables('defaultAccountName')]"
     },
-    "appHostingPlanName": {
+    "appServicePlanName": {
       "type": "string",
       "defaultValue": "[variables('defaultAccountName')]"
     },
@@ -148,71 +148,63 @@
       }
     },
     {
-      "condition": "[not(equals(parameters('appHostingPlanName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(parameters('appServicePlanName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Web/serverFarms",
       "apiVersion": "2016-09-01",
       "location": "[resourceGroup().location]",
-      "name": "[parameters('appHostingPlanName')]",
+      "name": "[parameters('appServicePlanName')]",
       "sku": {
         "tier": "[parameters('appServicePlanTier')]",
         "name": "[parameters('appServicePlanNodeSize')]",
         "capacity": "[parameters('appServicePlanNodeCountMinimum')]"
       }
+    },
+    {
+      "condition": "[not(equals(variables('webSiteName'), variables('defaultAccountName')))]",
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('webSiteName')]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "96f74a64-bf93-458d-9620-179da85f50a4"
+            },
+            {
+              "name": "App.Region",
+              "value": "[resourceGroup().location]"
+            },
+            {
+              "name": "Directory.ClientId",
+              "value": "5a5942f5-dfd4-42b4-a82e-37de4cf0ecee"
+            },
+            {
+              "name": "Directory.ClientSecret",
+              "value": "n1=Q2u]ZNcC#xV=3"
+            },
+            {
+              "name": "Storage",
+              "value": "[reference('linkedTemplateDataTier').outputs.storageAccount.value]"
+            },
+            {
+              "name": "Database.ReadOnly",
+              "value": "[reference('linkedTemplateDataTier').outputs.databaseAccountReadOnly.value]"
+            },
+            {
+              "name": "Database.ReadWrite",
+              "value": "[reference('linkedTemplateDataTier').outputs.databaseAccountReadWrite.value]"
+            },
+            {
+              "name": "Cache",
+              "value": "[reference('linkedTemplateAppTier').outputs.cacheAccountReadWrite.value]"
+            }
+          ]
+        }
+      }
     }
-    //{
-    //  "condition": "[not(equals(variables('webSiteName'), variables('defaultAccountName')))]",
-    //  "type": "Microsoft.Web/sites",
-    //  "apiVersion": "2016-08-01",
-    //  "location": "[resourceGroup().location]",
-    //  "name": "[variables('webSiteName')]",
-    //  "properties": {
-    //    "serverFarmId": "[resourceId(variables('appTierResourceGroup'), 'Microsoft.Web/serverFarms', variables('appServicePlanName'))]",
-    //    "siteConfig": {
-    //      "appSettings": [
-    //        {
-    //          "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-    //          "value": "96f74a64-bf93-458d-9620-179da85f50a4"
-    //        },
-    //        {
-    //          "name": "App.Region",
-    //          "value": "[parameters('regionName')]"
-    //        },
-    //        {
-    //          "name": "Directory.ClientId",
-    //          "value": "5a5942f5-dfd4-42b4-a82e-37de4cf0ecee"
-    //        },
-    //        {
-    //          "name": "Directory.ClientSecret",
-    //          "value": "n1=Q2u]ZNcC#xV=3"
-    //        },
-    //        {
-    //          "name": "Storage",
-    //          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2017-06-01').primaryKey, ';EndpointSuffix=core.windows.net')]"
-    //        },
-    //        {
-    //          "name": "Cosmos.Document.ReadOnly",
-    //          "value": "[concat('AccountEndpoint=https://', variables('databaseAccountNameDocument'), '.documents.azure.com:443/;AccountKey=', listReadOnlyKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountNameDocument')), '2016-03-31').primaryKey)]"
-    //        },
-    //        {
-    //          "name": "Cosmos.Document.ReadWrite",
-    //          "value": "[concat('AccountEndpoint=https://', variables('databaseAccountNameDocument'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountNameDocument')), '2016-03-31').primaryKey)]"
-    //        },
-    //        {
-    //          "name": "Cosmos.Table.ReadOnly",
-    //          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseAccountNameTable'), '.documents.azure.com:443/;AccountKey=', listReadOnlyKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountNameTable')), '2016-03-31').primaryKey, ';TableEndpoint=https://', variables('databaseAccountNameTable'), '.documents.azure.com')]"
-    //        },
-    //        {
-    //          "name": "Cosmos.Table.ReadWrite",
-    //          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseAccountNameTable'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(variables('dataTierResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountNameTable')), '2016-03-31').primaryKey, ';TableEndpoint=https://', variables('databaseAccountNameTable'), '.documents.azure.com')]"
-    //        },
-    //        {
-    //          "name": "Cache",
-    //          "value": "[concat(variables('cacheServiceName'), '.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId(variables('appTierResourceGroup'), 'Microsoft.Cache/redis', variables('cacheServiceName')), '2017-02-01').primaryKey)]"
-    //        }
-    //      ]
-    //    }
-    //  }
-    //}
     //{
     //  "type": "Microsoft.Network/trafficManagerProfiles",
     //  "apiVersion": "2017-05-01",
