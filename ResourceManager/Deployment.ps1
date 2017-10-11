@@ -60,7 +60,7 @@ $templateParametersApp.Add("logicAppName", "SkyMedia")
 #New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
 
 $templateParametersWeb = $templateParametersApp.Clone()
-$templateParametersWeb.Add("appHostingPlanName", "SkyMedia-USWest")
+$templateParametersWeb.Add("appServicePlanName", "SkyMedia-USWest")
 $templateParametersWeb.Add("appServicePlanTier", "Standard")
 $templateParametersWeb.Add("appServicePlanNodeSize", "S1")
 $templateParametersWeb.Add("appServicePlanNodeCountMinimum", 2)
@@ -107,7 +107,7 @@ $templateParametersApp.Add("logicAppName", "---")
 #New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
 
 $templateParametersWeb = $templateParametersApp.Clone()
-$templateParametersWeb.Add("appHostingPlanName", "SkyMedia-USEast")
+$templateParametersWeb.Add("appServicePlanName", "SkyMedia-USEast")
 $templateParametersWeb.Add("appServicePlanTier", "Standard")
 $templateParametersWeb.Add("appServicePlanNodeSize", "S1")
 $templateParametersWeb.Add("appServicePlanNodeCountMinimum", 2)
