@@ -4,7 +4,7 @@
   "parameters": {
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "---",
+      "defaultValue": "[variables('defaultAccountName')]",
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
@@ -13,7 +13,7 @@
     },
     "databaseAccountName": {
       "type": "string",
-      "defaultValue": "---",
+      "defaultValue": "[variables('defaultAccountName')]",
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
@@ -22,6 +22,7 @@
     }
   },
   "variables": {
+    "defaultAccountName": "---",
     "storageApiVersion": "2017-06-01",
     "storageAccountName": "[toLower(parameters('storageAccountName'))]",
     "databaseApiVersion": "2016-03-31",
@@ -29,7 +30,7 @@
   },
   "resources": [
     {
-      "condition": "[not(equals(variables('storageAccountName'), '---'))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[variables('storageAccountName')]",
@@ -40,7 +41,7 @@
       }
     },
     {
-      "condition": "[not(equals(variables('storageAccountName'), '---'))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[concat(variables('storageAccountName'), '1')]",
@@ -51,7 +52,7 @@
       }
     },
     {
-      "condition": "[not(equals(variables('storageAccountName'), '---'))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[concat(variables('storageAccountName'), '2')]",
@@ -65,7 +66,7 @@
       }
     },
     {
-      "condition": "[not(equals(variables('storageAccountName'), '---'))]",
+      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
       "name": "[concat(variables('storageAccountName'), '3')]",
@@ -79,7 +80,7 @@
       }
     },
     {
-      "condition": "[not(equals(variables('databaseAccountName'), '---'))]",
+      "condition": "[not(equals(variables('databaseAccountName'), variables('defaultAccountName')))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "[variables('databaseApiVersion')]",
       "name": "[variables('databaseAccountName')]",
