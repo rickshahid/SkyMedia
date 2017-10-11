@@ -91,25 +91,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2016-09-01",
-      "name": "linkedTemplateDataTier",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "https://raw.githubusercontent.com/RickShahid/SkyMedia/master/ResourceManager/Template.DataTier.json"
-        },
-        "parameters": {
-          "storageAccountName": {
-            "value": "[parameters('storageAccountName')]"
-          },
-          "databaseAccountName": {
-            "value": "[parameters('databaseAccountName')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2016-09-01",
       "name": "linkedTemplateAppTier",
       "properties": {
         "mode": "Incremental",
@@ -187,15 +168,15 @@
             },
             {
               "name": "Storage",
-              "value": "[reference('linkedTemplateDataTier').outputs.storageAccount.value]"
+              "value": "[reference('linkedTemplateAppTier').outputs.storageAccount.value]"
             },
             {
               "name": "Database.ReadOnly",
-              "value": "[reference('linkedTemplateDataTier').outputs.databaseAccountReadOnly.value]"
+              "value": "[reference('linkedTemplateAppTier').outputs.databaseAccountReadOnly.value]"
             },
             {
               "name": "Database.ReadWrite",
-              "value": "[reference('linkedTemplateDataTier').outputs.databaseAccountReadWrite.value]"
+              "value": "[reference('linkedTemplateAppTier').outputs.databaseAccountReadWrite.value]"
             },
             {
               "name": "Cache",
