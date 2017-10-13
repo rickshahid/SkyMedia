@@ -113,17 +113,5 @@
     }
   ],
   "outputs": {
-    "storageAccount": {
-      "type": "string",
-      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'), variables('storageApiVersion')).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-    },
-    "databaseAccountReadWrite": {
-      "type": "string",
-      "value": "[concat('AccountEndpoint=https://', variables('databaseAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(variables('databaseAccountName'), variables('databaseApiVersion')).primaryMasterKey)]"
-    },
-    "databaseAccountReadOnly": {
-      "type": "string",
-      "value": "[concat('AccountEndpoint=https://', variables('databaseAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(variables('databaseAccountName'), variables('databaseApiVersion')).primaryReadonlyMasterKey)]"
-    }
   }
 }
