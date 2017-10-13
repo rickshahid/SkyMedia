@@ -8,7 +8,7 @@
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
-        "description": "Storage account name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip storage account deployment."
+        "description": "Storage account name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip account deployment."
       }
     },
     "databaseAccountName": {
@@ -17,7 +17,16 @@
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
-        "description": "Database account name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip database account deployment."
+        "description": "Database account name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip account deployment."
+      }
+    },
+    "databaseDataRegions": {
+      "type": "array",
+      "defaultValue": [
+        "[resourceGroup().location]"
+      ],
+      "metadata": {
+        "description": "Array of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
       }
     }
   },
@@ -86,25 +95,35 @@
       "name": "[variables('databaseAccountName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "databaseAccountOfferType": "Standard"
-      },
-      "tags": {
-        "defaultExperience": "DocumentDB"
+        "databaseAccountOfferType": "Standard",
+        "copy": [
+          {
+            "name": "locations",
+            "count": "[length(parameters('databaseDataRegions'))]",
+            "input": {
+              "locationName": "[parameters('databaseDataRegions')[copyIndex('locations')]]",
+              "failoverPriority": "[copyIndex('locations')]"
+            }
+          }
+        ],
+        "tags": {
+          "defaultExperience": "DocumentDB"
+        }
       }
     }
   ],
   "outputs": {
     "storageAccount": {
       "type": "string",
-      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageApiVersion')).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-    },
-    "databaseAccountReadOnly": {
-      "type": "string",
-      "value": "[concat('AccountEndpoint=https://', variables('databaseAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountName')), variables('databaseApiVersion')).primaryReadonlyMasterKey)]"
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'), variables('storageApiVersion')).keys[0].value, ';EndpointSuffix=core.windows.net')]"
     },
     "databaseAccountReadWrite": {
       "type": "string",
-      "value": "[concat('AccountEndpoint=https://', variables('databaseAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountName')), variables('databaseApiVersion')).primaryMasterKey)]"
+      "value": "[concat('AccountEndpoint=https://', variables('databaseAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(variables('databaseAccountName'), variables('databaseApiVersion')).primaryMasterKey)]"
+    },
+    "databaseAccountReadOnly": {
+      "type": "string",
+      "value": "[concat('AccountEndpoint=https://', variables('databaseAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(variables('databaseAccountName'), variables('databaseApiVersion')).primaryReadonlyMasterKey)]"
     }
   }
 }
