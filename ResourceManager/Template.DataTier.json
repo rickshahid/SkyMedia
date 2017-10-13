@@ -2,47 +2,52 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "storageAccountName": {
+    "storageServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultAccountName')]",
+      "defaultValue": "[variables('defaultServiceName')]",
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
-        "description": "Storage account name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip account deployment."
+        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip resource deployment."
       }
     },
-    "databaseAccountName": {
+    "databaseServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultAccountName')]",
+      "defaultValue": "[variables('defaultServiceName')]",
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
-        "description": "Database account name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip account deployment."
+        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
       }
     },
     "databaseDataRegions": {
       "type": "array",
-      "defaultValue": [
-        "[resourceGroup().location]"
-      ],
       "metadata": {
         "description": "Array of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
+      }
+    },
+    "searchServiceName": {
+      "type": "string",
+      "defaultValue": "[variables('defaultServiceName')]",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
       }
     }
   },
   "variables": {
-    "defaultAccountName": "---",
-    "storageApiVersion": "2017-06-01",
-    "storageAccountName": "[toLower(parameters('storageAccountName'))]",
-    "databaseApiVersion": "2016-03-31",
-    "databaseAccountName": "[toLower(parameters('databaseAccountName'))]"
+    "defaultServiceName": "---",
+    "storageServiceName": "[toLower(parameters('storageServiceName'))]",
+    "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
+    "searchServiceName": "[toLower(parameters('searchServiceName'))]"
   },
   "resources": [
     {
-      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
-      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2017-06-01",
+      "name": "[variables('storageServiceName')]",
       "location": "[resourceGroup().location]",
       "kind": "Storage",
       "sku": {
@@ -50,10 +55,10 @@
       }
     },
     {
-      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
-      "name": "[concat(variables('storageAccountName'), '1')]",
+      "apiVersion": "2017-06-01",
+      "name": "[concat(variables('storageServiceName'), '1')]",
       "location": "[resourceGroup().location]",
       "kind": "Storage",
       "sku": {
@@ -61,10 +66,10 @@
       }
     },
     {
-      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
-      "name": "[concat(variables('storageAccountName'), '2')]",
+      "apiVersion": "2017-06-01",
+      "name": "[concat(variables('storageServiceName'), '2')]",
       "location": "[resourceGroup().location]",
       "kind": "BlobStorage",
       "sku": {
@@ -75,10 +80,10 @@
       }
     },
     {
-      "condition": "[not(equals(variables('storageAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('storageServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
-      "name": "[concat(variables('storageAccountName'), '3')]",
+      "apiVersion": "2017-06-01",
+      "name": "[concat(variables('storageServiceName'), '3')]",
       "location": "[resourceGroup().location]",
       "kind": "BlobStorage",
       "sku": {
@@ -89,10 +94,10 @@
       }
     },
     {
-      "condition": "[not(equals(variables('databaseAccountName'), variables('defaultAccountName')))]",
+      "condition": "[not(equals(variables('databaseServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "[variables('databaseApiVersion')]",
-      "name": "[variables('databaseAccountName')]",
+      "apiVersion": "2016-03-31",
+      "name": "[variables('databaseServiceName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "databaseAccountOfferType": "Standard",
@@ -109,6 +114,16 @@
         "tags": {
           "defaultExperience": "DocumentDB"
         }
+      }
+    },
+    {
+      "condition": "[not(equals(variables('searchServiceName'), variables('defaultServiceName')))]",
+      "type": "Microsoft.Search/searchServices",
+      "apiVersion": "2015-08-19",
+      "name": "[variables('searchServiceName')]",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "free"
       }
     }
   ],
