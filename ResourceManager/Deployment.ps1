@@ -6,20 +6,21 @@
 # Data Tier
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Storage).ResourceTypes | Where-Object ResourceTypeName -eq storageAccounts).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDB).ResourceTypes | Where-Object ResourceTypeName -eq databaseAccounts).ApiVersions
+#((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Search).ResourceTypes | Where-Object ResourceTypeName -eq searchServices).ApiVersions
 
 # App Tier
+#((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Insights).ResourceTypes | Where-Object ResourceTypeName -eq components).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Batch).ResourceTypes | Where-Object ResourceTypeName -eq batchAccounts).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Media).ResourceTypes | Where-Object ResourceTypeName -eq mediaServices).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Cache).ResourceTypes | Where-Object ResourceTypeName -eq redis).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Logic).ResourceTypes | Where-Object ResourceTypeName -eq workflows).ApiVersions
-#((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Insights).ResourceTypes | Where-Object ResourceTypeName -eq components).ApiVersions
-#((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Insights).ResourceTypes | Where-Object ResourceTypeName -eq autoscaleSettings).ApiVersions
 
 # Web Tier
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Web).ResourceTypes | Where-Object ResourceTypeName -eq serverFarms).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Web).ResourceTypes | Where-Object ResourceTypeName -eq sites).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Cdn).ResourceTypes | Where-Object ResourceTypeName -eq profiles).ApiVersions
 #((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Network).ResourceTypes | Where-Object ResourceTypeName -eq trafficManagerProfiles).ApiVersions
+#((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Insights).ResourceTypes | Where-Object ResourceTypeName -eq autoscaleSettings).ApiVersions
 
 $appName = "SkyMedia";
 
@@ -27,37 +28,44 @@ $templateFileDataTier = ($PSScriptRoot + "\Template.DataTier.json")
 $templateFileAppTier = ($PSScriptRoot + "\Template.AppTier.json")
 $templateFileWebTier = ($PSScriptRoot + "\Template.WebTier.json")
 
+$resourceGroupNameUSWest = ($appName + "-USWest")
+$resourceGroupNameUSEast = ($appName + "-USEast")
+$resourceGroupNameUSCentral = ($appName + "-USCentral")
+
 $regionLocation = "West US"
 
-$resourceGroupName = ($appName + "-USWest")
-
 $templateParametersData = @{
-	"storageAccountName" = "SkyMediaUSWest";
-	"databaseAccountName" = "SkyMedia";
+	"storageServiceName" = "SkyMediaUSWest"
+	"databaseServiceName" = "SkyMedia"
+	"databaseDataRegions" = "West US", "East US"
+	"searchServiceName" = "SkyMediaUSWest"
 }
 
-#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupNameUSWest -ErrorAction Ignore
 #if (!$resourceGroup)
 #{
-#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#	New-AzureRmResourceGroup -Name $resourceGroupNameUSWest -Location $regionLocation
 #}
-#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileDataTier -TemplateParameterObject $templateParametersData
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupNameUSWest -TemplateFile $templateFileDataTier -TemplateParameterObject $templateParametersData 
 
 $templateParametersApp = $templateParametersData.Clone()
-$templateParametersApp.Add("batchAccountName", "SkyMedia")
-$templateParametersApp.Add("mediaAccountName", "SkyUSWest")
-$templateParametersApp.Add("cacheAccountName", "SkyMedia-USWest")
+$templateParametersApp.Add("databaseResourceGroup", $resourceGroupNameUSWest)
+$templateParametersApp.Add("batchServiceName", "SkyMedia")
+$templateParametersApp.Add("mediaServiceName", "SkyUSWest")
+$templateParametersApp.Add("mediaServiceRegion", "West US")
+$templateParametersApp.Add("cacheServiceName", "SkyMedia-USWest")
 $templateParametersApp.Add("cacheServiceTier", "Standard")
 $templateParametersApp.Add("cacheServiceSize", "C0")
+$templateParametersApp.Add("appInsightsAccountName", "---")
 $templateParametersApp.Add("functionAppName", "SkyMedia-Functions-USWest")
 $templateParametersApp.Add("logicAppName", "SkyMedia")
 
-#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupNameUSWest -ErrorAction Ignore
 #if (!$resourceGroup)
 #{
-#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#	New-AzureRmResourceGroup -Name $resourceGroupNameUSWest -Location $regionLocation
 #}
-#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupNameUSWest -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
 
 $templateParametersWeb = $templateParametersApp.Clone()
 $templateParametersWeb.Add("appServicePlanName", "SkyMedia-USWest")
@@ -67,44 +75,47 @@ $templateParametersWeb.Add("appServicePlanNodeCountMinimum", 2)
 $templateParametersWeb.Add("appServicePlanNodeCountMaximum", 5)
 $templateParametersWeb.Add("webSiteName", "SkyMedia-USWest")
 
-#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupNameUSWest -ErrorAction Ignore
 #if (!$resourceGroup)
 #{
-#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#	New-AzureRmResourceGroup -Name $resourceGroupNameUSWest -Location $regionLocation
 #}
-#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupNameUSWest -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
 
-$regionLocation = "East US 2"
-
-$resourceGroupName = ($appName + "-USEast")
+$regionLocation = "East US"
 
 $templateParametersData = @{
-	"storageAccountName" = "SkyMediaUSEast";
-	"databaseAccountName" = "---";
+	"storageServiceName" = "SkyMediaUSEast"
+	"databaseServiceName" = "---"
+	"databaseDataRegions" = "West US", "East US"
+	"searchServiceName" = "---"
 }
 
-#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupNameUSEast -ErrorAction Ignore
 #if (!$resourceGroup)
 #{
-#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#	New-AzureRmResourceGroup -Name $resourceGroupNameUSEast -Location $regionLocation
 #}
-#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileDataTier -TemplateParameterObject $templateParametersData
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupNameUSEast -TemplateFile $templateFileDataTier -TemplateParameterObject $templateParametersData
 
 $templateParametersApp = $templateParametersData.Clone()
-$templateParametersApp.Add("batchAccountName", "SkyMedia")
-$templateParametersApp.Add("mediaAccountName", "SkyUSEast")
-$templateParametersApp.Add("cacheAccountName", "SkyMedia-USEast")
+$templateParametersApp.Add("databaseResourceGroup", $resourceGroupNameUSWest)
+$templateParametersApp.Add("batchServiceName", "SkyMedia")
+$templateParametersApp.Add("mediaServiceName", "SkyUSEast")
+$templateParametersApp.Add("mediaServiceRegion", "East US 2")
+$templateParametersApp.Add("cacheServiceName", "SkyMedia-USEast")
 $templateParametersApp.Add("cacheServiceTier", "Standard")
 $templateParametersApp.Add("cacheServiceSize", "C0")
+$templateParametersApp.Add("appInsightsAccountName", "---")
 $templateParametersApp.Add("functionAppName", "---")
 $templateParametersApp.Add("logicAppName", "---")
 
-#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupNameUSEast -ErrorAction Ignore
 #if (!$resourceGroup)
 #{
-#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#	New-AzureRmResourceGroup -Name $resourceGroupNameUSEast -Location $regionLocation
 #}
-#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupNameUSEast -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
 
 $templateParametersWeb = $templateParametersApp.Clone()
 $templateParametersWeb.Add("appServicePlanName", "SkyMedia-USEast")
@@ -114,22 +125,22 @@ $templateParametersWeb.Add("appServicePlanNodeCountMinimum", 2)
 $templateParametersWeb.Add("appServicePlanNodeCountMaximum", 5)
 $templateParametersWeb.Add("webSiteName", "SkyMedia-USEast")
 
-#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupNameUSEast -ErrorAction Ignore
 #if (!$resourceGroup)
 #{
-#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#	New-AzureRmResourceGroup -Name $resourceGroupNameUSEast -Location $regionLocation
 #}
-#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupNameUSEast -TemplateFile $templateFileWebTier -TemplateParameterObject $templateParametersWeb
 
 $regionLocation = "South Central US"
 
-$resourceGroupName = ($appName + "-USCentral")
+$templateParametersApp = @{
+	"appInsightsServiceName" = "Azure Sky Media"
+}
 
-$templateParametersApp = $templateParametersData.Clone()
-
-#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
+#$resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupNameUSCentral -ErrorAction Ignore
 #if (!$resourceGroup)
 #{
-#	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
+#	New-AzureRmResourceGroup -Name $resourceGroupNameUSCentral -Location $regionLocation
 #}
-#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
+#New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupNameUSCentral -TemplateFile $templateFileAppTier -TemplateParameterObject $templateParametersApp
