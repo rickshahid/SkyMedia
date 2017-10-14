@@ -22,6 +22,7 @@
     },
     "databaseDataRegions": {
       "type": "array",
+      "defaultValue": "",
       "metadata": {
         "description": "List of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
       }
