@@ -65,7 +65,7 @@
   },
   "resources": [
     {
-      "condition": "[not(equals(variables('storageServiceName'), ''))]",
+      "condition": "[not(equals(variables('storageServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[variables('storageServiceName')]",
@@ -76,7 +76,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
+      "condition": "[not(equals(variables('mediaStorageName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '1')]",
@@ -87,7 +87,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
+      "condition": "[not(equals(variables('mediaStorageName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '2')]",
@@ -101,7 +101,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
+      "condition": "[not(equals(variables('mediaStorageName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '3')]",
@@ -115,7 +115,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
+      "condition": "[not(equals(variables('databaseServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2016-03-31",
       "name": "[variables('databaseServiceName')]",
