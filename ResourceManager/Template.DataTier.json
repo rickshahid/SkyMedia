@@ -4,7 +4,7 @@
   "parameters": {
     "storageServiceName": {
       "type": "string",
-      "defaultValue": "---",
+      "defaultValue": "000",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
@@ -13,7 +13,7 @@
     },
     "databaseServiceName": {
       "type": "string",
-      "defaultValue": "---",
+      "defaultValue": "000",
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
@@ -32,7 +32,7 @@
     },
     "mediaStorageName": {
       "type": "string",
-      "defaultValue": "---",
+      "defaultValue": "000",
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
@@ -48,7 +48,7 @@
     },
     "searchServiceName": {
       "type": "string",
-      "defaultValue": "---",
+      "defaultValue": "000",
       "minLength": 2,
       "maxLength": 60,
       "metadata": {
@@ -57,7 +57,7 @@
     }
   },
   "variables": {
-    "defaultServiceName": "---",
+    "defaultServiceName": "000",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "mediaStorageName": "[toLower(parameters('mediaStorageName'))]",
