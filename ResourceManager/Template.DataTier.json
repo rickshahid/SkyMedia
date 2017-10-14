@@ -4,20 +4,20 @@
   "parameters": {
     "storageServiceName": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "---",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
-        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only)."
+        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only). Leave the default value to skip resource deployment."
       }
     },
     "databaseServiceName": {
       "type": "string",
-      "defaultValue": "",
-      "minLength": 3,
+      "defaultValue": "---",
+      "minLength": 3
       "maxLength": 31,
       "metadata": {
-        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
+        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
       }
     },
     "databaseDataRegions": {
@@ -32,27 +32,27 @@
     },
     "mediaStorageName": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "---",
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
-        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only)."
+        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip resource deployment."
       }
     },
     "mediaStorageRegion": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "West US",
       "metadata": {
         "description": "Azure region name for deployment of storage service resources, which will subsequently be utilized for media service resource deployment."
       }
     },
     "searchServiceName": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "---",
       "minLength": 2,
       "maxLength": 60,
       "metadata": {
-        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
       }
     }
   },
