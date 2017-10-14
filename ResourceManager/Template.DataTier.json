@@ -43,7 +43,7 @@
       "type": "string",
       "defaultValue": "West US",
       "metadata": {
-        "description": "Azure region name for deployment of storage service resources, which will subsequently be utilized for media service resource deployment."
+        "description": "Azure region name for deployment of storage service resources that will subsequently be utilized for media service resource deployment."
       }
     },
     "searchServiceName": {
