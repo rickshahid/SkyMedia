@@ -14,7 +14,7 @@
     "databaseServiceName": {
       "type": "string",
       "defaultValue": "---",
-      "minLength": 3
+      "minLength": 3,
       "maxLength": 31,
       "metadata": {
         "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
@@ -57,6 +57,7 @@
     }
   },
   "variables": {
+    "defaultServiceName": "---",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "mediaStorageName": "[toLower(parameters('mediaStorageName'))]",
@@ -75,7 +76,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '1')]",
@@ -86,7 +87,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '2')]",
@@ -100,7 +101,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '3')]",
@@ -114,7 +115,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2016-03-31",
       "name": "[variables('databaseServiceName')]",
@@ -137,7 +138,7 @@
       }
     },
     {
-      "condition": "[not(equals(variables('searchServiceName'), ''))]",
+      "condition": "[not(equals(variables('searchServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Search/searchServices",
       "apiVersion": "2015-08-19",
       "name": "[variables('searchServiceName')]",
