@@ -1,4 +1,4 @@
-
+{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
@@ -24,7 +24,7 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "List of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
+        "description": "Comma delimited list of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
       }
     },
     "mediaStorageName": {
