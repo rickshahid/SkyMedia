@@ -4,56 +4,55 @@
   "parameters": {
     "storageServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
-        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only). Leave the default value to skip resource deployment."
+        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
     "databaseServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "",
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
-        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
+        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
       }
     },
     "databaseDataRegions": {
       "type": "array",
       "metadata": {
-        "description": "Array of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
+        "description": "List of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
       }
     },
     "mediaStorageName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "",
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
-        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip resource deployment."
+        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only)."
       }
     },
     "mediaStorageRegion": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "",
       "metadata": {
         "description": "Azure region name for deployment of storage service resources, which will subsequently be utilized for media service resource deployment."
       }
     },
     "searchServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "",
       "minLength": 2,
       "maxLength": 60,
       "metadata": {
-        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
+        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     }
   },
   "variables": {
-    "defaultServiceName": "---",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "mediaStorageName": "[toLower(parameters('mediaStorageName'))]",
@@ -61,7 +60,7 @@
   },
   "resources": [
     {
-      "condition": "[not(equals(variables('storageServiceName'), variables('defaultServiceName')))]",
+      "condition": "[not(equals(variables('storageServiceName'), ''))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[variables('storageServiceName')]",
@@ -72,7 +71,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), variables('defaultServiceName'))), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '1')]",
@@ -83,7 +82,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), variables('defaultServiceName'))), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '2')]",
@@ -97,7 +96,7 @@
       }
     },
     {
-      "condition": "[and(not(equals(variables('mediaStorageName'), variables('defaultServiceName'))), not(equals(parameters('mediaStorageRegion'), variables('defaultServiceName'))))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
       "name": "[concat(variables('mediaStorageName'), '3')]",
@@ -111,7 +110,7 @@
       }
     },
     {
-      "condition": "[not(equals(variables('databaseServiceName'), variables('defaultServiceName')))]",
+      "condition": "[and(not(equals(variables('mediaStorageName'), '')), not(equals(parameters('mediaStorageRegion'), '')))]",
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2016-03-31",
       "name": "[variables('databaseServiceName')]",
@@ -134,7 +133,7 @@
       }
     },
     {
-      "condition": "[not(equals(variables('searchServiceName'), variables('defaultServiceName')))]",
+      "condition": "[not(equals(variables('searchServiceName'), ''))]",
       "type": "Microsoft.Search/searchServices",
       "apiVersion": "2015-08-19",
       "name": "[variables('searchServiceName')]",
