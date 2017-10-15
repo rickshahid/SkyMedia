@@ -45,10 +45,10 @@ To deploy the Azure Sky Media solution sample to your subscription, choose from 
       <b>App & Data Tiers</b>
     </td>
     <td>
-      <i>Under Construction</i>
+      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AppTier.json" title="Deploy App & Data Tiers" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"></a>
     </td>
     <td>
-      <i>Under Construction</i>
+      <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.AppTier.json" title="Visualize App & Data Tiers" target="_blank"><img src="http://armviz.io/visualizebutton.png"></a>
     </td>
   </tr>
   <tr>
