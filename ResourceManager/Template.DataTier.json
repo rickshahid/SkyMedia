@@ -51,7 +51,7 @@
     "defaultServiceName": "000",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
-    "mediaStorageName": "[toLower(parameters('mediaStorageName'))]",
+    "mediaStorageName": "[toLower(parameters('mediaStorageName'))]"
   },
   "resources": [
     {
