@@ -4,16 +4,16 @@
   "parameters": {
     "storageServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "000",
       "minLength": 3,
-      "maxLength": 23,
+      "maxLength": 24,
       "metadata": {
-        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip resource deployment."
+        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only). Leave the default value to skip resource deployment."
       }
     },
     "databaseServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "000",
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
@@ -22,17 +22,28 @@
     },
     "databaseDataRegions": {
       "type": "array",
+      "defaultValue": [
+        "West US",
+        "East US"
+      ],
       "metadata": {
         "description": "Array of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
       }
     },
-    "searchServiceName": {
+    "mediaStorageName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
-      "minLength": 2,
-      "maxLength": 60,
+      "defaultValue": "000",
+      "minLength": 3,
+      "maxLength": 23,
       "metadata": {
-        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
+        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only). Leave the default value to skip resource deployment."
+      }
+    },
+    "mediaStorageRegion": {
+      "type": "string",
+      "defaultValue": "West US",
+      "metadata": {
+        "description": "Azure region name for deployment of storage service resources that will subsequently be utilized for media service resource deployment."
       }
     },
     "databaseResourceGroup": {
@@ -41,9 +52,23 @@
         "description": "Name of the resource group that contains the database service resource."
       }
     },
+    "appInsightsName": {
+      "type": "string",
+      "defaultValue": "000",
+      "metadata": {
+        "description": "Application Insights service name. Leave the default value to skip resource deployment."
+      }
+    },
+    "appInsightsRegion": {
+      "type": "string",
+      "defaultValue": "South Central US",
+      "metadata": {
+        "description": "Azure region name for deployment of application insights service resource."
+      }
+    },
     "batchServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "000",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
@@ -52,63 +77,46 @@
     },
     "mediaServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "000",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
         "description": "Media service name must be between 3 and 24 characters (letters and numbers only). Leave the default value to skip resource deployment."
       }
     },
-    "mediaServiceRegion": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Azure region for the media service."
-      }
-    },
     "cacheServiceName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
+      "defaultValue": "000",
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
         "description": "Cache service name must be between 3 and 31 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
       }
     },
-    "cacheServiceTier": {
-      "type": "string",
-      "defaultValue": "Standard"
-    },
-    "cacheServiceSize": {
-      "type": "string",
-      "defaultValue": "C0"
-    },
-    "appInsightsServiceName": {
-      "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]",
-      "metadata": {
-        "description": "Application Insights service name. Leave the default value to skip resource deployment."
-      }
-    },
-    "appInsightsRegionName": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]",
-      "metadata": {
-        "description": "Application Insights region name."
-      }
-    },
     "functionAppName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]"
+      "defaultValue": "000",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "Function app name must be between 2 and 60 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
+      }
     },
     "logicAppName": {
       "type": "string",
-      "defaultValue": "[variables('defaultServiceName')]"
+      "defaultValue": "000",
+      "minLength": 1,
+      "maxLength": 74,
+      "metadata": {
+        "description": "Logic app name must be between 1 and 74 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
+      }
     }
   },
   "variables": {
-    "defaultServiceName": "---",
+    "defaultServiceName": "000",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
+    "mediaStorageName": "[toLower(parameters('mediaStorageName'))]",
     "batchServiceName": "[toLower(parameters('batchServiceName'))]",
     "mediaServiceName": "[toLower(parameters('mediaServiceName'))]",
     "cacheServiceName": "[toLower(parameters('cacheServiceName'))]",
@@ -134,18 +142,21 @@
           "databaseDataRegions": {
             "value": "[parameters('databaseDataRegions')]"
           },
-          "searchServiceName": {
-            "value": "[parameters('searchServiceName')]"
+          "mediaStorageName": {
+            "value": "[parameters('mediaStorageName')]"
+          },
+          "mediaStorageRegion": {
+            "value": "[parameters('mediaStorageRegion')]"
           }
         }
       }
     },
     {
-      "condition": "[not(equals(parameters('appInsightsServiceName'), variables('defaultServiceName')))]",
+      "condition": "[not(equals(parameters('appInsightsName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Insights/components",
       "apiVersion": "2015-05-01",
-      "location": "[parameters('appInsightsRegionName')]",
-      "name": "[parameters('appInsightsServiceName')]",
+      "location": "[parameters('appInsightsRegion')]",
+      "name": "[parameters('appInsightsName')]",
       "kind": "web",
       "properties": {
       }
@@ -154,14 +165,14 @@
       "condition": "[not(equals(variables('batchServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Batch/batchAccounts",
       "apiVersion": "2017-05-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('mediaStorageRegion')]",
       "name": "[variables('batchServiceName')]",
       "dependsOn": [
         "Microsoft.Resources/deployments/linkedTemplateDataTier"
       ],
       "properties": {
         "autoStorage": {
-          "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageServiceName'), '1'))]"
+          "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('mediaStorageName'), '1'))]"
         }
       }
     },
@@ -169,7 +180,7 @@
       "condition": "[not(equals(variables('mediaServiceName'), variables('defaultServiceName')))]",
       "type": "Microsoft.Media/mediaServices",
       "apiVersion": "2015-10-01",
-      "location": "[parameters('mediaServiceRegion')]",
+      "location": "[parameters('mediaStorageRegion')]",
       "name": "[variables('mediaServiceName')]",
       "dependsOn": [
         "Microsoft.Resources/deployments/linkedTemplateDataTier"
@@ -177,15 +188,15 @@
       "properties": {
         "storageAccounts": [
           {
-            "id": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageServiceName'), '1'))]",
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('mediaStorageName'), '1'))]",
             "isPrimary": true
           },
           {
-            "id": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageServiceName'), '2'))]",
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('mediaStorageName'), '2'))]",
             "isPrimary": false
           },
           {
-            "id": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('storageServiceName'), '3'))]",
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('mediaStorageName'), '3'))]",
             "isPrimary": false
           }
         ]
@@ -199,9 +210,9 @@
       "name": "[variables('cacheServiceName')]",
       "properties": {
         "sku": {
-          "family": "[first(parameters('cacheServiceSize'))]",
-          "name": "[parameters('cacheServiceTier')]",
-          "capacity": "[last(parameters('cacheServiceSize'))]"
+          "name": "Standard",
+          "family": "C",
+          "capacity": "0"
         }
       }
     },
@@ -259,78 +270,8 @@
         },
         "clientAffinityEnabled": false
       }
-    },
-    {
-      "condition": "[not(equals(parameters('logicAppName'), variables('defaultServiceName')))]",
-      "type": "Microsoft.Logic/workflows",
-      "apiVersion": "2017-07-01",
-      "name": "[concat(parameters('logicAppName'), '-Publish-Content')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "definition": {
-          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-          "contentVersion": "1.0.0.0",
-          "actions": {},
-          "outputs": {},
-          "parameters": {},
-          "triggers": {}
-        },
-        "parameters": {}
-      }
-    },
-    {
-      "condition": "[not(equals(parameters('logicAppName'), variables('defaultServiceName')))]",
-      "type": "Microsoft.Logic/workflows",
-      "apiVersion": "2017-07-01",
-      "name": "[concat(parameters('logicAppName'), '-Publish-Insight')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "definition": {
-          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-          "contentVersion": "1.0.0.0",
-          "actions": {},
-          "outputs": {},
-          "parameters": {},
-          "triggers": {}
-        },
-        "parameters": {}
-      }
-    },
-    {
-      "condition": "[not(equals(parameters('logicAppName'), variables('defaultServiceName')))]",
-      "type": "Microsoft.Logic/workflows",
-      "apiVersion": "2017-07-01",
-      "name": "[concat(parameters('logicAppName'), '-Purge-Publish')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "definition": {
-          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-          "contentVersion": "1.0.0.0",
-          "actions": {},
-          "outputs": {},
-          "parameters": {},
-          "triggers": {}
-        },
-        "parameters": {}
-      }
     }
   ],
   "outputs": {
-    //"storageAccount": {
-    //  "type": "string",
-    //  "value": "[reference('linkedTemplateDataTier').outputs.storageAccount.value]"
-    //},
-    //"databaseAccountReadOnly": {
-    //  "type": "string",
-    //  "value": "[reference('linkedTemplateDataTier').outputs.databaseAccountReadOnly.value]"
-    //},
-    //"databaseAccountReadWrite": {
-    //  "type": "string",
-    //  "value": "[reference('linkedTemplateDataTier').outputs.databaseAccountReadWrite.value]"
-    //}
-    //"cacheAccount": {
-    //  "type": "string",
-    //  "value": "[concat(variables('cacheAccountName'), '.redis.cache.windows.net:6380,password=', listKeys(variables('cacheAccountName'), '2017-02-01').primaryKey, ',ssl=True,abortConnect=False')]"
-    //}
   }
 }
