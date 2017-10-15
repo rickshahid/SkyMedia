@@ -45,15 +45,6 @@
       "metadata": {
         "description": "Azure region name for deployment of storage service resources that will subsequently be utilized for media service resource deployment."
       }
-    },
-    "searchServiceName": {
-      "type": "string",
-      "defaultValue": "000",
-      "minLength": 2,
-      "maxLength": 60,
-      "metadata": {
-        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only). Leave the default value to skip resource deployment."
-      }
     }
   },
   "variables": {
@@ -61,7 +52,6 @@
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "mediaStorageName": "[toLower(parameters('mediaStorageName'))]",
-    "searchServiceName": "[toLower(parameters('searchServiceName'))]"
   },
   "resources": [
     {
@@ -135,16 +125,6 @@
         "tags": {
           "defaultExperience": "DocumentDB"
         }
-      }
-    },
-    {
-      "condition": "[not(equals(variables('searchServiceName'), variables('defaultServiceName')))]",
-      "type": "Microsoft.Search/searchServices",
-      "apiVersion": "2015-08-19",
-      "name": "[variables('searchServiceName')]",
-      "location": "[resourceGroup().location]",
-      "sku": {
-        "name": "free"
       }
     }
   ],
