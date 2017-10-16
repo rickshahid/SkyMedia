@@ -26,7 +26,7 @@ The following application architecture diagram represents the deployment at http
 
 ![](http://skystorage.azureedge.net/Snip02.ApplicationArchitecture.png)
 
-To deploy the Azure Sky Media solution sample to your subscription, choose from the "Deploy to Azure" buttons below:
+To deploy the parameterized solution sample within your subscription, click the "Deploy to Azure" button below:
 
 <table>
   <tr>
