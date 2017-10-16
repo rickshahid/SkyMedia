@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Application Insights service resource."
+      }
+    },
+    "appInsightsRegion": {
+      "type": "string",
+      "defaultValue": "South Central US",
+      "metadata": {
+        "description": "Azure region name for deployment of the Application Insights service resource."
+      }
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2015-05-01",
+      "location": "[parameters('appInsightsRegion')]",
+      "name": "[parameters('appInsightsName')]",
+      "kind": "web",
+      "properties": {
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
