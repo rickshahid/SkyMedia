@@ -31,35 +31,24 @@ To deploy the Azure Sky Media solution sample to your subscription, choose from 
 <table>
   <tr>
     <td>
-      <b>Web, App & Data Tiers</b>
+      <b>Regional Services Template</b>
     </td>
     <td>
-      <i>Under Construction</i>
+      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.Region.json" title="Deploy Regional Services" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"></a>
     </td>
     <td>
-      <i>Under Construction</i>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <b>App & Data Tiers</b>
-    </td>
-    <td>
-      <i>Under Construction</i>
-    </td>
-    <td>
-      <i>Under Construction</i>
+      <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.Region.json" title="Visualize Regional Services" target="_blank"><img src="http://armviz.io/visualizebutton.png"></a>
     </td>
   </tr>
   <tr>
     <td>
-      <b>Data Tier</b>
+      <b>Shared Services Template</b>
     </td>
     <td>
-      <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Deploy Data Tier" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"></a>
+      <i>Under Construction</i>
     </td>
     <td>
-      <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceManager%2FTemplate.DataTier.json" title="Visualize Data Tier" target="_blank"><img src="http://armviz.io/visualizebutton.png"></a>
+      <i>Under Construction</i>
     </td>
   </tr>
 </table>
