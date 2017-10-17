@@ -42,7 +42,7 @@ To deploy the parameterized solution sample within your Azure subscription, clic
   </tr>
   <tr>
     <td>
-      <b>Regional Services Template</b>
+      <b>Regional Services Template</b>
     </td>
     <td>
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceTemplates%2FTemplate.Regional.json" title="Deploy Regional Services" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"></a>
