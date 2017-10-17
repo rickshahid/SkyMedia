@@ -31,17 +31,17 @@ namespace AzureSkyMedia.WebApp.Controllers
             if (timeSeconds == 0)
             {
                 documentId = string.Concat(collectionId, Constant.TextDelimiter.Identifier, documentId);
-                using (CosmosClient cosmosClient = new CosmosClient(false))
+                using (DocumentClient documentClient = new DocumentClient(false))
                 {
-                    metadata = cosmosClient.GetDocument(documentId);
+                    metadata = documentClient.GetDocument(documentId);
                 }
             }
             else
             {
                 string procedureId = Constant.Database.Procedure.MetadataFragment;
-                using (CosmosClient cosmosClient = new CosmosClient(true))
+                using (DocumentClient documentClient = new DocumentClient(true))
                 {
-                    metadata = cosmosClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
+                    metadata = documentClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
                 }
             }
             return Json(metadata);

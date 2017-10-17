@@ -39,14 +39,20 @@
     string speechToTextCaptionWebVttId = string.Concat("speechToTextCaptionWebVtt", taskNumber);
     string faceDetectionConfigRowId = string.Concat("faceDetectionConfigRow", taskNumber);
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
+    string faceDetectionTrackingModeId = string.Concat("faceDetectionTrackingMode", taskNumber);
+    string faceDetectionFacesRowId = string.Concat("faceDetectionFacesRow", taskNumber);
+    string faceDetectionAggregateEmotionRowId = string.Concat("faceDetectionAggregateEmotionRow", taskNumber);
+    string faceDetectionAggregateEmotionWindowId = string.Concat("faceDetectionAggregateEmotionWindow", taskNumber);
+    string faceDetectionAggregateEmotionIntervalId = string.Concat("faceDetectionAggregateEmotionInterval", taskNumber);
     string faceRedactionConfigRowId = string.Concat("faceRedactionConfigRow", taskNumber);
     string faceRedactionModeId = string.Concat("faceRedactionMode", taskNumber);
+    string faceRedactionBlurModeId = string.Concat("faceRedactionBlurMode", taskNumber);
     string motionDetectionConfigRowId = string.Concat("motionDetectionConfigRow", taskNumber);
     string motionDetectionSensitivityLevelId = string.Concat("motionDetectionSensitivityLevel", taskNumber);
     string motionDetectionLightChangeId = string.Concat("motionDetectionLightChange", taskNumber);
     string motionHyperlapseConfigRowId = string.Concat("motionHyperlapseConfigRow", taskNumber);
-    string motionHyperlapseStartFrameId = string.Concat("motionHyperlapseStartFrame", taskNumber);
-    string motionHyperlapseFrameCountId = string.Concat("motionHyperlapseFrameCount", taskNumber);
+    string motionHyperlapseFrameStartId = string.Concat("motionHyperlapseFrameStart", taskNumber);
+    string motionHyperlapseFrameEndId = string.Concat("motionHyperlapseFrameEnd", taskNumber);
     string motionHyperlapseSpeedId = string.Concat("motionHyperlapseSpeed", taskNumber);
     string outputAssetNameId = string.Concat("outputAssetName", taskNumber);
     string taskOptionsId = string.Concat("taskOptions", taskNumber);
@@ -54,7 +60,9 @@
 
 <tr id="@taskRowId" class="mediaWorkflowTaskRow">
     <td class="inputLabel">
-        Job Task #@taskNumber
+        <span class="inputLabelExtended">
+            Job Task<br>#@taskNumber
+        </span>
     </td>
     <td>
         <table class="jobTask">
@@ -75,10 +83,10 @@
             </tr>
             <tr id="@encoderConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span id="@encoderConfigDocId" class="siteLink mediaEncoderConfig">
+                    <span id="@encoderConfigDocId" class="inputLabelExtended" siteLink>
                         Encoder Config
+                        <br>
                         <span id="@encoderConfigDocSchemaId" class="siteLink" style="display: none">
-                            <br />
                             (Custom)
                         </span>
                     </span>
@@ -228,28 +236,38 @@
                         Face Detection
                     </span>
                 </td>
-                <td class="processorConfigRow">
-                    <table>
+                <td>
+                    <table class="processorConfigTable">
                         <tr>
                             <td>
-                                @Html.RadioButton(faceDetectionModeId, "faces", true)
-                            </td>
-                            <td class="inputLabel">
-                                Faces Only
+                                @Html.RadioButton(faceDetectionModeId, "Faces", true, new { onchange = "SetFaceDetectionConfig(this)" })
+                                Face Detect
                             </td>
                             <td>
-                                &nbsp;
-                                @Html.RadioButton(faceDetectionModeId, "aggregateEmotion", false)
-                            </td>
-                            <td class="inputLabel">
+                                @Html.RadioButton(faceDetectionModeId, "AggregateEmotion", false, new { onchange = "SetFaceDetectionConfig(this)", @class = "faceDetectionMode" })
                                 Aggregate Emotion
                             </td>
                             <td>
-                                &nbsp;
-                                @Html.RadioButton(faceDetectionModeId, "perFaceEmotion", false)
+                                @Html.RadioButton(faceDetectionModeId, "PerFaceEmotion", false, new { onchange = "SetFaceDetectionConfig(this)", @class = "faceDetectionMode" })
+                                Face Emotion
                             </td>
-                            <td class="inputLabel">
-                                Per Face Emotion
+                        </tr>
+                        <tr id="@faceDetectionFacesRowId">
+                            <td colspan="3">
+                                Tracking Mode
+                                <select id="@faceDetectionTrackingModeId" class="faceDetectionTrackingMode">
+                                    <option value="Precise">Precise</option>
+                                    <option value="Fast">Fast</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr id="@faceDetectionAggregateEmotionRowId" style="display: none">
+                            <td colspan="3">
+                                Window (ms)
+                                <input id="@faceDetectionAggregateEmotionWindowId" value="500" class="spinner d4" />
+                                &nbsp;&nbsp;
+                                Interval (ms)
+                                <input id="@faceDetectionAggregateEmotionIntervalId" value="500" class="spinner d4" />
                             </td>
                         </tr>
                     </table>
@@ -261,28 +279,32 @@
                         Face Redaction
                     </span>
                 </td>
-                <td class="processorConfigRow">
-                    <table>
+                <td>
+                    <table class="processorConfigTable">
                         <tr>
                             <td>
                                 @Html.RadioButton(faceRedactionModeId, "analyze", true)
-                            </td>
-                            <td class="inputLabel">
                                 Analyze Only
                             </td>
                             <td>
-                                &nbsp;
                                 @Html.RadioButton(faceRedactionModeId, "redact", false)
-                            </td>
-                            <td class="inputLabel">
                                 Apply Redaction
                             </td>
                             <td>
-                                &nbsp;
                                 @Html.RadioButton(faceRedactionModeId, "combined", false)
-                            </td>
-                            <td class="inputLabel">
                                 Combined Mode
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                Blur Mode
+                                <select id="@faceRedactionBlurModeId" class="faceRedactionBlurMode">
+                                    <option value="Debug">Debug</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Med" selected>Medium</option>
+                                    <option value="High">High</option>
+                                    <option value="Black">Black</option>
+                                </select>
                             </td>
                         </tr>
                     </table>
@@ -328,28 +350,29 @@
                 <td class="processorConfigRow">
                     <table>
                         <tr>
-                            <td class="inputLabel">
-                                Frames
+                            <td>
+                                <span class="motionHyperlapseFrames">
+                                    Frames
+                                </span>
                             </td>
-                            <td class="inputLabel">
-                                &nbsp;
-                                <input id="@motionHyperlapseStartFrameId" value="0" class="spinner d7" />
+                            <td>
+                                <input id="@motionHyperlapseFrameStartId" value="0" class="spinner d8" />
                             </td>
-                            <td class="inputLabel">
-                                &nbsp;
-                                -
-                                &nbsp;
+                            <td>
+                                <span class="motionHyperlapseFramesRange">
+                                    -
+                                </span>
                             </td>
-                            <td class="inputLabel">
-                                <input id="@motionHyperlapseFrameCountId" value="10000" class="spinner d7" />
+                            <td>
+                                <input id="@motionHyperlapseFrameEndId" value="10000" class="spinner d8" />
                             </td>
-                            <td class="inputLabel">
-                                &nbsp;
-                                Speed
+                            <td>
+                                <span class="motionHyperlapseSpeed">
+                                    Speed
+                                </span>
                             </td>
-                            <td class="inputLabel">
-                                &nbsp;
-                                <input id="@motionHyperlapseSpeedId" value="2" class="spinner d2" />
+                            <td>
+                                <input id="@motionHyperlapseSpeedId" value="3" class="spinner d2" />
                             </td>
                         </tr>
                     </table>
@@ -375,7 +398,7 @@
                         <tr>
                             <td class="contentProtectionLabel">
                                 <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
-                                    Content<br />Protection
+                                    Content<br>Protection
                                 </span>
                             </td>
                             <td>

@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -12,8 +11,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal class AsperaClient
     {
-        private string _serviceNode;
-        private string _serviceStats;
+        private string _serviceGateway;
+        private string _serviceWorker;
         private WebClient _serviceClient;
         private string _accountId;
         private string _accountKey;
@@ -22,20 +21,11 @@ namespace AzureSkyMedia.PlatformServices
         public AsperaClient(string authToken)
         {
             User authUser = new User(authToken);
+            _serviceGateway = authUser.AsperaServiceGateway;
 
-            _serviceNode = authUser.AsperaServiceGateway;
-            if (!_serviceNode.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-            {
-                _serviceNode = string.Concat("https://", _serviceNode);
-            }
-
-            string[] serviceInfo = _serviceNode.Split('.');
-            serviceInfo[0] = string.Concat(serviceInfo[0], Constant.Storage.Partner.AsperaWorker);
-            _serviceStats = string.Join(".", serviceInfo);
-            if (!_serviceStats.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-            {
-                _serviceStats = string.Concat("https://", _serviceStats);
-            }
+            string[] serviceGateway = _serviceGateway.Split('.');
+            serviceGateway[0] = string.Concat(serviceGateway[0], Constant.Storage.Partner.AsperaWorker);
+            _serviceWorker = string.Join(".", serviceGateway);
 
             _accountId = authUser.AsperaAccountId;
             _accountKey = authUser.AsperaAccountKey;
@@ -43,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
 
             string settingKey = Constant.AppSettingKey.AsperaTransferInfo;
             string transferInfo = AppSetting.GetValue(settingKey);
-            string transferApi = string.Concat(_serviceStats, transferInfo);
+            string transferApi = string.Concat(_serviceWorker, transferInfo);
 
             using (HttpRequestMessage request = _serviceClient.GetRequest(HttpMethod.Get, transferApi))
             {
@@ -56,12 +46,12 @@ namespace AzureSkyMedia.PlatformServices
         {
             string settingKey = Constant.AppSettingKey.AsperaUploadSetup;
             string uploadSetup = AppSetting.GetValue(settingKey);
-            string transferApi = string.Concat(_serviceNode, uploadSetup);
+            string transferApi = string.Concat(_serviceGateway, uploadSetup);
             if (fileDownload)
             {
                 settingKey = Constant.AppSettingKey.AsperaDownloadSetup;
                 string downloadSetup = AppSetting.GetValue(settingKey);
-                transferApi = string.Concat(_serviceNode, downloadSetup);
+                transferApi = string.Concat(_serviceGateway, downloadSetup);
             }
 
             TransferRequest transferRequest = new TransferRequest();

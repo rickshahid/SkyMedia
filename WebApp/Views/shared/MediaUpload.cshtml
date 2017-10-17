@@ -11,7 +11,7 @@
         </td>
         <td>
             @Html.RadioButton("uploadService", "azureStorage", true, new { @class = "mediaUploadLeft", onchange = "SetUploadService(this)" })
-            <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/storage/')">
+            <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/storage/blobs/')">
                 Azure Object Storage (HTTP)
             </span>
             <span id="uploadSigniantFlight" style="display: none">
@@ -36,7 +36,7 @@
             @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage" })
             &nbsp;
             @Html.CheckBox("storageEncryption")
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-rest-storage-encryption')">
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview#storage-encryption')">
                 Storage Encryption
             </span>
         </td>
@@ -49,7 +49,7 @@
             @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Media Asset Name]" })
             &nbsp;
             @Html.CheckBox("multipleFileAsset")
-            <span class="inputLabel">
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files#upload-multiple-files-with-media-services-net-sdk')">
                 Multiple File Asset
             </span>
         </td>

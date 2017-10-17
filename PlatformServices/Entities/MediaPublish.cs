@@ -15,7 +15,7 @@
         public string StorageAccountKey { get; set; }
     }
 
-    internal class MediaInsightsPublish : StorageEntity
+    internal class MediaInsightPublish : StorageEntity
     {
         public string MediaAccountDomainName { get; set; }
 

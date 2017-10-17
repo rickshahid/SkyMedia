@@ -10,6 +10,12 @@ using Microsoft.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage.Analytics;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+
+using Microsoft.Rest;
+using Microsoft.Azure.Management.Storage;
+using Microsoft.Azure.Management.Storage.Models;
+
 namespace AzureSkyMedia.PlatformServices
 {
     public class StorageEntity : TableEntity
@@ -23,6 +29,37 @@ namespace AzureSkyMedia.PlatformServices
 
     internal static class Storage
     {
+        public static string GetAccountType(string tenantId, string clientId, string clientKey, string accountName)
+        {
+            //var authContext = new AuthenticationContext(string.Format("https://login.windows.net/{0}", tenantId));
+            //var credential = new ClientCredential(clientId, clientKey);
+            //AuthenticationResult authResult = authContext.AcquireTokenAsync("https://management.core.windows.net/", credential).Result;
+            //string token = authResult.CreateAuthorizationHeader().Substring(Constant.HttpHeader.AuthPrefix.Length);
+
+            //TokenCredentials credentials = new TokenCredentials(token);
+
+            //StorageManagementClient storageClient = new StorageManagementClient(credentials);
+            //storageClient.SubscriptionId = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3";
+            //IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
+
+            //StorageAccountListKeysResult keys = storageClient.StorageAccounts.ListKeys("SkyMedia-USWest-Data", "skymediauswest0");
+
+            //foreach (StorageAccount storageAccount in storageAccounts)
+            //{
+            //    string x = storageAccount.Sku.ToString();
+            //    string y = storageAccount.Kind.ToString();
+            //    string z = storageAccount.AccessTier.ToString();
+            //}
+
+            string accountType = "Type: General";
+            string storageTier = "";
+            if (!string.IsNullOrEmpty(storageTier))
+            {
+                accountType = string.Concat(accountType, ", ", storageTier);
+            }
+            return accountType;
+        }
+
         private static string GetCapacityUsed(string authToken, string accountName)
         {
             string capacityUsed = string.Empty;
@@ -56,13 +93,14 @@ namespace AzureSkyMedia.PlatformServices
 
         private static string GetAccountInfo(string authToken, IStorageAccount storageAccount)
         {
-            string accountInfo = string.Concat("Account: ", storageAccount.Name);
+            User authUser = new User(authToken);
+            string tenantId = authUser.MediaAccountDomainName;
+            string clientId = authUser.MediaAccountClientId;
+            string clientKey = authUser.MediaAccountClientKey;
+
+            string accountType = GetAccountType(tenantId, clientId, clientKey, storageAccount.Name);
             string storageUsed = GetCapacityUsed(authToken, storageAccount.Name);
-            if (!string.IsNullOrEmpty(storageUsed))
-            {
-                accountInfo = string.Concat(accountInfo, ", Usage: ", storageUsed, ")");
-            }
-            return accountInfo;
+            return string.Concat(storageAccount.Name, ": ", accountType, ", ", storageUsed, ")");
         }
 
         private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)

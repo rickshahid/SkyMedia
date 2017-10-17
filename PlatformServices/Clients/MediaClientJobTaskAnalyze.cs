@@ -1,12 +1,42 @@
 ﻿using System.Globalization;
 using System.Collections.Generic;
 
+using Microsoft.WindowsAzure.MediaServices.Client;
+
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private static void IndexVideo(string authToken, IndexerClient indexerClient, IAsset asset, string locatorUrl, MediaJobTask jobTask)
+        {
+            string spokenLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.SpokenLanguage.ToString()];
+            string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
+            string videoDescription = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoDescription.ToString()];
+            string videoMetadata = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoMetadata.ToString()];
+            bool videoPublic = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoPublic.ToString()];
+            bool audioOnly = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.AudioOnly.ToString()];
+
+            string indexId = indexerClient.UploadVideo(asset, videoDescription, videoMetadata, spokenLanguage, searchPartition, locatorUrl, videoPublic, audioOnly);
+
+            User authUser = new User(authToken);
+            MediaInsightPublish insightPublish = new MediaInsightPublish
+            {
+                PartitionKey = authUser.MediaAccountId,
+                RowKey = indexId,
+                MediaAccountDomainName = authUser.MediaAccountDomainName,
+                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
+                MediaAccountClientId = authUser.MediaAccountClientId,
+                MediaAccountClientKey = authUser.MediaAccountClientKey,
+                IndexerAccountKey = authUser.VideoIndexerKey,
+            };
+
+            TableClient tableClient = new TableClient();
+            string tableName = Constant.Storage.TableName.InsightPublish;
+            tableClient.InsertEntity(tableName, insightPublish);
+        }
+
         private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
@@ -54,10 +84,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 captionFormats.Add("WebVTT");
             }
-            if (captionFormats.Count > 0)
-            {
-                processorOptions["Formats"] = captionFormats;
-            }
+            processorOptions["Formats"] = captionFormats;
             string spokenLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.SpokenLanguage.ToString()];
             processorOptions["Language"] = spokenLanguage.Replace("-", string.Empty); ;
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -68,14 +95,16 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
-            string mode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.FaceDetection;
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["options"];
-            processorOptions["mode"] = mode;
+            processorOptions["mode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
+            processorOptions["trackingMode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionTrackingMode.ToString()];
+            processorOptions["aggregateEmotionWindowMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionWindow.ToString()];
+            processorOptions["aggregateEmotionIntervalMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionInterval.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);
@@ -114,14 +143,16 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask[] GetMotionHyperlapseTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
+            int frameStart = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameStart.ToString()];
+            int frameEnd = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameEnd.ToString()];
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             jobTask.MediaProcessor = MediaProcessor.MotionHyperlapse;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionHyperlapseDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorSources = processorConfig["Sources"][0];
-            processorSources["StartFrame"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseStartFrame.ToString()];
-            processorSources["NumFrames"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameCount.ToString()];
+            processorSources["StartFrame"] = frameStart;
+            processorSources["NumFrames"] = frameEnd - frameStart + 1;
             JToken processorOptions = processorConfig["Options"];
             processorOptions["Speed"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseSpeed.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();

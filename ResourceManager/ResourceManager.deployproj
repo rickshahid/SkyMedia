@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>5324ef4a-155c-49b3-8bdf-6bbdc809159f</ProjectGuid>
+    <ProjectGuid>9d5675e0-59be-4cdd-ac58-782c587afbb7</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworkIdentifier>Deployment</TargetFrameworkIdentifier>
@@ -25,13 +25,13 @@
   <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
   <!-- vertag<:>end -->
   <ItemGroup>
-    <None Include="Deployment.ps1" />
+    <None Include="Deployment.Global.ps1" />
+    <None Include="Deployment.Regional.ps1" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
-    <None Include="Template.AppTier.json" />
-    <None Include="Template.DataTier.json" />
-    <None Include="Template.WebTier.json" />
+    <None Include="Template.Global.json" />
+    <None Include="Template.Regional.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

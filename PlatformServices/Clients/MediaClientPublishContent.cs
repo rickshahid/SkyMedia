@@ -90,8 +90,8 @@ namespace AzureSkyMedia.PlatformServices
         public static MediaPublish PublishContent(string queueName)
         {
             MediaPublish mediaPublish = null;
-            MessageClient messageClient = new MessageClient();
-            MediaContentPublish contentPublish = messageClient.GetMessage<MediaContentPublish>(queueName, out string messageId, out string popReceipt);
+            QueueClient queueClient = new QueueClient();
+            MediaContentPublish contentPublish = queueClient.GetMessage<MediaContentPublish>(queueName, out string messageId, out string popReceipt);
             if (contentPublish != null)
             {
                 string accountId = contentPublish.PartitionKey;
@@ -115,37 +115,9 @@ namespace AzureSkyMedia.PlatformServices
                         StatusMessage = GetNotificationMessage(accountId, job)
                     };
                 }
-                messageClient.DeleteMessage(queueName, messageId, popReceipt);
+                queueClient.DeleteMessage(queueName, messageId, popReceipt);
             }
             return mediaPublish;
-        }
-
-        public static void PurgePublishContent(EntityClient entityClient)
-        {
-            string tableName = Constant.Storage.TableName.ContentPublish;
-            MediaContentPublish[] contentPublishes = entityClient.GetEntities<MediaContentPublish>(tableName);
-            foreach (MediaContentPublish contentPublish in contentPublishes)
-            {
-                string accountDomain = contentPublish.MediaAccountDomainName;
-                string accountUrl = contentPublish.MediaAccountEndpointUrl;
-                string clientId = contentPublish.MediaAccountClientId;
-                string clientKey = contentPublish.MediaAccountClientKey;
-                string jobId = contentPublish.RowKey;
-
-                MediaClient mediaClient = new MediaClient(accountDomain, accountUrl, clientId, clientKey);
-                IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
-                if (job == null)
-                {
-                    entityClient.DeleteEntity(tableName, contentPublish);
-
-                    tableName = Constant.Storage.TableName.ContentProtection;
-                    ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
-                    if (contentProtection != null)
-                    {
-                        entityClient.DeleteEntity(tableName, contentProtection);
-                    }
-                }
-            }
         }
     }
 }

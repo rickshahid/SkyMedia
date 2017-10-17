@@ -83,19 +83,19 @@
                             DisplayVideoClipper("@languageCode");
                         });
                     }*@
-                    for (var i = 0; i < mediaStream.contentInsights.length; i++) {
-                        var contentInsight = mediaStream.contentInsights[i];
-                        if (contentInsight.processor == 3) { // Video Indexer
-                            var insightsImage = document.createElement("img");
-                            insightsImage.id = "insightsImage";
-                            insightsImage.src = "@storageCdnUrl" + "/MediaInsightsOpen.png";
-                            var insightsButton = document.createElement("button");
-                            insightsButton.id = "insightsButton";
-                            insightsButton.className = controlButtonCss;
-                            insightsButton.appendChild(insightsImage);
-                            controlBarRight.appendChild(insightsButton);
-                            $("#insightsButton").click(function () {
-                                ToggleIndexerInsights(contentInsight);
+                    for (var i = 0; i < mediaStream.contentInsight.length; i++) {
+                        var insight = mediaStream.contentInsight[i];
+                        if (insight.processor == 3) { // Video Indexer
+                            var insightImage = document.createElement("img");
+                            insightImage.id = "insightImage";
+                            insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
+                            var insightButton = document.createElement("button");
+                            insightButton.id = "insightButton";
+                            insightButton.className = controlButtonCss;
+                            insightButton.appendChild(insightImage);
+                            controlBarRight.appendChild(insightButton);
+                            $("#insightButton").click(function () {
+                                ToggleIndexerInsight(insight);
                             });
                         } else {
                             var metadataImage = document.createElement("img");
@@ -117,10 +117,10 @@
                 var streamUrl = mediaPlayer.currentSrc();
                 streamUrl = streamUrl.split("/");
                 for (var i = streamUrl.length - 2; i > streamUrl.length - 5; i--) {
-                    streamUrl[i] = streamUrl[i] + "<br />";
+                    streamUrl[i] = streamUrl[i] + "<br>";
                 }
                 var manifestIndex = streamUrl.length - 1;
-                streamUrl[manifestIndex] = streamUrl[manifestIndex].replace(",", "<br />,");
+                streamUrl[manifestIndex] = streamUrl[manifestIndex].replace(",", "<br>,");
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
                 ClearVideoOverlay();
@@ -143,7 +143,7 @@
                 StartStreamingEndpoint(title);
             }
             else if (accountMessage == "AMS02") {
-                var message = "Your streaming endpoint is in the process of starting.<br /><br />Please refresh after it is up and running.";
+                var message = "Your streaming endpoint is in the process of starting.<br><br>Please refresh after it is up and running.";
                 DisplayMessage(title, message);
             } else if (accountMessage != "") {
                 DisplayMessage("Account Message", accountMessage);
@@ -166,7 +166,7 @@
         <td id="metadataPanel" class="metadataPanel">
             <table>
                 <tr>
-                    <td class="inputLabel">
+                    <td>
                         <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/media-services/media-analytics/')">
                             Azure Media Analytics
                         </span>
@@ -185,7 +185,7 @@
     </tr>
 </table>
 
-<div id="indexerInsights" class="indexerInsights">
+<div id="indexerInsight" class="indexerInsight">
     <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
 </div>
 

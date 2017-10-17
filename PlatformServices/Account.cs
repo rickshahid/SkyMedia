@@ -57,15 +57,15 @@ namespace AzureSkyMedia.PlatformServices
                     indexerClient.DeleteVideo(indexId, true);
 
                     string collectionId = Constant.Database.Collection.ContentInsight;
-                    CosmosClient cosmosClient = new CosmosClient(true);
-                    cosmosClient.DeleteDocument(collectionId, indexId);
+                    DocumentClient documentClient = new DocumentClient(true);
+                    documentClient.DeleteDocument(collectionId, indexId);
 
-                    EntityClient entityClient = new EntityClient();
+                    TableClient tableClient = new TableClient();
                     string tableName = Constant.Storage.TableName.InsightPublish;
-                    MediaInsightsPublish insightsPublish = entityClient.GetEntity<MediaInsightsPublish>(tableName, accountId, indexId);
-                    if (insightsPublish != null)
+                    MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, indexId);
+                    if (insightPublish != null)
                     {
-                        entityClient.DeleteEntity(tableName, insightsPublish);
+                        tableClient.DeleteEntity(tableName, insightPublish);
                     }
                 }
                 foreach (ILocator locator in asset.Locators)
@@ -82,20 +82,20 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void DeleteJob(string accountId, IJob job)
         {
-            EntityClient entityClient = new EntityClient();
+            TableClient tableClient = new TableClient();
 
             string tableName = Constant.Storage.TableName.ContentPublish;
-            MediaContentPublish contentPublish = entityClient.GetEntity<MediaContentPublish>(tableName, accountId, job.Id);
+            MediaContentPublish contentPublish = tableClient.GetEntity<MediaContentPublish>(tableName, accountId, job.Id);
             if (contentPublish != null)
             {
-                entityClient.DeleteEntity(tableName, contentPublish);
+                tableClient.DeleteEntity(tableName, contentPublish);
             }
 
             tableName = Constant.Storage.TableName.ContentProtection;
-            ContentProtection contentProtection = entityClient.GetEntity<ContentProtection>(tableName, accountId, job.Id);
+            ContentProtection contentProtection = tableClient.GetEntity<ContentProtection>(tableName, accountId, job.Id);
             if (contentProtection != null)
             {
-                entityClient.DeleteEntity(tableName, contentProtection);
+                tableClient.DeleteEntity(tableName, contentProtection);
             }
 
             job.Delete();

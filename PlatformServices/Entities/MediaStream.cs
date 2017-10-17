@@ -8,7 +8,7 @@
 
         public MediaTrack[] TextTracks { get; set; }
 
-        public MediaInsight[] ContentInsights { get; set; }
+        public MediaInsight[] ContentInsight { get; set; }
 
         public MediaProtection[] ContentProtection { get; set; }
     }

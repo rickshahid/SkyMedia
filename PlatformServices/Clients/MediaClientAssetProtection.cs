@@ -11,9 +11,9 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static ContentProtection GetContentProtection(MediaContentPublish contentPublish)
         {
-            EntityClient entityClient = new EntityClient();
+            TableClient tableClient = new TableClient();
             string tableName = Constant.Storage.TableName.ContentProtection;
-            return entityClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
+            return tableClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
         }
 
         public MediaProtection[] GetContentProtection(IAsset asset)

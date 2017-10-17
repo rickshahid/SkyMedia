@@ -63,16 +63,16 @@ namespace AzureSkyMedia.PlatformServices
                 MobileNumber = authUser.MobileNumber
             };
 
-            EntityClient entityClient = new EntityClient();
+            TableClient tableClient = new TableClient();
             string tableName = Constant.Storage.TableName.ContentPublish;
-            entityClient.InsertEntity(tableName, contentPublish);
+            tableClient.InsertEntity(tableName, contentPublish);
 
             if (contentProtection != null)
             {
                 tableName = Constant.Storage.TableName.ContentProtection;
                 contentProtection.PartitionKey = contentPublish.PartitionKey;
                 contentProtection.RowKey = contentPublish.RowKey;
-                entityClient.InsertEntity(tableName, contentProtection);
+                tableClient.InsertEntity(tableName, contentProtection);
             }
         }
 

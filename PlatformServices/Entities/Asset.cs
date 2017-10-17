@@ -67,7 +67,7 @@ namespace AzureSkyMedia.PlatformServices
                     string assetInfo = string.Concat(" (", fileCount, filesLabel, ", ", assetSize, ")");
                     if (_asset.Options == AssetCreationOptions.StorageEncrypted)
                     {
-                        assetInfo = string.Concat(assetInfo, " <img id='", this.ClientId, "' class='mediaLock' src='", _storageCdnUrl, "/MediaLock.png' />");
+                        assetInfo = string.Concat(assetInfo, " <img id='", this.ClientId, "' class='mediaLock' src='", _storageCdnUrl, "/MediaLock.png'>");
                     }
                     return string.Concat(_asset.Name, assetInfo);
                 }

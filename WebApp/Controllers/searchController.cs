@@ -8,7 +8,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class searchController : Controller
     {
-        public JsonResult insights(MediaSearchCriteria searchCriteria)
+        public JsonResult insight(MediaSearchCriteria searchCriteria)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             IndexerClient indexerClient = new IndexerClient(authToken, null, null);

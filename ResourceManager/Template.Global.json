@@ -14,9 +14,37 @@
       "metadata": {
         "description": "Azure region name for deployment of the Application Insights service resource."
       }
+    },
+    "trafficManagerSubdomainName": {
+      "type": "string",
+      "metadata": {
+        "description": "Subdomain name (<subdomain>.trafficmanager.net) for the Traffic Manager resource."
+      }
+    },
+    "trafficManagerRoutingMethod": {
+      "type": "string",
+      "defaultValue": "Performance",
+      "allowedValues": [
+        "Performance",
+        "Weighted",
+        "Priority",
+        "Geographic"
+      ],
+      "metadata": {
+        "description": "Routing method of the Traffic Manager resource."
+      }
+    },
+    "trafficManagerTimeToLive": {
+      "type": "int",
+      "defaultValue": 30,
+      "metadata": {
+        "description": "Time-to-live setting (in seconds) for Traffic Manager DNS records."
+      }
     }
   },
   "variables": {
+    "trafficManagerSubdomainName": "[toLower(parameters('trafficManagerSubdomainName'))]",
+    "trafficManagerSubdomainNameStaging": "[concat(variables('trafficManagerSubdomainName'), '-staging')]"
   },
   "resources": [
     {
@@ -26,6 +54,42 @@
       "name": "[parameters('appInsightsName')]",
       "kind": "web",
       "properties": {
+      }
+    },
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "apiVersion": "2017-05-01",
+      "location": "global",
+      "name": "[variables('trafficManagerSubdomainName')]",
+      "properties": {
+        "trafficRoutingMethod": "[parameters('trafficManagerRoutingMethod')]",
+        "dnsConfig": {
+          "relativeName": "[variables('trafficManagerSubdomainName')]",
+          "ttl": "[parameters('trafficManagerTimeToLive')]"
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "apiVersion": "2017-05-01",
+      "location": "global",
+      "name": "[variables('trafficManagerSubdomainNameStaging')]",
+      "properties": {
+        "trafficRoutingMethod": "[parameters('trafficManagerRoutingMethod')]",
+        "dnsConfig": {
+          "relativeName": "[variables('trafficManagerSubdomainNameStaging')]",
+          "ttl": "[parameters('trafficManagerTimeToLive')]"
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/"
+        }
       }
     }
   ],

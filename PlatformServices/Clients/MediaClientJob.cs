@@ -7,34 +7,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static void IndexVideo(string authToken, IndexerClient indexerClient, IAsset asset, string locatorUrl, MediaJobTask jobTask)
-        {
-            string spokenLanguage = jobTask.ProcessorConfigString[MediaProcessorConfig.SpokenLanguage.ToString()];
-            string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
-            string videoDescription = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoDescription.ToString()];
-            string videoMetadata = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoMetadata.ToString()];
-            bool videoPublic = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoPublic.ToString()];
-            bool audioOnly = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.AudioOnly.ToString()];
-
-            string indexId = indexerClient.UploadVideo(asset, videoDescription, videoMetadata, spokenLanguage, searchPartition, locatorUrl, videoPublic, audioOnly);
-
-            User authUser = new User(authToken);
-            MediaInsightsPublish insightsPublish = new MediaInsightsPublish
-            {
-                PartitionKey = authUser.MediaAccountId,
-                RowKey = indexId,
-                MediaAccountDomainName = authUser.MediaAccountDomainName,
-                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
-                MediaAccountClientId = authUser.MediaAccountClientId,
-                MediaAccountClientKey = authUser.MediaAccountClientKey,
-                IndexerAccountKey = authUser.VideoIndexerKey,
-            };
-
-            EntityClient entityClient = new EntityClient();
-            string tableName = Constant.Storage.TableName.InsightPublish;
-            entityClient.InsertEntity(tableName, insightsPublish);
-        }
-
         private INotificationEndPoint GetNotificationEndpoint()
         {
             string endpointName = Constant.Media.JobNotification.EndpointName;

@@ -82,8 +82,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaPublishContentUrl = "Media.Publish.ContentUrl";
             public const string MediaPublishContentQueue = "Media.Publish.ContentQueue";
 
-            public const string MediaPublishInsightsUrl = "Media.Publish.InsightsUrl";
-            public const string MediaPublishInsightsQueue = "Media.Publish.InsightsQueue";
+            public const string MediaPublishInsightUrl = "Media.Publish.InsightUrl";
+            public const string MediaPublishInsightQueue = "Media.Publish.InsightQueue";
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
             public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
@@ -104,16 +104,18 @@ namespace AzureSkyMedia.PlatformServices
             public const string AsperaUploadSetup = "Aspera.UploadSetup";
             public const string AsperaDownloadSetup = "Aspera.DownloadSetup";
 
+            public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
             public const string AccountKeyPrefix = "AccountKey=";
             public const string DatabaseIdPrefix = "DatabaseId=";
 
             public const string AzureStorage = "Storage";
-            public const string AzureCosmosReadOnly = "Cosmos.ReadOnly";
-            public const string AzureCosmosReadWrite = "Cosmos.ReadWrite";
-
-            public const string AzureMedia = "Media";
             public const string AzureCache = "Cache";
+
+            public const string AzureCosmosDocumentReadOnly = "Cosmos.Document.ReadOnly";
+            public const string AzureCosmosDocumentReadWrite = "Cosmos.Document.ReadWrite";
+            //public const string AzureCosmosTableReadOnly = "Cosmos.Table.ReadOnly";
+            //public const string AzureCosmosTableReadWrite = "Cosmos.Table.ReadWrite";
         }
 
         public struct HttpHeader

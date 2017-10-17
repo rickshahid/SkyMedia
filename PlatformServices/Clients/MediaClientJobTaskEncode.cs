@@ -41,9 +41,9 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     string settingKey = Constant.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
                     string documentId = AppSetting.GetValue(settingKey);
-                    using (CosmosClient cosmosClient = new CosmosClient(false))
+                    using (DocumentClient documentClient = new DocumentClient(false))
                     {
-                        JObject processorConfig = cosmosClient.GetDocument(documentId);
+                        JObject processorConfig = documentClient.GetDocument(documentId);
                         jobTask.ProcessorConfig = processorConfig.ToString();
                     }
                 }
@@ -57,7 +57,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 if (inputSubclipped && !jobTask.ProcessorConfig.StartsWith("{"))
                 {
-                    using (CosmosClient cosmosClient = new CosmosClient(true))
+                    using (DocumentClient cosmosClient = new DocumentClient(true))
                     {
                         string collectionId = Constant.Database.Collection.ProcessorConfig;
                         string procedureId = Constant.Database.Procedure.ProcessorConfig;
@@ -72,9 +72,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (!string.IsNullOrEmpty(jobInput.MarkInTime))
                 {
-                    JObject inputSource = new JObject();
-                    inputSource.Add("StartTime", jobInput.MarkInTime);
-                    inputSource.Add("Duration", jobInput.MarkOutTime);
+                    JObject inputSource = new JObject
+                    {
+                        { "StartTime", jobInput.MarkInTime },
+                        { "Duration", jobInput.MarkOutTime }
+                    };
                     inputSources.Add(inputSource);
                 }
             }
@@ -82,9 +84,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 JObject oldConfig = JObject.Parse(jobTask.ProcessorConfig);
                 oldConfig.Remove("Sources");
-                JObject newConfig = new JObject();
-                newConfig.Add(oldConfig.First);
-                newConfig.Add("Sources", inputSources);
+                JObject newConfig = new JObject
+                {
+                    oldConfig.First,
+                    { "Sources", inputSources }
+                };
                 oldConfig.First.Remove();
                 JEnumerable<JToken> children = oldConfig.Children();
                 foreach (JToken child in children)

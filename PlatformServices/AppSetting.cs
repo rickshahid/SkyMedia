@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,11 @@ namespace AzureSkyMedia.PlatformServices
             string[] accountSettings = accountConnection.Split(Constant.TextDelimiter.Connection);
             foreach (string accountSetting in accountSettings)
             {
-                if (accountSetting.StartsWith(Constant.AppSettingKey.AccountNamePrefix, comparisonType))
+                if (accountSetting.StartsWith(Constant.AppSettingKey.AccountEndpointPrefix, comparisonType))
+                {
+                    parsedConnection.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountEndpointPrefix.Length));
+                }
+                else if (accountSetting.StartsWith(Constant.AppSettingKey.AccountNamePrefix, comparisonType))
                 {
                     parsedConnection.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountNamePrefix.Length));
                 }
@@ -34,7 +39,11 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static string[] GetValue(string settingKey, bool parseValue)
         {
-            string settingValue = ConfigRoot == null ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
+            string settingValue = ConfigurationManager.AppSettings[settingKey];
+            if (string.IsNullOrEmpty(settingValue))
+            {
+                settingValue = ConfigRoot == null ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
+            }
             if (settingValue == null)
             {
                 settingValue = string.Empty;

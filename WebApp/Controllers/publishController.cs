@@ -22,25 +22,25 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         [HttpPut]
-        [Route("/publish/insights")]
-        public MediaPublish PublishInsights(bool poisonQueue)
+        [Route("/publish/insight")]
+        public MediaPublish PublishInsight(bool poisonQueue)
         {
-            string settingKey = Constant.AppSettingKey.MediaPublishInsightsQueue;
+            string settingKey = Constant.AppSettingKey.MediaPublishInsightQueue;
             string queueName = AppSetting.GetValue(settingKey);
             if (poisonQueue)
             {
                 queueName = string.Concat(queueName, Constant.Storage.Queue.PoisonSuffix);
             }
-            return MediaClient.PublishInsights(queueName);
+            return MediaClient.PublishInsight(queueName);
         }
 
         [HttpDelete]
         [Route("/publish/purge")]
         public void PurgePublish()
         {
-            EntityClient entityClient = new EntityClient();
-            MediaClient.PurgePublishContent(entityClient);
-            MediaClient.PurgePublishInsights(entityClient);
+            TableClient tableClient = new TableClient();
+            MediaClient.PurgePublishContent(tableClient);
+            MediaClient.PurgePublishInsight(tableClient);
         }
 
         [HttpGet]

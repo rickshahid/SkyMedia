@@ -58,7 +58,7 @@ namespace AzureSkyMedia.PlatformServices
                     Name = streamName,
                     SourceUrl = sourceUrl,
                     TextTracks = MapTextTracks(textTracks),
-                    ContentInsights = new MediaInsight[] { },
+                    ContentInsight = new MediaInsight[] { },
                     ContentProtection = GetContentProtection(protectionTypes)
                 };
                 mediaStreams.Add(mediaStream);
@@ -145,17 +145,17 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaStream GetMediaStream(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
-            List<MediaInsight> contentInsights = new List<MediaInsight>();
+            List<MediaInsight> contentInsight = new List<MediaInsight>();
 
             string indexId = indexerClient.GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId) && indexerClient != null)
             {
-                MediaInsight contentInsight = new MediaInsight()
+                MediaInsight insight = new MediaInsight()
                 {
                     Processor = MediaProcessor.VideoIndexer,
-                    SourceUrl = indexerClient.GetInsightsUrl(indexId)
+                    SourceUrl = indexerClient.GetInsightUrl(indexId)
                 };
-                contentInsights.Add(contentInsight);
+                contentInsight.Add(insight);
             }
 
             //AnalyticsMetadata = GetAnalyticsMetadata(mediaClient, asset),
@@ -165,7 +165,7 @@ namespace AzureSkyMedia.PlatformServices
                 Name = asset.Name,
                 SourceUrl = mediaClient.GetLocatorUrl(asset),
                 TextTracks = GetTextTracks(mediaClient, indexerClient, asset),
-                ContentInsights = contentInsights.ToArray(),
+                ContentInsight = contentInsight.ToArray(),
                 ContentProtection = mediaClient.GetContentProtection(asset)
             };
             return mediaStream;

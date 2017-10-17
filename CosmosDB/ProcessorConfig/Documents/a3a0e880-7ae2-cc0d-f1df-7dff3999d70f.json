@@ -1,9 +1,0 @@
-{
-  "version": "1.0",
-  "options": {
-    "outputAudio": "true",
-    "fadeInFadeOut": "true",
-    "maxMotionThumbnailDurationInSecs": "30"
-  },
-  "id": "a3a0e880-7ae2-cc0d-f1df-7dff3999d70f"
-}

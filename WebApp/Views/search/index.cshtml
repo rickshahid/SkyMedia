@@ -17,27 +17,27 @@
             return searchCriteria;
         }
         function SubmitSearchRequest() {
-            $.post("/search/insights",
+            $.post("/search/insight",
                 {
                     searchCriteria: GetSearchCriteria()
                 },
                 function (results) {
-                    $("#insightsData").jsonBrowse(results);
+                    $("#insightData").jsonBrowse(results);
                 }
             );
         }
         $(function () {
             $("#indexId").focus();
-            CreateTipTop("mediaInsightsSearch", "Submit Search Request");
+            CreateTipTop("mediaInsightSearch", "Submit Search Request");
         })
     </script>
 }
 
 @section title {
-    Media Insights Search
+    Media Insight Search
 }
 
-<table class="insightsSearch">
+<table class="insightSearch">
     <tr>
         <td class="inputLabel">
             Index Id
@@ -100,8 +100,8 @@
     </tr>
 </table>
 
-<div id="insightsData" class="insightsData"></div>
+<div id="insightData" class="insightData"></div>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "mediaInsightsSearch", "MediaSearch.png", "SubmitSearchRequest()" })
+    @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "SubmitSearchRequest()" })
 </div>
