@@ -1,0 +1,42 @@
+﻿@section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/plupload/js/jquery.ui.plupload/css/jquery.ui.plupload.css" />
+    <link type="text/css" rel="stylesheet" href="@ViewData["signiantTransferApi"]/widgets/transferProgress/mediashuttletransferprogress.css" />
+    <script type="text/javascript" src="~/lib/plupload/js/moxie.min.js"></script>
+    <script type="text/javascript" src="~/lib/plupload/js/plupload.min.js"></script>
+    <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
+    <script type="text/javascript" src="@ViewData["signiantTransferApi"]/transferapi.min.js"></script>
+    <script type="text/javascript" src="@ViewData["signiantTransferApi"]/widgets/transferProgress/mediashuttletransferprogress.js"></script>
+    <script type="text/javascript" src="~/js/uploader.js"></script>
+    <script type="text/javascript" src="~/js/uploader.signiant.js"></script>
+    <script type="text/javascript" src="~/js/workflow.js"></script>
+    <script type="text/javascript" src="~/js/workflow.job.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.configuration.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.protection.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var signiantAccountKey = "@ViewData["signiantAccountKey"]";
+            var asperaAccountKey = "@ViewData["asperaAccountKey"]";
+            var serviceGateway = "@ViewData["signiantServiceGateway"]";
+            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
+            InitializeUploader(serviceGateway, signiantAccountKey);
+            CreateUploader();
+        })
+    </script>
+}
+
+@section title {
+    Media File Workflow<br>(Signiant Flight)
+}
+
+@Html.Partial("MediaUpload", new bool[] { true, false })
+
+<div id="fileUploader"></div>
+
+<div id="transferProgress"></div>
+
+<div id="transferMessage" class="transferMessage signiantTransfer">
+    <br>
+</div>
+
+@Html.Partial("MediaWorkflow", new string[] { "true", "signiantUploader" })

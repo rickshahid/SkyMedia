@@ -1,0 +1,57 @@
+﻿@{
+    bool[] model = Model;
+    bool signiantFlight = model[0];
+    bool asperaFasp = model[1];
+}
+
+<table class="mediaUpload">
+    <tr>
+        <td class="inputLabel">
+            Upload Service:
+        </td>
+        <td>
+            @Html.RadioButton("uploadService", "azureStorage", true, new { @class = "mediaUploadLeft", onchange = "SetUploadService(this)" })
+            <span class="siteLink" onclick="window.open('http://azure.microsoft.com/en-us/services/storage/blobs/')">
+                Azure Object Storage (HTTP)
+            </span>
+            <span id="uploadSigniantFlight" style="display: none">
+                @Html.RadioButton("uploadService", "signiantFlight", signiantFlight, new { @class = "mediaUploadRight", onchange = "SetUploadService(this)", disabled = "disabled" })
+                <span class="siteLink" onclick="window.open('http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/')">
+                    Signiant Flight (UDP)
+                </span>
+            </span>
+            <span id="uploadAsperaFasp" style="display: none">
+                @Html.RadioButton("uploadService", "asperaFasp", asperaFasp, new { @class = "mediaUploadRight", onchange = "SetUploadService(this)", disabled = "disabled" })
+                <span class="siteLink" onclick="window.open('http://azuremarketplace.microsoft.com/en-us/marketplace/apps/aspera.sod')">
+                    Aspera FASP (UDP)
+                </span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Azure Storage:
+        </td>
+        <td>
+            @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage" })
+            &nbsp;
+            @Html.CheckBox("storageEncryption")
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview#storage-encryption')">
+                Storage Encryption
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Input Asset:
+        </td>
+        <td>
+            @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Media Asset Name]" })
+            &nbsp;
+            @Html.CheckBox("multipleFileAsset")
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files#upload-multiple-files-with-media-services-net-sdk')">
+                Multiple File Asset
+            </span>
+        </td>
+    </tr>
+</table>
