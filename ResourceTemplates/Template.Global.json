@@ -316,19 +316,19 @@
       "type": "string",
       "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
     },
-    "functionAppUrl": {
+    "functionAppHost": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2016-08-01').hostNames[0]]"
     },
-    "contentDeliveryUrl": {
+    "contentDeliveryHost": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('contentDeliveryProfileName'), variables('contentDeliverySubdomainName')), '2017-04-02').hostName]"
     },
-    "trafficManagerUrl": {
+    "trafficManagerHost": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerSubdomainName')), '2017-05-01').dnsConfig.fqdn]"
     },
-    "trafficManagerUrlStaging": {
+    "trafficManagerHostStaging": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerSubdomainNameStaging')), '2017-05-01').dnsConfig.fqdn]"
     },
