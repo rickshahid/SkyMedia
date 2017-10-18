@@ -2,17 +2,87 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "appInsightsName": {
+    "storageServiceName": {
       "type": "string",
+      "minLength": 3,
+      "maxLength": 24,
       "metadata": {
-        "description": "Name of the Application Insights service resource."
+        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
-    "appInsightsRegion": {
+    "databaseServiceName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 31,
+      "metadata": {
+        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "databaseDataRegions": {
+      "type": "array",
+      "defaultValue": [
+        "South Central US",
+        "West US",
+        "East US"
+      ],
+      "metadata": {
+        "description": "Array of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
+      }
+    },
+    "searchServiceName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "searchServiceRegion": {
       "type": "string",
       "defaultValue": "South Central US",
       "metadata": {
-        "description": "Azure region name for deployment of the Application Insights service resource."
+        "description": "Azure region name for deployment of the Search service resource."
+      }
+    },
+    "searchServiceTier": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "metadata": {
+        "description": "Search service resource tier, which determines the maximum number of search indexes, documents, scaling units, etc."
+      }
+    },
+    "searchServiceReplicaCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Search service replica count. 2 or more replicas are required for high availabiliy with Basic or Standard service tiers."
+      }
+    },
+    "searchServicePartitionCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Search service partition count, which enables scaling of document count and faster indexing across multiple search units."
+      }
+    },
+    "functionAppName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "Function app name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "contentDeliveryProfileName": {
+      "type": "string",
+      "metadata": {
+        "description": "Content delivery profile name must be letters, numbers and hyphens only."
+      }
+    },
+    "contentDeliverySubdomainName": {
+      "type": "string",
+      "metadata": {
+        "description": "Subdomain name (<subdomain>.azureedge.net) for the Content Delivery Network resource."
       }
     },
     "trafficManagerSubdomainName": {
@@ -31,30 +101,165 @@
         "Geographic"
       ],
       "metadata": {
-        "description": "Routing method of the Traffic Manager resource."
+        "description": "Routing method for the Traffic Manager resource."
       }
     },
-    "trafficManagerTimeToLive": {
+    "trafficManagerRoutingTimeToLive": {
       "type": "int",
       "defaultValue": 30,
       "metadata": {
-        "description": "Time-to-live setting (in seconds) for Traffic Manager DNS records."
+        "description": "Routing record time-to-live setting (in seconds) for the Traffic Manager resource."
+      }
+    },
+    "appInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Application Insights service resource."
+      }
+    },
+    "appInsightsRegion": {
+      "type": "string",
+      "defaultValue": "South Central US",
+      "metadata": {
+        "description": "Azure region name for deployment of the Application Insights service resource."
       }
     }
   },
   "variables": {
+    "storageServiceName": "[toLower(parameters('storageServiceName'))]",
+    "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
+    "searchServiceName": "[toLower(parameters('searchServiceName'))]",
+    "searchServiceTier": "[toLower(parameters('searchServiceTier'))]",
+    "functionAppName": "[toLower(parameters('functionAppName'))]",
+    "contentDeliverySubdomainName": "[toLower(parameters('contentDeliverySubdomainName'))]",
     "trafficManagerSubdomainName": "[toLower(parameters('trafficManagerSubdomainName'))]",
     "trafficManagerSubdomainNameStaging": "[concat(variables('trafficManagerSubdomainName'), '-staging')]"
   },
   "resources": [
     {
-      "type": "Microsoft.Insights/components",
-      "apiVersion": "2015-05-01",
-      "location": "[parameters('appInsightsRegion')]",
-      "name": "[parameters('appInsightsName')]",
-      "kind": "web",
-      "properties": {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-06-01",
+      "name": "[variables('storageServiceName')]",
+      "location": "[resourceGroup().location]",
+      "kind": "Storage",
+      "sku": {
+        "name": "Standard_LRS"
       }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2016-03-31",
+      "name": "[variables('databaseServiceName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "copy": [
+          {
+            "name": "locations",
+            "count": "[length(parameters('databaseDataRegions'))]",
+            "input": {
+              "locationName": "[parameters('databaseDataRegions')[copyIndex('locations')]]",
+              "failoverPriority": "[copyIndex('locations')]"
+            }
+          }
+        ],
+        "tags": {
+          "defaultExperience": "DocumentDB"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Search/searchServices",
+      "apiVersion": "2015-08-19",
+      "name": "[variables('searchServiceName')]",
+      "location": "[parameters('searchServiceRegion')]",
+      "sku": {
+        "name": "[variables('searchServiceTier')]"
+      },
+      "properties": {
+        "replicaCount": "[parameters('searchServiceReplicaCount')]",
+        "partitionCount": "[parameters('searchServicePartitionCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('functionAppName')]",
+      "kind": "functionapp",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]"
+      ],
+      "properties": {
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~1"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "6.5.0"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "functionapp"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "Storage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "Database.Document",
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Cdn/profiles",
+      "apiVersion": "2017-04-02",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('contentDeliveryProfileName')]",
+      "sku": {
+        "name": "Standard_Akamai"
+      },
+      "resources": [
+        {
+          "type": "endpoints",
+          "apiVersion": "2017-04-02",
+          "location": "[resourceGroup().location]",
+          "name": "[variables('contentDeliverySubdomainName')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]",
+            "[resourceId('Microsoft.Cdn/profiles', parameters('contentDeliveryProfileName'))]"
+          ],
+          "properties": {
+            "origins": [
+              {
+                "name": "[variables('storageServiceName')]",
+                "properties": {
+                  "hostName": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))).primaryEndpoints.blob, 'https://', ''), '/', '')]"
+                }
+              }
+            ],
+            "originPath": "/cdn"
+          }
+        }
+      ]
     },
     {
       "type": "Microsoft.Network/trafficManagerProfiles",
@@ -65,7 +270,7 @@
         "trafficRoutingMethod": "[parameters('trafficManagerRoutingMethod')]",
         "dnsConfig": {
           "relativeName": "[variables('trafficManagerSubdomainName')]",
-          "ttl": "[parameters('trafficManagerTimeToLive')]"
+          "ttl": "[parameters('trafficManagerRoutingTimeToLive')]"
         },
         "monitorConfig": {
           "protocol": "HTTP",
@@ -83,7 +288,7 @@
         "trafficRoutingMethod": "[parameters('trafficManagerRoutingMethod')]",
         "dnsConfig": {
           "relativeName": "[variables('trafficManagerSubdomainNameStaging')]",
-          "ttl": "[parameters('trafficManagerTimeToLive')]"
+          "ttl": "[parameters('trafficManagerRoutingTimeToLive')]"
         },
         "monitorConfig": {
           "protocol": "HTTP",
@@ -91,8 +296,45 @@
           "path": "/"
         }
       }
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2015-05-01",
+      "location": "[parameters('appInsightsRegion')]",
+      "name": "[parameters('appInsightsName')]",
+      "kind": "web",
+      "properties": {
+      }
     }
   ],
   "outputs": {
+    "storageConnection": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "databaseDocumentConnection": {
+      "type": "string",
+      "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
+    },
+    "functionAppUrl": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/sites', variables('functionAppName')), '2016-08-01').hostNames[0]]"
+    },
+    "contentDeliveryUrl": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('contentDeliveryProfileName'), variables('contentDeliverySubdomainName')), '2017-04-02').hostName]"
+    },
+    "trafficManagerUrl": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerSubdomainName')), '2017-05-01').dnsConfig.fqdn]"
+    },
+    "trafficManagerUrlStaging": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerSubdomainNameStaging')), '2017-05-01').dnsConfig.fqdn]"
+    },
+    "appInsightsKey": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2015-05-01').instrumentationKey]"
+    }
   }
 }
