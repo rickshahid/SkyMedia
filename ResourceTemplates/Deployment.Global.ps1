@@ -29,6 +29,7 @@ $templateParameters = @{
 	"functionAppName" = "SkyFunction-USCentral"
 	"contentDeliveryProfileName" = "SkyMedia-Akamai"
 	"contentDeliverySubdomainName" = "SkyStorage"
+	"contentDeliveryOriginPath" = "/cdn"
 	"trafficManagerSubdomainName" = "SkyMedia"
 	"trafficManagerRoutingMethod" = "Performance"
 	"trafficManagerRoutingTimeToLive" = 30 # seconds

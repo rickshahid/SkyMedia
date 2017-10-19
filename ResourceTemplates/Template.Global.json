@@ -85,6 +85,12 @@
         "description": "Subdomain name (<subdomain>.azureedge.net) for the Content Delivery Network resource."
       }
     },
+    "contentDeliveryOriginPath": {
+      "type": "string",
+      "metadata": {
+        "description": "Optional origin path (beginning with /) for the Content Delivery Network resource."
+      }
+    },
     "trafficManagerSubdomainName": {
       "type": "string",
       "metadata": {
@@ -248,6 +254,7 @@
             "[resourceId('Microsoft.Cdn/profiles', parameters('contentDeliveryProfileName'))]"
           ],
           "properties": {
+            "originHostHeader": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))).primaryEndpoints.blob, 'https://', ''), '/', '')]",
             "origins": [
               {
                 "name": "[variables('storageServiceName')]",
@@ -256,7 +263,9 @@
                 }
               }
             ],
-            "originPath": "/cdn"
+            "originPath": "[parameters('contentDeliveryOriginPath')]",
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true
           }
         }
       ]
