@@ -264,8 +264,17 @@
               }
             ],
             "originPath": "[parameters('contentDeliveryOriginPath')]",
+            "queryStringCachingBehavior": "IgnoreQueryString",
             "isHttpAllowed": true,
-            "isHttpsAllowed": true
+            "isHttpsAllowed": true,
+            "isCompressionEnabled": true,
+            "contentTypesToCompress": [
+              "application/x-javascript",
+              "text/javascript",
+              "text/plain",
+              "text/html",
+              "text/css"
+            ]
           }
         }
       ]
