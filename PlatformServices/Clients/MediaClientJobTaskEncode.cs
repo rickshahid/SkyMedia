@@ -41,7 +41,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     string settingKey = Constant.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
                     string documentId = AppSetting.GetValue(settingKey);
-                    using (DocumentClient documentClient = new DocumentClient(false))
+                    using (DocumentClient documentClient = new DocumentClient())
                     {
                         JObject processorConfig = documentClient.GetDocument(documentId);
                         jobTask.ProcessorConfig = processorConfig.ToString();
@@ -57,7 +57,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 if (inputSubclipped && !jobTask.ProcessorConfig.StartsWith("{"))
                 {
-                    using (DocumentClient cosmosClient = new DocumentClient(true))
+                    using (DocumentClient cosmosClient = new DocumentClient())
                     {
                         string collectionId = Constant.Database.Collection.ProcessorConfig;
                         string procedureId = Constant.Database.Procedure.ProcessorConfig;

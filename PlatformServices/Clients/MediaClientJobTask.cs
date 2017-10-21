@@ -21,7 +21,7 @@ namespace AzureSkyMedia.PlatformServices
         private static JObject GetProcessorConfig(string documentId)
         {
             JObject processorConfig;
-            using (DocumentClient documentClient = new DocumentClient(false))
+            using (DocumentClient documentClient = new DocumentClient())
             {
                 processorConfig = documentClient.GetDocument(documentId);
             }

@@ -230,6 +230,10 @@
             {
               "name": "Database.Document",
               "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
+            },
+            {
+              "name": "Database.Table",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey, ';TableEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com')]"
             }
           ]
         }
@@ -333,6 +337,10 @@
     "databaseDocumentConnection": {
       "type": "string",
       "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
+    },
+    "databaseTableConnection": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey, ';TableEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com')]"
     },
     "functionAppHost": {
       "type": "string",

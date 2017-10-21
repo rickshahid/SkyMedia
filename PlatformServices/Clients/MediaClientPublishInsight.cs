@@ -110,7 +110,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string[] accountCredentials = new string[] { contentPublish.StorageAccountName, contentPublish.StorageAccountKey };
                 BlobClient blobClient = new BlobClient(accountCredentials);
-                using (DocumentClient documentClient = new DocumentClient(true))
+                using (DocumentClient documentClient = new DocumentClient())
                 {
                     foreach (ITask jobTask in jobTasks)
                     {
@@ -144,7 +144,7 @@ namespace AzureSkyMedia.PlatformServices
                     string clientKey = insightPublish.MediaAccountClientKey;
                     string assetId = externalId.ToString();
 
-                    DocumentClient documentClient = new DocumentClient(true);
+                    DocumentClient documentClient = new DocumentClient();
                     string collectionId = Constant.Database.Collection.ContentInsight;
                     string documentId = documentClient.UpsertDocument(collectionId, index, accountId, accountDomain, accountUrl, clientId, clientKey, assetId);
 

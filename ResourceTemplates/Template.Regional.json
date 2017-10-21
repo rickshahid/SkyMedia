@@ -2,6 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "globalServiceResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the global service resource group."
+      }
+    },
     "storageServiceName": {
       "type": "string",
       "minLength": 3,
@@ -18,16 +24,6 @@
         "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
       }
     },
-    "databaseDataRegions": {
-      "type": "array",
-      "defaultValue": [
-        "West US",
-        "East US"
-      ],
-      "metadata": {
-        "description": "Array of Azure region names for data replication. The first region listed will be read/write enabled while the other regions listed will be readonly enabled."
-      }
-    },
     "cacheServiceName": {
       "type": "string",
       "minLength": 3,
@@ -36,133 +32,94 @@
         "description": "Cache service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
       }
     },
-    "appInsightsResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the application insights resource group."
-      }
-    },
     "appServicePlanName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the application service plan for the web app."
+        "description": "Name of the application service plan for the web application."
       }
     },
     "appServicePlanTier": {
       "type": "string",
       "defaultValue": "Standard",
       "metadata": {
-        "description": "Tier of the application service plan for the web app."
+        "description": "Resource tier of the application service plan for the web application."
       }
     },
     "appServicePlanNodeSize": {
       "type": "string",
       "defaultValue": "S1",
       "metadata": {
-        "description": "Minimum number of compute nodes for app service plan scaling."
+        "description": "Size of each compute node within the application service plan."
       }
     },
     "appServicePlanNodeCountMinimum": {
       "type": "int",
+      "minValue": 1,
+      "defaultValue": 1,
       "metadata": {
-        "description": "Minimum number of compute nodes for app service plan scaling."
+        "description": "Minimum number of compute nodes within the application service plan."
       }
     },
     "appServicePlanNodeCountMaximum": {
       "type": "int",
+      "minValue": 1,
       "metadata": {
-        "description": "Maximum number of compute nodes for app service plan scaling."
+        "description": "Maximum number of compute nodes within the application service plan."
       }
     },
-    "functionAppName": {
+    "webAppSubdomainName": {
       "type": "string",
       "minLength": 2,
       "maxLength": 60,
       "metadata": {
-        "description": "Function app name must be between 2 and 60 characters (letters, numbers and hyphens only)."
-      }
-    },
-    "webAppName": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 60,
-      "metadata": {
-        "description": "Web app name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+        "description": "Web application subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
     "webAppRegionName": {
       "type": "string",
       "metadata": {
-        "description": "Region display name for the web app."
+        "description": "Region display name for the web application."
       }
     },
     "directoryClientId": {
       "type": "string",
       "metadata": {
-        "description": "Azure Active Directory client application identifier for production web app configuration."
+        "description": "Azure Active Directory client identifier for production web application configuration."
       }
     },
     "directoryClientSecret": {
       "type": "string",
       "metadata": {
-        "description": "Azure Active Directory client application secret for production web app configuration."
+        "description": "Azure Active Directory client secret for production web application configuration."
       }
     },
     "directoryClientIdStaging": {
       "type": "string",
       "metadata": {
-        "description": "Azure Active Directory client application identifier for staging web app configuration."
+        "description": "Azure Active Directory client identifier for staging web application configuration."
       }
     },
     "directoryClientSecretStaging": {
       "type": "string",
       "metadata": {
-        "description": "Azure Active Directory client application secret for staging web app configuration."
+        "description": "Azure Active Directory client secret for staging web application configuration."
+      }
+    },
+    "appInsightsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Application Insights service resource."
       }
     }
   },
   "variables": {
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
-    "databaseWriteRegion": "[toLower(replace(parameters('databaseDataRegions')[0], ' ', ''))]",
     "cacheServiceName": "[toLower(parameters('cacheServiceName'))]",
-    "functionAppName": "[toLower(parameters('functionAppName'))]",
-    "webAppName": "[toLower(parameters('webAppName'))]"
+    "webAppSubdomainName": "[toLower(parameters('webAppSubdomainName'))]",
+    "webAppSubdomainNameStaging": "[concat(variables('webAppSubdomainName'), '-staging')]",
   },
   "resources": [
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "2017-06-01",
-      "name": "[variables('storageServiceName')]",
-      "location": "[resourceGroup().location]",
-      "kind": "Storage",
-      "sku": {
-        "name": "Standard_LRS"
-      }
-    },
-    {
-      "condition": "[equals(resourceGroup().location, variables('databaseWriteRegion'))]",
-      "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2016-03-31",
-      "name": "[variables('databaseServiceName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "databaseAccountOfferType": "Standard",
-        "copy": [
-          {
-            "name": "locations",
-            "count": "[length(parameters('databaseDataRegions'))]",
-            "input": {
-              "locationName": "[parameters('databaseDataRegions')[copyIndex('locations')]]",
-              "failoverPriority": "[copyIndex('locations')]"
-            }
-          }
-        ],
-        "tags": {
-          "defaultExperience": "DocumentDB"
-        }
-      }
-    },
     {
       "type": "Microsoft.Cache/redis",
       "apiVersion": "2017-02-01",
@@ -173,59 +130,6 @@
           "name": "Standard",
           "family": "C",
           "capacity": "0"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "apiVersion": "2016-08-01",
-      "location": "[resourceGroup().location]",
-      "name": "[variables('functionAppName')]",
-      "kind": "functionapp",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]",
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName'))]"
-      ],
-      "properties": {
-        "siteConfig": {
-          "appSettings": [
-            {
-              "name": "FUNCTIONS_EXTENSION_VERSION",
-              "value": "~1"
-            },
-            {
-              "name": "WEBSITE_NODE_DEFAULT_VERSION",
-              "value": "6.5.0"
-            },
-            {
-              "name": "WEBSITE_CONTENTSHARE",
-              "value": "[variables('functionAppName')]"
-            },
-            {
-              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
-            },
-            {
-              "name": "AzureWebJobsStorage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
-            },
-            {
-              "name": "AzureWebJobsDashboard",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
-            },
-            {
-              "name": "Storage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
-            },
-            {
-              "name": "Database.ReadWrite",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
-            },
-            {
-              "name": "Database.ReadOnly",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryReadonlyMasterKey)]"
-            }
-          ]
         }
       }
     },
@@ -244,17 +148,19 @@
       "type": "Microsoft.Web/sites",
       "apiVersion": "2016-08-01",
       "location": "[resourceGroup().location]",
-      "name": "[variables('webAppName')]",
+      "name": "[variables('webAppSubdomainName')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]",
-        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName'))]",
-        "[resourceId('Microsoft.Cache/redis', variables('cacheServiceName'))]",
-        "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]"
+        "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
+        "[resourceId('Microsoft.Cache/redis', variables('cacheServiceName'))]"
       ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
         "siteConfig": {
           "appSettings": [
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.Insights/components', parameters('appInsightsName')), '2015-05-01').instrumentationKey]"
+            },
             {
               "name": "App.Region",
               "value": "[parameters('webAppRegionName')]"
@@ -269,15 +175,15 @@
             },
             {
               "name": "Storage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value, ';EndpointSuffix=core.windows.net')]"
             },
             {
-              "name": "Database.ReadWrite",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
+              "name": "Database.Document",
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
             },
             {
-              "name": "Database.ReadOnly",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryReadonlyMasterKey)]"
+              "name": "Database.Table",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseServiceName'), ';AccountKey=', listKeys(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey, ';TableEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com')]"
             },
             {
               "name": "Cache",
@@ -293,7 +199,7 @@
           "name": "slotconfignames",
           "type": "config",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]"
+            "[resourceId('Microsoft.Web/Sites', parameters('webAppSubdomainName'))]"
           ],
           "properties": {
             "appSettingNames": [
@@ -309,7 +215,7 @@
           "location": "[resourceGroup().location]",
           "name": "staging",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
+            "[resourceId('Microsoft.Web/Sites', parameters('webAppSubdomainName'))]"
           ],
           "properties": {
             "siteConfig": {
@@ -328,15 +234,15 @@
                 },
                 {
                   "name": "Storage",
-                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.Storage/storageAccounts', variables('storageServiceName')), '2017-06-01').keys[0].value, ';EndpointSuffix=core.windows.net')]"
                 },
                 {
-                  "name": "Database.ReadWrite",
-                  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
+                  "name": "Database.Document",
+                  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey)]"
                 },
                 {
-                  "name": "Database.ReadOnly",
-                  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryReadonlyMasterKey)]"
+                  "name": "Database.Table",
+                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseServiceName'), ';AccountKey=', listKeys(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), '2016-03-31').primaryMasterKey, ';TableEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com')]"
                 },
                 {
                   "name": "Cache",

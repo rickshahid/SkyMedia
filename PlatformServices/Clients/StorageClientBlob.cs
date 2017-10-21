@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
@@ -12,6 +13,12 @@ namespace AzureSkyMedia.PlatformServices
     {
         private CloudBlobClient _storage;
         private TableClient _tracker;
+
+        public BlobClient()
+        {
+            CloudStorageAccount storageAccount = Storage.GetSystemAccount();
+            _storage = storageAccount.CreateCloudBlobClient();
+        }
 
         public BlobClient(string authToken) : this(authToken, string.Empty)
         {
@@ -43,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             return container.GetDirectoryReference(directoryPath);
         }
 
-        private CloudBlobContainer GetContainer(string containerName, BlobContainerPublicAccessType publicAccess)
+        public CloudBlobContainer GetContainer(string containerName, BlobContainerPublicAccessType publicAccess)
         {
             CloudBlobContainer container = _storage.GetContainerReference(containerName);
             if (container.CreateIfNotExists())
@@ -58,6 +65,12 @@ namespace AzureSkyMedia.PlatformServices
         public CloudBlobContainer GetContainer(string containerName)
         {
             return GetContainer(containerName, BlobContainerPublicAccessType.Off);
+        }
+
+        public void DeleteContainer(string containerName)
+        {
+            CloudBlobContainer container = _storage.GetContainerReference(containerName);
+            container.DeleteIfExists();
         }
 
         public CloudBlockBlob GetBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
@@ -127,6 +140,14 @@ namespace AzureSkyMedia.PlatformServices
                 blob.PutBlockList(blockUpload.BlockIds);
                 _tracker.DeleteEntity(tableName, blockUpload);
             }
+        }
+
+        public void PublishContent(CloudBlobContainer destinationContainer)
+        {
+            WebClient webClient = new WebClient(string.Empty);
+            string requestUrl = "";
+            HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, requestUrl);
+            //HttpResponseMessage responseMessage = webClient.GetResponse(requestMessage);
         }
     }
 }

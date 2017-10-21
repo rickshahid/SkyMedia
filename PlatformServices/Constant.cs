@@ -110,12 +110,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string DatabaseIdPrefix = "DatabaseId=";
 
             public const string AzureStorage = "Storage";
+            public const string AzureDatabaseDocument = "Database.Document";
+            public const string AzureDatabaseTable = "Database.Table";
             public const string AzureCache = "Cache";
-
-            public const string AzureCosmosDocumentReadOnly = "Cosmos.Document.ReadOnly";
-            public const string AzureCosmosDocumentReadWrite = "Cosmos.Document.ReadWrite";
-            //public const string AzureCosmosTableReadOnly = "Cosmos.Table.ReadOnly";
-            //public const string AzureCosmosTableReadWrite = "Cosmos.Table.ReadWrite";
         }
 
         public struct HttpHeader
@@ -171,7 +168,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public struct Container
                 {
-                    public const string Upload = "upload";
+                    public const string FileUpload = "upload";
+                    public const string ContentDelivery = "cdn";
                 }
             }
 

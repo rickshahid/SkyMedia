@@ -57,7 +57,7 @@ namespace AzureSkyMedia.PlatformServices
                     indexerClient.DeleteVideo(indexId, true);
 
                     string collectionId = Constant.Database.Collection.ContentInsight;
-                    DocumentClient documentClient = new DocumentClient(true);
+                    DocumentClient documentClient = new DocumentClient();
                     documentClient.DeleteDocument(collectionId, indexId);
 
                     TableClient tableClient = new TableClient();

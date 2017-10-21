@@ -13,7 +13,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             object storage = null;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            string containerName = Constant.Storage.Blob.Container.Upload;
+            string containerName = Constant.Storage.Blob.Container.FileUpload;
             Storage.CreateContainer(authToken, storageAccount, containerName);
             string storageAccountKey = Storage.GetAccountKey(authToken, storageAccount);
             switch (transferService)
@@ -34,7 +34,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult file(string name, int chunk, int chunks, string storageAccount)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            string containerName = Constant.Storage.Blob.Container.Upload;
+            string containerName = Constant.Storage.Blob.Container.FileUpload;
             Stream inputStream = this.Request.Form.Files[0].OpenReadStream();
             Storage.UploadFile(authToken, storageAccount, containerName, inputStream, name, chunk, chunks);
             return Json(chunk);

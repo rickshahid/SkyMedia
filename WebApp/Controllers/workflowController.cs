@@ -24,7 +24,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             jobInputs = Workflow.GetJobInputs(mediaClient, jobInputs);
             if (mediaJob.Tasks != null)
             {
-                using (DocumentClient documentClient = new DocumentClient(false))
+                using (DocumentClient documentClient = new DocumentClient())
                 {
                     foreach (MediaJobTask jobTask in mediaJob.Tasks)
                     {

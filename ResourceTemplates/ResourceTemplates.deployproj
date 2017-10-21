@@ -26,11 +26,13 @@
   <!-- vertag<:>end -->
   <ItemGroup>
     <None Include="Deployment.Global.ps1" />
+    <None Include="Deployment.Media.ps1" />
     <None Include="Deployment.Regional.ps1" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
     <None Include="Template.Global.json" />
+    <None Include="Template.Media.json" />
     <None Include="Template.Regional.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />

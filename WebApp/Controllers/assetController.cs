@@ -31,7 +31,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             if (timeSeconds == 0)
             {
                 documentId = string.Concat(collectionId, Constant.TextDelimiter.Identifier, documentId);
-                using (DocumentClient documentClient = new DocumentClient(false))
+                using (DocumentClient documentClient = new DocumentClient())
                 {
                     metadata = documentClient.GetDocument(documentId);
                 }
@@ -39,7 +39,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             else
             {
                 string procedureId = Constant.Database.Procedure.MetadataFragment;
-                using (DocumentClient documentClient = new DocumentClient(true))
+                using (DocumentClient documentClient = new DocumentClient())
                 {
                     metadata = documentClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
                 }

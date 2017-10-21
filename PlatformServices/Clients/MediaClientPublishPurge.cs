@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public static void PurgePublishInsight(TableClient tableClient)
         {
-            DocumentClient documentClient = new DocumentClient(true);
+            DocumentClient documentClient = new DocumentClient();
             string collectionId = Constant.Database.Collection.ContentInsight;
             JObject[] documents = documentClient.GetDocuments(collectionId);
             foreach (JObject document in documents)
