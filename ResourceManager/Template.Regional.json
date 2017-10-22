@@ -117,7 +117,7 @@
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "cacheServiceName": "[toLower(parameters('cacheServiceName'))]",
     "webAppSubdomainName": "[toLower(parameters('webAppSubdomainName'))]",
-    "webAppSubdomainNameStaging": "[concat(variables('webAppSubdomainName'), '-staging')]",
+    "webAppSubdomainNameStaging": "[concat(variables('webAppSubdomainName'), '-staging')]"
   },
   "resources": [
     {
@@ -195,11 +195,11 @@
       },
       "resources": [
         {
+          "type": "config",
           "apiVersion": "2016-08-01",
           "name": "slotconfignames",
-          "type": "config",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('webAppSubdomainName'))]"
+            "[resourceId('Microsoft.Web/sites', parameters('webAppSubdomainName'))]"
           ],
           "properties": {
             "appSettingNames": [
@@ -215,7 +215,7 @@
           "location": "[resourceGroup().location]",
           "name": "staging",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('webAppSubdomainName'))]"
+            "[resourceId('Microsoft.Web/sites', parameters('webAppSubdomainName'))]"
           ],
           "properties": {
             "siteConfig": {
