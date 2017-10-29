@@ -1,0 +1,107 @@
+﻿@section head {
+    <script type="text/javascript">
+        function GetSearchCriteria() {
+            var searchCriteria = {
+                IndexId: $("#indexId").val(),
+                AssetId: $("#assetId").val(),
+                SpokenLanguage: $("#language").val(),
+                SearchPartition: $("#searchPartition").val(),
+                TextScope: $("#textScope").val(),
+                TextQuery: $("#textQuery").val(),
+                Owner: $("#owner").val(),
+                Face: $("#face").val(),
+                VideoPublic: $("#videoPublic").prop("checked"),
+                PageSize: 0,
+                SkipCount: 0
+            };
+            return searchCriteria;
+        }
+        function SubmitSearchRequest() {
+            $.post("/search/insight",
+                {
+                    searchCriteria: GetSearchCriteria()
+                },
+                function (results) {
+                    $("#insightData").jsonBrowse(results);
+                }
+            );
+        }
+        $(function () {
+            $("#indexId").focus();
+            CreateTipTop("mediaInsightSearch", "Submit Search Request");
+        })
+    </script>
+}
+
+@section title {
+    Media Insight Search
+}
+
+<table class="insightSearch">
+    <tr>
+        <td class="inputLabel">
+            Index Id
+        </td>
+        <td>
+            @Html.TextBox("indexId")
+        </td>
+        <td class="inputLabel">
+            Asset Id
+        </td>
+        <td>
+            @Html.TextBox("assetId")
+        </td>
+        <td class="inputLabel">
+            Language
+        </td>
+        <td>
+            @Html.DropDownList("language", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "searchLanguage" })
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Search Partition
+        </td>
+        <td>
+            @Html.TextBox("searchPartition")
+        </td>
+        <td class="inputLabel">
+            Text Scope
+        </td>
+        <td>
+            @Html.TextBox("textScope")
+        </td>
+        <td class="inputLabel">
+            Text Query
+        </td>
+        <td>
+            @Html.TextBox("textQuery")
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Owner
+        </td>
+        <td>
+            @Html.TextBox("owner")
+        </td>
+        <td class="inputLabel">
+            Face
+        </td>
+        <td>
+            @Html.TextBox("face")
+        </td>
+        <td class="inputLabel">
+            Public Video
+        </td>
+        <td>
+            @Html.CheckBox("videoPublic")
+        </td>
+    </tr>
+</table>
+
+<div id="insightData" class="insightData"></div>
+
+<div class="viewButtons">
+    @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "SubmitSearchRequest()" })
+</div>

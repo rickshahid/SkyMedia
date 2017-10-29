@@ -1,0 +1,806 @@
+﻿@viewport {
+    zoom: 1.0;
+}
+
+@media all and (max-width: 320px) {
+    #siteHome, #botService, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+        display: none !important;
+    }
+
+    .banner, .mediaPlayer {
+        width: 300px !important;
+    }
+
+    .viewTitle, .accountContext, .streamInfo {
+        font-size: small !important;
+    }
+}
+
+@media all and (min-width: 321px) and (max-width: 480px) {
+    #siteHome, #botService, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+        display: none !important;
+    }
+
+    .banner, .mediaPlayer {
+        width: 350px !important;
+    }
+
+    .viewTitle, .accountContext, .streamInfo {
+        font-size: medium !important;
+    }
+}
+
+@media all and (min-width: 481px) and (max-width: 768px) {
+    .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+        display: none !important;
+    }
+
+    .banner, .mediaPlayer {
+        width: 450px !important;
+    }
+
+    .viewTitle, .streamInfo {
+        font-size: large !important;
+    }
+}
+
+body {
+    background-color: black;
+    color: deepskyblue;
+}
+
+.layout {
+    margin: 0px auto;
+}
+
+.layout > tbody > tr > td {
+    vertical-align: top;
+}
+
+.banner {
+    margin: 0px auto;
+    width: 720px;
+}
+
+.bannerSide {
+    white-space: nowrap;
+}
+
+.bannerCenter {
+    text-align: center;
+    width: 100%;
+}
+
+.accountContext {
+    margin-bottom: 10px;
+    font-style: italic;
+    font-weight: bold;
+    font-size: large;
+}
+
+.siteButton {
+    background: none;
+    border: none;
+}
+
+.siteButton:hover {
+    cursor: pointer;
+}
+
+.siteButton.layoutButton {
+    height: 60px;
+    width: 60px;
+}
+
+.siteButton.layoutButton.sideTop {
+    margin-top: -10px;
+}
+
+.siteLink {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.siteLink:hover {
+    cursor: pointer;
+}
+
+.qtip {
+    border-radius: 20px;
+    max-width: 720px;
+    padding: 5px;
+}
+
+.qtip-content {
+    text-align: center;
+    font-style: italic;
+    font-weight: bold;
+    font-size: large;
+}
+
+.streamSlider {
+    width: 150px;
+}
+
+.streamSliderHandle {
+    color: azure !important;
+    top: -12px !important;
+    text-align: center;
+}
+
+.streamNumber {
+    font-size: x-large;
+    font-weight: bold;
+    color: azure;
+}
+
+.streamNumber.sideLeft {
+    padding-right: 15px;
+}
+
+.streamNumber.sideRight {
+    padding-left: 15px;
+}
+
+.streamInfo {
+    font-size: x-large;
+    text-align: center;
+}
+
+.streamName {
+    font-weight: bold;
+}
+
+.streamUrl {
+    font-style: italic;
+    margin-top: 20px;
+}
+
+.viewTitle {
+    text-align: center;
+    font-size: x-large;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.viewButtons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.processorConfigTable {
+    border: 2px dotted deepskyblue;
+}
+
+.processorConfigTable td {
+    padding: 5px;
+}
+
+.processorConfigRow {
+    padding-left: 3px !important;
+}
+
+.processorConfigRow td {
+    padding: 0px !important;
+}
+
+.ui-spinner-input {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.spinner {
+    font-size: medium !important;
+    font-weight: bold;
+}
+
+.spinner.d2 {
+    width: 28px;
+}
+
+.spinner.d4 {
+    width: 45px;
+}
+
+.spinner.d8 {
+    width: 78px;
+}
+
+.ui-slider {
+    background: deepskyblue;
+    height: 5px;
+}
+
+.ui-slider-handle {
+    background: deepskyblue !important;
+    border-radius: 10px;
+}
+
+.sliderHandle {
+    height: 15px !important;
+}
+
+.sliderLabel {
+    font-weight: bold;
+    margin-left: 5px;
+    color: azure;
+}
+
+.slider {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.slider.jobPriority {
+    width: 110px;
+}
+
+.ui-dialog-title {
+    float: none !important;
+}
+
+.ui-dialog-titlebar {
+    text-align: center;
+}
+
+.ui-dialog-titlebar-close {
+    display: none;
+}
+
+.ui-dialog-content {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+    border-top: 1px solid deepskyblue;
+    text-align: center;
+    padding-right: 0px;
+    padding-top: 15px;
+}
+
+.ui-dialog .ui-dialog-buttonpane button {
+    border-radius: 20px;
+    width: 175px;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { 
+    float: none;
+}
+
+.plupload_container {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    margin-top: 10px;
+}
+
+.plupload_header {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.plupload_filelist_footer {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.plupload_file_status {
+    text-align: center !important;
+}
+
+.plupload_file_size {
+    white-space: nowrap;
+    padding-left: 15px;
+}
+
+.plupload_progress_container {
+    height: 10px;
+    width: 100px;
+}
+
+.plupload_progress {
+    margin-right: 85px;
+}
+
+.signiantUploader {
+    position: relative;
+    bottom: 20px;
+}
+
+.asperaUploader {
+    position: relative;
+    bottom: 40px;
+}
+
+#transferProgress {
+    position: relative;
+    height: 20px;
+    width: 140px;
+    bottom: 35px;
+    left: 280px;
+    z-index: 10;
+}
+
+.asperaProgress {
+    border: 1px solid deepskyblue !important;
+}
+
+.asperaProgressLabel {
+    position: relative;
+    text-align: center;
+    font-weight: bold;
+    width: 140px;
+    color: azure;
+    bottom: 55px;
+    left: 280px;
+    z-index: 10;
+}
+
+.transferMessage {
+    position: relative;
+    left: 430px;
+}
+
+.transferMessage.storageTransfer {
+    bottom: 32px;
+    left: 275px;
+}
+
+.transferMessage.signiantTransfer {
+    bottom: 54px;
+}
+
+.transferMessage.asperaTransfer {
+    bottom: 74px;
+}
+
+.msapi_progressbar {
+    border: 1px solid deepskyblue !important;
+    background-color: black !important;
+}
+
+.msapi_transferProgress {
+    text-align: left !important;
+}
+
+.msapi_transferProgress span {
+    font-size: medium !important;
+    color: azure !important;
+    padding-left: 55px;
+    font-weight: bold;
+}
+
+.mediaUpload {
+    margin: 0px auto;
+}
+
+.mediaUpload td {
+    padding: 5px;
+}
+
+.mediaUploadLeft {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.mediaUploadRight {
+    margin-left: 14px;
+    margin-right: 0px;
+}
+
+.mediaStorage {
+    font-weight: bold;
+    width: 410px;
+}
+
+.mediaWorkflow {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    padding-left: 10px;
+    padding-top: 5px;
+    width: 720px;
+}
+
+.mediaWorkflow td {
+    padding: 5px;
+}
+
+.mediaWorkflowJob td {
+    padding-bottom: 10px;
+}
+
+.mediaWorkflowTaskRow td {
+    padding: 0px;
+}
+
+.mediaWorkflowTaskLink td {
+    padding: 0px;
+}
+
+.mediaWorkflowTaskLink hr {
+    border: 1px dashed deepskyblue;
+    height: 15px;
+    margin: 0px;
+    width: 0px;
+}
+
+.mediaWorkflowTaskButtons {
+    text-align: center;
+    width: 100%;
+}
+
+.mediaWorkflowControls td {
+    padding: 3px 0px 0px 0px !important;
+    white-space: nowrap;
+}
+
+.mediaWorkflowStart {
+    text-align: right;
+    width: 100%;
+}
+
+.mediaAssets {
+    background-color: deepskyblue;
+    border-radius: 20px;
+    color: darkblue;
+    overflow: auto;
+}
+
+.mediaAssets.browseView {
+    height: 450px;
+    width: 750px;
+}
+
+.mediaAssets.workflowView {
+    height: 300px;
+    width: 605px;
+}
+
+.mediaFile > .jstree-checkbox {
+    display: none !important;
+}
+
+.mediaFile.primary {
+    color: blueviolet !important;
+}
+
+.mediaLock {
+    vertical-align: text-bottom;
+}
+
+.jstree-hovered {
+  background: deepskyblue !important;
+  box-shadow: none !important;
+  color: yellow !important;
+}
+
+.jstree-clicked {
+  background: deepskyblue !important;
+  box-shadow: none !important;
+}
+
+.jstree-checkbox {
+    width: 28px !important;
+}
+
+.jstree-anchor {
+    padding: 0px !important;
+}
+
+.jstree-node {
+    font-weight: bold;
+    font-size: large;
+}
+
+.treeNodeClipped {
+    font-style: italic;
+}
+
+.mediaProcessor {
+    font-weight: bold;
+    width: 195px !important;
+}
+
+.mediaProcessorConfig {
+    font-weight: bold;
+    width: 420px;
+}
+
+.inputLabel {
+    padding-right: 0px !important;
+    white-space: nowrap;
+    font-weight: bold;
+    text-align: right;
+}
+
+.inputLabelExtended {
+    display: inline-block;
+    text-align: center;
+}
+
+.inputCheckbox {
+    margin-left: 0px;
+}
+
+.inputCheckboxContentProtection {
+    margin-left: 24px;
+}
+
+.inputCheckboxLabel {
+    vertical-align: top;
+}
+
+.inputAssetName {
+    font-weight: bold;
+    width: 406px;
+}
+
+.outputAssetName {
+    font-weight: bold;
+    width: 191px;
+}
+
+.indexerLanguage {
+    font-weight: bold;
+    width: 187px;
+}
+
+.indexerSearchPartition {
+    font-weight: bold;
+    width: 183px;
+}
+
+.indexerVideoMetadata {
+    font-weight: bold;
+    width: 218px;
+}
+
+.speechToTextLanguage {
+    margin-right: 10px;
+    font-weight: bold;
+    width: 195px;
+}
+
+.faceDetectionMode {
+    margin-left: 12px;
+}
+
+.faceDetectionTrackingMode {
+    font-weight: bold;
+    width: 75px;
+}
+
+.faceRedactionBlurMode {
+    font-weight: bold;
+    width: 107px;
+}
+
+.motionSensitivityLevel {
+    font-weight: bold;
+    width: 114px;
+}
+
+.motionHyperlapseFrames {
+    margin-right: 5px;
+}
+
+.motionHyperlapseFramesRange {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.motionHyperlapseSpeed {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.jobName {
+    background-color: white !important;
+    border: none !important;
+    font-weight: bold;
+    width: 168px;
+}
+
+.jobNode{
+    font-weight: bold;
+}
+
+.jobTask {
+    border: 1px dashed deepskyblue;
+    font-weight: bold;
+    padding-left: 5px;
+    margin-left: 5px;
+    width: 605px;
+}
+
+.jobTask td {
+    padding: 5px;
+}
+
+.jobTaskParent {
+    font-weight: bold;
+    width: 35px;
+}
+
+.jobTaskOptions {
+    width: 230px !important;
+    max-height: 85px;
+}
+
+.multiSelectOptions {
+    font-size: small;
+}
+
+.contentProtectionRow > td {
+    padding-top: 0px;
+}
+
+.contentProtectionLabel {
+    padding: 0px !important;
+    text-align: center;
+}
+
+.contentProtectionOptions {
+    border: 2px dotted deepskyblue;
+    white-space: nowrap;
+    padding-top: 5px;
+}
+
+.contentProtectionOptionsEncryption {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.contentProtectionOptionsEncryptionDrm {
+    border: 1px dotted deepskyblue;
+    padding: 3px 4px 3px 3px;
+}
+
+.contentProtectionOptionsEncryptionDrmOption {
+    margin-left: 5px;
+}
+
+.contentAuthAddressRange {
+    width: 126px;
+}
+
+.ui-jqgrid {
+    border: none !important;
+    background: background;
+}
+
+.ui-jqgrid-hbox {
+    background: background;
+}
+
+.ui-jqgrid-hdiv {
+    border: none !important;
+}
+
+.ui-jqgrid-htable th {
+    border-radius: 20px;
+}
+
+.ui-jqgrid-htable div {
+    height: 20px !important;
+}
+
+.ui-jqgrid-view {
+    font-size: medium !important;
+}
+
+.jqgrow td {
+    font-weight: bold !important;
+    height: 30px !important;
+    border: none !important;
+    background: background;
+}
+
+.jqgrow:hover td {
+    cursor: pointer;
+}
+
+.accountInventory {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+}
+
+.accountClear {
+    display: inline;
+}
+
+.entityCounts {
+    font-style: italic;
+    font-weight: bold;
+    font-size: large;
+    margin: 10px;
+}
+
+.entityCounts td {
+    text-align: right;
+    padding: 5px;
+}
+
+.entityCount {
+    color: azure;
+}
+
+.mediaContent {
+    vertical-align: bottom;
+    padding-bottom: 4px;
+}
+
+.metadataPanel {
+    display: none;
+}
+
+.analyticsProcessors {
+    width: 100%;
+}
+
+.mediaMetadata {
+    white-space: pre-line;
+    background: azure;
+    overflow: auto;
+    width: 350px;
+}
+
+.mediaOverlay {
+    border: 1px dashed yellow;
+    position: absolute;
+    display: none;
+    z-index: 100;
+}
+
+.mediaPlayer {
+    width: 700px;
+}
+
+.mediaPlayerButton {
+    padding-top: 4px !important;
+    background: none;
+    border: none;
+}
+
+.mediaPlayerButton.mediaMetadata {
+    padding-top: 8px !important;
+}
+
+.mediaControls {
+    margin: 10px auto;
+}
+
+.indexerInsight {
+    margin: 0 auto;
+    display: none;
+    height: 500px;
+    width: 700px;
+}
+
+.insightData {
+    background-color: deepskyblue;
+    margin: 0px auto;
+    margin-top: 10px;
+    color: darkblue;
+    overflow: auto;
+    height: 400px;
+    width: 800px;
+}
+
+.insightSearch {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.insightSearch td {
+    padding: 5px;
+}
+
+.searchLanguage {
+    width: 100%;
+}
+
+a.json-placeholder {
+    color: yellow;
+}

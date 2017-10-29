@@ -1,0 +1,34 @@
+﻿@section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/plupload/js/jquery.ui.plupload/css/jquery.ui.plupload.css" />
+    <script type="text/javascript" src="~/lib/plupload/js/moxie.min.js"></script>
+    <script type="text/javascript" src="~/lib/plupload/js/plupload.min.js"></script>
+    <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
+    <script type="text/javascript" src="~/js/uploader.js"></script>
+    <script type="text/javascript" src="~/js/workflow.js"></script>
+    <script type="text/javascript" src="~/js/workflow.job.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.configuration.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.protection.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var signiantAccountKey = "@ViewData["signiantAccountKey"]";
+            var asperaAccountKey = "@ViewData["asperaAccountKey"]";
+            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
+            CreateUploader();
+        })
+    </script>
+}
+
+@section title {
+    Media File Workflow
+}
+
+@Html.Partial("MediaUpload", new bool[] { false, false })
+
+<div id="fileUploader"></div>
+
+<div id="transferMessage" class="transferMessage storageTransfer">
+    <br>
+</div>
+
+@Html.Partial("MediaWorkflow", new string[] { "true" })

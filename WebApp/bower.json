@@ -1,0 +1,13 @@
+{
+  "name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "jqgrid": "5.2.1",
+    "jquery": "3.2.1",
+    "jquery-cookie": "1.4.1",
+    "jquery-editable-select": "2.2.5",
+    "jquery.scrollTo": "2.1.2",
+    "jquery-ui": "1.12.1",
+    "jstree": "3.3.4"
+  }
+}

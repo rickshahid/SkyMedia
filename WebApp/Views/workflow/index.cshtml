@@ -1,0 +1,22 @@
+﻿@section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/jstree/dist/themes/default/style.min.css" />
+    <script type="text/javascript" src="~/lib/jstree/dist/jstree.min.js"></script>
+    <script type="text/javascript" src="~/js/tree.js"></script>
+    <script type="text/javascript" src="~/js/workflow.js"></script>
+    <script type="text/javascript" src="~/js/workflow.job.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.configuration.js"></script>
+    <script type="text/javascript" src="~/js/workflow.task.protection.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            SetWorkflowInputs(false, null, null);
+            LoadTreeNodes(false);
+        })
+    </script>
+}
+
+@section title {
+    Media Asset Workflow
+}
+
+@Html.Partial("MediaWorkflow", new string[] { "false" })

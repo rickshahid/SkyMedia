@@ -1,0 +1,69 @@
+﻿@using System.Diagnostics;
+
+@section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/jstree/dist/themes/default/style.min.css" />
+    <script type="text/javascript" src="~/lib/jstree/dist/jstree.min.js"></script>
+    <script type="text/javascript" src="~/js/tree.js"></script>
+    <script type="text/javascript">
+        function ClearAccount(allEntities) {
+            $.post("/account/clear",
+                {
+                    allEntities: allEntities,
+                    includeLive: $("#includeLive").prop("checked")
+                },
+                function (result) {
+                    window.location = window.location.href;
+                }
+            );
+        }
+        function ConfirmClear() {
+            var title = "Confirm Media Account Clear (Permanent Content Deletion)";
+            var message = "Do you want to delete all entities or only child assets in your media account?";
+            var buttons = {
+                "All Entities": function () {
+                    ClearAccount(true);
+                    $(this).dialog("close");
+                },
+                "Child Assets": function () {
+                    ClearAccount(false);
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            };
+            DisplayMessage(title, message, buttons);
+        }
+        $(function () {
+            LoadTreeNodes(true);
+            CreateTipTop("accountInventory", "Media Account Inventory");
+            CreateTipTop("accountClear", "Clear Media Account");
+        })
+    </script>
+}
+
+@section title {
+    Media Asset Browse
+}
+
+<div id="mediaAssets" class="mediaAssets browseView"></div>
+
+<div class="viewButtons">
+    <table class="accountClear">
+        <tr>
+            <td>
+                @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", "window.location.href = '/account'" })
+            </td>
+        @if (Debugger.IsAttached)
+        {
+            <td>
+                @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
+            </td>
+            <td>
+                @Html.CheckBox("includeLive")
+                Include Live
+            </td>
+        }
+        </tr>
+    </table>
+</div>

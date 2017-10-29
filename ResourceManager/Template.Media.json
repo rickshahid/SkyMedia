@@ -1,0 +1,145 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageServiceName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 23,
+      "metadata": {
+        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only)."
+      }
+    },
+    "batchServiceName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 24,
+      "metadata": {
+        "description": "Batch service name must be between 3 and 24 characters (letters and numbers only)."
+      }
+    },
+    "mediaServiceName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 24,
+      "metadata": {
+        "description": "Media service name must be between 3 and 24 characters (letters and numbers only)."
+      }
+    },
+    "mediaRegionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure region name for all media resources, including storage and batch services."
+      }
+    }
+  },
+  "variables": {
+    "storageServiceName": "[toLower(parameters('storageServiceName'))]",
+    "storageService1Name": "[concat(variables('storageServiceName'), '1')]",
+    "storageService2Name": "[concat(variables('storageServiceName'), '2')]",
+    "storageService3Name": "[concat(variables('storageServiceName'), '3')]",
+    "batchServiceName": "[toLower(parameters('batchServiceName'))]",
+    "mediaServiceName": "[toLower(parameters('mediaServiceName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-06-01",
+      "location": "[parameters('mediaRegionName')]",
+      "name": "[variables('storageService1Name')]",
+      "kind": "Storage",
+      "sku": {
+        "name": "Standard_LRS"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-06-01",
+      "location": "[parameters('mediaRegionName')]",
+      "name": "[variables('storageService2Name')]",
+      "kind": "BlobStorage",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "properties": {
+        "accessTier": "Hot"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2017-06-01",
+      "location": "[parameters('mediaRegionName')]",
+      "name": "[variables('storageService3Name')]",
+      "kind": "BlobStorage",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "properties": {
+        "accessTier": "Cool"
+      }
+    },
+    {
+      "type": "Microsoft.Batch/batchAccounts",
+      "apiVersion": "2017-05-01",
+      "location": "[parameters('mediaRegionName')]",
+      "name": "[variables('batchServiceName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name'))]"
+      ],
+      "properties": {
+        "autoStorage": {
+          "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Media/mediaServices",
+      "apiVersion": "2015-10-01",
+      "location": "[parameters('mediaRegionName')]",
+      "name": "[variables('mediaServiceName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService2Name'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService3Name'))]"
+      ],
+      "properties": {
+        "storageAccounts": [
+          {
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name'))]",
+            "isPrimary": true
+          },
+          {
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService2Name'))]",
+            "isPrimary": false
+          },
+          {
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService3Name'))]",
+            "isPrimary": false
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "storage1Connection": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageService1Name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "storage2Connection": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageService2Name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageService2Name')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "storage3Connection": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageService3Name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageService3Name')), '2017-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "batchEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Batch/batchAccounts', variables('batchServiceName')), '2017-05-01').accountEndpoint]"
+    },
+    "mediaEndpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName')), '2015-10-01').apiEndpoints[0].endpoint]"
+    }
+  }
+}

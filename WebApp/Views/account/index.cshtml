@@ -1,0 +1,44 @@
+﻿@section head {
+    <script type="text/javascript">
+         function SetEntity(innerHtml, entityCount) {
+            innerHtml = innerHtml + "<tr><td>";
+            if (entityCount.length > 2) {
+                innerHtml = innerHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
+            } else {
+                innerHtml = innerHtml + entityCount[0]
+            }
+            return innerHtml + ":</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
+        }
+        function SetInventory(entityCounts) {
+            var innerHtml = "";
+            for (var i = 0; i < 11; i++) {
+                innerHtml = SetEntity(innerHtml, entityCounts[i]);
+            }
+            $("#inventoryLeft").html(innerHtml);
+            innerHtml = "";
+            for (var i = 11; i < entityCounts.length; i++) {
+                innerHtml = SetEntity(innerHtml, entityCounts[i]);
+            }
+            $("#inventoryRight").html(innerHtml);
+        }
+        $(function () {
+            var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
+            SetInventory(entityCounts);
+        })
+    </script>
+}
+
+@section title {
+    Media Account Inventory
+}
+
+<table class="accountInventory">
+    <tr>
+        <td>
+            <table id="inventoryLeft" class="entityCounts"></table>
+        </td>
+        <td>
+            <table id="inventoryRight" class="entityCounts"></table>
+        </td>
+    </tr>
+</table>
