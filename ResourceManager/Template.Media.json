@@ -7,7 +7,7 @@
       "minLength": 3,
       "maxLength": 23,
       "metadata": {
-        "description": "Storage service name must be between 3 and 23 characters (letters and numbers only)."
+        "description": "Name must be between 3 and 23 characters (letters and numbers only)."
       }
     },
     "batchServiceName": {
@@ -15,7 +15,7 @@
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
-        "description": "Batch service name must be between 3 and 24 characters (letters and numbers only)."
+        "description": "Name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
     "mediaServiceName": {
@@ -23,7 +23,7 @@
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
-        "description": "Media service name must be between 3 and 24 characters (letters and numbers only)."
+        "description": "Name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
     "mediaRegionName": {

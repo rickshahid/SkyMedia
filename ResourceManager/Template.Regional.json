@@ -13,7 +13,7 @@
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
-        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only)."
+        "description": "Name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
     "databaseServiceName": {
@@ -21,7 +21,7 @@
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
-        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
+        "description": "Name must be between 3 and 31 characters (letters, numbers and hyphens only)."
       }
     },
     "databaseIdentifier": {
@@ -35,7 +35,7 @@
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
-        "description": "Cache service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
+        "description": "Name must be between 3 and 31 characters (letters, numbers and hyphens only)."
       }
     },
     "appServicePlanName": {
@@ -78,7 +78,7 @@
       "minLength": 2,
       "maxLength": 60,
       "metadata": {
-        "description": "Web application subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
+        "description": "Subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
     "webAppRegionName": {

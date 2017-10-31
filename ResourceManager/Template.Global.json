@@ -7,7 +7,7 @@
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
-        "description": "Storage service name must be between 3 and 24 characters (letters and numbers only)."
+        "description": "Name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
     "databaseServiceName": {
@@ -15,7 +15,7 @@
       "minLength": 3,
       "maxLength": 31,
       "metadata": {
-        "description": "Database service name must be between 3 and 31 characters (letters, numbers and hyphens only)."
+        "description": "Name must be between 3 and 31 characters (letters, numbers and hyphens only)."
       }
     },
     "databaseDataRegions": {
@@ -34,7 +34,7 @@
       "minLength": 2,
       "maxLength": 60,
       "metadata": {
-        "description": "Search service name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
     "searchServiceRegion": {
@@ -70,31 +70,37 @@
       "minLength": 2,
       "maxLength": 60,
       "metadata": {
-        "description": "Function app name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
     "contentDeliveryProfileName": {
       "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
       "metadata": {
-        "description": "Content delivery profile name must be letters, numbers and hyphens only."
+        "description": "Name must be between 2 and 64 characters (letters, numbers and hyphens only)."
       }
     },
     "contentDeliverySubdomainName": {
       "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
       "metadata": {
-        "description": "Subdomain name (<subdomain>.azureedge.net) for the Content Delivery Network resource."
+        "description": "Subdomain name (<subdomain>.azureedge.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
       }
     },
     "contentDeliveryOriginPath": {
       "type": "string",
       "metadata": {
-        "description": "Optional origin path (beginning with /) for the Content Delivery Network resource."
+        "description": "Optional origin path (in the form /path relative to the origin root)."
       }
     },
     "trafficManagerSubdomainName": {
       "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
       "metadata": {
-        "description": "Subdomain name (<subdomain>.trafficmanager.net) for the Traffic Manager resource."
+        "description": "Subdomain name (<subdomain>.trafficmanager.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
       }
     },
     "trafficManagerRoutingMethod": {
@@ -114,7 +120,7 @@
       "type": "int",
       "defaultValue": 30,
       "metadata": {
-        "description": "Routing record time-to-live setting (in seconds) for the Traffic Manager resource."
+        "description": "Routing record time-to-live (in seconds) for the Traffic Manager resource."
       }
     },
     "appInsightsName": {
@@ -145,8 +151,8 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2017-06-01",
-      "name": "[variables('storageServiceName')]",
       "location": "[resourceGroup().location]",
+      "name": "[variables('storageServiceName')]",
       "kind": "Storage",
       "sku": {
         "name": "Standard_LRS"
@@ -155,8 +161,8 @@
     {
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2016-03-31",
-      "name": "[variables('databaseServiceName')]",
       "location": "[resourceGroup().location]",
+      "name": "[variables('databaseServiceName')]",
       "properties": {
         "databaseAccountOfferType": "Standard",
         "copy": [
@@ -177,8 +183,8 @@
     {
       "type": "Microsoft.Search/searchServices",
       "apiVersion": "2015-08-19",
-      "name": "[variables('searchServiceName')]",
       "location": "[parameters('searchServiceRegion')]",
+      "name": "[variables('searchServiceName')]",
       "sku": {
         "name": "[variables('searchServiceTier')]"
       },
