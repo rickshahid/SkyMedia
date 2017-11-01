@@ -93,12 +93,6 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
-In addition, the following Azure partner services have been integrated for high-speed file transfer into Azure Storage:
-
-* **Signiant Flight** - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
-
-* **Aspera Server On Demand** - http://azuremarketplace.microsoft.com/marketplace/apps/aspera.sod
-
 If you have any issues or suggestions, please let me know.
 
 Thanks.
