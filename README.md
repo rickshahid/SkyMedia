@@ -4,7 +4,7 @@ Welcome! This repository contains the multi-tenant Azure media solution sample t
 
 As an illustration, here is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. Azure Media Services content is adaptive, scaled and globally consumable across a wide range of devices and platforms.
 
-![](http://skystorage.azureedge.net/Snip01.ApplicationHome.png)
+![](http://skystorage.azureedge.net/Snip01.ApplicationSite.png)
 
 For more screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
