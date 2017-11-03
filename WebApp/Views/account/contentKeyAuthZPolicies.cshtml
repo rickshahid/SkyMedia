@@ -1,0 +1,27 @@
+﻿@section head {
+    <script type="text/javascript">
+        $(function () {
+            var rows = @Json.Serialize(ViewData["contentKeyAuthZPolicies"]);
+            var columns = [
+                {
+                    name: "id",
+                    hidden: true
+                },
+                {
+                    width: 500,
+                    name: "name",
+                    label: "Content Key Authorization Policy Name",
+                    formatter: FormatColumn,
+                    align: "center"
+                }
+            ];
+            LoadGrid("contentKeyAuthZPolicies", columns, rows, 400);
+        })
+    </script>
+}
+
+@section title {
+    Content Key<br>Authorization Policies
+}
+
+<table id="contentKeyAuthZPolicies"></table>

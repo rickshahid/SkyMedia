@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using DocClient = Microsoft.Azure.Documents.Client.DocumentClient;
@@ -34,15 +36,6 @@ namespace AzureSkyMedia.PlatformServices
             string accountKey = accountCredentials[1];
             _databaseId = accountCredentials[2];
             _database = new DocClient(new Uri(accountEndpoint), accountKey);
-        }
-
-        private RequestOptions GetRequestOptions(string accountId)
-        {
-            RequestOptions requestOptions = new RequestOptions()
-            {
-                PartitionKey = new PartitionKey(accountId)
-            };
-            return requestOptions;
         }
 
         private IQueryable<Document> GetDocumentQuery(string collectionId)
@@ -77,19 +70,60 @@ namespace AzureSkyMedia.PlatformServices
             return result;
         }
 
-        public void Initialize()
+        public void Initialize(string rootDirectory)
         {
             Database databaseId = new Database { Id = _databaseId };
             ResourceResponse<Database> database = _database.CreateDatabaseIfNotExistsAsync(databaseId).Result;
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            RequestOptions collectionOptions = new RequestOptions { OfferThroughput = 400 };
+            string settingKey = Constant.AppSettingKey.DatabaseThroughputUnits;
+            string throughputUnits = AppSetting.GetValue(settingKey);
 
-            DocumentCollection collectionId = new DocumentCollection { Id = Constant.Database.Collection.ContentInsight };
-            ResourceResponse<DocumentCollection> collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, collectionId, collectionOptions).Result;
+            RequestOptions collectionOptions = new RequestOptions();
+            collectionOptions.OfferThroughput = int.Parse(throughputUnits);
 
-            collectionId = new DocumentCollection { Id = Constant.Database.Collection.ProcessorConfig };
-            collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, collectionId, collectionOptions).Result;
+            DocumentCollection documentCollection = new DocumentCollection();
+            documentCollection.Id = Constant.Database.Collection.ContentInsight;
+
+            ResourceResponse<DocumentCollection> collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
+            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, documentCollection.Id);
+
+            string collectionDirectory = string.Concat(rootDirectory, @"\", documentCollection.Id);
+
+            string jsFile = string.Concat(collectionDirectory, @"\Functions\isTimecodeFragment.js");
+            UserDefinedFunction function = new UserDefinedFunction();
+            function.Id = "isTimecodeFragment";
+            function.Body = File.ReadAllText(jsFile);
+            _database.CreateUserDefinedFunctionAsync(collectionUri, function);
+
+            jsFile = string.Concat(collectionDirectory, @"\Procedures\getTimecodeFragment.js");
+            StoredProcedure procedure = new StoredProcedure();
+            procedure.Id = "getTimecodeFragment";
+            procedure.Body = File.ReadAllText(jsFile);
+            _database.CreateStoredProcedureAsync(collectionUri, procedure);
+
+            documentCollection = new DocumentCollection();
+            documentCollection.Id = Constant.Database.Collection.ProcessorConfig;
+
+            collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
+
+            collectionDirectory = string.Concat(rootDirectory, @"\", documentCollection.Id);
+
+            jsFile = string.Concat(collectionDirectory, @"\Procedures\getProcessorConfig.js");
+            procedure = new StoredProcedure();
+            procedure.Id = "getProcessorConfig";
+            procedure.Body = File.ReadAllText(jsFile);
+            _database.CreateStoredProcedureAsync(collectionUri, procedure);
+
+            string presetDirectory = string.Concat(rootDirectory, @"\ProcessorPresets");
+            string[] presetFiles = Directory.GetFiles(presetDirectory);
+            foreach (string presetFile in presetFiles)
+            {
+                StreamReader streamReader = new StreamReader(presetFile);
+                JsonTextReader presetReader = new JsonTextReader(streamReader);
+                JObject presetConfig = JObject.Load(presetReader);
+                UpsertDocument(documentCollection.Id, presetConfig);
+            }
         }
 
         public JObject[] GetDocuments(string collectionId)
@@ -122,17 +156,21 @@ namespace AzureSkyMedia.PlatformServices
             return result;
         }
 
-        public string UpsertDocument(string collectionId, JObject jsonDoc, string accountId, string accountDomain, string accountUrl, string clientId, string clientKey, string assetId)
+        public static JObject SetContext(JObject jsonDoc, string accountId, string accountDomain, string accountEndpoint, string clientId, string clientKey, string assetId)
         {
             jsonDoc["accountId"] = accountId;
             jsonDoc["accountDomain"] = accountDomain;
-            jsonDoc["accountUrl"] = accountUrl;
+            jsonDoc["accountEndpoint"] = accountEndpoint;
             jsonDoc["clientId"] = clientId;
             jsonDoc["clientKey"] = clientKey;
             jsonDoc["assetId"] = assetId;
+            return jsonDoc;
+        }
+
+        public string UpsertDocument(string collectionId, JObject jsonDoc)
+        {
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountId) : null;
-            Task<ResourceResponse<Document>> createTask = _database.UpsertDocumentAsync(collectionUri, jsonDoc, requestOptions);
+            Task<ResourceResponse<Document>> createTask = _database.UpsertDocumentAsync(collectionUri, jsonDoc);
             createTask.Wait();
             ResourceResponse<Document> responseDocument = createTask.Result;
             return responseDocument.Resource.Id;
@@ -146,8 +184,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string accountId = jsonDoc["accountId"].ToString();
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                RequestOptions requestOptions = collectionId == Constant.Database.Collection.ContentInsight ? GetRequestOptions(accountId) : null;
-                Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri, requestOptions);
+                Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri);
                 deleteTask.Wait();
             }
         }

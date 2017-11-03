@@ -23,24 +23,6 @@ namespace AzureSkyMedia.PlatformServices
             return tokenClaim;
         }
 
-        public static string[] GetClaimValues(string authToken, string claimType)
-        {
-            string[] claimValues = new string[] { };
-            Claim tokenClaim = GetTokenClaim(authToken, claimType);
-            if (tokenClaim != null)
-            {
-                if (tokenClaim.Value.Contains(Constant.TextDelimiter.Application.ToString()))
-                {
-                    claimValues = tokenClaim.Value.Split(Constant.TextDelimiter.Application);
-                }
-                else
-                {
-                    claimValues = new string[] { tokenClaim.Value };
-                }
-            }
-            return claimValues;
-        }
-
         public static string GetClaimValue(string authToken, string claimType)
         {
             string claimValue = string.Empty;

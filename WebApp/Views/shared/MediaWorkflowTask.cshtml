@@ -33,10 +33,10 @@
     string summarizationDurationSecondsId = string.Concat("summarizationDurationSeconds", taskNumber);
     string summarizationFadeTransitionsId = string.Concat("summarizationFadeTransitions", taskNumber);
     string summarizationIncludeAudioId = string.Concat("summarizationIncludeAudio", taskNumber);
-    string speechToTextConfigRowId = string.Concat("speechToTextConfigRow", taskNumber);
-    string speechToTextLanguageId = string.Concat("speechToTextLanguage", taskNumber);
-    string speechToTextCaptionTtmlId = string.Concat("speechToTextCaptionTtml", taskNumber);
-    string speechToTextCaptionWebVttId = string.Concat("speechToTextCaptionWebVtt", taskNumber);
+    string speechAnalyzerConfigRowId = string.Concat("speechAnalyzerConfigRow", taskNumber);
+    string speechAnalyzerLanguageId = string.Concat("speechAnalyzerLanguage", taskNumber);
+    string speechAnalyzerCaptionTtmlId = string.Concat("speechAnalyzerCaptionTtml", taskNumber);
+    string speechAnalyzerCaptionWebVttId = string.Concat("speechAnalyzerCaptionWebVtt", taskNumber);
     string faceDetectionConfigRowId = string.Concat("faceDetectionConfigRow", taskNumber);
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
     string faceDetectionTrackingModeId = string.Concat("faceDetectionTrackingMode", taskNumber);
@@ -201,7 +201,7 @@
                     </table>
                 </td>
             </tr>
-            <tr id="@speechToTextConfigRowId" style="display: none">
+            <tr id="@speechAnalyzerConfigRowId" style="display: none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
                         Speech To Text
@@ -211,19 +211,19 @@
                     <table>
                         <tr>
                             <td class="inputLabel">
-                                @Html.DropDownList(speechToTextLanguageId, ViewData["speechToTextLanguages"] as SelectListItem[], new { @class = "speechToTextLanguage" })
+                                @Html.DropDownList(speechAnalyzerLanguageId, ViewData["speechAnalyzerLanguages"] as SelectListItem[], new { @class = "speechToTextLanguage" })
                             </td>
                             <td class="inputLabel">
                                 Captions
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
-                                @Html.CheckBox(speechToTextCaptionTtmlId, false, new { @class = "inputCheckbox" })
+                                @Html.CheckBox(speechAnalyzerCaptionTtmlId, false, new { @class = "inputCheckbox" })
                                 TTML
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
-                                @Html.CheckBox(speechToTextCaptionWebVttId, true, new { @class = "inputCheckbox", disabled = "disabled" })
+                                @Html.CheckBox(speechAnalyzerCaptionWebVttId, true, new { @class = "inputCheckbox", disabled = "disabled" })
                                 WebVTT
                             </td>
                         </tr>
@@ -283,15 +283,15 @@
                     <table class="processorConfigTable">
                         <tr>
                             <td>
-                                @Html.RadioButton(faceRedactionModeId, "analyze", true)
+                                @Html.RadioButton(faceRedactionModeId, "Analyze", true)
                                 Analyze Only
                             </td>
                             <td>
-                                @Html.RadioButton(faceRedactionModeId, "redact", false)
+                                @Html.RadioButton(faceRedactionModeId, "Redact", false)
                                 Apply Redaction
                             </td>
                             <td>
-                                @Html.RadioButton(faceRedactionModeId, "combined", false)
+                                @Html.RadioButton(faceRedactionModeId, "Combined", false)
                                 Combined Mode
                             </td>
                         </tr>
@@ -325,9 +325,9 @@
                             <td>
                                 &nbsp;
                                 <select id="@motionDetectionSensitivityLevelId" class="motionSensitivityLevel">
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
                                 </select>
                             </td>
                             <td>

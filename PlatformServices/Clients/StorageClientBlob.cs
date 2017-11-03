@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net.Http;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
@@ -98,19 +97,19 @@ namespace AzureSkyMedia.PlatformServices
             return GetBlob(containerName, directoryPath, fileName, false);
         }
 
-        public void UploadFile(Stream inputStream, string containerName, string directoryPath, string fileName)
+        public void UploadFile(Stream readStream, string containerName, string directoryPath, string fileName)
         {
             CloudBlockBlob blob = GetBlob(containerName, directoryPath, fileName);
-            blob.UploadFromStream(inputStream);
+            blob.UploadFromStream(readStream);
         }
 
-        public void UploadBlock(Stream inputStream, string containerName, string directoryPath, string fileName,
+        public void UploadBlock(Stream readStream, string containerName, string directoryPath, string fileName,
                                 string partitionKey, int blockIndex, bool lastBlock)
         {
             string blockId = Convert.ToBase64String(BitConverter.GetBytes(blockIndex));
 
             CloudBlockBlob blob = GetBlob(containerName, directoryPath, fileName);
-            blob.PutBlock(blockId, inputStream, null);
+            blob.PutBlock(blockId, readStream, null);
 
             string tableName = Constant.Storage.TableName.FileUpload;
             string rowKey = blob.Name;
@@ -140,14 +139,6 @@ namespace AzureSkyMedia.PlatformServices
                 blob.PutBlockList(blockUpload.BlockIds);
                 _tracker.DeleteEntity(tableName, blockUpload);
             }
-        }
-
-        public void PublishContent(CloudBlobContainer destinationContainer)
-        {
-            WebClient webClient = new WebClient(string.Empty);
-            string requestUrl = "";
-            HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, requestUrl);
-            //HttpResponseMessage responseMessage = webClient.GetResponse(requestMessage);
         }
     }
 }

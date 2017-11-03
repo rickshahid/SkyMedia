@@ -85,15 +85,6 @@ namespace AzureSkyMedia.WebApp
             if (!string.IsNullOrEmpty(settingKey))
             {
                 policyId = AppSetting.GetValue(settingKey);
-                if (context.Properties.Items.ContainsKey("SubDomain"))
-                {
-                    string subDomain = context.Properties.Items["SubDomain"];
-                    if (!string.IsNullOrEmpty(subDomain))
-                    {
-                        subDomain = string.Concat(char.ToUpper(subDomain[0]), subDomain.Substring(1));
-                        policyId = string.Concat(policyId, subDomain);
-                    }
-                }
             }
             return policyId;
         }
@@ -138,14 +129,21 @@ namespace AzureSkyMedia.WebApp
             });
             authBuilder.AddOpenIdConnect(openIdOptions =>
             {
-                string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                openIdOptions.Authority = AppSetting.ConfigRoot[settingKey];
+                string settingKey = Constant.AppSettingKey.DirectoryTenantId;
+                string directoryTenantId = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+                string issuerUrl = AppSetting.GetValue(settingKey);
+                issuerUrl = string.Format(issuerUrl, directoryTenantId);
+
+                settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+                openIdOptions.Authority = issuerUrl;
 
                 settingKey = Constant.AppSettingKey.DirectoryClientId;
-                openIdOptions.ClientId = AppSetting.ConfigRoot[settingKey];
+                openIdOptions.ClientId = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryClientSecret;
-                openIdOptions.ClientSecret = AppSetting.ConfigRoot[settingKey];
+                openIdOptions.ClientSecret = AppSetting.GetValue(settingKey);
 
                 openIdOptions.Events = new OpenIdConnectEvents
                 {

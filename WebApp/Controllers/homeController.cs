@@ -95,14 +95,12 @@ namespace AzureSkyMedia.WebApp.Controllers
         internal static void SetViewData(string authToken, ViewDataDictionary viewData)
         {
             User authUser = new User(authToken);
-            viewData["signiantAccountKey"] = authUser.SigniantAccountKey;
-            viewData["asperaAccountKey"] = authUser.AsperaAccountKey;
             viewData["storageAccount"] = GetStorageAccounts(authToken);
             viewData["jobName"] = GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = GetMediaProcessors(authToken);
             viewData["encoderConfig1"] = new List<SelectListItem>();
             viewData["indexerLanguages"] = GetSpokenLanguages(true, false);
-            viewData["speechToTextLanguages"] = GetSpokenLanguages(false, false);
+            viewData["speechAnalyzerLanguages"] = GetSpokenLanguages(false, false);
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)

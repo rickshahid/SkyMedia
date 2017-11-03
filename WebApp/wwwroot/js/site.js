@@ -2,7 +2,8 @@
 function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
-    CreateTipBottom("mediaBlog", "Azure Media Services<br><br>Blog");
+    CreateTipBottom("accountInventory", "Azure Media Services<br><br>Account Inventory");
+    CreateTipBottom("mediaBot", "Azure Sky Media<br><br>Bot (Viddy)");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
     CreateTipBottom("userSignIn", "Azure Sky Media<br><br>User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br><br>User Sign Out");
@@ -21,14 +22,14 @@ function SetLayout() {
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("batchRendering", "Azure Batch Rendering");
     CreateTipLeft("botService", "Azure Bot Service");
+    CreateTipTop("mediaProcessorPreset", "Media Processor Preset");
     CreateTipTop("mediaFileWorkflow", "Media File Workflow");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
     CreateTipTop("mediaAssetBrowse", "Media Asset Browse");
     CreateTipTop("mediaStreamLeft", "Stream Tuner Left");
     CreateTipTop("mediaStreamRight", "Stream Tuner Right");
+    CreateTipTop("mediaStreamLive", "Media Stream Live");
     CreateTipTop("mediaInsightSearch", "Media Insight Search");
-    CreateTipTop("mediaStreamLive", "Live Media Stream");
-    CreateTipTop("mediaBotViddy", "Viddy Media Bot<br><br>(Under Construction)");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });

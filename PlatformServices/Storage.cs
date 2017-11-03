@@ -227,19 +227,19 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public static void UploadFile(string authToken, string storageAccount, string containerName,
-                                      Stream inputStream, string fileName, int chunkIndex, int chunksCount)
+                                      Stream readStream, string fileName, int chunkIndex, int chunksCount)
         {
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             if (chunksCount == 0)
             {
-                blobClient.UploadFile(inputStream, containerName, null, fileName);
+                blobClient.UploadFile(readStream, containerName, null, fileName);
             }
             else
             {
                 User authUser = new User(authToken);
                 string partitionKey = authUser.Id;
                 bool lastBlock = (chunkIndex == chunksCount - 1);
-                blobClient.UploadBlock(inputStream, containerName, null, fileName, partitionKey, chunkIndex, lastBlock);
+                blobClient.UploadBlock(readStream, containerName, null, fileName, partitionKey, chunkIndex, lastBlock);
             }
         }
     }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -9,75 +8,58 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Account
     {
-        private static string GetProcessorUnitCount(IEncodingReservedUnit[] processorUnits)
+        private static int GetProcessorUnitCount(IEncodingReservedUnit[] processorUnits)
         {
             int unitCount = 0;
             foreach (IEncodingReservedUnit processorUnit in processorUnits)
             {
                 unitCount = unitCount + processorUnit.CurrentReservedUnits;
             }
-            return unitCount.ToString();
+            return unitCount;
         }
 
-        private static string GetStreamingUnitCount(IStreamingEndpoint[] streamingEndpoints)
+        private static int GetStreamingUnitCount(IStreamingEndpoint[] streamingEndpoints)
         {
             int unitCount = 0;
             foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
             {
-                unitCount = streamingEndpoint.ScaleUnits.Value;
+                if (streamingEndpoint.ScaleUnits.HasValue)
+                {
+                    unitCount = streamingEndpoint.ScaleUnits.Value;
+                }
             }
-            return unitCount.ToString();
+            return unitCount;
         }
 
-        private static bool IsLiveAsset(MediaClient mediaClient, IAsset asset)
+        private static void DeleteAsset(string authToken, MediaClient mediaClient, string accountId, IAsset asset)
         {
-            bool liveAsset = false;
-            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
-            foreach (IChannel channel in channels)
+            IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+            string indexId = indexerClient.GetIndexId(asset);
+            if (!string.IsNullOrEmpty(indexId))
             {
-                foreach (IProgram program in channel.Programs)
+                indexerClient.DeleteVideo(indexId, true);
+
+                string collectionId = Constant.Database.Collection.ContentInsight;
+                DocumentClient documentClient = new DocumentClient();
+                documentClient.DeleteDocument(collectionId, indexId);
+
+                TableClient tableClient = new TableClient();
+                string tableName = Constant.Storage.TableName.InsightPublish;
+                MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, indexId);
+                if (insightPublish != null)
                 {
-                    if (string.Equals(program.Asset.Id, asset.Id, StringComparison.OrdinalIgnoreCase))
-                    {
-                        liveAsset = true;
-                    }
+                    tableClient.DeleteEntity(tableName, insightPublish);
                 }
             }
-            return liveAsset;
-        }
-
-        private static void DeleteAsset(string authToken, MediaClient mediaClient, string accountId, IAsset asset, bool includeLive)
-        {
-            if (includeLive || !IsLiveAsset(mediaClient, asset))
+            foreach (ILocator locator in asset.Locators)
             {
-                IndexerClient indexerClient = new IndexerClient(authToken, null, null);
-                string indexId = indexerClient.GetIndexId(asset);
-                if (!string.IsNullOrEmpty(indexId))
-                {
-                    indexerClient.DeleteVideo(indexId, true);
-
-                    string collectionId = Constant.Database.Collection.ContentInsight;
-                    DocumentClient documentClient = new DocumentClient();
-                    documentClient.DeleteDocument(collectionId, indexId);
-
-                    TableClient tableClient = new TableClient();
-                    string tableName = Constant.Storage.TableName.InsightPublish;
-                    MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, indexId);
-                    if (insightPublish != null)
-                    {
-                        tableClient.DeleteEntity(tableName, insightPublish);
-                    }
-                }
-                foreach (ILocator locator in asset.Locators)
-                {
-                    locator.Delete();
-                }
-                for (int i = asset.DeliveryPolicies.Count - 1; i >= 0; i--)
-                {
-                    asset.DeliveryPolicies.RemoveAt(i);
-                }
-                asset.Delete();
+                locator.Delete();
             }
+            for (int i = asset.DeliveryPolicies.Count - 1; i >= 0; i--)
+            {
+                asset.DeliveryPolicies.RemoveAt(i);
+            }
+            asset.Delete();
         }
 
         private static void DeleteJob(string accountId, IJob job)
@@ -101,25 +83,26 @@ namespace AzureSkyMedia.PlatformServices
             job.Delete();
         }
 
-        public static void DeleteEntities(string authToken, bool allEntities, bool includeLive)
+        public static void DeleteEntities(string authToken, bool allEntities, bool liveOnly)
         {
             User authUser = new User(authToken);
             MediaClient mediaClient = new MediaClient(authToken);
-            if (allEntities)
+            if (liveOnly)
             {
-                if (includeLive)
+                IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
+                foreach (IProgram program in programs)
                 {
-                    IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
-                    foreach (IProgram program in programs)
-                    {
-                        program.Delete();
-                    }
-                    IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
-                    foreach (IChannel channel in channels)
-                    {
-                        channel.Delete();
-                    }
+                    DeleteAsset(authToken, mediaClient, authUser.MediaAccountId, program.Asset);
+                    program.Delete();
                 }
+                IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+                foreach (IChannel channel in channels)
+                {
+                    channel.Delete();
+                }
+            }
+            else if (allEntities)
+            {
                 IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
                 foreach (IIngestManifest manifest in manifests)
                 {
@@ -154,10 +137,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (asset.ParentAssets.Count > 0 || allEntities)
                 {
-                    DeleteAsset(authToken, mediaClient, authUser.MediaAccountId, asset, includeLive);
+                    DeleteAsset(authToken, mediaClient, authUser.MediaAccountId, asset);
                 }
             }
-            if (allEntities && includeLive)
+            if (allEntities)
             {
                 IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
                 foreach (IAccessPolicy accessPolicy in accessPolicies)
@@ -187,6 +170,24 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        public static object GetContentKeys(string authToken)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            return mediaClient.GetEntities(MediaEntity.ContentKey) as IContentKey[];
+        }
+
+        public static object GetContentKeyAuthZPolicies(string authToken)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            return mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
+        }
+
+        public static object GetContentKeyAuthZPolicyOptions(string authToken)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            return mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
+        }
+
         public static object GetNotificationEndpoints(string authToken)
         {
             MediaClient mediaClient = new MediaClient(authToken);
@@ -197,8 +198,8 @@ namespace AzureSkyMedia.PlatformServices
         {
             IStorageAccount[] storageAccounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
             IContentKey[] contentKeys = mediaClient.GetEntities(MediaEntity.ContentKey) as IContentKey[];
-            IContentKeyAuthorizationPolicy[] contentKeyPolicies = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
-            IContentKeyAuthorizationPolicyOption[] contentKeyPolicyOptions = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
+            IContentKeyAuthorizationPolicy[] contentKeyAuthZPolicies = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicy) as IContentKeyAuthorizationPolicy[];
+            IContentKeyAuthorizationPolicyOption[] contentKeyAuthZPolicyOptions = mediaClient.GetEntities(MediaEntity.ContentKeyAuthPolicyOption) as IContentKeyAuthorizationPolicyOption[];
             IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
             IIngestManifestAsset[] manifestAssets = mediaClient.GetEntities(MediaEntity.ManifestAsset) as IIngestManifestAsset[];
             IIngestManifestFile[] manifestFiles = mediaClient.GetEntities(MediaEntity.ManifestFile) as IIngestManifestFile[];
@@ -219,25 +220,25 @@ namespace AzureSkyMedia.PlatformServices
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", storageAccounts.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Keys", contentKeys.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicies.Length.ToString() });
-            entityCounts.Add(new string[] { "Content Key Policy Options", contentKeyPolicyOptions.Length.ToString() });
+            entityCounts.Add(new string[] { "Content Keys", contentKeys.Length.ToString(), "/account/contentKeys" });
+            entityCounts.Add(new string[] { "Content Key AuthZ Policies", contentKeyAuthZPolicies.Length.ToString(), "/account/contentKeyAuthZPolicies" });
+            entityCounts.Add(new string[] { "Content Key AuthZ Policy Options", contentKeyAuthZPolicyOptions.Length.ToString(), "/account/contentKeyAuthZPolicyOptions" });
             entityCounts.Add(new string[] { "Ingest Manifests", manifests.Length.ToString() });
             entityCounts.Add(new string[] { "Ingest Manifest Assets", manifestAssets.Length.ToString() });
             entityCounts.Add(new string[] { "Ingest Manifest Files", manifestFiles.Length.ToString() });
             entityCounts.Add(new string[] { "Assets", assets.Length.ToString() });
             entityCounts.Add(new string[] { "Asset Files", files.Length.ToString() });
-            entityCounts.Add(new string[] { "Processors", processors.Length.ToString(), "/account/processors" });
-            entityCounts.Add(new string[] { "Processor Units", GetProcessorUnitCount(processorUnits) });
+            entityCounts.Add(new string[] { "Media Processors", processors.Length.ToString(), "/account/mediaProcessors" });
+            entityCounts.Add(new string[] { "Media Processor Units", GetProcessorUnitCount(processorUnits).ToString() });
             entityCounts.Add(new string[] { "Channels", channels.Length.ToString() });
             entityCounts.Add(new string[] { "Channel Programs", programs.Length.ToString() });
             entityCounts.Add(new string[] { "Job Templates", jobTemplates.Length.ToString() });
             entityCounts.Add(new string[] { "Jobs", jobs.Length.ToString() });
-            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString(), "/account/endpoints" });
+            entityCounts.Add(new string[] { "Notification Endpoints", notificationEndpoints.Length.ToString(), "/account/notificationEndpoints" });
             entityCounts.Add(new string[] { "Access Policies", accessPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString() });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
-            entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints) });
+            entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints).ToString() });
             entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString() });
             entityCounts.Add(new string[] { "Locators", locators.Length.ToString() });
             return entityCounts.ToArray();

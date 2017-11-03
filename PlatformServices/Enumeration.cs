@@ -59,11 +59,10 @@ namespace AzureSkyMedia.PlatformServices
     {
         EncoderStandard,
         EncoderPremium,
-        EncoderUltra,
         VideoIndexer,
         VideoAnnotation,
         VideoSummarization,
-        SpeechToText,
+        SpeechAnalyzer,
         FaceDetection,
         FaceRedaction,
         MotionDetection,
@@ -71,6 +70,14 @@ namespace AzureSkyMedia.PlatformServices
         MotionStabilization,
         CharacterRecognition,
         ContentModeration
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaProtocol
+    {
+        FMP4,
+        RTMP,
+        RTP
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

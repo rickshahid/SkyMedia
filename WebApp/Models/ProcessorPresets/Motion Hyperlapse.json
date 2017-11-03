@@ -1,0 +1,15 @@
+{
+  "Name": "Motion Hyperlapse",
+  "Version": 1.0,
+  "Sources": [
+    {
+      "StartFrame": 0,
+      "NumFrames": 10000
+    }
+  ],
+  "Options": {
+    "Speed": 3,
+    "Stabilize": true
+  },
+  "id": "4d1fc088-cb8c-46ff-b390-742f774629f1"
+}

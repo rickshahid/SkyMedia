@@ -51,10 +51,10 @@ function GetJobTask(taskNumber) {
                 jobTask.ProcessorConfigBoolean["SummarizationFadeTransitions"] = $("#summarizationFadeTransitions" + taskNumber).prop("checked");
                 jobTask.ProcessorConfigBoolean["VideoOnly"] = !$("#summarizationIncludeAudio" + taskNumber).prop("checked");
                 break;
-            case "SpeechToText":
-                jobTask.ProcessorConfigString["SpokenLanguage"] = $("#speechToTextLanguage" + taskNumber).val();
-                jobTask.ProcessorConfigBoolean["CaptionFormatTtml"] = $("#speechToTextCaptionTtml" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigBoolean["CaptionFormatWebVtt"] = $("#speechToTextCaptionWebVtt" + taskNumber).prop("checked");
+            case "SpeechAnalyzer":
+                jobTask.ProcessorConfigString["SpokenLanguage"] = $("#speechAnalyzerLanguage" + taskNumber).val();
+                jobTask.ProcessorConfigBoolean["CaptionFormatTtml"] = $("#speechAnalyzerCaptionTtml" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["CaptionFormatWebVtt"] = $("#speechAnalyzerCaptionWebVtt" + taskNumber).prop("checked");
                 break;
             case "FaceDetection":
                 jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();

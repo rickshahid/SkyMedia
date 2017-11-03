@@ -13,12 +13,12 @@ namespace AzureSkyMedia.PlatformServices
             foreach (MediaContentPublish contentPublish in contentPublishes)
             {
                 string accountDomain = contentPublish.MediaAccountDomainName;
-                string accountUrl = contentPublish.MediaAccountEndpointUrl;
+                string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
                 string clientId = contentPublish.MediaAccountClientId;
                 string clientKey = contentPublish.MediaAccountClientKey;
                 string jobId = contentPublish.RowKey;
 
-                MediaClient mediaClient = new MediaClient(accountDomain, accountUrl, clientId, clientKey);
+                MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
                 IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
                 if (job == null)
                 {
@@ -45,12 +45,12 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     string accountId = document["accountId"].ToString();
                     string accountDomain = document["accountDomain"].ToString();
-                    string accountUrl = document["accountUrl"].ToString();
+                    string accountEndpoint = document["accountEndpoint"].ToString();
                     string clientId = document["clientId"].ToString();
                     string clientKey = document["clientKey"].ToString();
                     string assetId = document["assetId"].ToString();
 
-                    MediaClient mediaClient = new MediaClient(accountDomain, accountUrl, clientId, clientKey);
+                    MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
                     IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
                     if (asset == null)
                     {

@@ -15,11 +15,10 @@ namespace AzureSkyMedia.PlatformServices
             List<string> processorIds = new List<string>();
             processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
             processorIds.Add(Constant.Media.ProcessorId.EncoderPremium);
-            processorIds.Add(Constant.Media.ProcessorId.EncoderUltra);
             processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
             processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
             processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
-            processorIds.Add(Constant.Media.ProcessorId.SpeechToText);
+            processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
             processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
             processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
             processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
@@ -85,9 +84,6 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.EncoderPremium:
                     processorId = Constant.Media.ProcessorId.EncoderPremium;
                     break;
-                case MediaProcessor.EncoderUltra:
-                    processorId = Constant.Media.ProcessorId.EncoderUltra;
-                    break;
                 case MediaProcessor.VideoIndexer:
                     processorId = Constant.Media.ProcessorId.VideoIndexer;
                     break;
@@ -97,8 +93,8 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.VideoSummarization:
                     processorId = Constant.Media.ProcessorId.VideoSummarization;
                     break;
-                case MediaProcessor.SpeechToText:
-                    processorId = Constant.Media.ProcessorId.SpeechToText;
+                case MediaProcessor.SpeechAnalyzer:
+                    processorId = Constant.Media.ProcessorId.SpeechAnalyzer;
                     break;
                 case MediaProcessor.FaceDetection:
                     processorId = Constant.Media.ProcessorId.FaceDetection;
@@ -142,9 +138,6 @@ namespace AzureSkyMedia.PlatformServices
                 case Constant.Media.ProcessorId.EncoderPremium:
                     mediaProcessor = MediaProcessor.EncoderPremium;
                     break;
-                case Constant.Media.ProcessorId.EncoderUltra:
-                    mediaProcessor = MediaProcessor.EncoderUltra;
-                    break;
                 case Constant.Media.ProcessorId.VideoIndexer:
                     mediaProcessor = MediaProcessor.VideoIndexer;
                     break;
@@ -154,8 +147,8 @@ namespace AzureSkyMedia.PlatformServices
                 case Constant.Media.ProcessorId.VideoSummarization:
                     mediaProcessor = MediaProcessor.VideoSummarization;
                     break;
-                case Constant.Media.ProcessorId.SpeechToText:
-                    mediaProcessor = MediaProcessor.SpeechToText;
+                case Constant.Media.ProcessorId.SpeechAnalyzer:
+                    mediaProcessor = MediaProcessor.SpeechAnalyzer;
                     break;
                 case Constant.Media.ProcessorId.FaceDetection:
                     mediaProcessor = MediaProcessor.FaceDetection;

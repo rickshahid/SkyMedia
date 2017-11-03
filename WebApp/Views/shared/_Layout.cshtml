@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <title>Azure Sky Media (@ViewData["appRegion"])</title>
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-multiselect/jquery.multiselect.css" />
@@ -31,11 +31,17 @@
             <tr>
                 <td class="bannerSide">
                     @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
+                    @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
+                    @{ string accountInventoryClick = ""; }
                     @if (ViewData.ContainsKey("accountContext"))
                     {
-                        @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
+                        accountInventoryClick = "window.location.href = '/account'";
                     }
-                    @Html.Partial("SiteButton", new string[] { "mediaBlog", "MediaBlog.png", "window.open('http://azure.microsoft.com/blog/topics/media-services/')" })
+                    else
+                    {
+                        accountInventoryClick = "DisplayMessage('Azure Media Services Account Inventory', 'You must be signed in to display your media services account inventory.')";
+                    }
+                    @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", accountInventoryClick })
                 </td>
                 <td class="bannerCenter">
                     <div class="viewTitle">
@@ -49,7 +55,7 @@
                     }
                 </td>
                 <td class="bannerSide">
-                    @Html.Partial("SiteButton", new string[] { "userDirectory", "UserDirectory.png", "window.open('http://azure.microsoft.com/en-us/services/active-directory-b2c/')" })
+                    @Html.Partial("SiteButton", new string[] { "mediaBot", "MediaBot.png", "DisplayMessage('Azure Sky Media Bot', 'Hi, my name is Viddy. I am currently under construction.<br><br>Please check on me later. Thank you.')" })
                     @if (ViewData.ContainsKey("accountContext"))
                     {
                         @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '" + ViewData["accountProfileEdit"] + "'" })
@@ -57,6 +63,7 @@
                     }
                     else
                     {
+                        @Html.Partial("SiteButton", new string[] { "userDirectory", "UserDirectory.png", "window.open('http://azure.microsoft.com/en-us/services/active-directory-b2c/')" })
                         @Html.Partial("SiteButton", new string[] { "userSignIn", "UserSignIn.png", "window.location.href = '" + ViewData["accountSignUpIn"] + "'" })
                     }
                 </td>
@@ -66,25 +73,25 @@
             <tr>
                 <td class="layoutSide">
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "amsPlatform", "MediaServices.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/')", "layoutButton sideTop" })
+                        @Html.Partial("SiteButton", new string[] { "amsPlatform", "MediaServices.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/')", "layoutButton side top" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "amsPlayer", "MediaPlayer.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/media-player/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "amsPlayer", "MediaPlayer.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/media-player/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "mediaStreaming", "MediaStreaming.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/live-on-demand/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "mediaStreaming", "MediaStreaming.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/live-on-demand/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "mediaEncoding", "MediaEncoding.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/encoding/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "mediaEncoding", "MediaEncoding.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/encoding/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "mediaProtection", "MediaProtection.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/content-protection/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "mediaProtection", "MediaProtection.png", "window.open('http://azure.microsoft.com/en-us/services/media-services/content-protection/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "mediaCertification", "MediaCertification.png", "window.open('http://azure.microsoft.com/en-us/blog/azure-media-services-certified-for-cdsa/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "mediaCertification", "MediaCertification.png", "window.open('http://azure.microsoft.com/en-us/blog/azure-media-services-certified-for-cdsa/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "mediaIndexer", "MediaIndexer.png", "window.open('http://azure.microsoft.com/en-us/services/cognitive-services/video-indexer/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "mediaIndexer", "MediaIndexer.png", "window.open('http://azure.microsoft.com/en-us/services/cognitive-services/video-indexer/')", "layoutButton side" })
                     </div>
                 </td>
                 <td>
@@ -92,25 +99,25 @@
                 </td>
                 <td class="layoutSide">
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "cognitiveServices", "CognitiveServices.png", "window.open('http://azure.microsoft.com/en-us/services/cognitive-services/')", "layoutButton sideTop" })
+                        @Html.Partial("SiteButton", new string[] { "cognitiveServices", "CognitiveServices.png", "window.open('http://azure.microsoft.com/en-us/services/cognitive-services/')", "layoutButton side top" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "appServiceWeb", "AppServiceWeb.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/web/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "appServiceWeb", "AppServiceWeb.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/web/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "appServiceFunctions", "AppServiceFunctions.png", "window.open('http://azure.microsoft.com/en-us/services/functions/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "appServiceFunctions", "AppServiceFunctions.png", "window.open('http://azure.microsoft.com/en-us/services/functions/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "appServiceLogic", "AppServiceLogic.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/logic/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "appServiceLogic", "AppServiceLogic.png", "window.open('http://azure.microsoft.com/en-us/services/app-service/logic/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "cosmosDB", "CosmosDB.png", "window.open('http://azure.microsoft.com/en-us/services/cosmos-db/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "cosmosDB", "CosmosDB.png", "window.open('http://azure.microsoft.com/en-us/services/cosmos-db/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "batchRendering", "BatchRendering.png", "window.open('http://rendering.azure.com/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "batchRendering", "BatchRendering.png", "window.open('http://rendering.azure.com/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "botService", "BotService.png", "window.open('http://azure.microsoft.com/en-us/services/bot-service/')", "layoutButton" })
+                        @Html.Partial("SiteButton", new string[] { "botService", "BotService.png", "window.open('http://azure.microsoft.com/en-us/services/bot-service/')", "layoutButton side" })
                     </div>
                 </td>
             </tr>                            

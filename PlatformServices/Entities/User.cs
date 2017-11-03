@@ -1,4 +1,6 @@
-﻿namespace AzureSkyMedia.PlatformServices
+﻿using System.Collections.Generic;
+
+namespace AzureSkyMedia.PlatformServices
 {
     public class User
     {
@@ -67,19 +69,34 @@
             }
         }
 
-        public string VideoIndexerKey
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey);
-            }
-        }
-
         public string[] StorageAccountNames
         {
             get
             {
-                return AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.StorageAccountName);
+                List<string> accountNames = new List<string>();
+
+                string claimType = Constant.UserAttribute.StorageAccount1Name;
+                string claimValue = AuthToken.GetClaimValue(_authToken, claimType);
+                if (!string.IsNullOrEmpty(claimValue))
+                {
+                    accountNames.Add(claimValue);
+                }
+
+                claimType = Constant.UserAttribute.StorageAccount2Name;
+                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
+                if (!string.IsNullOrEmpty(claimValue))
+                {
+                    accountNames.Add(claimValue);
+                }
+
+                claimType = Constant.UserAttribute.StorageAccount3Name;
+                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
+                if (!string.IsNullOrEmpty(claimValue))
+                {
+                    accountNames.Add(claimValue);
+                }
+
+                return accountNames.ToArray();
             }
         }
 
@@ -87,47 +104,38 @@
         {
             get
             {
-                return AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.StorageAccountKey);
+                List<string> accountKeys = new List<string>();
+
+                string claimType = Constant.UserAttribute.StorageAccount1Key;
+                string claimValue = AuthToken.GetClaimValue(_authToken, claimType);
+                if (!string.IsNullOrEmpty(claimValue))
+                {
+                    accountKeys.Add(claimValue);
+                }
+
+                claimType = Constant.UserAttribute.StorageAccount2Key;
+                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
+                if (!string.IsNullOrEmpty(claimValue))
+                {
+                    accountKeys.Add(claimValue);
+                }
+
+                claimType = Constant.UserAttribute.StorageAccount3Key;
+                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
+                if (!string.IsNullOrEmpty(claimValue))
+                {
+                    accountKeys.Add(claimValue);
+                }
+
+                return accountKeys.ToArray();
             }
         }
 
-        public string SigniantServiceGateway
+        public string VideoIndexerKey
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.SigniantServiceGateway);
-            }
-        }
-
-        public string SigniantAccountKey
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.SigniantAccountKey);
-            }
-        }
-
-        public string AsperaServiceGateway
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.AsperaServiceGateway);
-            }
-        }
-
-        public string AsperaAccountId
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.AsperaAccountId);
-            }
-        }
-
-        public string AsperaAccountKey
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.AsperaAccountKey);
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey);
             }
         }
     }

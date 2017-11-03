@@ -1,0 +1,34 @@
+﻿@section head {
+    <script type="text/javascript">
+        $(function () {
+            var rows = @Json.Serialize(ViewData["contentKeys"]);
+            var columns = [
+                {
+                    name: "id",
+                    hidden: true
+                },
+                {
+                    width: 500,
+                    name: "name",
+                    label: "Content Key Name",
+                    formatter: FormatColumn,
+                    align: "center"
+                },
+                {
+                    width: 300,
+                    name: "contentKeyType",
+                    label: "Content Key Type",
+                    formatter: FormatColumn,
+                    align: "center"
+                }
+            ];
+            LoadGrid("contentKeys", columns, rows, 400);
+        })
+    </script>
+}
+
+@section title {
+    Content Keys
+}
+
+<table id="contentKeys"></table>

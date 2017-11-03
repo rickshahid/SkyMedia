@@ -63,8 +63,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
             string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
-            string processorId3 = Constant.Media.ProcessorId.EncoderUltra;
-            string[] processorIds = new string[] { processorId1, processorId2, processorId3 };
+            string[] processorIds = new string[] { processorId1, processorId2 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             if (jobTasks.Length == 0)
             {
@@ -96,12 +95,12 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string accountId = contentPublish.PartitionKey;
                 string accountDomain = contentPublish.MediaAccountDomainName;
-                string accountUrl = contentPublish.MediaAccountEndpointUrl;
+                string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
                 string clientId = contentPublish.MediaAccountClientId;
                 string clientKey = contentPublish.MediaAccountClientKey;
                 string jobId = contentPublish.RowKey;
 
-                MediaClient mediaClient = new MediaClient(accountDomain, accountUrl, clientId, clientKey);
+                MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
                 IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
                 if (job != null)
                 {

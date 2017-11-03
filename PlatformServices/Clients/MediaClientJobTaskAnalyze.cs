@@ -44,10 +44,10 @@ namespace AzureSkyMedia.PlatformServices
             string settingKey = Constant.AppSettingKey.MediaProcessorVideoSummarizationDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
-            JToken processorOptions = processorConfig["options"];
-            processorOptions["maxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.SummarizationDurationSeconds.ToString()];
-            processorOptions["fadeInFadeOut"] = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.SummarizationFadeTransitions.ToString()];
-            processorOptions["outputAudio"] = !jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoOnly.ToString()];
+            JToken processorOptions = processorConfig["Options"];
+            processorOptions["MaxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.SummarizationDurationSeconds.ToString()];
+            processorOptions["FadeInFadeOut"] = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.SummarizationFadeTransitions.ToString()];
+            processorOptions["OutputAudio"] = !jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoOnly.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);
@@ -67,11 +67,11 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static MediaJobTask[] GetSpeechToTextTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        private static MediaJobTask[] GetSpeechAnalyzerTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.SpeechToText;
-            string settingKey = Constant.AppSettingKey.MediaProcessorSpeechToTextDocumentId;
+            jobTask.MediaProcessor = MediaProcessor.SpeechAnalyzer;
+            string settingKey = Constant.AppSettingKey.MediaProcessorSpeechAnalyzerDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];
@@ -100,11 +100,11 @@ namespace AzureSkyMedia.PlatformServices
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
-            JToken processorOptions = processorConfig["options"];
-            processorOptions["mode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
-            processorOptions["trackingMode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionTrackingMode.ToString()];
-            processorOptions["aggregateEmotionWindowMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionWindow.ToString()];
-            processorOptions["aggregateEmotionIntervalMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionInterval.ToString()];
+            JToken processorOptions = processorConfig["Options"];
+            processorOptions["Mode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
+            processorOptions["TrackingMode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionTrackingMode.ToString()];
+            processorOptions["AggregateEmotionWindowMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionWindow.ToString()];
+            processorOptions["AggregateEmotionIntervalMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionInterval.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);
@@ -120,8 +120,8 @@ namespace AzureSkyMedia.PlatformServices
             string settingKey = Constant.AppSettingKey.MediaProcessorFaceRedactionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
-            JToken processorOptions = processorConfig["options"];
-            processorOptions["mode"] = mode;
+            JToken processorOptions = processorConfig["Options"];
+            processorOptions["Mode"] = mode;
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);

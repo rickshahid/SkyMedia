@@ -1,0 +1,11 @@
+{
+  "Name": "Face Detection",
+  "Version": 1.0,
+  "Options": {
+    "Mode": "Faces",
+    "TrackingMode": "Fast",
+    "AggregateEmotionWindowMs": 500,
+    "AggregateEmotionIntervalMs": 500
+  },
+  "id": "332d873a-20bf-4044-8479-87744389589f"
+}

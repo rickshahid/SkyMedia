@@ -1,0 +1,22 @@
+{
+  "Name": "Encoder Standard - AAC Audio",
+  "Version": 1.0,
+  "Codecs": [
+    {
+      "Profile": "AACLC",
+      "Channels": 2,
+      "SamplingRate": 48000,
+      "Bitrate": 128,
+      "Type": "AACAudio"
+    }
+  ],
+  "Outputs": [
+    {
+      "FileName": "{Basename}_AAC_{AudioBitrate}.mp4",
+      "Format": {
+        "Type": "MP4Format"
+      }
+    }
+  ],
+  "id": "cc1c39c4-d115-4815-ad5b-4eae5f49ac77"
+}

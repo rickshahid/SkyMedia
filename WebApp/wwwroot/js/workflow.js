@@ -1,21 +1,5 @@
-﻿function SetWorkflowInputs(uploadView, signiantAccountKey, asperaAccountKey) {
-    if (uploadView) {
-        var currentUrl = window.location.href;
-        if (currentUrl.indexOf("signiant.") > -1) {
-            $("#uploadSigniantFlight").show();
-        } else if (currentUrl.indexOf("aspera.") > -1) {
-            $("#uploadAsperaFasp").show();
-        } else {
-            $("#uploadSigniantFlight").show();
-            $("#uploadAsperaFasp").show();
-        }
-        if (signiantAccountKey != "") {
-            $(":radio[name='uploadService'][value='signiantFlight']").prop("disabled", false);
-        }
-        if (asperaAccountKey != "") {
-            $(":radio[name='uploadService'][value='asperaFasp']").prop("disabled", false);
-        }
-    } else {
+﻿function SetWorkflowInputs(uploadView) {
+    if (!uploadView) {
         $("#mediaAssetsRow").show();
     }
     $("#jobName").editableSelect();

@@ -9,42 +9,61 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
-        public void signupin(string subdomain)
+        public void signupin()
         {
             AuthenticationProperties authProperties = new AuthenticationProperties();
-            authProperties.Items.Add("SubDomain", subdomain);
             HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
-        public void profileedit(string subdomain)
+        public void profileedit()
         {
             AuthenticationProperties authProperties = new AuthenticationProperties();
-            authProperties.Items.Add("SubDomain", subdomain);
             HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
-        public void passwordreset(string subdomain)
+        public void passwordreset()
         {
             AuthenticationProperties authProperties = new AuthenticationProperties();
-            authProperties.Items.Add("SubDomain", subdomain);
             HttpContext.ChallengeAsync(authProperties).Wait();
         }
 
-        public JsonResult clear(bool allEntities, bool includeLive)
+        public JsonResult clear(bool allEntities, bool liveOnly)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            Account.DeleteEntities(authToken, allEntities, includeLive);
+            Account.DeleteEntities(authToken, allEntities, liveOnly);
             return Json(allEntities);
         }
 
-        public IActionResult processors()
+
+        public IActionResult contentKeys()
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            ViewData["contentKeys"] = Account.GetContentKeys(authToken);
+            return View();
+        }
+
+        public IActionResult contentKeyAuthZPolicies()
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            ViewData["contentKeyAuthZPolicies"] = Account.GetContentKeyAuthZPolicies(authToken);
+            return View();
+        }
+
+        public IActionResult contentKeyAuthZPolicyOptions()
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            ViewData["contentKeyAuthZPolicyOptions"] = Account.GetContentKeyAuthZPolicyOptions(authToken);
+            return View();
+        }
+
+        public IActionResult mediaProcessors()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             ViewData["mediaProcessors"] = Processor.GetMediaProcessors(authToken, true);
             return View();
         }
 
-        public IActionResult endpoints()
+        public IActionResult notificationEndpoints()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             ViewData["notificationEndpoints"] = Account.GetNotificationEndpoints(authToken);

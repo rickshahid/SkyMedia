@@ -9,6 +9,23 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
+        //private static bool IsLiveAsset(MediaClient mediaClient, IAsset asset)
+        //{
+        //    bool liveAsset = false;
+        //    IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+        //    foreach (IChannel channel in channels)
+        //    {
+        //        foreach (IProgram program in channel.Programs)
+        //        {
+        //            if (string.Equals(program.Asset.Id, asset.Id, StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                liveAsset = true;
+        //            }
+        //        }
+        //    }
+        //    return liveAsset;
+        //}
+
         private static MediaTrack[] MapTextTracks(string textTracks)
         {
             List<MediaTrack> tracks = new List<MediaTrack>();
@@ -108,7 +125,7 @@ namespace AzureSkyMedia.PlatformServices
         //            if (!string.IsNullOrEmpty(webVtt))
         //            {
         //                MediaMetadata mediaMetadata = new MediaMetadata();
-        //                mediaMetadata.ProcessorName = Processor.GetProcessorName(MediaProcessor.SpeechToText);
+        //                mediaMetadata.ProcessorName = Processor.GetProcessorName(MediaProcessor.SpeechAnalyzer);
         //                mediaMetadata.SourceUrl = mediaClient.GetLocatorUrl(childAsset.Asset, webVtt);
         //                analyticsMetadata.Insert(0, mediaMetadata);
         //            }

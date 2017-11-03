@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void PublishSpeech(MediaClient mediaClient, IJob job)
         {
-            string processorId = Constant.Media.ProcessorId.SpeechToText;
+            string processorId = Constant.Media.ProcessorId.SpeechAnalyzer;
             string[] processorIds = new string[] { processorId };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             foreach (ITask jobTask in jobTasks)
@@ -80,11 +80,12 @@ namespace AzureSkyMedia.PlatformServices
 
                                 string accountId = contentPublish.PartitionKey;
                                 string accountDomain = contentPublish.MediaAccountDomainName;
-                                string accountUrl = contentPublish.MediaAccountEndpointUrl;
+                                string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
                                 string clientId = contentPublish.MediaAccountClientId;
                                 string clientKey = contentPublish.MediaAccountClientKey;
 
-                                string documentId = documentClient.UpsertDocument(collectionId, jsonDoc, accountId, accountDomain, accountUrl, clientId, clientKey, assetId);
+                                jsonDoc = DocumentClient.SetContext(jsonDoc, accountId, accountDomain, accountEndpoint, clientId, clientKey, assetId);
+                                string documentId = documentClient.UpsertDocument(collectionId, jsonDoc);
 
                                 string processorName = Processor.GetProcessorName(mediaProcessor.Value);
                                 outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
@@ -139,14 +140,16 @@ namespace AzureSkyMedia.PlatformServices
                 if (externalId != null)
                 {
                     string accountDomain = insightPublish.MediaAccountDomainName;
-                    string accountUrl = insightPublish.MediaAccountEndpointUrl;
+                    string accountEndpoint = insightPublish.MediaAccountEndpointUrl;
                     string clientId = insightPublish.MediaAccountClientId;
                     string clientKey = insightPublish.MediaAccountClientKey;
                     string assetId = externalId.ToString();
 
+                    index = DocumentClient.SetContext(index, accountId, accountDomain, accountEndpoint, clientId, clientKey, assetId);
+
                     DocumentClient documentClient = new DocumentClient();
                     string collectionId = Constant.Database.Collection.ContentInsight;
-                    string documentId = documentClient.UpsertDocument(collectionId, index, accountId, accountDomain, accountUrl, clientId, clientKey, assetId);
+                    string documentId = documentClient.UpsertDocument(collectionId, index);
 
                     mediaPublish = new MediaPublish
                     {

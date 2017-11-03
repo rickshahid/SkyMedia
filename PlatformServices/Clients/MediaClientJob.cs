@@ -47,7 +47,6 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     case MediaProcessor.EncoderStandard:
                     case MediaProcessor.EncoderPremium:
-                    case MediaProcessor.EncoderUltra:
                         tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.VideoIndexer:
@@ -76,8 +75,8 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
                         break;
-                    case MediaProcessor.SpeechToText:
-                        tasks = GetSpeechToTextTasks(mediaClient, jobTask, jobInputs);
+                    case MediaProcessor.SpeechAnalyzer:
+                        tasks = GetSpeechAnalyzerTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.FaceDetection:
                         tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);

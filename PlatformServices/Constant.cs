@@ -34,7 +34,9 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AppInsightsInstrumentationKey = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
-            public const string DirectoryUserDomain = "Directory.UserDomain";
+            public const string DirectoryTenantDomain = "Directory.TenantDomain";
+            public const string DirectoryTenantId = "Directory.TenantId";
+
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
 
@@ -46,6 +48,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryPolicyIdPasswordReset = "Directory.PolicyId.PasswordReset";
 
             public const string StorageCdnUrl = "Storage.CdnUrl";
+
+            public const string DatabaseThroughputUnits = "Database.ThroughputUnits";
 
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
@@ -67,7 +71,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaProcessorVideoSummarizationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
             public const string MediaProcessorVideoAnnotationDocumentId = "Media.Processor.VideoAnnotationDocumentId";
 
-            public const string MediaProcessorSpeechToTextDocumentId = "Media.Processor.SpeechToTextDocumentId";
+            public const string MediaProcessorSpeechAnalyzerDocumentId = "Media.Processor.SpeechAnalyzerDocumentId";
 
             public const string MediaProcessorFaceDetectionDocumentId = "Media.Processor.FaceDetectionDocumentId";
             public const string MediaProcessorFaceRedactionDocumentId = "Media.Processor.FaceRedactionDocumentId";
@@ -79,14 +83,13 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
             public const string MediaProcessorContentModerationDocumentId = "Media.Processor.ContentModerationDocumentId";
 
+            public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
+
             public const string MediaPublishContentUrl = "Media.Publish.ContentUrl";
             public const string MediaPublishContentQueue = "Media.Publish.ContentQueue";
 
             public const string MediaPublishInsightUrl = "Media.Publish.InsightUrl";
             public const string MediaPublishInsightQueue = "Media.Publish.InsightQueue";
-
-            public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
-            public const string MediaChannelAdvertisementSeconds = "Media.Channel.AdvertisementSeconds";
 
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
             public const string MediaLocatorMaxStreamCount = "Media.Locator.MaxStreamCount";
@@ -96,13 +99,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string MediaClipperEncoderPreset = "Media.Clipper.EncoderPreset";
             public const string MediaIndexerServiceUrl = "Media.Indexer.ServiceUrl";
-
-            public const string SigniantTransferApi = "Signiant.TransferApi";
-
-            public const string AsperaTransferApi = "Aspera.TransferApi";
-            public const string AsperaTransferInfo = "Aspera.TransferInfo";
-            public const string AsperaUploadSetup = "Aspera.UploadSetup";
-            public const string AsperaDownloadSetup = "Aspera.DownloadSetup";
 
             public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
@@ -140,25 +136,17 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaAccountEndpointUrl = "extension_MediaAccountEndpointUrl";
             public const string MediaAccountClientId = "extension_MediaAccountClientId";
             public const string MediaAccountClientKey = "extension_MediaAccountClientKey";
+            public const string StorageAccount1Name = "extension_StorageAccount1Name";
+            public const string StorageAccount1Key = "extension_StorageAccount1Key";
+            public const string StorageAccount2Name = "extension_StorageAccount2Name";
+            public const string StorageAccount2Key = "extension_StorageAccount2Key";
+            public const string StorageAccount3Name = "extension_StorageAccount3Name";
+            public const string StorageAccount3Key = "extension_StorageAccount3Key";
             public const string VideoIndexerKey = "extension_VideoIndexerKey";
-            public const string StorageAccountName = "extension_StorageAccountName";
-            public const string StorageAccountKey = "extension_StorageAccountKey";
-            public const string SigniantServiceGateway = "extension_SigniantServiceGateway";
-            public const string SigniantAccountKey = "extension_SigniantAccountKey";
-            public const string AsperaServiceGateway = "extension_AsperaServiceGateway";
-            public const string AsperaAccountId = "extension_AsperaAccountId";
-            public const string AsperaAccountKey = "extension_AsperaAccountKey";
         }
 
         public struct Storage
         {
-            public struct Partner
-            {
-                public const string SigniantContainer = " \"account-name\": \"{0}\", \"access-key\": \"{1}\", \"container\": \"{2}\" ";
-                public const string AsperaContainer = "azu://{0}:{1}@blob.core.windows.net";
-                public const string AsperaWorker = "-worker";
-            }
-
             public struct Account
             {
                 public const string Connection = "DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}";
@@ -211,11 +199,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string Prefix = "nb:mpid:";
                 public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
                 public const string EncoderPremium = "nb:mpid:UUID:77fea72a-107c-439e-b0bb-f88153b93461";
-                public const string EncoderUltra = "nb:mpid:UUID:816a4fda-76dc-463b-866b-9aa2f65deeac";
                 public const string VideoIndexer = "VideoIndexer";
                 public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";
                 public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
-                public const string SpeechToText = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
+                public const string SpeechAnalyzer = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
                 public const string FaceDetection = "nb:mpid:UUID:6a9b8239-81ea-4762-8125-66b4f45737a2";
                 public const string FaceRedaction = "nb:mpid:UUID:3806d7a6-4985-4437-b098-50e3733310e8";
                 public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
@@ -303,8 +290,8 @@ namespace AzureSkyMedia.PlatformServices
                 public const string ProgramAesSuffix = "-AES";
                 public const string ProgramDrmSuffix = "-DRM";
 
-                public const string AllowAllAddresses = "Allow All";
-                public const string AllowAddresses = "Allow Restricted";
+                public const string AllowAnyAddress = "Allow Any Address";
+                public const string AllowAuthorizedAddress = "Authorized Address Only";
             }
 
             public struct Stream
@@ -321,6 +308,7 @@ namespace AzureSkyMedia.PlatformServices
             public struct ItemKey
             {
                 public const string MediaProcessors = "MediaProcessors";
+                public const string MediaProcessorPresets = "MediaProcessorPresets";
             }
         }
 

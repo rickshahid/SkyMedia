@@ -1,9 +1,5 @@
-﻿@viewport {
-    zoom: 1.0;
-}
-
-@media all and (max-width: 320px) {
-    #siteHome, #botService, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+﻿@media all and (max-width: 320px) {
+    #siteHome, #botService, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -17,7 +13,7 @@
 }
 
 @media all and (min-width: 321px) and (max-width: 480px) {
-    #siteHome, #botService, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    #siteHome, #botService, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -92,7 +88,11 @@ body {
     width: 60px;
 }
 
-.siteButton.layoutButton.sideTop {
+.siteButton.layoutButton.side {
+    width: 75px;
+}
+
+.siteButton.layoutButton.top {
     margin-top: -10px;
 }
 
@@ -555,7 +555,7 @@ body {
     width: 218px;
 }
 
-.speechToTextLanguage {
+.speechAnalyzerLanguage {
     margin-right: 10px;
     font-weight: bold;
     width: 195px;
@@ -703,10 +703,6 @@ body {
 .accountInventory {
     border: 1px solid deepskyblue;
     border-radius: 20px;
-}
-
-.accountClear {
-    display: inline;
 }
 
 .entityCounts {

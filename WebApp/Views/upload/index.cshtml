@@ -11,9 +11,7 @@
     <script type="text/javascript" src="~/js/workflow.task.protection.js"></script>
     <script type="text/javascript">
         $(function () {
-            var signiantAccountKey = "@ViewData["signiantAccountKey"]";
-            var asperaAccountKey = "@ViewData["asperaAccountKey"]";
-            SetWorkflowInputs(true, signiantAccountKey, asperaAccountKey);
+            SetWorkflowInputs(true);
             CreateUploader();
         })
     </script>
@@ -23,7 +21,7 @@
     Media File Workflow
 }
 
-@Html.Partial("MediaUpload", new bool[] { false, false })
+@Html.Partial("MediaUpload")
 
 <div id="fileUploader"></div>
 

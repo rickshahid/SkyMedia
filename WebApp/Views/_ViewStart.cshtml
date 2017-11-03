@@ -40,18 +40,8 @@
 
     ViewData["accountSignUpIn"] = "/account/signupin";
     ViewData["accountProfileEdit"] = "/account/profileEdit";
-    string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
-    if (requestUrl.Contains("signiant"))
-    {
-        ViewData["accountSignUpIn"] = string.Concat(ViewData["accountSignUpIn"], "?subdomain=signiant");
-        ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=signiant");
-    }
-    else if (requestUrl.Contains("aspera"))
-    {
-        ViewData["accountSignUpIn"] = string.Concat(ViewData["accountSignUpIn"], "?subdomain=aspera");
-        ViewData["accountProfileEdit"] = string.Concat(ViewData["accountProfileEdit"], "?subdomain=aspera");
-    }
 
+    string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
     if (!requestUrl.Contains("/account/signup") && !requestUrl.Contains("/account/profile"))
     {
         Layout = "_Layout";

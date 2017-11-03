@@ -35,10 +35,10 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationSeconds" + lastTaskNumber, "summarizationDurationSeconds" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationFadeTransitions" + lastTaskNumber, "summarizationFadeTransitions" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationIncludeAudio" + lastTaskNumber, "summarizationIncludeAudio" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextConfigRow" + lastTaskNumber, "speechToTextConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextLanguage" + lastTaskNumber, "speechToTextLanguage" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionTtml" + lastTaskNumber, "speechToTextCaptionTtml" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechToTextCaptionWebVtt" + lastTaskNumber, "speechToTextCaptionWebVtt" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerConfigRow" + lastTaskNumber, "speechAnalyzerConfigRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzertLanguage" + lastTaskNumber, "speechAnalyzerLanguage" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerCaptionTtml" + lastTaskNumber, "speechAnalyzerCaptionTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerCaptionWebVtt" + lastTaskNumber, "speechAnalyzerCaptionWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionTrackingMode" + lastTaskNumber, "faceDetectionTrackingMode" + newTaskNumber);
@@ -84,13 +84,13 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
     var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
     var indexerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "indexerConfigRow");
     var summarizationConfigRowId = mediaProcessor.id.replace("mediaProcessor", "summarizationConfigRow");
-    var speechToTextConfigRowId = mediaProcessor.id.replace("mediaProcessor", "speechToTextConfigRow");
+    var speechAnalyzerConfigRowId = mediaProcessor.id.replace("mediaProcessor", "speechAnalyzerConfigRow");
     var faceDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionConfigRow");
     var faceRedactionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "faceRedactionConfigRow");
     var motionDetectionConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionDetectionConfigRow");
     var motionHyperlapseConfigRowId = mediaProcessor.id.replace("mediaProcessor", "motionHyperlapseConfigRow");
     var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
-    var hideIds = [encoderConfigRowId, encoderConfigDocSchemaId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, summarizationConfigRowId, speechToTextConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
+    var hideIds = [encoderConfigRowId, encoderConfigDocSchemaId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerConfigRowId, summarizationConfigRowId, speechAnalyzerConfigRowId, faceDetectionConfigRowId, faceRedactionConfigRowId, motionDetectionConfigRowId, motionHyperlapseConfigRowId];
     var unbindIds = [encoderConfigDocId, encoderConfigDocSchemaId];
     ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds, unbindIds);
     if (mediaProcessor.value != "None") {
@@ -145,8 +145,8 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
             case "VideoSummarization":
                 $("#" + summarizationConfigRowId).show();
                 break;
-            case "SpeechToText":
-                $("#" + speechToTextConfigRowId).show();
+            case "SpeechAnalyzer":
+                $("#" + speechAnalyzerConfigRowId).show();
                 break;
             case "FaceDetection":
                 $("#" + faceDetectionConfigRowId).show();

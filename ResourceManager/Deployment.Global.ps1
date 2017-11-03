@@ -32,7 +32,7 @@ $templateParameters = @{
 	"contentDeliveryOriginPath" = "/cdn"
 	"trafficManagerSubdomainName" = "SkyMedia"
 	"trafficManagerRoutingMethod" = "Performance"
-	"trafficManagerRoutingTimeToLive" = 30 # seconds
+	"trafficManagerRoutingTimeToLive" = 30 # Seconds
 	"appInsightsName" = "Azure Sky Media"
 	"appInsightsRegion" = "South Central US"
 }
