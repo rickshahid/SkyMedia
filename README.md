@@ -4,7 +4,7 @@ Welcome! This repository contains the multi-tenant Azure media solution sample t
 
 As an illustration, here is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. Azure Media Services content is adaptive, scaled and globally consumable across a wide range of devices and platforms.
 
-![](http://skystorage.azureedge.net/Snip01.ApplicationHome.png)
+![](http://skystorage.azureedge.net/Snip01.ApplicationSite.png)
 
 For more screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
@@ -92,12 +92,6 @@ The following Azure platform services were leveraged to create this sample media
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
-
-In addition, the following Azure partner services have been integrated for high-speed file transfer into Azure Storage:
-
-* **Signiant Flight** - http://www.signiant.com/signiant-flight-for-fast-large-file-transfers-to-azure-blob-storage/
-
-* **Aspera Server On Demand** - http://azuremarketplace.microsoft.com/marketplace/apps/aspera.sod
 
 If you have any issues or suggestions, please let me know.
 
