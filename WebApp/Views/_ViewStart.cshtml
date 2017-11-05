@@ -16,8 +16,8 @@
         ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccountId, ")");
     }
 
-    string settingKey = Constant.AppSettingKey.AppRegion;
-    ViewData["appRegion"] = homeController.GetAppSetting(settingKey);
+    string settingKey = Constant.AppSettingKey.AppRegionName;
+    ViewData["appRegionName"] = homeController.GetAppSetting(settingKey);
 
     string ampVersion = this.Context.Request.Query["amp.version"];
     if (string.IsNullOrEmpty(ampVersion))

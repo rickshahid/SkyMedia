@@ -25,12 +25,13 @@ namespace AzureSkyMedia.PlatformServices
         
         public struct AppSettingKey
         {
-            public const string AppRegion = "App.Region";
+            public const string AppRegionName = "App.RegionName";
+            public const string AppSubscriptionId = "App.SubscriptionId";
 
             public const string AppApiTitle = "App.Api.Title";
             public const string AppApiVersion = "App.Api.Version";
-            public const string AppApiDescription = "App.Api.Description";
             public const string AppApiEndpointUrl = "App.Api.EndpointUrl";
+            public const string AppApiDescription = "App.Api.Description";
 
             public const string AppInsightsInstrumentationKey = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
@@ -48,6 +49,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryPolicyIdPasswordReset = "Directory.PolicyId.PasswordReset";
 
             public const string StorageCdnUrl = "Storage.CdnUrl";
+            public const string StorageLoginUrl = "Storage.LoginUrl";
+            public const string StorageManagementUrl = "Storage.ManagementUrl";
 
             public const string DatabaseThroughputUnits = "Database.ThroughputUnits";
 

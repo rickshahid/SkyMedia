@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -130,11 +129,9 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                for (int i = 0; i < fileNames.Length; i++)
+                foreach (string fileName in fileNames)
                 {
-                    string fileName = fileNames[i];
-                    string assetName = Path.GetFileNameWithoutExtension(fileName);
-                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
+                    IAsset asset = mediaClient.CreateAsset(authToken, fileName, storageAccount, storageEncryption, new string[] { fileName });
                     MediaJobInput jobInput = GetJobInput(asset);
                     jobInputs.Add(jobInput);
                 }

@@ -4,6 +4,7 @@
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Storage).ResourceTypes | Where-Object ResourceTypeName -eq storageAccounts).ApiVersions
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Batch).ResourceTypes | Where-Object ResourceTypeName -eq batchAccounts).ApiVersions
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Media).ResourceTypes | Where-Object ResourceTypeName -eq mediaServices).ApiVersions
+# ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Cdn).ResourceTypes | Where-Object ResourceTypeName -eq profiles).ApiVersions
 
 $appName = "Azure.Sky.Media"
 
@@ -18,6 +19,8 @@ $templateParameters = @{
 	"batchServiceName" = "SkyMedia"
 	"mediaServiceName" = "USWest"
     "mediaRegionName" = "West US"
+	"contentDeliveryProfileName" = "SkyMedia-USWest"
+	"contentDeliveryProfileTier" = "Standard_Akamai"
 }
 
 $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
@@ -36,6 +39,8 @@ $templateParameters = @{
 	"batchServiceName" = "SkyMedia"
 	"mediaServiceName" = "USEast"
     "mediaRegionName" = "East US 2"
+	"contentDeliveryProfileName" = "SkyMedia-USEast"
+	"contentDeliveryProfileTier" = "Standard_Akamai"
 }
 
 $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore

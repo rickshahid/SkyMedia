@@ -81,7 +81,19 @@
         "description": "Name must be between 2 and 64 characters (letters, numbers and hyphens only)."
       }
     },
-    "contentDeliverySubdomainName": {
+    "contentDeliveryProfileTier": {
+      "type": "string",
+      "defaultValue": "Standard_Akamai",
+      "allowedValues": [
+        "Standard_Verizon",
+        "Premium_Verizon",
+        "Standard_Akamai"
+      ],
+      "metadata": {
+        "description": "Resource tier for the Content Delivery Network service."
+      }
+    },
+    "contentDeliveryEndpointSubdomain": {
       "type": "string",
       "minLength": 2,
       "maxLength": 64,
@@ -89,7 +101,7 @@
         "description": "Subdomain name (<subdomain>.azureedge.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
       }
     },
-    "contentDeliveryOriginPath": {
+    "contentDeliveryEndpointOriginPath": {
       "type": "string",
       "metadata": {
         "description": "Optional origin path (in the form /path relative to the origin root)."
@@ -148,7 +160,7 @@
     "webSiteApiVersion": "2016-08-01",
     "functionAppName": "[toLower(parameters('functionAppName'))]",
     "contentDeliveryApiVersion": "2017-04-02",
-    "contentDeliverySubdomainName": "[toLower(parameters('contentDeliverySubdomainName'))]",
+    "contentDeliveryEndpointSubdomain": "[toLower(parameters('contentDeliveryEndpointSubdomain'))]",
     "trafficManagerApiVersion": "2017-05-01",
     "trafficManagerSubdomainName": "[toLower(parameters('trafficManagerSubdomainName'))]",
     "trafficManagerSubdomainNameStaging": "[concat(variables('trafficManagerSubdomainName'), '-staging')]",
@@ -258,14 +270,14 @@
       "location": "[resourceGroup().location]",
       "name": "[parameters('contentDeliveryProfileName')]",
       "sku": {
-        "name": "Standard_Akamai"
+        "name": "[parameters('contentDeliveryProfileTier')]"
       },
       "resources": [
         {
           "type": "endpoints",
           "apiVersion": "[variables('contentDeliveryApiVersion')]",
           "location": "[resourceGroup().location]",
-          "name": "[variables('contentDeliverySubdomainName')]",
+          "name": "[variables('contentDeliveryEndpointSubdomain')]",
           "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]",
             "[resourceId('Microsoft.Cdn/profiles', parameters('contentDeliveryProfileName'))]"
@@ -280,7 +292,7 @@
                 }
               }
             ],
-            "originPath": "[parameters('contentDeliveryOriginPath')]",
+            "originPath": "[parameters('contentDeliveryEndpointOriginPath')]",
             "queryStringCachingBehavior": "IgnoreQueryString",
             "isHttpAllowed": true,
             "isHttpsAllowed": true,
@@ -361,7 +373,7 @@
     },
     "contentDeliveryHost": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('contentDeliveryProfileName'), variables('contentDeliverySubdomainName')), variables('contentDeliveryApiVersion')).hostName]"
+      "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('contentDeliveryProfileName'), variables('contentDeliveryEndpointSubdomain')), variables('contentDeliveryApiVersion')).hostName]"
     },
     "trafficManagerHost": {
       "type": "string",

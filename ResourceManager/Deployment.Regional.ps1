@@ -27,8 +27,9 @@ $templateParameters = @{
 	"appServicePlanNodeSize" = "S1"
 	"appServicePlanNodeCountMinimum" = 2
 	"appServicePlanNodeCountMaximum" = 5
-	"webAppSubdomainName" = "SkyMedia-USWest"
-	"webAppRegionName" = "US West"
+	"appSubdomainName" = "SkyMedia-USWest"
+	"appRegionName" = "US West"
+	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
 	"directoryClientId" = "5a5942f5-dfd4-42b4-a82e-37de4cf0ecee"
 	"directoryClientSecret" = "n1=Q2u]ZNcC#xV=3"
 	"directoryClientIdStaging" = "927f886f-127d-437c-8c09-fc4e95695d62"
@@ -61,8 +62,9 @@ $templateParameters = @{
 	"appServicePlanNodeSize" = "S1"
 	"appServicePlanNodeCountMinimum" = 2
 	"appServicePlanNodeCountMaximum" = 5
-	"webAppSubdomainName" = "SkyMedia-USEast"
-	"webAppRegionName" = "US East"
+	"appSubdomainName" = "SkyMedia-USEast"
+	"appRegionName" = "US East"
+	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
 	"directoryClientId" = "5a5942f5-dfd4-42b4-a82e-37de4cf0ecee"
 	"directoryClientSecret" = "n1=Q2u]ZNcC#xV=3"
 	"directoryClientIdStaging" = "927f886f-127d-437c-8c09-fc4e95695d62"

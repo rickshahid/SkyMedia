@@ -88,7 +88,7 @@
         "description": "Maximum number of compute nodes within the App Service Plan."
       }
     },
-    "webAppSubdomainName": {
+    "appSubdomainName": {
       "type": "string",
       "minLength": 2,
       "maxLength": 60,
@@ -96,10 +96,16 @@
         "description": "Subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
-    "webAppRegionName": {
+    "appRegionName": {
       "type": "string",
       "metadata": {
         "description": "Region display name for the web application."
+      }
+    },
+    "appSubscriptionId": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure subscription identifier to determine media storage account types with Reader role."
       }
     },
     "directoryClientId": {
@@ -142,7 +148,7 @@
     "cacheServiceName": "[toLower(parameters('cacheServiceName'))]",
     "webServerApiVersion": "2016-09-01",
     "webSiteApiVersion": "2016-08-01",
-    "webAppSubdomainName": "[toLower(parameters('webAppSubdomainName'))]",
+    "webAppSubdomainName": "[toLower(parameters('appSubdomainName'))]",
     "webAppSubdomainNameStaging": "[concat(variables('webAppSubdomainName'), '-staging')]",
     "appInsightsApiVersion": "2015-05-01"
   },
@@ -189,8 +195,12 @@
               "value": "[reference(resourceId(parameters('globalServiceResourceGroup'), 'Microsoft.Insights/components', parameters('appInsightsName')), variables('appInsightsApiVersion')).instrumentationKey]"
             },
             {
-              "name": "App.Region",
-              "value": "[parameters('webAppRegionName')]"
+              "name": "App.RegionName",
+              "value": "[parameters('appRegionName')]"
+            },
+            {
+              "name": "App.SubscriptionId",
+              "value": "[parameters('appSubscriptionId')]"
             },
             {
               "name": "Directory.ClientId",
@@ -226,11 +236,11 @@
           "apiVersion": "[variables('webSiteApiVersion')]",
           "name": "slotconfignames",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('webAppSubdomainName'))]"
+            "[resourceId('Microsoft.Web/sites', variables('webAppSubdomainName'))]"
           ],
           "properties": {
             "appSettingNames": [
-              "App.Region",
+              "App.RegionName",
               "Directory.ClientId",
               "Directory.ClientSecret"
             ]
@@ -242,14 +252,18 @@
           "location": "[resourceGroup().location]",
           "name": "staging",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('webAppSubdomainName'))]"
+            "[resourceId('Microsoft.Web/sites', variables('webAppSubdomainName'))]"
           ],
           "properties": {
             "siteConfig": {
               "appSettings": [
                 {
-                  "name": "App.Region",
-                  "value": "[concat(parameters('webAppRegionName'), ' - Staging')]"
+                  "name": "App.RegionName",
+                  "value": "[concat(parameters('appRegionName'), ' - Staging')]"
+                },
+                {
+                  "name": "App.SubscriptionId",
+                  "value": "[parameters('appSubscriptionId')]"
                 },
                 {
                   "name": "Directory.ClientId",

@@ -4,17 +4,16 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
+using Microsoft.Rest;
+using Microsoft.Azure.Management.Storage;
+using Microsoft.Azure.Management.Storage.Models;
+
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage.Analytics;
 using Microsoft.WindowsAzure.MediaServices.Client;
-
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-
-using Microsoft.Rest;
-using Microsoft.Azure.Management.Storage;
-using Microsoft.Azure.Management.Storage.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -29,33 +28,42 @@ namespace AzureSkyMedia.PlatformServices
 
     internal static class Storage
     {
-        public static string GetAccountType(string tenantId, string clientId, string clientKey, string accountName)
+        public static string GetAccountType(string subscriptionId, string tenantId, string clientId, string clientKey, string accountName)
         {
-            //var authContext = new AuthenticationContext(string.Format("https://login.windows.net/{0}", tenantId));
-            //var credential = new ClientCredential(clientId, clientKey);
-            //AuthenticationResult authResult = authContext.AcquireTokenAsync("https://management.core.windows.net/", credential).Result;
-            //string token = authResult.CreateAuthorizationHeader().Substring(Constant.HttpHeader.AuthPrefix.Length);
-
-            //TokenCredentials credentials = new TokenCredentials(token);
-
-            //StorageManagementClient storageClient = new StorageManagementClient(credentials);
-            //storageClient.SubscriptionId = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3";
-            //IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
-
-            //StorageAccountListKeysResult keys = storageClient.StorageAccounts.ListKeys("SkyMedia-USWest-Data", "skymediauswest0");
-
-            //foreach (StorageAccount storageAccount in storageAccounts)
-            //{
-            //    string x = storageAccount.Sku.ToString();
-            //    string y = storageAccount.Kind.ToString();
-            //    string z = storageAccount.AccessTier.ToString();
-            //}
-
-            string accountType = "Type: General";
-            string storageTier = "";
-            if (!string.IsNullOrEmpty(storageTier))
+            string accountType = string.Empty;
+            if (!string.IsNullOrEmpty(subscriptionId))
             {
-                accountType = string.Concat(accountType, ", ", storageTier);
+                string settingKey = Constant.AppSettingKey.StorageLoginUrl;
+                string loginUrl = AppSetting.GetValue(settingKey);
+
+                string authority = string.Concat(loginUrl, tenantId);
+                AuthenticationContext authContext = new AuthenticationContext(authority);
+
+                settingKey = Constant.AppSettingKey.StorageManagementUrl;
+                string managementUrl = AppSetting.GetValue(settingKey);
+
+                ClientCredential clientCredential = new ClientCredential(clientId, clientKey);
+
+                AuthenticationResult authResult = authContext.AcquireTokenAsync(managementUrl, clientCredential).Result;
+                TokenCredentials tokenCredential = new TokenCredentials(authResult.AccessToken);
+
+                StorageManagementClient storageClient = new StorageManagementClient(tokenCredential);
+                storageClient.SubscriptionId = subscriptionId;
+                IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
+
+                StorageAccount storageAccount = storageAccounts.Where(sa => sa.Name == accountName).SingleOrDefault();
+                if (storageAccount != null)
+                {
+                    switch (storageAccount.Kind)
+                    {
+                        case Kind.Storage:
+                            accountType = "General";
+                            break;
+                        case Kind.BlobStorage:
+                            accountType = string.Concat("Blob ", storageAccount.AccessTier.ToString());
+                            break;
+                    }
+                }
             }
             return accountType;
         }
@@ -93,14 +101,29 @@ namespace AzureSkyMedia.PlatformServices
 
         private static string GetAccountInfo(string authToken, IStorageAccount storageAccount)
         {
+            string accountInfo = string.Concat("Name: ", storageAccount.Name);
+
+            string settingKey = Constant.AppSettingKey.AppSubscriptionId;
+            string subscriptionId = AppSetting.GetValue(settingKey);
+
             User authUser = new User(authToken);
             string tenantId = authUser.MediaAccountDomainName;
             string clientId = authUser.MediaAccountClientId;
             string clientKey = authUser.MediaAccountClientKey;
 
-            string accountType = GetAccountType(tenantId, clientId, clientKey, storageAccount.Name);
+            string accountType = GetAccountType(subscriptionId, tenantId, clientId, clientKey, storageAccount.Name);
+            if (!string.IsNullOrEmpty(accountType))
+            {
+                accountInfo = string.Concat(accountInfo, ", Type: ", accountType);
+            }
+
             string storageUsed = GetCapacityUsed(authToken, storageAccount.Name);
-            return string.Concat(storageAccount.Name, ": ", accountType, ", ", storageUsed, ")");
+            if (!string.IsNullOrEmpty(storageUsed))
+            {
+                accountInfo = string.Concat(accountInfo, ", Used: ", storageUsed);
+            }
+
+            return accountInfo;
         }
 
         private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)

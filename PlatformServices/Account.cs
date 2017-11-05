@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
             return unitCount;
         }
 
-        private static void DeleteAsset(string authToken, MediaClient mediaClient, string accountId, IAsset asset)
+        private static void DeleteAsset(string authToken, string accountId, MediaClient mediaClient, IAsset asset)
         {
             IndexerClient indexerClient = new IndexerClient(authToken, null, null);
             string indexId = indexerClient.GetIndexId(asset);
@@ -62,6 +62,21 @@ namespace AzureSkyMedia.PlatformServices
             asset.Delete();
         }
 
+        private static void DeleteLive(string authToken, string accountId, MediaClient mediaClient)
+        {
+            IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
+            foreach (IProgram program in programs)
+            {
+                DeleteAsset(authToken, accountId, mediaClient, program.Asset);
+                program.Delete();
+            }
+            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+            foreach (IChannel channel in channels)
+            {
+                channel.Delete();
+            }
+        }
+
         private static void DeleteJob(string accountId, IJob job)
         {
             TableClient tableClient = new TableClient();
@@ -89,20 +104,22 @@ namespace AzureSkyMedia.PlatformServices
             MediaClient mediaClient = new MediaClient(authToken);
             if (liveOnly)
             {
-                IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
-                foreach (IProgram program in programs)
+                DeleteLive(authToken, authUser.MediaAccountId, mediaClient);
+            }
+            else if (!allEntities)
+            {
+                IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
+                foreach (IAsset asset in assets)
                 {
-                    DeleteAsset(authToken, mediaClient, authUser.MediaAccountId, program.Asset);
-                    program.Delete();
-                }
-                IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
-                foreach (IChannel channel in channels)
-                {
-                    channel.Delete();
+                    if (asset.ParentAssets.Count > 0)
+                    {
+                        DeleteAsset(authToken, authUser.MediaAccountId, mediaClient, asset);
+                    }
                 }
             }
-            else if (allEntities)
+            else
             {
+                DeleteLive(authToken, authUser.MediaAccountId, mediaClient);
                 IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
                 foreach (IIngestManifest manifest in manifests)
                 {
@@ -113,35 +130,29 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     jobTemplate.Delete();
                 }
-            }
-            IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
-            foreach (IJob job in jobs)
-            {
-                DeleteJob(authUser.MediaAccountId, job);
-            }
-            INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
-            foreach (INotificationEndPoint notificationEndpoint in notificationEndpoints)
-            {
-                if (notificationEndpoint.EndPointType == NotificationEndPointType.AzureTable)
+                IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
+                foreach (IJob job in jobs)
                 {
-                    IMonitoringConfiguration monitoringConfig = mediaClient.GetEntityById(MediaEntity.MonitoringConfiguration, notificationEndpoint.Id) as IMonitoringConfiguration;
-                    if (monitoringConfig != null)
+                    DeleteJob(authUser.MediaAccountId, job);
+                }
+                INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
+                foreach (INotificationEndPoint notificationEndpoint in notificationEndpoints)
+                {
+                    if (notificationEndpoint.EndPointType == NotificationEndPointType.AzureTable)
                     {
-                        monitoringConfig.Delete();
+                        IMonitoringConfiguration monitoringConfig = mediaClient.GetEntityById(MediaEntity.MonitoringConfiguration, notificationEndpoint.Id) as IMonitoringConfiguration;
+                        if (monitoringConfig != null)
+                        {
+                            monitoringConfig.Delete();
+                        }
                     }
+                    notificationEndpoint.Delete();
                 }
-                notificationEndpoint.Delete();
-            }
-            IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
-            foreach (IAsset asset in assets)
-            {
-                if (asset.ParentAssets.Count > 0 || allEntities)
+                IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
+                foreach (IAsset asset in assets)
                 {
-                    DeleteAsset(authToken, mediaClient, authUser.MediaAccountId, asset);
+                    DeleteAsset(authToken, authUser.MediaAccountId, mediaClient, asset);
                 }
-            }
-            if (allEntities)
-            {
                 IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
                 foreach (IAccessPolicy accessPolicy in accessPolicies)
                 {
