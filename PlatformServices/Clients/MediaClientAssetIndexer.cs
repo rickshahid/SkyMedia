@@ -13,22 +13,22 @@ namespace AzureSkyMedia.PlatformServices
         private string _serviceUrl;
         private string _accountId;
 
-        public IndexerClient(string authToken, string accountId, string indexerKey)
+        private IndexerClient()
         {
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                User authUser = new User(authToken);
-                accountId = authUser.MediaAccountId;
-                indexerKey = authUser.VideoIndexerKey;
-            }
-
-            if (!string.IsNullOrEmpty(indexerKey))
-            {
-                _indexer = new WebClient(indexerKey);
-            }
-
             string settingKey = Constant.AppSettingKey.MediaIndexerServiceUrl;
             _serviceUrl = AppSetting.GetValue(settingKey);
+        }
+
+        public IndexerClient(string authToken) : this()
+        {
+            User authUser = new User(authToken);
+            _indexer = new WebClient(authUser.VideoIndexerKey);
+            _accountId = authUser.MediaAccountId;
+        }
+
+        public IndexerClient(string accountId, string indexerKey) : this()
+        {
+            _indexer = new WebClient(indexerKey);
             _accountId = accountId;
         }
 

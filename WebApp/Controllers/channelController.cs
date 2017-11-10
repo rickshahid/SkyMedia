@@ -9,14 +9,16 @@ namespace AzureSkyMedia.WebApp.Controllers
         [HttpPost]
         [Route("/channel/create")]
         public string Create(string channelName, MediaEncoding channelEncoding, MediaProtocol inputProtocol,
-                             string authInputAddress, string authPreviewAddress, int archiveWindowMinutes)
+                             string inputAddressAuthorized, int inputSubnetPrefixLength,
+                             string previewAddressAuthorized, int previewSubnetPrefixLength,
+                             int archiveWindowMinutes, bool archiveEncryption)
         {
             string channelId = string.Empty;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                channelId = mediaClient.CreateChannel(channelName, channelEncoding, inputProtocol, authInputAddress, authPreviewAddress, archiveWindowMinutes);
+                channelId = mediaClient.CreateChannel(channelName, channelEncoding, inputProtocol, inputAddressAuthorized, inputSubnetPrefixLength, previewAddressAuthorized, previewSubnetPrefixLength, archiveWindowMinutes, archiveEncryption);
             }
             return channelId;
         }

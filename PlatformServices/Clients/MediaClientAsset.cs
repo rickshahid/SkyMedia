@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -9,15 +11,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private CloudBlockBlob CreateFile(IAsset asset, BlobClient blobClient, string containerName, string fileName)
-        {
-            CloudBlockBlob blob = blobClient.GetBlob(containerName, null, fileName, true);
-            IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-            assetFile.ContentFileSize = blob.Properties.Length;
-            assetFile.Update();
-            return blob;
-        }
-
         private IAsset[] GetAssets(string[] assetIds)
         {
             List<IAsset> assets = new List<IAsset>();
@@ -74,31 +67,35 @@ namespace AzureSkyMedia.PlatformServices
 
         public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames)
         {
-            AssetCreationOptions assetOptions = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
-            IAsset asset = _media.Assets.Create(assetName, storageAccount, assetOptions);
+            AssetCreationOptions assetEncryption = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
+            IAsset asset = _media.Assets.Create(assetName, storageAccount, assetEncryption);
 
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            string sourceContainerName = Constant.Storage.Blob.Container.FileUpload;
-            string destinationContainerName = asset.Uri.Segments[1];
+            string sourceContainer = Constant.Storage.Blob.Container.FileUpload;
 
             if (fileNames.Length == 1)
             {
                 string fileName = fileNames[0];
-                CloudBlockBlob sourceBlob = CreateFile(asset, blobClient, sourceContainerName, fileName);
-                CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, null, fileName, false);
-                destinationBlob.StartCopy(sourceBlob);
+                IAssetFile assetFile = asset.AssetFiles.Create(fileName);
+                CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
+                Stream sourceStream = sourceBlob.OpenRead();
+                assetFile.Upload(sourceStream);
             }
             else
             {
-                List<Task> copyTasks = new List<Task>();
+                BlobTransferClient transferClient = new BlobTransferClient();
+                ILocator sasLocator = CreateLocator(LocatorType.Sas, asset, true);
+                List<Task> uploadTasks = new List<Task>();
                 foreach (string fileName in fileNames)
                 {
-                    CloudBlockBlob sourceBlob = CreateFile(asset, blobClient, sourceContainerName, fileName);
-                    CloudBlockBlob destinationBlob = blobClient.GetBlob(destinationContainerName, null, fileName, false);
-                    Task copyTask = destinationBlob.StartCopyAsync(sourceBlob);
-                    copyTasks.Add(copyTask);
+                    IAssetFile assetFile = asset.AssetFiles.Create(fileName);
+                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
+                    Stream sourceStream = sourceBlob.OpenRead();
+                    Task uploadTask = assetFile.UploadAsync(sourceStream, transferClient, sasLocator, CancellationToken.None);
+                    uploadTasks.Add(uploadTask);
                 }
-                Task.WaitAll(copyTasks.ToArray());
+                Task.WaitAll(uploadTasks.ToArray());
+                sasLocator.Delete();
             }
 
             SetPrimaryFile(asset);

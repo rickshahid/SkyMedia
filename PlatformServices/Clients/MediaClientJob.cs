@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
                         tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.VideoIndexer:
-                        IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+                        IndexerClient indexerClient = new IndexerClient(authToken);
                         foreach (MediaJobInput jobInput in jobInputs)
                         {
                             if (jobInput.WorkflowView)

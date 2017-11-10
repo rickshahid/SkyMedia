@@ -122,46 +122,40 @@ namespace AzureSkyMedia.PlatformServices
             PublishSpeech(mediaClient, job);
         }
 
-        public static MediaPublish PublishInsight(string queueName)
+        public static MediaPublish PublishInsight(MediaInsightPublish insightPublish)
         {
+            string accountId = insightPublish.PartitionKey;
+            string indexerKey = insightPublish.IndexerAccountKey;
+            string indexId = insightPublish.RowKey;
+
+            IndexerClient indexerClient = new IndexerClient(accountId, indexerKey);
+            JObject index = indexerClient.GetIndex(indexId, null, false);
+
             MediaPublish mediaPublish = null;
-            QueueClient queueClient = new QueueClient();
-            MediaInsightPublish insightPublish = queueClient.GetMessage<MediaInsightPublish>(queueName, out string messageId, out string popReceipt);
-            if (insightPublish != null)
+            JToken externalId = GetExternalId(index);
+            if (externalId != null)
             {
-                string accountId = insightPublish.PartitionKey;
-                string indexerKey = insightPublish.IndexerAccountKey;
-                string indexId = insightPublish.RowKey;
+                string accountDomain = insightPublish.MediaAccountDomainName;
+                string accountEndpoint = insightPublish.MediaAccountEndpointUrl;
+                string clientId = insightPublish.MediaAccountClientId;
+                string clientKey = insightPublish.MediaAccountClientKey;
+                string assetId = externalId.ToString();
 
-                IndexerClient indexerClient = new IndexerClient(null, accountId, indexerKey);
-                JObject index = indexerClient.GetIndex(indexId, null, false);
+                index = DocumentClient.SetContext(index, accountId, accountDomain, accountEndpoint, clientId, clientKey, assetId);
 
-                JToken externalId = GetExternalId(index);
-                if (externalId != null)
+                DocumentClient documentClient = new DocumentClient();
+                string collectionId = Constant.Database.Collection.ContentInsight;
+                string documentId = documentClient.UpsertDocument(collectionId, index);
+
+                mediaPublish = new MediaPublish
                 {
-                    string accountDomain = insightPublish.MediaAccountDomainName;
-                    string accountEndpoint = insightPublish.MediaAccountEndpointUrl;
-                    string clientId = insightPublish.MediaAccountClientId;
-                    string clientKey = insightPublish.MediaAccountClientKey;
-                    string assetId = externalId.ToString();
-
-                    index = DocumentClient.SetContext(index, accountId, accountDomain, accountEndpoint, clientId, clientKey, assetId);
-
-                    DocumentClient documentClient = new DocumentClient();
-                    string collectionId = Constant.Database.Collection.ContentInsight;
-                    string documentId = documentClient.UpsertDocument(collectionId, index);
-
-                    mediaPublish = new MediaPublish
-                    {
-                        AssetId = assetId,
-                        IndexId = indexId,
-                        DocumentId = documentId,
-                        UserId = insightPublish.UserId,
-                        MobileNumber = insightPublish.MobileNumber,
-                        StatusMessage = string.Empty
-                    };
-                }
-                queueClient.DeleteMessage(queueName, messageId, popReceipt);
+                    AssetId = assetId,
+                    IndexId = indexId,
+                    DocumentId = documentId,
+                    UserId = insightPublish.UserId,
+                    MobileNumber = insightPublish.MobileNumber,
+                    StatusMessage = string.Empty
+                };
             }
             return mediaPublish;
         }

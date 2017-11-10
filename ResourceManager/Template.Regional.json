@@ -8,6 +8,54 @@
         "description": "Name of the global service resource group."
       }
     },
+    "directoryB2bClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2B) client identifier for production web application configuration."
+      }
+    },
+    "directoryB2bClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2B) client secret for production web application configuration."
+      }
+    },
+    "directoryB2bClientIdStaging": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2B) client identifier for staging web application configuration."
+      }
+    },
+    "directoryB2bClientSecretStaging": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2B) client secret for staging web application configuration."
+      }
+    },
+    "directoryB2cClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2C) client identifier for production web application configuration."
+      }
+    },
+    "directoryB2cClientSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2C) client secret for production web application configuration."
+      }
+    },
+    "directoryB2cClientIdStaging": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2C) client identifier for staging web application configuration."
+      }
+    },
+    "directoryB2cClientSecretStaging": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory (B2C) client secret for staging web application configuration."
+      }
+    },
     "storageServiceName": {
       "type": "string",
       "minLength": 3,
@@ -108,30 +156,6 @@
         "description": "Azure subscription identifier to determine media storage account types with Reader role."
       }
     },
-    "directoryClientId": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory client identifier for production web application configuration."
-      }
-    },
-    "directoryClientSecret": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory client secret for production web application configuration."
-      }
-    },
-    "directoryClientIdStaging": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory client identifier for staging web application configuration."
-      }
-    },
-    "directoryClientSecretStaging": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory client secret for staging web application configuration."
-      }
-    },
     "appInsightsName": {
       "type": "string",
       "metadata": {
@@ -203,12 +227,20 @@
               "value": "[parameters('appSubscriptionId')]"
             },
             {
-              "name": "Directory.ClientId",
-              "value": "[parameters('directoryClientId')]"
+              "name": "Directory.B2B.ClientId",
+              "value": "[parameters('directoryB2bClientId')]"
             },
             {
-              "name": "Directory.ClientSecret",
-              "value": "[parameters('directoryClientSecret')]"
+              "name": "Directory.B2B.ClientSecret",
+              "value": "[parameters('directoryB2bClientSecret')]"
+            },
+            {
+              "name": "Directory.B2C.ClientId",
+              "value": "[parameters('directoryB2cClientId')]"
+            },
+            {
+              "name": "Directory.B2C.ClientSecret",
+              "value": "[parameters('directoryB2cClientSecret')]"
             },
             {
               "name": "Storage",
@@ -266,12 +298,20 @@
                   "value": "[parameters('appSubscriptionId')]"
                 },
                 {
-                  "name": "Directory.ClientId",
-                  "value": "[parameters('directoryClientIdStaging')]"
+                  "name": "Directory.B2B.ClientId",
+                  "value": "[parameters('directoryB2bClientIdStaging')]"
                 },
                 {
-                  "name": "Directory.ClientSecret",
-                  "value": "[parameters('directoryClientSecretStaging')]"
+                  "name": "Directory.B2B.ClientSecret",
+                  "value": "[parameters('directoryB2bClientSecretStaging')]"
+                },
+                {
+                  "name": "Directory.B2C.ClientId",
+                  "value": "[parameters('directoryB2cClientIdStaging')]"
+                },
+                {
+                  "name": "Directory.B2C.ClientSecret",
+                  "value": "[parameters('directoryB2cClientSecretStaging')]"
                 },
                 {
                   "name": "Storage",

@@ -24,62 +24,73 @@ namespace AzureSkyMedia.PlatformServices
             channel.Programs.Create(programOptions);
         }
 
-        private void CreatePrograms(IChannel channel, int archiveWindowMinutes)
+        private void CreatePrograms(IChannel channel, int archiveWindowMinutes, bool archiveEncryption)
         {
             string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramClearSuffix);
-            IAsset assetClear = _media.Assets.Create(assetName, AssetCreationOptions.None);
+            IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.None);
+            CreateProgram(channel, asset, archiveWindowMinutes);
 
-            assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramAesSuffix);
-            IAsset assetAes = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
-            ContentProtection contentProtectionAes = new ContentProtection()
+            if (archiveEncryption)
             {
-                ContentAuthTypeToken = true,
-                Aes = true
-            };
-            AddDeliveryPolicies(assetAes, contentProtectionAes);
+                assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramAesSuffix);
+                asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+                ContentProtection contentProtection = new ContentProtection()
+                {
+                    ContentAuthTypeToken = true,
+                    Aes = true
+                };
+                AddDeliveryPolicies(asset, contentProtection);
+                CreateProgram(channel, asset, archiveWindowMinutes);
 
-            assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramDrmSuffix);
-            IAsset assetDrm = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
-            ContentProtection contentProtectionDrm = new ContentProtection()
-            {
-                ContentAuthTypeToken = true,
-                DrmPlayReady = true,
-                DrmWidevine = true
-            };
-            AddDeliveryPolicies(assetDrm, contentProtectionDrm);
-
-            CreateProgram(channel, assetClear, archiveWindowMinutes);
-            CreateProgram(channel, assetAes, archiveWindowMinutes);
-            CreateProgram(channel, assetDrm, archiveWindowMinutes);
+                assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramDrmSuffix);
+                asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+                contentProtection = new ContentProtection()
+                {
+                    ContentAuthTypeToken = true,
+                    DrmPlayReady = true,
+                    DrmWidevine = true
+                };
+                AddDeliveryPolicies(asset, contentProtection);
+                CreateProgram(channel, asset, archiveWindowMinutes);
+            }
         }
 
         private IChannel CreateChannel(string channelName, ChannelEncodingType channelType, StreamingProtocol channelProtocol,
-                                       string authInputAddress, string authPreviewAddress)
+                                       string inputAddressAuthorized, int inputSubnetPrefixLength,
+                                       string previewAddressAuthorized, int previewSubnetPrefixLength)
         {
             IPRange inputAddressRange = new IPRange();
-            inputAddressRange.Name = Constant.Media.Live.AllowAnyAddress;
-            inputAddressRange.Address = new IPAddress(0);
-            inputAddressRange.SubnetPrefixLength = 0;
-            if (!string.IsNullOrEmpty(authInputAddress))
+            if (string.IsNullOrEmpty(inputAddressAuthorized))
+            {
+                inputAddressRange.Name = Constant.Media.Live.AllowAnyAddress;
+                inputAddressRange.Address = new IPAddress(0);
+                inputAddressRange.SubnetPrefixLength = 0;
+            }
+            else
             {
                 inputAddressRange.Name = Constant.Media.Live.AllowAuthorizedAddress;
-                inputAddressRange.Address = IPAddress.Parse(authInputAddress);
+                inputAddressRange.Address = IPAddress.Parse(inputAddressAuthorized);
+                inputAddressRange.SubnetPrefixLength = inputSubnetPrefixLength;
             }
 
             IPRange previewAddressRange = new IPRange();
-            previewAddressRange.Name = Constant.Media.Live.AllowAnyAddress;
-            previewAddressRange.Address = new IPAddress(0);
-            previewAddressRange.SubnetPrefixLength = 0;
-            if (!string.IsNullOrEmpty(authPreviewAddress))
+            if (string.IsNullOrEmpty(previewAddressAuthorized))
+            {
+                previewAddressRange.Name = Constant.Media.Live.AllowAnyAddress;
+                previewAddressRange.Address = new IPAddress(0);
+                previewAddressRange.SubnetPrefixLength = 0;
+            }
+            else
             {
                 previewAddressRange.Name = Constant.Media.Live.AllowAuthorizedAddress;
-                previewAddressRange.Address = IPAddress.Parse(authPreviewAddress);
+                previewAddressRange.Address = IPAddress.Parse(previewAddressAuthorized);
+                previewAddressRange.SubnetPrefixLength = previewSubnetPrefixLength;
             }
 
             ChannelCreationOptions channelOptions = new ChannelCreationOptions()
             {
-                EncodingType = channelType,
                 Name = channelName,
+                EncodingType = channelType,
                 Input = new ChannelInput()
                 {
                     StreamingProtocol = channelProtocol,
@@ -109,12 +120,14 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public string CreateChannel(string channelName, MediaEncoding channelEncoding, MediaProtocol inputProtocol,
-                                    string authInputAddress, string authPreviewAddress, int archiveWindowMinutes)
+                                    string inputAddressAuthorized, int inputSubnetPrefixLength,
+                                    string previewAddressAuthorized, int previewSubnetPrefixLength,
+                                    int archiveWindowMinutes, bool archiveEncryption)
         {
             ChannelEncodingType channelType = (ChannelEncodingType)channelEncoding;
             StreamingProtocol channelProtocol = (StreamingProtocol)inputProtocol;
-            IChannel channel = CreateChannel(channelName, channelType, channelProtocol, authInputAddress, authPreviewAddress);
-            CreatePrograms(channel, archiveWindowMinutes);
+            IChannel channel = CreateChannel(channelName, channelType, channelProtocol, inputAddressAuthorized, inputSubnetPrefixLength, previewAddressAuthorized, previewSubnetPrefixLength);
+            CreatePrograms(channel, archiveWindowMinutes, archiveEncryption);
             foreach (IProgram program in channel.Programs)
             {
                 CreateLocator(LocatorType.OnDemandOrigin, program.Asset);

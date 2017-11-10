@@ -95,21 +95,35 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (contentProtection.ContentAuthTypeToken)
             {
-                string settingKey = Constant.AppSettingKey.DirectoryTenantDomain;
+                string settingKey = Constant.AppSettingKey.DirectoryId;
+                string directoryId = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.DirectoryTenantDomain;
+                settingKey = string.Format(settingKey, directoryId);
                 string directoryTenantDomain = AppSetting.GetValue(settingKey);
+                directoryTenantDomain = string.Format(directoryTenantDomain, directoryId);
 
                 settingKey = Constant.AppSettingKey.DirectoryTenantId;
+                settingKey = string.Format(settingKey, directoryId);
                 string directoryTenantId = AppSetting.GetValue(settingKey);
+                directoryTenantId = string.Format(directoryTenantId, directoryId);
 
                 settingKey = Constant.AppSettingKey.DirectoryDiscoveryUrl;
                 string discoveryUrl = AppSetting.GetValue(settingKey);
                 discoveryUrl = string.Format(discoveryUrl, directoryTenantDomain);
+                if (string.Equals(directoryId, "B2C", StringComparison.OrdinalIgnoreCase))
+                {
+                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
+                    string policyIdSignUpIn = AppSetting.GetValue(settingKey);
+                    discoveryUrl = string.Concat(discoveryUrl, "?p=", policyIdSignUpIn);
+                }
 
                 settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
                 string issuerUrl = AppSetting.GetValue(settingKey);
                 issuerUrl = string.Format(issuerUrl, directoryTenantId);
 
                 settingKey = Constant.AppSettingKey.DirectoryClientId;
+                settingKey = string.Format(settingKey, directoryId);
                 string clientId = AppSetting.GetValue(settingKey);
 
                 TokenRestrictionTemplate tokenTemplate = new TokenRestrictionTemplate(TokenType.JWT);

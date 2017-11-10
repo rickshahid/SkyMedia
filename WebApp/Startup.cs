@@ -129,20 +129,23 @@ namespace AzureSkyMedia.WebApp
             });
             authBuilder.AddOpenIdConnect(openIdOptions =>
             {
-                string settingKey = Constant.AppSettingKey.DirectoryTenantId;
+                string settingKey = Constant.AppSettingKey.DirectoryId;
+                string directoryId = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.DirectoryTenantId;
+                settingKey = string.Format(settingKey, directoryId);
                 string directoryTenantId = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
                 string issuerUrl = AppSetting.GetValue(settingKey);
-                issuerUrl = string.Format(issuerUrl, directoryTenantId);
-
-                settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                openIdOptions.Authority = issuerUrl;
+                openIdOptions.Authority = string.Format(issuerUrl, directoryTenantId); ;
 
                 settingKey = Constant.AppSettingKey.DirectoryClientId;
+                settingKey = string.Format(settingKey, directoryId);
                 openIdOptions.ClientId = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryClientSecret;
+                settingKey = string.Format(settingKey, directoryId);
                 openIdOptions.ClientSecret = AppSetting.GetValue(settingKey);
 
                 openIdOptions.Events = new OpenIdConnectEvents

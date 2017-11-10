@@ -7,16 +7,33 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private IAccessPolicy GetAccessPolicy()
+        private bool IsManifestFile(string fileName)
         {
-            string policyName = Constant.Media.AccessPolicy.ReadPolicyName;
+            return fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private IAccessPolicy GetAccessPolicy(bool readWrite)
+        {
+            string policyName = readWrite ? Constant.Media.AccessPolicy.ReadWritePolicyName : Constant.Media.AccessPolicy.ReadOnlyPolicyName;
             IAccessPolicy accessPolicy = GetEntityByName(MediaEntity.AccessPolicy, policyName, true) as IAccessPolicy;
             if (accessPolicy == null)
             {
-                string settingKey = Constant.AppSettingKey.MediaLocatorReadDurationDays;
-                string readDurationDays = AppSetting.GetValue(settingKey);
-                TimeSpan policyDuration = new TimeSpan(int.Parse(readDurationDays), 0, 0, 0);
-                accessPolicy = _media.AccessPolicies.Create(policyName, policyDuration, AccessPermissions.Read);
+                TimeSpan policyDuration;
+                AccessPermissions policyPermissions = AccessPermissions.Read;
+                if (readWrite)
+                {
+                    string settingKey = Constant.AppSettingKey.MediaLocatorWriteDurationMinutes;
+                    string durationMinutes = AppSetting.GetValue(settingKey);
+                    policyDuration = new TimeSpan(0, int.Parse(durationMinutes), 0);
+                    policyPermissions = policyPermissions | AccessPermissions.Write;
+                }
+                else
+                {
+                    string settingKey = Constant.AppSettingKey.MediaLocatorReadDurationDays;
+                    string durationDays = AppSetting.GetValue(settingKey);
+                    policyDuration = new TimeSpan(int.Parse(durationDays), 0, 0, 0);
+                }
+                accessPolicy = _media.AccessPolicies.Create(policyName, policyDuration, policyPermissions);
             }
             return accessPolicy;
         }
@@ -41,7 +58,7 @@ namespace AzureSkyMedia.PlatformServices
                 case LocatorType.OnDemandOrigin:
                     primaryUrl = string.Concat(primaryUrl, "/", locator.ContentAccessComponent);
                     primaryUrl = string.Concat(primaryUrl, "/", fileName);
-                    if (fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase))
+                    if (IsManifestFile(fileName))
                     {
                         primaryUrl = string.Concat(primaryUrl, Constant.Media.Stream.LocatorManifestSuffix);
                     }
@@ -50,7 +67,7 @@ namespace AzureSkyMedia.PlatformServices
             return primaryUrl;
         }
 
-        private static void SetPrimaryFile(IAsset asset)
+        private void SetPrimaryFile(IAsset asset)
         {
             if (asset.AssetFiles.Count() == 1)
             {
@@ -62,7 +79,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAssetFile assetFile in asset.AssetFiles)
                 {
-                    if (assetFile.Name.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase))
+                    if (IsManifestFile(assetFile.Name))
                     {
                         assetFile.IsPrimary = true;
                         assetFile.Update();
@@ -91,13 +108,15 @@ namespace AzureSkyMedia.PlatformServices
             {
                 locator = CreateLocator(locatorType, asset);
             }
-            else
+            else if (locator.ExpirationDateTime <= DateTime.UtcNow)
             {
-                if (locator.ExpirationDateTime <= DateTime.UtcNow)
+                string settingKey = Constant.AppSettingKey.MediaLocatorAutoRenewal;
+                string autoRenewal = AppSetting.GetValue(settingKey);
+                if (string.Equals(autoRenewal, "true", StringComparison.OrdinalIgnoreCase))
                 {
-                    IAccessPolicy accessPolicy = GetAccessPolicy();
-                    DateTime accessExpiration = DateTime.UtcNow.Add(accessPolicy.Duration);
-                    locator.Update(accessExpiration);
+                    IAccessPolicy accessPolicy = GetAccessPolicy(false);
+                    DateTime policyExpiration = DateTime.UtcNow.Add(accessPolicy.Duration);
+                    locator.Update(policyExpiration);
                 }
             }
             return GetPrimaryUrl(locator, fileName, excludeProtocol);
@@ -126,20 +145,25 @@ namespace AzureSkyMedia.PlatformServices
             return webVttUrl;
         }
 
-        public ILocator CreateLocator(string locatorId, LocatorType locatorType, IAsset asset)
+        public ILocator CreateLocator(string locatorId, LocatorType locatorType, IAsset asset, bool readWrite)
         {
             ILocator locator = asset.Locators.Where(l => l.Type == locatorType).FirstOrDefault();
             if (locator == null)
             {
-                IAccessPolicy accessPolicy = GetAccessPolicy();
+                IAccessPolicy accessPolicy = GetAccessPolicy(readWrite);
                 locator = _media.Locators.CreateLocator(locatorId, locatorType, asset, accessPolicy, null);
             }
             return locator;
         }
 
+        public ILocator CreateLocator(LocatorType locatorType, IAsset asset, bool readWrite)
+        {
+            return CreateLocator(null, locatorType, asset, readWrite);
+        }
+
         public ILocator CreateLocator(LocatorType locatorType, IAsset asset)
         {
-            return CreateLocator(null, locatorType, asset);
+            return CreateLocator(null, locatorType, asset, false);
         }
     }
 }

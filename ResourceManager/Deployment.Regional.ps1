@@ -16,6 +16,14 @@ $regionLocation = "West US"
 
 $templateParameters = @{
 	"globalServiceResourceGroup" = ($appName + "-US.Central")
+	"directoryB2bClientId" = "9a773e4c-d1d6-4fdf-adcb-df195c5f3c03"
+	"directoryB2bClientSecret" = "a7pRhpQf/OFkaF4Q4fSpjdclgTPUx5wPmkGk0pS8xwQ="
+	"directoryB2bClientIdStaging" = "2c96d59b-510e-44b7-bed4-a3b527c66825"
+	"directoryB2bClientSecretStaging" = "VBUI1dYVlYny9tZNSh3FQlux73YjpVH0+vYnAnlKtuY="
+	"directoryB2cClientId" = "66caa1db-0ccb-46a6-a0fd-44ff62e344d5"
+	"directoryB2cClientSecret" = "ZX{liJ5As1[EL6DY"
+	"directoryB2cClientIdStaging" = "2f0b5e56-a49d-457a-b603-4e9bd694648b"
+	"directoryB2cClientSecretStaging" = "4H#/M:7|uQo%A13n"
 	"storageServiceName" = "SkyMedia"
 	"databaseServiceName" = "SkyMedia"
 	"databaseIdentifier" = "Media"
@@ -30,10 +38,6 @@ $templateParameters = @{
 	"appSubdomainName" = "SkyMedia-USWest"
 	"appRegionName" = "US West"
 	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
-	"directoryClientId" = "5a5942f5-dfd4-42b4-a82e-37de4cf0ecee"
-	"directoryClientSecret" = "n1=Q2u]ZNcC#xV=3"
-	"directoryClientIdStaging" = "927f886f-127d-437c-8c09-fc4e95695d62"
-	"directoryClientSecretStaging" = "E85xs3rvQ415jIx)"
     "appInsightsName" = "Azure Sky Media"
 }
 
@@ -51,6 +55,14 @@ $regionLocation = "East US"
 
 $templateParameters = @{
 	"globalServiceResourceGroup" = ($appName + "-US.Central")
+	"directoryB2bClientId" = "9a773e4c-d1d6-4fdf-adcb-df195c5f3c03"
+	"directoryB2bClientSecret" = "a7pRhpQf/OFkaF4Q4fSpjdclgTPUx5wPmkGk0pS8xwQ="
+	"directoryB2bClientIdStaging" = "2c96d59b-510e-44b7-bed4-a3b527c66825"
+	"directoryB2bClientSecretStaging" = "VBUI1dYVlYny9tZNSh3FQlux73YjpVH0+vYnAnlKtuY="
+	"directoryB2cClientId" = "66caa1db-0ccb-46a6-a0fd-44ff62e344d5"
+	"directoryB2cClientSecret" = "ZX{liJ5As1[EL6DY"
+	"directoryB2cClientIdStaging" = "2f0b5e56-a49d-457a-b603-4e9bd694648b"
+	"directoryB2cClientSecretStaging" = "4H#/M:7|uQo%A13n"
 	"storageServiceName" = "SkyMedia"
 	"databaseServiceName" = "SkyMedia"
 	"databaseIdentifier" = "Media"
@@ -65,10 +77,6 @@ $templateParameters = @{
 	"appSubdomainName" = "SkyMedia-USEast"
 	"appRegionName" = "US East"
 	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
-	"directoryClientId" = "5a5942f5-dfd4-42b4-a82e-37de4cf0ecee"
-	"directoryClientSecret" = "n1=Q2u]ZNcC#xV=3"
-	"directoryClientIdStaging" = "927f886f-127d-437c-8c09-fc4e95695d62"
-	"directoryClientSecretStaging" = "E85xs3rvQ415jIx)"
     "appInsightsName" = "Azure Sky Media"
 }
 

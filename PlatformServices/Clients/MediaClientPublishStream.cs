@@ -55,7 +55,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     mediaClient.AddDeliveryPolicies(asset, contentProtection);
                 }
-                mediaClient.CreateLocator(locatorId, locatorType, asset);
+                mediaClient.CreateLocator(locatorId, locatorType, asset, false);
             }
         }
 
@@ -86,35 +86,29 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static MediaPublish PublishContent(string queueName)
+        public static MediaPublish PublishContent(MediaContentPublish contentPublish)
         {
+            string accountId = contentPublish.PartitionKey;
+            string accountDomain = contentPublish.MediaAccountDomainName;
+            string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
+            string clientId = contentPublish.MediaAccountClientId;
+            string clientKey = contentPublish.MediaAccountClientKey;
+            string jobId = contentPublish.RowKey;
+
+            MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
+            IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
+
             MediaPublish mediaPublish = null;
-            QueueClient queueClient = new QueueClient();
-            MediaContentPublish contentPublish = queueClient.GetMessage<MediaContentPublish>(queueName, out string messageId, out string popReceipt);
-            if (contentPublish != null)
+            if (job != null)
             {
-                string accountId = contentPublish.PartitionKey;
-                string accountDomain = contentPublish.MediaAccountDomainName;
-                string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
-                string clientId = contentPublish.MediaAccountClientId;
-                string clientKey = contentPublish.MediaAccountClientKey;
-                string jobId = contentPublish.RowKey;
-
-                MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
-                IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
-                if (job != null)
+                mediaClient.SetProcessorUnits(job, null, ReservedUnitType.Basic, false);
+                PublishJob(mediaClient, job, contentPublish);
+                mediaPublish = new MediaPublish()
                 {
-                    mediaClient.SetProcessorUnits(job, null, ReservedUnitType.Basic, false);
-                    PublishJob(mediaClient, job, contentPublish);
-
-                    mediaPublish = new MediaPublish()
-                    {
-                        UserId = contentPublish.UserId,
-                        MobileNumber = contentPublish.MobileNumber,
-                        StatusMessage = GetNotificationMessage(accountId, job)
-                    };
-                }
-                queueClient.DeleteMessage(queueName, messageId, popReceipt);
+                    UserId = contentPublish.UserId,
+                    MobileNumber = contentPublish.MobileNumber,
+                    StatusMessage = GetNotificationMessage(accountId, job)
+                };
             }
             return mediaPublish;
         }

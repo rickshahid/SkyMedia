@@ -171,7 +171,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     else
                     {
-                        IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+                        IndexerClient indexerClient = new IndexerClient(authToken);
                         bool liveStreams = this.Request.Host.Value.Contains("live.") || queryString.Contains("live=on");
                         mediaStreams = Media.GetMediaStreams(mediaClient, indexerClient, liveStreams);
                     }

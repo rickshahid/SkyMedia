@@ -18,6 +18,13 @@ $resourceGroupName = ($appName + "-US.Central")
 $regionLocation = "Central US"
 
 $templateParameters = @{
+	"directoryB2bTenantId" = "26baf8c5-e851-410f-8789-b491c6396ecf"
+	"directoryB2bTenantDomain" = "skymediab2b.onmicrosoft.com"
+	"directoryB2bClientId" = "9a773e4c-d1d6-4fdf-adcb-df195c5f3c03"
+	"directoryB2cTenantId" = "7fe6884f-bc15-434b-902d-90f9252495f8"
+	"directoryB2cTenantDomain" = "skymediab2c.onmicrosoft.com"
+	"directoryB2cClientId" = "66caa1db-0ccb-46a6-a0fd-44ff62e344d5"
+	"directoryB2cPolicyIdSignUpIn" = "B2C_1_SignUpIn"
 	"storageServiceName" = "SkyMedia"
 	"databaseServiceName" = "SkyMedia"
 	"databaseDataRegions" = "South Central US", "West US", "East US"

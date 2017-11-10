@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
+using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -33,7 +34,8 @@ namespace AzureSkyMedia.PlatformServices
             jobTask.Name = Processor.GetProcessorName(jobTask.MediaProcessor);
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {
-                jobTask.OutputAssetName = string.Concat(assetName, " - ", jobTask.Name);
+                string outputAssetName = Path.GetFileNameWithoutExtension(assetName);
+                jobTask.OutputAssetName = string.Concat(outputAssetName, " - ", jobTask.Name);
             }
             jobTask.OutputAssetEncryption = AssetCreationOptions.None;
             if (jobTask.ContentProtection != null)

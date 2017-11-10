@@ -33,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void DeleteAsset(string authToken, string accountId, MediaClient mediaClient, IAsset asset)
         {
-            IndexerClient indexerClient = new IndexerClient(authToken, null, null);
+            IndexerClient indexerClient = new IndexerClient(authToken);
             string indexId = indexerClient.GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId))
             {
@@ -67,8 +67,8 @@ namespace AzureSkyMedia.PlatformServices
             IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
             foreach (IProgram program in programs)
             {
-                DeleteAsset(authToken, accountId, mediaClient, program.Asset);
                 program.Delete();
+                DeleteAsset(authToken, accountId, mediaClient, program.Asset);
             }
             IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
             foreach (IChannel channel in channels)
