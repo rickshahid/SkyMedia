@@ -42,7 +42,7 @@ namespace AzureSkyMedia.PlatformServices
             return contentProtection;
         }
 
-        internal static void TrackJob(string authToken, IJob job, ContentProtection contentProtection)
+        internal static void TrackJob(string directoryId, string authToken, IJob job, ContentProtection contentProtection)
         {
             User authUser = new User(authToken);
             string storageAccountName = job.InputMediaAssets[0].StorageAccountName;
@@ -68,6 +68,11 @@ namespace AzureSkyMedia.PlatformServices
 
             if (contentProtection != null)
             {
+                string settingKey = Constant.AppSettingKey.DirectoryClientId;
+                settingKey = string.Format(settingKey, directoryId);
+                contentProtection.DirectoryId = directoryId;
+                contentProtection.ClientId = AppSetting.GetValue(settingKey);
+
                 tableName = Constant.Storage.TableName.ContentProtection;
                 contentProtection.PartitionKey = contentPublish.PartitionKey;
                 contentProtection.RowKey = contentPublish.RowKey;
@@ -139,7 +144,7 @@ namespace AzureSkyMedia.PlatformServices
             return jobInputs.ToArray();
         }
 
-        public static object SubmitJob(string authToken, MediaClient mediaClient, MediaJobInput[] jobInputs, MediaJob mediaJob)
+        public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, MediaJobInput[] jobInputs, MediaJob mediaJob)
         {
             IJob job = null;
             IJobTemplate jobTemplate = null;
@@ -156,7 +161,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (job != null && !string.IsNullOrEmpty(job.Id))
             {
-                TrackJob(authToken, job, contentProtection);
+                TrackJob(directoryId, authToken, job, contentProtection);
             }
             return GetJobOutput(mediaClient, job, jobTemplate, jobInputs);
         }

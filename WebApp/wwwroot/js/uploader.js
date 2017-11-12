@@ -134,7 +134,7 @@ function CreateUploader() {
             if (uploader.total.failed == 0) {
                 if (!SigniantEnabled() && !AsperaEnabled()) {
                     var elapsedTime = GetElapsedTime(_fileUploaderStartTime);
-                    $("#transferMessage").text("Elapsed Time: " + elapsedTime);
+                    $("#transferMessage").text("Upload Elapsed Time: " + elapsedTime);
                 }
                 IngestAssets();
             }

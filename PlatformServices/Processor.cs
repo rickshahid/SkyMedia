@@ -10,26 +10,33 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Processor
     {
-        private static string[] GetProcessorIds()
+        private static string[] GetProcessorIds(bool presetsView)
         {
             List<string> processorIds = new List<string>();
-            processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
-            processorIds.Add(Constant.Media.ProcessorId.EncoderPremium);
-            processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
-            processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
-            processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
-            processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
-            processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
-            processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
-            processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
-            processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
-            processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
-            processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
-            processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
+            if (presetsView)
+            {
+                processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
+            }
+            else
+            {
+                processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
+                processorIds.Add(Constant.Media.ProcessorId.EncoderPremium);
+                processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
+                processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
+                processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
+                processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
+                processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
+                processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
+                processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
+                processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
+                processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
+                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
+                processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
+            }
             return processorIds.ToArray();
         }
 
-        private static MediaProcessor[] GetMediaProcessors(string authToken)
+        private static MediaProcessor[] GetMediaProcessors(string authToken, bool presetsView)
         {
             CacheClient cacheClient = new CacheClient(authToken);
             string itemKey = Constant.Cache.ItemKey.MediaProcessors;
@@ -38,16 +45,16 @@ namespace AzureSkyMedia.PlatformServices
             {
                 MediaClient mediaClient = new MediaClient(authToken);
                 IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-                mediaProcessors = GetMediaProcessors(processors);
+                mediaProcessors = GetMediaProcessors(processors, presetsView);
                 cacheClient.SetValue<MediaProcessor[]>(itemKey, mediaProcessors);
             }
             return mediaProcessors;
         }
 
-        private static MediaProcessor[] GetMediaProcessors(IMediaProcessor[] processors)
+        private static MediaProcessor[] GetMediaProcessors(IMediaProcessor[] processors, bool presetsView)
         {
             List<MediaProcessor> mediaProcessors = new List<MediaProcessor>();
-            string[] processorIds = GetProcessorIds();
+            string[] processorIds = GetProcessorIds(presetsView);
             foreach (string processorId in processorIds)
             {
                 if (!processorId.StartsWith(Constant.Media.ProcessorId.Prefix, StringComparison.OrdinalIgnoreCase))
@@ -175,7 +182,7 @@ namespace AzureSkyMedia.PlatformServices
             return mediaProcessor;
         }
 
-        public static object GetMediaProcessors(string authToken, bool getEntities)
+        public static object GetMediaProcessors(string authToken, bool presetsView, bool getEntities)
         {
             object mediaProcessors;
             if (getEntities)
@@ -186,7 +193,7 @@ namespace AzureSkyMedia.PlatformServices
             else
             {
                 NameValueCollection processorNames = new NameValueCollection();
-                MediaProcessor[] processors = GetMediaProcessors(authToken);
+                MediaProcessor[] processors = GetMediaProcessors(authToken, presetsView);
                 foreach (MediaProcessor processor in processors)
                 {
                     string processorName = GetProcessorName(processor);

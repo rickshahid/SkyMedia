@@ -1,4 +1,4 @@
-﻿# (Get-Module Azure -ListAvailable).Version (v4.4.1 - October 2017)
+﻿# (Get-Module Azure -ListAvailable).Version (v5.0.1 - November 2017)
 # Login-AzureRmAccount
 
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Cache).ResourceTypes | Where-Object ResourceTypeName -eq redis).ApiVersions
@@ -15,7 +15,7 @@ $regionName = "US West"
 $regionLocation = "West US"
 
 $templateParameters = @{
-	"globalServiceResourceGroup" = ($appName + "-US.Central")
+	"globalServicesResourceGroup" = ($appName + "-US.Central")
 	"directoryB2bClientId" = "9a773e4c-d1d6-4fdf-adcb-df195c5f3c03"
 	"directoryB2bClientSecret" = "a7pRhpQf/OFkaF4Q4fSpjdclgTPUx5wPmkGk0pS8xwQ="
 	"directoryB2bClientIdStaging" = "2c96d59b-510e-44b7-bed4-a3b527c66825"
@@ -54,7 +54,7 @@ $regionName = "US East"
 $regionLocation = "East US"
 
 $templateParameters = @{
-	"globalServiceResourceGroup" = ($appName + "-US.Central")
+	"globalServicesResourceGroup" = ($appName + "-US.Central")
 	"directoryB2bClientId" = "9a773e4c-d1d6-4fdf-adcb-df195c5f3c03"
 	"directoryB2bClientSecret" = "a7pRhpQf/OFkaF4Q4fSpjdclgTPUx5wPmkGk0pS8xwQ="
 	"directoryB2bClientIdStaging" = "2c96d59b-510e-44b7-bed4-a3b527c66825"

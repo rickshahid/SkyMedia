@@ -5,6 +5,7 @@ namespace AzureSkyMedia.PlatformServices
     public struct Constant
     {
         public const string AppSettings = "appsettings.json";
+        public const string DirectoryIdB2C = "B2C";
         public const string NotAvailable = "N/A";
 
         public struct TextDelimiter
@@ -35,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AppInsightsInstrumentationKey = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
-            public const string DirectoryId = "Directory.Id";
+            public const string DirectoryDefaultId = "Directory.DefaultId";
 
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";

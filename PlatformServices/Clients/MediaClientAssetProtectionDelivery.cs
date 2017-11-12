@@ -30,7 +30,7 @@ namespace AzureSkyMedia.PlatformServices
             return deliveryProtocols;
         }
 
-        private IAssetDeliveryPolicy GetDeliveryPolicy(AssetDeliveryPolicyType policyType, Dictionary<AssetDeliveryPolicyConfigurationKey,
+        private IAssetDeliveryPolicy GetDeliveryPolicy(string directoryId, AssetDeliveryPolicyType policyType, Dictionary<AssetDeliveryPolicyConfigurationKey,
                                                        string> policyConfig, string policyName, ContentKeyDeliveryType[] deliveryTypes)
         {
             IAssetDeliveryPolicy deliveryPolicy = GetEntityByName(MediaEntity.DeliveryPolicy, policyName, true) as IAssetDeliveryPolicy;
@@ -61,7 +61,7 @@ namespace AzureSkyMedia.PlatformServices
                 policyConfig.Add(AssetDeliveryPolicyConfigurationKey.EnvelopeKeyAcquisitionUrl, keyDeliveryUrl.ToString());
                 policyConfig.Add(AssetDeliveryPolicyConfigurationKey.EnvelopeEncryptionIVAsBase64, Convert.ToBase64String(encryptionIV));
                 ContentKeyDeliveryType[] deliveryTypes = new ContentKeyDeliveryType[] { ContentKeyDeliveryType.BaselineHttp };
-                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(policyType, policyConfig, policyName, deliveryTypes);
+                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(contentProtection.DirectoryId, policyType, policyConfig, policyName, deliveryTypes);
                 deliveryPolicies.Add(deliveryPolicy);
             }
             if (contentProtection.DrmPlayReady && contentProtection.DrmWidevine)
@@ -77,7 +77,7 @@ namespace AzureSkyMedia.PlatformServices
                 keyDeliveryUrl = contentKey.GetKeyDeliveryUrl(ContentKeyDeliveryType.Widevine);
                 policyConfig.Add(AssetDeliveryPolicyConfigurationKey.WidevineLicenseAcquisitionUrl, keyDeliveryUrl.ToString());
                 ContentKeyDeliveryType[] deliveryTypes = new ContentKeyDeliveryType[] { ContentKeyDeliveryType.PlayReadyLicense, ContentKeyDeliveryType.Widevine };
-                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(policyType, policyConfig, policyName, deliveryTypes);
+                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(contentProtection.DirectoryId, policyType, policyConfig, policyName, deliveryTypes);
                 deliveryPolicies.Add(deliveryPolicy);
             }
             else if (contentProtection.DrmPlayReady)
@@ -91,7 +91,7 @@ namespace AzureSkyMedia.PlatformServices
                 policyConfig = new Dictionary<AssetDeliveryPolicyConfigurationKey, string>();
                 policyConfig.Add(AssetDeliveryPolicyConfigurationKey.PlayReadyLicenseAcquisitionUrl, keyDeliveryUrl.ToString());
                 ContentKeyDeliveryType[] deliveryTypes = new ContentKeyDeliveryType[] { ContentKeyDeliveryType.PlayReadyLicense };
-                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(policyType, policyConfig, policyName, deliveryTypes);
+                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(contentProtection.DirectoryId, policyType, policyConfig, policyName, deliveryTypes);
                 deliveryPolicies.Add(deliveryPolicy);
             }
             else if (contentProtection.DrmWidevine)
@@ -105,7 +105,7 @@ namespace AzureSkyMedia.PlatformServices
                 policyConfig = new Dictionary<AssetDeliveryPolicyConfigurationKey, string>();
                 policyConfig.Add(AssetDeliveryPolicyConfigurationKey.WidevineLicenseAcquisitionUrl, keyDeliveryUrl.ToString());
                 ContentKeyDeliveryType[] deliveryTypes = new ContentKeyDeliveryType[] { ContentKeyDeliveryType.Widevine };
-                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(policyType, policyConfig, policyName, deliveryTypes);
+                IAssetDeliveryPolicy deliveryPolicy = GetDeliveryPolicy(contentProtection.DirectoryId, policyType, policyConfig, policyName, deliveryTypes);
                 deliveryPolicies.Add(deliveryPolicy);
             }
             return deliveryPolicies.ToArray();

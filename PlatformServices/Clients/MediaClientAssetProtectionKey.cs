@@ -95,23 +95,18 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (contentProtection.ContentAuthTypeToken)
             {
-                string settingKey = Constant.AppSettingKey.DirectoryId;
-                string directoryId = AppSetting.GetValue(settingKey);
+                string settingKey = Constant.AppSettingKey.DirectoryTenantId;
+                settingKey = string.Format(settingKey, contentProtection.DirectoryId);
+                string directoryTenantId = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryTenantDomain;
-                settingKey = string.Format(settingKey, directoryId);
+                settingKey = string.Format(settingKey, contentProtection.DirectoryId);
                 string directoryTenantDomain = AppSetting.GetValue(settingKey);
-                directoryTenantDomain = string.Format(directoryTenantDomain, directoryId);
-
-                settingKey = Constant.AppSettingKey.DirectoryTenantId;
-                settingKey = string.Format(settingKey, directoryId);
-                string directoryTenantId = AppSetting.GetValue(settingKey);
-                directoryTenantId = string.Format(directoryTenantId, directoryId);
 
                 settingKey = Constant.AppSettingKey.DirectoryDiscoveryUrl;
                 string discoveryUrl = AppSetting.GetValue(settingKey);
                 discoveryUrl = string.Format(discoveryUrl, directoryTenantDomain);
-                if (string.Equals(directoryId, "B2C", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(contentProtection.DirectoryId, Constant.DirectoryIdB2C, StringComparison.OrdinalIgnoreCase))
                 {
                     settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
                     string policyIdSignUpIn = AppSetting.GetValue(settingKey);
@@ -122,14 +117,10 @@ namespace AzureSkyMedia.PlatformServices
                 string issuerUrl = AppSetting.GetValue(settingKey);
                 issuerUrl = string.Format(issuerUrl, directoryTenantId);
 
-                settingKey = Constant.AppSettingKey.DirectoryClientId;
-                settingKey = string.Format(settingKey, directoryId);
-                string clientId = AppSetting.GetValue(settingKey);
-
                 TokenRestrictionTemplate tokenTemplate = new TokenRestrictionTemplate(TokenType.JWT);
                 tokenTemplate.OpenIdConnectDiscoveryDocument = new OpenIdConnectDiscoveryDocument(discoveryUrl);
                 tokenTemplate.Issuer = issuerUrl;
-                tokenTemplate.Audience = clientId;
+                tokenTemplate.Audience = contentProtection.ClientId;
 
                 ContentKeyAuthorizationPolicyRestriction policyRestriction = new ContentKeyAuthorizationPolicyRestriction();
                 policyRestriction.Name = string.Concat(policyName, Constant.Media.ContentProtection.AuthPolicyTokenRestrictionName);

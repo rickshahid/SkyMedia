@@ -51,7 +51,7 @@ namespace AzureSkyMedia.PlatformServices
             IJob job = mediaClient.CreateJob(mediaJob, jobInputs, out IJobTemplate jobTemplate);
             if (job != null && !string.IsNullOrEmpty(job.Id))
             {
-                Workflow.TrackJob(authToken, job, null);
+                Workflow.TrackJob(Constant.DirectoryIdB2C, authToken, job, null);
             }
             return Workflow.GetJobOutput(mediaClient, job, jobTemplate, null);
         }

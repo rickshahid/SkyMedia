@@ -29,28 +29,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return storageAccounts.ToArray();
         }
 
-        private static SelectListItem[] GetMediaProcessors(string authToken)
-        {
-            List<SelectListItem> mediaProcessors = new List<SelectListItem>();
-            SelectListItem mediaProcessor = new SelectListItem()
-            {
-                Text = string.Empty,
-                Value = string.Empty
-            };
-            mediaProcessors.Add(mediaProcessor);
-            NameValueCollection processors = Processor.GetMediaProcessors(authToken, false) as NameValueCollection;
-            foreach (string processor in processors)
-            {
-                mediaProcessor = new SelectListItem()
-                {
-                    Text = processor,
-                    Value = processors[processor]
-                };
-                mediaProcessors.Add(mediaProcessor);
-            }
-            return mediaProcessors.ToArray();
-        }
-
         private static SelectListItem[] GetJobTemplates(string authToken)
         {
             List<SelectListItem> jobTemplates = new List<SelectListItem>();
@@ -65,6 +43,28 @@ namespace AzureSkyMedia.WebApp.Controllers
                 jobTemplates.Add(jobTemplate);
             }
             return jobTemplates.ToArray();
+        }
+
+        internal static SelectListItem[] GetMediaProcessors(string authToken, bool presetsView)
+        {
+            List<SelectListItem> mediaProcessors = new List<SelectListItem>();
+            SelectListItem mediaProcessor = new SelectListItem()
+            {
+                Text = string.Empty,
+                Value = string.Empty
+            };
+            mediaProcessors.Add(mediaProcessor);
+            NameValueCollection processors = Processor.GetMediaProcessors(authToken, presetsView, false) as NameValueCollection;
+            foreach (string processor in processors)
+            {
+                mediaProcessor = new SelectListItem()
+                {
+                    Text = processor,
+                    Value = processors[processor]
+                };
+                mediaProcessors.Add(mediaProcessor);
+            }
+            return mediaProcessors.ToArray();
         }
 
         internal static SelectListItem[] GetSpokenLanguages(bool videoIndexer, bool defaultEmpty)
@@ -97,7 +97,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             User authUser = new User(authToken);
             viewData["storageAccount"] = GetStorageAccounts(authToken);
             viewData["jobName"] = GetJobTemplates(authToken);
-            viewData["mediaProcessor1"] = GetMediaProcessors(authToken);
+            viewData["mediaProcessor1"] = GetMediaProcessors(authToken, false);
             viewData["encoderConfig1"] = new List<SelectListItem>();
             viewData["indexerLanguages"] = GetSpokenLanguages(true, false);
             viewData["speechAnalyzerLanguages"] = GetSpokenLanguages(false, false);

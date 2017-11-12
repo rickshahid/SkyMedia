@@ -1,6 +1,17 @@
 ﻿@section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/json-editor/jsoneditor.css" />
+    <script type="text/javascript" src="~/lib/json-editor/jquery.jsoneditor.min.js"></script>
+    <script type="text/javascript" src="~/lib/json-editor/jsoneditor.js"></script>
     <script type="text/javascript">
         $(function () {
+            var myjson = { any: { json: { value: 1 } } };
+            var opt = {
+                change: function (data) { /* called on every change */ },
+                propertyclick: function (path) { /* called when a property is clicked with the JS path to that property */ }
+            };
+            /* opt.propertyElement = '<textarea>'; */ // element of the property field, <input> is default
+            /* opt.valueElement = '<textarea>'; */  // element of the value field, <input> is default
+            $("#processorPreset").jsonEditor(myjson, opt);
         })
     </script>
 }
@@ -8,3 +19,24 @@
 @section title {
     Media Processor Preset
 }
+
+<table class="mediaProcessorPresets">
+    <tr>
+        <td class="inputLabel">
+            Media Processor:
+        </td>
+        <td>
+            @Html.DropDownList("mediaProcessor")
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Media Processor Preset:
+        </td>
+        <td>
+            @Html.DropDownList("mediaProcessorPreset")
+        </td>
+    </tr>
+</table>
+
+<div id="processorPreset" class="json-editor"></div>

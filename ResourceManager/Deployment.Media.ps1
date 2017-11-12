@@ -1,4 +1,4 @@
-﻿# (Get-Module Azure -ListAvailable).Version (v4.4.1 - October 2017)
+﻿# (Get-Module Azure -ListAvailable).Version (v5.0.1 - November 2017)
 # Login-AzureRmAccount
 
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Storage).ResourceTypes | Where-Object ResourceTypeName -eq storageAccounts).ApiVersions

@@ -268,6 +268,15 @@ body {
     float: none;
 }
 
+.mediaProcessorPresets {
+    margin: 0px auto;
+}
+
+.mediaProcessorPresets select {
+    font-weight: bold;
+    width: 400px;
+}
+
 .plupload_container {
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -285,12 +294,20 @@ body {
 }
 
 .plupload_file_status {
-    text-align: center !important;
+    text-align: left !important;
+}
+
+.plupload_total_status {
+    padding-left: 13px;
 }
 
 .plupload_file_size {
     white-space: nowrap;
     padding-left: 15px;
+}
+
+.plupload_total_file_size {
+    padding-right: 8px;
 }
 
 .plupload_progress_container {
@@ -299,75 +316,17 @@ body {
 }
 
 .plupload_progress {
-    margin-right: 85px;
+    margin-right: 60px;
 }
 
-.signiantUploader {
-    position: relative;
-    bottom: 20px;
-}
-
-.asperaUploader {
-    position: relative;
-    bottom: 40px;
-}
-
-#transferProgress {
-    position: relative;
-    height: 20px;
-    width: 140px;
-    bottom: 35px;
-    left: 280px;
-    z-index: 10;
-}
-
-.asperaProgress {
-    border: 1px solid deepskyblue !important;
-}
-
-.asperaProgressLabel {
-    position: relative;
-    text-align: center;
-    font-weight: bold;
-    width: 140px;
-    color: azure;
-    bottom: 55px;
-    left: 280px;
-    z-index: 10;
+.plupload_upload_status {
+    padding-left: 20px !important;
 }
 
 .transferMessage {
     position: relative;
-    left: 430px;
-}
-
-.transferMessage.storageTransfer {
     bottom: 32px;
-    left: 275px;
-}
-
-.transferMessage.signiantTransfer {
-    bottom: 54px;
-}
-
-.transferMessage.asperaTransfer {
-    bottom: 74px;
-}
-
-.msapi_progressbar {
-    border: 1px solid deepskyblue !important;
-    background-color: black !important;
-}
-
-.msapi_transferProgress {
-    text-align: left !important;
-}
-
-.msapi_transferProgress span {
-    font-size: medium !important;
-    color: azure !important;
-    padding-left: 55px;
-    font-weight: bold;
+    left: 300px;
 }
 
 .mediaUpload {

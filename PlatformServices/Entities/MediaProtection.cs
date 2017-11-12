@@ -2,6 +2,10 @@
 {
     public class ContentProtection : StorageEntity
     {
+        public string DirectoryId { get; set; }
+
+        public string ClientId { get; set; }
+
         public bool Aes { get; set; }
 
         public bool DrmPlayReady { get; set; }
