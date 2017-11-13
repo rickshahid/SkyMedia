@@ -38,8 +38,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string DirectoryDefaultId = "Directory.DefaultId";
 
-            public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
-            public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
+            public const string DirectoryIssuerUrl = "Directory.{0}.IssuerUrl";
+            public const string DirectoryDiscoveryUrl = "Directory.{0}.DiscoveryUrl";
             public const string DirectoryAuthorityUrl = "Directory.{0}.AuthorityUrl";
 
             public const string DirectoryTenantId = "Directory.{0}.TenantId";
@@ -47,7 +47,9 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string DirectoryClientId = "Directory.{0}.ClientId";
             public const string DirectoryClientSecret = "Directory.{0}.ClientSecret";
-           
+
+            public const string DirectoryMediaEndpointUrl = "Directory.B2B.MediaEndpointUrl";
+
             public const string DirectoryPolicyIdSignUpIn = "Directory.B2C.PolicyId.SignUpIn";
             public const string DirectoryPolicyIdProfileEdit = "Directory.B2C.PolicyId.ProfileEdit";
             public const string DirectoryPolicyIdPasswordReset = "Directory.B2C.PolicyId.PasswordReset";

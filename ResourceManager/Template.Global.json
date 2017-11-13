@@ -300,14 +300,6 @@
               "value": "B2C"
             },
             {
-              "name": "Directory.IssuerUrl",
-              "value": "https://login.microsoftonline.com/{0}/v2.0/"
-            },
-            {
-              "name": "Directory.DiscoveryUrl",
-              "value": "https://login.microsoftonline.com/{0}/v2.0/.well-known/openid-configuration"
-            },
-            {
               "name": "Directory.B2B.TenantId",
               "value": "[parameters('directoryB2bTenantId')]"
             },
@@ -316,12 +308,28 @@
               "value": "[parameters('directoryB2bTenantDomain')]"
             },
             {
+              "name": "Directory.B2B.IssuerUrl",
+              "value": "https://login.microsoftonline.com/{0}/"
+            },
+            {
+              "name": "Directory.B2B.DiscoveryUrl",
+              "value": "https://login.microsoftonline.com/{0}/.well-known/openid-configuration"
+            },
+            {
               "name": "Directory.B2C.TenantId",
               "value": "[parameters('directoryB2cTenantId')]"
             },
             {
               "name": "Directory.B2C.TenantDomain",
               "value": "[parameters('directoryB2cTenantDomain')]"
+            },
+            {
+              "name": "Directory.B2C.IssuerUrl",
+              "value": "https://login.microsoftonline.com/{0}/v2.0/"
+            },
+            {
+              "name": "Directory.B2C.DiscoveryUrl",
+              "value": "https://login.microsoftonline.com/{0}/v2.0/.well-known/openid-configuration"
             },
             {
               "name": "Directory.B2C.PolicyId.SignUpIn",

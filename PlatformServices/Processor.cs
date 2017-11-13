@@ -16,6 +16,15 @@ namespace AzureSkyMedia.PlatformServices
             if (presetsView)
             {
                 processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
+                processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
+                processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
+                processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
+                processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
+                processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
+                processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
+                processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
+                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
+                processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
             }
             else
             {
@@ -38,15 +47,28 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaProcessor[] GetMediaProcessors(string authToken, bool presetsView)
         {
-            CacheClient cacheClient = new CacheClient(authToken);
-            string itemKey = Constant.Cache.ItemKey.MediaProcessors;
-            MediaProcessor[] mediaProcessors = cacheClient.GetValues<MediaProcessor>(itemKey);
-            if (mediaProcessors.Length == 0)
+            MediaProcessor[] mediaProcessors = null;
+            try
             {
-                MediaClient mediaClient = new MediaClient(authToken);
-                IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-                mediaProcessors = GetMediaProcessors(processors, presetsView);
-                cacheClient.SetValue<MediaProcessor[]>(itemKey, mediaProcessors);
+                CacheClient cacheClient = new CacheClient(authToken);
+                string itemKey = Constant.Cache.ItemKey.MediaProcessors;
+                mediaProcessors = cacheClient.GetValues<MediaProcessor>(itemKey);
+                if (mediaProcessors.Length == 0)
+                {
+                    MediaClient mediaClient = new MediaClient(authToken);
+                    IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+                    mediaProcessors = GetMediaProcessors(processors, presetsView);
+                    cacheClient.SetValue<MediaProcessor[]>(itemKey, mediaProcessors);
+                }
+            }
+            finally
+            {
+                if (mediaProcessors == null)
+                {
+                    MediaClient mediaClient = new MediaClient(authToken);
+                    IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+                    mediaProcessors = GetMediaProcessors(processors, presetsView);
+                }
             }
             return mediaProcessors;
         }

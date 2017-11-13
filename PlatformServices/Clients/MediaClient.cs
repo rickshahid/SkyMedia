@@ -11,18 +11,30 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaClient(string authToken)
         {
+            string accountEndpoint;
             User authUser = new User(authToken);
             AzureAdTokenCredentials tokenCredentials;
             if (string.IsNullOrEmpty(authUser.MediaAccountClientId))
             {
-                tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccountDomainName, _azure);
+                string settingKey = Constant.AppSettingKey.DirectoryMediaEndpointUrl;
+                accountEndpoint = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.DirectoryDefaultId;
+                string directoryId = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.DirectoryTenantDomain;
+                settingKey = string.Format(settingKey, directoryId);
+                string directoryTenantDomain = AppSetting.GetValue(settingKey);
+
+                tokenCredentials = new AzureAdTokenCredentials(directoryTenantDomain, _azure);
             }
             else
             {
+                accountEndpoint = authUser.MediaAccountEndpointUrl;
                 AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(authUser.MediaAccountClientId, authUser.MediaAccountClientKey);
                 tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccountDomainName, symmetricKey, _azure);
             }
-            BindContext(authUser.MediaAccountEndpointUrl, tokenCredentials);
+            BindContext(accountEndpoint, tokenCredentials);
         }
 
         public MediaClient(string accountDomain, string accountEndpoint, string clientId, string clientKey)
