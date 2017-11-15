@@ -38,8 +38,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string DirectoryDefaultId = "Directory.DefaultId";
 
-            public const string DirectoryIssuerUrl = "Directory.{0}.IssuerUrl";
-            public const string DirectoryDiscoveryUrl = "Directory.{0}.DiscoveryUrl";
+            public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
+            public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
             public const string DirectoryAuthorityUrl = "Directory.{0}.AuthorityUrl";
 
             public const string DirectoryTenantId = "Directory.{0}.TenantId";

@@ -103,7 +103,6 @@ namespace AzureSkyMedia.WebApp
                 string directoryTenantId = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                settingKey = string.Format(settingKey, directoryId);
                 string issuerUrl = AppSetting.GetValue(settingKey);
                 context.Options.Authority = string.Format(issuerUrl, directoryTenantId);
 
@@ -181,7 +180,6 @@ namespace AzureSkyMedia.WebApp
                 string directoryTenantId = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                settingKey = string.Format(settingKey, _defaultDirectoryId);
                 string issuerUrl = AppSetting.GetValue(settingKey);
                 openIdOptions.Authority = string.Format(issuerUrl, directoryTenantId);
 

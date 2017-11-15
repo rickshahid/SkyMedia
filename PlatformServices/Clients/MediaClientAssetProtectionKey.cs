@@ -104,7 +104,6 @@ namespace AzureSkyMedia.PlatformServices
                 string directoryTenantDomain = AppSetting.GetValue(settingKey);
 
                 settingKey = Constant.AppSettingKey.DirectoryDiscoveryUrl;
-                settingKey = string.Format(settingKey, contentProtection.DirectoryId);
                 string discoveryUrl = AppSetting.GetValue(settingKey);
                 discoveryUrl = string.Format(discoveryUrl, directoryTenantDomain);
                 if (string.Equals(contentProtection.DirectoryId, Constant.DirectoryIdB2C, StringComparison.OrdinalIgnoreCase))
@@ -115,7 +114,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
 
                 settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                settingKey = string.Format(settingKey, contentProtection.DirectoryId);
                 string issuerUrl = AppSetting.GetValue(settingKey);
                 issuerUrl = string.Format(issuerUrl, directoryTenantId);
 

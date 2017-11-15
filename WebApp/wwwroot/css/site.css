@@ -1,28 +1,18 @@
-﻿@media all and (max-width: 320px) {
-    #siteHome, #botService, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+﻿@media all and (max-width: 480px) {
+    #siteHome, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
     .banner, .mediaPlayer {
-        width: 300px !important;
-    }
-
-    .viewTitle, .accountContext, .streamInfo {
-        font-size: small !important;
-    }
-}
-
-@media all and (min-width: 321px) and (max-width: 480px) {
-    #siteHome, #botService, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
-        display: none !important;
-    }
-
-    .banner, .mediaPlayer {
-        width: 350px !important;
+        width: 380px !important;
     }
 
     .viewTitle, .accountContext, .streamInfo {
         font-size: medium !important;
+    }
+
+    .viewTitle {
+        width: 75px;
     }
 }
 
@@ -37,6 +27,10 @@
 
     .viewTitle, .streamInfo {
         font-size: large !important;
+    }
+
+    .viewTitle {
+        width: 100px;
     }
 }
 
