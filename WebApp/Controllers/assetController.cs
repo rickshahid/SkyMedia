@@ -58,7 +58,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             object result;
             if (clipMode == Constant.Media.RenderedClipMode)
             {
-                result = MediaClient.SubmitJob(authToken, mediaClient, sourceUrl, markIn, markOut);
+                string directoryId = homeController.GetDirectoryId(this.Request);
+                result = MediaClient.SubmitJob(directoryId, authToken, mediaClient, sourceUrl, markIn, markOut);
             }
             else
             {

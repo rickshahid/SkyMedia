@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using System.Collections.Specialized;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication;
@@ -18,6 +17,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 using AzureSkyMedia.PlatformServices;
+using AzureSkyMedia.WebApp.Controllers;
 
 namespace AzureSkyMedia.WebApp
 {
@@ -95,7 +95,7 @@ namespace AzureSkyMedia.WebApp
 
         private static Task OnAuthenticationRedirect(RedirectContext context)
         {
-            string directoryId = GetDirectoryId(context.Request);
+            string directoryId = homeController.GetDirectoryId(context.Request);
             if (!string.Equals(directoryId, _defaultDirectoryId, StringComparison.OrdinalIgnoreCase))
             {
                 string settingKey = Constant.AppSettingKey.DirectoryTenantId;
@@ -115,7 +115,7 @@ namespace AzureSkyMedia.WebApp
                 context.Options.ClientSecret = AppSetting.GetValue(settingKey);
             }
 
-            if (string.Equals(directoryId, Constant.DirectoryIdB2C, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(directoryId, Constant.DirectoryService.B2C, StringComparison.OrdinalIgnoreCase))
             {
                 string policyId = GetPolicyId(context);
                 if (!string.IsNullOrEmpty(policyId))
@@ -131,17 +131,6 @@ namespace AzureSkyMedia.WebApp
             }
 
             return Task.FromResult(0);
-        }
-
-        internal static string GetDirectoryId(HttpRequest request)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryDefaultId;
-            string directoryId = AppSetting.GetValue(settingKey);
-            if (request != null && request.Host.Value.StartsWith("B2", StringComparison.OrdinalIgnoreCase))
-            {
-                directoryId = request.Host.Value.Substring(0, 3).ToUpper();
-            }
-            return directoryId;
         }
 
         internal static RedirectToActionResult OnSignIn(ControllerBase controller, string authToken)
@@ -173,7 +162,7 @@ namespace AzureSkyMedia.WebApp
             });
             authBuilder.AddOpenIdConnect(openIdOptions =>
             {
-                _defaultDirectoryId = GetDirectoryId(null);
+                _defaultDirectoryId = homeController.GetDirectoryId(null);
 
                 string settingKey = Constant.AppSettingKey.DirectoryTenantId;
                 settingKey = string.Format(settingKey, _defaultDirectoryId);

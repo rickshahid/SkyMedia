@@ -26,10 +26,10 @@
         <script type="text/javascript" src="~/js/site.js"></script>
         @RenderSection("head", false)
     </head>
-    <body onload="SetLayout()">
+    <body onload="@ViewData["onLoad"]">
         <table class="banner">
             <tr>
-                <td class="bannerSide">
+                <td>
                     @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                     @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
                     @{ string accountInventoryClick = ""; }
@@ -43,7 +43,7 @@
                     }
                     @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", accountInventoryClick })
                 </td>
-                <td class="bannerCenter">
+                <td>
                     <div class="viewTitle">
                         @RenderSection("title", false)
                     </div>
@@ -54,7 +54,7 @@
                         </div>
                     }
                 </td>
-                <td class="bannerSide">
+                <td class="bannerRight">
                     @Html.Partial("SiteButton", new string[] { "mediaBot", "MediaBot.png", "DisplayMessage('Azure Sky Media Bot', 'Hi, my name is Viddy. I am currently under construction.<br><br>Please check on me later. Thank you.')" })
                     @if (ViewData.ContainsKey("accountContext"))
                     {
@@ -63,7 +63,7 @@
                     }
                     else
                     {
-                        @Html.Partial("SiteButton", new string[] { "userDirectory", "UserDirectory.png", "window.open('http://azure.microsoft.com/en-us/services/active-directory-b2c/')" })
+                        @Html.Partial("SiteButton", new string[] { "userDirectory", "UserDirectory.png", "window.open('" + ViewData["userDirectoryUrl"] + "')" })
                         @Html.Partial("SiteButton", new string[] { "userSignIn", "UserSignIn.png", "window.location.href = '" + ViewData["accountSignUpIn"] + "'" })
                     }
                 </td>

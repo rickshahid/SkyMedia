@@ -5,8 +5,13 @@ namespace AzureSkyMedia.PlatformServices
     public struct Constant
     {
         public const string AppSettings = "appsettings.json";
-        public const string DirectoryIdB2C = "B2C";
         public const string NotAvailable = "N/A";
+
+        public struct DirectoryService
+        {
+            public const string B2B = "B2B";
+            public const string B2C = "B2C";
+        }
 
         public struct TextDelimiter
         {
@@ -124,9 +129,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct HttpHeader
         {
+            public const string ApiManagementKey = "Ocp-Apim-Subscription-Key";
             public const string AuthHeader = "Authorization";
             public const string AuthPrefix = "Bearer=";
-            public const string ApiKey = "Ocp-Apim-Subscription-Key";
         }
 
         public struct HttpForm
@@ -136,7 +141,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct HttpCookie
         {
-            public const string UserAuthToken = " AzureSkyMedia.UserAuthToken";
+            public const string UserAuthToken = "AzureSkyMedia.UserAuthToken";
+        }
+
+        public struct HttpQueryString
+        {
+            public const string ActiveDirectory = "aad";
         }
 
         public struct UserAttribute

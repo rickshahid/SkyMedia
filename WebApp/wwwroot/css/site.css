@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 480px) {
-    #siteHome, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -7,7 +7,7 @@
         width: 380px !important;
     }
 
-    .viewTitle, .accountContext, .streamInfo {
+    .viewTitle, .streamInfo, .accountContext {
         font-size: medium !important;
     }
 
@@ -22,7 +22,7 @@
     }
 
     .banner, .mediaPlayer {
-        width: 450px !important;
+        width: 480px !important;
     }
 
     .viewTitle, .streamInfo {
@@ -52,17 +52,13 @@ body {
     width: 720px;
 }
 
-.bannerSide {
-    white-space: nowrap;
-}
-
-.bannerCenter {
-    text-align: center;
-    width: 100%;
+.bannerRight {
+    text-align: right;
 }
 
 .accountContext {
     margin-bottom: 10px;
+    text-align: center;
     font-style: italic;
     font-weight: bold;
     font-size: large;
@@ -110,6 +106,10 @@ body {
     font-style: italic;
     font-weight: bold;
     font-size: large;
+}
+
+.streamDial {
+    padding: 0px 20px 0px 20px;
 }
 
 .streamSlider {

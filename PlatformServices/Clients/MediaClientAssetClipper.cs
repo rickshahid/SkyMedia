@@ -18,7 +18,7 @@ namespace AzureSkyMedia.PlatformServices
             return mediaClient.CreateFilter(asset, filterName, markIn, markOut);
         }
 
-        public static object SubmitJob(string authToken, MediaClient mediaClient, string sourceUrl, int markIn, int markOut)
+        public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, string sourceUrl, int markIn, int markOut)
         {
             IAsset asset = GetSourceAsset(mediaClient, sourceUrl);
 
@@ -51,7 +51,7 @@ namespace AzureSkyMedia.PlatformServices
             IJob job = mediaClient.CreateJob(mediaJob, jobInputs, out IJobTemplate jobTemplate);
             if (job != null && !string.IsNullOrEmpty(job.Id))
             {
-                Workflow.TrackJob(Constant.DirectoryIdB2C, authToken, job, null);
+                Workflow.TrackJob(directoryId, authToken, job, null);
             }
             return Workflow.GetJobOutput(mediaClient, job, jobTemplate, null);
         }

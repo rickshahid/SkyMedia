@@ -1,10 +1,14 @@
 ﻿var _authToken, _jobInputs, _encoderConfig, _mediaStreams, _streamNumber, _saveWorkflow, _facesMetadata;
-function SetLayout() {
+function SetLayout(b2b) {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
     CreateTipBottom("accountInventory", "Azure Media Services<br><br>Account Inventory");
     CreateTipBottom("mediaBot", "Azure Sky Media<br><br>Bot (Viddy)");
-    CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
+    if (b2b) {
+        CreateTipBottom("userDirectory", "Azure<br><br>Active Directory");
+    } else {
+        CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
+    }
     CreateTipBottom("userSignIn", "Azure Sky Media<br><br>User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br><br>User Sign Out");
     CreateTipBottom("userProfileEdit", "Azure Sky Media<br><br>User Profile Edit");
