@@ -273,8 +273,10 @@
           "properties": {
             "appSettingNames": [
               "App.RegionName",
-              "Directory.ClientId",
-              "Directory.ClientSecret"
+              "Directory.B2B.ClientId",
+              "Directory.B2B.ClientSecret",
+              "Directory.B2C.ClientId",
+              "Directory.B2C.ClientSecret"
             ]
           }
         },

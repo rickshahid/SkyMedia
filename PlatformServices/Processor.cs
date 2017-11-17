@@ -22,7 +22,6 @@ namespace AzureSkyMedia.PlatformServices
                 processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
                 processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
                 processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
-                processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
                 processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
                 processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
             }
@@ -38,7 +37,6 @@ namespace AzureSkyMedia.PlatformServices
                 processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
                 processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
                 processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
-                processorIds.Add(Constant.Media.ProcessorId.MotionStabilization);
                 processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
                 processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
             }
@@ -137,9 +135,6 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.MotionHyperlapse:
                     processorId = Constant.Media.ProcessorId.MotionHyperlapse;
                     break;
-                case MediaProcessor.MotionStabilization:
-                    processorId = Constant.Media.ProcessorId.MotionStabilization;
-                    break;
                 case MediaProcessor.CharacterRecognition:
                     processorId = Constant.Media.ProcessorId.CharacterRecognition;
                     break;
@@ -190,9 +185,6 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 case Constant.Media.ProcessorId.MotionHyperlapse:
                     mediaProcessor = MediaProcessor.MotionHyperlapse;
-                    break;
-                case Constant.Media.ProcessorId.MotionStabilization:
-                    mediaProcessor = MediaProcessor.MotionStabilization;
                     break;
                 case Constant.Media.ProcessorId.CharacterRecognition:
                     mediaProcessor = MediaProcessor.CharacterRecognition;

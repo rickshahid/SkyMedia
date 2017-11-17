@@ -90,9 +90,6 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.MotionHyperlapse:
                         tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, jobInputs);
                         break;
-                    case MediaProcessor.MotionStabilization:
-                        tasks = GetMotionStabilizationTasks(mediaClient, jobTask, jobInputs);
-                        break;
                     case MediaProcessor.CharacterRecognition:
                         tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
                         break;

@@ -67,7 +67,6 @@ namespace AzureSkyMedia.PlatformServices
         FaceRedaction,
         MotionDetection,
         MotionHyperlapse,
-        MotionStabilization,
         CharacterRecognition,
         ContentModeration
     }

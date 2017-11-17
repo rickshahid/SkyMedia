@@ -50,6 +50,10 @@
         ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/en-us/services/active-directory-b2c/";
     }
     ViewData["accountSignUpIn"] = "/account/signupin";
+    if (request.QueryString.HasValue)
+    {
+        ViewData["accountSignUpIn"] = string.Concat(ViewData["accountSignUpIn"], request.QueryString.Value);
+    }
     ViewData["accountProfileEdit"] = "/account/profileEdit";
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);

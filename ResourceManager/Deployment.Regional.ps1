@@ -16,10 +16,10 @@ $regionLocation = "West US"
 
 $templateParameters = @{
 	"globalServicesResourceGroup" = ($appName + "-US.Central")
-	"directoryB2bClientId" = "f5e33a09-2fd2-47a1-900e-619ee1a7fdb2"
-	"directoryB2bClientSecret" = "Ib2ZLHnvQMIt60dMhPe1LOBeAoDWaLV0FF0LZNlOUEQ="
-	"directoryB2bClientIdStaging" = "86d56b6c-86d7-4289-acef-ab1a4e346939"
-	"directoryB2bClientSecretStaging" = "JclTs5rNnNc08xo1QbW6QuRdkEfaTIyCHQzG9Fzgftk="
+	"directoryB2bClientId" = "64155701-3cc4-4ef9-9d21-dbc7920d8c8a"
+	"directoryB2bClientSecret" = "GDLlpsvt7V8CWJXVZlptEuEiWTRcDSLvT65/9G/bh8Y="
+	"directoryB2bClientIdStaging" = "1646960c-9354-49dd-a72d-0f921ff0d1c3"
+	"directoryB2bClientSecretStaging" = "qP+jcODxU1Vd8V+KWhmmJqlMuq7vwI3NsSfT+OuNPTE="
 	"directoryB2cClientId" = "66caa1db-0ccb-46a6-a0fd-44ff62e344d5"
 	"directoryB2cClientSecret" = "ZX{liJ5As1[EL6DY"
 	"directoryB2cClientIdStaging" = "2f0b5e56-a49d-457a-b603-4e9bd694648b"

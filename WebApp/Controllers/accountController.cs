@@ -11,29 +11,24 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         public void signupin()
         {
-            AuthenticationProperties authProperties = new AuthenticationProperties();
-            HttpContext.ChallengeAsync(authProperties).Wait();
+            HttpContext.ChallengeAsync().Wait();
         }
 
         public void profileedit()
         {
-            AuthenticationProperties authProperties = new AuthenticationProperties();
-            HttpContext.ChallengeAsync(authProperties).Wait();
+            HttpContext.ChallengeAsync().Wait();
         }
 
         public void passwordreset()
         {
-            AuthenticationProperties authProperties = new AuthenticationProperties();
-            HttpContext.ChallengeAsync(authProperties).Wait();
+            HttpContext.ChallengeAsync().Wait();
         }
 
-        public JsonResult clear(bool allEntities, bool liveOnly)
+        public void clear(bool allEntities, bool liveOnly)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             Account.DeleteEntities(authToken, allEntities, liveOnly);
-            return Json(allEntities);
         }
-
 
         public IActionResult contentKeys()
         {
