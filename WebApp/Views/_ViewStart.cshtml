@@ -42,12 +42,12 @@
     if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
     {
         ViewData["onLoad"] = "SetLayout(true)";
-        ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/en-us/services/active-directory/";
+        ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/services/active-directory/";
     }
     else
     {
         ViewData["onLoad"] = "SetLayout(false)";
-        ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/en-us/services/active-directory-b2c/";
+        ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/services/active-directory-b2c/";
     }
     ViewData["accountSignUpIn"] = "/account/signupin";
     if (request.QueryString.HasValue)

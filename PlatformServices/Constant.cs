@@ -204,6 +204,11 @@ namespace AzureSkyMedia.PlatformServices
                 public const string ProcessorConfig = "getProcessorConfig";
                 public const string MetadataFragment = "getTimecodeFragment";
             }
+
+            public struct Document
+            {
+                public const string SystemPropertyPrefix = "_";
+            }
         }
 
         public struct Media
@@ -258,10 +263,11 @@ namespace AzureSkyMedia.PlatformServices
                 public const AssetDeliveryProtocol Aes = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
                     AssetDeliveryProtocol.SmoothStreaming;
 
-                public const AssetDeliveryProtocol DrmPlayReady = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
-                    AssetDeliveryProtocol.SmoothStreaming;
+                public const AssetDeliveryProtocol DrmPlayReady = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.SmoothStreaming;
 
                 public const AssetDeliveryProtocol DrmWidevine = AssetDeliveryProtocol.Dash;
+
+                public const AssetDeliveryProtocol DrmFairPlay = AssetDeliveryProtocol.HLS;
             }
 
             public struct DeliveryPolicy

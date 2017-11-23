@@ -17,7 +17,7 @@ function SetLayout(b2b) {
     CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
-    CreateTipRight("mediaCertification", "Azure Media Services<br><br>Security Certification");
+    CreateTipRight("mediaClipper", "Azure Media Services<br><br>Clipper");
     CreateTipRight("mediaIndexer", "Azure Cognitive Services<br><br>Video Indexer");
     CreateTipLeft("cognitiveServices", "Azure Cognitive Services");
     CreateTipLeft("appServiceWeb", "Azure App Service<br><br>Web Apps");
@@ -26,14 +26,15 @@ function SetLayout(b2b) {
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("batchRendering", "Azure Batch Rendering");
     CreateTipLeft("botService", "Azure Bot Service");
-    CreateTipTop("mediaProcessorPreset", "Media Processor Preset");
+    CreateTipTop("mediaProcessorPresetEditor", "Media Processor<br><br>Preset Editor");
     CreateTipTop("mediaFileWorkflow", "Media File Workflow");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
-    CreateTipTop("mediaAssetBrowse", "Media Asset Browse");
+    CreateTipTop("mediaAssetLibrary", "Media Asset Library");
     CreateTipTop("mediaStreamLeft", "Stream Tuner Left");
     CreateTipTop("mediaStreamRight", "Stream Tuner Right");
     CreateTipTop("mediaStreamLive", "Media Stream Live");
     CreateTipTop("mediaInsightSearch", "Media Insight Search");
+    CreateTipBottom("mediaCertification", "Azure Media Services<br><br>Security Certification");
     $(document).ajaxError(function (event, xhr, settings, error) {
         DisplayMessage("Error Message", error);
     });

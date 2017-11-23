@@ -61,8 +61,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         string collectionId = Constant.Database.Collection.ProcessorConfig;
                         string procedureId = Constant.Database.Procedure.ProcessorConfig;
-                        JObject encoderConfig = documentClient.ExecuteProcedure(collectionId, procedureId, "name", jobTask.ProcessorConfig);
-                        encoderConfig.Remove("name");
+                        JObject encoderConfig = documentClient.ExecuteProcedure(collectionId, procedureId, "ProcessorName", jobTask.ProcessorConfig);
                         jobTask.ProcessorConfig = encoderConfig.ToString();
                     }
                 }

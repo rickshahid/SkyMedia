@@ -27,7 +27,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             CloudStorageAccount storageAccount = Storage.GetUserAccount(authToken, accountName);
             _storage = storageAccount.CreateCloudBlobClient();
+            accountName = Storage.GetAccounts(authToken)[0];
             _tracker = new TableClient(authToken, accountName);
+
         }
 
         public BlobClient(string[] accountCredentials)

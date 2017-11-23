@@ -40,37 +40,33 @@ namespace AzureSkyMedia.PlatformServices
 
         private IQueryable<Document> GetDocumentQuery(string collectionId)
         {
+            string collectionLink = string.Concat("dbs/", _databaseId, "/colls/", collectionId);
             FeedOptions feedOptions = new FeedOptions()
             {
                 EnableCrossPartitionQuery = true
             };
-            return _database.CreateDocumentQuery("dbs/" + _databaseId + "/colls/" + collectionId, feedOptions);
+            return _database.CreateDocumentQuery(collectionLink, feedOptions);
         }
 
-        private JObject GetResponseResult(string responseData, bool systemProperties)
+        private JObject GetResponseResult(string responseData)
         {
             JObject result = null;
             if (!string.IsNullOrEmpty(responseData))
             {
                 result = JObject.Parse(responseData);
-                if (!systemProperties)
+                JProperty[] properties = result.Properties().ToArray();
+                foreach (JProperty property in properties)
                 {
-                    JProperty[] properties = result.Properties().ToArray();
-                    for (int i = properties.Length - 1; i >= 0; i--)
+                    if (property.Name.StartsWith(Constant.Database.Document.SystemPropertyPrefix))
                     {
-                        JProperty property = properties[i];
-                        if (property.Name.StartsWith("_"))
-                        {
-                            result.Remove(property.Name);
-                        }
+                        result.Remove(property.Name);
                     }
-                    result.Remove("id");
                 }
             }
             return result;
         }
 
-        public void Initialize(string rootDirectory)
+        public void Initialize(string modelsDirectory)
         {
             Database databaseId = new Database { Id = _databaseId };
             ResourceResponse<Database> database = _database.CreateDatabaseIfNotExistsAsync(databaseId).Result;
@@ -88,7 +84,7 @@ namespace AzureSkyMedia.PlatformServices
             ResourceResponse<DocumentCollection> collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, documentCollection.Id);
 
-            string collectionDirectory = string.Concat(rootDirectory, @"\", documentCollection.Id);
+            string collectionDirectory = string.Concat(modelsDirectory, @"\", documentCollection.Id);
 
             string jsFile = string.Concat(collectionDirectory, @"\Functions\isTimecodeFragment.js");
             UserDefinedFunction function = new UserDefinedFunction();
@@ -106,8 +102,9 @@ namespace AzureSkyMedia.PlatformServices
             documentCollection.Id = Constant.Database.Collection.ProcessorConfig;
 
             collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
+            collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, documentCollection.Id);
 
-            collectionDirectory = string.Concat(rootDirectory, @"\", documentCollection.Id);
+            collectionDirectory = string.Concat(modelsDirectory, @"\", documentCollection.Id);
 
             jsFile = string.Concat(collectionDirectory, @"\Procedures\getProcessorConfig.js");
             procedure = new StoredProcedure();
@@ -115,14 +112,21 @@ namespace AzureSkyMedia.PlatformServices
             procedure.Body = File.ReadAllText(jsFile);
             _database.CreateStoredProcedureAsync(collectionUri, procedure);
 
-            string presetDirectory = string.Concat(rootDirectory, @"\ProcessorPresets");
-            string[] presetFiles = Directory.GetFiles(presetDirectory);
-            foreach (string presetFile in presetFiles)
+            string presetsDirectory = string.Concat(modelsDirectory, @"\ProcessorPresets");
+            string[] mediaProcessors = Directory.GetDirectories(presetsDirectory);
+            foreach (string mediaProcessor in mediaProcessors)
             {
-                StreamReader streamReader = new StreamReader(presetFile);
-                JsonTextReader presetReader = new JsonTextReader(streamReader);
-                JObject presetConfig = JObject.Load(presetReader);
-                UpsertDocument(documentCollection.Id, presetConfig);
+                string[] processorPresets = Directory.GetFiles(mediaProcessor);
+                foreach (string processorPreset in processorPresets)
+                {
+                    if (processorPreset.EndsWith(Constant.Media.FileExtension.Json, StringComparison.OrdinalIgnoreCase))
+                    {
+                        StreamReader streamReader = new StreamReader(processorPreset);
+                        JsonTextReader presetReader = new JsonTextReader(streamReader);
+                        JObject presetConfig = JObject.Load(presetReader);
+                        UpsertDocument(documentCollection.Id, presetConfig);
+                    }
+                }
             }
         }
 
@@ -133,7 +137,7 @@ namespace AzureSkyMedia.PlatformServices
             IEnumerable<Document> docs = query.AsEnumerable<Document>();
             foreach (Document doc in docs)
             {
-                JObject result = GetResponseResult(doc.ToString(), true);
+                JObject result = GetResponseResult(doc.ToString());
                 documents.Add(result);
             }
             return documents.ToArray();
@@ -151,7 +155,7 @@ namespace AzureSkyMedia.PlatformServices
             Document document = documents.FirstOrDefault();
             if (document != null)
             {
-                result = GetResponseResult(document.ToString(), false);
+                result = GetResponseResult(document.ToString());
             }
             return result;
         }
@@ -199,7 +203,7 @@ namespace AzureSkyMedia.PlatformServices
             JValue procesureResponse = procedureTask.Result.Response;
             if (procesureResponse != null)
             {
-                result = GetResponseResult(procesureResponse.ToString(), false);
+                result = GetResponseResult(procesureResponse.ToString());
             }
             return result;
         }

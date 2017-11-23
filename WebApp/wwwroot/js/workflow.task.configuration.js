@@ -97,7 +97,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
         switch (mediaProcessor.value) {
             case "EncoderStandard":
                 $("#" + encoderConfigDocId).click(function () {
-                    window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-presets-overview");
+                    window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-presets-overview");
                 });
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR Adaptive Streaming Ladder (Uninterleaved)", "Adaptive Streaming");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR Adaptive Streaming Ladder (Interleaved)", "Content Adaptive Multiple Bitrate MP4");
@@ -133,9 +133,11 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
             case "EncoderPremium":
             case "EncoderUltra":
                 $("#" + encoderConfigDocId).click(function () {
-                    window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-encode-with-premium-workflow");
+                    window.open("http://docs.microsoft.com/azure/media-services/media-services-encode-with-premium-workflow");
                 });
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("", "None");
+                encoderConfigOptions[encoderConfigOptions.length] = new Option("MXF (Multiple Language Audio)", "MXF Multiple Language Audio");
+                encoderConfigOptions[encoderConfigOptions.length] = new Option("MXF (Multiple MP4 Thumbnail)", "MXF Multiple MP4 Thumbnail");
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom Configuration File (XML)", "Custom");
                 $("#" + encoderOptionsRowId).show();
                 break;
@@ -177,13 +179,13 @@ function SetEncoderConfigOptions(encoderConfig) {
         switch ($("#" + mediaProcessorId).val()) {
             case "EncoderStandard":
                 $("#" + encoderConfigDocSchemaId).click(function () {
-                    window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-mes-schema");
+                    window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-schema");
                 });
                 break;
             case "EncoderPremium":
             case "EncoderUltra":
                 $("#" + encoderConfigDocSchemaId).click(function () {
-                    window.open("http://docs.microsoft.com/en-us/azure/media-services/media-services-workflow-designer");
+                    window.open("http://docs.microsoft.com/azure/media-services/media-services-workflow-designer");
                 });
                 break;
         }

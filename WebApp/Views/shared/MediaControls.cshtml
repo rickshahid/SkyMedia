@@ -10,7 +10,7 @@
         <td id="userButtonLeft1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaProcessorPreset", "MediaProcessorPreset.png", "window.location.href = '/preset'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaProcessorPresetEditor", "MediaProcessorPresetEditor.png", "window.location.href = '/preset'", "layoutButton" })
         }
         </td>
         <td id="userButtonLeft2">
@@ -49,7 +49,7 @@
         <td id="userButtonRight1">
         @if (ViewData.ContainsKey("accountContext"))
         {
-            @Html.Partial("SiteButton", new string[] { "mediaAssetBrowse", "MediaBrowse.png", "window.location.href = '/asset'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaAssetLibrary", "MediaLibrary.png", "window.location.href = '/asset'", "layoutButton" })
         }
         </td>
         <td id="userButtonRight2">

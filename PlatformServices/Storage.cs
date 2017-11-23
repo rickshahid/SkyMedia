@@ -9,7 +9,6 @@ using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage.Analytics;
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -28,7 +27,7 @@ namespace AzureSkyMedia.PlatformServices
 
     internal static class Storage
     {
-        public static string GetAccountType(string subscriptionId, string tenantId, string clientId, string clientKey, string accountName)
+        private static string GetAccountType(string subscriptionId, string tenantId, string clientId, string clientKey, string accountName)
         {
             string accountType = string.Empty;
             if (!string.IsNullOrEmpty(subscriptionId))
@@ -101,7 +100,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static string GetAccountInfo(string authToken, IStorageAccount storageAccount)
         {
-            string accountInfo = string.Concat("Name: ", storageAccount.Name);
+            string accountInfo = string.Concat("Account Name: ", storageAccount.Name);
 
             string settingKey = Constant.AppSettingKey.AppSubscriptionId;
             string subscriptionId = AppSetting.GetValue(settingKey);
@@ -114,13 +113,13 @@ namespace AzureSkyMedia.PlatformServices
             string accountType = GetAccountType(subscriptionId, tenantId, clientId, clientKey, storageAccount.Name);
             if (!string.IsNullOrEmpty(accountType))
             {
-                accountInfo = string.Concat(accountInfo, ", Type: ", accountType);
+                accountInfo = string.Concat(accountInfo, ", Account Type: ", accountType);
             }
 
-            string storageUsed = GetCapacityUsed(authToken, storageAccount.Name);
-            if (!string.IsNullOrEmpty(storageUsed))
+            string capacityUsed = GetCapacityUsed(authToken, storageAccount.Name);
+            if (!string.IsNullOrEmpty(capacityUsed))
             {
-                accountInfo = string.Concat(accountInfo, ", Used: ", storageUsed);
+                accountInfo = string.Concat(accountInfo, ", Capacity Used: ", capacityUsed);
             }
 
             return accountInfo;
@@ -221,13 +220,6 @@ namespace AzureSkyMedia.PlatformServices
                 mappedCount = byteCount + " Bytes";
             }
             return mappedCount;
-        }
-
-        public static void CreateContainer(string authToken, string storageAccount, string containerName)
-        {
-            BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            CloudBlobContainer container = blobClient.GetContainer(containerName);
-            container.CreateIfNotExists();
         }
 
         public static NameValueCollection GetAccounts(string authToken)

@@ -1,0 +1,23 @@
+{
+  "ProcessorType": "Encoder Standard",
+  "ProcessorName": "AAC Good Quality Audio",
+  "Version": 1.0,
+  "Codecs": [
+    {
+      "Profile": "AACLC",
+      "Channels": 2,
+      "SamplingRate": 48000,
+      "Bitrate": 192,
+      "Type": "AACAudio"
+    }
+  ],
+  "Outputs": [
+    {
+      "FileName": "{Basename}_AAC_{AudioBitrate}.mp4",
+      "Format": {
+        "Type": "MP4Format"
+      }
+    }
+  ],
+  "id": "34a9f2e9-70c5-4c32-8396-f679dba0356f"
+}

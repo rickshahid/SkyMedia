@@ -1,0 +1,9 @@
+{
+  "ProcessorType": "Content Moderation",
+  "ProcessorName": "Content Moderation",
+  "Version": 1.0,
+  "Options": {
+    "Mode": "Quality"
+  },
+  "id": "8421c594-850f-492a-b42e-10e294c8a6a1"
+}

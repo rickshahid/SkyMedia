@@ -11,10 +11,10 @@ namespace AzureSkyMedia.WebApp
     {
         public static void Main(string[] args)
         {
-            string rootDirectory = Directory.GetCurrentDirectory();
+            string appDirectory = Directory.GetCurrentDirectory();
             WebHostBuilder webHostBuilder = new WebHostBuilder();
             webHostBuilder.UseKestrel();
-            webHostBuilder.UseContentRoot(rootDirectory);
+            webHostBuilder.UseContentRoot(appDirectory);
             webHostBuilder.UseIISIntegration();
             webHostBuilder.UseStartup<Startup>();
             webHostBuilder.UseApplicationInsights();
@@ -22,9 +22,9 @@ namespace AzureSkyMedia.WebApp
 
             if (Debugger.IsAttached)
             {
-                rootDirectory = string.Concat(rootDirectory, @"\Models");
+                string modelsDirectory = string.Concat(appDirectory, @"\Models");
                 DocumentClient documentClient = new DocumentClient();
-                documentClient.Initialize(rootDirectory);
+                documentClient.Initialize(modelsDirectory);
             }
 
             webHost.Run();

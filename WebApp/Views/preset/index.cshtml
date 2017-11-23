@@ -3,21 +3,61 @@
     <script type="text/javascript" src="~/lib/json-editor/jquery.jsoneditor.min.js"></script>
     <script type="text/javascript" src="~/lib/json-editor/jsoneditor.js"></script>
     <script type="text/javascript">
+        function SetProcessorPresets(mediaProcessor) {
+            $.post("/preset/names",
+                {
+                    mediaProcessor: mediaProcessor.value
+                },
+                function (presetNames) {
+                    if (mediaProcessor.value == "") {
+                        $("#mediaProcessorPresetRow").hide();
+                    } else {
+                        var presetOptions = $("#mediaProcessorPreset")[0].options;
+                        presetOptions.length = 0;
+                        presetOptions[presetOptions.length] = new Option("", "");
+                        for (var i = 0; i < presetNames.length; i++) {
+                            presetOptions[presetOptions.length] = new Option(presetNames[i], presetNames[i]);
+                        }
+                        $("#mediaProcessorPresetRow").show();
+                        $("#mediaProcessorPreset").focus();
+                    }
+                }
+            );
+            if (mediaProcessor.value == "EncoderStandard") {
+                $("#presetLabel").click(function () {
+                    window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-presets-overview");
+                });
+            } else {
+                $("#presetLabel").unbind("click");
+            }
+        }
+        function SetProcessorPreset(presetName) {
+            $.post("/preset/name",
+                {
+                    mediaProcessor: $("#mediaProcessor").val(),
+                    presetName: presetName.value
+                },
+                function (preset) {
+                    //var options = {
+                    //    change: function (data) {
+                    //        /* called on every change */
+                    //    },
+                    //    propertyclick: function (path) {
+                    //        /* called when a property is clicked with the JS path to that property */
+                    //    }
+                    //};
+                    $("#presetEditor").jsonEditor(preset);
+                }
+            );
+        }
         $(function () {
-            var myjson = { any: { json: { value: 1 } } };
-            var opt = {
-                change: function (data) { /* called on every change */ },
-                propertyclick: function (path) { /* called when a property is clicked with the JS path to that property */ }
-            };
-            /* opt.propertyElement = '<textarea>'; */ // element of the property field, <input> is default
-            /* opt.valueElement = '<textarea>'; */  // element of the value field, <input> is default
-            $("#processorPreset").jsonEditor(myjson, opt);
+            $("#mediaProcessor").focus();
         })
     </script>
 }
 
 @section title {
-    Media Processor Preset
+    Media Processor Preset Editor
 }
 
 <table class="mediaProcessorPresets">
@@ -26,17 +66,19 @@
             Media Processor:
         </td>
         <td>
-            @Html.DropDownList("mediaProcessor")
+            @Html.DropDownList("mediaProcessor", null, new { onchange = "SetProcessorPresets(this)" })
         </td>
     </tr>
-    <tr>
+    <tr id="mediaProcessorPresetRow" style="display: none">
         <td class="inputLabel">
-            Media Processor Preset:
+            <span id="presetLabel" class="siteLink">
+                Media Processor Preset:
+            </span>
         </td>
         <td>
-            @Html.DropDownList("mediaProcessorPreset")
+            @Html.DropDownList("mediaProcessorPreset", null, new { onchange = "SetProcessorPreset(this)" })
         </td>
     </tr>
 </table>
 
-<div id="processorPreset" class="json-editor"></div>
+<div id="presetEditor" class="json-editor"></div>

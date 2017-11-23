@@ -19,26 +19,28 @@ namespace AzureSkyMedia.PlatformServices
         public MediaProtection[] GetContentProtection(IAsset asset)
         {
             List<MediaProtection> contentProtection = new List<MediaProtection>();
-            IAssetDeliveryPolicy[] deliveryPolicies = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicEnvelopeEncryption).ToArray();
+
+            IAssetDeliveryPolicy[] deliveryPolicies = asset.DeliveryPolicies.Where(dp => dp.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicEnvelopeEncryption).ToArray();
             if (deliveryPolicies.Length > 0)
             {
                 contentProtection.Add(MediaProtection.AES);
             }
-            deliveryPolicies = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicCommonEncryption).ToArray();
+
+            deliveryPolicies = asset.DeliveryPolicies.Where(dp => dp.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicCommonEncryption).ToArray();
             if (deliveryPolicies.Length > 0)
             {
-                IContentKey[] contentKeys = asset.ContentKeys.Where(k => k.ContentKeyType == ContentKeyType.CommonEncryption).ToArray();
+                IContentKey[] contentKeys = asset.ContentKeys.Where(ck => ck.ContentKeyType == ContentKeyType.CommonEncryption).ToArray();
                 foreach (IContentKey contentKey in contentKeys)
                 {
                     IContentKeyAuthorizationPolicy authPolicy = GetEntityById(MediaEntity.ContentKeyAuthPolicy, contentKey.AuthorizationPolicyId) as IContentKeyAuthorizationPolicy;
                     if (authPolicy != null)
                     {
-                        IContentKeyAuthorizationPolicyOption[] policyOptions = authPolicy.Options.Where(o => o.KeyDeliveryType == ContentKeyDeliveryType.PlayReadyLicense).ToArray();
+                        IContentKeyAuthorizationPolicyOption[] policyOptions = authPolicy.Options.Where(po => po.KeyDeliveryType == ContentKeyDeliveryType.PlayReadyLicense).ToArray();
                         if (policyOptions.Length > 0 && !contentProtection.Contains(MediaProtection.PlayReady))
                         {
                             contentProtection.Add(MediaProtection.PlayReady);
                         }
-                        policyOptions = authPolicy.Options.Where(o => o.KeyDeliveryType == ContentKeyDeliveryType.Widevine).ToArray();
+                        policyOptions = authPolicy.Options.Where(po => po.KeyDeliveryType == ContentKeyDeliveryType.Widevine).ToArray();
                         if (policyOptions.Length > 0 && !contentProtection.Contains(MediaProtection.Widevine))
                         {
                             contentProtection.Add(MediaProtection.Widevine);
@@ -46,11 +48,13 @@ namespace AzureSkyMedia.PlatformServices
                     }
                 }
             }
+
             deliveryPolicies = asset.DeliveryPolicies.Where(p => p.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicCommonEncryptionCbcs).ToArray();
             if (deliveryPolicies.Length > 0)
             {
                 contentProtection.Add(MediaProtection.FairPlay);
             }
+
             return contentProtection.ToArray();
         }
     }

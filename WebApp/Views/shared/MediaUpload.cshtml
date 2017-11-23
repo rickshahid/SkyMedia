@@ -5,11 +5,6 @@
         </td>
         <td>
             @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage" })
-            &nbsp;
-            @Html.CheckBox("storageEncryption")
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview#storage-encryption')">
-                Storage Encryption
-            </span>
         </td>
     </tr>
     <tr>
@@ -20,8 +15,13 @@
             @Html.TextBox("inputAssetName", null, new { @class = "inputAssetName", placeholder = "[New Media Asset Name]" })
             &nbsp;
             @Html.CheckBox("multipleFileAsset")
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-upload-files#upload-multiple-files-with-media-services-net-sdk')">
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-upload-files#upload-multiple-files-with-media-services-net-sdk')">
                 Multiple File Asset
+            </span>
+            &nbsp;
+            @Html.CheckBox("storageEncryption")
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview#storage-encryption')">
+                Storage Encryption
             </span>
         </td>
     </tr>

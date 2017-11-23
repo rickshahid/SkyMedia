@@ -73,7 +73,7 @@
                 <td>
                     @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1)" })
                     &nbsp;
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-rest-encode-asset#create-a-job-with-chained-tasks')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-rest-encode-asset#create-a-job-with-chained-tasks')">
                         Use output from Job Task #
                     </span>
                     <select id="@taskParentId" class="jobTaskParent" disabled>
@@ -106,11 +106,11 @@
                         <tr id="@encoderOptionsRowId" style="display: none">
                             <td>
                                 @Html.CheckBox(encoderFragmentOutputId, false, new { @class = "inputCheckbox" })
-                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/dotnet/api/microsoft.windowsazure.mediaservices.client.assetformatoption')">
+                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/dotnet/api/microsoft.windowsazure.mediaservices.client.assetformatoption')">
                                     Pre-Fragment Output
                                 </span>
                                 @Html.CheckBox(encoderContentProtectionId, false, new { @class = "inputCheckboxContentProtection", onclick = "ShowContentProtection(this)" })
-                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
+                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview')">
                                     Content Protection
                                 </span>
                             </td>
@@ -120,7 +120,7 @@
             </tr>
             <tr id="@indexerConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
                         Video Indexer
                     </span>
                 </td>
@@ -161,7 +161,7 @@
             </tr>
             <tr id="@summarizationConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-video-summarization')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-video-summarization')">
                         Summarization
                     </span>
                 </td>
@@ -203,7 +203,7 @@
             </tr>
             <tr id="@speechAnalyzerConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-process-content-with-indexer2')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-process-content-with-indexer2')">
                         Speech To Text
                     </span>
                 </td>
@@ -232,7 +232,7 @@
             </tr>
             <tr id="@faceDetectionConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-and-emotion-detection')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-face-and-emotion-detection')">
                         Face Detection
                     </span>
                 </td>
@@ -275,7 +275,7 @@
             </tr>
             <tr id="@faceRedactionConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-face-redaction')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-face-redaction')">
                         Face Redaction
                     </span>
                 </td>
@@ -312,7 +312,7 @@
             </tr>
             <tr id="@motionDetectionConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-motion-detection')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-motion-detection')">
                         Motion Detection
                     </span>
                 </td>
@@ -343,7 +343,7 @@
             </tr>
             <tr id="@motionHyperlapseConfigRowId" style="display: none">
                 <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-hyperlapse-content')">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-hyperlapse-content')">
                         Motion Hyperlapse
                     </span>
                 </td>
@@ -397,7 +397,7 @@
                     <table>
                         <tr>
                             <td class="contentProtectionLabel">
-                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-content-protection-overview')">
+                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview')">
                                     Content<br>Protection
                                 </span>
                             </td>
@@ -409,7 +409,7 @@
                                         </td>
                                         <td>
                                             @Html.CheckBox(encoderContentProtectionAesId, false, new { onchange = "SetContentProtection(this)" })
-                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-aes128')">
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-protect-with-aes128')">
                                                 AES
                                             </span>
                                             <span class="contentProtectionOptionsEncryption">
@@ -417,15 +417,15 @@
                                             </span>
                                             <span class="contentProtectionOptionsEncryptionDrm">
                                                 @Html.CheckBox(encoderContentProtectionDrmPlayReadyId, false, new { onchange = "SetContentProtection(this)" })
-                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-protect-with-drm')">
                                                     PlayReady
                                                 </span>
                                                 @Html.CheckBox(encoderContentProtectionDrmWidevineId, false, new { onchange = "SetContentProtection(this)", @class = "contentProtectionOptionsEncryptionDrmOption" })
-                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-with-drm')">
+                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-protect-with-drm')">
                                                     Widevine
                                                 </span>
                                                 @Html.CheckBox(encoderContentProtectionDrmFairPlayId, false, new { onchange = "SetContentProtection(this)", @class = "contentProtectionOptionsEncryptionDrmOption", disabled = "disabled" })
-                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-protect-hls-with-fairplay')">
+                                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-protect-hls-with-fairplay')">
                                                     FairPlay
                                                 </span>
                                             </span>
@@ -433,7 +433,7 @@
                                     </tr>
                                     <tr>
                                         <td class="inputLabel">
-                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
                                                 Authorization
                                             </span>
                                         </td>

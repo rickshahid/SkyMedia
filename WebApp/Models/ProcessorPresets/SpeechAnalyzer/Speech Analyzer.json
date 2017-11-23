@@ -1,0 +1,18 @@
+{
+  "ProcessorType": "Speech Analyzer",
+  "ProcessorName": "Speech Analyzer",
+  "Version": 1.0,
+  "Features": [
+    {
+      "Options": {
+        "Formats": [
+          "WebVTT"
+        ],
+        "Language": "EnUs",
+        "Type": "RecoOptions"
+      },
+      "Type": "SpReco"
+    }
+  ],
+  "id": "974d1bbf-94d3-4a0b-b493-c3f459e1f98a"
+}

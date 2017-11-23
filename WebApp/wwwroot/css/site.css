@@ -52,7 +52,11 @@ body {
     width: 720px;
 }
 
-.bannerRight {
+.bannerSide {
+    white-space: nowrap;
+}
+
+.bannerSide.right {
     text-align: right;
 }
 
@@ -262,15 +266,6 @@ body {
     float: none;
 }
 
-.mediaProcessorPresets {
-    margin: 0px auto;
-}
-
-.mediaProcessorPresets select {
-    font-weight: bold;
-    width: 400px;
-}
-
 .plupload_container {
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -343,7 +338,7 @@ body {
 
 .mediaStorage {
     font-weight: bold;
-    width: 410px;
+    width: 100%;
 }
 
 .mediaWorkflow {
@@ -399,7 +394,7 @@ body {
     overflow: auto;
 }
 
-.mediaAssets.browseView {
+.mediaAssets.libraryView {
     height: 450px;
     width: 750px;
 }
@@ -454,6 +449,15 @@ body {
     width: 195px !important;
 }
 
+.mediaProcessorPresets {
+    margin: 0px auto;
+}
+
+.mediaProcessorPresets select {
+    font-weight: bold;
+    width: 100%;
+}
+
 .mediaProcessorConfig {
     font-weight: bold;
     width: 420px;
@@ -485,7 +489,7 @@ body {
 
 .inputAssetName {
     font-weight: bold;
-    width: 406px;
+    width: 250px;
 }
 
 .outputAssetName {
@@ -752,4 +756,9 @@ body {
 
 a.json-placeholder {
     color: yellow;
+}
+
+.mediaCertification {
+    text-align: center;
+    padding-top: 10px;
 }
