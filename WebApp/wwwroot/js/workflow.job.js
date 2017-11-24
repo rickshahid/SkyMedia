@@ -1,4 +1,4 @@
-﻿function ScrollToButtons() {
+﻿function ScrollToBottom() {
     $.scrollTo("#mediaWorkflowTaskAdd");
     $.scrollTo("#mediaWorkflowTaskRemove");
 }
@@ -64,7 +64,7 @@ function AddJobTask(taskButton) {
     if (lastTaskNumber == 4) {
         $("#mediaWorkflowTaskAdd").hide();
     }
-    ScrollToButtons();
+    ScrollToBottom();
 }
 function RemoveJobTask(taskButton) {
     var workflowTable = document.getElementById("mediaWorkflow");
