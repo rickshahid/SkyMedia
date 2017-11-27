@@ -123,7 +123,7 @@ function SetJobTaskParents(taskNumber) {
         taskParent.disabled = false;
     }
 }
-function SetJobTaskWidgets(taskNumber) {
+function SetJobTaskInputs(taskNumber) {
     $.widget("ui.spinnerEx1", $.ui.spinner, {
         _format: function (value) {
             if (value < 10) {

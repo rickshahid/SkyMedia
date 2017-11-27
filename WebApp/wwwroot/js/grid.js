@@ -1,4 +1,13 @@
-﻿function LoadGrid(gridId, columns, rows, height) {
+﻿function ClearTitles(grid) {
+    for (var i = 0; i < grid.rows.length; i++) {
+        var rowId = grid.rows[i].id;
+        var row = document.getElementById(rowId);
+        for (var x = 0; x < row.cells.length; x++) {
+            row.cells[x].title = "";
+        }
+    }
+}
+function LoadGrid(gridId, columns, rows, height) {
     $("#" + gridId).jqGrid({
         colModel: columns,
         datatype: "local",
@@ -8,15 +17,6 @@
         sortname: "name",
         height: height
     });
-}
-function ClearTitles(grid) {
-    for (var i = 0; i < grid.rows.length; i++) {
-        var rowId = grid.rows[i].id;
-        var row = document.getElementById(rowId);
-        for (var x = 0; x < row.cells.length; x++) {
-            row.cells[x].title = "";
-        }
-    }
 }
 function FormatColumn(value, grid, row) {
     var title = row.name;

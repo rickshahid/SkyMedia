@@ -19,7 +19,7 @@
     CreateTipLeft("mediaWorkflowTaskAdd", "Add Job Task");
     CreateTipRight("mediaWorkflowTaskRemove", "Remove Job Task");
     $("#mediaWorkflowTaskRemove").hide();
-    SetJobTaskWidgets(1);
+    SetJobTaskInputs(1);
 }
 function ValidWorkflowInput(uploadView, saveWorkflow) {
     var validInput = true;
@@ -69,10 +69,6 @@ function ValidWorkflowTasks(validInput) {
     } while (mediaProcessor != null);
     return validInput;
 }
-function ValidWorkflowTaskClear(taskNumber) {
-    SetTipVisible("mediaProcessor" + taskNumber, false);
-    SetTipVisible("encoderConfigFile" + taskNumber, false);
-}
 function ValidWorkflow(uploadView, saveWorkflow) {
     var validWorkflow = ValidWorkflowInput(uploadView, saveWorkflow);
     var jobTemplateId = GetJobTemplateId();
@@ -80,34 +76,19 @@ function ValidWorkflow(uploadView, saveWorkflow) {
         validWorkflow = ValidWorkflowTasks(validWorkflow);
     }
     if (validWorkflow) {
-        _saveWorkflow = saveWorkflow;
         if (uploadView) {
             _fileUploader.start();
         } else {
-            StartWorkflow();
+            StartWorkflow(saveWorkflow);
         }
     }
-}
-function GetJobInputs(uploadView) {
-    var jobInputs = new Array();
-    if ($("#mediaAssets").children.length > 0) {
-        var mediaAssets = $("#mediaAssets").jstree(true).get_checked();
-        for (var i = 0; i < mediaAssets.length; i++) {
-            var jobInput = {
-                AssetId: mediaAssets[i],
-                WorkflowView: !uploadView
-            };
-            jobInputs.push(jobInput);
-        }
-    }
-    return jobInputs;
 }
 function IngestAssets() {
     var job = GetJob();
-    var files = GetUploaderFiles(true);
+    var fileNames = GetFileNames();
     $.post("/workflow/ingest",
         {
-            fileNames: files,
+            fileNames: fileNames,
             storageAccount: $("#storageAccount").val(),
             storageEncryption: $("#storageEncryption").prop("checked"),
             inputAssetName: $("#inputAssetName").val(),
@@ -119,9 +100,10 @@ function IngestAssets() {
         }
     );
 }
-function StartWorkflow() {
+function StartWorkflow(saveWorkflow) {
     var job = GetJob();
-    $.post("/workflow/start",
+    job.SaveWorkflow = saveWorkflow;
+   $.post("/workflow/start",
         {
             jobInputs: _jobInputs,
             mediaJob: job

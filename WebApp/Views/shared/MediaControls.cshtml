@@ -29,7 +29,7 @@
             <table class="streamDial">
                 <tr>
                     <td>
-                        @Html.Partial("SiteButton", new string[] { "mediaStreamLeft", "MediaStreamLeft.png", "SlideStreamNumber('left')" })
+                        @Html.Partial("SiteButton", new string[] { "mediaStreamLeft", "MediaStreamLeft.png", "SetStreamSlider('left')" })
                     </td>
                     <td class="streamNumber sideLeft">
                         <span>@(mediaStreams.Length == 0 ? 0 : 1)</span>
@@ -41,7 +41,7 @@
                         @mediaStreams.Length
                     </td>
                     <td>
-                        @Html.Partial("SiteButton", new string[] { "mediaStreamRight", "MediaStreamRight.png", "SlideStreamNumber('right')" })
+                        @Html.Partial("SiteButton", new string[] { "mediaStreamRight", "MediaStreamRight.png", "SetStreamSlider('right')" })
                     </td>
                 </tr>
             </table>

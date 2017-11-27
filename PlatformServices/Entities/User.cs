@@ -15,7 +15,12 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.UserId);
+                string userId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.EMails);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    userId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.EMail);
+                }
+                return userId;
             }
         }
 
@@ -41,7 +46,13 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName);
+                string accountDomain = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName);
+                if (string.IsNullOrEmpty(accountDomain))
+                {
+                    string settingKey = Constant.AppSettingKey.DirectoryMediaAccountTenantDomain;
+                    accountDomain = AppSetting.GetValue(settingKey);
+                }
+                return accountDomain;
             }
         }
 
@@ -49,7 +60,13 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl);
+                string endpointUrl = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl);
+                if (string.IsNullOrEmpty(endpointUrl))
+                {
+                    string settingKey = Constant.AppSettingKey.DirectoryMediaAccountEndpointUrl;
+                    endpointUrl = AppSetting.GetValue(settingKey);
+                }
+                return endpointUrl;
             }
         }
 

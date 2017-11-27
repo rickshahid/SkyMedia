@@ -1,4 +1,4 @@
-﻿var _authToken, _jobInputs, _encoderConfig, _mediaStreams, _streamNumber, _saveWorkflow, _facesMetadata;
+﻿var _authToken, _mediaStreams, _streamNumber, _jobInputs, _encoderConfig;
 function SetLayout(b2b) {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
@@ -137,10 +137,10 @@ function GetMediaPlayer(clipMode) {
         videobreakdown: {}
     };
     if (clipMode) {
-        plugins.AMVE = {
-            containerId: "videoClipper" + playerMode,
-            clipdataCallback: CreateVideoClip
-        };
+        //plugins.AMVE = {
+        //    containerId: "videoClipper" + playerMode,
+        //    clipdataCallback: CreateVideoClip
+        //};
     }
     var playerOptions = {
         plugins: plugins,

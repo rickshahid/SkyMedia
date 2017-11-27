@@ -53,7 +53,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryClientId = "Directory.{0}.ClientId";
             public const string DirectoryClientSecret = "Directory.{0}.ClientSecret";
 
-            public const string DirectoryMediaEndpointUrl = "Directory.B2B.MediaEndpointUrl";
+            public const string DirectoryMediaAccountTenantDomain = "Directory.B2B.MediaAccount.TenantDomain";
+            public const string DirectoryMediaAccountEndpointUrl = "Directory.B2B.MediaAccount.EndpointUrl";
 
             public const string DirectoryPolicyIdSignUpIn = "Directory.B2C.PolicyId.SignUpIn";
             public const string DirectoryPolicyIdProfileEdit = "Directory.B2C.PolicyId.ProfileEdit";
@@ -113,7 +114,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
 
+            public const string MediaClipperVersion = "Media.Clipper.Version";
             public const string MediaClipperEncoderPreset = "Media.Clipper.EncoderPreset";
+
             public const string MediaIndexerServiceUrl = "Media.Indexer.ServiceUrl";
 
             public const string AccountEndpointPrefix = "AccountEndpoint=";
@@ -141,7 +144,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct HttpCookie
         {
-            public const string UserAuthToken = "AzureSkyMedia.UserAuthToken";
+            public const string UserAuthToken = "UserAuthToken";
         }
 
         public struct HttpQueryString
@@ -151,7 +154,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct UserAttribute
         {
-            public const string UserId = "emails";
+            public const string EMail = "email";
+            public const string EMails = "emails";
             public const string MobileNumber = "extension_MobileNumber";
             public const string MediaAccountDomainName = "extension_MediaAccountDomainName";
             public const string MediaAccountEndpointUrl = "extension_MediaAccountEndpointUrl";

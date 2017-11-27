@@ -1,14 +1,14 @@
-﻿@using AzureSkyMedia.PlatformServices;
-@using AzureSkyMedia.WebApp.Controllers;
+﻿@using Microsoft.AspNetCore.Http;
 
-@using Microsoft.AspNetCore.Http;
+@using AzureSkyMedia.PlatformServices;
+@using AzureSkyMedia.WebApp.Controllers;
 
 @{
     HttpRequest request = this.Context.Request;
     HttpResponse response = this.Context.Response;
     string authToken = homeController.GetAuthToken(request, response);
-    ViewData["authTokenCookie"] = Constant.HttpCookie.UserAuthToken;
     ViewData["authToken"] = authToken;
+    ViewData["authTokenCookie"] = Constant.HttpCookie.UserAuthToken;
 
     if (!string.IsNullOrEmpty(authToken))
     {
@@ -35,6 +35,14 @@
     }
     ViewData["mediaPlayerSkin"] = ampSkin;
 
+    string amcVersion = this.Context.Request.Query["amc.version"];
+    if (string.IsNullOrEmpty(amcVersion))
+    {
+        settingKey = Constant.AppSettingKey.MediaClipperVersion;
+        amcVersion = homeController.GetAppSetting(settingKey);
+    }
+    ViewData["mediaClipperVersion"] = amcVersion;
+
     settingKey = Constant.AppSettingKey.StorageCdnUrl;
     ViewData["storageCdnUrl"] = homeController.GetAppSetting(settingKey);
 
@@ -49,11 +57,13 @@
         ViewData["onLoad"] = "SetLayout(false)";
         ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/services/active-directory-b2c/";
     }
-    ViewData["accountSignUpIn"] = "/account/signupin";
+
+    string accountSignUpIn = "/account/signupin";
     if (request.QueryString.HasValue)
     {
-        ViewData["accountSignUpIn"] = string.Concat(ViewData["accountSignUpIn"], request.QueryString.Value);
+        accountSignUpIn = string.Concat(accountSignUpIn, request.QueryString.Value);
     }
+    ViewData["accountSignUpIn"] = accountSignUpIn;
     ViewData["accountProfileEdit"] = "/account/profileEdit";
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);

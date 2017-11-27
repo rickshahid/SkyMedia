@@ -1,15 +1,4 @@
-﻿function GetStreamName(mediaStream, streamSlider) {
-    var streamName = mediaStream.name;
-    if (!streamSlider) {
-        streamName = streamName.replace("<br><br>", " ");
-    }
-    if (mediaStream.contentProtection.length > 0) {
-        var lineBreak = streamSlider ? "<br><br>" : "<br>";
-        streamName = streamName + lineBreak + "(" + mediaStream.contentProtection.join(", ") + ")";
-    }
-    return streamName;
-}
-function SlideStreamNumber(slideDirection) {
+﻿function SetStreamSlider(slideDirection) {
     var streamNumber = _streamNumber;
     if (slideDirection == "left" && streamNumber > 1) {
         streamNumber = streamNumber - 1;
@@ -26,12 +15,19 @@ function SetStreamNumber(streamNumber) {
         sliderHandle.innerText = streamNumber;
     }
 }
-function SetStreamName(mediaStream) {
-    var streamName = GetStreamName(mediaStream, false);
-    $("#streamName").html(streamName);
+function GetStreamName(mediaStream, streamSlider) {
+    var streamName = mediaStream.name;
+    if (!streamSlider) {
+        streamName = streamName.replace("<br><br>", " ");
+    }
+    if (mediaStream.contentProtection.length > 0) {
+        var lineBreak = streamSlider ? "<br><br>" : "<br>";
+        streamName = streamName + lineBreak + "(" + mediaStream.contentProtection.join(", ") + ")";
+    }
+    return streamName;
 }
-function ToggleLiveStream(liveButton) {
-    var buttonImage = liveButton.children[0];
+function ToggleLiveStream(button) {
+    var buttonImage = button.children[0];
     if (buttonImage.src.indexOf("LiveStreamOn") > -1) {
         buttonImage.src = buttonImage.src.replace("On", "Off");
         window.location.href = "/?live=off";
@@ -41,14 +37,14 @@ function ToggleLiveStream(liveButton) {
     }
 }
 function StartStreamingEndpoint(title) {
-    var message = "Your media account does not have a streaming endpoint running.<br><br>Do you want to start your streaming endpoint?"
+    var message = "Your media account streaming endpoint is not running.<br><br>Do you want to start your streaming endpoint now?"
     var buttons = {
         Yes: function () {
             $(this).dialog("close");
             $.post("/home/endpoint", { },
                 function (endpointName) {
                     if (endpointName != "") {
-                        message = "A request to start the " + endpointName + " streaming endpoint has been submitted.";
+                        message = "A request to start your " + endpointName + " streaming endpoint has been submitted.";
                         DisplayMessage(title, message);
                     }
                 }

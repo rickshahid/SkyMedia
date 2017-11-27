@@ -11,7 +11,6 @@ function GetJob() {
         Priority: $("#jobPriorityLabel").text(),
         Tasks: jobTasks,
         TemplateId: jobTemplateId,
-        SaveWorkflow: _saveWorkflow
     };
     return job;
 }
@@ -26,6 +25,20 @@ function GetJobTasks() {
         taskNumber = taskNumber + 1;
     } while (jobTask != null)
     return jobTasks;
+}
+function GetJobInputs(uploadView) {
+    var jobInputs = new Array();
+    if ($("#mediaAssets").children.length > 0) {
+        var mediaAssets = $("#mediaAssets").jstree(true).get_checked();
+        for (var i = 0; i < mediaAssets.length; i++) {
+            var jobInput = {
+                AssetId: mediaAssets[i],
+                WorkflowView: !uploadView
+            };
+            jobInputs.push(jobInput);
+        }
+    }
+    return jobInputs;
 }
 function GetJobTemplateId() {
     var jobTemplateId = "";
@@ -56,8 +69,8 @@ function AddJobTask(taskButton) {
     newTaskRow.outerHTML = GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber);
     AddJobTaskLink(workflowTable, taskRowIndex);
     SetJobTaskParents(newTaskNumber);
-    SetJobTaskWidgets(newTaskNumber);
-    SetJobTaskWidgets(lastTaskNumber);
+    SetJobTaskInputs(newTaskNumber);
+    SetJobTaskInputs(lastTaskNumber);
     var mediaProcessor = $("#mediaProcessor" + newTaskNumber)[0];
     SetProcessorConfig(mediaProcessor, newTaskNumber);
     $("#mediaWorkflowTaskRemove").show();
@@ -71,11 +84,12 @@ function RemoveJobTask(taskButton) {
     var taskRowIndex = GetTaskRowIndex(taskButton);
     var lastTaskRow = workflowTable.rows[taskRowIndex - 1];
     var lastTaskNumber = GetTaskNumber(lastTaskRow);
-    ValidWorkflowTaskClear(lastTaskNumber);
     workflowTable.deleteRow(lastTaskRow.rowIndex - 1);
     workflowTable.deleteRow(lastTaskRow.rowIndex);
     $("#mediaWorkflowTaskAdd").show();
     if (lastTaskNumber == 2) {
         $("#mediaWorkflowTaskRemove").hide();
     }
+    SetTipVisible("mediaProcessor" + taskNumber, false);
+    SetTipVisible("encoderConfigFile" + taskNumber, false);
 }

@@ -312,7 +312,7 @@ body {
     padding-left: 20px !important;
 }
 
-.transferMessage {
+.uploadMessage {
     position: relative;
     bottom: 32px;
     left: 300px;
@@ -676,33 +676,6 @@ body {
 
 .entityCount {
     color: azure;
-}
-
-.mediaContent {
-    vertical-align: bottom;
-    padding-bottom: 4px;
-}
-
-.metadataPanel {
-    display: none;
-}
-
-.analyticsProcessors {
-    width: 100%;
-}
-
-.mediaMetadata {
-    white-space: pre-line;
-    background: azure;
-    overflow: auto;
-    width: 350px;
-}
-
-.mediaOverlay {
-    border: 1px dashed yellow;
-    position: absolute;
-    display: none;
-    z-index: 100;
 }
 
 .mediaPlayer {
