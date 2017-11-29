@@ -8,7 +8,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         public static void PurgePublishContent(TableClient tableClient)
         {
-            string tableName = Constant.Storage.TableName.ContentPublish;
+            string tableName = Constant.Storage.Table.ContentPublish;
             MediaContentPublish[] contentPublishes = tableClient.GetEntities<MediaContentPublish>(tableName);
             foreach (MediaContentPublish contentPublish in contentPublishes)
             {
@@ -24,7 +24,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     tableClient.DeleteEntity(tableName, contentPublish);
 
-                    tableName = Constant.Storage.TableName.ContentProtection;
+                    tableName = Constant.Storage.Table.ContentProtection;
                     ContentProtection contentProtection = tableClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
                     if (contentProtection != null)
                     {
@@ -57,7 +57,7 @@ namespace AzureSkyMedia.PlatformServices
                         string documentId = document["id"].ToString();
                         documentClient.DeleteDocument(collectionId, documentId);
 
-                        string tableName = Constant.Storage.TableName.InsightPublish;
+                        string tableName = Constant.Storage.Table.InsightPublish;
                         MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, documentId);
                         if (insightPublish != null)
                         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -9,22 +8,9 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static ITask[] GetJobTasks(IJob job, string[] processorIds)
-        {
-            List<ITask> jobTasks = new List<ITask>();
-            foreach (ITask jobTask in job.Tasks)
-            {
-                if (processorIds.Contains(jobTask.MediaProcessorId, StringComparer.OrdinalIgnoreCase))
-                {
-                    jobTasks.Add(jobTask);
-                }
-            }
-            return jobTasks.ToArray();
-        }
-
         private static void PublishAsset(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection)
         {
-            if (asset.IsStreamable || asset.AssetType == AssetType.MP4)
+            if (asset.IsStreamable)
             {
                 string locatorId = null;
                 LocatorType locatorType = LocatorType.OnDemandOrigin;
@@ -100,6 +86,19 @@ namespace AzureSkyMedia.PlatformServices
                     MobileNumber = contentPublish.MobileNumber,
                     StatusMessage = GetNotificationMessage(accountId, job)
                 };
+            }
+            return mediaPublish;
+        }
+
+        public static MediaPublish PublishContent(string queueName)
+        {
+            MediaPublish mediaPublish = null;
+            QueueClient queueClient = new QueueClient();
+            MediaContentPublish contentPublish = queueClient.GetMessage<MediaContentPublish>(queueName, out string messageId, out string popReceipt);
+            if (contentPublish != null)
+            {
+                mediaPublish = PublishContent(contentPublish);
+                queueClient.DeleteMessage(queueName, messageId, popReceipt);
             }
             return mediaPublish;
         }

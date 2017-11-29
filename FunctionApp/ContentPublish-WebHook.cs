@@ -22,7 +22,7 @@ namespace AzureSkyMedia.FunctionApp
                 jobNotification.Properties.NewState == JobState.Finished)
             {
                 TableClient tableClient = new TableClient();
-                string tableName = Constant.Storage.TableName.ContentPublish;
+                string tableName = Constant.Storage.Table.ContentPublish;
                 string partitionKey = jobNotification.Properties.AccountName;
                 string rowKey = jobNotification.Properties.JobId;
                 contentPublish = tableClient.GetEntity<MediaContentPublish>(tableName, partitionKey, rowKey);
@@ -38,7 +38,7 @@ namespace AzureSkyMedia.FunctionApp
         }
 
         [FunctionName("ContentPublish-WebHook")]
-        public static async Task<object> Run([HttpTrigger(WebHookType = "genericJson")]HttpRequestMessage req, TraceWriter log)
+        public static async Task<object> Run([HttpTrigger(WebHookType = "genericJson")] HttpRequestMessage req, TraceWriter log)
         {
             string notificationMessage = await req.Content.ReadAsStringAsync();
             log.Info($"Notification Message: {notificationMessage}");

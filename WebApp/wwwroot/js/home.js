@@ -21,8 +21,8 @@ function GetStreamName(mediaStream, streamSlider) {
         streamName = streamName.replace("<br><br>", " ");
     }
     if (mediaStream.contentProtection.length > 0) {
-        var lineBreak = streamSlider ? "<br><br>" : "<br>";
-        streamName = streamName + lineBreak + "(" + mediaStream.contentProtection.join(", ") + ")";
+        var lineBreak = streamSlider ? "<br><br>" : "";
+        streamName = streamName + lineBreak + " + " + mediaStream.contentProtection.join(", ");
     }
     return streamName;
 }

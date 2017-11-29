@@ -19,7 +19,7 @@ namespace AzureSkyMedia.FunctionApp
         private static MediaInsightPublish EnqueuePublish(string accountId, string indexId)
         {
             TableClient tableClient = new TableClient();
-            string tableName = Constant.Storage.TableName.InsightPublish;
+            string tableName = Constant.Storage.Table.InsightPublish;
             string partitionKey = accountId;
             string rowKey = indexId;
             MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, partitionKey, rowKey);
@@ -34,7 +34,7 @@ namespace AzureSkyMedia.FunctionApp
         }
 
         [FunctionName("InsightPublish-HttpPost")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Function, "post")]HttpRequestMessage req, TraceWriter log)
+        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestMessage req, TraceWriter log)
         {
             StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
             IEnumerable<KeyValuePair<string, string>> urlParameters = req.GetQueryNameValuePairs();

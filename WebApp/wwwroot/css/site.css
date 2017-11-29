@@ -679,7 +679,7 @@ body {
 }
 
 .mediaPlayer {
-    width: 700px;
+    width: 750px;
 }
 
 .mediaPlayerButton {
@@ -700,7 +700,12 @@ body {
     margin: 0 auto;
     display: none;
     height: 500px;
-    width: 700px;
+    width: 750px;
+}
+
+.analyticsInsight {
+    margin: 0 auto;
+    display: none;
 }
 
 .insightData {

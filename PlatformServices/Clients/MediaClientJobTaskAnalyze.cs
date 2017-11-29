@@ -33,8 +33,21 @@ namespace AzureSkyMedia.PlatformServices
             };
 
             TableClient tableClient = new TableClient();
-            string tableName = Constant.Storage.TableName.InsightPublish;
+            string tableName = Constant.Storage.Table.InsightPublish;
             tableClient.InsertEntity(tableName, insightPublish);
+        }
+
+        private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        {
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
+            string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
+            string documentId = AppSetting.GetValue(settingKey);
+            JObject processorConfig = GetProcessorConfig(documentId);
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
+            jobTasks.AddRange(tasks);
+            return jobTasks.ToArray();
         }
 
         private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
@@ -54,11 +67,11 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        private static MediaJobTask[] GetCharacterRecognitionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
-            string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
+            jobTask.MediaProcessor = MediaProcessor.CharacterRecognition;
+            string settingKey = Constant.AppSettingKey.MediaProcessorCharacterRecognitionDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -155,19 +168,6 @@ namespace AzureSkyMedia.PlatformServices
             processorSources["NumFrames"] = frameEnd - frameStart + 1;
             JToken processorOptions = processorConfig["Options"];
             processorOptions["Speed"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseSpeed.ToString()];
-            jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
-            jobTasks.AddRange(tasks);
-            return jobTasks.ToArray();
-        }
-
-        private static MediaJobTask[] GetCharacterRecognitionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.CharacterRecognition;
-            string settingKey = Constant.AppSettingKey.MediaProcessorCharacterRecognitionDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
-            JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);

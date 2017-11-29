@@ -1,29 +1,47 @@
-﻿//function ToggleIndexerInsight(insight) {
-//    var insightImage = document.getElementById("insightImage");
-//    if ($("#indexerInsight").is(":visible")) {
-//        insightImage.src = insightImage.src.replace("Close", "Open");
-//        $("#indexerInsight").hide();
-//    } else {
-//        insightImage.src = insightImage.src.replace("Open", "Close");
-//        var indexerFrame = document.getElementById("indexerFrame");
-//        indexerFrame.src = insight.sourceUrl;
-//        $("#indexerInsight").show();
-//    }
-//}
-//function ToggleMetadataPanel() {
+﻿function IndexerInsight(mediaStream) {
+    var insight = null;
+    for (var i = 0; i < mediaStream.contentInsight.length; i++) {
+        var mediaProcessor = mediaStream.contentInsight[i].processor;
+        if (mediaProcessor == "VideoIndexer") {
+            insight = mediaStream.contentInsight[i];
+        }
+    }
+    return insight;
+}
+function AnalyticsInsight(mediaStream) {
+    var insight = false;
+    for (var i = 0; i < mediaStream.contentInsight.length; i++) {
+        var mediaProcessor = mediaStream.contentInsight[i].processor;
+        if (mediaProcessor != "VideoIndexer") {
+            insight = true;
+        }
+    }
+    return insight;
+}
+function ToggleIndexerInsight(mediaStream) {
+    var insightImage = document.getElementById("insightImage");
+    if ($("#indexerInsight").is(":visible")) {
+        insightImage.src = insightImage.src.replace("Close", "Open");
+        $("#indexerInsight").hide();
+    } else {
+        var insight = IndexerInsight(mediaStream);
+        var indexerFrame = document.getElementById("indexerFrame");
+        indexerFrame.src = insight.sourceUrl;
+        insightImage.src = insightImage.src.replace("Open", "Close");
+        $("#indexerInsight").show();
+    }
+}
+function ToggleAnalyticsInsight(mediaStream) {
 //    ClearVideoOverlay();
-//    var metadataImage = document.getElementById("metadataImage");
-//    if ($("#metadataPanel").is(":visible")) {
-//        metadataImage.src = metadataImage.src.replace("Close", "Open");
-//        $("#metadataPanel").hide();
-//    } else {
-//        metadataImage.src = metadataImage.src.replace("Open", "Close");
-//        var mediaPlayer = GetMediaPlayer(false);
-//        var playerHeight = mediaPlayer.el().clientHeight;
-//        $("#mediaMetadata").height(playerHeight);
-//        $("#metadataPanel").show();
-//    }
-//}
+    var analyticsImage = document.getElementById("analyticsImage");
+    if ($("#analyticsMetadata").is(":visible")) {
+        analyticsImage.src = analyticsImage.src.replace("Close", "Open");
+        $("#analyticsMetadata").hide();
+    } else {
+        analyticsImage.src = analyticsImage.src.replace("Open", "Close");
+        $("#analyticsMetadata").show();
+    }
+}
 //function GetFragmentEvent(fragment, timeScale, timeSeconds) {
 //    var ticksPerMillisecond = timeScale / 1000;
 //    var millisecondsPerInterval = fragment.interval / ticksPerMillisecond;
@@ -70,86 +88,86 @@
 //    }
 //    return facesMetadata;
 //}
-//function SetAnalyticsProcessors(mediaStream) {
-//    var processors = document.getElementById("analyticsProcessors");
-//    processors.options.length = 0;
-//    processors.options[processors.options.length] = new Option("", "");
-//    for (var i = 0; i < mediaStream.analyticsMetadata.length; i++) {
-//        var metadata = mediaStream.analyticsMetadata[i];
-//        var optionName = metadata.processor;
-//        var optionValue = metadata.sourceUrl != null ? metadata.sourceUrl : metadata.documentId;
-//        processors.options[processors.options.length] = new Option(optionName, optionValue);
-//    }
-//}
-//function SetAnalyticsMetadata() {
-//    $("#mediaMetadata").empty();
-//    var selectedText = $("#analyticsProcessors option:selected").text();
-//    if (selectedText != "") {
-//        var selectedValue = $("#analyticsProcessors").val();
-//        var mediaPlayer = GetMediaPlayer(false);
-//        var playerHeight = mediaPlayer.el().clientHeight;
-//        var playerWidth = mediaPlayer.el().clientWidth;
-//        var timeSeconds = mediaPlayer.currentTime();
-//        switch (selectedText) {
-//            case "Video Indexer":
-//                $.get("/asset/metadata",
-//                    {
-//                        documentId: selectedValue
-//                    },
-//                    function (result) {
-//                        $("#mediaMetadata").jsonBrowse(result);
-//                    }
-//                );
-//                break;
-//            case "Face Detection":
-//                $.get("/asset/metadata",
-//                    {
-//                        documentId: selectedValue,
-//                        timeSeconds: timeSeconds
-//                    },
-//                    function (result) {
-//                        $("#mediaMetadata").jsonBrowse(result, jsonOptions);
-//                        _facesMetadata = GetFacesMetadata(result, playerHeight, playerWidth, timeSeconds);
-//                        for (var i = 0; i < _facesMetadata.length; i++) {
-//                            var faceMetadata = _facesMetadata[i];
-//                            SetVideoOverlay(faceMetadata);
-//                        }
-//                    }
-//                );
-//        }
-//    }
-//}
-//function SetVideoOverlay(faceMetadata) {
-//    $("<div id='videoOverlay" + faceMetadata.id + "' class='mediaOverlay'></div>").insertBefore("#videoPlayer");
-//    var playerPosition = $("#videoPlayer").position();
-//    $("#videoOverlay" + faceMetadata.id).css({
-//        top: (playerPosition.top + faceMetadata.y) + "px",
-//        left: (playerPosition.left + faceMetadata.x) + "px",
-//        height: faceMetadata.height + "px",
-//        width: faceMetadata.width + "px"
-//    });
-//    $("#videoOverlay" + faceMetadata.id).show();
-//    var faceLabel = faceMetadata.label;
-//    if (faceMetadata.emotion != null) {
-//        faceLabel = faceLabel + "<br><br>(" + faceMetadata.emotion + ")";
-//    }
-//    CreateTipTop("videoOverlay" + faceMetadata.id, faceLabel, 0, 0, false);
-//    SetTipVisible("videoOverlay" + faceMetadata.id, true);
-//}
-//function ClearVideoOverlay() {
-//    var videoOverlays = $("div[id^='videoOverlay']");
-//    for (var i = 0; i < videoOverlays.length; i++) {
-//        var videoOverlay = videoOverlays[i];
-//        SetTipVisible(videoOverlay.id, false);
-//        $("#" + videoOverlay.id).remove();
-//    }
-//}
-//function ResetVideoOverlay() {
-//    ClearVideoOverlay();
-//    if (_facesMetadata != null) {
-//        for (var i = 0; i < _facesMetadata.length; i++) {
-//            var faceMetadata = _facesMetadata[i];
-//            SetVideoOverlay(faceMetadata);
-//        }
-//    }
-//}
+function SetAnalyticsProcessors(mediaStream) {
+    var processors = document.getElementById("analyticsProcessors");
+    processors.options.length = 0;
+    processors.options[processors.options.length] = new Option("", "");
+    for (var i = 0; i < mediaStream.analyticsMetadata.length; i++) {
+        var metadata = mediaStream.analyticsMetadata[i];
+        var optionName = metadata.processor;
+        var optionValue = metadata.sourceUrl != null ? metadata.sourceUrl : metadata.documentId;
+        processors.options[processors.options.length] = new Option(optionName, optionValue);
+    }
+}
+function SetAnalyticsMetadata() {
+    $("#mediaMetadata").empty();
+    var selectedText = $("#analyticsProcessors option:selected").text();
+    if (selectedText != "") {
+        var selectedValue = $("#analyticsProcessors").val();
+        var mediaPlayer = GetMediaPlayer(false);
+        var playerHeight = mediaPlayer.el().clientHeight;
+        var playerWidth = mediaPlayer.el().clientWidth;
+        var timeSeconds = mediaPlayer.currentTime();
+        switch (selectedText) {
+            case "Video Indexer":
+                $.get("/asset/metadata",
+                    {
+                        documentId: selectedValue
+                    },
+                    function (result) {
+                        $("#mediaMetadata").jsonBrowse(result);
+                    }
+                );
+                break;
+            case "Face Detection":
+                $.get("/asset/metadata",
+                    {
+                        documentId: selectedValue,
+                        timeSeconds: timeSeconds
+                    },
+                    function (result) {
+                        $("#mediaMetadata").jsonBrowse(result, jsonOptions);
+                        _facesMetadata = GetFacesMetadata(result, playerHeight, playerWidth, timeSeconds);
+                        for (var i = 0; i < _facesMetadata.length; i++) {
+                            var faceMetadata = _facesMetadata[i];
+                            SetVideoOverlay(faceMetadata);
+                        }
+                    }
+                );
+        }
+    }
+}
+function SetVideoOverlay(faceMetadata) {
+    $("<div id='videoOverlay" + faceMetadata.id + "' class='mediaOverlay'></div>").insertBefore("#videoPlayer");
+    var playerPosition = $("#videoPlayer").position();
+    $("#videoOverlay" + faceMetadata.id).css({
+        top: (playerPosition.top + faceMetadata.y) + "px",
+        left: (playerPosition.left + faceMetadata.x) + "px",
+        height: faceMetadata.height + "px",
+        width: faceMetadata.width + "px"
+    });
+    $("#videoOverlay" + faceMetadata.id).show();
+    var faceLabel = faceMetadata.label;
+    if (faceMetadata.emotion != null) {
+        faceLabel = faceLabel + "<br><br>(" + faceMetadata.emotion + ")";
+    }
+    CreateTipTop("videoOverlay" + faceMetadata.id, faceLabel, 0, 0, false);
+    SetTipVisible("videoOverlay" + faceMetadata.id, true);
+}
+function ClearVideoOverlay() {
+    var videoOverlays = $("div[id^='videoOverlay']");
+    for (var i = 0; i < videoOverlays.length; i++) {
+        var videoOverlay = videoOverlays[i];
+        SetTipVisible(videoOverlay.id, false);
+        $("#" + videoOverlay.id).remove();
+    }
+}
+function ResetVideoOverlay() {
+    ClearVideoOverlay();
+    if (_facesMetadata != null) {
+        for (var i = 0; i < _facesMetadata.length; i++) {
+            var faceMetadata = _facesMetadata[i];
+            SetVideoOverlay(faceMetadata);
+        }
+    }
+}

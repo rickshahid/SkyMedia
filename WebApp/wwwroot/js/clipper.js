@@ -1,4 +1,25 @@
-﻿//function DisplayVideoClipper(languageCode) {
+﻿function CreateClip(clipData) {
+    alert("CreateClip");
+}
+function ToggleClipper() {
+    var videoClipper = document.getElementById("videoClipper");
+    if (videoClipper != null) {
+        $("#videoClipper").remove();
+    } else {
+        videoClipper = document.createElement("div");
+        videoClipper.id = "videoClipper"
+        videoClipper.className = "azure-subclipper dark-skin";
+        var mediaPlayer = document.getElementById("mediaPlayer");
+        mediaPlayer.appendChild(videoClipper);
+        var clipper = new subclipper({
+            restVersion: "2.0",
+            selector: "#videoClipper",
+            submitSubclipCallback: CreateClip,
+            height: 600
+        });
+    }
+}
+//function DisplayVideoClipper(languageCode) {
 //    var dialogId = "clipperDialog";
 //    var title = "Azure Video Clipper";
 //    var buttons = {};

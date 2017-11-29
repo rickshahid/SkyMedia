@@ -218,7 +218,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (ILocator locator in locators)
             {
                 IAsset asset = locator.Asset;
-                if (asset.IsStreamable && asset.AssetType != AssetType.SmoothStreaming) // Live Streaming
+                if (asset.IsStreamable)
                 {
                     MediaStream mediaStream = GetMediaStream(mediaClient, indexerClient, asset);
                     mediaStreams.Add(mediaStream);

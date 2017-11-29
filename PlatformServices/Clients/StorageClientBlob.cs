@@ -113,7 +113,7 @@ namespace AzureSkyMedia.PlatformServices
             CloudBlockBlob blob = GetBlob(containerName, directoryPath, fileName);
             blob.PutBlock(blockId, readStream, null);
 
-            string tableName = Constant.Storage.TableName.FileUpload;
+            string tableName = Constant.Storage.Table.FileUpload;
             string rowKey = blob.Name;
 
             if (blockIndex == 0)

@@ -45,7 +45,7 @@ namespace AzureSkyMedia.PlatformServices
                 documentClient.DeleteDocument(collectionId, indexId);
 
                 TableClient tableClient = new TableClient();
-                string tableName = Constant.Storage.TableName.InsightPublish;
+                string tableName = Constant.Storage.Table.InsightPublish;
                 MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, indexId);
                 if (insightPublish != null)
                 {
@@ -82,14 +82,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             TableClient tableClient = new TableClient();
 
-            string tableName = Constant.Storage.TableName.ContentPublish;
+            string tableName = Constant.Storage.Table.ContentPublish;
             MediaContentPublish contentPublish = tableClient.GetEntity<MediaContentPublish>(tableName, accountId, job.Id);
             if (contentPublish != null)
             {
                 tableClient.DeleteEntity(tableName, contentPublish);
             }
 
-            tableName = Constant.Storage.TableName.ContentProtection;
+            tableName = Constant.Storage.Table.ContentProtection;
             ContentProtection contentProtection = tableClient.GetEntity<ContentProtection>(tableName, accountId, job.Id);
             if (contentProtection != null)
             {

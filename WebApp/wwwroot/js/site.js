@@ -131,25 +131,16 @@ function GetProtectionInfo(contentProtection) {
     }
     return protectionInfo;
 }
-function GetMediaPlayer(clipMode) {
-    var playerMode = clipMode ? "1" : "0";
-    var plugins = {
-        videobreakdown: {}
-    };
-    if (clipMode) {
-        //plugins.AMVE = {
-        //    containerId: "videoClipper" + playerMode,
-        //    clipdataCallback: CreateVideoClip
-        //};
-    }
+function GetMediaPlayer() {
     var playerOptions = {
-        plugins: plugins,
+        plugins: {
+            videobreakdown: {}
+        },
         playbackSpeed: {
             enabled: true
         }
     };
-    var playerId = "videoPlayer" + playerMode;
-    return amp(playerId, playerOptions);
+    return amp("videoPlayer", playerOptions);
 }
 function SetPlayerSpinner(visible) {
     if (visible) {

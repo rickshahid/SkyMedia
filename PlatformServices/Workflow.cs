@@ -63,7 +63,7 @@ namespace AzureSkyMedia.PlatformServices
             };
 
             TableClient tableClient = new TableClient();
-            string tableName = Constant.Storage.TableName.ContentPublish;
+            string tableName = Constant.Storage.Table.ContentPublish;
             tableClient.InsertEntity(tableName, contentPublish);
 
             if (contentProtection != null)
@@ -73,7 +73,7 @@ namespace AzureSkyMedia.PlatformServices
                 contentProtection.DirectoryId = directoryId;
                 contentProtection.ClientId = AppSetting.GetValue(settingKey);
 
-                tableName = Constant.Storage.TableName.ContentProtection;
+                tableName = Constant.Storage.Table.ContentProtection;
                 contentProtection.PartitionKey = contentPublish.PartitionKey;
                 contentProtection.RowKey = contentPublish.RowKey;
                 tableClient.InsertEntity(tableName, contentProtection);

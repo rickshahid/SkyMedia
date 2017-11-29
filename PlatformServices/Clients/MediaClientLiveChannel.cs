@@ -7,9 +7,9 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private void CreateProgram(IChannel channel, IAsset asset, int archiveWindowMinutes)
+        private void CreateProgram(IChannel channel, IAsset asset, int? archiveWindowMinutes)
         {
-            if (archiveWindowMinutes == 0)
+            if (!archiveWindowMinutes.HasValue)
             {
                 string settingKey = Constant.AppSettingKey.MediaChannelProgramArchiveMinutes;
                 string programArchiveMinutes = AppSetting.GetValue(settingKey);
@@ -19,12 +19,12 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Name = asset.Name,
                 AssetId = asset.Id,
-                ArchiveWindowLength = new TimeSpan(0, archiveWindowMinutes, 0)
+                ArchiveWindowLength = new TimeSpan(0, archiveWindowMinutes.Value, 0)
             };
             channel.Programs.Create(programOptions);
         }
 
-        private void CreatePrograms(IChannel channel, int archiveWindowMinutes, bool archiveEncryption)
+        private void CreatePrograms(IChannel channel, int? archiveWindowMinutes, bool archiveEncryption)
         {
             string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramClearSuffix);
             IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.None);
@@ -56,8 +56,8 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         private IChannel CreateChannel(string channelName, ChannelEncodingType channelType, StreamingProtocol channelProtocol,
-                                       string inputAddressAuthorized, int inputSubnetPrefixLength,
-                                       string previewAddressAuthorized, int previewSubnetPrefixLength)
+                                       string inputAddressAuthorized, int? inputSubnetPrefixLength,
+                                       string previewAddressAuthorized, int? previewSubnetPrefixLength)
         {
             IPRange inputAddressRange = new IPRange();
             if (string.IsNullOrEmpty(inputAddressAuthorized))
@@ -70,7 +70,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 inputAddressRange.Name = Constant.Media.Live.AllowAuthorizedAddress;
                 inputAddressRange.Address = IPAddress.Parse(inputAddressAuthorized);
-                inputAddressRange.SubnetPrefixLength = inputSubnetPrefixLength;
+                inputAddressRange.SubnetPrefixLength = inputSubnetPrefixLength.Value;
             }
 
             IPRange previewAddressRange = new IPRange();
@@ -84,7 +84,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 previewAddressRange.Name = Constant.Media.Live.AllowAuthorizedAddress;
                 previewAddressRange.Address = IPAddress.Parse(previewAddressAuthorized);
-                previewAddressRange.SubnetPrefixLength = previewSubnetPrefixLength;
+                previewAddressRange.SubnetPrefixLength = previewSubnetPrefixLength.Value;
             }
 
             ChannelCreationOptions channelOptions = new ChannelCreationOptions()
@@ -120,9 +120,9 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public string CreateChannel(string channelName, MediaEncoding channelEncoding, MediaProtocol inputProtocol,
-                                    string inputAddressAuthorized, int inputSubnetPrefixLength,
-                                    string previewAddressAuthorized, int previewSubnetPrefixLength,
-                                    int archiveWindowMinutes, bool archiveEncryption)
+                                    string inputAddressAuthorized, int? inputSubnetPrefixLength,
+                                    string previewAddressAuthorized, int? previewSubnetPrefixLength,
+                                    int? archiveWindowMinutes, bool archiveEncryption)
         {
             ChannelEncodingType channelType = (ChannelEncodingType)channelEncoding;
             StreamingProtocol channelProtocol = (StreamingProtocol)inputProtocol;

@@ -30,7 +30,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 processorUnits[0].CurrentReservedUnits += unitCount;
             }
-            else
+            else if (processorUnits[0].CurrentReservedUnits >= unitCount)
             {
                 processorUnits[0].CurrentReservedUnits -= unitCount;
             }
@@ -75,6 +75,9 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
                         break;
+                    case MediaProcessor.CharacterRecognition:
+                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
+                        break;
                     case MediaProcessor.SpeechAnalyzer:
                         tasks = GetSpeechAnalyzerTasks(mediaClient, jobTask, jobInputs);
                         break;
@@ -89,9 +92,6 @@ namespace AzureSkyMedia.PlatformServices
                         break;
                     case MediaProcessor.MotionHyperlapse:
                         tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.CharacterRecognition:
-                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.ContentModeration:
                         tasks = GetContentModerationTasks(mediaClient, jobTask, jobInputs);

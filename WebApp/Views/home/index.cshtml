@@ -24,6 +24,7 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
     <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
+    <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript" src="~/js/clipper.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
@@ -61,7 +62,7 @@
                     }
                 }
             });
-            var mediaPlayer = GetMediaPlayer(false);
+            var mediaPlayer = GetMediaPlayer();
             mediaPlayer.ready(function () {
                 this.videobreakdown({
                     syncTranscript: true,
@@ -70,6 +71,32 @@
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
+                    if (IndexerInsight(mediaStream) != null) {
+                        var insightImage = document.createElement("img");
+                        insightImage.id = "insightImage";
+                        insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
+                        var insightButton = document.createElement("button");
+                        insightButton.id = "insightButton";
+                        insightButton.className = controlButtonCss;
+                        insightButton.appendChild(insightImage);
+                        controlBarRight.appendChild(insightButton);
+                        $("#insightButton").click(function () {
+                            ToggleIndexerInsight(mediaStream);
+                        });
+                    }
+                    if (AnalyticsInsight(mediaStream)) {
+                        var analyticsImage = document.createElement("img");
+                        analyticsImage.id = "analyticsImage";
+                        analyticsImage.src = "@storageCdnUrl" + "/MediaAnalyticsOpen.png";
+                        var analyticsButton = document.createElement("button");
+                        analyticsButton.id = "analyticsButton";
+                        analyticsButton.className = controlButtonCss;
+                        analyticsButton.appendChild(analyticsImage);
+                        controlBarRight.appendChild(analyticsButton);
+                        $("#analyticsButton").click(function () {
+                            ToggleAnalyticsInsight(mediaStream);
+                        });
+                    }
                     var clipperImage = document.createElement("img");
                     clipperImage.id = "clipperImage";
                     clipperImage.src = "@storageCdnUrl" + "/MediaClipperOpen.png";
@@ -79,37 +106,8 @@
                     clipperButton.appendChild(clipperImage);
                     controlBarRight.appendChild(clipperButton);
                     $("#clipperButton").click(function () {
-                        @*mediaPlayer.pause();
-                        DisplayVideoClipper("@languageCode");*@
+                        ToggleClipper();
                     });
-                    for (var i = 0; i < mediaStream.contentInsight.length; i++) {
-                        var insight = mediaStream.contentInsight[i];
-                        if (insight.processor == 3) { // Video Indexer
-                            var insightImage = document.createElement("img");
-                            insightImage.id = "insightImage";
-                            insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
-                            var insightButton = document.createElement("button");
-                            insightButton.id = "insightButton";
-                            insightButton.className = controlButtonCss;
-                            insightButton.appendChild(insightImage);
-                            controlBarRight.appendChild(insightButton);
-                            $("#insightButton").click(function () {
-                                ToggleIndexerInsight(insight);
-                            });
-                        } else {
-                            var metadataImage = document.createElement("img");
-                            metadataImage.id = "metadataImage";
-                            metadataImage.src = "@storageCdnUrl" + "/MediaMetadataOpen.png";
-                            var metadataButton = document.createElement("button");
-                            metadataButton.id = "metadataButton";
-                            metadataButton.className = controlButtonCss + " mediaMetadata";
-                            metadataButton.appendChild(metadataImage);
-                            controlBarRight.appendChild(metadataButton);
-                            $("#metadataButton").click(function () {
-                                ToggleMetadataPanel();
-                            });
-                        }
-                    }
                 }
             });
             mediaPlayer.addEventListener(amp.eventName.play, function () {
@@ -125,7 +123,7 @@
                 ClearVideoOverlay();
             });
             mediaPlayer.addEventListener(amp.eventName.pause, function () {
-                if ($("#metadataPanel").is(":visible")) {
+                if ($("#analyticsInsight").is(":visible")) {
                     SetAnalyticsMetadata();
                 }
             });
@@ -147,8 +145,8 @@
             } else if (accountMessage != "") {
                 DisplayMessage("Account Message", accountMessage);
             }
-            window.onorientationchange = ResetVideoOverlay;
             window.onresize = ResetVideoOverlay;
+            window.onorientationchange = ResetVideoOverlay;
         })
     </script>
 }
@@ -157,11 +155,29 @@
     Azure Sky Media
 }
 
-@Html.Partial("MediaPlayer", 0)
+@Html.Partial("MediaPlayer")
 
 <div id="indexerInsight" class="indexerInsight">
     <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
 </div>
+
+<table id="analyticsInsight" class="analyticsInsight">
+    <tr>
+        <td class="inputLabel">
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/en-us/azure/media-services/media-services-analytics-overview')">
+                Media Analytics
+            </span>
+        </td>
+        <td>
+            <select id="analyticsProcessors" class="analyticsProcessors" onchange="SetAnalyticsMetadata()"></select>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div id="analyticsMetadata" class="analyticsMetadata"></div>
+        </td>
+    </tr>
+</table>
 
 @Html.Partial("MediaControls", mediaStreams)
 
@@ -169,9 +185,3 @@
     <div id="streamName" class="streamName"></div>
     <div id="streamUrl" class="streamUrl"></div>
 </div>
-
-<div id="mediaClipper" class="azure-subclipper dark-skin" />
-
-@*<div id="clipperDialog" style="display: none">
-    @Html.Partial("MediaPlayer", 1)
-</div>*@

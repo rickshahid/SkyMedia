@@ -55,6 +55,7 @@ namespace AzureSkyMedia.PlatformServices
         AudioOnly
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaProcessor
     {
         EncoderStandard,
@@ -62,12 +63,12 @@ namespace AzureSkyMedia.PlatformServices
         VideoIndexer,
         VideoAnnotation,
         VideoSummarization,
+        CharacterRecognition,
         SpeechAnalyzer,
         FaceDetection,
         FaceRedaction,
         MotionDetection,
         MotionHyperlapse,
-        CharacterRecognition,
         ContentModeration
     }
 

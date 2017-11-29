@@ -17,12 +17,12 @@ namespace AzureSkyMedia.PlatformServices
             {
                 processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
                 processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
+                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
                 processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
                 processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
                 processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
                 processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
                 processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
-                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
                 processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
             }
             else
@@ -32,12 +32,12 @@ namespace AzureSkyMedia.PlatformServices
                 processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
                 processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
                 processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
+                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
                 processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
                 processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
                 processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
                 processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
                 processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
-                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
                 processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
             }
             return processorIds.ToArray();
@@ -120,6 +120,9 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.VideoSummarization:
                     processorId = Constant.Media.ProcessorId.VideoSummarization;
                     break;
+                case MediaProcessor.CharacterRecognition:
+                    processorId = Constant.Media.ProcessorId.CharacterRecognition;
+                    break;
                 case MediaProcessor.SpeechAnalyzer:
                     processorId = Constant.Media.ProcessorId.SpeechAnalyzer;
                     break;
@@ -134,9 +137,6 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 case MediaProcessor.MotionHyperlapse:
                     processorId = Constant.Media.ProcessorId.MotionHyperlapse;
-                    break;
-                case MediaProcessor.CharacterRecognition:
-                    processorId = Constant.Media.ProcessorId.CharacterRecognition;
                     break;
                 case MediaProcessor.ContentModeration:
                     processorId = Constant.Media.ProcessorId.ContentModeration;
@@ -171,6 +171,9 @@ namespace AzureSkyMedia.PlatformServices
                 case Constant.Media.ProcessorId.VideoSummarization:
                     mediaProcessor = MediaProcessor.VideoSummarization;
                     break;
+                case Constant.Media.ProcessorId.CharacterRecognition:
+                    mediaProcessor = MediaProcessor.CharacterRecognition;
+                    break;
                 case Constant.Media.ProcessorId.SpeechAnalyzer:
                     mediaProcessor = MediaProcessor.SpeechAnalyzer;
                     break;
@@ -185,9 +188,6 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 case Constant.Media.ProcessorId.MotionHyperlapse:
                     mediaProcessor = MediaProcessor.MotionHyperlapse;
-                    break;
-                case Constant.Media.ProcessorId.CharacterRecognition:
-                    mediaProcessor = MediaProcessor.CharacterRecognition;
                     break;
                 case Constant.Media.ProcessorId.ContentModeration:
                     mediaProcessor = MediaProcessor.ContentModeration;

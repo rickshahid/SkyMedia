@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -9,6 +11,19 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private static ITask[] GetJobTasks(IJob job, string[] processorIds)
+        {
+            List<ITask> jobTasks = new List<ITask>();
+            foreach (ITask jobTask in job.Tasks)
+            {
+                if (processorIds.Contains(jobTask.MediaProcessorId, StringComparer.OrdinalIgnoreCase))
+                {
+                    jobTasks.Add(jobTask);
+                }
+            }
+            return jobTasks.ToArray();
+        }
+
         private static string[] GetAssetIds(MediaJobInput[] jobInputs)
         {
             List<string> assetIds = new List<string>();
@@ -35,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
             {
                 string outputAssetName = Path.GetFileNameWithoutExtension(assetName);
-                jobTask.OutputAssetName = string.Concat(outputAssetName, " - ", jobTask.Name);
+                jobTask.OutputAssetName = string.Concat(outputAssetName, " (", jobTask.Name, ")");
             }
             jobTask.OutputAssetEncryption = AssetCreationOptions.None;
             if (jobTask.ContentProtection != null)

@@ -100,10 +100,10 @@ namespace AzureSkyMedia.PlatformServices
         private static void PublishAnalytics(MediaClient mediaClient, IJob job, MediaContentPublish contentPublish, string assetId)
         {
             string processorId1 = Constant.Media.ProcessorId.VideoAnnotation;
-            string processorId2 = Constant.Media.ProcessorId.FaceDetection;
-            string processorId3 = Constant.Media.ProcessorId.FaceRedaction;
-            string processorId4 = Constant.Media.ProcessorId.MotionDetection;
-            string processorId5 = Constant.Media.ProcessorId.CharacterRecognition;
+            string processorId2 = Constant.Media.ProcessorId.CharacterRecognition;
+            string processorId3 = Constant.Media.ProcessorId.FaceDetection;
+            string processorId4 = Constant.Media.ProcessorId.FaceRedaction;
+            string processorId5 = Constant.Media.ProcessorId.MotionDetection;
             string processorId6 = Constant.Media.ProcessorId.ContentModeration;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
@@ -156,6 +156,19 @@ namespace AzureSkyMedia.PlatformServices
                     MobileNumber = insightPublish.MobileNumber,
                     StatusMessage = string.Empty
                 };
+            }
+            return mediaPublish;
+        }
+
+        public static MediaPublish PublishInsight(string queueName)
+        {
+            MediaPublish mediaPublish = null;
+            QueueClient queueClient = new QueueClient();
+            MediaInsightPublish insightPublish = queueClient.GetMessage<MediaInsightPublish>(queueName, out string messageId, out string popReceipt);
+            if (insightPublish != null)
+            {
+                mediaPublish = PublishInsight(insightPublish);
+                queueClient.DeleteMessage(queueName, messageId, popReceipt);
             }
             return mediaPublish;
         }
