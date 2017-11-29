@@ -5,7 +5,7 @@
         CreateTipRight(targetId, protectionTip);
     }
 }
-function LoadTreeNodes(libraryView) {
+function LoadTreeNodes(filesView) {
     var treeNodes = $("#mediaAssets").jstree({
         "core": {
             "themes": {
@@ -20,7 +20,7 @@ function LoadTreeNodes(libraryView) {
                 }
             }
         },
-        "plugins": libraryView ? [] : ["checkbox"],
+        "plugins": filesView ? [] : ["checkbox"],
         "checkbox": {
             "keep_selected_style": false,
             "tie_selection": false,

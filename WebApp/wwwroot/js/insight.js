@@ -32,14 +32,14 @@ function ToggleIndexerInsight(mediaStream) {
     }
 }
 function ToggleAnalyticsInsight(mediaStream) {
-//    ClearVideoOverlay();
+    ClearVideoOverlay();
     var analyticsImage = document.getElementById("analyticsImage");
-    if ($("#analyticsMetadata").is(":visible")) {
+    if ($("#analyticsInsight").is(":visible")) {
         analyticsImage.src = analyticsImage.src.replace("Close", "Open");
-        $("#analyticsMetadata").hide();
+        $("#analyticsInsight").hide();
     } else {
         analyticsImage.src = analyticsImage.src.replace("Open", "Close");
-        $("#analyticsMetadata").show();
+        $("#analyticsInsight").show();
     }
 }
 //function GetFragmentEvent(fragment, timeScale, timeSeconds) {

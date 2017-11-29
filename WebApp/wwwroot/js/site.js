@@ -29,7 +29,7 @@ function SetLayout(b2b) {
     CreateTipTop("mediaProcessorPresetEditor", "Media Processor<br><br>Preset Editor");
     CreateTipTop("mediaFileWorkflow", "Media File Workflow");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
-    CreateTipTop("mediaAssetLibrary", "Media Asset Library");
+    CreateTipTop("mediaAssetFiles", "Media Asset Files");
     CreateTipTop("mediaStreamLeft", "Stream Tuner Left");
     CreateTipTop("mediaStreamRight", "Stream Tuner Right");
     CreateTipTop("mediaStreamLive", "Media Stream Live");

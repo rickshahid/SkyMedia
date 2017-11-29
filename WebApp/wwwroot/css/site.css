@@ -155,6 +155,7 @@ body {
 }
 
 .viewTitle {
+    white-space: nowrap;
     text-align: center;
     font-size: x-large;
     font-weight: bold;
@@ -394,7 +395,7 @@ body {
     overflow: auto;
 }
 
-.mediaAssets.libraryView {
+.mediaAssets.filesView {
     height: 450px;
     width: 750px;
 }
@@ -697,14 +698,15 @@ body {
 }
 
 .indexerInsight {
-    margin: 0 auto;
+    margin: 0px auto;
     display: none;
     height: 500px;
     width: 750px;
 }
 
 .analyticsInsight {
-    margin: 0 auto;
+    margin: 10px auto;
+    font-size: large;
     display: none;
 }
 

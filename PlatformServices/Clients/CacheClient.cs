@@ -10,7 +10,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal class CacheClient
     {
-        private static Lazy<ConnectionMultiplexer> _service = new Lazy<ConnectionMultiplexer>(() =>
+        private static Lazy<ConnectionMultiplexer> _cache = new Lazy<ConnectionMultiplexer>(() =>
         {
             string settingKey = Constant.AppSettingKey.AzureCache;
             string accountConnection = AppSetting.GetValue(settingKey);
@@ -24,9 +24,9 @@ namespace AzureSkyMedia.PlatformServices
             _partitionId = authUser.Id;
         }
 
-        private IDatabase GetCache()
+        private IDatabase GetDatabase()
         {
-            return _service.Value.GetDatabase();
+            return _cache.Value.GetDatabase();
         }
 
         private string MapItemKey(string itemKey)
@@ -37,9 +37,9 @@ namespace AzureSkyMedia.PlatformServices
         public T GetValue<T>(string itemKey)
         {
             T value = default(T);
-            IDatabase cache = GetCache();
+            IDatabase database = GetDatabase();
             itemKey = MapItemKey(itemKey);
-            string itemValue = cache.StringGet(itemKey);
+            string itemValue = database.StringGet(itemKey);
             if (typeof(T) == typeof(string))
             {
                 value = (T)Convert.ChangeType(itemValue, typeof(T));
@@ -54,9 +54,9 @@ namespace AzureSkyMedia.PlatformServices
         public T[] GetValues<T>(string itemKey)
         {
             List<T> values = new List<T>();
-            IDatabase cache = GetCache();
+            IDatabase database = GetDatabase();
             itemKey = MapItemKey(itemKey);
-            string itemValue = cache.StringGet(itemKey);
+            string itemValue = database.StringGet(itemKey);
             if (!string.IsNullOrEmpty(itemValue))
             {
                 JArray itemValues = JArray.Parse(itemValue);
@@ -76,20 +76,20 @@ namespace AzureSkyMedia.PlatformServices
 
         public void SetValue<T>(string itemKey, T itemValue, TimeSpan? itemExpiration)
         {
-            IDatabase cache = GetCache();
+            IDatabase database = GetDatabase();
             itemKey = MapItemKey(itemKey);
             if (itemValue == null)
             {
-                cache.KeyDelete(itemKey);
+                database.KeyDelete(itemKey);
             }
             else if (typeof(T) == typeof(string))
             {
-                cache.StringSet(itemKey, itemValue.ToString(), itemExpiration);
+                database.StringSet(itemKey, itemValue.ToString(), itemExpiration);
             }
             else
             {
                 string itemSerialized = JsonConvert.SerializeObject(itemValue);
-                cache.StringSet(itemKey, itemSerialized, itemExpiration);
+                database.StringSet(itemKey, itemSerialized, itemExpiration);
             }
         }
     }
