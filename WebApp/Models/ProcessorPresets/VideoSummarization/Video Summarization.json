@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Video Summarization",
   "ProcessorName": "Video Summarization",
+  "PresetName": "Video Summarization",
   "Version": 1.0,
   "Options": {
     "OutputAudio": true,

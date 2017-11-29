@@ -30,7 +30,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string procedureId = Constant.Database.Procedure.ProcessorConfig;
             using (DocumentClient documentClient = new DocumentClient())
             {
-                preset = documentClient.ExecuteProcedure(collectionId, procedureId, "ProcessorName", presetName);
+                preset = documentClient.ExecuteProcedure(collectionId, procedureId, "PresetName", presetName);
             }
             return Json(preset);
         }

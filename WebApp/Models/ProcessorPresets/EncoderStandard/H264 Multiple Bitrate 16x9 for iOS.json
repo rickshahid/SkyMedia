@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Encoder Standard",
-  "ProcessorName": "H264 Multiple Bitrate 16x9 for iOS",
+  "ProcessorName": "Encoder Standard",
+  "PresetName": "H264 Multiple Bitrate 16x9 for iOS",
   "Version": 1.0,
   "Codecs": [
     {

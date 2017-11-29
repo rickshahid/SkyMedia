@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Motion Hyperlapse",
   "ProcessorName": "Motion Hyperlapse",
+  "PresetName": "Motion Hyperlapse",
   "Version": 1.0,
   "Sources": [
     {

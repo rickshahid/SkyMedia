@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Face Detection",
   "ProcessorName": "Face Detection",
+  "PresetName": "Face Detection",
   "Version": 1.0,
   "Options": {
     "Mode": "Faces",

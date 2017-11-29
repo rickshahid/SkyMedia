@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Encoder Standard",
-  "ProcessorName": "H264 Single Bitrate 4K",
+  "ProcessorName": "Encoder Standard",
+  "PresetName": "H264 Single Bitrate 4K",
   "Version": 1.0,
   "Codecs": [
     {

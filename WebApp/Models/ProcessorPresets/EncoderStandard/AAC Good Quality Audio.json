@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Encoder Standard",
-  "ProcessorName": "AAC Good Quality Audio",
+  "ProcessorName": "Encoder Standard",
+  "PresetName": "AAC Good Quality Audio",
   "Version": 1.0,
   "Codecs": [
     {

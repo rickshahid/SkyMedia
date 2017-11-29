@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Encoder Standard",
-  "ProcessorName": "H264 Multiple Bitrate 720p",
+  "ProcessorName": "Encoder Standard",
+  "PresetName": "H264 Multiple Bitrate 720p",
   "Version": 1.0,
   "Codecs": [
     {

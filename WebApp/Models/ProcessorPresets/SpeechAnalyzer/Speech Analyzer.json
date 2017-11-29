@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Speech Analyzer",
   "ProcessorName": "Speech Analyzer",
+  "PresetName": "Speech Analyzer",
   "Version": 1.0,
   "Features": [
     {

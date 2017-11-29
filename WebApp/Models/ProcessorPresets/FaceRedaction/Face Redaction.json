@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Face Redaction",
   "ProcessorName": "Face Redaction",
+  "PresetName": "Face Redaction",
   "Version": 1.0,
   "Options": {
     "Mode": "Analyze"

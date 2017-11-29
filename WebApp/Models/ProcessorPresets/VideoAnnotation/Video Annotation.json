@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Video Annotation",
   "ProcessorName": "Video Annotation",
+  "PresetName": "Video Annotation",
   "Version": 1.0,
   "id": "3ef7f690-5d44-4961-9cd4-16ff67f443eb"
 }

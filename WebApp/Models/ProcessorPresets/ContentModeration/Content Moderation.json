@@ -1,6 +1,6 @@
 {
-  "ProcessorType": "Content Moderation",
   "ProcessorName": "Content Moderation",
+  "PresetName": "Content Moderation",
   "Version": 1.0,
   "Options": {
     "Mode": "Quality"
