@@ -16,6 +16,8 @@
     string accountMessage = ViewData["accountMessage"] as string;
 
     string storageCdnUrl = ViewData["storageCdnUrl"] as string;
+
+    int videoIndexer = (int)MediaProcessor.VideoIndexer;
 }
 
 @section head {
@@ -71,7 +73,7 @@
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
-                    if (IndexerInsight(mediaStream) != null) {
+                    if (IndexerInsight(mediaStream, @videoIndexer) != null) {
                         var insightImage = document.createElement("img");
                         insightImage.id = "insightImage";
                         insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
@@ -81,10 +83,10 @@
                         insightButton.appendChild(insightImage);
                         controlBarRight.appendChild(insightButton);
                         $("#insightButton").click(function () {
-                            ToggleIndexerInsight(mediaStream);
+                            ToggleIndexerInsight(mediaStream, @videoIndexer);
                         });
                     }
-                    if (AnalyticsInsight(mediaStream)) {
+                    if (AnalyticsInsight(mediaStream, @videoIndexer)) {
                         var analyticsImage = document.createElement("img");
                         analyticsImage.id = "analyticsImage";
                         analyticsImage.src = "@storageCdnUrl" + "/MediaAnalyticsOpen.png";

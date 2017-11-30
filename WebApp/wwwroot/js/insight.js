@@ -1,30 +1,30 @@
-﻿function IndexerInsight(mediaStream) {
+﻿function IndexerInsight(mediaStream, videoIndexer) {
     var insight = null;
     for (var i = 0; i < mediaStream.contentInsight.length; i++) {
         var mediaProcessor = mediaStream.contentInsight[i].processor;
-        if (mediaProcessor == "VideoIndexer") {
+        if (mediaProcessor == videoIndexer) {
             insight = mediaStream.contentInsight[i];
         }
     }
     return insight;
 }
-function AnalyticsInsight(mediaStream) {
+function AnalyticsInsight(mediaStream, videoIndexer) {
     var insight = false;
     for (var i = 0; i < mediaStream.contentInsight.length; i++) {
         var mediaProcessor = mediaStream.contentInsight[i].processor;
-        if (mediaProcessor != "VideoIndexer") {
+        if (mediaProcessor != videoIndexer) {
             insight = true;
         }
     }
     return insight;
 }
-function ToggleIndexerInsight(mediaStream) {
+function ToggleIndexerInsight(mediaStream, videoIndexer) {
     var insightImage = document.getElementById("insightImage");
     if ($("#indexerInsight").is(":visible")) {
         insightImage.src = insightImage.src.replace("Close", "Open");
         $("#indexerInsight").hide();
     } else {
-        var insight = IndexerInsight(mediaStream);
+        var insight = IndexerInsight(mediaStream, videoIndexer);
         var indexerFrame = document.getElementById("indexerFrame");
         indexerFrame.src = insight.sourceUrl;
         insightImage.src = insightImage.src.replace("Open", "Close");

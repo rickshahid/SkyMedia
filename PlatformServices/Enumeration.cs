@@ -55,7 +55,6 @@ namespace AzureSkyMedia.PlatformServices
         AudioOnly
     }
 
-    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaProcessor
     {
         EncoderStandard,

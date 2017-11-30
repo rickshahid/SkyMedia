@@ -40,11 +40,7 @@ namespace AzureSkyMedia.PlatformServices
             IDatabase database = GetDatabase();
             itemKey = MapItemKey(itemKey);
             string itemValue = database.StringGet(itemKey);
-            if (typeof(T) == typeof(string))
-            {
-                value = (T)Convert.ChangeType(itemValue, typeof(T));
-            }
-            else if (itemValue != null)
+            if (itemValue != null)
             {
                 value = JsonConvert.DeserializeObject<T>(itemValue);
             }
