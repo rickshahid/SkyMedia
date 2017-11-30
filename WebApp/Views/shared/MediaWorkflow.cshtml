@@ -1,17 +1,11 @@
 ﻿@{
-    string[] model = Model;
-    string uploadView = model[0];
-    string cssClass = "mediaWorkflow";
-    if (model.Length > 1)
-    {
-        cssClass = string.Concat(cssClass, " ", model[1]);
-    }
+    bool uploadView = Model;
 }
 
-<table id="mediaWorkflow" class="@cssClass">
+<table id="mediaWorkflow" class="mediaWorkflow">
     <tr id="mediaAssetsRow" style="display: none">
         <td class="inputLabel">
-            <span class="inputLabelExtended">
+            <span class="inputLabelMultiLine">
                 Media<br>Assets
             </span>
         </td>

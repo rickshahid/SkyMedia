@@ -183,6 +183,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     public const string FileUpload = "upload";
                     public const string ContentDelivery = "cdn";
+                    public const string AzureMediaServices = "ams";
                 }
             }
 
@@ -223,6 +224,7 @@ namespace AzureSkyMedia.PlatformServices
         public struct Media
         {
             public const int RenderedClipMode = 2;
+            public const string AccountFileName = "MediaAccount.json";
 
             public struct ProcessorId
             {

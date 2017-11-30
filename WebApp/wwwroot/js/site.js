@@ -22,10 +22,10 @@ function SetLayout(b2b) {
     CreateTipLeft("cognitiveServices", "Azure Cognitive Services");
     CreateTipLeft("appServiceWeb", "Azure App Service<br><br>Web Apps");
     CreateTipLeft("appServiceFunctions", "Azure App Service<br><br>Function Apps");
-    CreateTipLeft("appServiceLogic", "Azure App Service<br><br>Logic Apps");
-    CreateTipLeft("cosmosDB", "Azure Cosmos DB");
-    CreateTipLeft("batchRendering", "Azure Batch Rendering");
+    CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
     CreateTipLeft("botService", "Azure Bot Service");
+    CreateTipLeft("batchRendering", "Azure Batch Rendering");
+    CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipTop("mediaProcessorPresetEditor", "Media Processor<br><br>Preset Editor");
     CreateTipTop("mediaFileWorkflow", "Media File Workflow");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
