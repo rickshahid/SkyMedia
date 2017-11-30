@@ -87,8 +87,6 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Function App** - http://azure.microsoft.com/services/functions/
 
-* **Logic App** - http://azure.microsoft.com/services/logic-apps/
-
 * **Redis Cache** - http://azure.microsoft.com/services/cache/
 
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
