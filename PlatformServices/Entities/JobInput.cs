@@ -8,8 +8,6 @@
 
         public string PrimaryFile { get; set; }
 
-        public bool WorkflowView { get; set; }
-
         public int MarkInSeconds { get; set; }
 
         public string MarkInTime { get; set; }

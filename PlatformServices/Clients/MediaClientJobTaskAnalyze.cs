@@ -80,6 +80,19 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
+        private static MediaJobTask[] GetContentModerationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        {
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            jobTask.MediaProcessor = MediaProcessor.ContentModeration;
+            string settingKey = Constant.AppSettingKey.MediaProcessorContentModerationDocumentId;
+            string documentId = AppSetting.GetValue(settingKey);
+            JObject processorConfig = GetProcessorConfig(documentId);
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
+            jobTasks.AddRange(tasks);
+            return jobTasks.ToArray();
+        }
+
         private static MediaJobTask[] GetSpeechAnalyzerTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
@@ -168,19 +181,6 @@ namespace AzureSkyMedia.PlatformServices
             processorSources["NumFrames"] = frameEnd - frameStart + 1;
             JToken processorOptions = processorConfig["Options"];
             processorOptions["Speed"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseSpeed.ToString()];
-            jobTask.ProcessorConfig = processorConfig.ToString();
-            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
-            jobTasks.AddRange(tasks);
-            return jobTasks.ToArray();
-        }
-
-        private static MediaJobTask[] GetContentModerationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            jobTask.MediaProcessor = MediaProcessor.ContentModeration;
-            string settingKey = Constant.AppSettingKey.MediaProcessorContentModerationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
-            JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
             MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, false);
             jobTasks.AddRange(tasks);

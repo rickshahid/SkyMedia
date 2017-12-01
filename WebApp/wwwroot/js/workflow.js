@@ -30,7 +30,7 @@ function ValidWorkflowInput(uploadView, saveWorkflow) {
             validInput = false;
         }
     } else {
-        _jobInputs = GetJobInputs(uploadView);
+        _jobInputs = GetJobInputs();
         if (_jobInputs.length == 0) {
             CreateTipTopLeft("mediaAssets", "Select Media Assets", 48, 0);
             SetTipVisible("mediaAssets", true);

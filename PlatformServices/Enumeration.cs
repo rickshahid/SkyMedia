@@ -63,12 +63,12 @@ namespace AzureSkyMedia.PlatformServices
         VideoAnnotation,
         VideoSummarization,
         CharacterRecognition,
+        ContentModeration,
         SpeechAnalyzer,
         FaceDetection,
         FaceRedaction,
         MotionDetection,
-        MotionHyperlapse,
-        ContentModeration
+        MotionHyperlapse        
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

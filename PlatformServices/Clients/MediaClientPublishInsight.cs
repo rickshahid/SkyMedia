@@ -101,10 +101,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             string processorId1 = Constant.Media.ProcessorId.VideoAnnotation;
             string processorId2 = Constant.Media.ProcessorId.CharacterRecognition;
-            string processorId3 = Constant.Media.ProcessorId.FaceDetection;
-            string processorId4 = Constant.Media.ProcessorId.FaceRedaction;
-            string processorId5 = Constant.Media.ProcessorId.MotionDetection;
-            string processorId6 = Constant.Media.ProcessorId.ContentModeration;
+            string processorId3 = Constant.Media.ProcessorId.ContentModeration;
+            string processorId4 = Constant.Media.ProcessorId.FaceDetection;
+            string processorId5 = Constant.Media.ProcessorId.FaceRedaction;
+            string processorId6 = Constant.Media.ProcessorId.MotionDetection;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
             ITask[] jobTasks = GetJobTasks(job, processorIds);
             if (jobTasks.Length > 0)

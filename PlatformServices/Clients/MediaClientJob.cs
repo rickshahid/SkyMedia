@@ -39,70 +39,67 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
         {
-            List<MediaJobTask> taskList = new List<MediaJobTask>();
-            foreach (MediaJobTask jobTask in mediaJob.Tasks)
+            List<MediaJobTask> tasks = new List<MediaJobTask>();
+            foreach (MediaJobTask task in mediaJob.Tasks)
             {
-                MediaJobTask[] tasks = null;
-                switch (jobTask.MediaProcessor)
+                MediaJobTask[] jobTasks = null;
+                switch (task.MediaProcessor)
                 {
                     case MediaProcessor.EncoderStandard:
                     case MediaProcessor.EncoderPremium:
-                        tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
+                        jobTasks = GetEncoderTasks(mediaClient, task, jobInputs);
                         break;
                     case MediaProcessor.VideoIndexer:
                         IndexerClient indexerClient = new IndexerClient(authToken);
                         foreach (MediaJobInput jobInput in jobInputs)
                         {
-                            if (jobInput.WorkflowView)
+                            string indexId = indexerClient.GetIndexId(jobInput.AssetId);
+                            if (!string.IsNullOrEmpty(indexId))
                             {
-                                string indexId = indexerClient.GetIndexId(jobInput.AssetId);
-                                if (!string.IsNullOrEmpty(indexId))
-                                {
-                                    indexerClient.ResetIndex(indexId);
-                                }
+                                indexerClient.ResetIndex(indexId);
                             }
                             else
                             {
                                 IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
                                 string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
-                                IndexVideo(authToken, indexerClient, asset, locatorUrl, jobTask);
+                                IndexVideo(authToken, indexerClient, asset, locatorUrl, task);
                             }
                         }
                         break;
                     case MediaProcessor.VideoAnnotation:
-                        tasks = GetVideoAnnotationTasks(mediaClient, jobTask, jobInputs);
+                        jobTasks = GetVideoAnnotationTasks(mediaClient, task, jobInputs);
                         break;
                     case MediaProcessor.VideoSummarization:
-                        tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
+                        jobTasks = GetVideoSummarizationTasks(mediaClient, task, jobInputs);
                         break;
                     case MediaProcessor.CharacterRecognition:
-                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.SpeechAnalyzer:
-                        tasks = GetSpeechAnalyzerTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.FaceDetection:
-                        tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.FaceRedaction:
-                        tasks = GetFaceRedactionTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.MotionDetection:
-                        tasks = GetMotionDetectionTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.MotionHyperlapse:
-                        tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, jobInputs);
+                        jobTasks = GetCharacterRecognitionTasks(mediaClient, task, jobInputs);
                         break;
                     case MediaProcessor.ContentModeration:
-                        tasks = GetContentModerationTasks(mediaClient, jobTask, jobInputs);
+                        jobTasks = GetContentModerationTasks(mediaClient, task, jobInputs);
+                        break;
+                    case MediaProcessor.SpeechAnalyzer:
+                        jobTasks = GetSpeechAnalyzerTasks(mediaClient, task, jobInputs);
+                        break;
+                    case MediaProcessor.FaceDetection:
+                        jobTasks = GetFaceDetectionTasks(mediaClient, task, jobInputs);
+                        break;
+                    case MediaProcessor.FaceRedaction:
+                        jobTasks = GetFaceRedactionTasks(mediaClient, task, jobInputs);
+                        break;
+                    case MediaProcessor.MotionDetection:
+                        jobTasks = GetMotionDetectionTasks(mediaClient, task, jobInputs);
+                        break;
+                    case MediaProcessor.MotionHyperlapse:
+                        jobTasks = GetMotionHyperlapseTasks(mediaClient, task, jobInputs);
                         break;
                 }
-                if (tasks != null)
+                if (jobTasks != null)
                 {
-                    taskList.AddRange(tasks);
+                    tasks.AddRange(jobTasks);
                 }
             }
-            mediaJob.Tasks = taskList.ToArray();
+            mediaJob.Tasks = tasks.ToArray();
             if (string.IsNullOrEmpty(mediaJob.Name))
             {
                 mediaJob.Name = jobInputs[0].AssetName;
@@ -116,17 +113,17 @@ namespace AzureSkyMedia.PlatformServices
             jobTemplate = null;
             if (!string.IsNullOrEmpty(mediaJob.TemplateId))
             {
-                List<IAsset> jobInputList = new List<IAsset>();
+                List<IAsset> inputAssets = new List<IAsset>();
                 foreach (MediaJobInput jobInput in jobInputs)
                 {
                     IAsset asset = GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
                     if (asset != null)
                     {
-                        jobInputList.Add(asset);
+                        inputAssets.Add(asset);
                     }
                 }
                 jobTemplate = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
-                job = _media.Jobs.Create(mediaJob.Name, jobTemplate, jobInputList, mediaJob.Priority);
+                job = _media.Jobs.Create(mediaJob.Name, jobTemplate, inputAssets, mediaJob.Priority);
             }
             else if (mediaJob.Tasks.Length > 0)
             {
@@ -149,10 +146,7 @@ namespace AzureSkyMedia.PlatformServices
                     currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
                 }
                 INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
-                if (notificationEndpoint != null)
-                {
-                    job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
-                }
+                job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
             }
             if (job != null)
             {
