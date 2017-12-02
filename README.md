@@ -93,6 +93,8 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
+* **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
+
 If you have any issues or suggestions, please let me know.
 
 Thanks.
