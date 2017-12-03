@@ -4,7 +4,7 @@ Welcome! This repository contains the multi-tenant Azure media solution sample t
 
 As an illustration, here is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. Azure Media Services content is adaptive, scaled and globally consumable across a wide range of devices and platforms.
 
-![](http://skymedia.blob.core.windows.net/img/Snip01.ApplicationWebSite.png)
+![](http://skymedia.blob.core.windows.net/img/Snip01-ApplicationWebSite.png)
 
 For more screenshots of key application modules and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
@@ -24,7 +24,7 @@ The following set of media functionality has been integrated and enabled within 
 
 The following application architecture diagram represents the deployment at http://www.skymedia.io
 
-![](http://skymedia.blob.core.windows.net/img/Snip02.ApplicationArchitecture.png)
+![](http://skymedia.blob.core.windows.net/img/Snip02-ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -54,6 +54,8 @@ To deploy the parameterized solution sample within your Azure subscription, clic
 </table>
 
 The following Azure platform services were leveraged to create this sample media application:
+
+* **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
 
 * **Active Directory** - http://azure.microsoft.com/services/active-directory/
 
@@ -92,6 +94,8 @@ The following Azure platform services were leveraged to create this sample media
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
+
+* **App Center** - http://azure.microsoft.com/services/app-center/
 
 If you have any issues or suggestions, please let me know.
 
