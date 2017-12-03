@@ -55,6 +55,8 @@ To deploy the parameterized solution sample within your Azure subscription, clic
 
 The following Azure platform services were leveraged to create this sample media application:
 
+* **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
+
 * **Active Directory** - http://azure.microsoft.com/services/active-directory/
 
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
@@ -93,7 +95,7 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
-* **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
+* **App Center** - http://azure.microsoft.com/services/app-center/
 
 If you have any issues or suggestions, please let me know.
 
