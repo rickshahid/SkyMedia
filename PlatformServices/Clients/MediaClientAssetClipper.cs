@@ -15,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
         public static object CreateFilter(string filterName, MediaClient mediaClient, string sourceUrl, int markIn, int markOut)
         {
             IAsset asset = GetSourceAsset(mediaClient, sourceUrl);
-            return mediaClient.CreateFilter(asset, filterName, markIn, markOut);
+            return mediaClient.CreateFilter(asset, filterName, markIn, markOut, null);
         }
 
         public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, string sourceUrl, int markIn, int markOut)

@@ -1,0 +1,35 @@
+﻿@{
+    string ampVersion = ViewData["mediaPlayerVersion"] as string;
+    string ampSkin = ViewData["mediaPlayerSkin"] as string;
+
+    string amcVersion = ViewData["mediaClipperVersion"] as string;
+}
+
+@section head {
+    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
+    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.css">
+    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
+    <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
+    <script type="text/javascript">
+        function LoadAssets() {
+            //alert("LoadAssets");
+        }
+        function CreateClip(clipData) {
+            //alert("CreateClip");
+        }
+        $(function () {
+            var clipper = new subclipper({
+                restVersion: "2.0",
+                selector: "#videoClipper",
+                submitSubclipCallback: CreateClip,
+                assetsPanelLoaderCallback: LoadAssets
+            });
+        })
+    </script>
+}
+
+@section title {
+    Azure Media Clipper
+}
+
+<div id="videoClipper" class="videoClipper azure-subclipper dark-skin"></div>

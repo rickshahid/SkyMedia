@@ -28,6 +28,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

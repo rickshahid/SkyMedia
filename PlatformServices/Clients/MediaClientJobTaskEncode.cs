@@ -7,19 +7,19 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static bool IsPremiumWorkflow(string fileName)
+        private static bool IsPremiumWorkflow(MediaJobInput jobInput)
         {
-            return fileName.EndsWith(Constant.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.OrdinalIgnoreCase);
+            return jobInput.PrimaryFile.EndsWith(Constant.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.OrdinalIgnoreCase);
         }
 
         private static int OrderByWorkflow(MediaJobInput leftSide, MediaJobInput rightSide)
         {
             int comparison = 0;
-            if (IsPremiumWorkflow(leftSide.PrimaryFile))
+            if (IsPremiumWorkflow(leftSide))
             {
                 comparison = -1;
             }
-            else if (IsPremiumWorkflow(rightSide.PrimaryFile))
+            else if (IsPremiumWorkflow(rightSide))
             {
                 comparison = 1;
             }
@@ -29,11 +29,9 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetEncoderTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            if (jobTask.MediaProcessor != MediaProcessor.EncoderStandard)
+            if (jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
             {
-                List<MediaJobInput> inputList = new List<MediaJobInput>(jobInputs);
-                inputList.Sort(OrderByWorkflow);
-                jobInputs = inputList.ToArray();
+                Array.Sort(jobInputs, OrderByWorkflow);
             }
             else
             {

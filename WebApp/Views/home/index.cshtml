@@ -7,8 +7,6 @@
     string ampVersion = ViewData["mediaPlayerVersion"] as string;
     string ampSkin = ViewData["mediaPlayerSkin"] as string;
 
-    string amcVersion = ViewData["mediaClipperVersion"] as string;
-
     string autoPlay = ViewData["autoPlay"] as string;
     string languageCode = ViewData["languageCode"] as string;
 
@@ -22,12 +20,9 @@
 
 @section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
-    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.css">
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
-    <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
     <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
     <script type="text/javascript" src="~/js/insight.js"></script>
-    <script type="text/javascript" src="~/js/clipper.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
         $(function () {
@@ -99,17 +94,6 @@
                             ToggleAnalyticsInsight(mediaStream);
                         });
                     }
-                    var clipperImage = document.createElement("img");
-                    clipperImage.id = "clipperImage";
-                    clipperImage.src = "@storageCdnUrl" + "/MediaClipperOpen.png";
-                    var clipperButton = document.createElement("button");
-                    clipperButton.id = "clipperButton";
-                    clipperButton.className = controlButtonCss;
-                    clipperButton.appendChild(clipperImage);
-                    controlBarRight.appendChild(clipperButton);
-                    $("#clipperButton").click(function () {
-                        ToggleClipper();
-                    });
                 }
             });
             mediaPlayer.addEventListener(amp.eventName.play, function () {

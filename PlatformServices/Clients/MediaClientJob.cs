@@ -25,16 +25,17 @@ namespace AzureSkyMedia.PlatformServices
         {
             int unitCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
-            processorUnits[0].ReservedUnitType = nodeType;
+            IEncodingReservedUnit processorUnit = processorUnits[0];
+            processorUnit.ReservedUnitType = nodeType;
             if (newJob)
             {
-                processorUnits[0].CurrentReservedUnits += unitCount;
+                processorUnit.CurrentReservedUnits += unitCount;
             }
-            else if (processorUnits[0].CurrentReservedUnits >= unitCount)
+            else if (processorUnit.CurrentReservedUnits >= unitCount)
             {
-                processorUnits[0].CurrentReservedUnits -= unitCount;
+                processorUnit.CurrentReservedUnits -= unitCount;
             }
-            processorUnits[0].Update();
+            processorUnit.Update();
         }
 
         internal static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)

@@ -62,25 +62,30 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(metadata);
         }
 
-        public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
+        //public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
+        //{
+        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
+        //    MediaClient mediaClient = new MediaClient(authToken);
+        //    if (string.IsNullOrEmpty(clipName))
+        //    {
+        //        clipName = string.Concat(markIn.ToString(), markOut.ToString());
+        //    }
+        //    object result;
+        //    if (clipMode == Constant.Media.RenderedClipMode)
+        //    {
+        //        string directoryId = homeController.GetDirectoryId(this.Request);
+        //        result = MediaClient.SubmitJob(directoryId, authToken, mediaClient, sourceUrl, markIn, markOut);
+        //    }
+        //    else
+        //    {
+        //        result = MediaClient.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
+        //    }
+        //    return Json(result);
+        //}
+
+        public IActionResult clipper()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            if (string.IsNullOrEmpty(clipName))
-            {
-                clipName = string.Concat(markIn.ToString(), markOut.ToString());
-            }
-            object result;
-            if (clipMode == Constant.Media.RenderedClipMode)
-            {
-                string directoryId = homeController.GetDirectoryId(this.Request);
-                result = MediaClient.SubmitJob(directoryId, authToken, mediaClient, sourceUrl, markIn, markOut);
-            }
-            else
-            {
-                result = MediaClient.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
-            }
-            return Json(result);
+            return View();
         }
 
         public IActionResult index()

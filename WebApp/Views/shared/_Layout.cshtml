@@ -83,7 +83,8 @@
                         @Html.Partial("SiteButton", new string[] { "mediaProtection", "MediaProtection.png", "window.open('http://azure.microsoft.com/services/media-services/content-protection/')", "layoutButton side" })
                     </div>
                     <div>
-                        @Html.Partial("SiteButton", new string[] { "mediaClipper", "MediaClipper.png", "window.open('http://azuremediaclipper.azurewebsites.net/')", "layoutButton side" })
+                        @{ string clipperUrl = ViewData.ContainsKey("accountContext") ? "/asset/clipper" : "http://azuremediaclipper.azurewebsites.net/";  }
+                        @Html.Partial("SiteButton", new string[] { "mediaClipper", "MediaClipper.png", "window.open('" + clipperUrl + "')", "layoutButton side" })
                     </div>
                     <div>
                         @Html.Partial("SiteButton", new string[] { "mediaIndexer", "MediaIndexer.png", "window.open('http://azure.microsoft.com/services/cognitive-services/video-indexer/')", "layoutButton side" })
