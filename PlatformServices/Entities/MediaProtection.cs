@@ -4,7 +4,7 @@
     {
         public string DirectoryId { get; set; }
 
-        public string ClientId { get; set; }
+        public string Audience { get; set; }
 
         public bool Aes { get; set; }
 

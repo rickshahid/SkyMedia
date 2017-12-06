@@ -81,21 +81,13 @@ namespace AzureSkyMedia.PlatformServices
         private static void DeleteJob(string accountId, IJob job)
         {
             TableClient tableClient = new TableClient();
-
             string tableName = Constant.Storage.Table.ContentPublish;
             MediaContentPublish contentPublish = tableClient.GetEntity<MediaContentPublish>(tableName, accountId, job.Id);
             if (contentPublish != null)
             {
                 tableClient.DeleteEntity(tableName, contentPublish);
+                MediaClient.DeleteContentProtections(tableClient, contentPublish.RowKey);
             }
-
-            tableName = Constant.Storage.Table.ContentProtection;
-            ContentProtection contentProtection = tableClient.GetEntity<ContentProtection>(tableName, accountId, job.Id);
-            if (contentProtection != null)
-            {
-                tableClient.DeleteEntity(tableName, contentProtection);
-            }
-
             job.Delete();
         }
 

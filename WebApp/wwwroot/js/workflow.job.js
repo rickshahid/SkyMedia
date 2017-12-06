@@ -26,18 +26,12 @@ function GetJobTasks() {
     } while (jobTask != null)
     return jobTasks;
 }
-function GetJobInputs() {
-    var jobInputs = new Array();
+function GetAssetIds() {
+    var assetIds = new Array();
     if ($("#mediaAssets").children.length > 0) {
-        var mediaAssets = $("#mediaAssets").jstree(true).get_checked();
-        for (var i = 0; i < mediaAssets.length; i++) {
-            var jobInput = {
-                AssetId: mediaAssets[i]
-            };
-            jobInputs.push(jobInput);
-        }
+        assetIds = $("#mediaAssets").jstree(true).get_checked();
     }
-    return jobInputs;
+    return assetIds;
 }
 function GetJobTemplateId() {
     var jobTemplateId = "";

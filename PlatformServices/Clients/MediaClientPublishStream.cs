@@ -51,9 +51,9 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                ContentProtection contentProtection = GetContentProtection(contentPublish);
                 foreach (ITask jobTask in jobTasks)
                 {
+                    ContentProtection contentProtection = GetContentProtection(job.Id, jobTask.Id);
                     foreach (IAsset outputAsset in jobTask.OutputAssets)
                     {
                         PublishAsset(mediaClient, outputAsset, contentProtection);

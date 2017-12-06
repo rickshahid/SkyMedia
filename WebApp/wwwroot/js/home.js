@@ -20,9 +20,16 @@ function GetStreamName(mediaStream, streamSlider) {
     if (!streamSlider) {
         streamName = streamName.replace("<br><br>", " ");
     }
-    if (mediaStream.contentProtection.length > 0) {
-        var lineBreak = streamSlider ? "<br><br>" : "";
-        streamName = streamName + lineBreak + " + " + mediaStream.contentProtection.join(", ");
+    if (mediaStream.source.protectionInfo.length > 0) {
+        if (streamSlider) {
+            streamName = streamName + "<br><br>";
+        }
+        for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
+            if (!streamSlider || i > 0) {
+                streamName = streamName + ", ";
+            }
+            streamName = streamName + mediaStream.source.protectionInfo[i].type;
+        }
     }
     return streamName;
 }

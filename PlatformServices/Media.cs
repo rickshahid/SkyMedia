@@ -46,21 +46,6 @@ namespace AzureSkyMedia.PlatformServices
             return tracks.ToArray();
         }
 
-        private static MediaProtection[] GetContentProtection(string protectionTypes)
-        {
-            List<MediaProtection> contentProtection = new List<MediaProtection>();
-            if (!string.IsNullOrEmpty(protectionTypes))
-            {
-                string[] typesInfo = protectionTypes.Split(Constant.TextDelimiter.Application);
-                foreach (string typeInfo in typesInfo)
-                {
-                    MediaProtection protectionType = (MediaProtection)Enum.Parse(typeof(MediaProtection), typeInfo);
-                    contentProtection.Add(protectionType);
-                }
-            }
-            return contentProtection.ToArray();
-        }
-
         private static void AddBaseStream(List<MediaStream> mediaStreams, string settingStreamName, string settingSourceUrl,
                                           string settingTextTrack, string settingContentProtection)
         {
@@ -73,10 +58,12 @@ namespace AzureSkyMedia.PlatformServices
                 MediaStream mediaStream = new MediaStream()
                 {
                     Name = streamName,
-                    SourceUrl = sourceUrl,
-                    TextTracks = MapTextTracks(textTracks),
-                    ContentInsight = new MediaInsight[] { },
-                    ContentProtection = GetContentProtection(protectionTypes)
+                    Source = new StreamSource()
+                    {
+                        Src = sourceUrl,
+                        ProtectionInfo = MediaClient.GetStreamProtections(string.Empty, protectionTypes)
+                    },
+                    TextTracks = MapTextTracks(textTracks)
                 };
                 mediaStreams.Add(mediaStream);
             }
@@ -160,7 +147,7 @@ namespace AzureSkyMedia.PlatformServices
         //    return analyticsMetadata.ToArray();
         //}
 
-        private static MediaStream GetMediaStream(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
+        private static MediaStream GetMediaStream(string authToken, MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             List<MediaInsight> contentInsight = new List<MediaInsight>();
 
@@ -180,15 +167,18 @@ namespace AzureSkyMedia.PlatformServices
             MediaStream mediaStream = new MediaStream()
             {
                 Name = asset.Name,
-                SourceUrl = mediaClient.GetLocatorUrl(asset),
+                Source = new StreamSource()
+                {
+                    Src = mediaClient.GetLocatorUrl(asset),
+                    ProtectionInfo = mediaClient.GetStreamProtections(authToken, asset)
+                },
                 TextTracks = GetTextTracks(mediaClient, indexerClient, asset),
                 ContentInsight = contentInsight.ToArray(),
-                ContentProtection = mediaClient.GetContentProtection(asset)
             };
             return mediaStream;
         }
 
-        private static MediaStream[] GetLiveStreams(MediaClient mediaClient, IndexerClient indexerClient)
+        private static MediaStream[] GetLiveStreams(string authToken, MediaClient mediaClient, IndexerClient indexerClient)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
             IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
@@ -196,18 +186,18 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IProgram program in channel.Programs)
                 {
-                    MediaStream mediaStream = GetMediaStream(mediaClient, indexerClient, program.Asset);
+                    MediaStream mediaStream = GetMediaStream(authToken, mediaClient, indexerClient, program.Asset);
                     mediaStreams.Add(mediaStream);
                 }
             }
             return mediaStreams.ToArray();
         }
 
-        public static MediaStream[] GetMediaStreams(MediaClient mediaClient, IndexerClient indexerClient, bool liveStreams)
+        public static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, IndexerClient indexerClient, bool liveStreams)
         {
             if (liveStreams)
             {
-                return GetLiveStreams(mediaClient, indexerClient);
+                return GetLiveStreams(authToken, mediaClient, indexerClient);
             }
 
             List<MediaStream> mediaStreams = new List<MediaStream>();
@@ -220,15 +210,15 @@ namespace AzureSkyMedia.PlatformServices
                 IAsset asset = locator.Asset;
                 if (asset.IsStreamable)
                 {
-                    MediaStream mediaStream = GetMediaStream(mediaClient, indexerClient, asset);
+                    MediaStream mediaStream = GetMediaStream(authToken, mediaClient, indexerClient, asset);
                     mediaStreams.Add(mediaStream);
-                    if (!string.IsNullOrEmpty(mediaStream.SourceUrl))
+                    if (!string.IsNullOrEmpty(mediaStream.Source.Src))
                     {
                         foreach (IStreamingAssetFilter filter in asset.AssetFilters)
                         {
                             MediaStream streamFilter = mediaStream;
                             streamFilter.Name = string.Concat(streamFilter.Name, Constant.Media.Stream.AssetFilteredSuffix);
-                            streamFilter.SourceUrl = string.Concat(streamFilter.SourceUrl, "(filter=", filter.Name, ")");
+                            streamFilter.Source.Src = string.Concat(streamFilter.Source.Src, "(filter=", filter.Name, ")");
                             mediaStreams.Add(streamFilter);
                         }
                     }

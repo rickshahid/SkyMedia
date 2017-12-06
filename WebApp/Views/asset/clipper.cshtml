@@ -11,19 +11,35 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
     <script type="text/javascript">
-        function LoadAssets() {
-            //alert("LoadAssets");
+        function LoadStreams(search, skip, take, type) {
+            alert("LoadStreams");
         }
         function CreateClip(clipData) {
-            //alert("CreateClip");
+            alert("CreateClip");
+        }
+        function CreateClipper(dynamicLoad) {
+            if (dynamicLoad) {
+                var clipper = new subclipper({
+                    restVersion: "2.0",
+                    selector: "#videoClipper",
+                    submitSubclipCallback: CreateClip,
+                    assetsPanelLoaderCallback: LoadStreams
+                });
+            } else {
+                var clipper = new subclipper({
+                    restVersion: "2.0",
+                    selector: "#videoClipper",
+                    submitSubclipCallback: CreateClip
+                });
+                $.get("/asset/streams",
+                    function (streams) {
+                        clipper.load(streams);
+                    }
+                );
+            }
         }
         $(function () {
-            var clipper = new subclipper({
-                restVersion: "2.0",
-                selector: "#videoClipper",
-                submitSubclipCallback: CreateClip,
-                assetsPanelLoaderCallback: LoadAssets
-            });
+            CreateClipper(false);
         })
     </script>
 }

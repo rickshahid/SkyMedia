@@ -18,42 +18,42 @@ namespace AzureSkyMedia.PlatformServices
             return mediaClient.CreateFilter(asset, filterName, markIn, markOut, null);
         }
 
-        public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, string sourceUrl, int markIn, int markOut)
-        {
-            IAsset asset = GetSourceAsset(mediaClient, sourceUrl);
+        //public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, string sourceUrl, int markIn, int markOut)
+        //{
+        //    IAsset asset = GetSourceAsset(mediaClient, sourceUrl);
 
-            MediaJobInput jobInput = new MediaJobInput()
-            {
-                AssetId = asset.Id,
-                MarkInSeconds = markIn,
-                MarkOutSeconds = markOut
-            };
+        //    MediaJobInput jobInput = new MediaJobInput()
+        //    {
+        //        AssetId = asset.Id,
+        //        MarkInSeconds = markIn,
+        //        MarkOutSeconds = markOut
+        //    };
 
-            MediaJobInput[] jobInputs = new MediaJobInput[] { jobInput };
-            jobInputs = Workflow.GetJobInputs(mediaClient, jobInputs);
+        //    MediaJobInput[] jobInputs = new MediaJobInput[] { jobInput };
+        //    jobInputs = Workflow.GetJobInputs(mediaClient, jobInputs);
 
-            string settingKey = Constant.AppSettingKey.MediaClipperEncoderPreset;
-            string processorConfig = AppSetting.GetValue(settingKey);
+        //    string settingKey = Constant.AppSettingKey.MediaClipperEncoderPreset;
+        //    string processorConfig = AppSetting.GetValue(settingKey);
 
-            MediaJobTask jobTask = new MediaJobTask()
-            {
-                MediaProcessor = MediaProcessor.EncoderStandard,
-                ProcessorConfig = processorConfig
-            };
+        //    MediaJobTask jobTask = new MediaJobTask()
+        //    {
+        //        MediaProcessor = MediaProcessor.EncoderStandard,
+        //        ProcessorConfig = processorConfig
+        //    };
 
-            MediaJob mediaJob = new MediaJob()
-            {
-                Tasks = new MediaJobTask[] { jobTask },
-                NodeType = ReservedUnitType.Premium
-            };
-            mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
+        //    MediaJob mediaJob = new MediaJob()
+        //    {
+        //        Tasks = new MediaJobTask[] { jobTask },
+        //        NodeType = ReservedUnitType.Premium
+        //    };
+        //    mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
 
-            IJob job = mediaClient.CreateJob(mediaJob, jobInputs, out IJobTemplate jobTemplate);
-            if (job != null && !string.IsNullOrEmpty(job.Id))
-            {
-                Workflow.TrackJob(directoryId, authToken, job, null);
-            }
-            return Workflow.GetJobOutput(mediaClient, job, jobTemplate, null);
-        }
+        //    IJob job = mediaClient.CreateJob(mediaJob, jobInputs, out IJobTemplate jobTemplate);
+        //    if (job != null && !string.IsNullOrEmpty(job.Id))
+        //    {
+        //        Workflow.TrackJob(directoryId, authToken, job, null);
+        //    }
+        //    return Workflow.GetJobOutput(mediaClient, job, jobTemplate, null);
+        //}
     }
 }

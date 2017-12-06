@@ -26,7 +26,7 @@ function ToggleIndexerInsight(mediaStream, videoIndexer) {
     } else {
         var insight = IndexerInsight(mediaStream, videoIndexer);
         var indexerFrame = document.getElementById("indexerFrame");
-        indexerFrame.src = insight.sourceUrl;
+        indexerFrame.src = insight.source.src;
         insightImage.src = insightImage.src.replace("Open", "Close");
         $("#indexerInsight").show();
     }
@@ -95,7 +95,7 @@ function SetAnalyticsProcessors(mediaStream) {
     for (var i = 0; i < mediaStream.analyticsMetadata.length; i++) {
         var metadata = mediaStream.analyticsMetadata[i];
         var optionName = metadata.processor;
-        var optionValue = metadata.sourceUrl != null ? metadata.sourceUrl : metadata.documentId;
+        var optionValue = metadata.source.src != null ? metadata.source.src : metadata.documentId;
         processors.options[processors.options.length] = new Option(optionName, optionValue);
     }
 }
@@ -164,10 +164,10 @@ function ClearVideoOverlay() {
 }
 function ResetVideoOverlay() {
     ClearVideoOverlay();
-    if (_facesMetadata != null) {
-        for (var i = 0; i < _facesMetadata.length; i++) {
-            var faceMetadata = _facesMetadata[i];
-            SetVideoOverlay(faceMetadata);
-        }
-    }
+    //if (_facesMetadata != null) {
+    //    for (var i = 0; i < _facesMetadata.length; i++) {
+    //        var faceMetadata = _facesMetadata[i];
+    //        SetVideoOverlay(faceMetadata);
+    //    }
+    //}
 }

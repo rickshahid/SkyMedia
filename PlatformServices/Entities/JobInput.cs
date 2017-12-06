@@ -7,13 +7,5 @@
         public string AssetName { get; set; }
 
         public string PrimaryFile { get; set; }
-
-        public int MarkInSeconds { get; set; }
-
-        public string MarkInTime { get; set; }
-
-        public int MarkOutSeconds { get; set; }
-
-        public string MarkOutTime { get; set; }
     }
 }

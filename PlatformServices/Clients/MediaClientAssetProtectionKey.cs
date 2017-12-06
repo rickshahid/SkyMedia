@@ -114,7 +114,7 @@ namespace AzureSkyMedia.PlatformServices
                 TokenRestrictionTemplate tokenTemplate = new TokenRestrictionTemplate(TokenType.JWT);
                 tokenTemplate.OpenIdConnectDiscoveryDocument = new OpenIdConnectDiscoveryDocument(discoveryUrl);
                 tokenTemplate.Issuer = Account.GetIssuerUrl(contentProtection.DirectoryId, directoryTenantId);
-                tokenTemplate.Audience = contentProtection.ClientId;
+                tokenTemplate.Audience = contentProtection.Audience;
 
                 ContentKeyAuthorizationPolicyRestriction policyRestriction = new ContentKeyAuthorizationPolicyRestriction();
                 policyRestriction.Name = string.Concat(policyName, Constant.Media.ContentProtection.AuthPolicyTokenRestrictionName);

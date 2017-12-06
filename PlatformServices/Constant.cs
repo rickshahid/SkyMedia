@@ -114,7 +114,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaPlayerSkin = "Media.Player.Skin";
 
             public const string MediaClipperVersion = "Media.Clipper.Version";
-            public const string MediaClipperEncoderPreset = "Media.Clipper.EncoderPreset";
 
             public const string MediaIndexerServiceUrl = "Media.Indexer.ServiceUrl";
 
@@ -222,7 +221,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Media
         {
-            public const int RenderedClipMode = 2;
             public const string AccountFileName = "MediaAccount.json";
 
             public struct ProcessorId

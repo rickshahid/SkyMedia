@@ -27,7 +27,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            Asset[] assets = mediaClient.GetAssets(null);
+            Asset[] assets = mediaClient.GetAssets(authToken, null);
             return Json(assets);
         }
 
@@ -35,7 +35,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            Asset[] assets = mediaClient.GetAssets(assetId);
+            Asset[] assets = mediaClient.GetAssets(authToken, assetId);
             return Json(assets);
         }
 
@@ -82,6 +82,14 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    }
         //    return Json(result);
         //}
+
+        public JsonResult streams()
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
+            MediaStream[] streams = Media.GetMediaStreams(authToken, mediaClient, null, false);
+            return Json(streams);
+        }
 
         public IActionResult clipper()
         {

@@ -1,4 +1,4 @@
-﻿var _authToken, _mediaStreams, _streamNumber, _jobInputs, _encoderConfig;
+﻿var _authToken, _mediaStreams, _streamNumber, _encoderConfig, _assetIds;
 function SetLayout(b2b) {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
@@ -9,16 +9,16 @@ function SetLayout(b2b) {
     } else {
         CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
     }
+    CreateTipBottom("userProfileEdit", "Azure Sky Media<br><br>User Profile Edit");
     CreateTipBottom("userSignIn", "Azure Sky Media<br><br>User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br><br>User Sign Out");
-    CreateTipBottom("userProfileEdit", "Azure Sky Media<br><br>User Profile Edit");
     CreateTipRight("amsPlatform", "Azure Media Services");
     CreateTipRight("amsPlayer", "Azure Media Player");
     CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
-    CreateTipRight("mediaClipper", "Azure Media Services<br><br>Clipper");
-    CreateTipRight("mediaIndexer", "Azure Cognitive Services<br><br>Video Indexer");
+    CreateTipRight("mediaClipper", "Azure Media Clipper");
+    CreateTipRight("mediaIndexer", "Azure Video Indexer");
     CreateTipLeft("cognitiveServices", "Azure Cognitive Services");
     CreateTipLeft("appServiceWeb", "Azure App Service<br><br>Web Apps");
     CreateTipLeft("appServiceFunctions", "Azure App Service<br><br>Function Apps");
@@ -82,65 +82,17 @@ function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
     DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose);
 }
-function DisplayWorkflow(result) {
-    var title, message = "", onClose = null;
-    if (result.id != null && (result.id.indexOf("jid") > -1 || result.id.indexOf("jtid") > -1)) {
-        title = "Azure Media Services Job";
-        if (result.id.indexOf("jtid") > -1) {
-            title = title + " Template";
-            onClose = function () {
-                window.location = window.location.href;
-            }
-        }
-        message = result.name + "<br><br>" + result.id;
-    } else {
-        title = "Azure Media Services Asset";
-        if (result.length > 1) {
-            title = title + "s";
-        }
-        for (var i = 0; i < result.length; i++) {
-            message = message + GetAssetInfo(result, i);
-        }
-    }
-    DisplayMessage(title, message, null, null, onClose);
-}
-function GetAssetInfo(result, i) {
-    var assetInfo = result[i].assetName + "<br>";
-    if (result.length == 1) {
-        assetInfo = assetInfo + "<br>";
-    }
-    if (i > 0) {
-        assetInfo = "<br><br>" + assetInfo;
-    }
-    return assetInfo + result[i].assetId;
-}
-function GetSourceType(sourceUrl) {
-    return sourceUrl.toLowerCase().indexOf(".mp4") > -1 ? "video/mp4" : "application/vnd.ms-sstr+xml";
-}
-function GetProtectionInfo(contentProtection) {
-    var protectionInfo = null;
-    if (contentProtection.length > 0) {
-        protectionInfo = new Array();
-        var authToken = window.location.href.indexOf("notoken") > -1 ? "" : "Bearer=" + _authToken;
-        for (var i = 0; i < contentProtection.length; i++) {
-            protectionInfo.push({
-                type: contentProtection[i],
-                authenticationToken: authToken
-            });
-        }
-    }
-    return protectionInfo;
-}
 function GetMediaPlayer() {
-    var playerOptions = {
-        plugins: {
-            videobreakdown: {}
-        },
+    var options = {
+        fluid: true,
         playbackSpeed: {
             enabled: true
+        },
+        plugins: {
+            videobreakdown: {}
         }
     };
-    return amp("videoPlayer", playerOptions);
+    return amp("videoPlayer", options);
 }
 function SetPlayerSpinner(visible) {
     if (visible) {
@@ -153,9 +105,8 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
     mediaPlayer.autoplay(autoPlay);
     mediaPlayer.src(
         [{
-            src: mediaStream.sourceUrl,
-            type: GetSourceType(mediaStream.sourceUrl),
-            protectionInfo: GetProtectionInfo(mediaStream.contentProtection)
+            src: mediaStream.source.src,
+            protectionInfo: mediaStream.streamProtection
         }],
         mediaStream.textTracks
     );

@@ -23,13 +23,7 @@ namespace AzureSkyMedia.PlatformServices
                 if (job == null)
                 {
                     tableClient.DeleteEntity(tableName, contentPublish);
-
-                    tableName = Constant.Storage.Table.ContentProtection;
-                    ContentProtection contentProtection = tableClient.GetEntity<ContentProtection>(tableName, contentPublish.PartitionKey, contentPublish.RowKey);
-                    if (contentProtection != null)
-                    {
-                        tableClient.DeleteEntity(tableName, contentProtection);
-                    }
+                    DeleteContentProtections(tableClient, contentPublish.RowKey);
                 }
             }
         }

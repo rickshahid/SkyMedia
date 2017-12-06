@@ -56,9 +56,14 @@ namespace AzureSkyMedia.PlatformServices
             return entities;
         }
 
+        public T[] GetEntities<T>(string tableName, string propertyName, string propertyValue) where T : StorageEntity, new()
+        {
+            return GetEntities<T>(tableName, propertyName, QueryComparisons.Equal, propertyValue);
+        }
+
         public T[] GetEntities<T>(string tableName) where T : StorageEntity, new()
         {
-            return GetEntities<T>(tableName, null, QueryComparisons.Equal, null);
+            return GetEntities<T>(tableName, null, null);
         }
 
         public T GetEntity<T>(string tableName, string partitionKey, string rowKey) where T : StorageEntity

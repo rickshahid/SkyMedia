@@ -4,6 +4,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal class Asset
     {
+        private string _authToken;
         private MediaClient _mediaClient;
         private IAsset _asset;
         private IAssetFile _file;
@@ -13,9 +14,10 @@ namespace AzureSkyMedia.PlatformServices
         //private string _locatorUrl;
         //private string _webVttUrl;
 
-        private Asset(MediaClient mediaClient)
+        private Asset(string authToken)
         {
-            _mediaClient = mediaClient;
+            _authToken = authToken;
+            _mediaClient = new MediaClient(authToken);
             string settingKey = Constant.AppSettingKey.StorageCdnUrl;
             _storageCdnUrl = AppSetting.GetValue(settingKey);
 
@@ -24,12 +26,12 @@ namespace AzureSkyMedia.PlatformServices
             //_webVttUrl = string.Empty;
         }
 
-        public Asset(MediaClient mediaClient, IAsset asset) : this(mediaClient)
+        public Asset(string authToken, IAsset asset) : this(authToken)
         {
             _asset = asset;
         }
 
-        public Asset(MediaClient mediaClient, IAssetFile file) : this(mediaClient)
+        public Asset(string authToken, IAssetFile file) : this(authToken)
         {
             _file = file;
         }
@@ -103,10 +105,10 @@ namespace AzureSkyMedia.PlatformServices
                 if (_asset != null && _asset.Options == AssetCreationOptions.StorageEncrypted)
                 {
                     protectionTip = "Storage";
-                    MediaProtection[] contentProtection = _mediaClient.GetContentProtection(_asset);
-                    if (contentProtection.Length > 0)
+                    StreamProtection[] streamProtections = _mediaClient.GetStreamProtections(_authToken, _asset);
+                    if (streamProtections.Length > 0)
                     {
-                        switch (contentProtection[0])
+                        switch (streamProtections[0].Type)
                         {
                             case MediaProtection.AES:
                                 protectionTip = string.Concat(protectionTip, " & Envelope (AES)");

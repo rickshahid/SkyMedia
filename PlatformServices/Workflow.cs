@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -18,31 +17,21 @@ namespace AzureSkyMedia.PlatformServices
             return jobInput;
         }
 
-        private static MediaJobInput GetJobInput(MediaClient mediaClient, string assetId)
+        private static object GetJobOutput(IJob job, IJobTemplate jobTemplate, MediaJobInput[] jobInputs)
         {
-            MediaJobInput jobInput = null;
-            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-            if (asset != null)
+            object jobOutput = job;
+            if (jobTemplate != null)
             {
-                jobInput = GetJobInput(asset);
+                jobOutput = jobTemplate;
             }
-            return jobInput;
+            else if (jobOutput == null)
+            {
+                jobOutput = jobInputs;
+            }
+            return jobOutput;
         }
 
-        private static ContentProtection GetContentProtection(MediaJobTask[] jobTasks)
-        {
-            ContentProtection contentProtection = null;
-            foreach (MediaJobTask jobTask in jobTasks)
-            {
-                if (contentProtection == null && jobTask.ContentProtection != null)
-                {
-                    contentProtection = jobTask.ContentProtection;
-                }
-            }
-            return contentProtection;
-        }
-
-        internal static void TrackJob(string directoryId, string authToken, IJob job, ContentProtection contentProtection)
+        private static void TrackJob(string directoryId, string authToken, IJob job, MediaJobTask[] jobTasks)
         {
             User authUser = new User(authToken);
             string storageAccountName = job.InputMediaAssets[0].StorageAccountName;
@@ -66,64 +55,22 @@ namespace AzureSkyMedia.PlatformServices
             string tableName = Constant.Storage.Table.ContentPublish;
             tableClient.InsertEntity(tableName, contentPublish);
 
-            if (contentProtection != null)
+            ContentProtection[] contentProtections = MediaClient.GetContentProtections(job, jobTasks);
+            foreach (ContentProtection contentProtection in contentProtections)
             {
                 string settingKey = Constant.AppSettingKey.DirectoryClientId;
                 settingKey = string.Format(settingKey, directoryId);
                 contentProtection.DirectoryId = directoryId;
-                contentProtection.ClientId = AppSetting.GetValue(settingKey);
+                contentProtection.Audience = AppSetting.GetValue(settingKey);
 
                 tableName = Constant.Storage.Table.ContentProtection;
-                contentProtection.PartitionKey = contentPublish.PartitionKey;
-                contentProtection.RowKey = contentPublish.RowKey;
+                contentProtection.PartitionKey = contentPublish.RowKey;
                 tableClient.InsertEntity(tableName, contentProtection);
             }
         }
 
-        internal static object GetJobOutput(MediaClient mediaClient, IJob job, IJobTemplate jobTemplate, MediaJobInput[] jobInputs)
-        {
-            object output = job;
-            if (job == null || string.IsNullOrEmpty(job.Id))
-            {
-                if (jobTemplate != null)
-                {
-                    output = jobTemplate;
-                }
-                else if (jobInputs != null)
-                {
-                    foreach (MediaJobInput jobInput in jobInputs)
-                    {
-                        IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                        jobInput.AssetName = asset.Name;
-                    }
-                    output = jobInputs;
-                }
-            }
-            return output;
-        }
-
-        public static MediaJobInput[] GetJobInputs(MediaClient mediaClient, MediaJobInput[] jobInputs)
-        {
-            List<MediaJobInput> assets = new List<MediaJobInput>();
-            foreach (MediaJobInput jobInput in jobInputs)
-            {
-                MediaJobInput asset = GetJobInput(mediaClient, jobInput.AssetId);
-                asset.MarkInSeconds = jobInput.MarkInSeconds;
-                asset.MarkOutSeconds = jobInput.MarkOutSeconds;
-                if (asset.MarkInSeconds > 0)
-                {
-                    TimeSpan markIn = new TimeSpan(0, 0, asset.MarkInSeconds);
-                    TimeSpan markOut = new TimeSpan(0, 0, asset.MarkOutSeconds - asset.MarkInSeconds);
-                    asset.MarkInTime = markIn.ToString(Constant.TextFormatter.ClockTime);
-                    asset.MarkOutTime = markOut.ToString(Constant.TextFormatter.ClockTime);
-                }
-                assets.Add(asset);
-            }
-            return assets.ToArray();
-        }
-
-        public static MediaJobInput[] CreateJobInputs(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
-                                                      string inputAssetName, bool multipleFileAsset, string[] fileNames)
+        public static MediaJobInput[] GetJobInputs(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
+                                                   string inputAssetName, bool multipleFileAsset, string[] fileNames)
         {
             List<MediaJobInput> jobInputs = new List<MediaJobInput>();
             if (multipleFileAsset)
@@ -144,26 +91,38 @@ namespace AzureSkyMedia.PlatformServices
             return jobInputs.ToArray();
         }
 
-        public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, MediaJobInput[] jobInputs, MediaJob mediaJob)
+        public static MediaJobInput[] GetJobInputs(MediaClient mediaClient, string[] assetIds)
+        {
+            List<MediaJobInput> jobInputs = new List<MediaJobInput>();
+            foreach (string assetId in assetIds)
+            {
+                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+                if (asset != null)
+                {
+                    MediaJobInput jobInput = GetJobInput(asset);
+                    jobInputs.Add(jobInput);
+                }
+            }
+            return jobInputs.ToArray();
+        }
+
+        public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
         {
             IJob job = null;
             IJobTemplate jobTemplate = null;
-            ContentProtection contentProtection = null;
             if (mediaJob.Tasks != null)
             {
                 mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
-                contentProtection = GetContentProtection(mediaJob.Tasks);
-                job = mediaClient.CreateJob(mediaJob, jobInputs, out jobTemplate);
             }
-            else if (!string.IsNullOrEmpty(mediaJob.TemplateId) || mediaJob.SaveWorkflow)
+            if (mediaJob.Tasks != null || !string.IsNullOrEmpty(mediaJob.TemplateId))
             {
                 job = mediaClient.CreateJob(mediaJob, jobInputs, out jobTemplate);
             }
             if (job != null && !string.IsNullOrEmpty(job.Id))
             {
-                TrackJob(directoryId, authToken, job, contentProtection);
+                TrackJob(directoryId, authToken, job, mediaJob.Tasks);
             }
-            return GetJobOutput(mediaClient, job, jobTemplate, jobInputs);
+            return GetJobOutput(job, jobTemplate, jobInputs);
         }
     }
 }
