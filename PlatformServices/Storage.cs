@@ -27,30 +27,43 @@ namespace AzureSkyMedia.PlatformServices
 
     internal static class Storage
     {
-        private static string GetAccountType(string subscriptionId, string tenantId, string clientId, string clientKey, string accountName)
+        private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)
+        {
+            return DateTimeOffset.Compare(rightSide.Time, leftSide.Time);
+        }
+
+        private static string GetAccountType(string authToken, string accountName)
         {
             string accountType = string.Empty;
+            string settingKey = Constant.AppSettingKey.AppSubscriptionId;
+            string subscriptionId = AppSetting.GetValue(settingKey);
             if (!string.IsNullOrEmpty(subscriptionId))
             {
-                string settingKey = Constant.AppSettingKey.StorageLoginUrl;
-                string loginUrl = AppSetting.GetValue(settingKey);
+                User authUser = new User(authToken);
+                string mediaAccountDomain = authUser.MediaAccountDomainName;
+                string mediaClientId = authUser.MediaAccountClientId;
+                string mediaClientKey = authUser.MediaAccountClientKey;
 
-                string authority = string.Concat(loginUrl, tenantId);
-                AuthenticationContext authContext = new AuthenticationContext(authority);
+                settingKey = Constant.AppSettingKey.MediaLoginUrl;
+                string mediaLoginUrl = AppSetting.GetValue(settingKey);
+
+                string mediaAuthority = string.Concat(mediaLoginUrl, mediaAccountDomain);
+                AuthenticationContext authContext = new AuthenticationContext(mediaAuthority);
 
                 settingKey = Constant.AppSettingKey.StorageManagementUrl;
-                string managementUrl = AppSetting.GetValue(settingKey);
+                string storageManagementUrl = AppSetting.GetValue(settingKey);
 
-                ClientCredential clientCredential = new ClientCredential(clientId, clientKey);
+                ClientCredential mediaClientCredential = new ClientCredential(mediaClientId, mediaClientKey);
 
-                AuthenticationResult authResult = authContext.AcquireTokenAsync(managementUrl, clientCredential).Result;
+                AuthenticationResult authResult = authContext.AcquireTokenAsync(storageManagementUrl, mediaClientCredential).Result;
                 TokenCredentials tokenCredential = new TokenCredentials(authResult.AccessToken);
 
                 StorageManagementClient storageClient = new StorageManagementClient(tokenCredential);
                 storageClient.SubscriptionId = subscriptionId;
-                IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
 
+                IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
                 StorageAccount storageAccount = storageAccounts.Where(sa => sa.Name == accountName).SingleOrDefault();
+
                 if (storageAccount != null)
                 {
                     switch (storageAccount.Kind)
@@ -74,20 +87,20 @@ namespace AzureSkyMedia.PlatformServices
             if (storageAccount != null)
             {
                 CloudAnalyticsClient storageAnalytics = storageAccount.CreateCloudAnalyticsClient();
-                TableQuery<CapacityEntity> tableQuery = storageAnalytics.CreateCapacityQuery();
-                IQueryable<CapacityEntity> capacityQuery = tableQuery.Where(x => x.RowKey == "data");
+                TableQuery<CapacityEntity> capacityQuery = storageAnalytics.CreateCapacityQuery();
+                IQueryable<CapacityEntity> capacityData = capacityQuery.Where(x => x.RowKey == Constant.Storage.Table.Key.CapacityData);
                 try
                 {
-                    List<CapacityEntity> capacityEntities = capacityQuery.ToList();
-                    if (capacityEntities.Count == 0)
+                    List<CapacityEntity> capacities = capacityData.ToList();
+                    if (capacities.Count == 0)
                     {
                         capacityUsed = Storage.MapByteCount(0);
                     }
                     else
                     {
-                        capacityEntities.Sort(OrderByLatest);
-                        CapacityEntity latestAnalytics = capacityEntities.First();
-                        capacityUsed = Storage.MapByteCount(latestAnalytics.Capacity);
+                        capacities.Sort(OrderByLatest);
+                        long latestCapacity = capacities.First().Capacity;
+                        capacityUsed = Storage.MapByteCount(latestCapacity);
                     }
                 }
                 catch
@@ -101,33 +114,17 @@ namespace AzureSkyMedia.PlatformServices
         private static string GetAccountInfo(string authToken, IStorageAccount storageAccount)
         {
             string accountInfo = string.Concat("Account Name: ", storageAccount.Name);
-
-            string settingKey = Constant.AppSettingKey.AppSubscriptionId;
-            string subscriptionId = AppSetting.GetValue(settingKey);
-
-            User authUser = new User(authToken);
-            string tenantId = authUser.MediaAccountDomainName;
-            string clientId = authUser.MediaAccountClientId;
-            string clientKey = authUser.MediaAccountClientKey;
-
-            string accountType = GetAccountType(subscriptionId, tenantId, clientId, clientKey, storageAccount.Name);
+            string accountType = GetAccountType(authToken, storageAccount.Name);
             if (!string.IsNullOrEmpty(accountType))
             {
                 accountInfo = string.Concat(accountInfo, ", Account Type: ", accountType);
             }
-
             string capacityUsed = GetCapacityUsed(authToken, storageAccount.Name);
             if (!string.IsNullOrEmpty(capacityUsed))
             {
                 accountInfo = string.Concat(accountInfo, ", Capacity Used: ", capacityUsed);
             }
-
             return accountInfo;
-        }
-
-        private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)
-        {
-            return DateTimeOffset.Compare(rightSide.Time, leftSide.Time);
         }
 
         private static int GetAccountIndex(string[] accountNames, string accountName)
@@ -146,13 +143,7 @@ namespace AzureSkyMedia.PlatformServices
             return accountIndex;
         }
 
-        internal static string GetAccountKey(string authToken, string accountName)
-        {
-            Storage.GetAccount(authToken, accountName, out string accountKey);
-            return accountKey;
-        }
-
-        internal static CloudStorageAccount GetAccount(string authToken, string accountName, out string accountKey)
+        private static CloudStorageAccount GetAccount(string authToken, string accountName, out string accountKey)
         {
             accountKey = string.Empty;
             User authUser = new User(authToken);
@@ -168,19 +159,25 @@ namespace AzureSkyMedia.PlatformServices
             return CloudStorageAccount.Parse(storageAccount);
         }
 
-        internal static CloudStorageAccount GetSystemAccount()
+        public static CloudStorageAccount GetSystemAccount()
         {
             string settingKey = Constant.AppSettingKey.AzureStorage;
             string storageAccount = AppSetting.GetValue(settingKey);
             return CloudStorageAccount.Parse(storageAccount);
         }
 
-        internal static CloudStorageAccount GetUserAccount(string authToken, string accountName)
+        public static CloudStorageAccount GetUserAccount(string authToken, string accountName)
         {
             return GetAccount(authToken, accountName, out string accountKey);
         }
 
-        internal static long GetAssetBytes(IAsset asset, out int fileCount)
+        public static string GetAccountKey(string authToken, string accountName)
+        {
+            Storage.GetAccount(authToken, accountName, out string accountKey);
+            return accountKey;
+        }
+
+        public static long GetAssetBytes(IAsset asset, out int fileCount)
         {
             fileCount = 0;
             long assetBytes = 0;
@@ -192,7 +189,7 @@ namespace AzureSkyMedia.PlatformServices
             return assetBytes;
         }
 
-        internal static string MapByteCount(long byteCount)
+        public static string MapByteCount(long byteCount)
         {
             string mappedCount;
             if (byteCount >= 1099511627776)
@@ -226,9 +223,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             NameValueCollection storageAccounts = new NameValueCollection();
             MediaClient mediaClient = new MediaClient(authToken);
-            IStorageAccount storageAccount = mediaClient.DefaultStorageAccount;
-            string accountInfo = GetAccountInfo(authToken, storageAccount);
-            storageAccounts.Add(accountInfo, storageAccount.Name);
+            IStorageAccount defaultStorage = mediaClient.DefaultStorageAccount;
+            string accountInfo = GetAccountInfo(authToken, defaultStorage);
+            storageAccounts.Add(accountInfo, defaultStorage.Name);
             IStorageAccount[] accounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
             foreach (IStorageAccount account in accounts)
             {

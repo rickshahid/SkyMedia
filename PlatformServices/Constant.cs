@@ -61,10 +61,11 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryPolicyIdPasswordReset = "Directory.B2C.PolicyId.PasswordReset";
 
             public const string StorageCdnUrl = "Storage.CdnUrl";
-            public const string StorageLoginUrl = "Storage.LoginUrl";
             public const string StorageManagementUrl = "Storage.ManagementUrl";
 
             public const string DatabaseThroughputUnits = "Database.ThroughputUnits";
+
+            public const string MediaLoginUrl = "Media.LoginUrl";
 
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
@@ -191,6 +192,11 @@ namespace AzureSkyMedia.PlatformServices
                 public const string ContentProtection = "ContentProtection";
                 public const string ContentPublish = "ContentPublish";
                 public const string InsightPublish = "InsightPublish";
+
+                public struct Key
+                {
+                    public const string CapacityData = "data";
+                }
             }
 
             public struct Queue
