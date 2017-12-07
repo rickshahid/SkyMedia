@@ -22,7 +22,7 @@ The following set of media functionality has been integrated and enabled within 
 
 * Optionally enable SMS text message notification of workflow completion via integrated user profile management
 
-The following application architecture overview diagram represents the sample deployment at http://www.skymedia.io
+The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.io
 
 ![](http://skymedia.blob.core.windows.net/img/Snip02-ApplicationArchitecture.png)
 
