@@ -18,19 +18,19 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                spokenLanguages.Add("English (US)", "en-US");
-                spokenLanguages.Add("English (British)", "en-GB");
-                spokenLanguages.Add("Spanish", "es-ES");
-                spokenLanguages.Add("Spanish (Mexican)", "es-MX");
+                spokenLanguages.Add("English (US)", "enUS");
+                spokenLanguages.Add("English (British)", "enGB");
+                spokenLanguages.Add("Spanish", "esES");
+                spokenLanguages.Add("Spanish (Mexican)", "esMX");
             }
-            spokenLanguages.Add("Arabic (Egyptian)", "ar-EG");
-            spokenLanguages.Add("Chinese (Mandarin)", "zh-CN");
-            spokenLanguages.Add("French", "fr-FR");
-            spokenLanguages.Add("German", "de-DE");
-            spokenLanguages.Add("Italian", "it-IT");
-            spokenLanguages.Add("Japanese", "ja-JP");
-            spokenLanguages.Add("Portuguese", "pt-BR");
-            spokenLanguages.Add("Russian", "ru-RU");
+            spokenLanguages.Add("Arabic (Egyptian)", videoIndexer ? "ar-EG" : "arEG");
+            spokenLanguages.Add("Chinese (Mandarin)", videoIndexer ? "zh-CN" : "zhCN");
+            spokenLanguages.Add("French", videoIndexer ? "fr-FR" : "frFR");
+            spokenLanguages.Add("German", videoIndexer ? "de-DE" : "deDE");
+            spokenLanguages.Add("Italian", videoIndexer ? "it-IT" : "itIT");
+            spokenLanguages.Add("Japanese", videoIndexer ? "ja-JP" : "jaJP");
+            spokenLanguages.Add("Portuguese", videoIndexer ? "pt-BR" : "ptBR");
+            spokenLanguages.Add("Russian", videoIndexer ? "ru-RU" : "ruRU");
             return spokenLanguages;
         }
 

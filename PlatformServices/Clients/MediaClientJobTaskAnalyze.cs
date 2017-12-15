@@ -65,8 +65,7 @@ namespace AzureSkyMedia.PlatformServices
                 timedTextFormats.Add("TTML");
             }
             processorOptions["Formats"] = timedTextFormats;
-            string languageId = jobTask.ProcessorConfigString[MediaProcessorConfig.LanguageId.ToString()];
-            processorOptions["Language"] = languageId.Replace("-", string.Empty);
+            processorOptions["Language"] = jobTask.ProcessorConfigString[MediaProcessorConfig.LanguageId.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
             return GetJobTasks(mediaClient, jobTask, jobInputs, false);
         }
