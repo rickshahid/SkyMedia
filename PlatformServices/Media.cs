@@ -38,24 +38,29 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
-            string webVttUrl = mediaClient.GetWebVttUrl(asset);
-            string languageLabel = Language.GetLanguageLabel(webVttUrl);
-            string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
-            if (!string.IsNullOrEmpty(documentId) && videoIndexer && indexerClient.IndexerEnabled)
+            string[] webVttUrls = mediaClient.GetWebVttUrls(asset);
+            for (int i = 0; i < webVttUrls.Length; i++)
             {
-                webVttUrl = indexerClient.GetWebVttUrl(documentId, null);
-                JObject index = indexerClient.GetIndex(documentId, null, false);
-                languageLabel = IndexerClient.GetLanguageLabel(index);
-            }
-            if (!string.IsNullOrEmpty(webVttUrl))
-            {
-                MediaTrack textTrack = new MediaTrack()
+                string webVttUrl = webVttUrls[i];
+                string languageLabel = Language.GetLanguageLabel(webVttUrl);
+                string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
+                if (!string.IsNullOrEmpty(documentId) && videoIndexer && indexerClient.IndexerEnabled)
                 {
-                    Type = Constant.Media.Stream.TextTrackCaptions,
-                    Label = languageLabel,
-                    SourceUrl = webVttUrl,
-                };
-                textTracks.Add(textTrack);
+                    string languageId = Language.GetLanguageId(webVttUrl);
+                    webVttUrl = indexerClient.GetWebVttUrl(documentId, languageId);
+                    JObject index = indexerClient.GetIndex(documentId, languageId, false);
+                    languageLabel = IndexerClient.GetLanguageLabel(index);
+                }
+                if (!string.IsNullOrEmpty(webVttUrl))
+                {
+                    MediaTrack textTrack = new MediaTrack()
+                    {
+                        Type = Constant.Media.Stream.TextTrackCaptions,
+                        Label = languageLabel,
+                        SourceUrl = webVttUrl,
+                    };
+                    textTracks.Add(textTrack);
+                }
             }
             return textTracks.ToArray();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -132,17 +133,18 @@ namespace AzureSkyMedia.PlatformServices
             return GetLocatorUrl(asset, null);
         }
 
-        public string GetWebVttUrl(IAsset asset)
+        public string[] GetWebVttUrls(IAsset asset)
         {
-            string webVttUrl = string.Empty;
+            List<string> webVttUrls = new List<string>();
             foreach (IAssetFile assetFile in asset.AssetFiles)
             {
                 if (assetFile.Name.EndsWith(Constant.Media.FileExtension.WebVtt, StringComparison.OrdinalIgnoreCase))
                 {
-                    webVttUrl = GetLocatorUrl(asset, assetFile.Name);
+                    string webVttUrl = GetLocatorUrl(asset, assetFile.Name);
+                    webVttUrls.Add(webVttUrl);
                 }
             }
-            return webVttUrl;
+            return webVttUrls.ToArray();
         }
 
         public ILocator CreateLocator(string locatorId, LocatorType locatorType, IAsset asset, bool readWrite)
