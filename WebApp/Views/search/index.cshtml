@@ -4,7 +4,7 @@
             var searchCriteria = {
                 IndexId: $("#indexId").val(),
                 AssetId: $("#assetId").val(),
-                SpokenLanguage: $("#language").val(),
+                LanguageId: $("#languageId").val(),
                 SearchPartition: $("#searchPartition").val(),
                 TextScope: $("#textScope").val(),
                 TextQuery: $("#textQuery").val(),
@@ -52,10 +52,10 @@
             @Html.TextBox("assetId")
         </td>
         <td class="inputLabel">
-            Language
+            Language Id
         </td>
         <td>
-            @Html.DropDownList("language", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "searchLanguage" })
+            @Html.DropDownList("languageId", ViewData["indexerLanguages"] as SelectListItem[], new { @class = "searchLanguage" })
         </td>
     </tr>
     <tr>

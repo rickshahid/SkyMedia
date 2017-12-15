@@ -17,7 +17,7 @@ namespace AzureSkyMedia.PlatformServices
                 List<ILocator> locators = asset.Locators.Where(l => l.Type == locatorType).ToList();
                 foreach (ILocator locator in locators)
                 {
-                    if (string.IsNullOrEmpty(locatorId))
+                    if (locatorId == null)
                     {
                         locatorId = locator.Id;
                     }
@@ -41,23 +41,23 @@ namespace AzureSkyMedia.PlatformServices
             string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
             string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
             string[] processorIds = new string[] { processorId1, processorId2 };
-            ITask[] jobTasks = GetJobTasks(job, processorIds);
-            if (jobTasks.Length == 0)
+            ITask[] encoderTasks = GetJobTasks(job, processorIds);
+            if (encoderTasks.Length == 0)
             {
                 foreach (IAsset inputAsset in job.InputMediaAssets)
                 {
-                    PublishAnalytics(mediaClient, job, contentPublish, inputAsset.Id);
+                    PublishAnalytics(mediaClient, contentPublish, job);
                 }
             }
             else
             {
-                foreach (ITask jobTask in jobTasks)
+                foreach (ITask encoderTask in encoderTasks)
                 {
-                    ContentProtection contentProtection = GetContentProtection(job.Id, jobTask.Id);
-                    foreach (IAsset outputAsset in jobTask.OutputAssets)
+                    ContentProtection contentProtection = GetContentProtection(job.Id, encoderTask.Id);
+                    foreach (IAsset outputAsset in encoderTask.OutputAssets)
                     {
                         PublishAsset(mediaClient, outputAsset, contentProtection);
-                        PublishAnalytics(mediaClient, job, contentPublish, outputAsset.Id);
+                        PublishAnalytics(mediaClient, contentPublish, job);
                     }
                 }
             }

@@ -6,7 +6,7 @@
         
         public string AssetId { get; set; }
 
-        public string SpokenLanguage { get; set; }
+        public string LanguageId { get; set; }
 
         public string SearchPartition { get; set; }
 

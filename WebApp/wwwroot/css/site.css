@@ -512,10 +512,8 @@ body {
     width: 218px;
 }
 
-.speechAnalyzerLanguage {
-    margin-right: 10px;
-    font-weight: bold;
-    width: 195px;
+.speechAnalyzerOutputs {
+    margin-left: 10px;
 }
 
 .faceDetectionMode {
@@ -744,5 +742,5 @@ a.json-placeholder {
 
 .mediaCertification {
     text-align: center;
-    padding-top: 10px;
+    padding-top: 20px;
 }

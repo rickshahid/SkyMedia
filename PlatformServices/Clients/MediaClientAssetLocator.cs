@@ -88,7 +88,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        internal static string GetPrimaryFile(IAsset asset)
+        public static string GetPrimaryFile(IAsset asset)
         {
             string primaryFile = string.Empty;
             foreach (IAssetFile assetFile in asset.AssetFiles)

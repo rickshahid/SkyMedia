@@ -10,9 +10,13 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         public JsonResult insight(MediaSearchCriteria searchCriteria)
         {
+            JObject results = null;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             IndexerClient indexerClient = new IndexerClient(authToken);
-            JObject results = indexerClient.Search(searchCriteria);
+            if (indexerClient.IndexerEnabled)
+            {
+                results = indexerClient.Search(searchCriteria);
+            }
             return Json(results);
         }
 

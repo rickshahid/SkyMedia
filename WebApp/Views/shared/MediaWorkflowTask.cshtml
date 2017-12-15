@@ -22,7 +22,7 @@
     string encoderContentProtectionAuthTypeAddressId = string.Concat(encoderContentProtectionIdPrefix, "AuthTypeAddress" + taskNumber);
     string encoderContentProtectionAuthAddressRangeId = string.Concat(encoderContentProtectionIdPrefix, "AuthAddressRange" + taskNumber);
     string indexerConfigRowId = string.Concat("indexerConfigRow", taskNumber);
-    string indexerLanguageId = string.Concat("indexerLanguage", taskNumber);
+    string indexerLanguageId = string.Concat("indexerLanguageId", taskNumber);
     string indexerSearchPartitionId = string.Concat("indexerSearchPartition", taskNumber);
     string indexerVideoDescriptionId = string.Concat("indexerVideoDescription", taskNumber);
     string indexerVideoMetadataId = string.Concat("indexerVideoMetadata", taskNumber);
@@ -34,9 +34,9 @@
     string summarizationFadeTransitionsId = string.Concat("summarizationFadeTransitions", taskNumber);
     string summarizationIncludeAudioId = string.Concat("summarizationIncludeAudio", taskNumber);
     string speechAnalyzerConfigRowId = string.Concat("speechAnalyzerConfigRow", taskNumber);
-    string speechAnalyzerLanguageId = string.Concat("speechAnalyzerLanguage", taskNumber);
-    string speechAnalyzerCaptionTtmlId = string.Concat("speechAnalyzerCaptionTtml", taskNumber);
-    string speechAnalyzerCaptionWebVttId = string.Concat("speechAnalyzerCaptionWebVtt", taskNumber);
+    string speechAnalyzerLanguageId = string.Concat("speechAnalyzerLanguageId", taskNumber);
+    string speechAnalyzerTimedTextFormatTtmlId = string.Concat("speechAnalyzerTimedTextFormatTtml", taskNumber);
+    string speechAnalyzerTimedTextFormatWebVttId = string.Concat("speechAnalyzerTimedTextFormatWebVtt", taskNumber);
     string faceDetectionConfigRowId = string.Concat("faceDetectionConfigRow", taskNumber);
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
     string faceDetectionTrackingModeId = string.Concat("faceDetectionTrackingMode", taskNumber);
@@ -211,20 +211,22 @@
                     <table>
                         <tr>
                             <td class="inputLabel">
-                                @Html.DropDownList(speechAnalyzerLanguageId, ViewData["speechAnalyzerLanguages"] as SelectListItem[], new { @class = "speechToTextLanguage" })
+                                @Html.DropDownList(speechAnalyzerLanguageId, ViewData["speechAnalyzerLanguages"] as SelectListItem[], new { @class = "mediaProcessor" })
                             </td>
                             <td class="inputLabel">
-                                Captions
-                            </td>
-                            <td class="inputLabel">
-                                &nbsp;
-                                @Html.CheckBox(speechAnalyzerCaptionTtmlId, false, new { @class = "inputCheckbox" })
-                                TTML
+                                <span class="speechAnalyzerOutputs")">
+                                    Outputs
+                                </span>
                             </td>
                             <td class="inputLabel">
                                 &nbsp;
-                                @Html.CheckBox(speechAnalyzerCaptionWebVttId, true, new { @class = "inputCheckbox", disabled = "disabled" })
+                                @Html.CheckBox(speechAnalyzerTimedTextFormatWebVttId, true, new { @class = "inputCheckbox", disabled = "disabled" })
                                 WebVTT
+                            </td>
+                            <td class="inputLabel">
+                                &nbsp;
+                                @Html.CheckBox(speechAnalyzerTimedTextFormatTtmlId, false, new { @class = "inputCheckbox" })
+                                TTML
                             </td>
                         </tr>
                     </table>

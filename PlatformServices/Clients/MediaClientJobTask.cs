@@ -44,7 +44,7 @@ namespace AzureSkyMedia.PlatformServices
             return processorConfig;
         }
 
-        private static MediaJobTask SetJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
+        private static MediaJobTask GetJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
         {
             jobTask.Name = Processor.GetProcessorName(jobTask.MediaProcessor);
             if (string.IsNullOrEmpty(jobTask.OutputAssetName))
@@ -60,12 +60,12 @@ namespace AzureSkyMedia.PlatformServices
             return jobTask;
         }
 
-        private static MediaJobTask[] SetJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs, bool multipleInputTask)
+        private static MediaJobTask[] GetJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs, bool multipleInputTask)
         {
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             if (multipleInputTask)
             {
-                jobTask = SetJobTask(mediaClient, jobTask, jobInputs[0].AssetName);
+                jobTask = GetJobTask(mediaClient, jobTask, jobInputs[0].AssetName);
                 jobTask.InputAssetIds = GetAssetIds(jobInputs);
                 jobTasks.Add(jobTask);
             }
@@ -74,7 +74,7 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (MediaJobInput jobInput in jobInputs)
                 {
                     MediaJobTask newTask = jobTask.CreateCopy();
-                    newTask = SetJobTask(mediaClient, newTask, jobInput.AssetName);
+                    newTask = GetJobTask(mediaClient, newTask, jobInput.AssetName);
                     newTask.InputAssetIds = new string[] { jobInput.AssetId };
                     jobTasks.Add(newTask);
                 }

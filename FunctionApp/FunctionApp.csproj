@@ -1,15 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net47</TargetFramework>
-    <AssemblyName>AzureSkyMedia.FunctionApp</AssemblyName>
     <RootNamespace>AzureSkyMedia.FunctionApp</RootNamespace>
+    <AssemblyName>AzureSkyMedia.FunctionApp</AssemblyName>
   </PropertyGroup>
   <ItemGroup>    
-    <PackageReference Include="Microsoft.Azure.DocumentDB" Version="1.19.1" />    
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.13.1" />    
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />    
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />    
-    <PackageReference Include="windowsazure.mediaservices" Version="4.1.0.1" />    
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.7" />    
     <PackageReference Include="WindowsAzure.Storage" Version="8.6.0" />
   </ItemGroup>
   <ItemGroup>
@@ -26,8 +22,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

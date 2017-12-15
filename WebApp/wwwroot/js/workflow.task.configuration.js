@@ -24,7 +24,7 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerConfigRow" + lastTaskNumber, "indexerConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerLanguage" + lastTaskNumber, "indexerLanguage" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerLanguageId" + lastTaskNumber, "indexerLanguageId" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSearchPartition" + lastTaskNumber, "indexerSearchPartition" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoDescription" + lastTaskNumber, "indexerVideoDescription" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoMetadata" + lastTaskNumber, "indexerVideoMetadata" + newTaskNumber);
@@ -36,9 +36,9 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationFadeTransitions" + lastTaskNumber, "summarizationFadeTransitions" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationIncludeAudio" + lastTaskNumber, "summarizationIncludeAudio" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerConfigRow" + lastTaskNumber, "speechAnalyzerConfigRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzertLanguage" + lastTaskNumber, "speechAnalyzerLanguage" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerCaptionTtml" + lastTaskNumber, "speechAnalyzerCaptionTtml" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerCaptionWebVtt" + lastTaskNumber, "speechAnalyzerCaptionWebVtt" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerLanguageId" + lastTaskNumber, "speechAnalyzerLanguageId" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerTimedTextFormatTtml" + lastTaskNumber, "speechAnalyzerTimedTextFormatTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerTimedTextFormatWebVtt" + lastTaskNumber, "speechAnalyzerTimedTextFormatWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionTrackingMode" + lastTaskNumber, "faceDetectionTrackingMode" + newTaskNumber);
@@ -131,7 +131,6 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 $("#" + encoderOptionsRowId).show();
                 break;
             case "EncoderPremium":
-            case "EncoderUltra":
                 $("#" + encoderConfigDocId).click(function () {
                     window.open("http://docs.microsoft.com/azure/media-services/media-services-encode-with-premium-workflow");
                 });
@@ -183,7 +182,6 @@ function SetEncoderConfigOptions(encoderConfig) {
                 });
                 break;
             case "EncoderPremium":
-            case "EncoderUltra":
                 $("#" + encoderConfigDocSchemaId).click(function () {
                     window.open("http://docs.microsoft.com/azure/media-services/media-services-workflow-designer");
                 });

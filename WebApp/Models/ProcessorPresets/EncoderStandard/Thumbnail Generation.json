@@ -1,0 +1,27 @@
+{
+  "ProcessorName": "Encoder Standard",
+  "PresetName": "Thumbnail Generation",
+  "Version": 1.0,
+  "Codecs": [
+    {
+      "PngLayers": [
+        {
+          "Type": "PngLayer",
+          "Width": "100%",
+          "Height": "100%"
+        }
+      ],
+      "Start": "{Best}",
+      "Type": "PngImage"
+    }
+  ],
+  "Outputs": [
+    {
+      "FileName": "{Basename}_{Index}{Extension}",
+      "Format": {
+        "Type": "PngFormat"
+      }
+    }
+  ],
+  "id": "0070e7d5-7c66-48a2-a826-a8917b4b4c88"
+}

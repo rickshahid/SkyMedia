@@ -47,10 +47,12 @@ namespace AzureSkyMedia.PlatformServices
                 string[] streamProtectionTypes = protectionTypes.Split(Constant.TextDelimiter.Application);
                 foreach (string streamProtectionType in streamProtectionTypes)
                 {
-                    StreamProtection streamProtection = new StreamProtection();
-                    streamProtection.Type = (MediaProtection)Enum.Parse(typeof(MediaProtection), streamProtectionType);
-                    streamProtection.AuthenticationToken = authToken;
-                    streamProtections.Add(streamProtection);
+                    StreamProtection streamProtection = new StreamProtection()
+                    {
+                        Type = (MediaProtection)Enum.Parse(typeof(MediaProtection), streamProtectionType),
+                        AuthenticationToken = authToken
+                    };
+                streamProtections.Add(streamProtection);
                 }
             }
             return streamProtections.ToArray();

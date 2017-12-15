@@ -89,15 +89,18 @@ namespace AzureSkyMedia.PlatformServices
 
         public void InsertEntities(string tableName, IList<StorageEntity> entities)
         {
-            CloudTable table = _storage.GetTableReference(tableName);
-            table.CreateIfNotExists();
-            SetProperties(entities);
-            TableBatchOperation operations = new TableBatchOperation();
-            foreach (StorageEntity entity in entities)
+            if (entities.Count > 0)
             {
-                operations.Insert(entity);
+                CloudTable table = _storage.GetTableReference(tableName);
+                table.CreateIfNotExists();
+                SetProperties(entities);
+                TableBatchOperation operations = new TableBatchOperation();
+                foreach (StorageEntity entity in entities)
+                {
+                    operations.Insert(entity);
+                }
+                table.ExecuteBatch(operations);
             }
-            table.ExecuteBatch(operations);
         }
 
         public void UpdateEntity(string tableName, StorageEntity entity)
@@ -111,15 +114,18 @@ namespace AzureSkyMedia.PlatformServices
 
         public void UpdateEntities(string tableName, IList<StorageEntity> entities)
         {
-            CloudTable table = _storage.GetTableReference(tableName);
-            table.CreateIfNotExists();
-            SetProperties(entities);
-            TableBatchOperation operations = new TableBatchOperation();
-            foreach (StorageEntity entity in entities)
+            if (entities.Count > 0)
             {
-                operations.Replace(entity);
+                CloudTable table = _storage.GetTableReference(tableName);
+                table.CreateIfNotExists();
+                SetProperties(entities);
+                TableBatchOperation operations = new TableBatchOperation();
+                foreach (StorageEntity entity in entities)
+                {
+                    operations.Replace(entity);
+                }
+                table.ExecuteBatch(operations);
             }
-            table.ExecuteBatch(operations);
         }
 
         public void UpsertEntity(string tableName, StorageEntity entity)
@@ -133,15 +139,18 @@ namespace AzureSkyMedia.PlatformServices
 
         public void UpsertEntities(string tableName, IList<StorageEntity> entities)
         {
-            CloudTable table = _storage.GetTableReference(tableName);
-            table.CreateIfNotExists();
-            SetProperties(entities);
-            TableBatchOperation operations = new TableBatchOperation();
-            foreach (StorageEntity entity in entities)
+            if (entities.Count > 0)
             {
-                operations.InsertOrReplace(entity);
+                CloudTable table = _storage.GetTableReference(tableName);
+                table.CreateIfNotExists();
+                SetProperties(entities);
+                TableBatchOperation operations = new TableBatchOperation();
+                foreach (StorageEntity entity in entities)
+                {
+                    operations.InsertOrReplace(entity);
+                }
+                table.ExecuteBatch(operations);
             }
-            table.ExecuteBatch(operations);
         }
 
         public void MergeEntity(string tableName, StorageEntity entity)
@@ -155,15 +164,18 @@ namespace AzureSkyMedia.PlatformServices
 
         public void MergeEntities(string tableName, IList<StorageEntity> entities)
         {
-            CloudTable table = _storage.GetTableReference(tableName);
-            table.CreateIfNotExists();
-            SetProperties(entities);
-            TableBatchOperation operations = new TableBatchOperation();
-            foreach (StorageEntity entity in entities)
+            if (entities.Count > 0)
             {
-                operations.Merge(entity);
+                CloudTable table = _storage.GetTableReference(tableName);
+                table.CreateIfNotExists();
+                SetProperties(entities);
+                TableBatchOperation operations = new TableBatchOperation();
+                foreach (StorageEntity entity in entities)
+                {
+                    operations.Merge(entity);
+                }
+                table.ExecuteBatch(operations);
             }
-            table.ExecuteBatch(operations);
         }
 
         public void DeleteEntity(string tableName, StorageEntity entity)
@@ -176,14 +188,17 @@ namespace AzureSkyMedia.PlatformServices
 
         public void DeleteEntities(string tableName, IList<StorageEntity> entities)
         {
-            CloudTable table = _storage.GetTableReference(tableName);
-            table.CreateIfNotExists();
-            TableBatchOperation operations = new TableBatchOperation();
-            foreach (StorageEntity entity in entities)
+            if (entities.Count> 0)
             {
-                operations.Delete(entity);
+                CloudTable table = _storage.GetTableReference(tableName);
+                table.CreateIfNotExists();
+                TableBatchOperation operations = new TableBatchOperation();
+                foreach (StorageEntity entity in entities)
+                {
+                    operations.Delete(entity);
+                }
+                table.ExecuteBatch(operations);
             }
-            table.ExecuteBatch(operations);
         }
 
         public void DeleteTable(string tableName)

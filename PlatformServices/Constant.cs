@@ -70,17 +70,18 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
             public const string MediaStream1TextTracks = "Media.Stream1.TextTracks";
-            public const string MediaStream1ContentProtection = "Media.Stream1.ContentProtection";
 
             public const string MediaStream2Name = "Media.Stream2.Name";
             public const string MediaStream2SourceUrl = "Media.Stream2.SourceUrl";
             public const string MediaStream2TextTracks = "Media.Stream2.TextTracks";
-            public const string MediaStream2ContentProtection = "Media.Stream2.ContentProtection";
 
             public const string MediaStream3Name = "Media.Stream3.Name";
             public const string MediaStream3SourceUrl = "Media.Stream3.SourceUrl";
             public const string MediaStream3TextTracks = "Media.Stream3.TextTracks";
-            public const string MediaStream3ContentProtection = "Media.Stream3.ContentProtection";
+
+            public const string MediaStream4Name = "Media.Stream4.Name";
+            public const string MediaStream4SourceUrl = "Media.Stream4.SourceUrl";
+            public const string MediaStream4TextTracks = "Media.Stream4.TextTracks";
 
             public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
 

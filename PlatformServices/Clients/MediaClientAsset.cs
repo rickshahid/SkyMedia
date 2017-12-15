@@ -11,6 +11,32 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private static string[] GetFileNames(IAsset asset, string fileExtension)
+        {
+            List<string> fileNames = new List<string>();
+            foreach (IAssetFile file in asset.AssetFiles)
+            {
+                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    fileNames.Add(file.Name);
+                }
+            }
+            return fileNames.ToArray();
+        }
+
+        private static IAssetFile[] GetAssetFiles(IAsset asset, string fileExtension)
+        {
+            List<IAssetFile> assetFiles = new List<IAssetFile>();
+            foreach (IAssetFile file in asset.AssetFiles)
+            {
+                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    assetFiles.Add(file);
+                }
+            }
+            return assetFiles.ToArray();
+        }
+
         private IAsset[] GetAssets(string[] assetIds)
         {
             List<IAsset> assets = new List<IAsset>();

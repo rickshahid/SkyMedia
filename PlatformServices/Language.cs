@@ -8,42 +8,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Language
     {
-        private static string GetLanguageLabel(string languageCode, bool videoIndexer)
-        {
-            string languageLabel = string.Empty;
-            NameValueCollection languages = GetSpokenLanguages(videoIndexer);
-            foreach (string language in languages.Keys)
-            {
-                if (string.Equals(languages[language], languageCode, StringComparison.OrdinalIgnoreCase))
-                {
-                    languageLabel = language;
-                }
-            }
-            return languageLabel;
-        }
-
-        internal static string GetLanguageCode(string sourceUrl)
-        {
-            string[] sourceInfo = sourceUrl.Split('.');
-            string fileName = sourceInfo[sourceInfo.Length - 2];
-            return fileName.Substring(fileName.Length - 2);
-        }
-
-        internal static string GetLanguageCode(JObject processorConfig)
-        {
-            string languageCode = string.Empty;
-            if (processorConfig["Features"] != null && processorConfig["Features"].HasValues)
-            {
-                JToken processorOptions = processorConfig["Features"][0]["Options"];
-                if (processorOptions != null && processorOptions["Language"] != null)
-                {
-                    languageCode = processorOptions["Language"].ToString();
-                }
-            }
-            return languageCode;
-        }
-
-        internal static NameValueCollection GetSpokenLanguages(bool videoIndexer)
+        public static NameValueCollection GetSpokenLanguages(bool videoIndexer)
         {
             NameValueCollection spokenLanguages = new NameValueCollection();
             if (videoIndexer)
@@ -69,16 +34,44 @@ namespace AzureSkyMedia.PlatformServices
             return spokenLanguages;
         }
 
-        internal static string GetLanguageLabel(string webVttUrl)
+        public static string GetLanguageId(JObject processorConfig)
         {
-            string languageCode = Path.GetFileNameWithoutExtension(webVttUrl);
-            return GetLanguageLabel(languageCode, false);
+            string languageId = string.Empty;
+            if (processorConfig["Features"] != null && processorConfig["Features"].HasValues)
+            {
+                JToken processorOptions = processorConfig["Features"][0]["Options"];
+                if (processorOptions != null && processorOptions["Language"] != null)
+                {
+                    languageId = processorOptions["Language"].ToString();
+                }
+            }
+            return languageId;
         }
 
-        internal static string GetLanguageLabel(JObject index)
+        public static string GetLanguageLabel(string languageId, bool videoIndexer)
         {
-            string languageCode = index["breakdowns"][0]["language"].ToString();
-            return GetLanguageLabel(languageCode, false);
+            string languageLabel = string.Empty;
+            NameValueCollection languages = GetSpokenLanguages(videoIndexer);
+            foreach (string language in languages.Keys)
+            {
+                if (string.Equals(languages[language], languageId, StringComparison.OrdinalIgnoreCase))
+                {
+                    languageLabel = language;
+                }
+            }
+            return languageLabel;
+        }
+
+        public static string GetLanguageLabel(string webVttUrl)
+        {
+            string languageLabel = string.Empty;
+            if (!string.IsNullOrEmpty(webVttUrl))
+            {
+                string languageId = Path.GetFileNameWithoutExtension(webVttUrl);
+                languageId = languageId.Substring(languageId.Length - 4);
+                languageLabel = GetLanguageLabel(languageId, false);
+            }
+            return languageLabel;
         }
     }
 }

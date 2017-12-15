@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
 
     internal enum MediaProcessorConfig
     {
-        SpokenLanguage,
+        LanguageId,
         SearchPartition,
         FaceDetectionMode,
         FaceDetectionTrackingMode,
@@ -39,8 +39,8 @@ namespace AzureSkyMedia.PlatformServices
         FaceDetectionAggregateEmotionInterval,
         FaceRedactionMode,
         FaceRedactionBlurMode,
-        CaptionFormatTtml,
-        CaptionFormatWebVtt,
+        TimedTextFormatTtml,
+        TimedTextFormatWebVtt,
         SummarizationDurationSeconds,
         SummarizationFadeTransitions,
         MotionDetectionSensitivityLevel,

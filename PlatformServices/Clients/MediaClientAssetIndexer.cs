@@ -22,7 +22,10 @@ namespace AzureSkyMedia.PlatformServices
         public IndexerClient(string authToken) : this()
         {
             User authUser = new User(authToken);
-            _indexer = new WebClient(authUser.VideoIndexerKey);
+            if (!string.IsNullOrEmpty(authUser.VideoIndexerKey))
+            {
+                _indexer = new WebClient(authUser.VideoIndexerKey);
+            }
             _accountId = authUser.MediaAccountId;
         }
 
@@ -32,19 +35,14 @@ namespace AzureSkyMedia.PlatformServices
             _accountId = accountId;
         }
 
+        public bool IndexerEnabled
+        {
+            get { return _indexer != null; }
+        }
+
         private string GetPrivacy(bool videoPublic)
         {
             return videoPublic ? "public" : "private";
-        }
-
-        private string GetAssetId(IAsset asset)
-        {
-            string assetId = asset.Id;
-            if (asset.ParentAssets.Count > 0)
-            {
-                assetId = asset.ParentAssets[0].Id;
-            }
-            return assetId;
         }
 
         private string GetCallbackUrl()
@@ -55,16 +53,67 @@ namespace AzureSkyMedia.PlatformServices
             return WebUtility.UrlEncode(callbackUrl);
         }
 
+        private string IndexVideo(IAsset asset, string description, string metadata, string languageId,
+                                  string searchPartition, string locatorUrl, bool videoPublic, bool audioOnly)
+        {
+            string indexId = string.Empty;
+            string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
+            requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(asset.Name));
+            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(description));
+            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(metadata));
+            requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
+            requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
+            requestUrl = string.Concat(requestUrl, "&language=", languageId);
+            requestUrl = string.Concat(requestUrl, "&partition=", searchPartition);
+            requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
+            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(videoPublic));
+            if (audioOnly)
+            {
+                requestUrl = string.Concat(requestUrl, "&indexingPreset=audioOnly");
+            }
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUrl))
+            {
+                indexId = _indexer.GetResponse<string>(request);
+            }
+            return indexId;
+        }
+
+        public static string GetAssetId(JObject index)
+        {
+            string assetId = string.Empty;
+            if (index["breakdowns"] != null && index["breakdowns"].HasValues)
+            {
+                JToken externalId = index["breakdowns"][0]["externalId"];
+                if (externalId != null)
+                {
+                    assetId = externalId.ToString();
+                }
+            }
+            return assetId;
+        }
+
+        public static string GetLanguageLabel(JObject index)
+        {
+            string languageLabel = string.Empty;
+            if (index["breakdowns"] != null && index["breakdowns"].HasValues)
+            {
+                JToken language = index["breakdowns"][0]["language"];
+                if (language != null)
+                {
+                    string languageId = language.ToString();
+                    languageLabel = Language.GetLanguageLabel(languageId, true);
+                }
+            }
+            return languageLabel;
+        }
+
         public JArray GetAccounts()
         {
             JArray accounts = null;
-            if (_indexer != null)
+            string requestUrl = string.Concat(_serviceUrl, "/Accounts");
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
             {
-                string requestUrl = string.Concat(_serviceUrl, "/Accounts");
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
-                {
-                    accounts = _indexer.GetResponse<JArray>(request);
-                }
+                accounts = _indexer.GetResponse<JArray>(request);
             }
             return accounts;
         }
@@ -72,195 +121,155 @@ namespace AzureSkyMedia.PlatformServices
         public string GetInsightUrl(string indexId)
         {
             string url = string.Empty;
-            if (_indexer != null)
+            string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/InsightsWidgetUrl");
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
             {
-                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/InsightsWidgetUrl");
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
-                {
-                    url = _indexer.GetResponse<string>(request);
-                }
+                url = _indexer.GetResponse<string>(request);
             }
             return url;
         }
 
-        public string GetWebVttUrl(string indexId, string spokenLanguage)
+        public string GetWebVttUrl(string indexId, string languageId)
         {
             string url = string.Empty;
-            if (_indexer != null)
+            string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/VttUrl");
+            if (!string.IsNullOrEmpty(languageId))
             {
-                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/VttUrl");
-                if (!string.IsNullOrEmpty(spokenLanguage))
-                {
-                    requestUrl = string.Concat(requestUrl, "?", spokenLanguage);
-                }
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
-                {
-                    url = _indexer.GetResponse<string>(request);
-                }
+                requestUrl = string.Concat(requestUrl, "?", languageId);
+            }
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+            {
+                url = _indexer.GetResponse<string>(request);
             }
             return url;
         }
 
-        public string GetIndexId(IAsset asset)
-        {
-            string assetId = GetAssetId(asset);
-            return GetIndexId(assetId);
-        }
-
-        public string GetIndexId(string assetId)
-        {
-            string indexId = string.Empty;
-            if (_indexer != null)
-            {
-                MediaSearchCriteria searchCriteria = new MediaSearchCriteria()
-                {
-                    AssetId = assetId
-                };
-                JObject searchResults = Search(searchCriteria);
-                JArray results = searchResults["results"] as JArray;
-                if (results.HasValues)
-                {
-                    indexId = results.First["id"].ToString();
-                }
-            }
-            return indexId;
-        }
-
-        public JObject GetIndex(string indexId, string spokenLanguage, bool processingState)
+        public JObject GetIndex(string indexId, string languageId, bool processingState)
         {
             JObject index = null;
-            if (_indexer != null)
+            string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId);
+            if (!string.IsNullOrEmpty(languageId))
             {
-                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId);
-                if (!string.IsNullOrEmpty(spokenLanguage))
-                {
-                    requestUrl = string.Concat(requestUrl, "?", spokenLanguage);
-                }
-                else if (processingState)
-                {
-                    requestUrl = string.Concat(requestUrl, "/State");
-                }
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
-                {
-                    index = _indexer.GetResponse<JObject>(request);
-                }
+                requestUrl = string.Concat(requestUrl, "?", languageId);
+            }
+            else if (processingState)
+            {
+                requestUrl = string.Concat(requestUrl, "/State");
+            }
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+            {
+                index = _indexer.GetResponse<JObject>(request);
             }
             return index;
         }
 
         public void ResetIndex(string indexId)
         {
-            if (_indexer != null)
+            string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/reindex/", indexId);
+            requestUrl = string.Concat(requestUrl, "?callbackUrl=", GetCallbackUrl());
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Put, requestUrl))
             {
-                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/reindex/", indexId);
-                requestUrl = string.Concat(requestUrl, "?callbackUrl=", GetCallbackUrl());
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Put, requestUrl))
-                {
-                    _indexer.GetResponse<object>(request);
-                }
+                _indexer.GetResponse<object>(request);
             }
         }
 
-        public string UploadVideo(IAsset asset, string description, string metadata, string spokenLanguage,
-                                  string searchPartition, string locatorUrl, bool videoPublic, bool audioOnly)
+        public void IndexVideo(string authToken, MediaJobTask jobTask, IAsset asset, string locatorUrl)
         {
-            string indexId = string.Empty;
-            if (_indexer != null)
+            string languageId = jobTask.ProcessorConfigString[MediaProcessorConfig.LanguageId.ToString()];
+            string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
+            string videoDescription = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoDescription.ToString()];
+            string videoMetadata = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoMetadata.ToString()];
+            bool videoPublic = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoPublic.ToString()];
+            bool audioOnly = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.AudioOnly.ToString()];
+
+            string indexId = IndexVideo(asset, videoDescription, videoMetadata, languageId, searchPartition, locatorUrl, videoPublic, audioOnly);
+            string processorName = Processor.GetProcessorName(MediaProcessor.VideoIndexer);
+            asset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, indexId);
+            asset.Update();
+
+            User authUser = new User(authToken);
+            MediaInsightPublish insightPublish = new MediaInsightPublish
             {
-                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
-                requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(asset.Name));
-                requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(description));
-                requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(metadata));
-                requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
-                requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
-                requestUrl = string.Concat(requestUrl, "&language=", spokenLanguage);
-                requestUrl = string.Concat(requestUrl, "&partition=", searchPartition);
-                requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
-                requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(videoPublic));
-                if (audioOnly)
-                {
-                    requestUrl = string.Concat(requestUrl, "&indexingPreset=audioOnly");
-                }
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUrl))
-                {
-                    indexId = _indexer.GetResponse<string>(request);
-                }
-            }
-            return indexId;
+                PartitionKey = authUser.MediaAccountId,
+                RowKey = indexId,
+                MediaAccountDomainName = authUser.MediaAccountDomainName,
+                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
+                MediaAccountClientId = authUser.MediaAccountClientId,
+                MediaAccountClientKey = authUser.MediaAccountClientKey,
+                IndexerAccountKey = authUser.VideoIndexerKey,
+            };
+
+            TableClient tableClient = new TableClient();
+            string tableName = Constant.Storage.Table.InsightPublish;
+            tableClient.InsertEntity(tableName, insightPublish);
         }
 
         public void DeleteVideo(string indexId, bool deleteInsight)
         {
-            if (_indexer != null)
+            string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId);
+            if (deleteInsight)
             {
-                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId);
-                if (deleteInsight)
-                {
-                    requestUrl = string.Concat(requestUrl, "?deleteInsights=true");
-                }
-                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Delete, requestUrl))
-                {
-                    _indexer.GetResponse<object>(request);
-                }
+                requestUrl = string.Concat(requestUrl, "?deleteInsights=true");
+            }
+            using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Delete, requestUrl))
+            {
+                _indexer.GetResponse<object>(request);
             }
         }
 
         public JObject Search(MediaSearchCriteria searchCriteria)
         {
             JObject results = null;
-            if (_indexer != null)
+            if (!string.IsNullOrEmpty(searchCriteria.IndexId))
             {
+                results = GetIndex(searchCriteria.IndexId, searchCriteria.LanguageId, false);
+            }
+            else
+            {
+                string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/Search?privacy=", GetPrivacy(searchCriteria.VideoPublic));
                 if (!string.IsNullOrEmpty(searchCriteria.IndexId))
                 {
-                    results = GetIndex(searchCriteria.IndexId, searchCriteria.SpokenLanguage, false);
+                    requestUrl = string.Concat(requestUrl, "&id=", searchCriteria.IndexId);
                 }
-                else
+                if (!string.IsNullOrEmpty(searchCriteria.AssetId))
                 {
-                    string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/Search?privacy=", GetPrivacy(searchCriteria.VideoPublic));
-                    if (!string.IsNullOrEmpty(searchCriteria.IndexId))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&id=", searchCriteria.IndexId);
-                    }
-                    if (!string.IsNullOrEmpty(searchCriteria.AssetId))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(searchCriteria.AssetId));
-                    }
-                    if (!string.IsNullOrEmpty(searchCriteria.SpokenLanguage))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&language=", searchCriteria.SpokenLanguage);
-                    }
-                    if (!string.IsNullOrEmpty(searchCriteria.TextScope))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&textScope=", WebUtility.UrlEncode(searchCriteria.TextScope));
-                    }
-                    if (!string.IsNullOrEmpty(searchCriteria.TextQuery))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&query=", WebUtility.UrlEncode(searchCriteria.TextQuery));
-                    }
-                    if (!string.IsNullOrEmpty(searchCriteria.SearchPartition))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&partition=", searchCriteria.SearchPartition);
-                    }
-                    if (!string.IsNullOrEmpty(searchCriteria.Owner))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&owner=", searchCriteria.Owner);
-                    }
-                    if (!string.IsNullOrEmpty(searchCriteria.Face))
-                    {
-                        requestUrl = string.Concat(requestUrl, "&face=", searchCriteria.Face);
-                    }
-                    if (searchCriteria.PageSize > 0)
-                    {
-                        requestUrl = string.Concat(requestUrl, "&pageSize=", searchCriteria.PageSize.ToString());
-                    }
-                    if (searchCriteria.SkipCount > 0)
-                    {
-                        requestUrl = string.Concat(requestUrl, "&skip=", searchCriteria.SkipCount.ToString());
-                    }
-                    using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
-                    {
-                        results = _indexer.GetResponse<JObject>(request);
-                    }
+                    requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(searchCriteria.AssetId));
+                }
+                if (!string.IsNullOrEmpty(searchCriteria.LanguageId))
+                {
+                    requestUrl = string.Concat(requestUrl, "&language=", searchCriteria.LanguageId);
+                }
+                if (!string.IsNullOrEmpty(searchCriteria.TextScope))
+                {
+                    requestUrl = string.Concat(requestUrl, "&textScope=", WebUtility.UrlEncode(searchCriteria.TextScope));
+                }
+                if (!string.IsNullOrEmpty(searchCriteria.TextQuery))
+                {
+                    requestUrl = string.Concat(requestUrl, "&query=", WebUtility.UrlEncode(searchCriteria.TextQuery));
+                }
+                if (!string.IsNullOrEmpty(searchCriteria.SearchPartition))
+                {
+                    requestUrl = string.Concat(requestUrl, "&partition=", searchCriteria.SearchPartition);
+                }
+                if (!string.IsNullOrEmpty(searchCriteria.Owner))
+                {
+                    requestUrl = string.Concat(requestUrl, "&owner=", searchCriteria.Owner);
+                }
+                if (!string.IsNullOrEmpty(searchCriteria.Face))
+                {
+                    requestUrl = string.Concat(requestUrl, "&face=", searchCriteria.Face);
+                }
+                if (searchCriteria.PageSize > 0)
+                {
+                    requestUrl = string.Concat(requestUrl, "&pageSize=", searchCriteria.PageSize.ToString());
+                }
+                if (searchCriteria.SkipCount > 0)
+                {
+                    requestUrl = string.Concat(requestUrl, "&skip=", searchCriteria.SkipCount.ToString());
+                }
+                using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
+                {
+                    results = _indexer.GetResponse<JObject>(request);
                 }
             }
             return results;

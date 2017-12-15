@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
-using Microsoft.WindowsAzure.MediaServices.Client;
 
 using Newtonsoft.Json;
 
@@ -18,8 +17,8 @@ namespace AzureSkyMedia.FunctionApp
         {
             MediaContentPublish contentPublish = null;
             if (jobNotification.EventType == MediaJobNotificationEvent.JobStateChange &&
-                jobNotification.Properties.OldState == JobState.Processing &&
-                jobNotification.Properties.NewState == JobState.Finished)
+                jobNotification.Properties.OldState == MediaJobState.Processing &&
+                jobNotification.Properties.NewState == MediaJobState.Finished)
             {
                 TableClient tableClient = new TableClient();
                 string tableName = Constant.Storage.Table.ContentPublish;

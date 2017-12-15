@@ -333,7 +333,7 @@
             },
             {
               "name": "Database.Document",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey)]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=Media')]"
             },
             {
               "name": "Database.Table",

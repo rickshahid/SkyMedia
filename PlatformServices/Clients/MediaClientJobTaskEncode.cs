@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
@@ -28,7 +27,6 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask[] GetEncoderTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             if (jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
             {
                 Array.Sort(jobInputs, OrderByWorkflow);
@@ -44,9 +42,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             bool multipleInputTask = jobTask.MediaProcessor != MediaProcessor.EncoderStandard;
-            MediaJobTask[] tasks = SetJobTasks(mediaClient, jobTask, jobInputs, multipleInputTask);
-            jobTasks.AddRange(tasks);
-            return jobTasks.ToArray();
+            return GetJobTasks(mediaClient, jobTask, jobInputs, multipleInputTask);
         }
     }
 }

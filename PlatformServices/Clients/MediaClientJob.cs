@@ -40,67 +40,70 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
         {
-            List<MediaJobTask> tasks = new List<MediaJobTask>();
-            foreach (MediaJobTask task in mediaJob.Tasks)
+            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+            foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
-                MediaJobTask[] jobTasks = null;
-                switch (task.MediaProcessor)
+                MediaJobTask[] tasks = null;
+                switch (jobTask.MediaProcessor)
                 {
                     case MediaProcessor.EncoderStandard:
                     case MediaProcessor.EncoderPremium:
-                        jobTasks = GetEncoderTasks(mediaClient, task, jobInputs);
+                        tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.VideoIndexer:
                         IndexerClient indexerClient = new IndexerClient(authToken);
-                        foreach (MediaJobInput jobInput in jobInputs)
+                        if (indexerClient.IndexerEnabled)
                         {
-                            string indexId = indexerClient.GetIndexId(jobInput.AssetId);
-                            if (!string.IsNullOrEmpty(indexId))
-                            {
-                                indexerClient.ResetIndex(indexId);
-                            }
-                            else
+                            foreach (MediaJobInput jobInput in jobInputs)
                             {
                                 IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                                string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
-                                IndexVideo(authToken, indexerClient, asset, locatorUrl, task);
+                                string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
+                                if (videoIndexer)
+                                {
+                                    indexerClient.ResetIndex(documentId);
+                                }
+                                else
+                                {
+                                    string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
+                                    indexerClient.IndexVideo(authToken, jobTask, asset, locatorUrl);
+                                }
                             }
                         }
                         break;
                     case MediaProcessor.VideoAnnotation:
-                        jobTasks = GetVideoAnnotationTasks(mediaClient, task, jobInputs);
+                        tasks = GetVideoAnnotationTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.VideoSummarization:
-                        jobTasks = GetVideoSummarizationTasks(mediaClient, task, jobInputs);
+                        tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.CharacterRecognition:
-                        jobTasks = GetCharacterRecognitionTasks(mediaClient, task, jobInputs);
+                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.ContentModeration:
-                        jobTasks = GetContentModerationTasks(mediaClient, task, jobInputs);
+                        tasks = GetContentModerationTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.SpeechAnalyzer:
-                        jobTasks = GetSpeechAnalyzerTasks(mediaClient, task, jobInputs);
+                        tasks = GetSpeechAnalyzerTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.FaceDetection:
-                        jobTasks = GetFaceDetectionTasks(mediaClient, task, jobInputs);
+                        tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.FaceRedaction:
-                        jobTasks = GetFaceRedactionTasks(mediaClient, task, jobInputs);
+                        tasks = GetFaceRedactionTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.MotionDetection:
-                        jobTasks = GetMotionDetectionTasks(mediaClient, task, jobInputs);
+                        tasks = GetMotionDetectionTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.MotionHyperlapse:
-                        jobTasks = GetMotionHyperlapseTasks(mediaClient, task, jobInputs);
+                        tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, jobInputs);
                         break;
                 }
-                if (jobTasks != null)
+                if (tasks != null)
                 {
-                    tasks.AddRange(jobTasks);
+                    jobTasks.AddRange(tasks);
                 }
             }
-            mediaJob.Tasks = tasks.ToArray();
+            mediaJob.Tasks = jobTasks.ToArray();
             if (string.IsNullOrEmpty(mediaJob.Name))
             {
                 mediaJob.Name = jobInputs[0].AssetName;

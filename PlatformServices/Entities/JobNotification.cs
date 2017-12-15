@@ -14,6 +14,17 @@ namespace AzureSkyMedia.PlatformServices
         TaskProgress = 5
     }
 
+    internal enum MediaJobState
+    {
+        Queued = 0,
+        Scheduled = 1,
+        Processing = 2,
+        Finished = 3,
+        Error = 4,
+        Canceled = 5,
+        Canceling = 6
+    }
+
     internal sealed class MediaJobNotification
     {
         public MediaJobNotificationEvent EventType { get; set; }
@@ -37,8 +48,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public string JobName { get; set; }
 
-        public JobState OldState { get; set; }
+        public MediaJobState OldState { get; set; }
 
-        public JobState NewState { get; set; }
+        public MediaJobState NewState { get; set; }
     }
 }

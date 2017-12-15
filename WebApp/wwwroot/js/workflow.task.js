@@ -24,7 +24,6 @@ function GetJobTask(taskNumber) {
         switch (jobTask.MediaProcessor) {
             case "EncoderStandard":
             case "EncoderPremium":
-            case "EncoderUltra":
                 var encoderConfig = $("#encoderConfig" + taskNumber).val();
                 if (encoderConfig == "Custom") {
                     jobTask.ProcessorConfig = _encoderConfig;
@@ -37,7 +36,7 @@ function GetJobTask(taskNumber) {
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "VideoIndexer":
-                jobTask.ProcessorConfigString["SpokenLanguage"] = $("#indexerLanguage" + taskNumber).val();
+                jobTask.ProcessorConfigString["LanguageId"] = $("#indexerLanguageId" + taskNumber).val();
                 jobTask.ProcessorConfigString["SearchPartition"] = $("#indexerSearchPartition" + taskNumber).val();
                 jobTask.ProcessorConfigString["VideoDescription"] = $("#indexerVideoDescription" + taskNumber).val();
                 jobTask.ProcessorConfigString["VideoMetadata"] = $("#indexerVideoMetadata" + taskNumber).val();
@@ -45,16 +44,16 @@ function GetJobTask(taskNumber) {
                 jobTask.ProcessorConfigBoolean["AudioOnly"] = $("#indexerAudioOnly" + taskNumber).prop("checked");
                 break;
             case "VideoSummarization":
-                var durationMinutes = $("#summarizationDurationMinutes" + taskNumber).val();
-                var durationSeconds = $("#summarizationDurationSeconds" + taskNumber).val();
+                var durationMinutes = parseInt($("#summarizationDurationMinutes" + taskNumber).val());
+                var durationSeconds = parseInt($("#summarizationDurationSeconds" + taskNumber).val());
                 jobTask.ProcessorConfigInteger["SummarizationDurationSeconds"] = (durationMinutes * 60) + durationSeconds;
                 jobTask.ProcessorConfigBoolean["SummarizationFadeTransitions"] = $("#summarizationFadeTransitions" + taskNumber).prop("checked");
                 jobTask.ProcessorConfigBoolean["VideoOnly"] = !$("#summarizationIncludeAudio" + taskNumber).prop("checked");
                 break;
             case "SpeechAnalyzer":
-                jobTask.ProcessorConfigString["SpokenLanguage"] = $("#speechAnalyzerLanguage" + taskNumber).val();
-                jobTask.ProcessorConfigBoolean["CaptionFormatTtml"] = $("#speechAnalyzerCaptionTtml" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigBoolean["CaptionFormatWebVtt"] = $("#speechAnalyzerCaptionWebVtt" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigString["LanguageId"] = $("#speechAnalyzerLanguageId" + taskNumber).val();
+                jobTask.ProcessorConfigBoolean["TimedTextFormatTtml"] = $("#speechAnalyzerTimedTextFormatTtml" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["TimedTextFormatWebVtt"] = $("#speechAnalyzerTimedTextFormatWebVtt" + taskNumber).prop("checked");
                 break;
             case "FaceDetection":
                 jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();

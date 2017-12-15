@@ -34,22 +34,27 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void DeleteAsset(string authToken, string accountId, MediaClient mediaClient, IAsset asset)
         {
-            IndexerClient indexerClient = new IndexerClient(authToken);
-            string indexId = indexerClient.GetIndexId(asset);
-            if (!string.IsNullOrEmpty(indexId))
+            string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
+            if (!string.IsNullOrEmpty(documentId))
             {
-                indexerClient.DeleteVideo(indexId, true);
-
-                string collectionId = Constant.Database.Collection.ContentInsight;
                 DocumentClient documentClient = new DocumentClient();
-                documentClient.DeleteDocument(collectionId, indexId);
-
-                TableClient tableClient = new TableClient();
-                string tableName = Constant.Storage.Table.InsightPublish;
-                MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, indexId);
-                if (insightPublish != null)
+                string collectionId = Constant.Database.Collection.ContentInsight;
+                documentClient.DeleteDocument(collectionId, documentId);
+                if (videoIndexer)
                 {
-                    tableClient.DeleteEntity(tableName, insightPublish);
+                    IndexerClient indexerClient = new IndexerClient(authToken);
+                    if (indexerClient.IndexerEnabled)
+                    {
+                        indexerClient.DeleteVideo(documentId, true);
+                    }
+
+                    TableClient tableClient = new TableClient();
+                    string tableName = Constant.Storage.Table.InsightPublish;
+                    MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, documentId);
+                    if (insightPublish != null)
+                    {
+                        tableClient.DeleteEntity(tableName, insightPublish);
+                    }
                 }
             }
             foreach (ILocator locator in asset.Locators)
