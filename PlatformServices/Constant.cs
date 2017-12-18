@@ -191,6 +191,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string FileUpload = "FileUpload";
                 public const string ContentProtection = "ContentProtection";
+                public const string ContentIndex = "ContentIndex";
                 public const string ContentPublish = "ContentPublish";
                 public const string InsightPublish = "InsightPublish";
 
@@ -316,7 +317,7 @@ namespace AzureSkyMedia.PlatformServices
                 public const string Manifest = ".ism";
                 public const string WebVtt = ".vtt";
                 public const string Json = ".json";
-                public const string Video = ".mp4";
+                public const string MP4 = ".mp4";
             }
 
             public struct Live

@@ -36,12 +36,14 @@ function GetJobTask(taskNumber) {
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "VideoIndexer":
-                jobTask.ProcessorConfigString["LanguageId"] = $("#indexerLanguageId" + taskNumber).val();
-                jobTask.ProcessorConfigString["SearchPartition"] = $("#indexerSearchPartition" + taskNumber).val();
-                jobTask.ProcessorConfigString["VideoDescription"] = $("#indexerVideoDescription" + taskNumber).val();
-                jobTask.ProcessorConfigString["VideoMetadata"] = $("#indexerVideoMetadata" + taskNumber).val();
-                jobTask.ProcessorConfigBoolean["VideoPublic"] = $("#indexerVideoPublic" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigBoolean["AudioOnly"] = $("#indexerAudioOnly" + taskNumber).prop("checked");
+                jobTask.ContentIndex = {
+                    LanguageId: $("#indexerLanguageId" + taskNumber).val(),
+                    SearchPartition: $("#indexerSearchPartition" + taskNumber).val(),
+                    VideoDescription: $("#indexerVideoDescription" + taskNumber).val(),
+                    VideoMetadata: $("#indexerVideoMetadata" + taskNumber).val(),
+                    VideoPublic: $("#indexerVideoPublic" + taskNumber).prop("checked"),
+                    AudioOnly: $("#indexerAudioOnly" + taskNumber).prop("checked")
+                };
                 break;
             case "VideoSummarization":
                 var durationMinutes = parseInt($("#summarizationDurationMinutes" + taskNumber).val());

@@ -38,15 +38,12 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void PublishJob(MediaClient mediaClient, IJob job, MediaContentPublish contentPublish)
         {
-            string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
-            string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
-            string[] processorIds = new string[] { processorId1, processorId2 };
-            ITask[] encoderTasks = GetJobTasks(job, processorIds);
+            ITask[] encoderTasks = GetEncoderTasks(job);
             if (encoderTasks.Length == 0)
             {
                 foreach (IAsset inputAsset in job.InputMediaAssets)
                 {
-                    PublishAnalytics(mediaClient, contentPublish, job);
+                    PublishAnalytics(mediaClient, contentPublish, job, encoderTasks);
                 }
             }
             else
@@ -57,7 +54,7 @@ namespace AzureSkyMedia.PlatformServices
                     foreach (IAsset outputAsset in encoderTask.OutputAssets)
                     {
                         PublishAsset(mediaClient, outputAsset, contentProtection);
-                        PublishAnalytics(mediaClient, contentPublish, job);
+                        PublishAnalytics(mediaClient, contentPublish, job, encoderTasks);
                     }
                 }
             }

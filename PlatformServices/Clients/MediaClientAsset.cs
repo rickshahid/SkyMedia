@@ -127,5 +127,19 @@ namespace AzureSkyMedia.PlatformServices
             SetPrimaryFile(asset);
             return asset;
         }
+
+        public static string GetSmallestFileName(IAsset asset, string fileExtension)
+        {
+            IAssetFile smallestFile = null;
+            foreach (IAssetFile file in asset.AssetFiles)
+            {
+                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase) &&
+                   (smallestFile == null || file.ContentFileSize < smallestFile.ContentFileSize))
+                {
+                    smallestFile = file;
+                }
+            }
+            return smallestFile?.Name;
+        }
     }
 }

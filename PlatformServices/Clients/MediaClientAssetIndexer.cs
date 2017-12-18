@@ -53,21 +53,20 @@ namespace AzureSkyMedia.PlatformServices
             return WebUtility.UrlEncode(callbackUrl);
         }
 
-        private string IndexVideo(IAsset asset, string description, string metadata, string languageId,
-                                  string searchPartition, string locatorUrl, bool videoPublic, bool audioOnly)
+        private string IndexVideo(IAsset asset, string locatorUrl, ContentIndex indexerConfig)
         {
             string indexId = string.Empty;
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
             requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(asset.Name));
-            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(description));
-            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(metadata));
+            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(indexerConfig.VideoDescription));
+            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(indexerConfig.VideoMetadata));
             requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
             requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
-            requestUrl = string.Concat(requestUrl, "&language=", languageId);
-            requestUrl = string.Concat(requestUrl, "&partition=", searchPartition);
+            requestUrl = string.Concat(requestUrl, "&language=", indexerConfig.LanguageId);
+            requestUrl = string.Concat(requestUrl, "&partition=", indexerConfig.SearchPartition);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
-            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(videoPublic));
-            if (audioOnly)
+            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(indexerConfig.VideoPublic));
+            if (indexerConfig.AudioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=audioOnly");
             }
@@ -173,35 +172,38 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public void IndexVideo(string authToken, MediaJobTask jobTask, IAsset asset, string locatorUrl)
+        public void IndexVideo(MediaClient mediaClient, IAsset asset, ContentIndex indexerConfig)
         {
-            string languageId = jobTask.ProcessorConfigString[MediaProcessorConfig.LanguageId.ToString()];
-            string searchPartition = jobTask.ProcessorConfigString[MediaProcessorConfig.SearchPartition.ToString()];
-            string videoDescription = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoDescription.ToString()];
-            string videoMetadata = jobTask.ProcessorConfigString[MediaProcessorConfig.VideoMetadata.ToString()];
-            bool videoPublic = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoPublic.ToString()];
-            bool audioOnly = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.AudioOnly.ToString()];
-
-            string indexId = IndexVideo(asset, videoDescription, videoMetadata, languageId, searchPartition, locatorUrl, videoPublic, audioOnly);
-            string processorName = Processor.GetProcessorName(MediaProcessor.VideoIndexer);
-            asset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, indexId);
-            asset.Update();
-
-            User authUser = new User(authToken);
-            MediaInsightPublish insightPublish = new MediaInsightPublish
+            string fileName = null;
+            if (asset.IsStreamable)
             {
-                PartitionKey = authUser.MediaAccountId,
-                RowKey = indexId,
-                MediaAccountDomainName = authUser.MediaAccountDomainName,
-                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
-                MediaAccountClientId = authUser.MediaAccountClientId,
-                MediaAccountClientKey = authUser.MediaAccountClientKey,
-                IndexerAccountKey = authUser.VideoIndexerKey,
-            };
+                fileName = MediaClient.GetSmallestFileName(asset, Constant.Media.FileExtension.MP4);
+            }
+            string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, fileName, false);
+            string indexId = IndexVideo(asset, locatorUrl, indexerConfig);
+            if (!string.IsNullOrEmpty(indexId))
+            {
+                asset.AlternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, indexId);
+                asset.Update();
+            }
 
-            TableClient tableClient = new TableClient();
-            string tableName = Constant.Storage.Table.InsightPublish;
-            tableClient.InsertEntity(tableName, insightPublish);
+            if (!string.IsNullOrEmpty(indexerConfig.MediaAccountDomainName))
+            {
+                MediaInsightPublish insightPublish = new MediaInsightPublish
+                {
+                    PartitionKey = indexerConfig.PartitionKey,
+                    RowKey = indexId,
+                    MediaAccountDomainName = indexerConfig.MediaAccountDomainName,
+                    MediaAccountEndpointUrl = indexerConfig.MediaAccountEndpointUrl,
+                    MediaAccountClientId = indexerConfig.MediaAccountClientId,
+                    MediaAccountClientKey = indexerConfig.MediaAccountClientKey,
+                    IndexerAccountKey = indexerConfig.IndexerAccountKey
+                };
+
+                TableClient tableClient = new TableClient();
+                string tableName = Constant.Storage.Table.InsightPublish;
+                tableClient.InsertEntity(tableName, insightPublish);
+            }
         }
 
         public void DeleteVideo(string indexId, bool deleteInsight)

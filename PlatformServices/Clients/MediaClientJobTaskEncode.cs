@@ -2,6 +2,8 @@
 
 using Newtonsoft.Json.Linq;
 
+using Microsoft.WindowsAzure.MediaServices.Client;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
@@ -43,6 +45,28 @@ namespace AzureSkyMedia.PlatformServices
             }
             bool multipleInputTask = jobTask.MediaProcessor != MediaProcessor.EncoderStandard;
             return GetJobTasks(mediaClient, jobTask, jobInputs, multipleInputTask);
+        }
+
+        private static ITask[] GetEncoderTasks(IJob job)
+        {
+            string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
+            string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
+            string[] processorIds = new string[] { processorId1, processorId2 };
+            return GetJobTasks(job, processorIds);
+        }
+
+        private static bool HasEncoderTask(MediaJobTask[] jobTasks)
+        {
+            bool hasEncoderTask = false;
+            foreach (MediaJobTask jobTask in jobTasks)
+            {
+                if (jobTask.MediaProcessor == MediaProcessor.EncoderStandard ||
+                    jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
+                {
+                    hasEncoderTask = true;
+                }
+            }
+            return hasEncoderTask;
         }
     }
 }

@@ -9,6 +9,11 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
+        private static bool FilterByStreaming(ILocator locator)
+        {
+            return locator.Type == LocatorType.OnDemandOrigin;
+        }
+
         private static int OrderByDate(ILocator leftSide, ILocator rightSide)
         {
             return DateTime.Compare(leftSide.Asset.Created, rightSide.Asset.Created);
@@ -151,6 +156,7 @@ namespace AzureSkyMedia.PlatformServices
             string settingKey = Constant.AppSettingKey.MediaLocatorMaxStreamCount;
             int maxStreamCount = int.Parse(AppSetting.GetValue(settingKey));
             ILocator[] locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
+            locators = Array.FindAll(locators, FilterByStreaming);
             Array.Sort<ILocator>(locators, OrderByDate);
             foreach (ILocator locator in locators)
             {

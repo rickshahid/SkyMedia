@@ -32,7 +32,6 @@ namespace AzureSkyMedia.PlatformServices
     internal enum MediaProcessorConfig
     {
         LanguageId,
-        SearchPartition,
         FaceDetectionMode,
         FaceDetectionTrackingMode,
         FaceDetectionAggregateEmotionWindow,
@@ -48,11 +47,7 @@ namespace AzureSkyMedia.PlatformServices
         MotionHyperlapseFrameStart,
         MotionHyperlapseFrameEnd,
         MotionHyperlapseSpeed,
-        VideoDescription,
-        VideoMetadata,
-        VideoPublic,
-        VideoOnly,
-        AudioOnly
+        VideoOnly
     }
 
     public enum MediaProcessor

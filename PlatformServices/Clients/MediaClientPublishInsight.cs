@@ -19,6 +19,15 @@ namespace AzureSkyMedia.PlatformServices
                 destinationFile.Upload(sourceStream);
             }
         }
+        
+        private static string UpsertDocument(DocumentClient documentClient, JObject document, MediaProcessor processor, IAsset asset)
+        {
+            string collectionId = Constant.Database.Collection.ContentInsight;
+            string documentId = documentClient.UpsertDocument(collectionId, document);
+            asset.AlternateId = string.Concat(processor.ToString(), Constant.TextDelimiter.Identifier, documentId);
+            asset.Update();
+            return documentId;
+        }
 
         private static void PublishTextTracks(BlobClient blobClient, ITask jobTask, IAsset encoderOutput)
         {
@@ -53,7 +62,6 @@ namespace AzureSkyMedia.PlatformServices
                         MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(jobTask.MediaProcessorId);
                         if (mediaProcessor.HasValue)
                         {
-                            string collectionId = Constant.Database.Collection.ContentInsight;
                             JObject document = JObject.Parse(documentData);
 
                             string accountId = contentPublish.PartitionKey;
@@ -63,11 +71,7 @@ namespace AzureSkyMedia.PlatformServices
                             string clientKey = contentPublish.MediaAccountClientKey;
 
                             document = DocumentClient.SetContext(document, accountId, accountDomain, accountEndpoint, clientId, clientKey, outputAsset.Id);
-                            string documentId = documentClient.UpsertDocument(collectionId, document);
-
-                            string processorName = Processor.GetProcessorName(mediaProcessor.Value);
-                            outputAsset.AlternateId = string.Concat(processorName, Constant.TextDelimiter.Identifier, documentId);
-                            outputAsset.Update();
+                            UpsertDocument(documentClient, document, mediaProcessor.Value, outputAsset);
 
                             if (encoderOutput != null)
                             {
@@ -84,8 +88,9 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishAnalytics(MediaClient mediaClient, MediaContentPublish contentPublish, IJob job)
+        private static void PublishAnalytics(MediaClient mediaClient, MediaContentPublish contentPublish, IJob job, ITask[] encoderTasks)
         {
+            IAsset encoderOutput = encoderTasks.Length == 0 ? null : encoderTasks[0].OutputAssets[0];
             string[] accountCredentials = new string[] { contentPublish.StorageAccountName, contentPublish.StorageAccountKey };
             BlobClient blobClient = new BlobClient(accountCredentials);
             string processorId1 = Constant.Media.ProcessorId.VideoAnnotation;
@@ -96,11 +101,6 @@ namespace AzureSkyMedia.PlatformServices
             string processorId6 = Constant.Media.ProcessorId.MotionDetection;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
             ITask[] analyticTasks = GetJobTasks(job, processorIds);
-            processorId1 = Constant.Media.ProcessorId.EncoderStandard;
-            processorId2 = Constant.Media.ProcessorId.EncoderPremium;
-            processorIds = new string[] { processorId1, processorId2 };
-            ITask[] encoderTasks = GetJobTasks(job, processorIds);
-            IAsset encoderOutput = encoderTasks.Length == 1 ? encoderTasks[0].OutputAssets[0] : null;
             if (analyticTasks.Length > 0)
             {
                 using (DocumentClient documentClient = new DocumentClient())
@@ -119,6 +119,22 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (ITask analyticTask in analyticTasks)
                 {
                     PublishTextTracks(blobClient, analyticTask, encoderOutput);
+                }
+            }
+            if (encoderOutput != null)
+            {
+                TableClient tableClient = new TableClient();
+                string tableName = Constant.Storage.Table.ContentIndex;
+                string partitionKey = contentPublish.PartitionKey;
+                string rowKey = contentPublish.RowKey;
+                ContentIndex indexerConfig = tableClient.GetEntity<ContentIndex>(tableName, partitionKey, rowKey);
+                if (indexerConfig != null)
+                {
+                    string accountId = contentPublish.PartitionKey;
+                    string indexerKey = indexerConfig.IndexerAccountKey;
+
+                    IndexerClient indexerClient = new IndexerClient(accountId, indexerKey);
+                    indexerClient.IndexVideo(mediaClient, encoderOutput, indexerConfig);
                 }
             }
         }
@@ -141,11 +157,12 @@ namespace AzureSkyMedia.PlatformServices
             string assetId = IndexerClient.GetAssetId(index);
             if (!string.IsNullOrEmpty(assetId))
             {
-                index = DocumentClient.SetContext(index, accountId, accountDomain, accountEndpoint, clientId, clientKey, assetId);
+                MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
+                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
 
                 DocumentClient documentClient = new DocumentClient();
-                string collectionId = Constant.Database.Collection.ContentInsight;
-                string documentId = documentClient.UpsertDocument(collectionId, index);
+                index = DocumentClient.SetContext(index, accountId, accountDomain, accountEndpoint, clientId, clientKey, assetId);
+                string documentId = UpsertDocument(documentClient, index, MediaProcessor.VideoIndexer, asset);
 
                 mediaPublish = new MediaPublish
                 {

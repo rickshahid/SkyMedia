@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
             return jobOutput;
         }
 
-        private static void TrackJob(string directoryId, string authToken, IJob job, MediaJobTask[] jobTasks)
+        private static void TrackJob(string directoryId, string authToken, IJob job, MediaJobTask[] jobTasks, ContentIndex indexerConfig)
         {
             User authUser = new User(authToken);
             string storageAccountName = job.InputMediaAssets[0].StorageAccountName;
@@ -54,6 +54,19 @@ namespace AzureSkyMedia.PlatformServices
             TableClient tableClient = new TableClient();
             string tableName = Constant.Storage.Table.ContentPublish;
             tableClient.InsertEntity(tableName, contentPublish);
+
+            if (indexerConfig != null)
+            {
+                tableName = Constant.Storage.Table.ContentIndex;
+                indexerConfig.PartitionKey = contentPublish.PartitionKey;
+                indexerConfig.RowKey = contentPublish.RowKey;
+                indexerConfig.MediaAccountDomainName = contentPublish.MediaAccountDomainName;
+                indexerConfig.MediaAccountEndpointUrl = contentPublish.MediaAccountEndpointUrl;
+                indexerConfig.MediaAccountClientId = contentPublish.MediaAccountClientId;
+                indexerConfig.MediaAccountClientKey = contentPublish.MediaAccountClientKey;
+                indexerConfig.IndexerAccountKey = authUser.VideoIndexerKey;
+                tableClient.InsertEntity(tableName, indexerConfig);
+            }
 
             ContentProtection[] contentProtections = MediaClient.GetContentProtections(job, jobTasks);
             foreach (ContentProtection contentProtection in contentProtections)
@@ -110,9 +123,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             IJob job = null;
             IJobTemplate jobTemplate = null;
+            ContentIndex indexerConfig = null;
             if (mediaJob.Tasks != null)
             {
-                mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
+                mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs, out indexerConfig);
             }
             if (mediaJob.Tasks != null || !string.IsNullOrEmpty(mediaJob.TemplateId))
             {
@@ -120,7 +134,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (job != null && !string.IsNullOrEmpty(job.Id))
             {
-                TrackJob(directoryId, authToken, job, mediaJob.Tasks);
+                TrackJob(directoryId, authToken, job, mediaJob.Tasks, indexerConfig);
             }
             return GetJobOutput(job, jobTemplate, jobInputs);
         }

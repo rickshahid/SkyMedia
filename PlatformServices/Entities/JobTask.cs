@@ -44,6 +44,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
+        public ContentIndex ContentIndex { get; set; }
+
         public TaskOptions Options { get; set; }
     }
 }
