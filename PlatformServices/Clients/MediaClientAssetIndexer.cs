@@ -53,7 +53,7 @@ namespace AzureSkyMedia.PlatformServices
             return WebUtility.UrlEncode(callbackUrl);
         }
 
-        private string IndexVideo(IAsset asset, string locatorUrl, ContentIndex indexerConfig)
+        private string IndexVideo(IAsset asset, string locatorUrl, IndexerConfig indexerConfig)
         {
             string indexId = string.Empty;
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
@@ -176,7 +176,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public void IndexVideo(MediaClient mediaClient, IAsset asset, ContentIndex indexerConfig)
+        public void IndexVideo(string authToken, MediaClient mediaClient, IAsset asset, IndexerConfig indexerConfig)
         {
             string fileName = null;
             if (asset.IsStreamable)
@@ -189,16 +189,17 @@ namespace AzureSkyMedia.PlatformServices
             {
                 asset.AlternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, indexId);
                 asset.Update();
-            
+
+                User authUser = new User(authToken);
                 MediaInsightPublish insightPublish = new MediaInsightPublish
                 {
-                    PartitionKey = indexerConfig.PartitionKey,
+                    PartitionKey = authUser.MediaAccountId,
                     RowKey = indexId,
-                    MediaAccountDomainName = indexerConfig.MediaAccountDomainName,
-                    MediaAccountEndpointUrl = indexerConfig.MediaAccountEndpointUrl,
-                    MediaAccountClientId = indexerConfig.MediaAccountClientId,
-                    MediaAccountClientKey = indexerConfig.MediaAccountClientKey,
-                    IndexerAccountKey = indexerConfig.IndexerAccountKey
+                    MediaAccountDomainName = authUser.MediaAccountDomainName,
+                    MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
+                    MediaAccountClientId = authUser.MediaAccountClientId,
+                    MediaAccountClientKey = authUser.MediaAccountClientKey,
+                    IndexerAccountKey = authUser.VideoIndexerKey
                 };
 
                 TableClient tableClient = new TableClient();

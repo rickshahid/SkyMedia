@@ -54,19 +54,5 @@ namespace AzureSkyMedia.PlatformServices
             string[] processorIds = new string[] { processorId1, processorId2 };
             return GetJobTasks(job, processorIds);
         }
-
-        private static bool HasEncoderTask(MediaJobTask[] jobTasks)
-        {
-            bool hasEncoderTask = false;
-            foreach (MediaJobTask jobTask in jobTasks)
-            {
-                if (jobTask.MediaProcessor == MediaProcessor.EncoderStandard ||
-                    jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
-                {
-                    hasEncoderTask = true;
-                }
-            }
-            return hasEncoderTask;
-        }
     }
 }

@@ -122,22 +122,6 @@ namespace AzureSkyMedia.PlatformServices
                     PublishTextTracks(blobClient, analyticTask, encoderOutput);
                 }
             }
-            if (encoderOutput != null)
-            {
-                TableClient tableClient = new TableClient();
-                string tableName = Constant.Storage.Table.ContentIndex;
-                string partitionKey = contentPublish.PartitionKey;
-                string rowKey = contentPublish.RowKey;
-                ContentIndex indexerConfig = tableClient.GetEntity<ContentIndex>(tableName, partitionKey, rowKey);
-                if (indexerConfig != null)
-                {
-                    string accountId = contentPublish.PartitionKey;
-                    string indexerKey = indexerConfig.IndexerAccountKey;
-
-                    IndexerClient indexerClient = new IndexerClient(accountId, indexerKey);
-                    indexerClient.IndexVideo(mediaClient, encoderOutput, indexerConfig);
-                }
-            }
         }
 
         public static MediaPublish PublishInsight(MediaInsightPublish insightPublish)

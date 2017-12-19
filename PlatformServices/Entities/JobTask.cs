@@ -44,8 +44,23 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
-        public ContentIndex ContentIndex { get; set; }
+        public IndexerConfig IndexerConfig { get; set; }
 
         public TaskOptions Options { get; set; }
+    }
+
+    public class IndexerConfig
+    {
+        public string LanguageId { get; set; }
+
+        public string SearchPartition { get; set; }
+
+        public string VideoDescription { get; set; }
+
+        public string VideoMetadata { get; set; }
+
+        public bool VideoPublic { get; set; }
+
+        public bool AudioOnly { get; set; }
     }
 }

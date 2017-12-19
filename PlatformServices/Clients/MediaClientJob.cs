@@ -38,9 +38,8 @@ namespace AzureSkyMedia.PlatformServices
             processorUnit.Update();
         }
 
-        internal static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs, out ContentIndex indexerConfig)
+        public static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
         {
-            indexerConfig = null;
             List<MediaJobTask> jobTasks = new List<MediaJobTask>();
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
@@ -55,30 +54,17 @@ namespace AzureSkyMedia.PlatformServices
                         IndexerClient indexerClient = new IndexerClient(authToken);
                         if (indexerClient.IndexerEnabled)
                         {
-                            User authUser = new User(authToken);
-                            jobTask.ContentIndex.MediaAccountDomainName = authUser.MediaAccountDomainName;
-                            jobTask.ContentIndex.MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl;
-                            jobTask.ContentIndex.MediaAccountClientId = authUser.MediaAccountClientId;
-                            jobTask.ContentIndex.MediaAccountClientKey = authUser.MediaAccountClientKey;
-                            jobTask.ContentIndex.IndexerAccountKey = authUser.VideoIndexerKey;
-                            if (HasEncoderTask(mediaJob.Tasks))
+                            foreach (MediaJobInput jobInput in jobInputs)
                             {
-                                indexerConfig = jobTask.ContentIndex;
-                            }
-                            else
-                            {
-                                foreach (MediaJobInput jobInput in jobInputs)
+                                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
+                                string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
+                                if (videoIndexer)
                                 {
-                                    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                                    string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
-                                    if (videoIndexer)
-                                    {
-                                        indexerClient.ResetIndex(documentId);
-                                    }
-                                    else
-                                    {
-                                        indexerClient.IndexVideo(mediaClient, asset, jobTask.ContentIndex);
-                                    }
+                                    indexerClient.ResetIndex(documentId);
+                                }
+                                else
+                                {
+                                    indexerClient.IndexVideo(authToken, mediaClient, asset, jobTask.IndexerConfig);
                                 }
                             }
                         }
@@ -124,7 +110,7 @@ namespace AzureSkyMedia.PlatformServices
             return mediaJob;
         }
 
-        internal IJob CreateJob(MediaJob mediaJob, MediaJobInput[] jobInputs, out IJobTemplate jobTemplate)
+        public IJob CreateJob(MediaJob mediaJob, MediaJobInput[] jobInputs, out IJobTemplate jobTemplate)
         {
             IJob job = null;
             jobTemplate = null;
