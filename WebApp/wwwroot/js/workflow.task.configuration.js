@@ -41,7 +41,6 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerTimedTextFormatWebVtt" + lastTaskNumber, "speechAnalyzerTimedTextFormatWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionConfigRow" + lastTaskNumber, "faceDetectionConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionTrackingMode" + lastTaskNumber, "faceDetectionTrackingMode" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionFacesRow" + lastTaskNumber, "faceDetectionFacesRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionAggregateEmotionRow" + lastTaskNumber, "faceDetectionAggregateEmotionRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionAggregateEmotionWindow" + lastTaskNumber, "faceDetectionAggregateEmotionWindow" + newTaskNumber);

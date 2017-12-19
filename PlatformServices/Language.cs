@@ -34,12 +34,6 @@ namespace AzureSkyMedia.PlatformServices
             return spokenLanguages;
         }
 
-        public static string GetLanguageId(string webVttUrl)
-        {
-            string languageId = Path.GetFileNameWithoutExtension(webVttUrl);
-            return languageId.Insert(2, "-");
-        }
-
         public static string GetLanguageId(JObject processorConfig)
         {
             string languageId = string.Empty;

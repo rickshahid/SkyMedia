@@ -55,6 +55,12 @@ namespace AzureSkyMedia.PlatformServices
                         IndexerClient indexerClient = new IndexerClient(authToken);
                         if (indexerClient.IndexerEnabled)
                         {
+                            User authUser = new User(authToken);
+                            jobTask.ContentIndex.MediaAccountDomainName = authUser.MediaAccountDomainName;
+                            jobTask.ContentIndex.MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl;
+                            jobTask.ContentIndex.MediaAccountClientId = authUser.MediaAccountClientId;
+                            jobTask.ContentIndex.MediaAccountClientKey = authUser.MediaAccountClientKey;
+                            jobTask.ContentIndex.IndexerAccountKey = authUser.VideoIndexerKey;
                             if (HasEncoderTask(mediaJob.Tasks))
                             {
                                 indexerConfig = jobTask.ContentIndex;
@@ -71,12 +77,6 @@ namespace AzureSkyMedia.PlatformServices
                                     }
                                     else
                                     {
-                                        User authUser = new User(authToken);
-                                        jobTask.ContentIndex.MediaAccountDomainName = authUser.MediaAccountDomainName;
-                                        jobTask.ContentIndex.MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl;
-                                        jobTask.ContentIndex.MediaAccountClientId = authUser.MediaAccountClientId;
-                                        jobTask.ContentIndex.MediaAccountClientKey = authUser.MediaAccountClientKey;
-                                        jobTask.ContentIndex.IndexerAccountKey = authUser.VideoIndexerKey;
                                         indexerClient.IndexVideo(mediaClient, asset, jobTask.ContentIndex);
                                     }
                                 }

@@ -117,10 +117,14 @@ namespace AzureSkyMedia.PlatformServices
             return accounts;
         }
 
-        public string GetInsightUrl(string indexId)
+        public string GetInsightUrl(string indexId, bool allowEdit)
         {
             string url = string.Empty;
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/InsightsWidgetUrl");
+            if (allowEdit)
+            {
+                requestUrl = string.Concat(requestUrl, "?allowEdit");
+            }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
             {
                 url = _indexer.GetResponse<string>(request);
@@ -185,10 +189,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 asset.AlternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, indexId);
                 asset.Update();
-            }
-
-            if (!string.IsNullOrEmpty(indexerConfig.MediaAccountDomainName))
-            {
+            
                 MediaInsightPublish insightPublish = new MediaInsightPublish
                 {
                     PartitionKey = indexerConfig.PartitionKey,

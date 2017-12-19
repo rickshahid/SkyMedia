@@ -1,4 +1,4 @@
-﻿function IndexerInsight(mediaStream, videoIndexer) {
+﻿function GetIndexerInsight(mediaStream, videoIndexer) {
     var insight = null;
     for (var i = 0; i < mediaStream.contentInsight.length; i++) {
         var mediaProcessor = mediaStream.contentInsight[i].processor;
@@ -8,25 +8,14 @@
     }
     return insight;
 }
-function AnalyticsInsight(mediaStream, videoIndexer) {
-    var insight = false;
-    for (var i = 0; i < mediaStream.contentInsight.length; i++) {
-        var mediaProcessor = mediaStream.contentInsight[i].processor;
-        if (mediaProcessor != videoIndexer) {
-            insight = true;
-        }
-    }
-    return insight;
-}
-function ToggleIndexerInsight(mediaStream, videoIndexer) {
+function ToggleIndexerInsight(indexerInsight) {
     var insightImage = document.getElementById("insightImage");
     if ($("#indexerInsight").is(":visible")) {
         insightImage.src = insightImage.src.replace("Close", "Open");
         $("#indexerInsight").hide();
     } else {
-        var insight = IndexerInsight(mediaStream, videoIndexer);
         var indexerFrame = document.getElementById("indexerFrame");
-        indexerFrame.src = insight.source.src;
+        indexerFrame.src = indexerInsight.sourceUrl;
         insightImage.src = insightImage.src.replace("Open", "Close");
         $("#indexerInsight").show();
     }

@@ -11,19 +11,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string[] GetFileNames(IAsset asset, string fileExtension)
-        {
-            List<string> fileNames = new List<string>();
-            foreach (IAssetFile file in asset.AssetFiles)
-            {
-                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    fileNames.Add(file.Name);
-                }
-            }
-            return fileNames.ToArray();
-        }
-
         private static IAssetFile[] GetAssetFiles(IAsset asset, string fileExtension)
         {
             List<IAssetFile> assetFiles = new List<IAssetFile>();
@@ -126,6 +113,19 @@ namespace AzureSkyMedia.PlatformServices
 
             SetPrimaryFile(asset);
             return asset;
+        }
+
+        public static string[] GetFileNames(IAsset asset, string fileExtension)
+        {
+            List<string> fileNames = new List<string>();
+            foreach (IAssetFile file in asset.AssetFiles)
+            {
+                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    fileNames.Add(file.Name);
+                }
+            }
+            return fileNames.ToArray();
         }
 
         public static string GetSmallestFileName(IAsset asset, string fileExtension)

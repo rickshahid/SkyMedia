@@ -68,7 +68,8 @@
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
-                    if (IndexerInsight(mediaStream, @videoIndexer) != null) {
+                    var indexerInsight = GetIndexerInsight(mediaStream, @videoIndexer);
+                    if (indexerInsight != null) {
                         var insightImage = document.createElement("img");
                         insightImage.id = "insightImage";
                         insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
@@ -78,10 +79,10 @@
                         insightButton.appendChild(insightImage);
                         controlBarRight.appendChild(insightButton);
                         $("#insightButton").click(function () {
-                            ToggleIndexerInsight(mediaStream, @videoIndexer);
+                            ToggleIndexerInsight(indexerInsight);
                         });
                     }
-                    if (AnalyticsInsight(mediaStream, @videoIndexer)) {
+                    if (mediaStream.contentInsight.length > 0) {
                         var analyticsImage = document.createElement("img");
                         analyticsImage.id = "analyticsImage";
                         analyticsImage.src = "@storageCdnUrl" + "/MediaAnalyticsOpen.png";

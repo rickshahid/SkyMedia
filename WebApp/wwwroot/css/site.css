@@ -520,11 +520,6 @@ body {
     margin-left: 12px;
 }
 
-.faceDetectionTrackingMode {
-    font-weight: bold;
-    width: 75px;
-}
-
 .faceRedactionBlurMode {
     font-weight: bold;
     width: 107px;

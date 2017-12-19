@@ -59,7 +59,6 @@ function GetJobTask(taskNumber) {
                 break;
             case "FaceDetection":
                 jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();
-                jobTask.ProcessorConfigString["FaceDetectionTrackingMode"] = $("#faceDetectionTrackingMode" + taskNumber).val();
                 jobTask.ProcessorConfigInteger["FaceDetectionAggregateEmotionWindow"] = $("#faceDetectionAggregateEmotionWindow" + taskNumber).val();
                 jobTask.ProcessorConfigInteger["FaceDetectionAggregateEmotionInterval"] = $("#faceDetectionAggregateEmotionInterval" + taskNumber).val();
                 break;

@@ -39,7 +39,6 @@
     string speechAnalyzerTimedTextFormatWebVttId = string.Concat("speechAnalyzerTimedTextFormatWebVtt", taskNumber);
     string faceDetectionConfigRowId = string.Concat("faceDetectionConfigRow", taskNumber);
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
-    string faceDetectionTrackingModeId = string.Concat("faceDetectionTrackingMode", taskNumber);
     string faceDetectionFacesRowId = string.Concat("faceDetectionFacesRow", taskNumber);
     string faceDetectionAggregateEmotionRowId = string.Concat("faceDetectionAggregateEmotionRow", taskNumber);
     string faceDetectionAggregateEmotionWindowId = string.Concat("faceDetectionAggregateEmotionWindow", taskNumber);
@@ -252,15 +251,6 @@
                             <td>
                                 @Html.RadioButton(faceDetectionModeId, "PerFaceEmotion", false, new { onchange = "SetFaceDetectionConfig(this)", @class = "faceDetectionMode" })
                                 Face Emotion
-                            </td>
-                        </tr>
-                        <tr id="@faceDetectionFacesRowId">
-                            <td colspan="3">
-                                Tracking Mode
-                                <select id="@faceDetectionTrackingModeId" class="faceDetectionTrackingMode">
-                                    <option value="Precise">Precise</option>
-                                    <option value="Fast">Fast</option>
-                                </select>
                             </td>
                         </tr>
                         <tr id="@faceDetectionAggregateEmotionRowId" style="display: none">

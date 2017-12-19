@@ -162,7 +162,7 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(asset.AlternateId) && asset.AlternateId.Contains(Constant.TextDelimiter.Identifier.ToString()))
             {
                 string[] alternateId = asset.AlternateId.Split(Constant.TextDelimiter.Identifier);
-                videoIndexer = string.Equals(alternateId[0], Processor.GetProcessorName(MediaProcessor.VideoIndexer), StringComparison.OrdinalIgnoreCase);
+                videoIndexer = string.Equals(alternateId[0], MediaProcessor.VideoIndexer.ToString(), StringComparison.OrdinalIgnoreCase);
                 documentId = alternateId[1];
             }
             return documentId;

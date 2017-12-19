@@ -33,7 +33,6 @@ namespace AzureSkyMedia.PlatformServices
     {
         LanguageId,
         FaceDetectionMode,
-        FaceDetectionTrackingMode,
         FaceDetectionAggregateEmotionWindow,
         FaceDetectionAggregateEmotionInterval,
         FaceRedactionMode,

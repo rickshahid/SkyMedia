@@ -78,7 +78,6 @@ namespace AzureSkyMedia.PlatformServices
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Options"];
             processorOptions["Mode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
-            processorOptions["TrackingMode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionTrackingMode.ToString()];
             processorOptions["AggregateEmotionWindowMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionWindow.ToString()];
             processorOptions["AggregateEmotionIntervalMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceDetectionAggregateEmotionInterval.ToString()];
             jobTask.ProcessorConfig = processorConfig.ToString();
@@ -109,13 +108,13 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask[] GetMotionHyperlapseTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
-            int frameStart = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameStart.ToString()];
-            int frameEnd = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameEnd.ToString()];
             jobTask.MediaProcessor = MediaProcessor.MotionHyperlapse;
             string settingKey = Constant.AppSettingKey.MediaProcessorMotionHyperlapseDocumentId;
             string documentId = AppSetting.GetValue(settingKey);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorSources = processorConfig["Sources"][0];
+            int frameStart = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameStart.ToString()];
+            int frameEnd = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameEnd.ToString()];
             processorSources["StartFrame"] = frameStart;
             processorSources["NumFrames"] = frameEnd - frameStart + 1;
             JToken processorOptions = processorConfig["Options"];
