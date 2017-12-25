@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
                                 string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
                                 if (videoIndexer)
                                 {
-                                    indexerClient.ResetIndex(documentId);
+                                    indexerClient.ResetIndex(authToken, documentId);
                                 }
                                 else
                                 {

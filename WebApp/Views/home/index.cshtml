@@ -1,4 +1,5 @@
 ﻿@using AzureSkyMedia.PlatformServices;
+@using AzureSkyMedia.WebApp.Controllers;
 
 @{
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
@@ -15,7 +16,7 @@
 
     string storageCdnUrl = ViewData["storageCdnUrl"] as string;
 
-    int videoIndexer = (int)MediaProcessor.VideoIndexer;
+    string videoIndexer = insightController.GetProcessorName(MediaProcessor.VideoIndexer);
 }
 
 @section head {
@@ -68,7 +69,7 @@
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
-                    var indexerInsight = GetIndexerInsight(mediaStream, @videoIndexer);
+                    var indexerInsight = GetIndexerInsight(mediaStream, "@videoIndexer");
                     if (indexerInsight != null) {
                         var insightImage = document.createElement("img");
                         insightImage.id = "insightImage";
@@ -92,6 +93,7 @@
                         analyticsButton.appendChild(analyticsImage);
                         controlBarRight.appendChild(analyticsButton);
                         $("#analyticsButton").click(function () {
+                            SetAnalyticsProcessors(mediaStream);
                             ToggleAnalyticsInsight(mediaStream);
                         });
                     }
@@ -107,12 +109,6 @@
                 streamUrl[manifestIndex] = streamUrl[manifestIndex].replace(",", "<br>,");
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
-                ClearVideoOverlay();
-            });
-            mediaPlayer.addEventListener(amp.eventName.pause, function () {
-                if ($("#analyticsInsight").is(":visible")) {
-                    SetAnalyticsMetadata();
-                }
             });
             if (mediaStream == null) {
                 SetPlayerSpinner(false);
@@ -132,8 +128,6 @@
             } else if (accountMessage != "") {
                 DisplayMessage("Account Message", accountMessage);
             }
-            window.onresize = ResetVideoOverlay;
-            window.onorientationchange = ResetVideoOverlay;
         })
     </script>
 }
@@ -152,7 +146,7 @@
     <tr>
         <td class="inputLabel">
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-analytics-overview')">
-                Media Analytics
+                Azure Media Analytics
             </span>
         </td>
         <td>
@@ -174,5 +168,5 @@
 </div>
 
 <div class="mediaCertification">
-    @Html.Partial("SiteButton", new string[] { "mediaCertification", "MediaCertification.png", "window.open('http://www.microsoft.com/en-us/trustcenter/compliance/cdsa')", "layoutButton side" })
+    @Html.Partial("SiteButton", new string[] { "mediaCertification", "MediaCertification.png", "window.open('http://www.microsoft.com/en-us/trustcenter/compliance/cdsa')" })
 </div>

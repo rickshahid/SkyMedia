@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "H264 Single Bitrate 4x3 SD",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -40,5 +40,5 @@
       }
     }
   ],
-  "id": "3dc392a5-1b2c-4e32-b147-28f69c5bf733"
+  "id": "Encoder Standard - H264 Single Bitrate 4x3 SD"
 }

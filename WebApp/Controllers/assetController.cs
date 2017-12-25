@@ -39,28 +39,27 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(assets);
         }
 
-        public JsonResult metadata(string documentId, double timeSeconds)
-        {
-            JObject metadata;
-            string collectionId = Constant.Database.Collection.ContentInsight;
-            if (timeSeconds == 0)
-            {
-                documentId = string.Concat(collectionId, Constant.TextDelimiter.Identifier, documentId);
-                using (DocumentClient documentClient = new DocumentClient())
-                {
-                    metadata = documentClient.GetDocument(documentId);
-                }
-            }
-            else
-            {
-                string procedureId = Constant.Database.Procedure.MetadataFragment;
-                using (DocumentClient documentClient = new DocumentClient())
-                {
-                    metadata = documentClient.ExecuteProcedure(collectionId, procedureId, documentId, timeSeconds);
-                }
-            }
-            return Json(metadata);
-        }
+        //public JsonResult metadata(string documentId, double timeSeconds)
+        //{
+        //    JObject metadata;
+        //    string collectionId = Constant.Database.Collection.ContentInsight;
+        //    if (timeSeconds == 0)
+        //    {
+        //        using (DocumentClient documentClient = new DocumentClient())
+        //        {
+        //            metadata = documentClient.GetDocument(collectionId, documentId);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        string procedureId = Constant.Database.Procedure.MetadataFragment;
+        //        using (DocumentClient documentClient = new DocumentClient())
+        //        {
+        //            metadata = documentClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
+        //        }
+        //    }
+        //    return Json(metadata);
+        //}
 
         //public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
         //{

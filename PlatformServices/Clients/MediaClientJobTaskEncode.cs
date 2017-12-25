@@ -35,11 +35,12 @@ namespace AzureSkyMedia.PlatformServices
             }
             else if (string.Equals(jobTask.ProcessorConfig, Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset, StringComparison.OrdinalIgnoreCase))
             {
-                string settingKey = Constant.AppSettingKey.MediaProcessorThumbnailGenerationDocumentId;
-                string documentId = AppSetting.GetValue(settingKey);
+                string collectionId = Constant.Database.Collection.ProcessorConfig;
+                string documentId = Processor.GetProcessorName(MediaProcessor.EncoderStandard);
+                documentId = string.Concat(documentId, Constant.Database.Document.ThumbnailsIdSuffix);
                 using (DocumentClient documentClient = new DocumentClient())
                 {
-                    JObject processorConfig = documentClient.GetDocument(documentId);
+                    JObject processorConfig = documentClient.GetDocument(collectionId, documentId);
                     jobTask.ProcessorConfig = processorConfig.ToString();
                 }
             }

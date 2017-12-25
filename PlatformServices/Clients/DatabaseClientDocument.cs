@@ -159,11 +159,16 @@ namespace AzureSkyMedia.PlatformServices
         {
             videoIndexer = false;
             string documentId = string.Empty;
-            if (!string.IsNullOrEmpty(asset.AlternateId) && asset.AlternateId.Contains(Constant.TextDelimiter.Identifier.ToString()))
+            string alternateId = asset.AlternateId;
+            if (string.IsNullOrEmpty(alternateId) && asset.ParentAssets.Count == 1)
             {
-                string[] alternateId = asset.AlternateId.Split(Constant.TextDelimiter.Identifier);
-                videoIndexer = string.Equals(alternateId[0], MediaProcessor.VideoIndexer.ToString(), StringComparison.OrdinalIgnoreCase);
-                documentId = alternateId[1];
+                alternateId = asset.ParentAssets[0].AlternateId;
+            }
+            if (!string.IsNullOrEmpty(alternateId) && alternateId.Contains(Constant.TextDelimiter.Identifier.ToString()))
+            {
+                string[] alternateIdInfo = alternateId.Split(Constant.TextDelimiter.Identifier);
+                videoIndexer = string.Equals(alternateIdInfo[0], MediaProcessor.VideoIndexer.ToString(), StringComparison.OrdinalIgnoreCase);
+                documentId = alternateIdInfo[1];
             }
             return documentId;
         }
@@ -181,12 +186,9 @@ namespace AzureSkyMedia.PlatformServices
             return documents.ToArray();
         }
 
-        public JObject GetDocument(string documentId)
+        public JObject GetDocument(string collectionId, string documentId)
         {
             JObject document = null;
-            string[] id = documentId.Split(Constant.TextDelimiter.Identifier);
-            string collectionId = id[0];
-            documentId = id[1];
             IQueryable<Document> query = GetDocumentQuery(collectionId);
             query = query.Where(d => d.Id == documentId);
             IEnumerable<Document> documents = query.AsEnumerable<Document>();
@@ -196,6 +198,17 @@ namespace AzureSkyMedia.PlatformServices
                 document = ParseDocument(doc.ToString());
             }
             return document;
+        }
+
+        public JObject GetDocument(string collectionId, string procedureId, params dynamic[] procedureParameters)
+        {
+            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
+            Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
+            Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
+            procedureTask.Wait();
+            StoredProcedureResponse<JValue> procedureResponse = procedureTask.Result;
+            JValue procedureValue = procedureResponse.Response;
+            return ParseDocument(procedureValue.ToString());
         }
 
         public string UpsertDocument(string collectionId, JObject document)
@@ -209,25 +222,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public void DeleteDocument(string collectionId, string documentId)
         {
-            string docId = string.Concat(collectionId, Constant.TextDelimiter.Identifier, documentId);
-            JObject document = GetDocument(docId);
+            JObject document = GetDocument(collectionId, documentId);
             if (document != null)
             {
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
                 Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri);
                 deleteTask.Wait();
             }
-        }
-
-        public JObject ExecuteProcedure(string collectionId, string procedureId, params dynamic[] procedureParameters)
-        {
-            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
-            Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
-            procedureTask.Wait();
-            StoredProcedureResponse<JValue> procedureResponse = procedureTask.Result;
-            JValue procedureValue = procedureResponse.Response;
-            return ParseDocument(procedureValue.ToString());
         }
 
         public void Dispose()

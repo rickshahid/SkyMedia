@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "H264 Single Bitrate 4K Audio 5.1",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -40,5 +40,5 @@
       }
     }
   ],
-  "id": "3cb35fe9-25db-4d2f-9aef-c347fc51b9ee"
+  "id": "Encoder Standard - H264 Single Bitrate 4K Audio 5.1"
 }

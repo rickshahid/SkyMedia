@@ -25,13 +25,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             MediaClient mediaClient = new MediaClient(authToken);
             if (mediaJob.Tasks != null)
             {
+                string collectionId = Constant.Database.Collection.ProcessorConfig;
                 using (DocumentClient documentClient = new DocumentClient())
                 {
                     foreach (MediaJobTask jobTask in mediaJob.Tasks)
                     {
                         if (!string.IsNullOrEmpty(jobTask.ProcessorDocumentId))
                         {
-                            JObject processorConfig = documentClient.GetDocument(jobTask.ProcessorDocumentId);
+                            JObject processorConfig = documentClient.GetDocument(collectionId, jobTask.ProcessorDocumentId);
                             if (processorConfig != null)
                             {
                                 jobTask.ProcessorConfig = processorConfig.ToString();

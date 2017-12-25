@@ -65,7 +65,7 @@ function AddJobTask(taskButton) {
     SetJobTaskInputs(newTaskNumber);
     SetJobTaskInputs(lastTaskNumber);
     var mediaProcessor = $("#mediaProcessor" + newTaskNumber)[0];
-    SetProcessorConfig(mediaProcessor, newTaskNumber);
+    SetProcessorConfig(mediaProcessor, newTaskNumber, null);
     $("#mediaWorkflowTaskRemove").show();
     if (lastTaskNumber == 4) {
         $("#mediaWorkflowTaskAdd").hide();
@@ -83,6 +83,4 @@ function RemoveJobTask(taskButton) {
     if (lastTaskNumber == 2) {
         $("#mediaWorkflowTaskRemove").hide();
     }
-    SetTipVisible("mediaProcessor" + taskNumber, false);
-    SetTipVisible("encoderConfigFile" + taskNumber, false);
 }

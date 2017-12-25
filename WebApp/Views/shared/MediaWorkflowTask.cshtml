@@ -70,7 +70,7 @@
                     Media Processor
                 </td>
                 <td>
-                    @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1)" })
+                    @Html.DropDownList(mediaProcessorId, null, new { @class = "mediaProcessor", onchange = "SetProcessorConfig(this, 1, " + Json.Serialize(ViewData["encoderPresets"]) + ")" })
                     &nbsp;
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-rest-encode-asset#create-a-job-with-chained-tasks')">
                         Use output from Job Task #

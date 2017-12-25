@@ -4,11 +4,16 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private static string GetDocumentId(MediaProcessor mediaProcessor)
+        {
+            string processorName = Processor.GetProcessorName(mediaProcessor);
+            return string.Concat(processorName, Constant.Database.Document.DefaultIdSuffix);
+        }
+
         private static MediaJobTask[] GetVideoAnnotationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.VideoAnnotation;
-            string settingKey = Constant.AppSettingKey.MediaProcessorVideoAnnotationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
             return GetJobTasks(mediaClient, jobTask, jobInputs, false);
@@ -17,8 +22,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.VideoSummarization;
-            string settingKey = Constant.AppSettingKey.MediaProcessorVideoSummarizationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Options"];
             processorOptions["MaxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.SummarizationDurationSeconds.ToString()];
@@ -31,8 +35,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetCharacterRecognitionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.CharacterRecognition;
-            string settingKey = Constant.AppSettingKey.MediaProcessorCharacterRecognitionDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
             return GetJobTasks(mediaClient, jobTask, jobInputs, false);
@@ -41,8 +44,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetContentModerationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.ContentModeration;
-            string settingKey = Constant.AppSettingKey.MediaProcessorContentModerationDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
             return GetJobTasks(mediaClient, jobTask, jobInputs, false);
@@ -51,8 +53,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetSpeechAnalyzerTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.SpeechAnalyzer;
-            string settingKey = Constant.AppSettingKey.MediaProcessorSpeechAnalyzerDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Features"][0]["Options"];
             JArray timedTextFormats = new JArray();
@@ -73,8 +74,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.FaceDetection;
-            string settingKey = Constant.AppSettingKey.MediaProcessorFaceDetectionDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Options"];
             processorOptions["Mode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
@@ -87,8 +87,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetFaceRedactionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.FaceRedaction;
-            string settingKey = Constant.AppSettingKey.MediaProcessorFaceRedactionDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorOptions = processorConfig["Options"];
             processorOptions["Mode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceRedactionMode.ToString()];
@@ -99,8 +98,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetMotionDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.MotionDetection;
-            string settingKey = Constant.AppSettingKey.MediaProcessorMotionDetectionDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             jobTask.ProcessorConfig = processorConfig.ToString();
             return GetJobTasks(mediaClient, jobTask, jobInputs, false);
@@ -109,8 +107,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetMotionHyperlapseTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.MotionHyperlapse;
-            string settingKey = Constant.AppSettingKey.MediaProcessorMotionHyperlapseDocumentId;
-            string documentId = AppSetting.GetValue(settingKey);
+            string documentId = GetDocumentId(jobTask.MediaProcessor);
             JObject processorConfig = GetProcessorConfig(documentId);
             JToken processorSources = processorConfig["Sources"][0];
             int frameStart = jobTask.ProcessorConfigInteger[MediaProcessorConfig.MotionHyperlapseFrameStart.ToString()];

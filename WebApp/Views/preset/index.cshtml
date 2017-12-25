@@ -1,28 +1,30 @@
 ﻿@section head {
     <link type="text/css" rel="stylesheet" href="~/lib/json-editor/jsoneditor.css" />
     <script type="text/javascript" src="~/lib/json-editor/jquery.jsoneditor.min.js"></script>
-    <script type="text/javascript" src="~/lib/json-editor/jsoneditor.js"></script>
     <script type="text/javascript">
+        var _sharedPreset = true;
         function SetProcessorPresets(mediaProcessor) {
-            $.post("/preset/names",
-                {
-                    mediaProcessor: mediaProcessor.value
-                },
-                function (presetNames) {
-                    if (mediaProcessor.value == "") {
-                        $("#mediaProcessorPresetRow").hide();
-                    } else {
-                        var presetOptions = $("#mediaProcessorPreset")[0].options;
-                        presetOptions.length = 0;
-                        presetOptions[presetOptions.length] = new Option("", "");
-                        for (var i = 0; i < presetNames.length; i++) {
-                            presetOptions[presetOptions.length] = new Option(presetNames[i], presetNames[i]);
+            if (mediaProcessor.value == "") {
+                $("#mediaProcessorPresetRow").hide();
+                $("#mediaProcessorPresetEditor").jsonEditor();
+            } else {
+                $.post("/preset/options",
+                    {
+                        mediaProcessor: mediaProcessor.value
+                    },
+                    function (presetOptions) {
+                        var presets = $("#mediaProcessorPreset")[0].options;
+                        presets.length = 0;
+                        presets[presets.length] = new Option("", "");
+                        for (var i = 0; i < presetOptions.length; i++) {
+                            var presetOption = presetOptions[i];
+                            presets[presets.length] = new Option(presetOption.text, presetOption.value);
                         }
                         $("#mediaProcessorPresetRow").show();
                         $("#mediaProcessorPreset").focus();
                     }
-                }
-            );
+                );
+            }
             if (mediaProcessor.value == "EncoderStandard") {
                 $("#presetLabel").click(function () {
                     window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-presets-overview");
@@ -31,26 +33,35 @@
                 $("#presetLabel").unbind("click");
             }
         }
-        function SetProcessorPreset(presetName) {
-            $.post("/preset/name",
+        function SetProcessorPreset(presetId) {
+            $.post("/preset/config",
                 {
-                    mediaProcessor: $("#mediaProcessor").val(),
-                    presetName: presetName.value
+                    presetId: presetId.value
                 },
-                function (preset) {
-                    //var options = {
-                    //    change: function (data) {
-                    //        /* called on every change */
-                    //    },
-                    //    propertyclick: function (path) {
-                    //        /* called when a property is clicked with the JS path to that property */
-                    //    }
-                    //};
-                    $("#presetEditor").jsonEditor(preset);
+                function (presetConfig) {
+                    $("#mediaProcessorPresetEditor").jsonEditor(presetConfig);
                 }
             );
         }
+        function DisplayPresetMessage(message) {
+            var title = "Media Processor Preset Editor";
+            DisplayMessage(title, message);
+        }
+        function SavePreset() {
+            if (_sharedPreset) {
+                var message = "Shared presets cannot be updated. To create a custom preset, change the PresetId property.";
+                DisplayPresetMessage(title, message);
+            }
+        }
+        function DeletePreset() {
+            if (_sharedPreset) {
+                var message = "Shared presets cannot be deleted.";
+                DisplayPresetMessage(title, message);
+            }
+        }
         $(function () {
+            CreateTipTop("processorPresetSave", "Media Processor<br><br>Preset Save");
+            CreateTipTop("processorPresetDelete", "Media Processor<br><br>Preset Delete");
             $("#mediaProcessor").focus();
         })
     </script>
@@ -81,9 +92,17 @@
     </tr>
 </table>
 
-<div id="presetEditor" class="json-editor"></div>
+<div id="mediaProcessorPresetEditor" class="json-editor"></div>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "presetSave", "MediaItemSave.png", "ConfirmSave()" })
-    @Html.Partial("SiteButton", new string[] { "presetDelete", "MediaItemDelete.png", "ConfirmDelete()" })
+    <table>
+        <tr>
+            <td>
+                @Html.Partial("SiteButton", new string[] { "processorPresetSave", "MediaProcessorPresetSave.png", "SavePreset()" })
+            </td>
+            <td>
+                @Html.Partial("SiteButton", new string[] { "processorPresetDelete", "MediaProcessorPresetDelete.png", "DeletePreset()" })
+            </td>
+        </tr>
+    </table>
 </div>

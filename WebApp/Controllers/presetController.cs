@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,26 +12,53 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class presetController : Controller
     {
-        public JsonResult names(string mediaProcessor)
+        internal static SelectListItem[] GetProcessorPresets(MediaProcessor mediaProcessor, string accountId, bool includeDefaults)
         {
-            string appDirectory = Directory.GetCurrentDirectory();
-            string presetsDirectory = string.Concat(appDirectory, @"\Models\ProcessorPresets\", mediaProcessor);
-            string[] presetNames = Directory.GetFiles(presetsDirectory);
-            for (int i = 0; i < presetNames.Length; i++)
+            List<SelectListItem> processorPresets = new List<SelectListItem>();
+            NameValueCollection presets = Processor.GetProcessorPresets(mediaProcessor, accountId);
+            if (includeDefaults)
             {
-                presetNames[i] = Path.GetFileNameWithoutExtension(presetNames[i]);
+                SelectListItem processorPreset = new SelectListItem()
+                {
+                    Text = "H.264 MBR Adaptive Streaming Ladder (Uninterleaved)",
+                    Value = "Adaptive Streaming"
+                };
+                processorPresets.Add(processorPreset);
+                processorPreset = new SelectListItem()
+                {
+                    Text = "H.264 MBR Adaptive Streaming Ladder (Interleaved)",
+                    Value = "Content Adaptive Multiple Bitrate MP4"
+                };
+                processorPresets.Add(processorPreset);
             }
-            return Json(presetNames);
+            foreach (string presetName in presets.Keys)
+            {
+                SelectListItem processorPreset = new SelectListItem()
+                {
+                    Text = presetName,
+                    Value = presets[presetName]
+                };
+                processorPresets.Add(processorPreset);
+            }
+            return processorPresets.ToArray();
         }
 
-        public JsonResult name(string mediaProcessor, string presetName)
+        public JsonResult options(MediaProcessor mediaProcessor)
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            User authUser = new User(authToken);
+            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.Id, false);
+            return Json(presets);
+        }
+
+        public JsonResult config(string presetId)
         {
             JObject preset;
             string collectionId = Constant.Database.Collection.ProcessorConfig;
             string procedureId = Constant.Database.Procedure.ProcessorConfig;
             using (DocumentClient documentClient = new DocumentClient())
             {
-                preset = documentClient.ExecuteProcedure(collectionId, procedureId, "PresetName", presetName);
+                preset = documentClient.GetDocument(collectionId, procedureId, "id", presetId);
             }
             return Json(preset);
         }

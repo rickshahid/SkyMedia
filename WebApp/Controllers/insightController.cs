@@ -8,6 +8,22 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class insightController : Controller
     {
+        public static string GetProcessorName(MediaProcessor mediaProcessor)
+        {
+            return Processor.GetProcessorName(mediaProcessor);
+        }
+
+        public JsonResult document(string documentId, double timeSeconds)
+        {
+            JObject insight;
+            string collectionId = Constant.Database.Collection.ContentInsight;
+            using (DocumentClient documentClient = new DocumentClient())
+            {
+                insight = documentClient.GetDocument(collectionId, documentId);
+            }
+            return Json(insight);
+        }
+
         [HttpGet]
         [Route("/insight/accounts")]
         public JArray GetAccounts()

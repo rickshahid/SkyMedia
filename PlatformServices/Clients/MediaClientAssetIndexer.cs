@@ -53,6 +53,24 @@ namespace AzureSkyMedia.PlatformServices
             return WebUtility.UrlEncode(callbackUrl);
         }
 
+        private void PublishInsight(string authToken, string indexId)
+        {
+            User authUser = new User(authToken);
+            MediaInsightPublish insightPublish = new MediaInsightPublish
+            {
+                PartitionKey = authUser.MediaAccountId,
+                RowKey = indexId,
+                MediaAccountDomainName = authUser.MediaAccountDomainName,
+                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
+                MediaAccountClientId = authUser.MediaAccountClientId,
+                MediaAccountClientKey = authUser.MediaAccountClientKey,
+                IndexerAccountKey = authUser.VideoIndexerKey
+            };
+            TableClient tableClient = new TableClient();
+            string tableName = Constant.Storage.Table.InsightPublish;
+            tableClient.UpsertEntity(tableName, insightPublish);
+        }
+
         private string IndexVideo(IAsset asset, string locatorUrl, IndexerConfig indexerConfig)
         {
             string indexId = string.Empty;
@@ -166,7 +184,7 @@ namespace AzureSkyMedia.PlatformServices
             return index;
         }
 
-        public void ResetIndex(string indexId)
+        public void ResetIndex(string authToken, string indexId)
         {
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/reindex/", indexId);
             requestUrl = string.Concat(requestUrl, "?callbackUrl=", GetCallbackUrl());
@@ -174,37 +192,18 @@ namespace AzureSkyMedia.PlatformServices
             {
                 _indexer.GetResponse<object>(request);
             }
+            PublishInsight(authToken, indexId);
         }
 
         public void IndexVideo(string authToken, MediaClient mediaClient, IAsset asset, IndexerConfig indexerConfig)
         {
-            string fileName = null;
-            if (asset.IsStreamable)
-            {
-                fileName = MediaClient.GetSmallestFileName(asset, Constant.Media.FileExtension.MP4);
-            }
-            string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, fileName, false);
+            string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
             string indexId = IndexVideo(asset, locatorUrl, indexerConfig);
             if (!string.IsNullOrEmpty(indexId))
             {
                 asset.AlternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, indexId);
                 asset.Update();
-
-                User authUser = new User(authToken);
-                MediaInsightPublish insightPublish = new MediaInsightPublish
-                {
-                    PartitionKey = authUser.MediaAccountId,
-                    RowKey = indexId,
-                    MediaAccountDomainName = authUser.MediaAccountDomainName,
-                    MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
-                    MediaAccountClientId = authUser.MediaAccountClientId,
-                    MediaAccountClientKey = authUser.MediaAccountClientKey,
-                    IndexerAccountKey = authUser.VideoIndexerKey
-                };
-
-                TableClient tableClient = new TableClient();
-                string tableName = Constant.Storage.Table.InsightPublish;
-                tableClient.InsertEntity(tableName, insightPublish);
+                PublishInsight(authToken, indexId);
             }
         }
 

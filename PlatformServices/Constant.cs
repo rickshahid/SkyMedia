@@ -83,22 +83,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream4SourceUrl = "Media.Stream4.SourceUrl";
             public const string MediaStream4TextTracks = "Media.Stream4.TextTracks";
 
-            public const string MediaProcessorThumbnailGenerationDocumentId = "Media.Processor.ThumbnailGenerationDocumentId";
-
-            public const string MediaProcessorVideoAnnotationDocumentId = "Media.Processor.VideoAnnotationDocumentId";
-            public const string MediaProcessorVideoSummarizationDocumentId = "Media.Processor.VideoSummarizationDocumentId";
-
-            public const string MediaProcessorCharacterRecognitionDocumentId = "Media.Processor.CharacterRecognitionDocumentId";
-            public const string MediaProcessorContentModerationDocumentId = "Media.Processor.ContentModerationDocumentId";
-            public const string MediaProcessorSpeechAnalyzerDocumentId = "Media.Processor.SpeechAnalyzerDocumentId";
-
-            public const string MediaProcessorFaceDetectionDocumentId = "Media.Processor.FaceDetectionDocumentId";
-            public const string MediaProcessorFaceRedactionDocumentId = "Media.Processor.FaceRedactionDocumentId";
-
-            public const string MediaProcessorMotionDetectionDocumentId = "Media.Processor.MotionDetectionDocumentId";
-            public const string MediaProcessorMotionHyperlapseDocumentId = "Media.Processor.MotionHyperlapseDocumentId";
-            public const string MediaProcessorMotionStabilizationDocumentId = "Media.Processor.MotionStabilizationDocumentId";
-
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
 
             public const string MediaPublishContentUrl = "Media.Publish.ContentUrl";
@@ -223,6 +207,9 @@ namespace AzureSkyMedia.PlatformServices
             public struct Document
             {
                 public const string SystemPropertyPrefix = "_";
+
+                public const string DefaultIdSuffix = " - Default";
+                public const string ThumbnailsIdSuffix = " - Thumbnail Generation";
             }
         }
 

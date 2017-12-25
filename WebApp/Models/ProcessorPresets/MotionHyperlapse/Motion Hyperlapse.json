@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Motion Hyperlapse",
-  "PresetName": "Motion Hyperlapse",
+  "PresetName": "Default",
+  "MediaProcessor": "Motion Hyperlapse",
   "Version": 1.0,
   "Sources": [
     {
@@ -12,5 +12,5 @@
     "Speed": 3,
     "Stabilize": true
   },
-  "id": "4d1fc088-cb8c-46ff-b390-742f774629f1"
+  "id": "Motion Hyperlapse - Default"
 }

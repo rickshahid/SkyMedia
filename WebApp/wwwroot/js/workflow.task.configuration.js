@@ -72,7 +72,7 @@ function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds
         $("#" + unbindIds[i]).unbind("click");
     }
 }
-function SetProcessorConfig(mediaProcessor, taskNumber) {
+function SetProcessorConfig(mediaProcessor, taskNumber, encoderPresets) {
     var encoderConfigRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigRow");
     var encoderConfigDocId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigDoc");
     var encoderConfigDocSchemaId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigDocSchema");
@@ -98,34 +98,10 @@ function SetProcessorConfig(mediaProcessor, taskNumber) {
                 $("#" + encoderConfigDocId).click(function () {
                     window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-presets-overview");
                 });
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR Adaptive Streaming Ladder (Uninterleaved)", "Adaptive Streaming");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR Adaptive Streaming Ladder (Interleaved)", "Content Adaptive Multiple Bitrate MP4");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 4K (12 levels, 1000 - 20000 kbps) AAC 5.1", "H264 Multiple Bitrate 4K Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 4K (12 levels, 1000 - 20000 kbps) AAC", "H264 Multiple Bitrate 4K");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 1080p (8 levels, 400 - 6000 kbps) AAC 5.1", "H264 Multiple Bitrate 1080p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 1080p (8 levels, 400 - 6000 kbps) AAC", "H264 Multiple Bitrate 1080p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 720p (6 levels, 400 - 3400 kbps) AAC 5.1", "H264 Multiple Bitrate 720p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 720p (6 levels, 400 - 3400 kbps) AAC", "H264 Multiple Bitrate 720p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 16x9 for iOS (8 levels, 200 - 8500 kbps) AAC", "H264 Multiple Bitrate 16x9 for iOS");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 16x9 SD (5 levels, 400 - 1900 kbps) AAC 5.1", "H264 Multiple Bitrate 16x9 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 16x9 SD (5 levels, 400 - 1900 kbps) AAC", "H264 Multiple Bitrate 16x9 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 4x3 for iOS (8 levels, 200 - 8500 kbps) AAC", "H264 Multiple Bitrate 4x3 for iOS");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 4x3 SD (5 levels, 400 - 1600 kbps) AAC 5.1", "H264 Multiple Bitrate 4x3 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 MBR 4x3 SD (5 levels, 400 - 1600 kbps) AAC", "H264 Multiple Bitrate 4x3 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 4K (18000 kbps) AAC 5.1", "H264 Single Bitrate 4K Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 4K (18000 kbps) AAC", "H264 Single Bitrate 4K");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 1080p (6750 kbps) AAC 5.1", "H264 Single Bitrate 1080p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 1080p (6750 kbps) AAC", "H264 Single Bitrate 1080p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 720p (4500 kbps) AAC 5.1", "H264 Single Bitrate 720p Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 720p (4500 kbps) AAC", "H264 Single Bitrate 720p");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 720p for Android (2000 kbps) AAC", "H264 Single Bitrate 720p for Android");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 16x9 SD (2200 kbps) AAC 5.1", "H264 Single Bitrate 16x9 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 16x9 SD (2200 kbps) AAC", "H264 Single Bitrate 16x9 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 4x3 SD (1600 kbps) AAC 5.1", "H264 Single Bitrate 4x3 SD Audio 5.1");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR 4x3 SD (1600 kbps) AAC", "H264 Single Bitrate 4x3 SD");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR High Quality SD for Android (500 kbps) AAC", "H264 Single Bitrate High Quality SD for Android");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("H.264 SBR Low Quality SD for Android (56 kbps) AAC", "H264 Single Bitrate Low Quality SD for Android");
-                encoderConfigOptions[encoderConfigOptions.length] = new Option("Thumbnails (PNG Format, 5% Intervals, 640 x 360 px)", "Thumbnails");
+                for (var i = 0; i < encoderPresets.length; i++) {
+                    var encoderPreset = encoderPresets[i];
+                    encoderConfigOptions[encoderConfigOptions.length] = new Option(encoderPreset.text, encoderPreset.value);
+                }
                 encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom Configuration File (JSON)", "Custom");
                 $("#" + encoderOptionsRowId).show();
                 break;

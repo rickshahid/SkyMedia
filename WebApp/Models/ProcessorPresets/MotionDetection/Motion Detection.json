@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Motion Detection",
-  "PresetName": "Motion Detection",
+  "PresetName": "Default",
+  "MediaProcessor": "Motion Detection",
   "Version": 1.0,
-  "id": "38858f9a-b933-4a64-bc31-6937f0cec0ab"
+  "id": "Motion Detection - Default"
 }

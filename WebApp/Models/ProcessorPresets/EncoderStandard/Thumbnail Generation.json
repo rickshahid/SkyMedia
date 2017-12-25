@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "Thumbnail Generation",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -23,5 +23,5 @@
       }
     }
   ],
-  "id": "0070e7d5-7c66-48a2-a826-a8917b4b4c88"
+  "id": "Encoder Standard - Thumbnail Generation"
 }

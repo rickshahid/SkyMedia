@@ -93,6 +93,10 @@ namespace AzureSkyMedia.PlatformServices
                 CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
                 Stream sourceStream = sourceBlob.OpenRead();
                 assetFile.Upload(sourceStream);
+                foreach (ILocator locator in asset.Locators)
+                {
+                    locator.Delete();
+                }
             }
             else
             {
@@ -126,20 +130,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return fileNames.ToArray();
-        }
-
-        public static string GetSmallestFileName(IAsset asset, string fileExtension)
-        {
-            IAssetFile smallestFile = null;
-            foreach (IAssetFile file in asset.AssetFiles)
-            {
-                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase) &&
-                   (smallestFile == null || file.ContentFileSize < smallestFile.ContentFileSize))
-                {
-                    smallestFile = file;
-                }
-            }
-            return smallestFile?.Name;
         }
     }
 }

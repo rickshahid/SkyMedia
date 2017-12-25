@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "H264 Multiple Bitrate 720p Audio 5.1",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -109,5 +109,5 @@
       }
     }
   ],
-  "id": "a53ef469-cd91-4e73-a661-3dda48a92b7d"
+  "id": "Encoder Standard - H264 Multiple Bitrate 720p Audio 5.1"
 }

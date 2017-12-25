@@ -110,7 +110,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 MediaInsight insight = new MediaInsight()
                 {
-                    Processor = MediaProcessor.VideoIndexer,
+                    MediaProcessor = Processor.GetProcessorName(MediaProcessor.VideoIndexer),
                     DocumentId = documentId,
                     SourceUrl = indexerClient.GetInsightUrl(documentId, false)
                 };
@@ -123,10 +123,12 @@ namespace AzureSkyMedia.PlatformServices
                 string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
                 if (fileNameInfo.Length == 2)
                 {
+                    MediaProcessor processor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), fileNameInfo[0]);
+                    documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
                     MediaInsight insight = new MediaInsight()
                     {
-                        Processor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), fileNameInfo[0]),
-                        DocumentId = fileNameInfo[1],
+                        MediaProcessor = Processor.GetProcessorName(processor),
+                        DocumentId = documentId,
                         SourceUrl = string.Empty
                     };
                     contentInsight.Add(insight);

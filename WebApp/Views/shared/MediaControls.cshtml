@@ -10,13 +10,13 @@
     @if (ViewData.ContainsKey("accountContext"))
     {
         <td id="userButtonLeft1">
-            @Html.Partial("SiteButton", new string[] { "mediaProcessorPresetEditor", "MediaProcessorPresetEditor.png", "window.location.href = '/preset'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaProcessorPresetEditor", "MediaProcessorPresetEditor.png", "window.location.href = '/preset'" })
         </td>
         <td id="userButtonLeft2">
-            @Html.Partial("SiteButton", new string[] { "mediaFileWorkflow", "MediaUpload.png", "window.location.href = '/upload'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaFileWorkflow", "MediaUpload.png", "window.location.href = '/upload'" })
         </td>
         <td id="userButtonLeft3">
-            @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'" })
         </td>
     }
         <td>
@@ -43,13 +43,13 @@
     @if (ViewData.ContainsKey("accountContext"))
     { 
         <td id="userButtonRight1">
-            @Html.Partial("SiteButton", new string[] { "mediaAssetFiles", "MediaAssetFiles.png", "window.location.href = '/asset'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaAssetFiles", "MediaAssetFiles.png", "window.location.href = '/asset'" })
         </td>
         <td id="userButtonRight2">
-            @Html.Partial("SiteButton", new string[] { "mediaStreamLive", liveStreamImage, "ToggleLiveStream(this)", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaStreamLive", liveStreamImage, "ToggleLiveStream(this)" })
         </td>
         <td id="userButtonRight3">
-            @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "window.location.href = '/search'", "layoutButton" })
+            @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "window.location.href = '/search'" })
         </td>
     }
     </tr>

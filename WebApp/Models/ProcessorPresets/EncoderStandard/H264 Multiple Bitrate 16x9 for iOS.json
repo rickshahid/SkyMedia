@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "H264 Multiple Bitrate 16x9 for iOS",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -133,5 +133,5 @@
       }
     }
   ],
-  "id": "e392014a-c0c1-4df9-9d4b-2bda54ca21fc"
+  "id": "Encoder Standard - H264 Multiple Bitrate 16x9 for iOS"
 }

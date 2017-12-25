@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "H264 Multiple Bitrate 1080p",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -137,5 +137,5 @@
       }
     }
   ],
-  "id": "6fc63583-99d4-4ad6-8847-6aa4047ce507"
+  "id": "Encoder Standard - H264 Multiple Bitrate 1080p"
 }

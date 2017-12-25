@@ -3,8 +3,8 @@
         display: none !important;
     }
 
-    .banner, .mediaPlayer {
-        width: 380px !important;
+    .header, .mediaPlayer {
+        width: 400px !important;
     }
 
     .viewTitle, .streamInfo, .accountContext {
@@ -21,11 +21,11 @@
         display: none !important;
     }
 
-    .banner, .mediaPlayer {
+    .header, .mediaPlayer {
         width: 480px !important;
     }
 
-    .viewTitle, .streamInfo {
+    .viewTitle, .streamInfo, .accountContext {
         font-size: large !important;
     }
 
@@ -35,28 +35,28 @@
 }
 
 body {
-    background-color: black;
     color: deepskyblue;
+    background-color: black;
 }
 
 .layout {
     margin: 0px auto;
 }
 
-.layout > tbody > tr > td {
+.layoutSide {
     vertical-align: top;
 }
 
-.banner {
+.header {
     margin: 0px auto;
-    width: 720px;
+    width: 800px;
 }
 
-.bannerSide {
-    white-space: nowrap;
+.headerLeft {
+    text-align: left;
 }
 
-.bannerSide.right {
+.headerRight {
     text-align: right;
 }
 
@@ -77,17 +77,9 @@ body {
     cursor: pointer;
 }
 
-.siteButton.layoutButton {
+.siteButton.layoutVertical {
     height: 60px;
     width: 60px;
-}
-
-.siteButton.layoutButton.side {
-    width: 75px;
-}
-
-.siteButton.layoutButton.top {
-    margin-top: -10px;
 }
 
 .siteLink {
@@ -101,7 +93,7 @@ body {
 
 .qtip {
     border-radius: 20px;
-    max-width: 720px;
+    max-width: 800px;
     padding: 5px;
 }
 
@@ -164,6 +156,14 @@ body {
 .viewButtons {
     text-align: center;
     margin-top: 20px;
+}
+
+.viewButtons table {
+    margin: 0px auto;
+}
+
+#processorPresetSave {
+    padding-top: 3px;
 }
 
 .processorConfigTable {
@@ -396,7 +396,7 @@ body {
 
 .mediaAssets.filesView {
     height: 450px;
-    width: 750px;
+    width: 800px;
 }
 
 .mediaAssets.workflowView {
@@ -672,7 +672,7 @@ body {
 }
 
 .mediaPlayer {
-    width: 750px;
+    width: 800px;
 }
 
 .mediaPlayerButton {
@@ -695,21 +695,29 @@ body {
 }
 
 .indexerInsight {
-    margin: 0px auto;
     display: none;
     height: 500px;
-    width: 750px;
+    width: 800px;
 }
 
 .analyticsInsight {
-    margin: 10px auto;
+    margin-top: 10px;
     font-size: large;
     display: none;
 }
 
-.insightData {
+.analyticsInsight td {
+    padding: 0px;
+}
+
+.analyticsProcessors {
+    font-weight: bold;
+    margin-left: 5px;
+    width: 180px;
+}
+
+.analyticsMetadata {
     background-color: deepskyblue;
-    margin: 0px auto;
     margin-top: 10px;
     color: darkblue;
     overflow: auto;
@@ -738,4 +746,8 @@ a.json-placeholder {
 .mediaCertification {
     text-align: center;
     padding-top: 20px;
+}
+
+.json-editor {
+    min-width: 800px;
 }

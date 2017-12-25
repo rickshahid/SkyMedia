@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "H264 Multiple Bitrate 4x3 SD Audio 5.1",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -95,5 +95,5 @@
       }
     }
   ],
-  "id": "3162fea9-080f-492f-8c7a-78535c1be6a9"
+  "id": "Encoder Standard - H264 Multiple Bitrate 4x3 SD Audio 5.1"
 }

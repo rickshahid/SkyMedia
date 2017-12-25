@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "AAC Good Quality Audio",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -19,5 +19,5 @@
       }
     }
   ],
-  "id": "34a9f2e9-70c5-4c32-8396-f679dba0356f"
+  "id": "Encoder Standard - AAC Good Quality Audio"
 }

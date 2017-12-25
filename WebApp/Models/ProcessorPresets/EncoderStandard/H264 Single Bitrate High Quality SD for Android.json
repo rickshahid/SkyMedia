@@ -1,6 +1,6 @@
 {
-  "ProcessorName": "Encoder Standard",
   "PresetName": "H264 Single Bitrate High Quality SD for Android",
+  "MediaProcessor": "Encoder Standard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -39,5 +39,5 @@
       }
     }
   ],
-  "id": "4e02acaa-ce2f-4b7d-816b-f4b5d9064e2c"
+  "id": "Encoder Standard - H264 Single Bitrate High Quality SD for Android"
 }
