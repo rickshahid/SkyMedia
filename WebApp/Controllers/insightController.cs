@@ -13,15 +13,15 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Processor.GetProcessorName(mediaProcessor);
         }
 
-        public JsonResult document(string documentId, double timeSeconds)
+        public JsonResult metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
         {
-            JObject insight;
+            JObject metadata;
             string collectionId = Constant.Database.Collection.ContentInsight;
             using (DocumentClient documentClient = new DocumentClient())
             {
-                insight = documentClient.GetDocument(collectionId, documentId);
+                metadata = documentClient.GetDocument(collectionId, documentId);
             }
-            return Json(insight);
+            return Json(metadata);
         }
 
         [HttpGet]

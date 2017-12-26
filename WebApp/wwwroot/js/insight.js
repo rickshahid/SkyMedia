@@ -43,17 +43,18 @@ function SetAnalyticsProcessors(mediaStream) {
 }
 function SetAnalyticsMetadata() {
     $("#analyticsMetadata").empty();
-    var documentId = $("#analyticsProcessors").val();
-    if (documentId != "") {
+    var mediaProcessor = $("#analyticsProcessors option:selected").text();
+    if (mediaProcessor != "") {
         var mediaPlayer = GetMediaPlayer();
         mediaPlayer.pause();
-        $.get("/insight/document",
+        $.get("/insight/metadata",
             {
-                documentId: documentId,
+                mediaProcessor: mediaProcessor.replace(/\s+/g, ""),
+                documentId: $("#analyticsProcessors").val(),
                 timeSeconds: mediaPlayer.currentTime()
             },
-            function (document) {
-                $("#analyticsMetadata").jsonBrowse(document);
+            function (metadata) {
+                $("#analyticsMetadata").jsonBrowse(metadata);
             }
         );
     }

@@ -52,11 +52,11 @@ body {
     width: 800px;
 }
 
-.headerLeft {
-    text-align: left;
+.headerSide {
+    white-space: nowrap;
 }
 
-.headerRight {
+.headerSide.right {
     text-align: right;
 }
 

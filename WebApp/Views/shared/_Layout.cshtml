@@ -29,7 +29,7 @@
     <body onload="@ViewData["onLoad"]">
         <table class="header">
             <tr>
-                <td class="headerLeft">
+                <td class="headerSide">
                     @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                     @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
                     @{
@@ -43,7 +43,7 @@
                         @RenderSection("title", true)
                     </div>
                 </td>
-                <td class="headerRight">
+                <td class="headerSide right">
                     @Html.Partial("SiteButton", new string[] { "mediaBot", "MediaBot.png", "DisplayMessage('Azure Sky Media Bot', 'Hi, my name is Viddy. I am currently under construction.<br><br>Please check on me later. Thank you.')" })
                     @if (ViewData.ContainsKey("accountContext"))
                     {
