@@ -1,22 +1,23 @@
 {
-  "PresetName": "H264 Single Bitrate High Quality SD for Android",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Single Bitrate 720p",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
-      "KeyFrameInterval": "00:00:05",
+      "KeyFrameInterval": "00:00:02",
       "SceneChangeDetection": true,
       "H264Layers": [
         {
-          "Profile": "Baseline",
-          "Level": "3",
-          "Bitrate": 500,
-          "MaxBitrate": 500,
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 4500,
+          "MaxBitrate": 4500,
           "BufferWindow": "00:00:05",
-          "Width": 480,
-          "Height": 360,
+          "Width": 1280,
+          "Height": 720,
+          "BFrames": 3,
           "ReferenceFrames": 3,
-          "EntropyMode": "Cavlc",
+          "AdaptiveBFrame": true,
           "Type": "H264Layer",
           "FrameRate": "0/1"
         }
@@ -39,5 +40,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Single Bitrate High Quality SD for Android"
+  "id": "EncoderStandard_H.264 Single Bitrate 720p"
 }

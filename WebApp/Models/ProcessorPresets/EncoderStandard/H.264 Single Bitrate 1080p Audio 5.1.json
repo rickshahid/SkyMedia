@@ -1,6 +1,6 @@
 {
-  "PresetName": "H264 Single Bitrate 4K",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Single Bitrate 1080p Audio 5.1",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -10,11 +10,11 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 18000,
-          "MaxBitrate": 18000,
+          "Bitrate": 6750,
+          "MaxBitrate": 6750,
           "BufferWindow": "00:00:05",
-          "Width": 3840,
-          "Height": 2160,
+          "Width": 1920,
+          "Height": 1080,
           "BFrames": 3,
           "ReferenceFrames": 3,
           "AdaptiveBFrame": true,
@@ -26,9 +26,9 @@
     },
     {
       "Profile": "AACLC",
-      "Channels": 2,
+      "Channels": 6,
       "SamplingRate": 48000,
-      "Bitrate": 128,
+      "Bitrate": 384,
       "Type": "AACAudio"
     }
   ],
@@ -40,5 +40,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Single Bitrate 4K"
+  "id": "EncoderStandard_H.264 Single Bitrate 1080p Audio 5.1"
 }

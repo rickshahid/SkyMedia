@@ -99,7 +99,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             viewData["jobName"] = GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = GetMediaProcessors(authToken, false);
             viewData["encoderConfig1"] = new List<SelectListItem>();
-            viewData["encoderPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.Id, true);
+            viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccountId, true);
+            viewData["encoderPremiumPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderPremium, authUser.MediaAccountId, false);
             viewData["indexerLanguages"] = GetSpokenLanguages(true, false);
             viewData["speechAnalyzerLanguages"] = GetSpokenLanguages(false, false);
         }

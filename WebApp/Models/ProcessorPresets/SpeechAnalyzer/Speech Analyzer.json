@@ -1,6 +1,6 @@
 {
   "PresetName": "Default",
-  "MediaProcessor": "Speech Analyzer",
+  "MediaProcessor": "SpeechAnalyzer",
   "Version": 1.0,
   "Features": [
     {
@@ -14,5 +14,5 @@
       "Type": "SpReco"
     }
   ],
-  "id": "Speech Analyzer - Default"
+  "id": "SpeechAnalyzer_Default"
 }

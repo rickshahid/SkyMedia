@@ -1,6 +1,6 @@
 {
   "PresetName": "Default",
-  "MediaProcessor": "Video Annotation",
+  "MediaProcessor": "VideoAnnotation",
   "Version": 1.0,
-  "id": "Video Annotation - Default"
+  "id": "VideoAnnotation_Default"
 }

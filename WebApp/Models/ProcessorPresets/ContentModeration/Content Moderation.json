@@ -1,9 +1,9 @@
 {
   "PresetName": "Default",
-  "MediaProcessor": "Content Moderation",
+  "MediaProcessor": "ContentModeration",
   "Version": 1.0,
   "Options": {
     "Mode": "Quality"
   },
-  "id": "Content Moderation - Default"
+  "id": "ContentModeration_Default"
 }

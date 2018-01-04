@@ -1,6 +1,6 @@
 {
-  "PresetName": "H264 Multiple Bitrate 16x9 SD Audio 5.1",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Multiple Bitrate 1080p",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -9,11 +9,11 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 1900,
-          "MaxBitrate": 1900,
+          "Bitrate": 6000,
+          "MaxBitrate": 6000,
           "BufferWindow": "00:00:05",
-          "Width": 848,
-          "Height": 480,
+          "Width": 1920,
+          "Height": 1080,
           "BFrames": 3,
           "ReferenceFrames": 3,
           "AdaptiveBFrame": true,
@@ -23,11 +23,11 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 1300,
-          "MaxBitrate": 1300,
+          "Bitrate": 4700,
+          "MaxBitrate": 4700,
           "BufferWindow": "00:00:05",
-          "Width": 848,
-          "Height": 480,
+          "Width": 1920,
+          "Height": 1080,
           "BFrames": 3,
           "ReferenceFrames": 3,
           "AdaptiveBFrame": true,
@@ -37,8 +37,50 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 900,
-          "MaxBitrate": 900,
+          "Bitrate": 3400,
+          "MaxBitrate": 3400,
+          "BufferWindow": "00:00:05",
+          "Width": 1280,
+          "Height": 720,
+          "BFrames": 3,
+          "ReferenceFrames": 3,
+          "AdaptiveBFrame": true,
+          "Type": "H264Layer",
+          "FrameRate": "0/1"
+        },
+        {
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 2250,
+          "MaxBitrate": 2250,
+          "BufferWindow": "00:00:05",
+          "Width": 960,
+          "Height": 540,
+          "BFrames": 3,
+          "ReferenceFrames": 3,
+          "AdaptiveBFrame": true,
+          "Type": "H264Layer",
+          "FrameRate": "0/1"
+        },
+        {
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 1500,
+          "MaxBitrate": 1500,
+          "BufferWindow": "00:00:05",
+          "Width": 960,
+          "Height": 540,
+          "BFrames": 3,
+          "ReferenceFrames": 3,
+          "AdaptiveBFrame": true,
+          "Type": "H264Layer",
+          "FrameRate": "0/1"
+        },
+        {
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 1000,
+          "MaxBitrate": 1000,
           "BufferWindow": "00:00:05",
           "Width": 640,
           "Height": 360,
@@ -68,8 +110,8 @@
           "Bitrate": 400,
           "MaxBitrate": 400,
           "BufferWindow": "00:00:05",
-          "Width": 432,
-          "Height": 240,
+          "Width": 320,
+          "Height": 180,
           "BFrames": 3,
           "ReferenceFrames": 3,
           "AdaptiveBFrame": true,
@@ -81,9 +123,9 @@
     },
     {
       "Profile": "AACLC",
-      "Channels": 6,
+      "Channels": 2,
       "SamplingRate": 48000,
-      "Bitrate": 384,
+      "Bitrate": 128,
       "Type": "AACAudio"
     }
   ],
@@ -95,5 +137,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Multiple Bitrate 16x9 SD Audio 5.1"
+  "id": "EncoderStandard_H.264 Multiple Bitrate 1080p"
 }

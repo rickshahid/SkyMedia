@@ -1,9 +1,0 @@
-{
-  "PresetName": "Default",
-  "MediaProcessor": "Face Redaction",
-  "Version": 1.0,
-  "Options": {
-    "Mode": "Analyze"
-  },
-  "id": "Face Redaction - Default"
-}

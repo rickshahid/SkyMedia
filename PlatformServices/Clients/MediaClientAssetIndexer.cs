@@ -71,20 +71,20 @@ namespace AzureSkyMedia.PlatformServices
             tableClient.UpsertEntity(tableName, insightPublish);
         }
 
-        private string IndexVideo(IAsset asset, string locatorUrl, IndexerConfig indexerConfig)
+        private string IndexVideo(IAsset asset, string locatorUrl, ContentIndexer contentIndexer)
         {
             string indexId = string.Empty;
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
             requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(asset.Name));
-            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(indexerConfig.VideoDescription));
-            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(indexerConfig.VideoMetadata));
+            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(contentIndexer.VideoDescription));
+            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(contentIndexer.VideoMetadata));
             requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
             requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
-            requestUrl = string.Concat(requestUrl, "&language=", indexerConfig.LanguageId);
-            requestUrl = string.Concat(requestUrl, "&partition=", indexerConfig.SearchPartition);
+            requestUrl = string.Concat(requestUrl, "&language=", contentIndexer.LanguageId);
+            requestUrl = string.Concat(requestUrl, "&partition=", contentIndexer.SearchPartition);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
-            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(indexerConfig.VideoPublic));
-            if (indexerConfig.AudioOnly)
+            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(contentIndexer.VideoPublic));
+            if (contentIndexer.AudioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=audioOnly");
             }
@@ -195,10 +195,10 @@ namespace AzureSkyMedia.PlatformServices
             PublishInsight(authToken, indexId);
         }
 
-        public void IndexVideo(string authToken, MediaClient mediaClient, IAsset asset, IndexerConfig indexerConfig)
+        public void IndexVideo(string authToken, MediaClient mediaClient, IAsset asset, ContentIndexer contentIndexer)
         {
             string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
-            string indexId = IndexVideo(asset, locatorUrl, indexerConfig);
+            string indexId = IndexVideo(asset, locatorUrl, contentIndexer);
             if (!string.IsNullOrEmpty(indexId))
             {
                 asset.AlternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, indexId);

@@ -64,7 +64,7 @@ namespace AzureSkyMedia.PlatformServices
                                 }
                                 else
                                 {
-                                    indexerClient.IndexVideo(authToken, mediaClient, asset, jobTask.IndexerConfig);
+                                    indexerClient.IndexVideo(authToken, mediaClient, asset, jobTask.ContentIndexer);
                                 }
                             }
                         }
@@ -75,26 +75,20 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
                         break;
-                    case MediaProcessor.CharacterRecognition:
-                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.ContentModeration:
-                        tasks = GetContentModerationTasks(mediaClient, jobTask, jobInputs);
+                    case MediaProcessor.FaceDetection:
+                        tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.SpeechAnalyzer:
                         tasks = GetSpeechAnalyzerTasks(mediaClient, jobTask, jobInputs);
                         break;
-                    case MediaProcessor.FaceDetection:
-                        tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.FaceRedaction:
-                        tasks = GetFaceRedactionTasks(mediaClient, jobTask, jobInputs);
-                        break;
                     case MediaProcessor.MotionDetection:
                         tasks = GetMotionDetectionTasks(mediaClient, jobTask, jobInputs);
                         break;
-                    case MediaProcessor.MotionHyperlapse:
-                        tasks = GetMotionHyperlapseTasks(mediaClient, jobTask, jobInputs);
+                    case MediaProcessor.ContentModeration:
+                        tasks = GetContentModerationTasks(mediaClient, jobTask, jobInputs);
+                        break;
+                    case MediaProcessor.CharacterRecognition:
+                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
                         break;
                 }
                 if (tasks != null)
@@ -133,7 +127,7 @@ namespace AzureSkyMedia.PlatformServices
                 job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
                 foreach (MediaJobTask jobTask in mediaJob.Tasks)
                 {
-                    string processorId = Processor.GetProcessorId(jobTask.MediaProcessor);
+                    string processorId = Processor.GetProcessorId(jobTask.MediaProcessor, jobTask.ProcessorConfig);
                     IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
                     ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
                     if (jobTask.ParentIndex.HasValue)

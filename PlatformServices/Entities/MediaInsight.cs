@@ -8,4 +8,19 @@
 
         public string SourceUrl { get; set; }
     }
+
+    public class ContentIndexer
+    {
+        public string LanguageId { get; set; }
+
+        public string SearchPartition { get; set; }
+
+        public string VideoDescription { get; set; }
+
+        public string VideoMetadata { get; set; }
+
+        public bool VideoPublic { get; set; }
+
+        public bool AudioOnly { get; set; }
+    }
 }

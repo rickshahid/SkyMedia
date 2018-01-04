@@ -1,39 +1,11 @@
 {
-  "PresetName": "H264 Multiple Bitrate 1080p",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Multiple Bitrate 720p Audio 5.1",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
       "KeyFrameInterval": "00:00:02",
       "H264Layers": [
-        {
-          "Profile": "Auto",
-          "Level": "auto",
-          "Bitrate": 6000,
-          "MaxBitrate": 6000,
-          "BufferWindow": "00:00:05",
-          "Width": 1920,
-          "Height": 1080,
-          "BFrames": 3,
-          "ReferenceFrames": 3,
-          "AdaptiveBFrame": true,
-          "Type": "H264Layer",
-          "FrameRate": "0/1"
-        },
-        {
-          "Profile": "Auto",
-          "Level": "auto",
-          "Bitrate": 4700,
-          "MaxBitrate": 4700,
-          "BufferWindow": "00:00:05",
-          "Width": 1920,
-          "Height": 1080,
-          "BFrames": 3,
-          "ReferenceFrames": 3,
-          "AdaptiveBFrame": true,
-          "Type": "H264Layer",
-          "FrameRate": "0/1"
-        },
         {
           "Profile": "Auto",
           "Level": "auto",
@@ -123,9 +95,9 @@
     },
     {
       "Profile": "AACLC",
-      "Channels": 2,
+      "Channels": 6,
       "SamplingRate": 48000,
-      "Bitrate": 128,
+      "Bitrate": 384,
       "Type": "AACAudio"
     }
   ],
@@ -137,5 +109,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Multiple Bitrate 1080p"
+  "id": "EncoderStandard_H.264 Multiple Bitrate 720p Audio 5.1"
 }

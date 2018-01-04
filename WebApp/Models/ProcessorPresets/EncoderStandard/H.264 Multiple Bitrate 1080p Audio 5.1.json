@@ -1,16 +1,16 @@
 {
-  "PresetName": "H264 Multiple Bitrate 16x9 for iOS",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Multiple Bitrate 1080p Audio 5.1",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
-      "KeyFrameInterval": "00:00:03",
+      "KeyFrameInterval": "00:00:02",
       "H264Layers": [
         {
-          "Profile": "High",
-          "Level": "4",
-          "Bitrate": 8500,
-          "MaxBitrate": 8500,
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 6000,
+          "MaxBitrate": 6000,
           "BufferWindow": "00:00:05",
           "Width": 1920,
           "Height": 1080,
@@ -21,10 +21,24 @@
           "FrameRate": "0/1"
         },
         {
-          "Profile": "Main",
-          "Level": "3.1",
-          "Bitrate": 6500,
-          "MaxBitrate": 6500,
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 4700,
+          "MaxBitrate": 4700,
+          "BufferWindow": "00:00:05",
+          "Width": 1920,
+          "Height": 1080,
+          "BFrames": 3,
+          "ReferenceFrames": 3,
+          "AdaptiveBFrame": true,
+          "Type": "H264Layer",
+          "FrameRate": "0/1"
+        },
+        {
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 3400,
+          "MaxBitrate": 3400,
           "BufferWindow": "00:00:05",
           "Width": 1280,
           "Height": 720,
@@ -35,24 +49,10 @@
           "FrameRate": "0/1"
         },
         {
-          "Profile": "Main",
-          "Level": "3.1",
-          "Bitrate": 5000,
-          "MaxBitrate": 5000,
-          "BufferWindow": "00:00:05",
-          "Width": 1280,
-          "Height": 720,
-          "BFrames": 3,
-          "ReferenceFrames": 3,
-          "AdaptiveBFrame": true,
-          "Type": "H264Layer",
-          "FrameRate": "0/1"
-        },
-        {
-          "Profile": "Main",
-          "Level": "3.1",
-          "Bitrate": 3500,
-          "MaxBitrate": 3500,
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 2250,
+          "MaxBitrate": 2250,
           "BufferWindow": "00:00:05",
           "Width": 960,
           "Height": 540,
@@ -63,54 +63,58 @@
           "FrameRate": "0/1"
         },
         {
-          "Profile": "Baseline",
-          "Level": "3.1",
-          "Bitrate": 1200,
-          "MaxBitrate": 1200,
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 1500,
+          "MaxBitrate": 1500,
           "BufferWindow": "00:00:05",
-          "Width": 640,
-          "Height": 360,
+          "Width": 960,
+          "Height": 540,
+          "BFrames": 3,
           "ReferenceFrames": 3,
-          "EntropyMode": "Cavlc",
+          "AdaptiveBFrame": true,
           "Type": "H264Layer",
           "FrameRate": "0/1"
         },
         {
-          "Profile": "Baseline",
-          "Level": "3",
-          "Bitrate": 600,
-          "MaxBitrate": 600,
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 1000,
+          "MaxBitrate": 1000,
           "BufferWindow": "00:00:05",
           "Width": 640,
           "Height": 360,
+          "BFrames": 3,
           "ReferenceFrames": 3,
-          "EntropyMode": "Cavlc",
+          "AdaptiveBFrame": true,
           "Type": "H264Layer",
           "FrameRate": "0/1"
         },
         {
-          "Profile": "Baseline",
-          "Level": "3",
+          "Profile": "Auto",
+          "Level": "auto",
+          "Bitrate": 650,
+          "MaxBitrate": 650,
+          "BufferWindow": "00:00:05",
+          "Width": 640,
+          "Height": 360,
+          "BFrames": 3,
+          "ReferenceFrames": 3,
+          "AdaptiveBFrame": true,
+          "Type": "H264Layer",
+          "FrameRate": "0/1"
+        },
+        {
+          "Profile": "Auto",
+          "Level": "auto",
           "Bitrate": 400,
           "MaxBitrate": 400,
           "BufferWindow": "00:00:05",
-          "Width": 480,
-          "Height": 270,
+          "Width": 320,
+          "Height": 180,
+          "BFrames": 3,
           "ReferenceFrames": 3,
-          "EntropyMode": "Cavlc",
-          "Type": "H264Layer",
-          "FrameRate": "0/1"
-        },
-        {
-          "Profile": "Baseline",
-          "Level": "3",
-          "Bitrate": 200,
-          "MaxBitrate": 200,
-          "BufferWindow": "00:00:05",
-          "Width": 416,
-          "Height": 214,
-          "ReferenceFrames": 3,
-          "EntropyMode": "Cavlc",
+          "AdaptiveBFrame": true,
           "Type": "H264Layer",
           "FrameRate": "0/1"
         }
@@ -118,10 +122,10 @@
       "Type": "H264Video"
     },
     {
-      "Profile": "HEAACV2",
-      "Channels": 2,
+      "Profile": "AACLC",
+      "Channels": 6,
       "SamplingRate": 48000,
-      "Bitrate": 64,
+      "Bitrate": 384,
       "Type": "AACAudio"
     }
   ],
@@ -133,5 +137,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Multiple Bitrate 16x9 for iOS"
+  "id": "EncoderStandard_H.264 Multiple Bitrate 1080p Audio 5.1"
 }

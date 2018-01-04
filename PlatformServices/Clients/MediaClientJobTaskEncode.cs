@@ -1,8 +1,8 @@
 ﻿using System;
 
-using Newtonsoft.Json.Linq;
-
 using Microsoft.WindowsAzure.MediaServices.Client;
+
+using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -10,17 +10,17 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static bool IsPremiumWorkflow(MediaJobInput jobInput)
         {
-            return jobInput.PrimaryFile.EndsWith(Constant.Media.ProcessorConfig.EncoderPremiumWorkflowExtension, StringComparison.OrdinalIgnoreCase);
+            return jobInput.PrimaryFile.EndsWith(Constant.Media.FileExtension.Workflow, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static int OrderByWorkflow(MediaJobInput leftSide, MediaJobInput rightSide)
+        private static int OrderByWorkflow(MediaJobInput leftItem, MediaJobInput rightIten)
         {
             int comparison = 0;
-            if (IsPremiumWorkflow(leftSide))
+            if (IsPremiumWorkflow(leftItem))
             {
                 comparison = -1;
             }
-            else if (IsPremiumWorkflow(rightSide))
+            else if (IsPremiumWorkflow(rightIten))
             {
                 comparison = 1;
             }
@@ -33,17 +33,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Array.Sort(jobInputs, OrderByWorkflow);
             }
-            else if (string.Equals(jobTask.ProcessorConfig, Constant.Media.ProcessorConfig.EncoderStandardThumbnailsPreset, StringComparison.OrdinalIgnoreCase))
-            {
-                string collectionId = Constant.Database.Collection.ProcessorConfig;
-                string documentId = Processor.GetProcessorName(MediaProcessor.EncoderStandard);
-                documentId = string.Concat(documentId, Constant.Database.Document.ThumbnailsIdSuffix);
-                using (DocumentClient documentClient = new DocumentClient())
-                {
-                    JObject processorConfig = documentClient.GetDocument(collectionId, documentId);
-                    jobTask.ProcessorConfig = processorConfig.ToString();
-                }
-            }
+            JObject processorConfig = GetProcessorConfig(jobTask);
+            jobTask.ProcessorConfig = processorConfig == null ? jobTask.ProcessorConfigId : processorConfig.ToString();
             bool multipleInputTask = jobTask.MediaProcessor != MediaProcessor.EncoderStandard;
             return GetJobTasks(mediaClient, jobTask, jobInputs, multipleInputTask);
         }

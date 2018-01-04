@@ -1,23 +1,22 @@
 {
-  "PresetName": "H264 Single Bitrate 720p Audio 5.1",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Single Bitrate High Quality SD for Android",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
-      "KeyFrameInterval": "00:00:02",
+      "KeyFrameInterval": "00:00:05",
       "SceneChangeDetection": true,
       "H264Layers": [
         {
-          "Profile": "Auto",
-          "Level": "auto",
-          "Bitrate": 4500,
-          "MaxBitrate": 4500,
+          "Profile": "Baseline",
+          "Level": "3",
+          "Bitrate": 500,
+          "MaxBitrate": 500,
           "BufferWindow": "00:00:05",
-          "Width": 1280,
-          "Height": 720,
-          "BFrames": 3,
+          "Width": 480,
+          "Height": 360,
           "ReferenceFrames": 3,
-          "AdaptiveBFrame": true,
+          "EntropyMode": "Cavlc",
           "Type": "H264Layer",
           "FrameRate": "0/1"
         }
@@ -26,9 +25,9 @@
     },
     {
       "Profile": "AACLC",
-      "Channels": 6,
+      "Channels": 2,
       "SamplingRate": 48000,
-      "Bitrate": 384,
+      "Bitrate": 128,
       "Type": "AACAudio"
     }
   ],
@@ -40,5 +39,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Single Bitrate 720p Audio 5.1"
+  "id": "EncoderStandard_H.264 Single Bitrate High Quality SD for Android"
 }

@@ -27,9 +27,9 @@ namespace AzureSkyMedia.PlatformServices
 
     internal static class Storage
     {
-        private static int OrderByLatest(CapacityEntity leftSide, CapacityEntity rightSide)
+        private static int OrderByLatest(CapacityEntity leftItem, CapacityEntity rightItem)
         {
-            return DateTimeOffset.Compare(rightSide.Time, leftSide.Time);
+            return DateTimeOffset.Compare(rightItem.Time, leftItem.Time);
         }
 
         private static string GetAccountType(string authToken, string accountName)

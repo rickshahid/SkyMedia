@@ -22,7 +22,7 @@ namespace AzureSkyMedia.WebApp
 
             if (Debugger.IsAttached)
             {
-                string modelsDirectory = string.Concat(appDirectory, @"\Models");
+                string modelsDirectory = string.Concat(appDirectory, Constant.Media.ProcessorConfig.DirectoryModels);
                 DocumentClient documentClient = new DocumentClient();
                 documentClient.Initialize(modelsDirectory);
             }

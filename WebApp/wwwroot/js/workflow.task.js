@@ -16,10 +16,10 @@ function GetJobTask(taskNumber) {
             MediaProcessor: mediaProcessor,
             ParentIndex: taskParent == "" ? null : taskParent - 1,
             OutputAssetName: $("#outputAssetName" + taskNumber).val(),
-            Options: taskOptions,
+            ProcessorConfigString: {},
             ProcessorConfigBoolean: {},
             ProcessorConfigInteger: {},
-            ProcessorConfigString: {}
+            Options: taskOptions
         };
         switch (jobTask.MediaProcessor) {
             case "EncoderStandard":
@@ -28,7 +28,7 @@ function GetJobTask(taskNumber) {
                 if (encoderConfig == "Custom") {
                     jobTask.ProcessorConfig = _encoderConfig;
                 } else {
-                    jobTask.ProcessorConfig = encoderConfig;
+                    jobTask.ProcessorConfigId = encoderConfig;
                 }
                 if ($("#encoderFragmentOutput" + taskNumber).prop("checked")) {
                     jobTask.OutputAssetFormat = 1; // AssetFormatOption.AdaptiveStreaming
@@ -36,7 +36,7 @@ function GetJobTask(taskNumber) {
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "VideoIndexer":
-                jobTask.IndexerConfig = {
+                jobTask.ContentIndexer = {
                     LanguageId: $("#indexerLanguageId" + taskNumber).val(),
                     SearchPartition: $("#indexerSearchPartition" + taskNumber).val(),
                     VideoDescription: $("#indexerVideoDescription" + taskNumber).val(),
@@ -50,30 +50,30 @@ function GetJobTask(taskNumber) {
                 var durationSeconds = parseInt($("#summarizationDurationSeconds" + taskNumber).val());
                 jobTask.ProcessorConfigInteger["SummarizationDurationSeconds"] = (durationMinutes * 60) + durationSeconds;
                 jobTask.ProcessorConfigBoolean["SummarizationFadeTransitions"] = $("#summarizationFadeTransitions" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigBoolean["VideoOnly"] = !$("#summarizationIncludeAudio" + taskNumber).prop("checked");
-                break;
-            case "SpeechAnalyzer":
-                jobTask.ProcessorConfigString["LanguageId"] = $("#speechAnalyzerLanguageId" + taskNumber).val();
-                jobTask.ProcessorConfigBoolean["TimedTextFormatTtml"] = $("#speechAnalyzerTimedTextFormatTtml" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigBoolean["TimedTextFormatWebVtt"] = $("#speechAnalyzerTimedTextFormatWebVtt" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["SummarizationIncludeAudio"] = $("#summarizationIncludeAudio" + taskNumber).prop("checked");
                 break;
             case "FaceDetection":
                 jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();
-                jobTask.ProcessorConfigInteger["FaceDetectionAggregateEmotionWindow"] = $("#faceDetectionAggregateEmotionWindow" + taskNumber).val();
-                jobTask.ProcessorConfigInteger["FaceDetectionAggregateEmotionInterval"] = $("#faceDetectionAggregateEmotionInterval" + taskNumber).val();
+                switch (jobTask.ProcessorConfigString["FaceDetectionMode"]) {
+                    case "Redact":
+                        jobTask.ProcessorConfigString["FaceDetectionMode"] = "Combined";
+                        jobTask.ProcessorConfigString["FaceRedactionBlurMode"] = $("#faceRedactionBlurMode" + taskNumber).val();
+                        break;
+                    case "Emotion":
+                        jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceEmotionMode" + taskNumber + ":checked").val();
+                        jobTask.ProcessorConfigInteger["FaceEmotionAggregateWindow"] = $("#faceEmotionAggregateWindow" + taskNumber).val();
+                        jobTask.ProcessorConfigInteger["FaceEmotionAggregateInterval"] = $("#faceEmotionAggregateInterval" + taskNumber).val();
+                        break;
+                }
                 break;
-            case "FaceRedaction":
-                jobTask.ProcessorConfigString["FaceRedactionMode"] = $("#faceRedactionMode" + taskNumber + ":checked").val();
-                jobTask.ProcessorConfigString["FaceRedactionBlurMode"] = $("#faceRedactionBlurMode" + taskNumber).val();
+            case "SpeechAnalyzer":
+                jobTask.ProcessorConfigString["SpeechAnalyzerLanguageId"] = $("#speechAnalyzerLanguageId" + taskNumber).val();
+                jobTask.ProcessorConfigBoolean["SpeechAnalyzerTimedTextFormatTtml"] = $("#speechAnalyzerTimedTextFormatTtml" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["SpeechAnalyzerTimedTextFormatWebVtt"] = $("#speechAnalyzerTimedTextFormatWebVtt" + taskNumber).prop("checked");
                 break;
             case "MotionDetection":
                 jobTask.ProcessorConfigString["MotionDetectionSensitivityLevel"] = $("#motionDetectionSensitivityLevel" + taskNumber).val();
                 jobTask.ProcessorConfigBoolean["MotionDetectionLightChange"] = $("#motionDetectionLightChange" + taskNumber).prop("checked");
-                break;
-            case "MotionHyperlapse":
-                jobTask.ProcessorConfigInteger["MotionHyperlapseFrameStart"] = $("#motionHyperlapseFrameStart" + taskNumber).val();
-                jobTask.ProcessorConfigInteger["MotionHyperlapseFrameEnd"] = $("#motionHyperlapseFrameEnd" + taskNumber).val();
-                jobTask.ProcessorConfigInteger["MotionHyperlapseSpeed"] = $("#motionHyperlapseSpeed" + taskNumber).val().substr(0, 1);
                 break;
         }
     }
@@ -99,16 +99,23 @@ function SetEncoderConfig(fileInput) {
 }
 function SetFaceDetectionConfig(radioButton) {
     var taskNumber = radioButton.id.slice(-1);
-    $("#faceDetectionFacesRow" + taskNumber).hide();
-    $("#faceDetectionAggregateEmotionRow" + taskNumber).hide();
+    $("#faceRedactionRow" + taskNumber).hide();
+    $("#faceEmotionRow" + taskNumber).hide();
     switch (radioButton.value) {
-        case "Faces":
-            $("#faceDetectionFacesRow" + taskNumber).show();
+        case "FaceRedaction":
+            $("#faceRedactionRow" + taskNumber).show();
             break;
+        case "EmotionDetection":
+            $("#faceEmotionRow" + taskNumber).show();
+            break;
+    }
+}
+function SetFaceEmotionConfig(radioButton) {
+    var taskNumber = radioButton.id.slice(-1);
+    $("#faceEmotionAggregateRow" + taskNumber).hide();
+    switch (radioButton.value) {
         case "AggregateEmotion":
-            $("#faceDetectionAggregateEmotionRow" + taskNumber).show();
-            break;
-        case "PerFaceEmotion":
+            $("#faceEmotionAggregateRow" + taskNumber).show();
             break;
     }
 }
@@ -124,7 +131,7 @@ function SetJobTaskParents(taskNumber) {
     }
 }
 function SetJobTaskInputs(taskNumber) {
-    $.widget("ui.spinnerEx1", $.ui.spinner, {
+    $.widget("ui.spinnerEx", $.ui.spinner, {
         _format: function (value) {
             if (value < 10) {
                 value = "0" + value;
@@ -135,41 +142,21 @@ function SetJobTaskInputs(taskNumber) {
             return parseInt(value);
         }
     });
-    $.widget("ui.spinnerEx2", $.ui.spinner, {
-        _format: function (value) {
-            return value + "x";
-        },
-        _parse: function (value) {
-            return parseInt(value);
-        }
-    });
-    $("#summarizationDurationMinutes" + taskNumber).spinnerEx1({
+    $("#summarizationDurationMinutes" + taskNumber).spinnerEx({
         min: 0,
         max: 99
     });
-    $("#summarizationDurationSeconds" + taskNumber).spinnerEx1({
+    $("#summarizationDurationSeconds" + taskNumber).spinnerEx({
         min: 0,
         max: 59
     });
-    $("#faceDetectionAggregateEmotionWindow" + taskNumber).spinner({
+    $("#faceEmotionAggregateWindow" + taskNumber).spinner({
         min: 250,
         max: 2000
     });
-    $("#faceDetectionAggregateEmotionInterval" + taskNumber).spinner({
+    $("#faceEmotionAggregateInterval" + taskNumber).spinner({
         min: 250,
         max: 1000
-    });
-    $("#motionHyperlapseFrameStart" + taskNumber).spinner({
-        min: 0,
-        max: 99999999
-    });
-    $("#motionHyperlapseFrameEnd" + taskNumber).spinner({
-        min: 0,
-        max: 99999999
-    });
-    $("#motionHyperlapseSpeed" + taskNumber).spinnerEx2({
-        min: 1,
-        max: 9
     });
     $("#taskOptions" + taskNumber).multiselect({
         noneSelectedText: "0 of 3 Job Task Options",
@@ -179,12 +166,9 @@ function SetJobTaskInputs(taskNumber) {
     });
 }
 function ClearJobTaskWidgets(taskNumber) {
-    $("#summarizationDurationMinutes" + taskNumber).spinnerEx1("destroy");
-    $("#summarizationDurationSeconds" + taskNumber).spinnerEx1("destroy");
-    $("#faceDetectionAggregateEmotionWindow" + taskNumber).spinner("destroy");
-    $("#faceDetectionAggregateEmotionInterval" + taskNumber).spinner("destroy");
-    $("#motionHyperlapseFrameStart" + taskNumber).spinner("destroy");
-    $("#motionHyperlapseFrameEnd" + taskNumber).spinner("destroy");
-    $("#motionHyperlapseSpeed" + taskNumber).spinnerEx2("destroy");
+    $("#summarizationDurationMinutes" + taskNumber).spinnerEx("destroy");
+    $("#summarizationDurationSeconds" + taskNumber).spinnerEx("destroy");
+    $("#faceEmotionAggregateWindow" + taskNumber).spinner("destroy");
+    $("#faceEmotionAggregateInterval" + taskNumber).spinner("destroy");
     $("#taskOptions" + taskNumber).multiselect("destroy");
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Microsoft.WindowsAzure.MediaServices.Client;
-
 namespace AzureSkyMedia.PlatformServices
 {
     internal enum MediaJobNotificationEvent
@@ -25,7 +23,7 @@ namespace AzureSkyMedia.PlatformServices
         Canceling = 6
     }
 
-    internal sealed class MediaJobNotification
+    internal class MediaJobNotification
     {
         public MediaJobNotificationEvent EventType { get; set; }
 
@@ -38,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
         public string ETag { get; set; }
     }
 
-    internal sealed class MediaJobNotificationProperties
+    internal class MediaJobNotificationProperties
     {
         public string AccountId { get; set; }
 

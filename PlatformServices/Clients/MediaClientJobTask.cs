@@ -34,10 +34,15 @@ namespace AzureSkyMedia.PlatformServices
             return assetIds.ToArray();
         }
 
-        private static JObject GetProcessorConfig(string documentId)
+        private static JObject GetProcessorConfig(MediaJobTask jobTask)
         {
             JObject processorConfig;
             string collectionId = Constant.Database.Collection.ProcessorConfig;
+            string documentId = jobTask.ProcessorConfigId;
+            if (string.IsNullOrEmpty(documentId))
+            {
+                documentId = string.Concat(jobTask.MediaProcessor.ToString(), Constant.Database.Document.DefaultIdSuffix);
+            }
             using (DocumentClient documentClient = new DocumentClient())
             {
                 processorConfig = documentClient.GetDocument(collectionId, documentId);

@@ -70,7 +70,7 @@
             </tr>
         }
         <tr>
-            <td class="layoutSide">
+            <td class="layoutPanel side">
                 <div>
                     @Html.Partial("SiteButton", new string[] { "amsPlatform", "MediaServices.png", "window.open('http://azure.microsoft.com/services/media-services/')", "layoutVertical" })
                 </div>
@@ -94,10 +94,10 @@
                     @Html.Partial("SiteButton", new string[] { "mediaIndexer", "MediaIndexer.png", "window.open('http://azure.microsoft.com/services/cognitive-services/video-indexer/')", "layoutVertical" })
                 </div>
             </td>
-            <td>
+            <td class="layoutPanel">
                 @RenderBody()
             </td>
-            <td class="layoutSide">
+            <td class="layoutPanel side">
                 <div>
                     @Html.Partial("SiteButton", new string[] { "cognitiveServices", "CognitiveServices.png", "window.open('http://azure.microsoft.com/services/cognitive-services/')", "layoutVertical" })
                 </div>

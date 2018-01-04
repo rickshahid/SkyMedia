@@ -1,6 +1,12 @@
 {
   "PresetName": "Default",
-  "MediaProcessor": "Character Recognition",
+  "MediaProcessor": "CharacterRecognition",
   "Version": 1.0,
-  "id": "Character Recognition - Default"
+  "Options": {
+    "AdvancedOutput": true,
+    "Language": "AutoDetect",
+    "TimeInterval": "00:00:00.500",
+    "TextOrientation": "AutoDetect"
+  },
+  "id": "CharacterRecognition_Default"
 }

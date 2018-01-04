@@ -22,7 +22,7 @@
                     searchCriteria: GetSearchCriteria()
                 },
                 function (results) {
-                    $("#insightData").jsonBrowse(results);
+                    $("#insightSearchResults").jsonBrowse(results);
                 }
             );
         }
@@ -37,7 +37,7 @@
     Media Insight Search
 }
 
-<table class="insightSearch">
+<table class="insightSearchCriteria">
     <tr>
         <td class="inputLabel">
             Index Id
@@ -100,7 +100,7 @@
     </tr>
 </table>
 
-<div id="insightData" class="insightData"></div>
+<div id="insightSearchResults" class="analyticsMetadata"></div>
 
 <div class="viewButtons">
     @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "SubmitSearchRequest()" })

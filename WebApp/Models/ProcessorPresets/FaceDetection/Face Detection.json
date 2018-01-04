@@ -1,12 +1,12 @@
 {
   "PresetName": "Default",
-  "MediaProcessor": "Face Detection",
+  "MediaProcessor": "FaceDetection",
   "Version": 1.0,
   "Options": {
-    "Mode": "Faces",
-    "TrackingMode": "Fast",
+    "Mode": "Analyze",
+    "BlurType": "Med",
     "AggregateEmotionWindowMs": 500,
     "AggregateEmotionIntervalMs": 500
   },
-  "id": "Face Detection - Default"
+  "id": "FaceDetection_Default"
 }

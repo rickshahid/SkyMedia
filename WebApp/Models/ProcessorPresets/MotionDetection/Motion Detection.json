@@ -1,6 +1,12 @@
 {
   "PresetName": "Default",
-  "MediaProcessor": "Motion Detection",
+  "MediaProcessor": "MotionDetection",
   "Version": 1.0,
-  "id": "Motion Detection - Default"
+  "Options": {
+    "DetectLightChange": false,
+    "SensitivityLevel": "medium",
+    "FrameSamplingValue": 1,
+    "MergeTimeThreshold": "00:00:00"
+  },
+  "id": "MotionDetection_Default"
 }

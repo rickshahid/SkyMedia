@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 480px) {
-    #accountInventory, #userDirectory, #userProfileEdit, .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    #accountInventory, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -17,7 +17,7 @@
 }
 
 @media all and (min-width: 481px) and (max-width: 768px) {
-    .layoutSide, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -43,8 +43,12 @@ body {
     margin: 0px auto;
 }
 
-.layoutSide {
+.layoutPanel {
     vertical-align: top;
+}
+
+.layoutPanel.side {
+
 }
 
 .header {
@@ -104,8 +108,12 @@ body {
     font-size: large;
 }
 
-.streamDial {
-    padding: 0px 20px 0px 20px;
+.streamTuner {
+    width: 100%;
+}
+
+.streamTuner table {
+    margin: 0px auto;
 }
 
 .streamSlider {
@@ -137,20 +145,19 @@ body {
     text-align: center;
 }
 
-.streamName {
+.streamInfoName {
     font-weight: bold;
 }
 
-.streamUrl {
+.streamInfoUrl {
     font-style: italic;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .viewTitle {
     text-align: center;
     font-size: x-large;
     font-weight: bold;
-    margin: 5px;
 }
 
 .viewButtons {
@@ -162,24 +169,60 @@ body {
     margin: 0px auto;
 }
 
-#processorPresetSave {
-    padding-top: 3px;
+a.json-placeholder {
+    color: azure;
 }
 
-.processorConfigTable {
+.json-editor {
+    padding-top: 10px !important;
+    min-width: 750px;
+}
+
+.mediaProcessorPresets {
+    margin: 0px auto;
+}
+
+.mediaProcessorPresets select {
+    font-weight: bold;
+    width: 100%;
+}
+
+.mediaProcessorPresetButtons {
+    padding-right: 10px;
+    margin-top: -34px;
+    display: none;
+    float: right;
+}
+
+.mediaProcessor {
+    font-weight: bold;
+    width: 195px !important;
+}
+
+.mediaProcessorConfig {
+    font-weight: bold;
+    width: 420px;
+}
+
+.mediaProcessorConfigTable {
     border: 2px dotted deepskyblue;
 }
 
-.processorConfigTable td {
+.mediaProcessorConfigTable td {
     padding: 5px;
 }
 
-.processorConfigRow {
+.mediaProcessorConfigRow {
     padding-left: 3px !important;
 }
 
-.processorConfigRow td {
+.mediaProcessorConfigRow td {
     padding: 0px !important;
+}
+
+.mediaCertification {
+    text-align: center;
+    padding-top: 20px;
 }
 
 .ui-spinner-input {
@@ -198,10 +241,6 @@ body {
 
 .spinner.d4 {
     width: 45px;
-}
-
-.spinner.d8 {
-    width: 78px;
 }
 
 .ui-slider {
@@ -444,30 +483,15 @@ body {
     font-style: italic;
 }
 
-.mediaProcessor {
-    font-weight: bold;
-    width: 195px !important;
-}
-
-.mediaProcessorPresets {
-    margin: 0px auto;
-}
-
-.mediaProcessorPresets select {
-    font-weight: bold;
-    width: 100%;
-}
-
-.mediaProcessorConfig {
-    font-weight: bold;
-    width: 420px;
-}
-
 .inputLabel {
     padding-right: 0px !important;
     white-space: nowrap;
     font-weight: bold;
     text-align: right;
+}
+
+.inputLabel.large {
+    font-size: large;
 }
 
 .inputLabelMultiLine {
@@ -517,7 +541,7 @@ body {
 }
 
 .faceDetectionMode {
-    margin-left: 12px;
+    padding-left: 2px !important;
 }
 
 .faceRedactionBlurMode {
@@ -530,25 +554,11 @@ body {
     width: 114px;
 }
 
-.motionHyperlapseFrames {
-    margin-right: 5px;
-}
-
-.motionHyperlapseFramesRange {
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-.motionHyperlapseSpeed {
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
 .jobName {
     background-color: white !important;
     border: none !important;
     font-weight: bold;
-    width: 168px;
+    width: 170px;
 }
 
 .jobNode{
@@ -725,29 +735,16 @@ body {
     width: 800px;
 }
 
-.insightSearch {
+.insightSearchCriteria {
     border: 1px solid deepskyblue;
     border-radius: 20px;
     padding: 5px;
 }
 
-.insightSearch td {
+.insightSearchCriteria td {
     padding: 5px;
 }
 
 .searchLanguage {
     width: 100%;
-}
-
-a.json-placeholder {
-    color: yellow;
-}
-
-.mediaCertification {
-    text-align: center;
-    padding-top: 20px;
-}
-
-.json-editor {
-    min-width: 800px;
 }

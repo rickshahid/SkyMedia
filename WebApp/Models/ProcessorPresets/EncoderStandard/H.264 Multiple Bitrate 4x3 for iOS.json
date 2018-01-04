@@ -1,6 +1,6 @@
 {
-  "PresetName": "H264 Multiple Bitrate 4x3 for iOS",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Multiple Bitrate 4x3 for iOS",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -133,5 +133,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Multiple Bitrate 4x3 for iOS"
+  "id": "EncoderStandard_H.264 Multiple Bitrate 4x3 for iOS"
 }

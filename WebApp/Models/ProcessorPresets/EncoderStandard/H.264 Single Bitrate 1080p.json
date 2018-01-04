@@ -1,6 +1,6 @@
 {
-  "PresetName": "H264 Single Bitrate 1080p Audio 5.1",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Single Bitrate 1080p",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -26,9 +26,9 @@
     },
     {
       "Profile": "AACLC",
-      "Channels": 6,
+      "Channels": 2,
       "SamplingRate": 48000,
-      "Bitrate": 384,
+      "Bitrate": 128,
       "Type": "AACAudio"
     }
   ],
@@ -40,5 +40,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Single Bitrate 1080p Audio 5.1"
+  "id": "EncoderStandard_H.264 Single Bitrate 1080p"
 }

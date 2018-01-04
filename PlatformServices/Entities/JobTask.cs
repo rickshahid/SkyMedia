@@ -26,9 +26,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaProcessor MediaProcessor { get; set; }
 
-        public string ProcessorConfig { get; set; }
+        public string ProcessorConfigId { get; set; }
 
-        public string ProcessorDocumentId { get; set; }
+        public string ProcessorConfig { get; set; }
 
         public string OutputAssetName { get; set; }
 
@@ -44,23 +44,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
-        public IndexerConfig IndexerConfig { get; set; }
+        public ContentIndexer ContentIndexer { get; set; }
 
         public TaskOptions Options { get; set; }
-    }
-
-    public class IndexerConfig
-    {
-        public string LanguageId { get; set; }
-
-        public string SearchPartition { get; set; }
-
-        public string VideoDescription { get; set; }
-
-        public string VideoMetadata { get; set; }
-
-        public bool VideoPublic { get; set; }
-
-        public bool AudioOnly { get; set; }
     }
 }

@@ -1,11 +1,11 @@
 {
   "PresetName": "Default",
-  "MediaProcessor": "Video Summarization",
+  "MediaProcessor": "VideoSummarization",
   "Version": 1.0,
   "Options": {
     "OutputAudio": true,
     "FadeInFadeOut": true,
     "MaxMotionThumbnailDurationInSecs": 30
   },
-  "id": "Video Summarization - Default"
+  "id": "VideoSummarization_Default"
 }

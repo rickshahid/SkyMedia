@@ -14,9 +14,9 @@ namespace AzureSkyMedia.PlatformServices
             return locator.Type == LocatorType.OnDemandOrigin;
         }
 
-        private static int OrderByDate(ILocator leftSide, ILocator rightSide)
+        private static int OrderByDate(ILocator leftItem, ILocator rightItem)
         {
-            return DateTime.Compare(leftSide.Asset.Created, rightSide.Asset.Created);
+            return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
         }
 
         private static MediaTrack[] GetTextTracks(string tracks)

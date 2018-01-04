@@ -26,7 +26,7 @@ function SetLayout(b2b) {
     CreateTipLeft("botService", "Azure Bot Service");
     CreateTipLeft("batchRendering", "Azure Batch Rendering");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
-    CreateTipTop("mediaProcessorPresetEditor", "Media Processor<br><br>Preset Editor");
+    CreateTipTop("mediaProcessorPresets", "Media Processor<br><br>Presets");
     CreateTipTop("mediaFileWorkflow", "Media File Workflow");
     CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
     CreateTipTop("mediaAssetFiles", "Media Asset Files");
@@ -81,6 +81,15 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
 function DisplayMessage(title, message, buttons, width, onClose) {
     var dialogId = "messageDialog";
     DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose);
+}
+function ConfirmMessage(title, message, onConfirm) {
+    var buttons = {
+        Yes: onConfirm,
+        No: function () {
+            $(this).dialog("close");
+        }
+    };
+    DisplayMessage(title, message, buttons);
 }
 function GetMediaPlayer() {
     var options = {

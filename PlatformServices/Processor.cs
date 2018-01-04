@@ -19,13 +19,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 processorIds.Add(Constant.Media.ProcessorId.EncoderStandard);
                 processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
-                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
-                processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
-                processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
                 processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
-                processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
+                processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
                 processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
-                processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
+                processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
+                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
             }
             else
             {
@@ -34,15 +32,20 @@ namespace AzureSkyMedia.PlatformServices
                 processorIds.Add(Constant.Media.ProcessorId.VideoIndexer);
                 processorIds.Add(Constant.Media.ProcessorId.VideoAnnotation);
                 processorIds.Add(Constant.Media.ProcessorId.VideoSummarization);
-                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
-                processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
-                processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
                 processorIds.Add(Constant.Media.ProcessorId.FaceDetection);
-                processorIds.Add(Constant.Media.ProcessorId.FaceRedaction);
+                processorIds.Add(Constant.Media.ProcessorId.SpeechAnalyzer);
                 processorIds.Add(Constant.Media.ProcessorId.MotionDetection);
-                processorIds.Add(Constant.Media.ProcessorId.MotionHyperlapse);
+                processorIds.Add(Constant.Media.ProcessorId.ContentModeration);
+                processorIds.Add(Constant.Media.ProcessorId.CharacterRecognition);
             }
             return processorIds.ToArray();
+        }
+
+        private static MediaProcessor[] GetProcessors(string authToken, bool presetsView)
+        {
+            MediaClient mediaClient = new MediaClient(authToken);
+            IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
+            return GetMediaProcessors(processors, presetsView);
         }
 
         private static MediaProcessor[] GetMediaProcessors(string authToken, bool presetsView)
@@ -55,9 +58,7 @@ namespace AzureSkyMedia.PlatformServices
                 mediaProcessors = cacheClient.GetValues<MediaProcessor>(itemKey);
                 if (mediaProcessors.Length == 0)
                 {
-                    MediaClient mediaClient = new MediaClient(authToken);
-                    IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-                    mediaProcessors = GetMediaProcessors(processors, presetsView);
+                    mediaProcessors = GetProcessors(authToken, presetsView);
                     cacheClient.SetValue<MediaProcessor[]>(itemKey, mediaProcessors);
                 }
             }
@@ -65,9 +66,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (mediaProcessors == null)
                 {
-                    MediaClient mediaClient = new MediaClient(authToken);
-                    IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
-                    mediaProcessors = GetMediaProcessors(processors, presetsView);
+                    mediaProcessors = GetProcessors(authToken, presetsView);
                 }
             }
             return mediaProcessors;
@@ -122,26 +121,20 @@ namespace AzureSkyMedia.PlatformServices
                 case Constant.Media.ProcessorId.VideoSummarization:
                     mediaProcessor = MediaProcessor.VideoSummarization;
                     break;
-                case Constant.Media.ProcessorId.CharacterRecognition:
-                    mediaProcessor = MediaProcessor.CharacterRecognition;
-                    break;
-                case Constant.Media.ProcessorId.ContentModeration:
-                    mediaProcessor = MediaProcessor.ContentModeration;
+                case Constant.Media.ProcessorId.FaceDetection:
+                    mediaProcessor = MediaProcessor.FaceDetection;
                     break;
                 case Constant.Media.ProcessorId.SpeechAnalyzer:
                     mediaProcessor = MediaProcessor.SpeechAnalyzer;
                     break;
-                case Constant.Media.ProcessorId.FaceDetection:
-                    mediaProcessor = MediaProcessor.FaceDetection;
-                    break;
-                case Constant.Media.ProcessorId.FaceRedaction:
-                    mediaProcessor = MediaProcessor.FaceRedaction;
-                    break;
                 case Constant.Media.ProcessorId.MotionDetection:
                     mediaProcessor = MediaProcessor.MotionDetection;
                     break;
-                case Constant.Media.ProcessorId.MotionHyperlapse:
-                    mediaProcessor = MediaProcessor.MotionHyperlapse;
+                case Constant.Media.ProcessorId.ContentModeration:
+                    mediaProcessor = MediaProcessor.ContentModeration;
+                    break;
+                case Constant.Media.ProcessorId.CharacterRecognition:
+                    mediaProcessor = MediaProcessor.CharacterRecognition;
                     break;
             }
             return mediaProcessor;
@@ -169,7 +162,7 @@ namespace AzureSkyMedia.PlatformServices
             return mediaProcessors;
         }
 
-        public static string GetProcessorId(MediaProcessor mediaProcessor)
+        public static string GetProcessorId(MediaProcessor mediaProcessor, string processorConfig)
         {
             string processorId = null;
             switch (mediaProcessor)
@@ -189,26 +182,26 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaProcessor.VideoSummarization:
                     processorId = Constant.Media.ProcessorId.VideoSummarization;
                     break;
-                case MediaProcessor.CharacterRecognition:
-                    processorId = Constant.Media.ProcessorId.CharacterRecognition;
-                    break;
-                case MediaProcessor.ContentModeration:
-                    processorId = Constant.Media.ProcessorId.ContentModeration;
+                case MediaProcessor.FaceDetection:
+                    processorId = Constant.Media.ProcessorId.FaceRedaction;
+                    JToken processorOptions = JObject.Parse(processorConfig)["Options"];
+                    string processorMode = processorOptions["Mode"].ToString();
+                    if (processorMode == "PerFaceEmotion" || processorMode == "AggregateEmotion")
+                    {
+                        processorId = Constant.Media.ProcessorId.FaceDetection;
+                    }
                     break;
                 case MediaProcessor.SpeechAnalyzer:
                     processorId = Constant.Media.ProcessorId.SpeechAnalyzer;
                     break;
-                case MediaProcessor.FaceDetection:
-                    processorId = Constant.Media.ProcessorId.FaceDetection;
-                    break;
-                case MediaProcessor.FaceRedaction:
-                    processorId = Constant.Media.ProcessorId.FaceRedaction;
-                    break;
                 case MediaProcessor.MotionDetection:
                     processorId = Constant.Media.ProcessorId.MotionDetection;
                     break;
-                case MediaProcessor.MotionHyperlapse:
-                    processorId = Constant.Media.ProcessorId.MotionHyperlapse;
+                case MediaProcessor.ContentModeration:
+                    processorId = Constant.Media.ProcessorId.ContentModeration;
+                    break;
+                case MediaProcessor.CharacterRecognition:
+                    processorId = Constant.Media.ProcessorId.CharacterRecognition;
                     break;
             }
             return processorId;
@@ -225,16 +218,16 @@ namespace AzureSkyMedia.PlatformServices
             NameValueCollection processorPresets = new NameValueCollection();
             DocumentClient documentClient = new DocumentClient();
             string collectionId = Constant.Database.Collection.ProcessorConfig;
-            string processorName = GetProcessorName(mediaProcessor);
+            string accountPresetId = string.Concat(accountId, Constant.TextDelimiter.Identifier, mediaProcessor.ToString());
             JObject[] presets = documentClient.GetDocuments(collectionId);
             foreach (JObject preset in presets)
             {
+                string presetId = preset["id"].ToString();
                 string presetProcessor = preset["MediaProcessor"].ToString();
-                if (string.Equals(presetProcessor, processorName, StringComparison.OrdinalIgnoreCase) && (preset["accountId"] == null ||
-                    string.Equals(accountId, preset["accountId"].ToString(), StringComparison.OrdinalIgnoreCase)))
+                if (presetProcessor.StartsWith(mediaProcessor.ToString(), StringComparison.OrdinalIgnoreCase) ||
+                    presetId.StartsWith(accountPresetId, StringComparison.Ordinal))
                 {
                     string presetName = preset["PresetName"].ToString();
-                    string presetId = preset["id"].ToString();
                     processorPresets.Add(presetName, presetId);
                 }
             }

@@ -1,6 +1,6 @@
 {
-  "PresetName": "H264 Multiple Bitrate 4x3 SD Audio 5.1",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Multiple Bitrate 16x9 SD Audio 5.1",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -9,10 +9,10 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 1600,
-          "MaxBitrate": 1600,
+          "Bitrate": 1900,
+          "MaxBitrate": 1900,
           "BufferWindow": "00:00:05",
-          "Width": 640,
+          "Width": 848,
           "Height": 480,
           "BFrames": 3,
           "ReferenceFrames": 3,
@@ -26,7 +26,7 @@
           "Bitrate": 1300,
           "MaxBitrate": 1300,
           "BufferWindow": "00:00:05",
-          "Width": 640,
+          "Width": 848,
           "Height": 480,
           "BFrames": 3,
           "ReferenceFrames": 3,
@@ -37,10 +37,10 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 800,
-          "MaxBitrate": 800,
+          "Bitrate": 900,
+          "MaxBitrate": 900,
           "BufferWindow": "00:00:05",
-          "Width": 480,
+          "Width": 640,
           "Height": 360,
           "BFrames": 3,
           "ReferenceFrames": 3,
@@ -51,10 +51,10 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 600,
-          "MaxBitrate": 600,
+          "Bitrate": 650,
+          "MaxBitrate": 650,
           "BufferWindow": "00:00:05",
-          "Width": 480,
+          "Width": 640,
           "Height": 360,
           "BFrames": 3,
           "ReferenceFrames": 3,
@@ -68,7 +68,7 @@
           "Bitrate": 400,
           "MaxBitrate": 400,
           "BufferWindow": "00:00:05",
-          "Width": 360,
+          "Width": 432,
           "Height": 240,
           "BFrames": 3,
           "ReferenceFrames": 3,
@@ -95,5 +95,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Multiple Bitrate 4x3 SD Audio 5.1"
+  "id": "EncoderStandard_H.264 Multiple Bitrate 16x9 SD Audio 5.1"
 }

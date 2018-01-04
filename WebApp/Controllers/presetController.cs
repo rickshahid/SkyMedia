@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 using Microsoft.AspNetCore.Mvc;
@@ -12,22 +14,54 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class presetController : Controller
     {
-        internal static SelectListItem[] GetProcessorPresets(MediaProcessor mediaProcessor, string accountId, bool includeDefaults)
+        private bool HasUniqueName(string processorPreset, out JObject presetConfig)
+        {
+            bool uniqueName = true;
+            presetConfig = JObject.Parse(processorPreset);
+            string presetName = presetConfig["PresetName"].ToString();
+            string mediaProcessor = presetConfig["MediaProcessor"].ToString();
+            string appDirectory = Directory.GetCurrentDirectory();
+            string presetsDirectory = string.Concat(appDirectory, Constant.Media.ProcessorConfig.DirectoryPresets, mediaProcessor);
+            string[] presetFiles = Directory.GetFiles(presetsDirectory);
+            foreach (string presetFile in presetFiles)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(presetFile);
+                if (string.Equals(fileName, presetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    uniqueName = false;
+                }
+            }
+            if (uniqueName)
+            {
+                string authToken = homeController.GetAuthToken(this.Request, this.Response);
+                User authUser = new User(authToken);
+                presetConfig["id"] = string.Concat(authUser.MediaAccountId, Constant.TextDelimiter.Identifier, mediaProcessor, Constant.TextDelimiter.Identifier, presetName);
+            }
+            return uniqueName;
+        }
+
+        private static int OrderByName(SelectListItem leftItem, SelectListItem rightItem)
+        {
+            return string.Compare(leftItem.Text, rightItem.Text);
+        }
+
+        internal static SelectListItem[] GetProcessorPresets(MediaProcessor mediaProcessor, string accountId, bool includeLadder)
         {
             List<SelectListItem> processorPresets = new List<SelectListItem>();
             NameValueCollection presets = Processor.GetProcessorPresets(mediaProcessor, accountId);
-            if (includeDefaults)
+            if (includeLadder)
             {
                 SelectListItem processorPreset = new SelectListItem()
                 {
-                    Text = "H.264 MBR Adaptive Streaming Ladder (Uninterleaved)",
-                    Value = "Adaptive Streaming"
+                    Text = Constant.Media.ProcessorConfig.StreamingLadderPresetName,
+                    Value = Constant.Media.ProcessorConfig.StreamingLadderPresetValue,
+                    Selected = true
                 };
                 processorPresets.Add(processorPreset);
                 processorPreset = new SelectListItem()
                 {
-                    Text = "H.264 MBR Adaptive Streaming Ladder (Interleaved)",
-                    Value = "Content Adaptive Multiple Bitrate MP4"
+                    Text = Constant.Media.ProcessorConfig.DownloadLadderPresetName,
+                    Value = Constant.Media.ProcessorConfig.DownloadLadderPresetValue
                 };
                 processorPresets.Add(processorPreset);
             }
@@ -40,14 +74,15 @@ namespace AzureSkyMedia.WebApp.Controllers
                 };
                 processorPresets.Add(processorPreset);
             }
+            processorPresets.Sort(OrderByName);
             return processorPresets.ToArray();
         }
 
-        public JsonResult options(MediaProcessor mediaProcessor)
+        public JsonResult configs(MediaProcessor mediaProcessor)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             User authUser = new User(authToken);
-            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.Id, false);
+            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.MediaAccountId, false);
             return Json(presets);
         }
 
@@ -61,6 +96,37 @@ namespace AzureSkyMedia.WebApp.Controllers
                 preset = documentClient.GetDocument(collectionId, procedureId, "id", presetId);
             }
             return Json(preset);
+        }
+
+        public JsonResult save(string processorPreset)
+        {
+            bool saved = false;
+            if (HasUniqueName(processorPreset, out JObject presetConfig))
+            {
+                string collectionId = Constant.Database.Collection.ProcessorConfig;
+                using (DocumentClient documentClient = new DocumentClient())
+                {
+                    documentClient.UpsertDocument(collectionId, presetConfig);
+                    saved = true;
+                }
+            }
+            return Json(saved);
+        }
+
+        public JsonResult delete(string processorPreset)
+        {
+            bool deleted = false;
+            if (HasUniqueName(processorPreset, out JObject presetConfig))
+            {
+                string collectionId = Constant.Database.Collection.ProcessorConfig;
+                string documentId = presetConfig["id"].ToString();
+                using (DocumentClient documentClient = new DocumentClient())
+                {
+                    documentClient.DeleteDocument(collectionId, documentId);
+                    deleted = true;
+                }
+            }
+            return Json(deleted);
         }
 
         public IActionResult index()

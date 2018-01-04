@@ -1,6 +1,6 @@
 {
-  "PresetName": "H264 Single Bitrate 1080p",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Single Bitrate 16x9 SD",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -10,11 +10,11 @@
         {
           "Profile": "Auto",
           "Level": "auto",
-          "Bitrate": 6750,
-          "MaxBitrate": 6750,
+          "Bitrate": 2200,
+          "MaxBitrate": 2200,
           "BufferWindow": "00:00:05",
-          "Width": 1920,
-          "Height": 1080,
+          "Width": 848,
+          "Height": 480,
           "BFrames": 3,
           "ReferenceFrames": 3,
           "AdaptiveBFrame": true,
@@ -40,5 +40,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Single Bitrate 1080p"
+  "id": "EncoderStandard_H.264 Single Bitrate 16x9 SD"
 }

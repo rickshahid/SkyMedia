@@ -1,6 +1,6 @@
 {
-  "PresetName": "H264 Single Bitrate 16x9 SD Audio 5.1",
-  "MediaProcessor": "Encoder Standard",
+  "PresetName": "H.264 Single Bitrate 16x9 SD Audio 5.1",
+  "MediaProcessor": "EncoderStandard",
   "Version": 1.0,
   "Codecs": [
     {
@@ -40,5 +40,5 @@
       }
     }
   ],
-  "id": "Encoder Standard - H264 Single Bitrate 16x9 SD Audio 5.1"
+  "id": "EncoderStandard_H.264 Single Bitrate 16x9 SD Audio 5.1"
 }

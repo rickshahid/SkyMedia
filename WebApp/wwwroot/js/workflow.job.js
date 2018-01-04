@@ -65,9 +65,9 @@ function AddJobTask(taskButton) {
     SetJobTaskInputs(newTaskNumber);
     SetJobTaskInputs(lastTaskNumber);
     var mediaProcessor = $("#mediaProcessor" + newTaskNumber)[0];
-    SetProcessorConfig(mediaProcessor, newTaskNumber, null);
+    SetProcessorConfig(mediaProcessor, newTaskNumber, null, null);
     $("#mediaWorkflowTaskRemove").show();
-    if (lastTaskNumber == 4) {
+    if (lastTaskNumber == 9) {
         $("#mediaWorkflowTaskAdd").hide();
     }
     ScrollToBottom();
