@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Text;
 
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -10,19 +9,23 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static bool ValidDocument(JObject document)
+        private static bool ValidDocument(IAsset asset, string fileName)
         {
-            string settingKey = Constant.AppSettingKey.DatabaseDocumentMaxSizeBytes;
-            string maxDocumentSize = AppSetting.GetValue(settingKey);
-            int maxDocumentBytes = int.Parse(maxDocumentSize);
-            byte[] documentBytes = Encoding.UTF8.GetBytes(document.ToString());
-            return documentBytes.Length <= maxDocumentBytes;
+            bool validDocument = true;
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                IAssetFile assetFile = GetAssetFile(asset, fileName);
+                string settingKey = Constant.AppSettingKey.DatabaseDocumentMaxSizeBytes;
+                string maxDocumentSizeBytes = AppSetting.GetValue(settingKey);
+                validDocument = assetFile.ContentFileSize <= int.Parse(maxDocumentSizeBytes);
+            }
+            return validDocument;
         }
 
-        private static string UpsertDocument(DocumentClient documentClient, JObject document, MediaProcessor processor, IAsset asset)
+        private static string UpsertDocument(DocumentClient documentClient, JObject document, MediaProcessor processor, IAsset asset, string fileName)
         {
             string documentId = string.Empty;
-            if (ValidDocument(document))
+            if (ValidDocument(asset, fileName))
             {
                 string collectionId = Constant.Database.Collection.ContentInsight;
                 documentId = documentClient.UpsertDocument(collectionId, document);
@@ -73,11 +76,11 @@ namespace AzureSkyMedia.PlatformServices
                     JObject document = JObject.Parse(documentData);
                     document = DocumentClient.SetContext(document, contentPublish.MediaAccount, outputAsset.Id);
                     MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(jobTask.MediaProcessorId);
-                    UpsertDocument(documentClient, document, mediaProcessor.Value, outputAsset);
+                    string documentId = UpsertDocument(documentClient, document, mediaProcessor.Value, outputAsset, fileName);
 
                     if (encoderOutput != null)
                     {
-                        string assetFileName = string.Concat(outputAsset.AlternateId, Constant.Media.FileExtension.Json);
+                        string assetFileName = string.Concat(mediaProcessor.Value.ToString(), Constant.TextDelimiter.Identifier, documentId, Constant.Media.FileExtension.Json);
                         IAssetFile assetFile = encoderOutput.AssetFiles.Create(assetFileName);
                         using (Stream sourceStream = sourceBlob.OpenRead())
                         {
@@ -135,7 +138,7 @@ namespace AzureSkyMedia.PlatformServices
 
                 DocumentClient documentClient = new DocumentClient();
                 index = DocumentClient.SetContext(index, insightPublish.MediaAccount, assetId);
-                string documentId = UpsertDocument(documentClient, index, MediaProcessor.VideoIndexer, asset);
+                string documentId = UpsertDocument(documentClient, index, MediaProcessor.VideoIndexer, asset, null);
 
                 mediaPublished = new MediaPublished
                 {

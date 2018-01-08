@@ -36,6 +36,7 @@ namespace AzureSkyMedia.PlatformServices
 
             DynamicTableEntity dynamicEntity = new DynamicTableEntity(entity.PartitionKey, entity.RowKey)
             {
+                ETag = "*",
                 Properties = properties
             };
             return dynamicEntity;
@@ -86,7 +87,10 @@ namespace AzureSkyMedia.PlatformServices
                 OperationContext context = new OperationContext();
                 TableOperation operation = TableOperation.Retrieve(partitionKey, rowKey);
                 DynamicTableEntity dynamicEntity = table.Execute(operation).Result as DynamicTableEntity;
-                entity = GetEntity<T>(dynamicEntity, context);
+                if (dynamicEntity != null)
+                {
+                    entity = GetEntity<T>(dynamicEntity, context);
+                }
             }
             return entity;
         }
@@ -104,7 +108,6 @@ namespace AzureSkyMedia.PlatformServices
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            entity.ETag = "*";
             DynamicTableEntity dynamicEntity = GetDynamicEntity(entity);
             TableOperation operation = TableOperation.Replace(dynamicEntity);
             table.Execute(operation);
@@ -114,7 +117,6 @@ namespace AzureSkyMedia.PlatformServices
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            entity.ETag = "*";
             DynamicTableEntity dynamicEntity = GetDynamicEntity(entity);
             TableOperation operation = TableOperation.InsertOrReplace(dynamicEntity);
             table.Execute(operation);
