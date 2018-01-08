@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
@@ -23,47 +22,59 @@ namespace AzureSkyMedia.PlatformServices
             _storage = storageAccount.CreateCloudTableClient();
         }
 
-        private void SetProperties(StorageEntity entity)
+        private DynamicTableEntity GetDynamicEntity(StorageEntity entity)
         {
             if (!entity.CreatedOn.HasValue)
             {
                 entity.CreatedOn = DateTime.UtcNow;
             }
-        }
 
-        private void SetProperties(IList<StorageEntity> entities)
-        {
-            foreach (StorageEntity entity in entities)
+            OperationContext context = new OperationContext();
+            IDictionary<string, EntityProperty> properties = TableEntity.Flatten(entity, context);
+            properties.Remove("PartitionKey");
+            properties.Remove("RowKey");
+
+            DynamicTableEntity dynamicEntity = new DynamicTableEntity(entity.PartitionKey, entity.RowKey)
             {
-                SetProperties(entity);
-            }
+                Properties = properties
+            };
+            return dynamicEntity;
         }
 
-        public T[] GetEntities<T>(string tableName, string propertyName, string filterOperation, string propertyValue) where T : StorageEntity, new()
+        private T GetEntity<T>(DynamicTableEntity dynamicEntity, OperationContext context) where T : StorageEntity
         {
-            T[] entities = new T[] { };
+            T entity = TableEntity.ConvertBack<T>(dynamicEntity.Properties, context);
+            entity.PartitionKey = dynamicEntity.PartitionKey;
+            entity.RowKey = dynamicEntity.RowKey;
+            return entity;
+        }
+
+        public T[] GetEntities<T>(string tableName, string partitionKey) where T : StorageEntity
+        {
+            List<T> entities = new List<T>();
             CloudTable table = _storage.GetTableReference(tableName);
             if (table.Exists())
             {
-                TableQuery<T> query = new TableQuery<T>();
-                if (!string.IsNullOrEmpty(propertyName))
+                TableQuery query = new TableQuery();
+                if (!string.IsNullOrEmpty(partitionKey))
                 {
-                    string filter = TableQuery.GenerateFilterCondition(propertyName, filterOperation, propertyValue);
+                    string filter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey);
                     query = query.Where(filter);
                 }
-                entities = table.ExecuteQuery(query).ToArray();
+                OperationContext context = new OperationContext();
+                IEnumerable<DynamicTableEntity> dynamicEntities = table.ExecuteQuery(query);
+                foreach (DynamicTableEntity dynamicEntity in dynamicEntities)
+                {
+                    T entity = GetEntity<T>(dynamicEntity, context);
+                    entities.Add(entity);
+                }
             }
-            return entities;
+            return entities.ToArray();
         }
 
-        public T[] GetEntities<T>(string tableName, string propertyName, string propertyValue) where T : StorageEntity, new()
+        public T[] GetEntities<T>(string tableName) where T : StorageEntity
         {
-            return GetEntities<T>(tableName, propertyName, QueryComparisons.Equal, propertyValue);
-        }
-
-        public T[] GetEntities<T>(string tableName) where T : StorageEntity, new()
-        {
-            return GetEntities<T>(tableName, null, null);
+            return GetEntities<T>(tableName, null);
         }
 
         public T GetEntity<T>(string tableName, string partitionKey, string rowKey) where T : StorageEntity
@@ -72,8 +83,10 @@ namespace AzureSkyMedia.PlatformServices
             CloudTable table = _storage.GetTableReference(tableName);
             if (table.Exists())
             {
-                TableOperation operation = TableOperation.Retrieve<T>(partitionKey, rowKey);
-                entity = (T)table.Execute(operation).Result;
+                OperationContext context = new OperationContext();
+                TableOperation operation = TableOperation.Retrieve(partitionKey, rowKey);
+                DynamicTableEntity dynamicEntity = table.Execute(operation).Result as DynamicTableEntity;
+                entity = GetEntity<T>(dynamicEntity, context);
             }
             return entity;
         }
@@ -82,106 +95,36 @@ namespace AzureSkyMedia.PlatformServices
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            SetProperties(entity);
-            TableOperation operation = TableOperation.Insert(entity);
+            DynamicTableEntity dynamicEntity = GetDynamicEntity(entity);
+            TableOperation operation = TableOperation.Insert(dynamicEntity);
             table.Execute(operation);
-        }
-
-        public void InsertEntities(string tableName, IList<StorageEntity> entities)
-        {
-            if (entities.Count > 0)
-            {
-                CloudTable table = _storage.GetTableReference(tableName);
-                table.CreateIfNotExists();
-                SetProperties(entities);
-                TableBatchOperation operations = new TableBatchOperation();
-                foreach (StorageEntity entity in entities)
-                {
-                    operations.Insert(entity);
-                }
-                table.ExecuteBatch(operations);
-            }
         }
 
         public void UpdateEntity(string tableName, StorageEntity entity)
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            SetProperties(entity);
-            TableOperation operation = TableOperation.Replace(entity);
+            entity.ETag = "*";
+            DynamicTableEntity dynamicEntity = GetDynamicEntity(entity);
+            TableOperation operation = TableOperation.Replace(dynamicEntity);
             table.Execute(operation);
-        }
-
-        public void UpdateEntities(string tableName, IList<StorageEntity> entities)
-        {
-            if (entities.Count > 0)
-            {
-                CloudTable table = _storage.GetTableReference(tableName);
-                table.CreateIfNotExists();
-                SetProperties(entities);
-                TableBatchOperation operations = new TableBatchOperation();
-                foreach (StorageEntity entity in entities)
-                {
-                    operations.Replace(entity);
-                }
-                table.ExecuteBatch(operations);
-            }
         }
 
         public void UpsertEntity(string tableName, StorageEntity entity)
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
-            SetProperties(entity);
-            TableOperation operation = TableOperation.InsertOrReplace(entity);
+            entity.ETag = "*";
+            DynamicTableEntity dynamicEntity = GetDynamicEntity(entity);
+            TableOperation operation = TableOperation.InsertOrReplace(dynamicEntity);
             table.Execute(operation);
-        }
-
-        public void UpsertEntities(string tableName, IList<StorageEntity> entities)
-        {
-            if (entities.Count > 0)
-            {
-                CloudTable table = _storage.GetTableReference(tableName);
-                table.CreateIfNotExists();
-                SetProperties(entities);
-                TableBatchOperation operations = new TableBatchOperation();
-                foreach (StorageEntity entity in entities)
-                {
-                    operations.InsertOrReplace(entity);
-                }
-                table.ExecuteBatch(operations);
-            }
-        }
-
-        public void MergeEntity(string tableName, StorageEntity entity)
-        {
-            CloudTable table = _storage.GetTableReference(tableName);
-            table.CreateIfNotExists();
-            SetProperties(entity);
-            TableOperation operation = TableOperation.Merge(entity);
-            table.Execute(operation);
-        }
-
-        public void MergeEntities(string tableName, IList<StorageEntity> entities)
-        {
-            if (entities.Count > 0)
-            {
-                CloudTable table = _storage.GetTableReference(tableName);
-                table.CreateIfNotExists();
-                SetProperties(entities);
-                TableBatchOperation operations = new TableBatchOperation();
-                foreach (StorageEntity entity in entities)
-                {
-                    operations.Merge(entity);
-                }
-                table.ExecuteBatch(operations);
-            }
         }
 
         public void DeleteEntity(string tableName, StorageEntity entity)
         {
             CloudTable table = _storage.GetTableReference(tableName);
             table.CreateIfNotExists();
+            entity.ETag = "*";
             TableOperation operation = TableOperation.Delete(entity);
             table.Execute(operation);
         }
@@ -195,6 +138,7 @@ namespace AzureSkyMedia.PlatformServices
                 TableBatchOperation operations = new TableBatchOperation();
                 foreach (StorageEntity entity in entities)
                 {
+                    entity.ETag = "*";
                     operations.Delete(entity);
                 }
                 table.ExecuteBatch(operations);

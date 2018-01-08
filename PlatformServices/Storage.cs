@@ -40,26 +40,25 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(subscriptionId))
             {
                 User authUser = new User(authToken);
-                string mediaAccountDomain = authUser.MediaAccountDomainName;
-                string mediaClientId = authUser.MediaAccountClientId;
-                string mediaClientKey = authUser.MediaAccountClientKey;
 
                 settingKey = Constant.AppSettingKey.MediaLoginUrl;
                 string mediaLoginUrl = AppSetting.GetValue(settingKey);
 
-                string mediaAuthority = string.Concat(mediaLoginUrl, mediaAccountDomain);
+                string mediaAuthority = string.Concat(mediaLoginUrl, authUser.MediaAccount.DomainName);
                 AuthenticationContext authContext = new AuthenticationContext(mediaAuthority);
 
                 settingKey = Constant.AppSettingKey.StorageManagementUrl;
                 string storageManagementUrl = AppSetting.GetValue(settingKey);
 
-                ClientCredential mediaClientCredential = new ClientCredential(mediaClientId, mediaClientKey);
+                ClientCredential mediaClientCredential = new ClientCredential(authUser.MediaAccount.ClientId, authUser.MediaAccount.ClientKey);
 
                 AuthenticationResult authResult = authContext.AcquireTokenAsync(storageManagementUrl, mediaClientCredential).Result;
                 TokenCredentials tokenCredential = new TokenCredentials(authResult.AccessToken);
 
-                StorageManagementClient storageClient = new StorageManagementClient(tokenCredential);
-                storageClient.SubscriptionId = subscriptionId;
+                StorageManagementClient storageClient = new StorageManagementClient(tokenCredential)
+                {
+                    SubscriptionId = subscriptionId
+                };
 
                 IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
                 StorageAccount storageAccount = storageAccounts.Where(sa => sa.Name == accountName).SingleOrDefault();

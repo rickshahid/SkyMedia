@@ -16,13 +16,13 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static class InsightPublishHttpPost
     {
-        private static MediaInsightPublish EnqueuePublish(string accountId, string indexId)
+        private static MediaPublish EnqueuePublish(string accountId, string indexId)
         {
             TableClient tableClient = new TableClient();
             string tableName = Constant.Storage.Table.InsightPublish;
             string partitionKey = accountId;
             string rowKey = indexId;
-            MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, partitionKey, rowKey);
+            MediaPublish insightPublish = tableClient.GetEntity<MediaPublish>(tableName, partitionKey, rowKey);
             if (insightPublish != null)
             {
                 string settingKey = Constant.AppSettingKey.MediaPublishInsightQueue;
@@ -44,7 +44,7 @@ namespace AzureSkyMedia.FunctionApp
             log.Info($"Index Id: {indexId}");
             if (!string.IsNullOrEmpty(accountId) && !string.IsNullOrEmpty(indexId))
             {
-                MediaInsightPublish insightPublish = EnqueuePublish(accountId, indexId);
+                MediaPublish insightPublish = EnqueuePublish(accountId, indexId);
                 log.Info($"Insight Publish: {JsonConvert.SerializeObject(insightPublish)}");
             }
             return req.CreateResponse(HttpStatusCode.OK);

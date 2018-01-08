@@ -35,7 +35,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 string authToken = homeController.GetAuthToken(this.Request, this.Response);
                 User authUser = new User(authToken);
-                presetConfig["id"] = string.Concat(authUser.MediaAccountId, Constant.TextDelimiter.Identifier, mediaProcessor, Constant.TextDelimiter.Identifier, presetName);
+                presetConfig["id"] = string.Concat(authUser.MediaAccount.Id, Constant.TextDelimiter.Identifier, mediaProcessor, Constant.TextDelimiter.Identifier, presetName);
             }
             return uniqueName;
         }
@@ -82,7 +82,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             User authUser = new User(authToken);
-            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.MediaAccountId, false);
+            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.MediaAccount.Id, false);
             return Json(presets);
         }
 

@@ -48,9 +48,12 @@ function CreateUploader() {
             };
         },
         StateChanged: function (uploader) {
+            var busy = false;
             if (uploader.state == plupload.STARTED) {
                 _fileUploaderStartTime = new Date();
+                busy = true;
             }
+            SetCursor(busy);
         },
         UploadComplete: function (uploader, files) {
             if (uploader.total.failed == 0) {

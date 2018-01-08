@@ -63,7 +63,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string StorageCdnUrl = "Storage.CdnUrl";
             public const string StorageManagementUrl = "Storage.ManagementUrl";
 
-            public const string DatabaseThroughputUnits = "Database.ThroughputUnits";
+            public const string DatabaseCollectionThroughputUnits = "Database.Collection.ThroughputUnits";
+            public const string DatabaseDocumentMaxSizeBytes = "Database.Document.MaxSizeBytes";
 
             public const string MediaLoginUrl = "Media.LoginUrl";
 

@@ -34,17 +34,15 @@ namespace AzureSkyMedia.PlatformServices
         private static void TrackJob(string directoryId, string authToken, IJob job, MediaJobTask[] jobTasks)
         {
             User authUser = new User(authToken);
+
             string storageAccountName = job.InputMediaAssets[0].StorageAccountName;
             string storageAccountKey = Storage.GetAccountKey(authToken, storageAccountName);
 
-            MediaContentPublish contentPublish = new MediaContentPublish()
+            MediaPublish contentPublish = new MediaPublish()
             {
-                PartitionKey = authUser.MediaAccountId,
+                PartitionKey = authUser.MediaAccount.Id,
                 RowKey = job.Id,
-                MediaAccountDomainName = authUser.MediaAccountDomainName,
-                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
-                MediaAccountClientId = authUser.MediaAccountClientId,
-                MediaAccountClientKey = authUser.MediaAccountClientKey,
+                MediaAccount = authUser.MediaAccount,
                 StorageAccountName = storageAccountName,
                 StorageAccountKey = storageAccountKey,
                 UserId = authUser.Id,

@@ -73,7 +73,7 @@ namespace AzureSkyMedia.PlatformServices
             ResourceResponse<Database> database = _database.CreateDatabaseIfNotExistsAsync(databaseId).Result;
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            string settingKey = Constant.AppSettingKey.DatabaseThroughputUnits;
+            string settingKey = Constant.AppSettingKey.DatabaseCollectionThroughputUnits;
             string throughputUnits = AppSetting.GetValue(settingKey);
 
             RequestOptions collectionOptions = new RequestOptions()
@@ -143,14 +143,13 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static JObject SetContext(JObject document, string accountId, string accountDomain, string accountEndpoint,
-                                         string clientId, string clientKey, string assetId)
+        public static JObject SetContext(JObject document, MediaAccount mediaAccount, string assetId)
         {
-            document["accountId"] = accountId;
-            document["accountDomain"] = accountDomain;
-            document["accountEndpoint"] = accountEndpoint;
-            document["clientId"] = clientId;
-            document["clientKey"] = clientKey;
+            document["accountId"] = mediaAccount.Id;
+            document["accountDomain"] = mediaAccount.DomainName;
+            document["accountEndpoint"] = mediaAccount.EndpointUrl;
+            document["clientId"] = mediaAccount.ClientId;
+            document["clientKey"] = mediaAccount.ClientKey;
             document["assetId"] = assetId;
             return document;
         }

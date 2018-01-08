@@ -13,7 +13,7 @@
     if (!string.IsNullOrEmpty(authToken))
     {
         User authUser = new User(authToken);
-        ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccountId, ")");
+        ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccount.Id, ")");
     }
 
     string settingKey = Constant.AppSettingKey.AppRegionName;

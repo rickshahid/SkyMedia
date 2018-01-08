@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -9,40 +10,51 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static void CreateFile(BlobClient blobClient, IAssetFile sourceFile, IAsset targetAsset, string targetFileName)
+        private static bool ValidDocument(JObject document)
         {
-            string sourceContainer = sourceFile.Asset.Uri.Segments[1];
-            CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, sourceFile.Name);
-            using (Stream sourceStream = sourceBlob.OpenRead())
-            {
-                IAssetFile destinationFile = targetAsset.AssetFiles.Create(targetFileName);
-                destinationFile.Upload(sourceStream);
-            }
+            string settingKey = Constant.AppSettingKey.DatabaseDocumentMaxSizeBytes;
+            string maxDocumentSize = AppSetting.GetValue(settingKey);
+            int maxDocumentBytes = int.Parse(maxDocumentSize);
+            byte[] documentBytes = Encoding.UTF8.GetBytes(document.ToString());
+            return documentBytes.Length <= maxDocumentBytes;
         }
-        
+
         private static string UpsertDocument(DocumentClient documentClient, JObject document, MediaProcessor processor, IAsset asset)
         {
-            string collectionId = Constant.Database.Collection.ContentInsight;
-            string documentId = documentClient.UpsertDocument(collectionId, document);
-            asset.AlternateId = string.Concat(processor.ToString(), Constant.TextDelimiter.Identifier, documentId);
-            asset.Update();
+            string documentId = string.Empty;
+            if (ValidDocument(document))
+            {
+                string collectionId = Constant.Database.Collection.ContentInsight;
+                documentId = documentClient.UpsertDocument(collectionId, document);
+                asset.AlternateId = string.Concat(processor.ToString(), Constant.TextDelimiter.Identifier, documentId);
+                asset.Update();
+            }
             return documentId;
         }
 
         private static void PublishTextTracks(BlobClient blobClient, ITask jobTask, IAsset encoderOutput)
         {
-            IAsset analyticsAsset = jobTask.OutputAssets[0];
-            IAssetFile[] webVttFiles = GetAssetFiles(analyticsAsset, Constant.Media.FileExtension.WebVtt);
-            foreach (IAssetFile webVttFile in webVttFiles)
+            if (encoderOutput != null)
             {
-                JObject processorConfig = JObject.Parse(jobTask.Configuration);
-                string languageId = Language.GetLanguageId(processorConfig);
-                string fileName = string.Concat(languageId, Constant.Media.FileExtension.WebVtt);
-                CreateFile(blobClient, webVttFile, encoderOutput, fileName);
+                IAsset speechOutput = jobTask.OutputAssets[0];
+                IAssetFile[] webVttFiles = GetAssetFiles(speechOutput, Constant.Media.FileExtension.WebVtt);
+                foreach (IAssetFile webVttFile in webVttFiles)
+                {
+                    JObject processorConfig = JObject.Parse(jobTask.Configuration);
+                    string languageId = Language.GetLanguageId(processorConfig);
+                    string fileName = string.Concat(languageId, Constant.Media.FileExtension.WebVtt);
+                    string sourceContainer = webVttFile.Asset.Uri.Segments[1];
+                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, webVttFile.Name);
+                    using (Stream sourceStream = sourceBlob.OpenRead())
+                    {
+                        IAssetFile destinationFile = encoderOutput.AssetFiles.Create(fileName);
+                        destinationFile.Upload(sourceStream);
+                    }
+                }
             }
         }
 
-        private static void PublishAnalytics(BlobClient blobClient, DocumentClient documentClient, MediaContentPublish contentPublish, ITask jobTask, IAsset encoderOutput)
+        private static void PublishAnalytics(BlobClient blobClient, DocumentClient documentClient, MediaPublish contentPublish, ITask jobTask, IAsset encoderOutput)
         {
             foreach (IAsset outputAsset in jobTask.OutputAssets)
             {
@@ -57,99 +69,75 @@ namespace AzureSkyMedia.PlatformServices
                         StreamReader streamReader = new StreamReader(sourceStream);
                         documentData = streamReader.ReadToEnd();
                     }
-                    if (!string.IsNullOrEmpty(documentData))
+
+                    JObject document = JObject.Parse(documentData);
+                    document = DocumentClient.SetContext(document, contentPublish.MediaAccount, outputAsset.Id);
+                    MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(jobTask.MediaProcessorId);
+                    UpsertDocument(documentClient, document, mediaProcessor.Value, outputAsset);
+
+                    if (encoderOutput != null)
                     {
-                        MediaProcessor? mediaProcessor = Processor.GetMediaProcessor(jobTask.MediaProcessorId);
-                        if (mediaProcessor.HasValue)
+                        string assetFileName = string.Concat(outputAsset.AlternateId, Constant.Media.FileExtension.Json);
+                        IAssetFile assetFile = encoderOutput.AssetFiles.Create(assetFileName);
+                        using (Stream sourceStream = sourceBlob.OpenRead())
                         {
-                            JObject document = JObject.Parse(documentData);
-
-                            string accountId = contentPublish.PartitionKey;
-                            string accountDomain = contentPublish.MediaAccountDomainName;
-                            string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
-                            string clientId = contentPublish.MediaAccountClientId;
-                            string clientKey = contentPublish.MediaAccountClientKey;
-
-                            document = DocumentClient.SetContext(document, accountId, accountDomain, accountEndpoint, clientId, clientKey, outputAsset.Id);
-                            UpsertDocument(documentClient, document, mediaProcessor.Value, outputAsset);
-
-                            if (encoderOutput != null)
-                            {
-                                string assetFileName = string.Concat(outputAsset.AlternateId, Constant.Media.FileExtension.Json);
-                                IAssetFile assetFile = encoderOutput.AssetFiles.Create(assetFileName);
-                                using (Stream sourceStream = sourceBlob.OpenRead())
-                                {
-                                    StreamReader streamReader = new StreamReader(sourceStream);
-                                    assetFile.Upload(sourceStream);
-                                }
-                            }
+                            StreamReader streamReader = new StreamReader(sourceStream);
+                            assetFile.Upload(sourceStream);
                         }
                     }
                 }
             }
         }
 
-        private static void PublishAnalytics(MediaClient mediaClient, MediaContentPublish contentPublish, IJob job, ITask[] encoderTasks)
+        private static void PublishAnalytics(MediaClient mediaClient, MediaPublish contentPublish, IJob job, ITask[] encoderTasks)
         {
             IAsset encoderOutput = encoderTasks.Length == 0 ? null : encoderTasks[0].OutputAssets[0];
             string[] accountCredentials = new string[] { contentPublish.StorageAccountName, contentPublish.StorageAccountKey };
             BlobClient blobClient = new BlobClient(accountCredentials);
             string processorId1 = Constant.Media.ProcessorId.VideoAnnotation;
-            string processorId2 = Constant.Media.ProcessorId.CharacterRecognition;
-            string processorId3 = Constant.Media.ProcessorId.ContentModeration;
-            string processorId4 = Constant.Media.ProcessorId.FaceDetection;
-            string processorId5 = Constant.Media.ProcessorId.FaceRedaction;
-            string processorId6 = Constant.Media.ProcessorId.MotionDetection;
+            string processorId2 = Constant.Media.ProcessorId.FaceDetection;
+            string processorId3 = Constant.Media.ProcessorId.FaceRedaction;
+            string processorId4 = Constant.Media.ProcessorId.MotionDetection;
+            string processorId5 = Constant.Media.ProcessorId.ContentModeration;
+            string processorId6 = Constant.Media.ProcessorId.CharacterRecognition;
             string[] processorIds = new string[] { processorId1, processorId2, processorId3, processorId4, processorId5, processorId6 };
             ITask[] analyticTasks = GetJobTasks(job, processorIds);
-            if (analyticTasks.Length > 0)
+            using (DocumentClient documentClient = new DocumentClient())
             {
-                using (DocumentClient documentClient = new DocumentClient())
+                foreach (ITask analyticTask in analyticTasks)
                 {
-                    foreach (ITask analyticTask in analyticTasks)
-                    {
-                        PublishAnalytics(blobClient, documentClient, contentPublish, analyticTask, encoderOutput);
-                    }
+                    PublishAnalytics(blobClient, documentClient, contentPublish, analyticTask, encoderOutput);
                 }
             }
             processorId1 = Constant.Media.ProcessorId.SpeechAnalyzer;
             processorIds = new string[] { processorId1 };
             analyticTasks = GetJobTasks(job, processorIds);
-            if (analyticTasks.Length > 0 && encoderOutput != null)
+            foreach (ITask analyticTask in analyticTasks)
             {
-                foreach (ITask analyticTask in analyticTasks)
-                {
-                    PublishTextTracks(blobClient, analyticTask, encoderOutput);
-                }
+                PublishTextTracks(blobClient, analyticTask, encoderOutput);
             }
         }
 
-        public static MediaPublish PublishInsight(MediaInsightPublish insightPublish)
+        public static MediaPublished PublishInsight(MediaPublish insightPublish)
         {
             string accountId = insightPublish.PartitionKey;
-            string accountDomain = insightPublish.MediaAccountDomainName;
-            string accountEndpoint = insightPublish.MediaAccountEndpointUrl;
-            string clientId = insightPublish.MediaAccountClientId;
-            string clientKey = insightPublish.MediaAccountClientKey;
-
-            string indexerKey = insightPublish.IndexerAccountKey;
             string indexId = insightPublish.RowKey;
 
-            IndexerClient indexerClient = new IndexerClient(accountId, indexerKey);
+            IndexerClient indexerClient = new IndexerClient(accountId, insightPublish.MediaAccount.IndexerKey);
             JObject index = indexerClient.GetIndex(indexId, null, false);
 
-            MediaPublish mediaPublish = null;
+            MediaPublished mediaPublished = null;
             string assetId = IndexerClient.GetAssetId(index);
             if (!string.IsNullOrEmpty(assetId))
             {
-                MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
+                MediaClient mediaClient = new MediaClient(insightPublish.MediaAccount);
                 IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
 
                 DocumentClient documentClient = new DocumentClient();
-                index = DocumentClient.SetContext(index, accountId, accountDomain, accountEndpoint, clientId, clientKey, assetId);
+                index = DocumentClient.SetContext(index, insightPublish.MediaAccount, assetId);
                 string documentId = UpsertDocument(documentClient, index, MediaProcessor.VideoIndexer, asset);
 
-                mediaPublish = new MediaPublish
+                mediaPublished = new MediaPublished
                 {
                     AssetId = assetId,
                     IndexId = indexId,
@@ -159,20 +147,20 @@ namespace AzureSkyMedia.PlatformServices
                     StatusMessage = string.Empty
                 };
             }
-            return mediaPublish;
+            return mediaPublished;
         }
 
-        public static MediaPublish PublishInsight(string queueName)
+        public static MediaPublished PublishInsight(string queueName)
         {
-            MediaPublish mediaPublish = null;
+            MediaPublished mediaPublished = null;
             QueueClient queueClient = new QueueClient();
-            MediaInsightPublish insightPublish = queueClient.GetMessage<MediaInsightPublish>(queueName, out string messageId, out string popReceipt);
+            MediaPublish insightPublish = queueClient.GetMessage<MediaPublish>(queueName, out string messageId, out string popReceipt);
             if (insightPublish != null)
             {
-                mediaPublish = PublishInsight(insightPublish);
+                mediaPublished = PublishInsight(insightPublish);
                 queueClient.DeleteMessage(queueName, messageId, popReceipt);
             }
-            return mediaPublish;
+            return mediaPublished;
         }
     }
 }

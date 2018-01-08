@@ -124,6 +124,9 @@ namespace AzureSkyMedia.PlatformServices
                 case Constant.Media.ProcessorId.FaceDetection:
                     mediaProcessor = MediaProcessor.FaceDetection;
                     break;
+                case Constant.Media.ProcessorId.FaceRedaction:
+                    mediaProcessor = MediaProcessor.FaceDetection;
+                    break;
                 case Constant.Media.ProcessorId.SpeechAnalyzer:
                     mediaProcessor = MediaProcessor.SpeechAnalyzer;
                     break;

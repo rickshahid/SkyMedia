@@ -22,11 +22,11 @@ namespace AzureSkyMedia.PlatformServices
         public IndexerClient(string authToken) : this()
         {
             User authUser = new User(authToken);
-            if (!string.IsNullOrEmpty(authUser.VideoIndexerKey))
+            if (!string.IsNullOrEmpty(authUser.MediaAccount.IndexerKey))
             {
-                _indexer = new WebClient(authUser.VideoIndexerKey);
+                _indexer = new WebClient(authUser.MediaAccount.IndexerKey);
             }
-            _accountId = authUser.MediaAccountId;
+            _accountId = authUser.MediaAccount.Id;
         }
 
         public IndexerClient(string accountId, string indexerKey) : this()
@@ -56,15 +56,11 @@ namespace AzureSkyMedia.PlatformServices
         private void PublishInsight(string authToken, string indexId)
         {
             User authUser = new User(authToken);
-            MediaInsightPublish insightPublish = new MediaInsightPublish
+            MediaPublish insightPublish = new MediaPublish
             {
-                PartitionKey = authUser.MediaAccountId,
+                PartitionKey = authUser.MediaAccount.Id,
                 RowKey = indexId,
-                MediaAccountDomainName = authUser.MediaAccountDomainName,
-                MediaAccountEndpointUrl = authUser.MediaAccountEndpointUrl,
-                MediaAccountClientId = authUser.MediaAccountClientId,
-                MediaAccountClientKey = authUser.MediaAccountClientKey,
-                IndexerAccountKey = authUser.VideoIndexerKey
+                MediaAccount = authUser.MediaAccount
             };
             TableClient tableClient = new TableClient();
             string tableName = Constant.Storage.Table.InsightPublish;

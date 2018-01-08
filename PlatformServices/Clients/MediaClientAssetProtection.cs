@@ -35,7 +35,7 @@ namespace AzureSkyMedia.PlatformServices
         public static void DeleteContentProtections(TableClient tableClient, string jobId)
         {
             string tableName = Constant.Storage.Table.ContentProtection;
-            ContentProtection[] contentProtections = tableClient.GetEntities<ContentProtection>(tableName, "PartitionKey", jobId);
+            ContentProtection[] contentProtections = tableClient.GetEntities<ContentProtection>(tableName, jobId);
             tableClient.DeleteEntities(tableName, contentProtections);
         }
 

@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void PublishJob(MediaClient mediaClient, IJob job, MediaContentPublish contentPublish)
+        private static void PublishJob(MediaClient mediaClient, IJob job, MediaPublish contentPublish)
         {
             ITask[] encoderTasks = GetEncoderTasks(job);
             if (encoderTasks.Length == 0)
@@ -60,44 +60,40 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static MediaPublish PublishContent(MediaContentPublish contentPublish)
+        public static MediaPublished PublishContent(MediaPublish contentPublish)
         {
             string accountId = contentPublish.PartitionKey;
-            string accountDomain = contentPublish.MediaAccountDomainName;
-            string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
-            string clientId = contentPublish.MediaAccountClientId;
-            string clientKey = contentPublish.MediaAccountClientKey;
             string jobId = contentPublish.RowKey;
 
-            MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
+            MediaClient mediaClient = new MediaClient(contentPublish.MediaAccount);
             IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
 
-            MediaPublish mediaPublish = null;
+            MediaPublished mediaPublished = null;
             if (job != null)
             {
                 mediaClient.SetProcessorUnits(job, null, ReservedUnitType.Basic, false);
                 PublishJob(mediaClient, job, contentPublish);
-                mediaPublish = new MediaPublish()
+                mediaPublished = new MediaPublished()
                 {
                     UserId = contentPublish.UserId,
                     MobileNumber = contentPublish.MobileNumber,
                     StatusMessage = GetNotificationMessage(accountId, job)
                 };
             }
-            return mediaPublish;
+            return mediaPublished;
         }
 
-        public static MediaPublish PublishContent(string queueName)
+        public static MediaPublished PublishContent(string queueName)
         {
-            MediaPublish mediaPublish = null;
+            MediaPublished mediaPublished = null;
             QueueClient queueClient = new QueueClient();
-            MediaContentPublish contentPublish = queueClient.GetMessage<MediaContentPublish>(queueName, out string messageId, out string popReceipt);
+            MediaPublish contentPublish = queueClient.GetMessage<MediaPublish>(queueName, out string messageId, out string popReceipt);
             if (contentPublish != null)
             {
-                mediaPublish = PublishContent(contentPublish);
+                mediaPublished = PublishContent(contentPublish);
                 queueClient.DeleteMessage(queueName, messageId, popReceipt);
             }
-            return mediaPublish;
+            return mediaPublished;
         }
     }
 }

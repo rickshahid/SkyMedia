@@ -105,6 +105,13 @@ function DisplayWorkflow(result) {
     }
     DisplayMessage(title, message, null, null, onClose);
 }
+function GetAssetIds() {
+    var assetIds = new Array();
+    if ($("#mediaAssets").children.length > 0) {
+        assetIds = $("#mediaAssets").jstree(true).get_checked();
+    }
+    return assetIds;
+}
 function GetAssetInfo(result, i) {
     var assetInfo = result[i].assetName + "<br>";
     if (result.length == 1) {
@@ -118,6 +125,7 @@ function GetAssetInfo(result, i) {
 function IngestAssets() {
     var job = GetJob();
     var fileNames = GetFileNames();
+    SetCursor(true);
     $.post("/workflow/ingest",
         {
             storageAccount: $("#storageAccount").val(),
@@ -128,6 +136,7 @@ function IngestAssets() {
             mediaJob: job
         },
         function (result) {
+            SetCursor(false);
             DisplayWorkflow(result);
         }
     );
@@ -135,12 +144,14 @@ function IngestAssets() {
 function StartWorkflow(saveWorkflow) {
     var job = GetJob();
     job.SaveWorkflow = saveWorkflow;
+    SetCursor(true);
     $.post("/workflow/start",
         {
             assetIds: _assetIds,
             mediaJob: job
         },
         function (result) {
+            SetCursor(false);
             DisplayWorkflow(result);
         }
     );

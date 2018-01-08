@@ -5,10 +5,70 @@ namespace AzureSkyMedia.PlatformServices
     public class User
     {
         private string _authToken;
+        private MediaAccount _mediaAccount;
 
         public User(string authToken)
         {
             _authToken = authToken;
+            _mediaAccount = GetMediaAccount();
+        }
+
+        private MediaAccount GetMediaAccount()
+        {
+            MediaAccount mediaAccount = new MediaAccount()
+            {
+                Id = GetMediaAccountId(),
+                DomainName = GetMediaAccountDomainName(),
+                EndpointUrl = GetMediaAccountEndpointUrl(),
+                ClientId = GetMediaAccountClientId(),
+                ClientKey = GetMediaAccountClientKey(),
+                IndexerKey = GetMediaAccountIndexerKey()
+            };
+            return mediaAccount;
+        }
+
+        private string GetMediaAccountId()
+        {
+            string accountId = GetMediaAccountEndpointUrl();
+            accountId = accountId.Split('/')[2];
+            return accountId.Split('.')[0];
+        }
+
+        private string GetMediaAccountDomainName()
+        {
+            string accountDomain = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName);
+            if (string.IsNullOrEmpty(accountDomain))
+            {
+                string settingKey = Constant.AppSettingKey.DirectoryMediaAccountTenantDomain;
+                accountDomain = AppSetting.GetValue(settingKey);
+            }
+            return accountDomain;
+        }
+
+        private string GetMediaAccountEndpointUrl()
+        {
+            string endpointUrl = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl);
+            if (string.IsNullOrEmpty(endpointUrl))
+            {
+                string settingKey = Constant.AppSettingKey.DirectoryMediaAccountEndpointUrl;
+                endpointUrl = AppSetting.GetValue(settingKey);
+            }
+            return endpointUrl;
+        }
+
+        private string GetMediaAccountClientId()
+        {
+            return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientId);
+        }
+
+        private string GetMediaAccountClientKey()
+        {
+            return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientKey);
+        }
+
+        private string GetMediaAccountIndexerKey()
+        {
+            return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey);
         }
 
         public string Id
@@ -32,58 +92,9 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string MediaAccountId
+        public MediaAccount MediaAccount
         {
-            get
-            {
-                string accountId = this.MediaAccountEndpointUrl;
-                accountId = accountId.Split('/')[2];
-                return accountId.Split('.')[0];
-            }
-        }
-
-        public string MediaAccountDomainName
-        {
-            get
-            {
-                string accountDomain = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName);
-                if (string.IsNullOrEmpty(accountDomain))
-                {
-                    string settingKey = Constant.AppSettingKey.DirectoryMediaAccountTenantDomain;
-                    accountDomain = AppSetting.GetValue(settingKey);
-                }
-                return accountDomain;
-            }
-        }
-
-        public string MediaAccountEndpointUrl
-        {
-            get
-            {
-                string endpointUrl = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl);
-                if (string.IsNullOrEmpty(endpointUrl))
-                {
-                    string settingKey = Constant.AppSettingKey.DirectoryMediaAccountEndpointUrl;
-                    endpointUrl = AppSetting.GetValue(settingKey);
-                }
-                return endpointUrl;
-            }
-        }
-
-        public string MediaAccountClientId
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientId);
-            }
-        }
-
-        public string MediaAccountClientKey
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientKey);
-            }
+            get { return _mediaAccount; }
         }
 
         public string[] StorageAccountNames
@@ -145,14 +156,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
 
                 return accountKeys.ToArray();
-            }
-        }
-
-        public string VideoIndexerKey
-        {
-            get
-            {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey);
             }
         }
     }

@@ -221,7 +221,7 @@
     <Compile Include="Entities\JobInput.cs" />
     <Compile Include="Entities\JobNotification.cs" />
     <Compile Include="Entities\JobTask.cs" />
-    <Compile Include="Entities\MediaChannel.cs" />
+    <Compile Include="Entities\MediaAccount.cs" />
     <Compile Include="Entities\MediaInsight.cs" />
     <Compile Include="Entities\MediaProtection.cs" />
     <Compile Include="Entities\MediaPublish.cs" />

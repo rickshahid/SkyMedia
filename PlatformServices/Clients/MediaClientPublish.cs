@@ -9,16 +9,11 @@ namespace AzureSkyMedia.PlatformServices
         public static void PurgePublishContent(TableClient tableClient)
         {
             string tableName = Constant.Storage.Table.ContentPublish;
-            MediaContentPublish[] contentPublishes = tableClient.GetEntities<MediaContentPublish>(tableName);
-            foreach (MediaContentPublish contentPublish in contentPublishes)
+            MediaPublish[] contentPublishes = tableClient.GetEntities<MediaPublish>(tableName);
+            foreach (MediaPublish contentPublish in contentPublishes)
             {
-                string accountDomain = contentPublish.MediaAccountDomainName;
-                string accountEndpoint = contentPublish.MediaAccountEndpointUrl;
-                string clientId = contentPublish.MediaAccountClientId;
-                string clientKey = contentPublish.MediaAccountClientKey;
                 string jobId = contentPublish.RowKey;
-
-                MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
+                MediaClient mediaClient = new MediaClient(contentPublish.MediaAccount);
                 IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
                 if (job == null)
                 {
@@ -37,14 +32,17 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (document["accountId"] != null)
                 {
-                    string accountId = document["accountId"].ToString();
-                    string accountDomain = document["accountDomain"].ToString();
-                    string accountEndpoint = document["accountEndpoint"].ToString();
-                    string clientId = document["clientId"].ToString();
-                    string clientKey = document["clientKey"].ToString();
+                    MediaAccount mediaAccount = new MediaAccount()
+                    {
+                        Id = document["accountId"].ToString(),
+                        DomainName = document["accountDomain"].ToString(),
+                        EndpointUrl = document["accountEndpoint"].ToString(),
+                        ClientId = document["clientId"].ToString(),
+                        ClientKey = document["clientKey"].ToString()
+                    };
                     string assetId = document["assetId"].ToString();
 
-                    MediaClient mediaClient = new MediaClient(accountDomain, accountEndpoint, clientId, clientKey);
+                    MediaClient mediaClient = new MediaClient(mediaAccount);
                     IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
                     if (asset == null)
                     {
@@ -52,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
                         documentClient.DeleteDocument(collectionId, documentId);
 
                         string tableName = Constant.Storage.Table.InsightPublish;
-                        MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, documentId);
+                        MediaPublish insightPublish = tableClient.GetEntity<MediaPublish>(tableName, mediaAccount.Id, documentId);
                         if (insightPublish != null)
                         {
                             tableClient.DeleteEntity(tableName, insightPublish);

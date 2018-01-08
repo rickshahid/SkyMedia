@@ -1,34 +1,15 @@
 ﻿namespace AzureSkyMedia.PlatformServices
 {
-    internal class MediaContentPublish : StorageEntity
+    internal class MediaPublish : StorageEntity
     {
-        public string MediaAccountDomainName { get; set; }
-
-        public string MediaAccountEndpointUrl { get; set; }
-
-        public string MediaAccountClientId { get; set; }
-
-        public string MediaAccountClientKey { get; set; }
+        public MediaAccount MediaAccount { get; set; }
 
         public string StorageAccountName { get; set; }
 
         public string StorageAccountKey { get; set; }
     }
 
-    internal class MediaInsightPublish : StorageEntity
-    {
-        public string MediaAccountDomainName { get; set; }
-
-        public string MediaAccountEndpointUrl { get; set; }
-
-        public string MediaAccountClientId { get; set; }
-
-        public string MediaAccountClientKey { get; set; }
-
-        public string IndexerAccountKey { get; set; }
-    }
-
-    public class MediaPublish
+    public class MediaPublished
     {
         public string AssetId { get; set; }
 

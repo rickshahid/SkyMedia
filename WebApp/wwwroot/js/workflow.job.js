@@ -7,7 +7,7 @@ function GetJob() {
     var jobTemplateId = GetJobTemplateId();
     var job = {
         Name: $("#jobName").val(),
-        NodeType: $("#jobNode").val(),
+        NodeType: $("#jobNodeType").val(),
         Priority: $("#jobPriorityLabel").text(),
         Tasks: jobTasks,
         TemplateId: jobTemplateId,
@@ -25,13 +25,6 @@ function GetJobTasks() {
         taskNumber = taskNumber + 1;
     } while (jobTask != null)
     return jobTasks;
-}
-function GetAssetIds() {
-    var assetIds = new Array();
-    if ($("#mediaAssets").children.length > 0) {
-        assetIds = $("#mediaAssets").jstree(true).get_checked();
-    }
-    return assetIds;
 }
 function GetJobTemplateId() {
     var jobTemplateId = "";

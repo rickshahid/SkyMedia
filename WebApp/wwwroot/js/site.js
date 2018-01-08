@@ -1,4 +1,11 @@
 ﻿var _authToken, _mediaStreams, _streamNumber, _encoderConfig, _assetIds;
+function SetCursor(busy) {
+    if (busy) {
+        $("body").css("cursor", "wait");
+    } else {
+        $("body").css("cursor", "auto");
+    }
+}
 function SetLayout(b2b) {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
@@ -36,6 +43,7 @@ function SetLayout(b2b) {
     CreateTipTop("mediaInsightSearch", "Media Insight Search");
     CreateTipBottom("mediaCertification", "Azure Media Services<br><br>Security Certification");
     $(document).ajaxError(function (event, xhr, settings, error) {
+        SetCursor(false);
         DisplayMessage("Error Message", error);
     });
     $.ajaxSetup({

@@ -13,23 +13,23 @@ namespace AzureSkyMedia.PlatformServices
         {
             User authUser = new User(authToken);
             AzureAdTokenCredentials tokenCredentials;
-            if (string.IsNullOrEmpty(authUser.MediaAccountClientId))
+            if (string.IsNullOrEmpty(authUser.MediaAccount.ClientId))
             {
-                tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccountDomainName, _azure);
+                tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccount.DomainName, _azure);
             }
             else
             {
-                AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(authUser.MediaAccountClientId, authUser.MediaAccountClientKey);
-                tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccountDomainName, symmetricKey, _azure);
+                AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(authUser.MediaAccount.ClientId, authUser.MediaAccount.ClientKey);
+                tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccount.DomainName, symmetricKey, _azure);
             }
-            BindContext(authUser.MediaAccountEndpointUrl, tokenCredentials);
+            BindContext(authUser.MediaAccount.EndpointUrl, tokenCredentials);
         }
 
-        public MediaClient(string accountDomain, string accountEndpoint, string clientId, string clientKey)
+        public MediaClient(MediaAccount mediaAccount)
         {
-            AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(clientId, clientKey);
-            AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(accountDomain, symmetricKey, _azure);
-            BindContext(accountEndpoint, tokenCredentials);
+            AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(mediaAccount.ClientId, mediaAccount.ClientKey);
+            AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(mediaAccount.DomainName, symmetricKey, _azure);
+            BindContext(mediaAccount.EndpointUrl, tokenCredentials);
         }
 
         private void BindContext(string accountEndpoint, AzureAdTokenCredentials tokenCredentials)

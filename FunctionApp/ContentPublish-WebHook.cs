@@ -13,9 +13,9 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static class ContentPublishWebHook
     {
-        private static MediaContentPublish EnqueuePublish(MediaJobNotification jobNotification)
+        private static MediaPublish EnqueuePublish(MediaJobNotification jobNotification)
         {
-            MediaContentPublish contentPublish = null;
+            MediaPublish contentPublish = null;
             if (jobNotification.EventType == MediaJobNotificationEvent.JobStateChange &&
                 jobNotification.Properties.OldState == MediaJobState.Processing &&
                 jobNotification.Properties.NewState == MediaJobState.Finished)
@@ -24,7 +24,7 @@ namespace AzureSkyMedia.FunctionApp
                 string tableName = Constant.Storage.Table.ContentPublish;
                 string partitionKey = jobNotification.Properties.AccountName;
                 string rowKey = jobNotification.Properties.JobId;
-                contentPublish = tableClient.GetEntity<MediaContentPublish>(tableName, partitionKey, rowKey);
+                contentPublish = tableClient.GetEntity<MediaPublish>(tableName, partitionKey, rowKey);
                 if (contentPublish != null)
                 {
                     string settingKey = Constant.AppSettingKey.MediaPublishContentQueue;
@@ -46,7 +46,7 @@ namespace AzureSkyMedia.FunctionApp
                 MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(notificationMessage);
                 if (jobNotification != null)
                 {
-                    MediaContentPublish contentPublish = EnqueuePublish(jobNotification);
+                    MediaPublish contentPublish = EnqueuePublish(jobNotification);
                     log.Info($"Content Publish: {JsonConvert.SerializeObject(contentPublish)}");
                 }
             }

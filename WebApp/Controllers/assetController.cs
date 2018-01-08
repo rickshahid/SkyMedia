@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using Newtonsoft.Json.Linq;
-
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -10,7 +8,7 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         [HttpPut]
         [Route("/asset/publish")]
-        public MediaPublish publish(bool? insightQueue, bool? poisonQueue)
+        public MediaPublished publish(bool? insightQueue, bool? poisonQueue)
         {
             if (!insightQueue.HasValue) insightQueue = false;
             if (!poisonQueue.HasValue) poisonQueue = false;

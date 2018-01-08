@@ -336,6 +336,10 @@
               "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=Media')]"
             },
             {
+              "name": "Database.Document.MaxSizeBytes",
+              "value": "2097152"
+            },
+            {
               "name": "Database.Table",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';TableEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com')]"
             },

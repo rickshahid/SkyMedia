@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
 
                     TableClient tableClient = new TableClient();
                     string tableName = Constant.Storage.Table.InsightPublish;
-                    MediaInsightPublish insightPublish = tableClient.GetEntity<MediaInsightPublish>(tableName, accountId, documentId);
+                    MediaPublish insightPublish = tableClient.GetEntity<MediaPublish>(tableName, accountId, documentId);
                     if (insightPublish != null)
                     {
                         tableClient.DeleteEntity(tableName, insightPublish);
@@ -87,7 +87,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             TableClient tableClient = new TableClient();
             string tableName = Constant.Storage.Table.ContentPublish;
-            MediaContentPublish contentPublish = tableClient.GetEntity<MediaContentPublish>(tableName, accountId, job.Id);
+            MediaPublish contentPublish = tableClient.GetEntity<MediaPublish>(tableName, accountId, job.Id);
             if (contentPublish != null)
             {
                 tableClient.DeleteEntity(tableName, contentPublish);
@@ -102,7 +102,7 @@ namespace AzureSkyMedia.PlatformServices
             MediaClient mediaClient = new MediaClient(authToken);
             if (liveOnly)
             {
-                DeleteLive(authToken, authUser.MediaAccountId, mediaClient);
+                DeleteLive(authToken, authUser.MediaAccount.Id, mediaClient);
             }
             else if (!allEntities)
             {
@@ -111,13 +111,13 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     if (asset.ParentAssets.Count > 0)
                     {
-                        DeleteAsset(authToken, authUser.MediaAccountId, mediaClient, asset);
+                        DeleteAsset(authToken, authUser.MediaAccount.Id, mediaClient, asset);
                     }
                 }
             }
             else
             {
-                DeleteLive(authToken, authUser.MediaAccountId, mediaClient);
+                DeleteLive(authToken, authUser.MediaAccount.Id, mediaClient);
                 IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
                 foreach (IIngestManifest manifest in manifests)
                 {
@@ -131,7 +131,7 @@ namespace AzureSkyMedia.PlatformServices
                 IJob[] jobs = mediaClient.GetEntities(MediaEntity.Job) as IJob[];
                 foreach (IJob job in jobs)
                 {
-                    DeleteJob(authUser.MediaAccountId, job);
+                    DeleteJob(authUser.MediaAccount.Id, job);
                 }
                 INotificationEndPoint[] notificationEndpoints = mediaClient.GetEntities(MediaEntity.NotificationEndpoint) as INotificationEndPoint[];
                 foreach (INotificationEndPoint notificationEndpoint in notificationEndpoints)
@@ -149,7 +149,7 @@ namespace AzureSkyMedia.PlatformServices
                 IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset) as IAsset[];
                 foreach (IAsset asset in assets)
                 {
-                    DeleteAsset(authToken, authUser.MediaAccountId, mediaClient, asset);
+                    DeleteAsset(authToken, authUser.MediaAccount.Id, mediaClient, asset);
                 }
                 IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
                 foreach (IAccessPolicy accessPolicy in accessPolicies)

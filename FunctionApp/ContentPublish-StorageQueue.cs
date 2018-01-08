@@ -13,11 +13,12 @@ namespace AzureSkyMedia.FunctionApp
         public static void Run([QueueTrigger("publish-content")] string queueMessage, TraceWriter log)
         {
             log.Info($"Queue Message: {queueMessage}");
-            MediaContentPublish contentPublish = JsonConvert.DeserializeObject<MediaContentPublish>(queueMessage);
+            MediaPublish contentPublish = JsonConvert.DeserializeObject<MediaPublish>(queueMessage);
             if (contentPublish != null)
             {
-                MediaClient.PublishContent(contentPublish);
+                MediaPublished contentPublished = MediaClient.PublishContent(contentPublish);
                 log.Info($"Content Publish: {JsonConvert.SerializeObject(contentPublish)}");
+                log.Info($"Content Published: {JsonConvert.SerializeObject(contentPublished)}");
             }
         }
     }
