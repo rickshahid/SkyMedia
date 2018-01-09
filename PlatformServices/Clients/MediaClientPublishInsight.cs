@@ -80,7 +80,13 @@ namespace AzureSkyMedia.PlatformServices
 
                     if (encoderOutput != null)
                     {
-                        string assetFileName = string.Concat(mediaProcessor.Value.ToString(), Constant.TextDelimiter.Identifier, documentId, Constant.Media.FileExtension.Json);
+                        string assetFileName = mediaProcessor.Value.ToString();
+                        if (!string.IsNullOrEmpty(documentId))
+                        {
+                            assetFileName = string.Concat(Constant.TextDelimiter.Identifier, documentId);
+                        }
+                        assetFileName = string.Concat(assetFileName, Constant.Media.FileExtension.Json);
+
                         IAssetFile assetFile = encoderOutput.AssetFiles.Create(assetFileName);
                         using (Stream sourceStream = sourceBlob.OpenRead())
                         {

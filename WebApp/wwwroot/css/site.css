@@ -48,12 +48,11 @@ body {
 }
 
 .layoutPanel.side {
-
 }
 
 .header {
     margin: 0px auto;
-    width: 800px;
+    width: 720px;
 }
 
 .headerSide {
@@ -109,7 +108,7 @@ body {
 }
 
 .streamTuner {
-    width: 100%;
+    width: 360px;
 }
 
 .streamTuner table {
