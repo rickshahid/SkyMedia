@@ -24,7 +24,7 @@ The following set of media functionality has been integrated and enabled within 
 
 The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.io
 
-![](http://skymedia.blob.core.windows.net/img/Snip02-ApplicationArchitecture.png)
+![](http://skymedia.blob.core.windows.net/img/Snip02.ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
