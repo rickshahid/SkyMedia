@@ -3,7 +3,7 @@
   "MediaProcessor": "CharacterRecognition",
   "Version": 1.0,
   "Options": {
-    "AdvancedOutput": true,
+    "AdvancedOutput": false,
     "Language": "AutoDetect",
     "TimeInterval": "00:00:00.500",
     "TextOrientation": "AutoDetect"

@@ -2,7 +2,9 @@
 {
     public struct MediaInsight
     {
-        public string MediaProcessor { get; set; }
+        public string ProcessorId { get; set; }
+
+        public string ProcessorName { get; set; }
 
         public string DocumentId { get; set; }
 

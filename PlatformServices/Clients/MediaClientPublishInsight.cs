@@ -83,7 +83,7 @@ namespace AzureSkyMedia.PlatformServices
                         string assetFileName = mediaProcessor.Value.ToString();
                         if (!string.IsNullOrEmpty(documentId))
                         {
-                            assetFileName = string.Concat(Constant.TextDelimiter.Identifier, documentId);
+                            assetFileName = string.Concat(assetFileName, Constant.TextDelimiter.Identifier, documentId);
                         }
                         assetFileName = string.Concat(assetFileName, Constant.Media.FileExtension.Json);
 

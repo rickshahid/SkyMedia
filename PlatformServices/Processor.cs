@@ -187,11 +187,14 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 case MediaProcessor.FaceDetection:
                     processorId = Constant.Media.ProcessorId.FaceRedaction;
-                    JToken processorOptions = JObject.Parse(processorConfig)["Options"];
-                    string processorMode = processorOptions["Mode"].ToString();
-                    if (processorMode == "PerFaceEmotion" || processorMode == "AggregateEmotion")
+                    if (!string.IsNullOrEmpty(processorConfig))
                     {
-                        processorId = Constant.Media.ProcessorId.FaceDetection;
+                        JToken processorOptions = JObject.Parse(processorConfig)["Options"];
+                        string processorMode = processorOptions["Mode"].ToString();
+                        if (processorMode == "PerFaceEmotion" || processorMode == "AggregateEmotion")
+                        {
+                            processorId = Constant.Media.ProcessorId.FaceDetection;
+                        }
                     }
                     break;
                 case MediaProcessor.SpeechAnalyzer:

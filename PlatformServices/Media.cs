@@ -19,6 +19,13 @@ namespace AzureSkyMedia.PlatformServices
             return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
         }
 
+        private static int OrderByProcessor(MediaInsight leftItem, MediaInsight rightItem)
+        {
+            MediaProcessor leftProcessor = Processor.GetMediaProcessor(leftItem.ProcessorId).Value;
+            MediaProcessor rightProcessor = Processor.GetMediaProcessor(rightItem.ProcessorId).Value;
+            return leftProcessor.CompareTo(rightProcessor);
+        }
+
         private static MediaTrack[] GetTextTracks(string tracks)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
@@ -110,7 +117,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 MediaInsight insight = new MediaInsight()
                 {
-                    MediaProcessor = Processor.GetProcessorName(MediaProcessor.VideoIndexer),
+                    ProcessorId = Processor.GetProcessorId(MediaProcessor.VideoIndexer, null),
+                    ProcessorName = Processor.GetProcessorName(MediaProcessor.VideoIndexer),
                     DocumentId = documentId,
                     SourceUrl = indexerClient.GetInsightUrl(documentId, false)
                 };
@@ -127,13 +135,16 @@ namespace AzureSkyMedia.PlatformServices
                     documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
                     MediaInsight insight = new MediaInsight()
                     {
-                        MediaProcessor = Processor.GetProcessorName(processor),
+                        ProcessorId = Processor.GetProcessorId(processor, null),
+                        ProcessorName = Processor.GetProcessorName(processor),
                         DocumentId = documentId,
                         SourceUrl = string.Empty
                     };
                     contentInsight.Add(insight);
                 }
             }
+
+            contentInsight.Sort(OrderByProcessor);
 
             MediaStream mediaStream = new MediaStream()
             {
