@@ -41,11 +41,10 @@ function SetAnalyticsProcessors(mediaStream) {
         processors.options[processors.options.length] = new Option(optionName, optionValue);
     }
 }
-function SetAnalyticsMetadata() {
+function SetAnalyticsMetadata(mediaPlayer) {
     $("#analyticsMetadata").empty();
     var mediaProcessor = $("#analyticsProcessors option:selected").text();
     if (mediaProcessor != "") {
-        var mediaPlayer = GetMediaPlayer();
         mediaPlayer.pause();
         $.get("/insight/metadata",
             {

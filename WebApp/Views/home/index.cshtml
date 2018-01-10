@@ -2,6 +2,12 @@
 @using AzureSkyMedia.WebApp.Controllers;
 
 @{
+    string userId = ViewData["userId"] as string;
+    string authToken = ViewData["authToken"] as string;
+
+    string accountId = ViewData["accountId"] as string;
+    string accountMessage = ViewData["accountMessage"] as string;
+
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
     int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
 
@@ -10,10 +16,6 @@
 
     string autoPlay = ViewData["autoPlay"] as string;
     string languageCode = ViewData["languageCode"] as string;
-
-    string authToken = ViewData["authToken"] as string;
-    string accountMessage = ViewData["accountMessage"] as string;
-
     string storageCdnUrl = ViewData["storageCdnUrl"] as string;
 
     string videoIndexer = insightController.GetProcessorName(MediaProcessor.VideoIndexer);
@@ -23,9 +25,11 @@
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
+    <script type="text/javascript" src="~/js/amp-appInsights.min.js"></script>
     <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
+        var _mediaPlayer;
         $(function () {
             _authToken = "@authToken";
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
@@ -60,8 +64,8 @@
                     }
                 }
             });
-            var mediaPlayer = GetMediaPlayer();
-            mediaPlayer.ready(function () {
+            _mediaPlayer = GetMediaPlayer("@userId", "@accountId");
+            _mediaPlayer.ready(function () {
                 this.videobreakdown({
                     syncTranscript: true,
                     syncLanguage: true
@@ -99,8 +103,8 @@
                     }
                 }
             });
-            mediaPlayer.addEventListener(amp.eventName.play, function () {
-                var streamUrl = mediaPlayer.currentSrc();
+            _mediaPlayer.addEventListener(amp.eventName.play, function () {
+                var streamUrl = _mediaPlayer.currentSrc();
                 streamUrl = streamUrl.split("/");
                 for (var i = streamUrl.length - 2; i > streamUrl.length - 5; i--) {
                     streamUrl[i] = streamUrl[i] + "<br>";
@@ -113,7 +117,7 @@
             if (mediaStream == null) {
                 SetPlayerSpinner(false);
             } else {
-                SetPlayerContent(mediaPlayer, mediaStream, "@languageCode", @autoPlay);
+                SetPlayerContent(_mediaPlayer, mediaStream, "@languageCode", @autoPlay);
                 SetStreamNumber(_streamNumber);
                 var streamName = GetStreamName(mediaStream, false);
                 $("#streamName").html(streamName);
@@ -150,7 +154,7 @@
             </span>
         </td>
         <td>
-            <select id="analyticsProcessors" class="analyticsProcessors" onchange="SetAnalyticsMetadata()"></select>
+            <select id="analyticsProcessors" class="analyticsProcessors" onchange="SetAnalyticsMetadata(_mediaPlayer)"></select>
         </td>
     </tr>
     <tr>

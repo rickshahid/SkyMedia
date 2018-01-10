@@ -13,6 +13,8 @@
     if (!string.IsNullOrEmpty(authToken))
     {
         User authUser = new User(authToken);
+        ViewData["userId"] = authUser.Id;
+        ViewData["accountId"] = authUser.MediaAccount.Id;
         ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccount.Id, ")");
     }
 

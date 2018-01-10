@@ -99,13 +99,17 @@ function ConfirmMessage(title, message, onConfirm) {
     };
     DisplayMessage(title, message, buttons);
 }
-function GetMediaPlayer() {
+function GetMediaPlayer(userId, accountId) {
     var options = {
         fluid: true,
         playbackSpeed: {
             enabled: true
         },
         plugins: {
+            appInsights: {
+                userId: userId,
+                accountId: accountId
+            },
             videobreakdown: {}
         }
     };
