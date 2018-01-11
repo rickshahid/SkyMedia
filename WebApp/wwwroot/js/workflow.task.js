@@ -102,10 +102,10 @@ function SetFaceDetectionConfig(radioButton) {
     $("#faceRedactionRow" + taskNumber).hide();
     $("#faceEmotionRow" + taskNumber).hide();
     switch (radioButton.value) {
-        case "FaceRedaction":
+        case "Redact":
             $("#faceRedactionRow" + taskNumber).show();
             break;
-        case "EmotionDetection":
+        case "Emotion":
             $("#faceEmotionRow" + taskNumber).show();
             break;
     }

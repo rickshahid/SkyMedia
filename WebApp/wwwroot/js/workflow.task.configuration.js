@@ -88,6 +88,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
     var annotationRowId = mediaProcessor.id.replace("mediaProcessor", "annotationRow");
     var summarizationRowId = mediaProcessor.id.replace("mediaProcessor", "summarizationRow");
     var faceDetectionRowId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionRow");
+    var faceDetectionModeId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionMode");
     var speechAnalyzerRowId = mediaProcessor.id.replace("mediaProcessor", "speechAnalyzerRow");
     var motionDetectionRowId = mediaProcessor.id.replace("mediaProcessor", "motionDetectionRow");
     var contentModerationRowId = mediaProcessor.id.replace("mediaProcessor", "contentModerationRow");
@@ -124,6 +125,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
             break;
         case "FaceDetection":
             $("#" + faceDetectionRowId).show();
+            $("#" + faceDetectionModeId).change();
             break;
         case "SpeechAnalyzer":
             $("#" + speechAnalyzerRowId).show();

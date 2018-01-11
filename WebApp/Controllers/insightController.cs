@@ -17,9 +17,10 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             JObject metadata;
             string collectionId = Constant.Database.Collection.ContentInsight;
+            string procedureId = Constant.Database.Procedure.MetadataFragment;
             using (DocumentClient documentClient = new DocumentClient())
             {
-                metadata = documentClient.GetDocument(collectionId, documentId);
+                metadata = documentClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
             }
             return Json(metadata);
         }
