@@ -120,7 +120,7 @@ namespace AzureSkyMedia.PlatformServices
                     ProcessorId = Processor.GetProcessorId(MediaProcessor.VideoIndexer, null),
                     ProcessorName = Processor.GetProcessorName(MediaProcessor.VideoIndexer),
                     DocumentId = documentId,
-                    SourceUrl = indexerClient.GetInsightUrl(documentId, false)
+                    SourceUrl = indexerClient.GetInsightUrl(documentId, true)
                 };
                 contentInsight.Add(insight);
             }

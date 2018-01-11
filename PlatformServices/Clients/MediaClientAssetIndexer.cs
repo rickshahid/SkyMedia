@@ -137,7 +137,7 @@ namespace AzureSkyMedia.PlatformServices
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/", indexId, "/InsightsWidgetUrl");
             if (allowEdit)
             {
-                requestUrl = string.Concat(requestUrl, "?allowEdit");
+                requestUrl = string.Concat(requestUrl, "?allowEdit=true");
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Get, requestUrl))
             {
