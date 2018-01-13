@@ -18,10 +18,6 @@ function CreateTipBottom(targetId, tipText, adjustX, adjustY, hideEvent) {
     var tipPosition = { my: "top center", at: "bottom center", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition, hideEvent);
 }
-function CreateTipBottomLeft(targetId, tipText, adjustX, adjustY, hideEvent) {
-    var tipPosition = { my: "top center", at: "bottom left", adjust: { x: adjustX, y: adjustY } };
-    CreateTip(targetId, tipText, tipPosition, hideEvent);
-}
 function CreateTipLeft(targetId, tipText, adjustX, adjustY, hideEvent) {
     var tipPosition = { my: "right center", at: "left center", adjust: { x: adjustX, y: adjustY } };
     CreateTip(targetId, tipText, tipPosition, hideEvent);

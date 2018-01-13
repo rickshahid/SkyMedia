@@ -84,7 +84,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            MediaStream[] streams = Media.GetMediaStreams(authToken, mediaClient, false);
+            MediaStream[] streams = Media.GetMediaStreams(authToken, mediaClient);
             return Json(streams);
         }
 

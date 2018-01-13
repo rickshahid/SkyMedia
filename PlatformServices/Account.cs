@@ -32,6 +32,21 @@ namespace AzureSkyMedia.PlatformServices
             return unitCount;
         }
 
+        private static IStreamingEndpoint GetStreamingEndpoint(MediaClient mediaClient)
+        {
+            IStreamingEndpoint streamingEndpoint = null;
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            if (streamingEndpoints.Length > 1)
+            {
+                streamingEndpoint = mediaClient.GetEntityByName(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpointName, true) as IStreamingEndpoint;
+            }
+            else if (streamingEndpoints.Length == 1)
+            {
+                streamingEndpoint = streamingEndpoints[0];
+            }
+            return streamingEndpoint;
+        }
+
         private static void DeleteAsset(string authToken, string accountId, MediaClient mediaClient, IAsset asset)
         {
             string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
@@ -287,6 +302,36 @@ namespace AzureSkyMedia.PlatformServices
                 authorizeUrl = authorizeUrl.Replace("/v2.0", string.Empty);
             }
             return authorizeUrl;
+        }
+
+        public static bool IsStreamingEnabled(MediaClient mediaClient, out bool endpointStarting)
+        {
+            endpointStarting = false;
+            bool streamingEnabled = false;
+            IStreamingEndpoint streamingEndpoint = GetStreamingEndpoint(mediaClient);
+            if (streamingEndpoint != null)
+            {
+                endpointStarting = streamingEndpoint.State == StreamingEndpointState.Starting;
+                if (streamingEndpoint.State == StreamingEndpointState.Starting ||
+                    streamingEndpoint.State == StreamingEndpointState.Running ||
+                    streamingEndpoint.State == StreamingEndpointState.Scaling)
+                {
+                    streamingEnabled = true;
+                }
+            }
+            return streamingEnabled;
+        }
+
+        public static string StartStreamingEndpoint(MediaClient mediaClient)
+        {
+            string endpointName = string.Empty;
+            IStreamingEndpoint streamingEndpoint = GetStreamingEndpoint(mediaClient);
+            if (streamingEndpoint != null)
+            {
+                streamingEndpoint.StartAsync();
+                endpointName = streamingEndpoint.Name;
+            }
+            return endpointName;
         }
     }
 }

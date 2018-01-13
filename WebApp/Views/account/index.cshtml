@@ -24,12 +24,14 @@
             $("#inventoryRight").html(innerHtml);
         }
         function ClearAccount(allEntities, liveOnly) {
+            SetCursor(true);
             $.post("/account/clear",
                 {
                     allEntities: allEntities,
                     liveOnly: liveOnly
                 },
                 function () {
+                    SetCursor(false);
                     window.location = window.location.href;
                 }
             );

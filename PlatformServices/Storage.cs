@@ -41,10 +41,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 User authUser = new User(authToken);
 
-                settingKey = Constant.AppSettingKey.MediaLoginUrl;
-                string mediaLoginUrl = AppSetting.GetValue(settingKey);
+                settingKey = Constant.AppSettingKey.StorageLoginUrl;
+                string storageLoginUrl = AppSetting.GetValue(settingKey);
 
-                string mediaAuthority = string.Concat(mediaLoginUrl, authUser.MediaAccount.DomainName);
+                string mediaAuthority = string.Concat(storageLoginUrl, authUser.MediaAccount.DomainName);
                 AuthenticationContext authContext = new AuthenticationContext(mediaAuthority);
 
                 settingKey = Constant.AppSettingKey.StorageManagementUrl;
@@ -104,7 +104,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 catch
                 {
-                    capacityUsed = Constant.NotAvailable;
+                    capacityUsed = Constant.Storage.NotAvailable;
                 }
             }
             return capacityUsed;

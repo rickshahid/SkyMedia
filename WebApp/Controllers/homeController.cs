@@ -152,7 +152,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            string endpointName = Media.StartStreamingEndpoint(mediaClient);
+            string endpointName = Account.StartStreamingEndpoint(mediaClient);
             return Json(endpointName);
         }
 
@@ -182,18 +182,20 @@ namespace AzureSkyMedia.WebApp.Controllers
                 else
                 {
                     MediaClient mediaClient = new MediaClient(authToken);
-                    if (!Media.IsStreamingEnabled(mediaClient))
+                    if (!Account.IsStreamingEnabled(mediaClient, out bool endpointStarting))
                     {
-                        accountMessage = Constant.Message.StreamingEndpointNotRunning;
-                    }
-                    else if (Media.IsStreamingStarting(mediaClient))
-                    {
-                        accountMessage = Constant.Message.StreamingEndpointStarting;
+                        accountMessage = endpointStarting ? Constant.Message.StreamingEndpointStarting : Constant.Message.StreamingEndpointNotRunning;
                     }
                     else
                     {
                         bool liveStreams = this.Request.Host.Value.Contains("live.") || queryString.Contains("live=on");
-                        mediaStreams = Media.GetMediaStreams(authToken, mediaClient, liveStreams);
+                        if (liveStreams)
+                        {
+                            mediaStreams = Media.GetLiveStreams(authToken, mediaClient);
+                        }
+                        {
+                            mediaStreams = Media.GetMediaStreams(authToken, mediaClient);
+                        }
                     }
                 }
             }

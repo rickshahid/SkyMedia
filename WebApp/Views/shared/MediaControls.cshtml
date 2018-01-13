@@ -18,6 +18,9 @@
         <td id="userButtonLeft3">
             @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'" })
         </td>
+        <td id="userButtonLeft4">
+            @Html.Partial("SiteButton", new string[] { "mediaAssetFiles", "MediaAssetFiles.png", "window.location.href = '/asset'" })
+        </td>
     }
         <td class="streamTuner">
             <table>
@@ -43,13 +46,16 @@
     @if (ViewData.ContainsKey("accountContext"))
     { 
         <td id="userButtonRight1">
-            @Html.Partial("SiteButton", new string[] { "mediaAssetFiles", "MediaAssetFiles.png", "window.location.href = '/asset'" })
+            @Html.Partial("SiteButton", new string[] { "mediaAssetClipper", "MediaClipper.png", "window.location.href = '/asset/clipper'" })
         </td>
         <td id="userButtonRight2">
             @Html.Partial("SiteButton", new string[] { "mediaStreamLive", liveStreamImage, "ToggleLiveStream(this)" })
         </td>
         <td id="userButtonRight3">
             @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "window.location.href = '/search'" })
+        </td>
+        <td id="userButtonRight4">
+            @Html.Partial("SiteButton", new string[] { "azureRoadmap", "AzureRoadmap.png", "window.open('http://azure.microsoft.com/roadmap/')" })
         </td>
     }
     </tr>

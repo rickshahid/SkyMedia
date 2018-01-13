@@ -160,30 +160,35 @@ namespace AzureSkyMedia.PlatformServices
             return mediaStream;
         }
 
-        private static MediaStream[] GetLiveStreams(string authToken, MediaClient mediaClient)
+        public static MediaStream[] GetMediaStreams()
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
-            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
-            foreach (IChannel channel in channels)
-            {
-                foreach (IProgram program in channel.Programs)
-                {
-                    MediaStream mediaStream = GetMediaStream(authToken, mediaClient, program.Asset);
-                    mediaStreams.Add(mediaStream);
-                }
-            }
+
+            string settingKey1 = Constant.AppSettingKey.MediaStream1Name;
+            string settingKey2 = Constant.AppSettingKey.MediaStream1SourceUrl;
+            string settingKey3 = Constant.AppSettingKey.MediaStream1TextTracks;
+            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
+            settingKey1 = Constant.AppSettingKey.MediaStream2Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream2SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream2TextTracks;
+            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
+            settingKey1 = Constant.AppSettingKey.MediaStream3Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream3SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream3TextTracks;
+            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
+            settingKey1 = Constant.AppSettingKey.MediaStream4Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream4SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream4TextTracks;
+            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
             return mediaStreams.ToArray();
         }
 
-        public static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, bool liveStreams)
+        public static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient)
         {
-            IndexerClient indexerClient = new IndexerClient(authToken);
-
-            if (liveStreams)
-            {
-                return GetLiveStreams(authToken, mediaClient);
-            }
-
             List<MediaStream> mediaStreams = new List<MediaStream>();
             string settingKey = Constant.AppSettingKey.MediaLocatorMaxStreamCount;
             int maxStreamCount = int.Parse(AppSetting.GetValue(settingKey));
@@ -216,74 +221,19 @@ namespace AzureSkyMedia.PlatformServices
             return mediaStreams.ToArray();
         }
 
-        public static MediaStream[] GetMediaStreams()
+        public static MediaStream[] GetLiveStreams(string authToken, MediaClient mediaClient)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
-
-            string settingKey1 = Constant.AppSettingKey.MediaStream1Name;
-            string settingKey2 = Constant.AppSettingKey.MediaStream1SourceUrl;
-            string settingKey3 = Constant.AppSettingKey.MediaStream1TextTracks;
-            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
-            settingKey1 = Constant.AppSettingKey.MediaStream2Name;
-            settingKey2 = Constant.AppSettingKey.MediaStream2SourceUrl;
-            settingKey3 = Constant.AppSettingKey.MediaStream2TextTracks;
-            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
-            settingKey1 = Constant.AppSettingKey.MediaStream3Name;
-            settingKey2 = Constant.AppSettingKey.MediaStream3SourceUrl;
-            settingKey3 = Constant.AppSettingKey.MediaStream3TextTracks;
-            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
-            settingKey1 = Constant.AppSettingKey.MediaStream4Name;
-            settingKey2 = Constant.AppSettingKey.MediaStream4SourceUrl;
-            settingKey3 = Constant.AppSettingKey.MediaStream4TextTracks;
-            AddBaseStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
+            IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
+            foreach (IChannel channel in channels)
+            {
+                foreach (IProgram program in channel.Programs)
+                {
+                    MediaStream mediaStream = GetMediaStream(authToken, mediaClient, program.Asset);
+                    mediaStreams.Add(mediaStream);
+                }
+            }
             return mediaStreams.ToArray();
-        }
-
-        public static bool IsStreamingEnabled(MediaClient mediaClient)
-        {
-            bool streamingEnabled = false;
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
-            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
-            {
-                if (streamingEndpoint.State == StreamingEndpointState.Starting ||
-                    streamingEndpoint.State == StreamingEndpointState.Running ||
-                    streamingEndpoint.State == StreamingEndpointState.Scaling)
-                {
-                    streamingEnabled = true;
-                }
-            }
-            return streamingEnabled;
-        }
-
-        public static bool IsStreamingStarting(MediaClient mediaClient)
-        {
-            bool streamingStarting = false;
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
-            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
-            {
-                if (streamingEndpoint.State == StreamingEndpointState.Starting)
-                {
-                    streamingStarting = true;
-                }
-            }
-            return streamingStarting;
-        }
-
-        public static string StartStreamingEndpoint(MediaClient mediaClient)
-        {
-            string endpointName = string.Empty;
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
-            if (streamingEndpoints.Length > 0)
-            {
-                IStreamingEndpoint streamingEndpoint = streamingEndpoints[0];
-                streamingEndpoint.StartAsync();
-                endpointName = streamingEndpoint.Name;
-            }
-            return endpointName;
         }
     }
 }

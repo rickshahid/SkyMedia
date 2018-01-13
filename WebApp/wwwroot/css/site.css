@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 480px) {
-    #accountInventory, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    #accountInventory, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonLeft4, #userButtonRight1, #userButtonRight2, #userButtonRight3, #userButtonRight4 {
         display: none !important;
     }
 
@@ -17,7 +17,7 @@
 }
 
 @media all and (min-width: 481px) and (max-width: 768px) {
-    .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonLeft4, #userButtonRight1, #userButtonRight2, #userButtonRight3, #userButtonRight4 {
         display: none !important;
     }
 
@@ -108,7 +108,8 @@ body {
 }
 
 .streamTuner {
-    width: 360px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .streamTuner table {
@@ -116,7 +117,7 @@ body {
 }
 
 .streamSlider {
-    width: 150px;
+    width: 100px;
 }
 
 .streamSliderHandle {

@@ -34,13 +34,14 @@ function SetLayout(b2b) {
     CreateTipLeft("batchRendering", "Azure Batch Rendering");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipTop("mediaProcessorPresets", "Media Processor<br><br>Presets");
-    CreateTipTop("mediaFileWorkflow", "Media File Workflow");
-    CreateTipTop("mediaAssetWorkflow", "Media Asset Workflow");
-    CreateTipTop("mediaAssetFiles", "Media Asset Files");
-    CreateTipTop("mediaStreamLeft", "Stream Tuner Left");
-    CreateTipTop("mediaStreamRight", "Stream Tuner Right");
-    CreateTipTop("mediaStreamLive", "Media Stream Live");
-    CreateTipTop("mediaInsightSearch", "Media Insight Search");
+    CreateTipTop("mediaFileWorkflow", "Media File<br><br>Workflow");
+    CreateTipTop("mediaAssetWorkflow", "Media Asset<br><br>Workflow");
+    CreateTipTop("mediaAssetFiles", "Media Asset<br><br>Files");
+    CreateTipTop("streamSlider", "Media Stream<br><br>Tuner", 0, -10);
+    CreateTipTop("mediaAssetClipper", "Media Asset<br><br>Clipper");
+    CreateTipTop("mediaStreamLive", "Media Stream<br><br>Live");
+    CreateTipTop("mediaInsightSearch", "Media Insight<br><br>Search");
+    CreateTipTop("azureRoadmap", "Microsoft Azure<br><br>Roadmap");
     CreateTipBottom("mediaCertification", "Azure Media Services<br><br>Security Certification");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);

@@ -5,7 +5,6 @@ namespace AzureSkyMedia.PlatformServices
     public struct Constant
     {
         public const string AppSettings = "appsettings.json";
-        public const string NotAvailable = "N/A";
 
         public struct DirectoryService
         {
@@ -61,12 +60,11 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryPolicyIdPasswordReset = "Directory.B2C.PolicyId.PasswordReset";
 
             public const string StorageCdnUrl = "Storage.CdnUrl";
+            public const string StorageLoginUrl = "Storage.LoginUrl";
             public const string StorageManagementUrl = "Storage.ManagementUrl";
 
             public const string DatabaseCollectionThroughputUnits = "Database.Collection.ThroughputUnits";
             public const string DatabaseDocumentMaxSizeBytes = "Database.Document.MaxSizeBytes";
-
-            public const string MediaLoginUrl = "Media.LoginUrl";
 
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
@@ -157,6 +155,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Storage
         {
+            public const string NotAvailable = "N/A";
+
             public struct Account
             {
                 public const string Connection = "DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}";
@@ -325,6 +325,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Stream
             {
+                public const string DefaultEndpointName = "default";
                 public const string LocatorIdPrefix = "nb:lid:UUID:";
                 public const string LocatorManifestSuffix = "/manifest";
                 public const string AssetFilteredSuffix = " (Filtered)";
