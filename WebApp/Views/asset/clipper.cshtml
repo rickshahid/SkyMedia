@@ -12,34 +12,30 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
     <script type="text/javascript">
         function LoadStreams(search, skip, take, type) {
-            alert("LoadStreams");
+            SetCursor(true);
+            $.get("/asset/streams",
+                {
+                    searchCriteria: search,
+                    skipCount: skip,
+                    takeCount: take,
+                    streamType: type
+                },
+                function (streams) {
+                    SetCursor(false);
+                    clipper.load(streams);
+                }
+            );
         }
         function CreateClip(clipData) {
             alert("CreateClip");
         }
-        function CreateClipper(dynamicLoad) {
-            if (dynamicLoad) {
-                var clipper = new subclipper({
-                    restVersion: "2.0",
-                    selector: "#videoClipper",
-                    submitSubclipCallback: CreateClip,
-                    assetsPanelLoaderCallback: LoadStreams
-                });
-            } else {
-                var clipper = new subclipper({
-                    restVersion: "2.0",
-                    selector: "#videoClipper",
-                    submitSubclipCallback: CreateClip
-                });
-                $.get("/asset/streams",
-                    function (streams) {
-                        clipper.load(streams);
-                    }
-                );
-            }
-        }
         $(function () {
-            CreateClipper(false);
+            var clipper = new subclipper({
+                restVersion: "2.0",
+                selector: "#videoClipper",
+                submitSubclipCallback: CreateClip,
+                assetsPanelLoaderCallback: LoadStreams
+            });
         })
     </script>
 }

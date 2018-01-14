@@ -17,11 +17,13 @@
             return searchCriteria;
         }
         function SubmitSearchRequest() {
+            SetCursor(true);
             $.post("/search/insight",
                 {
                     searchCriteria: GetSearchCriteria()
                 },
                 function (results) {
+                    SetCursor(false);
                     $("#insightSearchResults").jsonBrowse(results);
                 }
             );

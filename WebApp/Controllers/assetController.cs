@@ -37,28 +37,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(assets);
         }
 
-        //public JsonResult metadata(string documentId, double timeSeconds)
-        //{
-        //    JObject metadata;
-        //    string collectionId = Constant.Database.Collection.ContentInsight;
-        //    if (timeSeconds == 0)
-        //    {
-        //        using (DocumentClient documentClient = new DocumentClient())
-        //        {
-        //            metadata = documentClient.GetDocument(collectionId, documentId);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        string procedureId = Constant.Database.Procedure.MetadataFragment;
-        //        using (DocumentClient documentClient = new DocumentClient())
-        //        {
-        //            metadata = documentClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
-        //        }
-        //    }
-        //    return Json(metadata);
-        //}
-
         //public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
         //{
         //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
@@ -80,7 +58,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    return Json(result);
         //}
 
-        public JsonResult streams()
+        public JsonResult streams(string searchCriteria, int skipCount, int takeCount, string streamType)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);

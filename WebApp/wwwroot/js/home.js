@@ -48,8 +48,10 @@ function StartStreamingEndpoint(title) {
     var buttons = {
         Yes: function () {
             $(this).dialog("close");
+            SetCursor(true);
             $.post("/home/endpoint", { },
                 function (endpointName) {
+                    SetCursor(false);
                     if (endpointName != "") {
                         message = "A request to start your " + endpointName + " streaming endpoint has been submitted.";
                         DisplayMessage(title, message);

@@ -46,6 +46,7 @@ function SetAnalyticsMetadata(mediaPlayer) {
     var mediaProcessor = $("#analyticsProcessors option:selected").text();
     if (mediaProcessor != "") {
         mediaPlayer.pause();
+        SetCursor(true);
         $.get("/insight/metadata",
             {
                 mediaProcessor: mediaProcessor.replace(/\s+/g, ""),
@@ -53,6 +54,7 @@ function SetAnalyticsMetadata(mediaPlayer) {
                 timeSeconds: mediaPlayer.currentTime()
             },
             function (metadata) {
+                SetCursor(false);
                 $("#analyticsMetadata").jsonBrowse(metadata);
             }
         );

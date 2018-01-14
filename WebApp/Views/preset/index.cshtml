@@ -12,11 +12,13 @@
             if (mediaProcessor.value == "") {
                 $("#mediaProcessorPresetRow").hide();
             } else {
+                SetCursor(true);
                 $.post("/preset/configs",
                     {
                         mediaProcessor: mediaProcessor.value
                     },
                     function (presetConfigs) {
+                        SetCursor(false);
                         var presetOptions = $("#mediaProcessorPreset")[0].options;
                         presetOptions.length = 0;
                         presetOptions[presetOptions.length] = new Option("", "");
@@ -40,11 +42,13 @@
         function SetProcessorPreset(presetId) {
             ResetPresetEditor();
             if (presetId.value != "") {
+                SetCursor(true);
                 $.post("/preset/config",
                     {
                         presetId: presetId.value
                     },
                     function (processorPreset) {
+                        SetCursor(false);
                         var editorOptions = {
                             change: function (updatedPreset) {
                                 _processorPreset = updatedPreset;
@@ -61,11 +65,13 @@
             var title = "Media Processor Preset Save";
             var message = "Are you sure you want to save the current processor preset?"
             var onConfirm = function () {
+                SetCursor(true);
                 $.post("/preset/save",
                     {
                         processorPreset: JSON.stringify(_processorPreset)
                     },
                     function (saved) {
+                        SetCursor(false);
                         var message = saved ? "The current preset has been saved." : "To create a custom preset, the PresetName property must be unique.";
                         DisplayMessage(title, message);
                         if (saved) {
@@ -82,11 +88,13 @@
             var title = "Media Processor Preset Delete";
             var message = "Are you sure you want to delete the current processor preset?"
             var onConfirm = function () {
+                SetCursor(true);
                 $.post("/preset/delete",
                     {
                         processorPreset: JSON.stringify(_processorPreset)
                     },
                     function (deleted) {
+                        SetCursor(false);
                         var message = deleted ? "The current preset has been deleted." : "System presets cannot be deleted.";
                         DisplayMessage(title, message);
                         if (deleted) {

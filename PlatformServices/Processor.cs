@@ -230,8 +230,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string presetId = preset["id"].ToString();
                 string presetProcessor = preset["MediaProcessor"].ToString();
-                if (presetProcessor.StartsWith(mediaProcessor.ToString(), StringComparison.OrdinalIgnoreCase) ||
-                    presetId.StartsWith(accountPresetId, StringComparison.Ordinal))
+                string[] presetIdInfo = presetId.Split(Constant.TextDelimiter.Identifier);
+                bool customPreset = presetIdInfo.Length == 3 ? true : false;
+                if ((!customPreset && presetProcessor.StartsWith(mediaProcessor.ToString(), StringComparison.OrdinalIgnoreCase)) ||
+                    (customPreset && presetId.StartsWith(accountPresetId, StringComparison.Ordinal)))
                 {
                     string presetName = preset["PresetName"].ToString();
                     processorPresets.Add(presetName, presetId);
