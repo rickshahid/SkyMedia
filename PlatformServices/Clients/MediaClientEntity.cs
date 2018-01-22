@@ -182,101 +182,260 @@ namespace AzureSkyMedia.PlatformServices
             return entity;
         }
 
-        public object GetEntityByName(MediaEntity entityType, string entityName, bool requireUnique)
+        public object GetEntityByName(MediaEntity entityType, string entityName, bool allEntities)
         {
             object entity = null;
             switch (entityType)
             {
                 case MediaEntity.MonitoringConfiguration:
                     IQueryable<IMonitoringConfiguration> monitoringConfigs = _media.MonitoringConfigurations.Where(x => x.NotificationEndPointId.Contains(entityName));
-                    entity = requireUnique ? monitoringConfigs.SingleOrDefault() : monitoringConfigs.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = monitoringConfigs.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = monitoringConfigs.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.StorageAccount:
                     IQueryable<IStorageAccount> storageAccounts = _media.StorageAccounts.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? storageAccounts.SingleOrDefault() : storageAccounts.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = storageAccounts.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = storageAccounts.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.ContentKey:
                     IQueryable<IContentKey> contentKeys = _media.ContentKeys.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? contentKeys.SingleOrDefault() : contentKeys.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = contentKeys.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = contentKeys.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.ContentKeyAuthPolicy:
                     IQueryable<IContentKeyAuthorizationPolicy> authPolicies = _media.ContentKeyAuthorizationPolicies.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? authPolicies.SingleOrDefault() : authPolicies.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = authPolicies.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = authPolicies.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.ContentKeyAuthPolicyOption:
                     IQueryable<IContentKeyAuthorizationPolicyOption> policyOptions = _media.ContentKeyAuthorizationPolicyOptions.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? policyOptions.SingleOrDefault() : policyOptions.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = policyOptions.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = policyOptions.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.Manifest:
                     IQueryable<IIngestManifest> manifests = _media.IngestManifests.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? manifests.SingleOrDefault() : manifests.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = manifests.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = manifests.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.ManifestAsset:
                     IQueryable<IIngestManifestAsset> manifestAssets = _media.IngestManifestAssets.Where(x => x.Asset.Name.Contains(entityName));
-                    entity = requireUnique ? manifestAssets.SingleOrDefault() : manifestAssets.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = manifestAssets.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = manifestAssets.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.ManifestFile:
                     IQueryable<IIngestManifestFile> manifestFiles = _media.IngestManifestFiles.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? manifestFiles.SingleOrDefault() : manifestFiles.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = manifestFiles.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = manifestFiles.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.Asset:
                     IQueryable<IAsset> assets = _media.Assets.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? assets.SingleOrDefault() : assets.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = assets.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = assets.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.File:
                     IQueryable<IAssetFile> files = _media.Files.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? files.SingleOrDefault() : files.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = files.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = files.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.Channel:
                     IQueryable<IChannel> channels = _media.Channels.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? channels.SingleOrDefault() : channels.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = channels.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = channels.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.Program:
                     IQueryable<IProgram> programs = _media.Programs.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? programs.SingleOrDefault() : programs.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = programs.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = programs.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.Processor:
                     IQueryable<IMediaProcessor> processors = _media.MediaProcessors.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? processors.SingleOrDefault() : processors.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = processors.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = processors.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.ProcessorUnit:
                     IQueryable<IEncodingReservedUnit> reservedUnits = _media.EncodingReservedUnits.Where(x => x.ReservedUnitType.ToString().Contains(entityName));
-                    entity = requireUnique ? reservedUnits.SingleOrDefault() : reservedUnits.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = reservedUnits.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = reservedUnits.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.Job:
                     IQueryable<IJob> jobs = _media.Jobs.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? jobs.SingleOrDefault() : jobs.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = jobs.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = jobs.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.JobTemplate:
                     IQueryable<IJobTemplate> templates = _media.JobTemplates.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? templates.SingleOrDefault() : templates.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = templates.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = templates.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.NotificationEndpoint:
                     IQueryable<INotificationEndPoint> notifications = _media.NotificationEndPoints.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? notifications.SingleOrDefault() : notifications.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = notifications.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = notifications.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.AccessPolicy:
                     IQueryable<IAccessPolicy> accessPolicies = _media.AccessPolicies.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? accessPolicies.SingleOrDefault() : accessPolicies.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = accessPolicies.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = accessPolicies.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.DeliveryPolicy:
                     IQueryable<IAssetDeliveryPolicy> deliveryPolicies = _media.AssetDeliveryPolicies.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? deliveryPolicies.SingleOrDefault() : deliveryPolicies.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = deliveryPolicies.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = deliveryPolicies.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.StreamingEndpoint:
                     IQueryable<IStreamingEndpoint> streamingEndpoints = _media.StreamingEndpoints.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? streamingEndpoints.SingleOrDefault() : streamingEndpoints.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = streamingEndpoints.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = streamingEndpoints.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.StreamingFilter:
                     IQueryable<IStreamingFilter> streamingFilters = _media.Filters.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? streamingFilters.SingleOrDefault() : streamingFilters.FirstOrDefault();
+                    if (allEntities)
+                    {
+                        entity = streamingFilters.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = streamingFilters.SingleOrDefault();
+                    }
                     break;
                 case MediaEntity.Locator:
-                    IQueryable<ILocator> locators = _media.Locators.Where(x => x.Name.Contains(entityName));
-                    entity = requireUnique ? locators.SingleOrDefault() : locators.FirstOrDefault();
+                    IQueryable<ILocator> locators = _media.Locators.Where(x => x.Asset.Name.Contains(entityName));
+                    if (allEntities)
+                    {
+                        entity = locators.AsEnumerable();
+                    }
+                    else
+                    {
+                        entity = locators.SingleOrDefault();
+                    }
                     break;
             }
             return entity;
+        }
+
+        public object GetEntityByName(MediaEntity entityType, string entityName)
+        {
+            return GetEntityByName(entityType, entityName, false);
         }
     }
 }

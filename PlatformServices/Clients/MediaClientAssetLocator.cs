@@ -16,7 +16,7 @@ namespace AzureSkyMedia.PlatformServices
         private IAccessPolicy GetAccessPolicy(bool readWrite)
         {
             string policyName = readWrite ? Constant.Media.AccessPolicy.ReadWritePolicyName : Constant.Media.AccessPolicy.ReadOnlyPolicyName;
-            IAccessPolicy accessPolicy = GetEntityByName(MediaEntity.AccessPolicy, policyName, true) as IAccessPolicy;
+            IAccessPolicy accessPolicy = GetEntityByName(MediaEntity.AccessPolicy, policyName) as IAccessPolicy;
             if (accessPolicy == null)
             {
                 TimeSpan policyDuration;

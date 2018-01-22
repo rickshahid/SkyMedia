@@ -13,11 +13,6 @@ namespace AzureSkyMedia.PlatformServices
             this.ProcessorConfigInteger = new Dictionary<string, int>();
         }
 
-        public MediaJobTask CreateCopy()
-        {
-            return (MediaJobTask)this.MemberwiseClone();
-        }
-
         public int? ParentIndex { get; set; }
 
         public string Name { get; set; }

@@ -328,7 +328,6 @@ namespace AzureSkyMedia.PlatformServices
                 public const string DefaultEndpointName = "default";
                 public const string LocatorIdPrefix = "nb:lid:UUID:";
                 public const string LocatorManifestSuffix = "/manifest";
-                public const string AssetFilteredSuffix = " (Filtered)";
                 public const string TextTrackCaptions = "captions";
             }
         }

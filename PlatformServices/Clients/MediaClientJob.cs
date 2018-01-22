@@ -10,7 +10,7 @@ namespace AzureSkyMedia.PlatformServices
         private INotificationEndPoint GetNotificationEndpoint()
         {
             string endpointName = Constant.Media.JobNotification.EndpointName;
-            INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName, true) as INotificationEndPoint;
+            INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName) as INotificationEndPoint;
             if (notificationEndpoint == null)
             {
                 NotificationEndPointType endpointType = NotificationEndPointType.WebHook;

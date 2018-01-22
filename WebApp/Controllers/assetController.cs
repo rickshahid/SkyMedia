@@ -37,6 +37,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(assets);
         }
 
+        public JsonResult streams(string searchCriteria, int skipCount, int takeCount, string streamType)
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            MediaStream[] streams = Media.GetMediaStreams(authToken, searchCriteria, skipCount, takeCount, streamType);
+            return Json(streams);
+        }
+
         //public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
         //{
         //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
@@ -57,14 +64,6 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    }
         //    return Json(result);
         //}
-
-        public JsonResult streams(string searchCriteria, int skipCount, int takeCount, string streamType)
-        {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            MediaStream[] streams = Media.GetMediaStreams(authToken, mediaClient);
-            return Json(streams);
-        }
 
         public IActionResult clipper()
         {

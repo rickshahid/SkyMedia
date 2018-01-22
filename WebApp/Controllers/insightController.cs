@@ -20,7 +20,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             string procedureId = Constant.Database.Procedure.MetadataFragment;
             using (DocumentClient documentClient = new DocumentClient())
             {
-                metadata = documentClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
+                if (mediaProcessor == MediaProcessor.VideoIndexer)
+                {
+                    metadata = documentClient.GetDocument(collectionId, documentId);
+                }
+                else
+                {
+                    metadata = documentClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
+                }
             }
             return Json(metadata);
         }

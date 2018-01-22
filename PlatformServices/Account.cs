@@ -38,7 +38,7 @@ namespace AzureSkyMedia.PlatformServices
             IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
             if (streamingEndpoints.Length > 1)
             {
-                streamingEndpoint = mediaClient.GetEntityByName(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpointName, true) as IStreamingEndpoint;
+                streamingEndpoint = mediaClient.GetEntityByName(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpointName) as IStreamingEndpoint;
             }
             else if (streamingEndpoints.Length == 1)
             {

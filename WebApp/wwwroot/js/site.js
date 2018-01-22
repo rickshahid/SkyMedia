@@ -10,7 +10,7 @@ function SetLayout(b2b) {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
     CreateTipBottom("accountInventory", "Azure Media Services<br><br>Account Inventory");
-    CreateTipBottom("mediaBot", "Azure Sky Media<br><br>Bot (Viddy)");
+    CreateTipBottom("mediaBot", "Azure Bot Service");
     if (b2b) {
         CreateTipBottom("userDirectory", "Azure<br><br>Active Directory");
     } else {
@@ -36,12 +36,10 @@ function SetLayout(b2b) {
     CreateTipTop("mediaProcessorPresets", "Media Processor<br><br>Presets");
     CreateTipTop("mediaFileWorkflow", "Media File<br><br>Workflow");
     CreateTipTop("mediaAssetWorkflow", "Media Asset<br><br>Workflow");
-    CreateTipTop("mediaAssetFiles", "Media Asset<br><br>Files");
     CreateTipTop("streamSlider", "Media Stream<br><br>Tuner", 0, -10);
+    CreateTipTop("mediaAssetFiles", "Media Asset<br><br>Files");
     CreateTipTop("mediaAssetClipper", "Media Asset<br><br>Clipper");
-    CreateTipTop("mediaStreamLive", "Media Stream<br><br>Live");
     CreateTipTop("mediaInsightSearch", "Media Insight<br><br>Search");
-    CreateTipTop("azureRoadmap", "Microsoft Azure<br><br>Roadmap");
     CreateTipBottom("mediaCertification", "Azure Media Services<br><br>Security Certification");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);

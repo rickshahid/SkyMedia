@@ -79,10 +79,9 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (MediaJobInput jobInput in jobInputs)
                 {
-                    MediaJobTask newTask = jobTask.CreateCopy();
-                    newTask = GetJobTask(mediaClient, newTask, jobInput.AssetName);
-                    newTask.InputAssetIds = new string[] { jobInput.AssetId };
-                    jobTasks.Add(newTask);
+                    jobTask = GetJobTask(mediaClient, jobTask, jobInput.AssetName);
+                    jobTask.InputAssetIds = new string[] { jobInput.AssetId };
+                    jobTasks.Add(jobTask);
                 }
             }
             return jobTasks.ToArray();

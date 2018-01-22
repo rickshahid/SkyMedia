@@ -137,7 +137,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public void InsertCue(string channelName, int durationSeconds, int cueId, bool showSlate)
         {
-            IChannel channel = GetEntityByName(MediaEntity.Channel, channelName, true) as IChannel;
+            IChannel channel = GetEntityByName(MediaEntity.Channel, channelName) as IChannel;
             TimeSpan duration = new TimeSpan(0, 0, 0, durationSeconds);
             channel.StartAdvertisement(duration, cueId, showSlate);
         }

@@ -73,6 +73,20 @@
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
+                    if (_mediaPlayer.isLive()) {
+                        var markerImage = document.createElement("img");
+                        markerImage.id = "markerImage";
+                        markerImage.src = "@storageCdnUrl" + "/MediaStreamMarker.png";
+                        var markerButton = document.createElement("button");
+                        markerButton.id = "markerButton";
+                        markerButton.className = controlButtonCss;
+                        markerButton.appendChild(markerImage);
+                        controlBarRight.appendChild(markerButton);
+                        $("#markerButton").click(function () {
+                            alert("Insert Live Stream Marker");
+                        });
+                        CreateTipTop("markerButton", "Insert Live<br><br>Marker");
+                    }
                     var indexerInsight = GetIndexerInsight(mediaStream, "@videoIndexer");
                     if (indexerInsight != null) {
                         var insightImage = document.createElement("img");
@@ -86,6 +100,7 @@
                         $("#insightButton").click(function () {
                             ToggleIndexerInsight(indexerInsight);
                         });
+                        CreateTipTop("insightButton", "Video Indexer<br><br>Insight");
                     }
                     if (mediaStream.contentInsight.length > 0) {
                         var analyticsImage = document.createElement("img");
@@ -100,6 +115,7 @@
                             SetAnalyticsProcessors(mediaStream);
                             ToggleAnalyticsInsight(mediaStream);
                         });
+                        CreateTipTop("analyticsButton", "Media Analytics<br><br>Insight");
                     }
                 }
             });
@@ -146,23 +162,15 @@
     <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
 </div>
 
-<table id="analyticsInsight" class="analyticsInsight">
-    <tr>
-        <td class="inputLabel">
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-analytics-overview')">
-                Azure Media Analytics
-            </span>
-        </td>
-        <td>
-            <select id="analyticsProcessors" class="analyticsProcessors" onchange="SetAnalyticsMetadata(_mediaPlayer)"></select>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <div id="analyticsMetadata" class="analyticsMetadata"></div>
-        </td>
-    </tr>
-</table>
+<div id="analyticsInsight" class="analyticsInsight">
+    <div class="analyticsProcessors">
+        <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-analytics-overview')">
+            Azure Media Analytics
+        </span>
+        <select id="analyticsProcessors" onchange="SetAnalyticsMetadata(_mediaPlayer)"></select>
+    </div>
+    <div id="analyticsMetadata" class="analyticsMetadata"></div>
+</div>
 
 @Html.Partial("MediaControls", mediaStreams)
 

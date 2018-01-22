@@ -81,7 +81,12 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (string fileName in fileNames)
                 {
-                    IAsset asset = mediaClient.CreateAsset(authToken, fileName, storageAccount, storageEncryption, new string[] { fileName });
+                    string assetName = fileName;
+                    if (fileNames.Length == 1 && !string.IsNullOrEmpty(inputAssetName))
+                    {
+                        assetName = inputAssetName;
+                    }
+                    IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
                     MediaJobInput jobInput = GetJobInput(asset);
                     jobInputs.Add(jobInput);
                 }

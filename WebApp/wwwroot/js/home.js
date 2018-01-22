@@ -33,16 +33,6 @@ function GetStreamName(mediaStream, streamSlider) {
     }
     return streamName;
 }
-function ToggleLiveStream(button) {
-    var buttonImage = button.children[0];
-    if (buttonImage.src.indexOf("LiveStreamOn") > -1) {
-        buttonImage.src = buttonImage.src.replace("On", "Off");
-        window.location.href = "/?live=off";
-    } else {
-        buttonImage.src = buttonImage.src.replace("Off", "On");
-        window.location.href = "/?live=on";
-    }
-}
 function StartStreamingEndpoint(title) {
     var message = "Your media account streaming endpoint is not running.<br><br>Do you want to start your streaming endpoint now?"
     var buttons = {

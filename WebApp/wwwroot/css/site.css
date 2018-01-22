@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 480px) {
-    #accountInventory, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonLeft4, #userButtonRight1, #userButtonRight2, #userButtonRight3, #userButtonRight4 {
+    #accountInventory, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -17,7 +17,7 @@
 }
 
 @media all and (min-width: 481px) and (max-width: 768px) {
-    .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonLeft4, #userButtonRight1, #userButtonRight2, #userButtonRight3, #userButtonRight4 {
+    .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -48,6 +48,7 @@ body {
 }
 
 .layoutPanel.side {
+    display: normal;
 }
 
 .header {
@@ -117,7 +118,7 @@ body {
 }
 
 .streamSlider {
-    width: 100px;
+    width: 150px;
 }
 
 .streamSliderHandle {
@@ -339,12 +340,14 @@ a.json-placeholder {
 }
 
 .plupload_total_file_size {
-    padding-right: 8px;
+    display: inline-block;
+    padding-right: 10px;
+    width: 55px;
 }
 
 .plupload_progress_container {
     height: 10px;
-    width: 100px;
+    width: 95px;
 }
 
 .plupload_progress {
@@ -444,7 +447,7 @@ a.json-placeholder {
 
 .mediaAssets.workflowView {
     height: 300px;
-    width: 605px;
+    width: 685px;
 }
 
 .mediaFile > .jstree-checkbox {
@@ -704,8 +707,13 @@ a.json-placeholder {
 }
 
 .videoClipper {
-    height: 850px;
     width: 1080px;
+}
+
+.clipLoader {
+    text-align: center;
+    font-size: large;
+    margin-top: 20px;
 }
 
 .indexerInsight {
@@ -720,11 +728,11 @@ a.json-placeholder {
     display: none;
 }
 
-.analyticsInsight td {
-    padding: 0px;
+.analyticsProcessors {
+    text-align: center;
 }
 
-.analyticsProcessors {
+.analyticsProcessors select {
     font-weight: bold;
     margin-left: 5px;
     width: 180px;

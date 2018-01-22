@@ -44,7 +44,7 @@
                     </div>
                 </td>
                 <td class="headerSide right">
-                    @Html.Partial("SiteButton", new string[] { "mediaBot", "MediaBot.png", "DisplayMessage('Azure Sky Media Bot', 'Hi, my name is Viddy. I am currently under construction.<br><br>Please check on me later. Thank you.')" })
+                    @Html.Partial("SiteButton", new string[] { "mediaBot", "MediaBot.png", "window.open('http://azure.microsoft.com/services/bot-service/')" })
                     @if (ViewData.ContainsKey("accountContext"))
                     {
                         @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '" + ViewData["accountProfileEdit"] + "'" })

@@ -24,7 +24,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private IContentKey GetContentKey(ContentKeyType keyType, string keyName, ContentProtection contentProtection)
         {
-            IContentKey contentKey = GetEntityByName(MediaEntity.ContentKey, keyName, true) as IContentKey;
+            IContentKey contentKey = GetEntityByName(MediaEntity.ContentKey, keyName) as IContentKey;
             if (contentKey == null)
             {
                 Guid keyId = Guid.NewGuid();
@@ -140,7 +140,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 case ContentKeyType.EnvelopeEncryption:
                     string policyOptionName = string.Concat(policyName, Constant.Media.ContentProtection.AuthPolicyOptionNameAes);
-                    IContentKeyAuthorizationPolicyOption policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName, true) as IContentKeyAuthorizationPolicyOption;
+                    IContentKeyAuthorizationPolicyOption policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName) as IContentKeyAuthorizationPolicyOption;
                     if (policyOption == null)
                     {
                         ContentKeyDeliveryType deliveryType = ContentKeyDeliveryType.BaselineHttp;
@@ -154,7 +154,7 @@ namespace AzureSkyMedia.PlatformServices
                     if (contentProtection.DrmPlayReady)
                     {
                         policyOptionName = string.Concat(policyName, Constant.Media.ContentProtection.AuthPolicyOptionNameDrmPlayReady);
-                        policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName, true) as IContentKeyAuthorizationPolicyOption;
+                        policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName) as IContentKeyAuthorizationPolicyOption;
                         if (policyOption == null)
                         {
                             PlayReadyLicenseResponseTemplate responseTemplate = new PlayReadyLicenseResponseTemplate();
@@ -173,7 +173,7 @@ namespace AzureSkyMedia.PlatformServices
                     if (contentProtection.DrmWidevine)
                     {
                         policyOptionName = string.Concat(policyName, Constant.Media.ContentProtection.AuthPolicyOptionNameDrmWidevine);
-                        policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName, true) as IContentKeyAuthorizationPolicyOption;
+                        policyOption = GetEntityByName(MediaEntity.ContentKeyAuthPolicyOption, policyOptionName) as IContentKeyAuthorizationPolicyOption;
                         if (policyOption == null)
                         {
                             ContentKeySpecs contentKeySpecs = new ContentKeySpecs();
@@ -206,7 +206,7 @@ namespace AzureSkyMedia.PlatformServices
         private void SetContentKeyAuthPolicy(IContentKey contentKey, ContentProtection contentProtection)
         {
             string policyName = string.Concat(contentKey.Name, Constant.Media.ContentProtection.AuthPolicyName);
-            IContentKeyAuthorizationPolicy authPolicy = GetEntityByName(MediaEntity.ContentKeyAuthPolicy, policyName, true) as IContentKeyAuthorizationPolicy;
+            IContentKeyAuthorizationPolicy authPolicy = GetEntityByName(MediaEntity.ContentKeyAuthPolicy, policyName) as IContentKeyAuthorizationPolicy;
             if (authPolicy == null)
             {
                 authPolicy = CreateContentKeyAuthPolicy(policyName, contentKey, contentProtection);

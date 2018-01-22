@@ -37,7 +37,7 @@ namespace AzureSkyMedia.PlatformServices
                                                        Dictionary<AssetDeliveryPolicyConfigurationKey, string> policyConfig,
                                                        ContentKeyDeliveryType[] deliveryTypes)
         {
-            IAssetDeliveryPolicy deliveryPolicy = GetEntityByName(MediaEntity.DeliveryPolicy, policyName, true) as IAssetDeliveryPolicy;
+            IAssetDeliveryPolicy deliveryPolicy = GetEntityByName(MediaEntity.DeliveryPolicy, policyName) as IAssetDeliveryPolicy;
             if (deliveryPolicy == null)
             {
                 AssetDeliveryProtocol policyProtocols = GetDeliveryProtocols(deliveryTypes);

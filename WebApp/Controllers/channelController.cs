@@ -23,5 +23,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
             return channelId;
         }
+
+        public JsonResult marker(string channelName, int durationSeconds, int cueId, bool showSlate)
+        {
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
+            mediaClient.InsertCue(channelName, durationSeconds, cueId, showSlate);
+            return Json(cueId);
+        }
     }
 }

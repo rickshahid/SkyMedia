@@ -188,14 +188,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     else
                     {
-                        bool liveStreams = this.Request.Host.Value.Contains("live.") || queryString.Contains("live=on");
-                        if (liveStreams)
-                        {
-                            mediaStreams = Media.GetLiveStreams(authToken, mediaClient);
-                        }
-                        {
-                            mediaStreams = Media.GetMediaStreams(authToken, mediaClient);
-                        }
+                        mediaStreams = Media.GetMediaStreams(authToken, mediaClient);
                     }
                 }
             }
