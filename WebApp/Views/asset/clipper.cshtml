@@ -11,35 +11,31 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
     <script type="text/javascript">
-        function GetStreams(search, skip, take, type) {
-            SetCursor(true);
-            $.get("/asset/streams",
-                {
-                    searchCriteria: search,
-                    skipCount: skip,
-                    takeCount: take,
-                    streamType: type
-                },
-                function (streams) {
-                    SetCursor(false);
-                }
-            );
-        }
-        function CreateClip(clipData) {
-            alert("CreateClip");
-        }
         function LoadClipper(loadMode) {
             var autoPlay = false;
             var restVersion = "2.0";
-            var clipperId = "videoClipper";
+            var clipperSelector = "#videoClipper";
+            var onSubmitClip = function (clipData) {
+                var promise = new Promise(function (resolve, reject) {
+                    $.post("/asset/clip", {
+                        clipData: clipData
+                    })
+                    .then(function (clip) {
+                        resolve(true);
+                    }).catch(function () {
+                        reject();
+                    });
+                });
+                return promise;
+            };
             switch (loadMode) {
                 case "static":
                     var clipper = new subclipper({
                         height: 600,
                         autoplayVideo: autoPlay,
                         restVersion: restVersion,
-                        selector: "#" + clipperId,
-                        submitSubclipCallback: CreateClip
+                        selector: clipperSelector,
+                        submitSubclipCallback: onSubmitClip
                     });
                     SetCursor(true);
                     $.get("/asset/streams",
@@ -50,18 +46,22 @@
                     );
                     break;
                 case "dynamic":
-                    var onLoadPanel = function (search, skip, take, type) {
+                    var onLoadPanel = function (searchCriteria, skipCount, takeCount, streamType) {
                         var promise = new Promise(function (resolve, reject) {
-                            // TODO: implement the getAssetsFromBackend method to get the assets from the back-end using the filter parameters (search, skip, take, type).
-                            GetStreams(search, skip, take, type)
-                                .then(function (assets) {
-                                    resolve({
-                                        total: assets.length,
-                                        assets: assets
-                                    });
-                                }).catch(function () {
-                                    reject(Error("error details"));
+                            $.get("/asset/streams", {
+                                searchCriteria: searchCriteria,
+                                skipCount: skipCount,
+                                takeCount: takeCount,
+                                streamType: streamType
+                            })
+                            .then(function (streams) {
+                                resolve({
+                                    total: streams.length,
+                                    assets: streams
                                 });
+                            }).catch(function () {
+                                reject();
+                            });
                         });
                         return promise;
                     };
@@ -69,15 +69,15 @@
                         height: 850,
                         autoplayVideo: autoPlay,
                         restVersion: restVersion,
-                        selector: "#" + clipperId,
-                        submitSubclipCallback: CreateClip,
+                        selector: clipperSelector,
+                        submitSubclipCallback: onSubmitClip,
                         assetsPanelLoaderCallback: onLoadPanel
                     });
                     break;
             }
         }
         $(function () {
-            $("#clipLoadMode").change();
+            $("#assetLoadMode").change();
         })
     </script>
 }
@@ -90,10 +90,10 @@
 
 <div class="clipLoader">
     <span class="inputLabel">
-        Media Asset Load Mode:
+        Asset Load Mode:
     </span>
-    @Html.RadioButton("clipLoadMode", "static", true, new { onchange = "LoadClipper(this.value)" })
-    Static
-    @Html.RadioButton("clipLoadMode", "dynamic", false, new { onchange = "LoadClipper(this.value)" })
+    @Html.RadioButton("assetLoadMode", "dynamic", true, new { onchange = "LoadClipper(this.value)" })
     Dynamic
+    @Html.RadioButton("assetLoadMode", "static", false, new { onchange = "LoadClipper(this.value)" })
+    Static
 </div>

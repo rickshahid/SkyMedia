@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+using Newtonsoft.Json.Linq;
+
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -42,6 +44,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaStream[] streams = Media.GetMediaStreams(authToken, searchCriteria, skipCount, takeCount, streamType);
             return Json(streams);
+        }
+
+        public JsonResult clip(string clipData)
+        {
+            JObject clip = JObject.Parse(clipData);
+            return Json(clip);
         }
 
         //public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
