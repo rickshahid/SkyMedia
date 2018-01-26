@@ -48,7 +48,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static ILocator[] GetMediaLocators(MediaClient mediaClient, string assetName)
+        private static IEnumerable<ILocator> GetMediaLocators(MediaClient mediaClient, string assetName)
         {
             ILocator[] locators;
             if (string.IsNullOrEmpty(assetName))
@@ -234,14 +234,41 @@ namespace AzureSkyMedia.PlatformServices
             return mediaStreams.ToArray();
         }
 
-        public static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient)
+        public static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, int streamNumber, out int streamOffset, out int streamIndex, out bool endOfStreams)
         {
+            endOfStreams = false;
             List<MediaStream> mediaStreams = new List<MediaStream>();
-            ILocator[] locators = GetMediaLocators(mediaClient, null);
-            foreach (ILocator locator in locators)
+            string settingKey = Constant.AppSettingKey.MediaLocatorTunerPageSize;
+            int tunerPageSize = int.Parse(AppSetting.GetValue(settingKey));
+            streamOffset = ((streamNumber - 1) / tunerPageSize) * tunerPageSize;
+            streamIndex = (streamNumber - 1) % tunerPageSize;
+            IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, null);
+            int locatorsCount = locators.Count();
+            if (locatorsCount > 0)
             {
-                MediaStream[] assetStreams = GetMediaStreams(authToken, mediaClient, locator.Asset, false, false);
-                mediaStreams.AddRange(assetStreams);
+                if (streamOffset == locatorsCount)
+                {
+                    streamOffset = streamOffset - tunerPageSize;
+                    streamIndex = tunerPageSize - 1;
+                    endOfStreams = true;
+                }
+                else if (streamIndex == locatorsCount)
+                {
+                    streamIndex = streamIndex - 1;
+                    endOfStreams = true;
+                }
+                locators = locators.Skip(streamOffset);
+                foreach (ILocator locator in locators)
+                {
+                    MediaStream[] assetStreams = GetMediaStreams(authToken, mediaClient, locator.Asset, false, false);
+                    foreach (MediaStream assetStream in assetStreams)
+                    {
+                        if (mediaStreams.Count < tunerPageSize)
+                        {
+                            mediaStreams.Add(assetStream);
+                        }
+                    }
+                }
             }
             return mediaStreams.ToArray();
         }

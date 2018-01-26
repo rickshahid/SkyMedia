@@ -53,14 +53,9 @@ namespace AzureSkyMedia.PlatformServices
             string tableName = Constant.Storage.Table.ContentPublish;
             tableClient.InsertEntity(tableName, contentPublish);
 
-            ContentProtection[] contentProtections = MediaClient.GetContentProtections(job, jobTasks);
+            ContentProtection[] contentProtections = MediaClient.GetContentProtections(directoryId, job, jobTasks);
             foreach (ContentProtection contentProtection in contentProtections)
             {
-                string settingKey = Constant.AppSettingKey.DirectoryClientId;
-                settingKey = string.Format(settingKey, directoryId);
-                contentProtection.DirectoryId = directoryId;
-                contentProtection.Audience = AppSetting.GetValue(settingKey);
-
                 tableName = Constant.Storage.Table.ContentProtection;
                 contentProtection.PartitionKey = contentPublish.RowKey;
                 tableClient.InsertEntity(tableName, contentProtection);

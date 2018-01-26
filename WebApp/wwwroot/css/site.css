@@ -672,6 +672,13 @@ a.json-placeholder {
     border-radius: 20px;
 }
 
+.accountToken {
+    margin: 20px auto;
+    overflow: hidden;
+    display: none;
+    width: 550px;
+}
+
 .entityCounts {
     font-style: italic;
     font-weight: bold;

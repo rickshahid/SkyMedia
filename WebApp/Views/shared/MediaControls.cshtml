@@ -1,55 +1,58 @@
-﻿@using AzureSkyMedia.PlatformServices;
+﻿@{
+    int[] model = Model;
+    int streamOffset = model[0];
+    int streamCount = model[1];
 
-@{
-    MediaStream[] mediaStreams = Model;
+    int tunerPageStart = streamCount == 0 ? 0 : streamOffset + 1;
+    int tunerPageEnd = streamOffset + streamCount;
 }
 
 <table class="mediaControls">
     <tr>
-    @if (ViewData.ContainsKey("accountContext"))
-    {
-        <td id="userButtonLeft1">
-            @Html.Partial("SiteButton", new string[] { "mediaProcessorPresets", "MediaProcessorPresets.png", "window.location.href = '/preset'" })
-        </td>
-        <td id="userButtonLeft2">
-            @Html.Partial("SiteButton", new string[] { "mediaFileWorkflow", "MediaUpload.png", "window.location.href = '/upload'" })
-        </td>
-        <td id="userButtonLeft3">
-            @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'" })
-        </td>
-    }
+        @if (ViewData.ContainsKey("accountContext"))
+        {
+            <td id="userButtonLeft1">
+                @Html.Partial("SiteButton", new string[] { "mediaProcessorPresets", "MediaProcessorPresets.png", "window.location.href = '/preset'" })
+            </td>
+            <td id="userButtonLeft2">
+                @Html.Partial("SiteButton", new string[] { "mediaFileWorkflow", "MediaUpload.png", "window.location.href = '/upload'" })
+            </td>
+            <td id="userButtonLeft3">
+                @Html.Partial("SiteButton", new string[] { "mediaAssetWorkflow", "MediaWorkflow.png", "window.location.href = '/workflow'" })
+            </td>
+        }
         <td class="streamTuner">
             <table>
                 <tr>
                     <td>
-                        @Html.Partial("SiteButton", new string[] { "mediaStreamLeft", "MediaStreamLeft.png", "SetStreamSlider('left')" })
+                        @Html.Partial("SiteButton", new string[] { "mediaStreamLeft", "MediaStreamLeft.png", "SetStreamTuner(false)" })
                     </td>
                     <td class="streamNumber sideLeft">
-                        <span>@(mediaStreams.Length == 0 ? 0 : 1)</span>
+                        @tunerPageStart
                     </td>
                     <td>
                         <div id="streamSlider" class="streamSlider"></div>
                     </td>
                     <td class="streamNumber sideRight">
-                        @mediaStreams.Length
+                        @tunerPageEnd
                     </td>
                     <td>
-                        @Html.Partial("SiteButton", new string[] { "mediaStreamRight", "MediaStreamRight.png", "SetStreamSlider('right')" })
+                        @Html.Partial("SiteButton", new string[] { "mediaStreamRight", "MediaStreamRight.png", "SetStreamTuner(true)" })
                     </td>
                 </tr>
             </table>
         </td>
-    @if (ViewData.ContainsKey("accountContext"))
-    { 
-        <td id="userButtonRight1">
-            @Html.Partial("SiteButton", new string[] { "mediaAssetFiles", "MediaAssetFiles.png", "window.location.href = '/asset'" })
-        </td>
-        <td id="userButtonRight2">
-            @Html.Partial("SiteButton", new string[] { "mediaAssetClipper", "MediaClipper.png", "window.location.href = '/asset/clipper'" })
-        </td>
-        <td id="userButtonRight3">
-            @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "window.location.href = '/search'" })
-        </td>
-    }
+        @if (ViewData.ContainsKey("accountContext"))
+        { 
+            <td id="userButtonRight1">
+                @Html.Partial("SiteButton", new string[] { "mediaAssetFiles", "MediaAssetFiles.png", "window.location.href = '/asset'" })
+            </td>
+            <td id="userButtonRight2">
+                @Html.Partial("SiteButton", new string[] { "mediaAssetClipper", "MediaClipper.png", "window.location.href = '/asset/clipper'" })
+            </td>
+            <td id="userButtonRight3">
+                @Html.Partial("SiteButton", new string[] { "mediaInsightSearch", "MediaSearch.png", "window.location.href = '/search'" })
+            </td>
+        }
     </tr>
 </table>

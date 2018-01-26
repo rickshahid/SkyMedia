@@ -1,8 +1,21 @@
 ﻿@using System.Diagnostics;
 
+@{
+    string authToken = ViewData["authToken"] as string;
+}
+
 @section head {
     <script type="text/javascript">
-         function SetEntity(innerHtml, entityCount) {
+        function ToggleToken() {
+            if ($("#authToken").is(":visible")) {
+                $("#authToken").text("");
+                $("#authToken").hide();
+            } else {
+                $("#authToken").text("@authToken");
+                $("#authToken").show();
+            }
+        }
+        function SetEntity(innerHtml, entityCount) {
             innerHtml = innerHtml + "<tr><td>";
             if (entityCount.length > 2) {
                 innerHtml = innerHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
@@ -59,6 +72,7 @@
             DisplayMessage(title, message, buttons);
         }
         $(function () {
+            CreateTipTop("accountToken", "JSON Web Token (JWT)");
             CreateTipTop("accountClear", "Clear Media Account");
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
             SetInventory(entityCounts);
@@ -82,8 +96,11 @@
 </table>
 
 <div class="viewButtons">
-@if (Debugger.IsAttached)
-{
-    @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
-}
+    @Html.Partial("SiteButton", new string[] { "accountToken", "AccountToken.png", "ToggleToken()" })
+    @if (Debugger.IsAttached)
+    {
+        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
+    }
 </div>
+
+<div id="authToken" class="accountToken"></div>

@@ -1,15 +1,19 @@
-﻿function SetStreamSlider(slideDirection) {
+﻿function SetStreamTuner(slideForward) {
     var streamNumber = _streamNumber;
-    if (slideDirection == "left" && streamNumber > 1) {
-        streamNumber = streamNumber - 1;
-    } else if (slideDirection == "right" && streamNumber < _mediaStreams.length) {
-        streamNumber = streamNumber + 1;
+    if (_mediaStreams.length > 0) {
+        if (slideForward) {
+            streamNumber = streamNumber + 1;
+        } else if (streamNumber > 1) {
+            streamNumber = streamNumber - 1;
+        }
     }
-    window.location.href = "/?stream=" + streamNumber;
+    if (streamNumber != _streamNumber) {
+        window.location.href = "/?stream=" + streamNumber;
+    }
 }
-function SetStreamNumber(streamNumber) {
+function SetStreamNumber(streamNumber, streamIndex) {
     var sliderHandle = document.getElementsByClassName("ui-slider-handle")[0];
-    if (streamNumber == 1 || streamNumber == _mediaStreams.length) {
+    if (streamIndex == 0 || streamIndex == _mediaStreams.length - 1) {
         sliderHandle.innerText = "";
     } else {
         sliderHandle.innerText = streamNumber;

@@ -173,6 +173,16 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
             }
 
+            int streamNumber = 1;
+            string autoPlay = "false";
+            if (queryString.Contains("stream"))
+            {
+                streamNumber = int.Parse(this.Request.Query["stream"]);
+                autoPlay = "true";
+            }
+
+            int streamOffset = 0;
+            int streamIndex = streamNumber - 1;
             try
             {
                 if (string.IsNullOrEmpty(authToken))
@@ -188,7 +198,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     else
                     {
-                        mediaStreams = Media.GetMediaStreams(authToken, mediaClient);
+                        mediaStreams = Media.GetMediaStreams(authToken, mediaClient, streamNumber, out streamOffset, out streamIndex, out bool endOfStreams);
+                        if (endOfStreams)
+                        {
+                            streamNumber = streamNumber - 1;
+                        }
                     }
                 }
             }
@@ -199,15 +213,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["accountMessage"] = accountMessage;
 
             ViewData["mediaStreams"] = mediaStreams;
-            ViewData["streamNumber"] = 1;
-            ViewData["autoPlay"] = "false";
-            if (queryString.Contains("stream"))
-            {
-                ViewData["streamNumber"] = this.Request.Query["stream"];
-                ViewData["autoPlay"] = "true";
-            }
+            ViewData["streamNumber"] = streamNumber;
+
+            ViewData["streamOffset"] = streamOffset;
+            ViewData["streamIndex"] = streamIndex;
 
             ViewData["languageCode"] = this.Request.Query["language"];
+            ViewData["autoPlay"] = autoPlay;
+
             return View();
         }
     }

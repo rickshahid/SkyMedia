@@ -10,6 +10,8 @@
 
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
     int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
+    int streamOffset = int.Parse(ViewData["streamOffset"].ToString());
+    int streamIndex = int.Parse(ViewData["streamIndex"].ToString());
 
     string ampVersion = ViewData["mediaPlayerVersion"] as string;
     string ampSkin = ViewData["mediaPlayerSkin"] as string;
@@ -34,11 +36,12 @@
             _authToken = "@authToken";
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
+            _streamIndex = @streamIndex;
             var accountMessage = "@accountMessage";
-            var mediaStream = _mediaStreams.length == 0 ? null : _mediaStreams[_streamNumber - 1];
+            var mediaStream = _mediaStreams.length == 0 ? null : _mediaStreams[_streamIndex];
             var sliderWidth = $("#streamSlider").width();
             var sliderStep = _mediaStreams.length == 1 ? sliderWidth : Math.floor(sliderWidth / (_mediaStreams.length - 1));
-            var sliderValue = (_streamNumber - 1) * sliderStep;
+            var sliderValue = _streamIndex * sliderStep;
             $("#streamSlider").slider({
                 min: 0,
                 max: sliderWidth,
@@ -50,16 +53,19 @@
                 slide: function (event, ui) {
                     if (_mediaStreams.length > 0) {
                         var streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / sliderStep) + 1;
-                        var mediaStream = _mediaStreams[streamNumber - 1];
+                        var streamIndex = streamNumber - 1;
+                        var mediaStream = _mediaStreams[streamIndex];
                         var streamName = GetStreamName(mediaStream, true);
+                        streamNumber = streamNumber + @streamOffset;
                         CreateTipTopLeft("streamSlider", streamName, ui.value + 2, -15);
                         SetTipVisible("streamSlider", true);
-                        SetStreamNumber(streamNumber);
+                        SetStreamNumber(streamNumber, streamIndex);
                     }
                 },
                 stop: function (event, ui) {
                     if (_mediaStreams.length > 0) {
                         _streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / sliderStep) + 1;
+                        _streamNumber = _streamNumber + @streamOffset;
                         window.location.href = "/?stream=" + _streamNumber;
                     }
                 }
@@ -134,7 +140,7 @@
                 SetPlayerSpinner(false);
             } else {
                 SetPlayerContent(_mediaPlayer, mediaStream, "@languageCode", @autoPlay);
-                SetStreamNumber(_streamNumber);
+                SetStreamNumber(_streamNumber, _streamIndex);
                 var streamName = GetStreamName(mediaStream, false);
                 $("#streamName").html(streamName);
             }
@@ -172,7 +178,7 @@
     <div id="analyticsMetadata" class="analyticsMetadata"></div>
 </div>
 
-@Html.Partial("MediaControls", mediaStreams)
+@Html.Partial("MediaControls", new int[] { streamOffset, mediaStreams.Length })
 
 <div class="streamInfo">
     <div id="streamName" class="streamInfoName"></div>

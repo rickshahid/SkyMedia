@@ -17,15 +17,20 @@ namespace AzureSkyMedia.PlatformServices
             return tableClient.GetEntity<ContentProtection>(tableName, jobId, taskId);
         }
 
-        public static ContentProtection[] GetContentProtections(IJob job, MediaJobTask[] jobTasks)
+        public static ContentProtection[] GetContentProtections(string directoryId, IJob job, MediaJobTask[] jobTasks)
         {
             List<ContentProtection> contentProtections = new List<ContentProtection>();
+            string settingKey = Constant.AppSettingKey.DirectoryClientId;
+            settingKey = string.Format(settingKey, directoryId);
+            string directoryClientId = AppSetting.GetValue(settingKey);
             for (int i = 0; i < job.Tasks.Count; i++)
             {
                 if (jobTasks[i].ContentProtection != null)
                 {
                     ContentProtection contentProtection = jobTasks[i].ContentProtection;
                     contentProtection.RowKey = job.Tasks[i].Id;
+                    contentProtection.DirectoryId = directoryId;
+                    contentProtection.Audience = directoryClientId;
                     contentProtections.Add(contentProtection);
                 }
             }

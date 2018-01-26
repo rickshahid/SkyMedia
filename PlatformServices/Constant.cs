@@ -92,7 +92,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string MediaLocatorWriteDurationMinutes = "Media.Locator.WriteDurationMinutes";
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
-            public const string MediaLocatorMaxStreamCount = "Media.Locator.MaxStreamCount";
+            public const string MediaLocatorTunerPageSize = "Media.Locator.TunerPageSize";
             public const string MediaLocatorAutoRenewal = "Media.Locator.AutoRenewal";
 
             public const string MediaPlayerVersion = "Media.Player.Version";
