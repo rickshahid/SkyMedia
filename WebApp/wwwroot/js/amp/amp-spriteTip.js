@@ -13,12 +13,10 @@ function GetThumbnailTrack(player, options) {
         var textTrack = textTracks[i];
         if (textTrack.src.indexOf(".vtt") > -1 && _vttCues.length == 0) {
             var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                    var vttUrl = textTrack.src;
-                    var vttData = xhr.responseText;
-                    ParseThumbnailTrack(player, vttUrl, vttData);
-                }
+            xhr.onload = function () {
+                var vttUrl = textTrack.src;
+                var vttData = xhr.responseText;
+                ParseThumbnailTrack(player, vttUrl, vttData);
             };
             xhr.open("GET", textTrack.src, true);
             xhr.send();
