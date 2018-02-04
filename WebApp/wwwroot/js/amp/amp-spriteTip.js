@@ -15,7 +15,9 @@ function GetThumbnailTrack(player, options) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                    ParseThumbnailTrack(player, textTrack.src, xhr.responseText);
+                    var vttUrl = textTrack.src;
+                    var vttData = xhr.responseText;
+                    ParseThumbnailTrack(player, vttUrl, vttData);
                 }
             };
             xhr.open("GET", textTrack.src, true);
@@ -31,7 +33,7 @@ function ParseThumbnailTrack(player, vttUrl, vttData) {
             if (_imgUrl == null) {
                 var imgUrl = vttUrl.split("/");
                 var imgFile = cue.text.split("#")[0];
-                imgUrl[imgUrl.length - 1] = imgFile.substr(2);
+                imgUrl[imgUrl.length - 1] = imgFile.replace("./", "");
                 _imgUrl = imgUrl.join("/");
             }
             if (_vttCues.length == 0) {
@@ -45,7 +47,7 @@ function ParseThumbnailTrack(player, vttUrl, vttData) {
 }
 function InitializeSprite(player) {
     var seekBar = player.controlBar.progressControl.seekBar.el();
-    var progress = player.controlBar.progressControl.el();
+    var progressBar = player.controlBar.progressControl.el();
     seekBar.addEventListener("mousemove", function (e) {
         var timeSeconds = GetTimeSeconds(e, player);
         for (var i = 0; i < _vttCues.length; i++) {
@@ -61,7 +63,7 @@ function InitializeSprite(player) {
             }
         }
     });
-    progress.addEventListener("mouseout", function () {
+    progressBar.addEventListener("mouseout", function () {
         var spriteImg = document.getElementById("spriteImg");
         spriteImg.style.visibility = "hidden";
     });
