@@ -32,11 +32,7 @@
                 <td class="headerSide">
                     @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                     @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
-                    @{
-                        string displayMessage = "DisplayMessage('Azure Media Services Account Inventory', 'You must be signed in to display your media services account inventory.')";
-                        string onClick = ViewData.ContainsKey("accountContext") ? "window.location.href = '/account'" : displayMessage;
-                    }
-                    @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", onClick })
+                    @Html.Partial("SiteButton", new string[] { "mediaStreamLive", "MediaStreamLive.png", "window.open('http://docs.microsoft.com/azure/media-services/media-services-manage-channels-overview')" })
                 </td>
                 <td>
                     <div class="viewTitle">
@@ -44,7 +40,11 @@
                     </div>
                 </td>
                 <td class="headerSide right">
-                    @Html.Partial("SiteButton", new string[] { "mediaBot", "MediaBot.png", "window.open('http://azure.microsoft.com/services/bot-service/')" })
+                    @{
+                        string displayMessage = "DisplayMessage('Azure Media Services Account Inventory', 'You must be signed in to display your media services account inventory.')";
+                        string onInventoryClick = ViewData.ContainsKey("accountContext") ? "window.location.href = '/account'" : displayMessage;
+                    }
+                    @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", onInventoryClick, "flipHorizontal" })
                     @if (ViewData.ContainsKey("accountContext"))
                     {
                         @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '" + ViewData["accountProfileEdit"] + "'" })

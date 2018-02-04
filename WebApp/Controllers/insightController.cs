@@ -68,7 +68,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         [HttpDelete]
         [Route("/insight/delete")]
-        public void DeleteInsight(string indexId)
+        public void DeleteVideo(string indexId, bool deleteInsight)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
@@ -76,7 +76,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 IndexerClient indexerClient = new IndexerClient(authToken);
                 if (indexerClient.IndexerEnabled)
                 {
-                    indexerClient.DeleteVideo(indexId, true);
+                    indexerClient.DeleteVideo(indexId, deleteInsight);
                 }
 
                 DocumentClient documentClient = new DocumentClient();

@@ -9,8 +9,8 @@ function SetCursor(busy) {
 function SetLayout(b2b) {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
+    CreateTipBottom("mediaStreamLive", "Azure Media Services<br><br>Live Streaming");
     CreateTipBottom("accountInventory", "Azure Media Services<br><br>Account Inventory");
-    CreateTipBottom("mediaBot", "Azure Bot Service");
     if (b2b) {
         CreateTipBottom("userDirectory", "Azure<br><br>Active Directory");
     } else {
@@ -109,7 +109,10 @@ function GetMediaPlayer(userId, accountId) {
                 userId: userId,
                 accountId: accountId
             },
-            videobreakdown: {}
+            spriteTip: {
+            },
+            videobreakdown: {
+            }
         }
     };
     return amp("videoPlayer", options);

@@ -154,27 +154,28 @@ function SetEncoderPresetOptions(encoderConfigOptions, encoderPresets) {
     }
 }
 function SetEncoderConfigOptions(encoderConfig) {
-    var mediaProcessorId = encoderConfig.id.replace("encoderConfig", "mediaProcessor");
     var encoderConfigDocSchemaId = encoderConfig.id.replace("encoderConfig", "encoderConfigDocSchema");
     var encoderConfigFileRowId = encoderConfig.id.replace("encoderConfig", "encoderConfigFileRow");
-    if (encoderConfig.value == "Custom") {
-        $("#" + encoderConfigDocSchemaId).show();
-        $("#" + encoderConfigFileRowId).show();
-        switch ($("#" + mediaProcessorId).val()) {
-            case "EncoderStandard":
-                $("#" + encoderConfigDocSchemaId).click(function () {
-                    window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-schema");
-                });
-                break;
-            case "EncoderPremium":
-                $("#" + encoderConfigDocSchemaId).click(function () {
-                    window.open("http://docs.microsoft.com/azure/media-services/media-services-workflow-designer");
-                });
-                break;
-        }
-    } else {
-        $("#" + encoderConfigDocSchemaId).hide();
-        $("#" + encoderConfigFileRowId).hide();
+    var mediaProcessorId = encoderConfig.id.replace("encoderConfig", "mediaProcessor");
+    $("#" + encoderConfigDocSchemaId).hide();
+    $("#" + encoderConfigFileRowId).hide();
+    switch (encoderConfig.value) {
+        case "Custom":
+            $("#" + encoderConfigDocSchemaId).show();
+            $("#" + encoderConfigFileRowId).show();
+            switch ($("#" + mediaProcessorId).val()) {
+                case "EncoderStandard":
+                    $("#" + encoderConfigDocSchemaId).click(function () {
+                        window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-schema");
+                    });
+                    break;
+                case "EncoderPremium":
+                    $("#" + encoderConfigDocSchemaId).click(function () {
+                        window.open("http://docs.microsoft.com/azure/media-services/media-services-workflow-designer");
+                    });
+                    break;
+            }
+            break;
     }
     ScrollToBottom();
 }

@@ -12,17 +12,21 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal class WebClient
     {
-        private string _authToken;
         private string _apimKey;
+        private string _authToken;
 
-        public WebClient(JwtSecurityToken authToken)
+        public WebClient()
         {
-            _authToken = authToken.EncodedPayload;
         }
 
         public WebClient(string apimKey)
         {
             _apimKey = apimKey;
+        }
+
+        public WebClient(JwtSecurityToken authToken)
+        {
+            _authToken = authToken.EncodedPayload;
         }
 
         private T GetResponseData<T>(HttpContent responseContent)
@@ -51,6 +55,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public HttpRequestMessage GetRequest(HttpMethod requestMethod, string requestUrl, object requestData)
         {
+            if (requestUrl.StartsWith("//"))
+            {
+                requestUrl = string.Concat("https:", requestUrl);
+            }
             HttpRequestMessage requestMessage = new HttpRequestMessage(requestMethod, requestUrl);
             if (requestData != null)
             {

@@ -227,6 +227,7 @@
     <Compile Include="Entities\MediaPublish.cs" />
     <Compile Include="Entities\MediaSearch.cs" />
     <Compile Include="Entities\MediaStream.cs" />
+    <Compile Include="Entities\MediaThumbnails.cs" />
     <Compile Include="Entities\MediaTrack.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Enumeration.cs" />

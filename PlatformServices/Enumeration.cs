@@ -83,4 +83,11 @@ namespace AzureSkyMedia.PlatformServices
         Widevine,
         FairPlay
     }
+
+    public enum MediaThumbnailFormat
+    {
+        JPG,
+        PNG,
+        BMP
+    }
 }

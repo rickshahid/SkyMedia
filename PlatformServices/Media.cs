@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -32,20 +33,17 @@ namespace AzureSkyMedia.PlatformServices
             string streamName = AppSetting.GetValue(settingStreamName);
             string sourceUrl = AppSetting.GetValue(settingSourceUrl);
             string textTracks = AppSetting.GetValue(settingTextTrack);
-            if (!string.IsNullOrEmpty(streamName))
+            MediaStream mediaStream = new MediaStream()
             {
-                MediaStream mediaStream = new MediaStream()
+                Name = streamName,
+                Source = new StreamSource()
                 {
-                    Name = streamName,
-                    Source = new StreamSource()
-                    {
-                        Src = sourceUrl,
-                        ProtectionInfo = new StreamProtection[] { }
-                    },
-                    TextTracks = GetTextTracks(textTracks)
-                };
-                mediaStreams.Add(mediaStream);
-            }
+                    Src = sourceUrl,
+                    ProtectionInfo = new StreamProtection[] { }
+                },
+                TextTracks = GetTextTracks(textTracks)
+            };
+            mediaStreams.Add(mediaStream);
         }
 
         private static IEnumerable<ILocator> GetMediaLocators(MediaClient mediaClient, string assetName)
@@ -61,10 +59,7 @@ namespace AzureSkyMedia.PlatformServices
                 List<ILocator> assetLocators = new List<ILocator>();
                 foreach (IAsset asset in assets)
                 {
-                    foreach (ILocator locator in asset.Locators)
-                    {
-                        assetLocators.Add(locator);
-                    }
+                    assetLocators.AddRange(asset.Locators);
                 }
                 locators = assetLocators.ToArray();
             }
@@ -73,6 +68,20 @@ namespace AzureSkyMedia.PlatformServices
             return locators;
         }
         
+        private static string GetTextTrackType(string webVttData)
+        {
+            string webVttType;
+            if (webVttData.Contains(Constant.Media.Stream.TextTrack.ThumbnailsData))
+            {
+                webVttType = Constant.Media.Stream.TextTrack.Thumbnails;
+            }
+            else
+            {
+                webVttType = Constant.Media.Stream.TextTrack.Captions;
+            }
+            return webVttType;
+        }
+
         private static MediaTrack[] GetTextTracks(string tracks)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
@@ -97,37 +106,39 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
+            WebClient webClient = new WebClient();
             string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
             if (!string.IsNullOrEmpty(documentId) && videoIndexer && indexerClient.IndexerEnabled)
             {
                 string webVttUrl = indexerClient.GetWebVttUrl(documentId, null);
+                HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, webVttUrl);
+                string webVttData = webClient.GetResponse<string>(requestMessage);
                 JObject index = indexerClient.GetIndex(documentId, null, false);
                 string languageLabel = IndexerClient.GetLanguageLabel(index);
                 MediaTrack textTrack = new MediaTrack()
                 {
-                    Type = Constant.Media.Stream.TextTrackCaptions,
+                    Type = GetTextTrackType(webVttData),
                     Label = languageLabel,
                     SourceUrl = webVttUrl,
                 };
                 textTracks.Add(textTrack);
             }
-            else
+            string[] webVttUrls = mediaClient.GetWebVttUrls(asset);
+            for (int i = 0; i < webVttUrls.Length; i++)
             {
-                string[] webVttUrls = mediaClient.GetWebVttUrls(asset);
-                for (int i = 0; i < webVttUrls.Length; i++)
+                string webVttUrl = webVttUrls[i];
+                HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, webVttUrl);
+                string webVttData = webClient.GetResponse<string>(requestMessage);
+                string languageLabel = Language.GetLanguageLabel(webVttUrl);
+                if (!string.IsNullOrEmpty(webVttUrl))
                 {
-                    string webVttUrl = webVttUrls[i];
-                    string languageLabel = Language.GetLanguageLabel(webVttUrl);
-                    if (!string.IsNullOrEmpty(webVttUrl))
+                    MediaTrack textTrack = new MediaTrack()
                     {
-                        MediaTrack textTrack = new MediaTrack()
-                        {
-                            Type = Constant.Media.Stream.TextTrackCaptions,
-                            Label = languageLabel,
-                            SourceUrl = webVttUrl,
-                        };
-                        textTracks.Add(textTrack);
-                    }
+                        Type = GetTextTrackType(webVttData),
+                        Label = languageLabel,
+                        SourceUrl = webVttUrl,
+                    };
+                    textTracks.Add(textTrack);
                 }
             }
             return textTracks.ToArray();
