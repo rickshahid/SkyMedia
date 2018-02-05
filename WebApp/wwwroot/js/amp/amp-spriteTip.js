@@ -51,8 +51,8 @@ function InitializeSprite(player) {
         for (var i = 0; i < _vttCues.length; i++) {
             var cue = _vttCues[i];
             if (cue.startTime <= timeSeconds && cue.endTime >= timeSeconds) {
-                var spriteImg = document.getElementById("spriteImg");
                 var xywh = cue.text.split("=")[1].split(",");
+                var spriteImg = document.getElementById("spriteImg");
                 spriteImg.style.background = "url('" + _imgUrl + "') " + xywh[0] + "px " + xywh[1] + "px";
                 spriteImg.style.width = xywh[2] + "px";
                 spriteImg.style.height = xywh[3] + "px";
