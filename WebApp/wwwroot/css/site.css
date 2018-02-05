@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 480px) {
-    #accountInventory, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    #mediaStreamLive, #accountInventory, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -79,6 +79,10 @@ body {
 
 .siteButton:hover {
     cursor: pointer;
+}
+
+.siteButton.flipHorizontal {
+    transform: rotateY(180deg);
 }
 
 .siteButton.layoutVertical {
