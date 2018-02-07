@@ -16,7 +16,7 @@ The following set of media functionality has been integrated and enabled within 
 
 * Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
 
-* Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
+* Define workflows using multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
 * Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
 
