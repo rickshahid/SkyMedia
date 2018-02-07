@@ -16,11 +16,9 @@ The following set of media functionality has been integrated and enabled within 
 
 * Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
 
-* Discover and extract actionable insights from your video content across a wide range of cognitive / analytic services
-
 * Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
-* Optionally enable SMS text message notification of workflow completion via integrated user profile management
+* Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
 
 The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.io
 
