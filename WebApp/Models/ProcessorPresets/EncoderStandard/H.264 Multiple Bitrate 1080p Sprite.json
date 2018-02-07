@@ -133,13 +133,13 @@
       "Step": "00:00:10",
       "Range": "100%",
       "Type": "JpgImage",
-      "SpriteColumn": 0,
+      "SpriteColumn": 10,
       "JpgLayers": [
         {
           "Quality": 100,
           "Type": "JpgLayer",
-          "Width": "20%",
-          "Height": "20%"
+          "Width": "10%",
+          "Height": "10%"
         }
       ]
     }
@@ -149,6 +149,12 @@
       "FileName": "{Basename}_{Width}x{Height}_{VideoBitrate}.mp4",
       "Format": {
         "Type": "MP4Format"
+      }
+    },
+    {
+      "FileName": "{Basename}_{Index}{Extension}",
+      "Format": {
+        "Type": "JpgFormat"
       }
     }
   ],
