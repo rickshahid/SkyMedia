@@ -12,15 +12,13 @@ The following set of media functionality has been integrated and enabled within 
 
 * Scalable video (adaptive) streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
 
-* Self-service user account registration and profile management across storage, transfer and media services accounts
+* Multi-tenant, self-service user account registration and profile management across both storage and media accounts
 
 * Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
 
-* Discover and extract actionable insights from your video content across a wide range of cognitive / analytic services
+* Define workflows using multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
-* Define workflows with multiple tasks (executed in parallel and/or sequence) that integrate various media processors
-
-* Optionally enable SMS text message notification of workflow completion via integrated user profile management
+* Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
 
 The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.io
 
