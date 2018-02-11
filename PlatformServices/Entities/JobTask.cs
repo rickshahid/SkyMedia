@@ -37,6 +37,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public Dictionary<string, int> ProcessorConfigInteger { get; set; }
 
+        public ThumbnailGeneration ThumbnailGeneration { get; set; }
+
         public ContentProtection ContentProtection { get; set; }
 
         public ContentIndexer ContentIndexer { get; set; }

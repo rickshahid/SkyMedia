@@ -183,6 +183,17 @@
       "SamplingRate": 48000,
       "Bitrate": 128,
       "Type": "AACAudio"
+    },
+    {
+      "PngLayers": [
+        {
+          "Type": "PngLayer",
+          "Width": "100%",
+          "Height": "100%"
+        }
+      ],
+      "Start": "{Best}",
+      "Type": "PngImage"
     }
   ],
   "Outputs": [
@@ -190,6 +201,12 @@
       "FileName": "{Basename}_{Width}x{Height}_{VideoBitrate}.mp4",
       "Format": {
         "Type": "MP4Format"
+      }
+    },
+    {
+      "FileName": "{Basename}_{Index}{Extension}",
+      "Format": {
+        "Type": "PngFormat"
       }
     }
   ],

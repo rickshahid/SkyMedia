@@ -33,6 +33,7 @@ function GetJobTask(taskNumber) {
                 if ($("#encoderFragmentOutput" + taskNumber).prop("checked")) {
                     jobTask.OutputAssetFormat = 1; // AssetFormatOption.AdaptiveStreaming
                 }
+                jobTask.ThumbnailGeneration = GetThumbnailGeneration(taskNumber);
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "VideoIndexer":
@@ -142,6 +143,135 @@ function SetJobTaskInputs(taskNumber) {
             return parseInt(value);
         }
     });
+    $("#encoderThumbnailGenerationSpriteColumns" + taskNumber).spinner({
+        min: 0,
+        max: 99,
+        disabled: true
+    });
+    $("#encoderThumbnailGenerationWidthPercent" + taskNumber).spinner({
+        min: 0,
+        max: 100,
+        spin: function (event, ui) {
+            ClearWidthPixel(this);
+        }
+    });
+    $("#encoderThumbnailGenerationWidthPixel" + taskNumber).spinner({
+        min: 0,
+        max: 100,
+        spin: function (event, ui) {
+            ClearWidthPercent(this);
+        }
+    });
+    $("#encoderThumbnailGenerationHeightPercent" + taskNumber).spinner({
+        min: 0,
+        max: 100,
+        spin: function (event, ui) {
+            ClearHeightPixel(this);
+        }
+    });
+    $("#encoderThumbnailGenerationHeightPixel" + taskNumber).spinner({
+        min: 0,
+        max: 100,
+        spin: function (event, ui) {
+            ClearHeightPercent(this);
+        }
+    });
+    $("#encoderThumbnailGenerationStartPercent" + taskNumber).spinner({
+        min: 0,
+        max: 100,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStartTime(this);
+        }
+    });
+    $("#encoderThumbnailGenerationStartHour" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStartPercent(this, "encoderThumbnailGenerationStartHour");
+        }
+    });
+    $("#encoderThumbnailGenerationStartMinute" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStartPercent(this, "encoderThumbnailGenerationStartMinute");
+        }
+    });
+    $("#encoderThumbnailGenerationStartSecond" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStartPercent(this, "encoderThumbnailGenerationStartSecond");
+        }
+    });
+    $("#encoderThumbnailGenerationStepPercent" + taskNumber).spinner({
+        min: 0,
+        max: 100,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStepTime(this);
+        }
+    });
+    $("#encoderThumbnailGenerationStepHour" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStepPercent(this, "encoderThumbnailGenerationStepHour");
+        }
+    });
+    $("#encoderThumbnailGenerationStepMinute" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStepPercent(this, "encoderThumbnailGenerationStepMinute");
+        }
+    });
+    $("#encoderThumbnailGenerationStepSecond" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearStepPercent(this, "encoderThumbnailGenerationStepSecond");
+        }
+    });
+    $("#encoderThumbnailGenerationRangePercent" + taskNumber).spinner({
+        min: 0,
+        max: 100,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearRangeTime(this);
+        }
+    });
+    $("#encoderThumbnailGenerationRangeHour" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearRangePercent(this, "encoderThumbnailGenerationRangeHour");
+        }
+    });
+    $("#encoderThumbnailGenerationRangeMinute" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearRangePercent(this, "encoderThumbnailGenerationRangeMinute");
+        }
+    });
+    $("#encoderThumbnailGenerationRangeSecond" + taskNumber).spinnerEx({
+        min: 0,
+        max: 59,
+        disabled: true,
+        spin: function (event, ui) {
+            ClearRangePercent(this, "encoderThumbnailGenerationRangeSecond");
+        }
+    });
     $("#summarizationDurationMinutes" + taskNumber).spinnerEx({
         min: 0,
         max: 99
@@ -166,6 +296,23 @@ function SetJobTaskInputs(taskNumber) {
     });
 }
 function ClearJobTaskWidgets(taskNumber) {
+    $("#encoderThumbnailGenerationSpriteColumns" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationWidthPercent" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationWidthPixel" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationHeightPercent" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationHeightPixel" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationStartPercent" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationStartHour" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationStartMinute" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationStartSecond" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationStepPercent" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationStepHour" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationStepMinute" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationStepSecond" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationRangePercent" + taskNumber).spinner("destroy");
+    $("#encoderThumbnailGenerationRangeHour" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationRangeMinute" + taskNumber).spinnerEx("destroy");
+    $("#encoderThumbnailGenerationRangeSecond" + taskNumber).spinnerEx("destroy");
     $("#summarizationDurationMinutes" + taskNumber).spinnerEx("destroy");
     $("#summarizationDurationSeconds" + taskNumber).spinnerEx("destroy");
     $("#faceEmotionAggregateWindow" + taskNumber).spinner("destroy");

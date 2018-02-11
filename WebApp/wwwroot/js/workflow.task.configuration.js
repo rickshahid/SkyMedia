@@ -5,8 +5,9 @@
 function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     var taskRowHtml = ReplaceAllText(lastTaskRow.outerHTML, "taskRow" + lastTaskNumber, "taskRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, ">#" + lastTaskNumber, ">#" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "mediaProcessor" + lastTaskNumber, "mediaProcessor" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "taskParent" + lastTaskNumber, "taskParent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "mediaProcessor" + lastTaskNumber, "mediaProcessor" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigRow" + lastTaskNumber, "encoderConfigRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigDoc" + lastTaskNumber, "encoderConfigDoc" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigDocSchema" + lastTaskNumber, "encoderConfigDocSchema" + newTaskNumber);
@@ -14,6 +15,28 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFileRow" + lastTaskNumber, "encoderConfigFileRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderConfigFile" + lastTaskNumber, "encoderConfigFile" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderOptionsRow" + lastTaskNumber, "encoderOptionsRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGeneration" + lastTaskNumber, "encoderThumbnailGeneration" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationRow" + lastTaskNumber, "encoderThumbnailGenerationRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationFormat" + lastTaskNumber, "encoderThumbnailGenerationFormat" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationBest" + lastTaskNumber, "encoderThumbnailGenerationBest" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationSingle" + lastTaskNumber, "encoderThumbnailGenerationSingle" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationSpriteColumns" + lastTaskNumber, "encoderThumbnailGenerationSpriteColumns" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationWidthPercent" + lastTaskNumber, "encoderThumbnailGenerationWidthPercent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationWidthPixel" + lastTaskNumber, "encoderThumbnailGenerationWidthPixel" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationHeightPercent" + lastTaskNumber, "encoderThumbnailGenerationHeightPercent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationHeightPixel" + lastTaskNumber, "encoderThumbnailGenerationHeightPixel" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStartPercent" + lastTaskNumber, "encoderThumbnailGenerationStartPercent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStartHour" + lastTaskNumber, "encoderThumbnailGenerationStartHour" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStartMinute" + lastTaskNumber, "encoderThumbnailGenerationStartMinute" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStartSecond" + lastTaskNumber, "encoderThumbnailGenerationStartSecond" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStepPercent" + lastTaskNumber, "encoderThumbnailGenerationStepPercent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStepHour" + lastTaskNumber, "encoderThumbnailGenerationStepHour" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStepMinute" + lastTaskNumber, "encoderThumbnailGenerationStepMinute" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationStepSecond" + lastTaskNumber, "encoderThumbnailGenerationStepSecond" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationRangePercent" + lastTaskNumber, "encoderThumbnailGenerationRangePercent" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationRangeHour" + lastTaskNumber, "encoderThumbnailGenerationRangeHour" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationRangeMinute" + lastTaskNumber, "encoderThumbnailGenerationRangeMinute" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationRangeSecond" + lastTaskNumber, "encoderThumbnailGenerationRangeSecond" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderFragmentOutput" + lastTaskNumber, "encoderFragmentOutput" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtection" + lastTaskNumber, "encoderContentProtection" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionRow" + lastTaskNumber, "encoderContentProtectionRow" + newTaskNumber);
@@ -54,7 +77,6 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectionLightChange" + lastTaskNumber, "motionDetectionLightChange" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "outputAssetName" + lastTaskNumber, "outputAssetName" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "taskOptions" + lastTaskNumber, "taskOptions" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "this, " + lastTaskNumber, "this, " + newTaskNumber);
     return taskRowHtml;
 }
 function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds, unbindIds) {
@@ -75,6 +97,14 @@ function ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds
         }
     }
 }
+function ResetEncoderOptions(mediaProcessor) {
+    var encoderThumbnailGenerationId = mediaProcessor.id.replace("mediaProcessor", "encoderThumbnailGeneration");
+    var encoderContentProtectionId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtection");
+    var encoderFragmentOutputId = mediaProcessor.id.replace("mediaProcessor", "encoderFragmentOutput");
+    $("#" + encoderThumbnailGenerationId).prop("checked", false);
+    $("#" + encoderContentProtectionId).prop("checked", false);
+    $("#" + encoderFragmentOutputId).prop("checked", false);
+}
 function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, encoderPremiumPresets) {
     var encoderConfigRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigRow");
     var encoderConfigDocId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigDoc");
@@ -83,6 +113,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
     var encoderConfigFileRowId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFileRow");
     var encoderConfigFileId = mediaProcessor.id.replace("mediaProcessor", "encoderConfigFile");
     var encoderOptionsRowId = mediaProcessor.id.replace("mediaProcessor", "encoderOptionsRow");
+    var encoderThumbnailGenerationRowId = mediaProcessor.id.replace("mediaProcessor", "encoderThumbnailGenerationRow");
     var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
     var indexerRowId = mediaProcessor.id.replace("mediaProcessor", "indexerRow");
     var annotationRowId = mediaProcessor.id.replace("mediaProcessor", "annotationRow");
@@ -94,7 +125,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
     var contentModerationRowId = mediaProcessor.id.replace("mediaProcessor", "contentModerationRow");
     var characterRecognitionRowId = mediaProcessor.id.replace("mediaProcessor", "characterRecognitionRow");
     var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
-    var hideIds = [encoderConfigRowId, encoderConfigDocSchemaId, encoderConfigFileRowId, encoderOptionsRowId, encoderContentProtectionRowId, indexerRowId, annotationRowId, summarizationRowId, faceDetectionRowId, speechAnalyzerRowId, motionDetectionRowId, contentModerationRowId, characterRecognitionRowId];
+    var hideIds = [encoderConfigRowId, encoderConfigDocSchemaId, encoderConfigFileRowId, encoderOptionsRowId, encoderThumbnailGenerationRowId, encoderContentProtectionRowId, indexerRowId, annotationRowId, summarizationRowId, faceDetectionRowId, speechAnalyzerRowId, motionDetectionRowId, contentModerationRowId, characterRecognitionRowId];
     var unbindIds = [encoderConfigDocId, encoderConfigDocSchemaId];
     ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds, unbindIds);
     switch (mediaProcessor.value) {
@@ -104,6 +135,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
             });
             SetEncoderPresetOptions(encoderConfigOptions, encoderStandardPresets);
             encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom Configuration File (JSON)", "Custom");
+            ResetEncoderOptions(mediaProcessor);
             $("#" + encoderOptionsRowId).show();
             break;
         case "EncoderPremium":
@@ -112,6 +144,7 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
             });
             SetEncoderPresetOptions(encoderConfigOptions, encoderPremiumPresets);
             encoderConfigOptions[encoderConfigOptions.length] = new Option("Custom Configuration File (XML)", "Custom");
+            ResetEncoderOptions(mediaProcessor);
             $("#" + encoderOptionsRowId).show();
             break;
         case "VideoIndexer":
@@ -157,9 +190,23 @@ function SetEncoderConfigOptions(encoderConfig) {
     var encoderConfigDocSchemaId = encoderConfig.id.replace("encoderConfig", "encoderConfigDocSchema");
     var encoderConfigFileRowId = encoderConfig.id.replace("encoderConfig", "encoderConfigFileRow");
     var mediaProcessorId = encoderConfig.id.replace("encoderConfig", "mediaProcessor");
+    var encoderOptionsRowId = encoderConfig.id.replace("encoderConfig", "encoderOptionsRow");
+    var encoderThumbnailGenerationId = encoderConfig.id.replace("encoderConfig", "encoderThumbnailGeneration");
+    var encoderThumbnailGenerationRowId = encoderConfig.id.replace("encoderConfig", "encoderThumbnailGenerationRow");
     $("#" + encoderConfigDocSchemaId).hide();
     $("#" + encoderConfigFileRowId).hide();
+    $("#" + encoderOptionsRowId).show();
+    $("#" + encoderThumbnailGenerationId).prop("disabled", false);
+    $("#" + encoderThumbnailGenerationRowId).hide();
     switch (encoderConfig.value) {
+        case "Adaptive Streaming":
+        case "Content Adaptive Multiple Bitrate MP4":
+            $("#" + encoderThumbnailGenerationId).prop("disabled", true);
+            break;
+        case "EncoderStandard_Thumbnail Generation":
+            $("#" + encoderOptionsRowId).hide();
+            $("#" + encoderThumbnailGenerationRowId).show();
+            break;
         case "Custom":
             $("#" + encoderConfigDocSchemaId).show();
             $("#" + encoderConfigFileRowId).show();

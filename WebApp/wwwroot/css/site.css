@@ -35,8 +35,8 @@
 }
 
 body {
-    color: deepskyblue;
     background-color: black;
+    color: deepskyblue;
 }
 
 .layout {
@@ -174,17 +174,9 @@ body {
     margin: 0px auto;
 }
 
-a.json-placeholder {
-    color: azure;
-}
-
-.json-string {
-    color: azure;
-}
-
 .json-editor {
     padding-top: 10px !important;
-    min-width: 750px;
+    min-width: 775px;
 }
 
 .mediaProcessorPresets {
@@ -197,36 +189,49 @@ a.json-placeholder {
 }
 
 .mediaProcessorPresetButtons {
-    padding-right: 10px;
-    margin-top: -34px;
+    padding-right: 15px;
+    margin-top: -30px;
     display: none;
     float: right;
 }
 
 .mediaProcessor {
     font-weight: bold;
-    width: 195px !important;
+    width: 195px;
 }
 
 .mediaProcessorConfig {
     font-weight: bold;
-    width: 420px;
+    width: 419px;
 }
 
-.mediaProcessorConfigTable {
+.mediaProcessorConfigOptions {
     border: 2px dotted deepskyblue;
+    white-space: nowrap;
+    width: 436px;
 }
 
-.mediaProcessorConfigTable td {
-    padding: 5px;
+.mediaProcessorConfigOptionOr {
+    font-style: italic;
+    font-size: large;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-.mediaProcessorConfigRow {
-    padding-left: 3px !important;
-}
-
-.mediaProcessorConfigRow td {
+.mediaProcessorConfigOptionColon {
     padding: 0px !important;
+}
+
+.encoderThumbnailGenerationOptions {
+    width: 484px;
+}
+
+.encoderThumbnailGenerationOptionsTable {
+    padding-top: 0px !important;
+}
+
+.encoderContentProtectionOptions {
+    width: 490px;
 }
 
 .mediaCertification {
@@ -246,6 +251,10 @@ a.json-placeholder {
 
 .spinner.d2 {
     width: 28px;
+}
+
+.spinner.d3 {
+    width: 36px;
 }
 
 .spinner.d4 {
@@ -510,12 +519,12 @@ a.json-placeholder {
     text-align: center;
 }
 
-.inputCheckbox {
-    margin-left: 0px;
+.inputSelect {
+    font-weight: bold;
 }
 
-.inputCheckboxContentProtection {
-    margin-left: 24px;
+.inputCheckbox {
+    margin-left: 0px;
 }
 
 .inputCheckboxLabel {
@@ -530,6 +539,23 @@ a.json-placeholder {
 .outputAssetName {
     font-weight: bold;
     width: 191px;
+}
+
+.encoderOptions {
+    padding: 0px !important;
+}
+
+.encoderOptions td {
+    padding: 2px !important;
+}
+
+.encoderThumbnailGenerationFormatLabel {
+    margin-left: 1px;
+}
+
+.encoderThumbnailGenerationFormat {
+    margin-left: 4px;
+    width: 76px;
 }
 
 .indexerLanguage {
@@ -547,10 +573,6 @@ a.json-placeholder {
     width: 216px;
 }
 
-.speechAnalyzerOutputs {
-    margin-left: 10px;
-}
-
 .faceDetectionMode {
     padding-left: 2px !important;
 }
@@ -560,9 +582,20 @@ a.json-placeholder {
     width: 107px;
 }
 
+.speechAnalyzerLanguage {
+    width: 186px;
+}
+
+.speechAnalyzerAudio {
+    margin-left: 5px;
+}
+
+.speechAnalyzerAudioOption {
+    margin-left: 3px;
+}
+
 .motionSensitivityLevel {
-    font-weight: bold;
-    width: 114px;
+    width: 111px;
 }
 
 .jobName {
@@ -581,7 +614,7 @@ a.json-placeholder {
     font-weight: bold;
     padding-left: 5px;
     margin-left: 5px;
-    width: 605px;
+    width: 610px;
 }
 
 .jobTask td {
@@ -602,29 +635,9 @@ a.json-placeholder {
     font-size: small;
 }
 
-.contentProtectionRow > td {
-    padding-top: 0px;
-}
-
-.contentProtectionLabel {
-    padding: 0px !important;
-    text-align: center;
-}
-
-.contentProtectionOptions {
-    border: 2px dotted deepskyblue;
-    white-space: nowrap;
-    padding-top: 5px;
-}
-
-.contentProtectionOptionsEncryption {
-    margin-right: 5px;
-    margin-left: 5px;
-}
-
 .contentProtectionOptionsEncryptionDrm {
     border: 1px dotted deepskyblue;
-    padding: 3px 4px 3px 3px;
+    padding: 3px 6px 3px 5px;
 }
 
 .contentProtectionOptionsEncryptionDrmOption {
@@ -632,7 +645,7 @@ a.json-placeholder {
 }
 
 .contentAuthAddressRange {
-    width: 126px;
+    width: 132px;
 }
 
 .ui-jqgrid {
@@ -770,4 +783,12 @@ a.json-placeholder {
 
 .searchLanguage {
     width: 100%;
+}
+
+a.json-placeholder {
+    color: azure;
+}
+
+.json-string {
+    color: azure;
 }

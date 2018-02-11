@@ -10,6 +10,29 @@
     string encoderConfigFileRowId = string.Concat("encoderConfigFileRow", taskNumber);
     string encoderConfigFileId = string.Concat("encoderConfigFile", taskNumber);
     string encoderOptionsRowId = string.Concat("encoderOptionsRow", taskNumber);
+    string encoderThumbnailGenerationIdPrefix = "encoderThumbnailGeneration";
+    string encoderThumbnailGenerationId = string.Concat(encoderThumbnailGenerationIdPrefix, taskNumber);
+    string encoderThumbnailGenerationRowId = string.Concat(encoderThumbnailGenerationIdPrefix, "Row", taskNumber);
+    string encoderThumbnailGenerationFormatId = string.Concat(encoderThumbnailGenerationIdPrefix, "Format", taskNumber);
+    string encoderThumbnailGenerationBestId = string.Concat(encoderThumbnailGenerationIdPrefix, "Best", taskNumber);
+    string encoderThumbnailGenerationSingleId = string.Concat(encoderThumbnailGenerationIdPrefix, "Single", taskNumber);
+    string encoderThumbnailGenerationSpriteColumnsId = string.Concat(encoderThumbnailGenerationIdPrefix, "SpriteColumns", taskNumber);
+    string encoderThumbnailGenerationWidthPercentId = string.Concat(encoderThumbnailGenerationIdPrefix, "WidthPercent", taskNumber);
+    string encoderThumbnailGenerationWidthPixelId = string.Concat(encoderThumbnailGenerationIdPrefix, "WidthPixel", taskNumber);
+    string encoderThumbnailGenerationHeightPercentId = string.Concat(encoderThumbnailGenerationIdPrefix, "HeightPercent", taskNumber);
+    string encoderThumbnailGenerationHeightPixelId = string.Concat(encoderThumbnailGenerationIdPrefix, "HeightPixel", taskNumber);
+    string encoderThumbnailGenerationStartPercentId = string.Concat(encoderThumbnailGenerationIdPrefix, "StartPercent", taskNumber);
+    string encoderThumbnailGenerationStartHourId = string.Concat(encoderThumbnailGenerationIdPrefix, "StartHour", taskNumber);
+    string encoderThumbnailGenerationStartMinuteId = string.Concat(encoderThumbnailGenerationIdPrefix, "StartMinute", taskNumber);
+    string encoderThumbnailGenerationStartSecondId = string.Concat(encoderThumbnailGenerationIdPrefix, "StartSecond", taskNumber);
+    string encoderThumbnailGenerationStepPercentId = string.Concat(encoderThumbnailGenerationIdPrefix, "StepPercent", taskNumber);
+    string encoderThumbnailGenerationStepHourId = string.Concat(encoderThumbnailGenerationIdPrefix, "StepHour", taskNumber);
+    string encoderThumbnailGenerationStepMinuteId = string.Concat(encoderThumbnailGenerationIdPrefix, "StepMinute", taskNumber);
+    string encoderThumbnailGenerationStepSecondId = string.Concat(encoderThumbnailGenerationIdPrefix, "StepSecond", taskNumber);
+    string encoderThumbnailGenerationRangePercentId = string.Concat(encoderThumbnailGenerationIdPrefix, "RangePercent", taskNumber);
+    string encoderThumbnailGenerationRangeHourId = string.Concat(encoderThumbnailGenerationIdPrefix, "RangeHour", taskNumber);
+    string encoderThumbnailGenerationRangeMinuteId = string.Concat(encoderThumbnailGenerationIdPrefix, "RangeMinute", taskNumber);
+    string encoderThumbnailGenerationRangeSecondId = string.Concat(encoderThumbnailGenerationIdPrefix, "RangeSecond", taskNumber);
     string encoderFragmentOutputId = string.Concat("encoderFragmentOutput", taskNumber);
     string encoderContentProtectionIdPrefix = "encoderContentProtection";
     string encoderContentProtectionId = string.Concat(encoderContentProtectionIdPrefix, taskNumber);
@@ -87,7 +110,7 @@
                     </span>
                 </td>
                 <td>
-                    <table class="mediaProcessorConfigTable">
+                    <table class="mediaProcessorConfigOptions">
                         <tr>
                             <td>
                                 @Html.DropDownList(encoderConfigId, null, new { @class = "mediaProcessorConfig", onchange = "SetEncoderConfigOptions(this)" })
@@ -99,15 +122,32 @@
                             </td>
                         </tr>
                         <tr id="@encoderOptionsRowId" style="display:none">
-                            <td>
-                                @Html.CheckBox(encoderFragmentOutputId, false, new { @class = "inputCheckbox" })
-                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-generate-fmp4-chunks')">
-                                    Pre-Fragment Output
-                                </span>
-                                @Html.CheckBox(encoderContentProtectionId, false, new { @class = "inputCheckboxContentProtection", onclick = "ShowContentProtection(this)" })
-                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview')">
-                                    Content Protection
-                                </span>
+                            <td class="encoderOptions">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            @Html.CheckBox(encoderThumbnailGenerationId, false, new { onclick = "ShowThumbnailGeneration(this)" })
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes')">
+                                                Thumbnail Generation
+                                            </span>
+                                        </td>
+                                        <td>
+                                            &nbsp;
+                                            @Html.CheckBox(encoderFragmentOutputId, false)
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-generate-fmp4-chunks')">
+                                                Pre-Fragment Output
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @Html.CheckBox(encoderContentProtectionId, false, new { onclick = "ShowContentProtection(this)" })
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview')">
+                                                Content Protection
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                     </table>
@@ -120,7 +160,7 @@
                     </span>
                 </td>
                 <td>
-                    <table class="mediaProcessorConfigTable">
+                    <table class="mediaProcessorConfigOptions">
                         <tr>
                             <td>
                                 @Html.DropDownList(indexerLanguageId, ViewData["indexerLanguages"] as SelectListItem[], new { @class = "indexerLanguage" })
@@ -161,27 +201,23 @@
                     </span>
                 </td>
                 <td>
-                    <table class="mediaProcessorConfigTable">
+                    <table class="mediaProcessorConfigOptions">
                         <tr>
                             <td class="inputLabel">
                                 Output Duration
-                                &nbsp;
                             </td>
                             <td class="inputLabel">
-                                <input id="@summarizationDurationMinutesId" value="1" class="spinner d2" />
-                                &nbsp;
-                                Minutes
-                                &nbsp;
+                                <input id="@summarizationDurationMinutesId" class="spinner d2" value="1" />
                             </td>
-                            <td class="inputLabel">
-                                <input id="@summarizationDurationSecondsId" value="0" class="spinner d2" />
-                                &nbsp;
-                                Seconds
-                                &nbsp;
+                            <td class="mediaProcessorConfigOptionColon">
+                                :
+                            </td>
+                            <td class="inputLabel mediaProcessorConfigOptionColon">
+                                <input id="@summarizationDurationSecondsId" class="spinner d2" value="0" />
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="3">
+                            <td colspan="4">
                                 @Html.CheckBox(summarizationFadeTransitionsId, true, new { @class = "inputCheckbox" })
                                 <span class="inputCheckboxLabel">
                                     Fade Transitions
@@ -192,6 +228,7 @@
                                     Include Audio
                                 </span>
                             </td>
+                            <td style="width:100%" />
                         </tr>
                     </table>
                 </td>
@@ -203,7 +240,7 @@
                     </span>
                 </td>
                 <td>
-                    <table class="mediaProcessorConfigTable">
+                    <table class="mediaProcessorConfigOptions">
                         <tr>
                             <td class="faceDetectionMode">
                                 @Html.RadioButton(faceDetectionModeId, "Analyze", true, new { onchange = "SetFaceDetectionConfig(this)" })
@@ -248,10 +285,10 @@
                         <tr id="@faceEmotionAggregateRowId" style="display:none">
                             <td colspan="3">
                                 Window (ms)
-                                <input id="@faceEmotionAggregateWindowId" value="500" class="spinner d4" />
+                                <input id="@faceEmotionAggregateWindowId" class="spinner d4" value="500" />
                                 &nbsp;&nbsp;
                                 Interval (ms)
-                                <input id="@faceEmotionAggregateIntervalId" value="500" class="spinner d4" />
+                                <input id="@faceEmotionAggregateIntervalId" class="spinner d4" value="500" />
                             </td>
                         </tr>
                     </table>
@@ -260,30 +297,29 @@
             <tr id="@speechAnalyzerRowId" style="display:none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-process-content-with-indexer2')">
-                        Speech To Text
+                        Speech Analyzer
                     </span>
                 </td>
-                <td class="mediaProcessorConfigRow">
-                    <table>
+                <td>
+                    <table class="mediaProcessorConfigOptions">
                         <tr>
                             <td class="inputLabel">
-                                @Html.DropDownList(speechAnalyzerLanguageId, ViewData["speechAnalyzerLanguages"] as SelectListItem[], new { @class = "mediaProcessor" })
+                                @Html.DropDownList(speechAnalyzerLanguageId, ViewData["speechAnalyzerLanguages"] as SelectListItem[], new { @class = "inputSelect speechAnalyzerLanguage" })
                             </td>
                             <td class="inputLabel">
-                                <span class="speechAnalyzerOutputs" )">
-                                    Outputs
+                                <span class="speechAnalyzerAudio">
+                                    Audio
                                 </span>
                             </td>
                             <td class="inputLabel">
-                                &nbsp;
-                                @Html.CheckBox(speechAnalyzerTimedTextFormatWebVttId, true, new { @class = "inputCheckbox", disabled = "disabled" })
+                                @Html.CheckBox(speechAnalyzerTimedTextFormatWebVttId, true, new { @class = "inputCheckbox speechAnalyzerAudioOption", disabled = "disabled" })
                                 WebVTT
                             </td>
                             <td class="inputLabel">
-                                &nbsp;
-                                @Html.CheckBox(speechAnalyzerTimedTextFormatTtmlId, false, new { @class = "inputCheckbox" })
+                                @Html.CheckBox(speechAnalyzerTimedTextFormatTtmlId, false, new { @class = "inputCheckbox speechAnalyzerAudioOption" })
                                 TTML
                             </td>
+                            <td style="width:100%" />
                         </tr>
                     </table>
                 </td>
@@ -294,27 +330,22 @@
                         Motion Detection
                     </span>
                 </td>
-                <td class="mediaProcessorConfigRow">
-                    <table>
+                <td>
+                    <table class="mediaProcessorConfigOptions">
                         <tr>
-                            <td class="inputLabel">
-                                Sensitivity
-                            </td>
                             <td>
-                                &nbsp;
-                                <select id="@motionDetectionSensitivityLevelId" class="motionSensitivityLevel">
+                                Sensitivity
+                                <select id="@motionDetectionSensitivityLevelId" class="inputSelect motionSensitivityLevel">
                                     <option value="Low">Low</option>
                                     <option value="Medium" selected>Medium</option>
                                     <option value="High">High</option>
                                 </select>
                             </td>
-                            <td>
-                                &nbsp;
-                                @Html.CheckBox(motionDetectionLightChangeId, false, new { @class = "inputCheckbox" })
-                            </td>
                             <td class="inputLabel">
+                                @Html.CheckBox(motionDetectionLightChangeId, false, new { @class = "inputCheckbox" })
                                 Detect Light Change
                             </td>
+                            <td style="width:100%" />
                         </tr>
                     </table>
                 </td>
@@ -333,17 +364,187 @@
                     </select>
                 </td>
             </tr>
+            <tr id="@encoderThumbnailGenerationRowId" style="display:none">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td>
+                                <span class="siteLink inputLabelMultiLine" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes')">
+                                    Thumbnail<br>Generation
+                                </span>
+                            </td>
+                            <td>
+                                <table class="mediaProcessorConfigOptions encoderThumbnailGenerationOptions">
+                                    <tr>
+                                        <td>
+                                            <span class="encoderThumbnailGenerationFormatLabel">
+                                                Format
+                                            </span>
+                                            <select id="@encoderThumbnailGenerationFormatId" class="inputSelect encoderThumbnailGenerationFormat" onchange="SetThumbnailFormat(this)">
+                                                <option value="Png">PNG</option>
+                                                <option value="Jpg">JPG</option>
+                                                <option value="Bmp">BMP</option>
+                                                <option value="Sprite">Sprite</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            @Html.CheckBox(encoderThumbnailGenerationBestId, true, new { onchange = "SetThumbnailBest(this)" })
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes#example-of-a-single-png-file-preset')">
+                                                Best
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @Html.CheckBox(encoderThumbnailGenerationSingleId, false, new { onchange = "SetThumbnailSingle(this)", disabled = "disabled" })
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes#example-of-a-one-image-at-a-specific-timestamp-preset')">
+                                                Single
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="siteLink inputLabelMultiLine" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes')">
+                                                Sprite<br>Columns
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <input id="@encoderThumbnailGenerationSpriteColumnsId" class="spinner d2" value="0" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" class="encoderThumbnailGenerationOptionsTable">
+                                            <table>
+                                                <tr>
+                                                    <td class="inputLabel">
+                                                        Width
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationWidthPercentId" class="spinner d3" value="100" />
+                                                        %
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionOr">
+                                                        or
+                                                    </td>
+                                                    <td colspan="3">
+                                                        <input id="@encoderThumbnailGenerationWidthPixelId" class="spinner d3" value="0" />
+                                                        px
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="inputLabel">
+                                                        Height
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationHeightPercentId" class="spinner d3" value="100" />
+                                                        %
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionOr">
+                                                        or
+                                                    </td>
+                                                    <td colspan="3">
+                                                        <input id="@encoderThumbnailGenerationHeightPixelId" class="spinner d3" value="0" />
+                                                        px
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="inputLabel">
+                                                        Start
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStartPercentId" class="spinner d3" value="0" />
+                                                        %
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionOr">
+                                                        or
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStartHourId" class="spinner d2" value="0" />
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionColon">
+                                                        :
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStartMinuteId" class="spinner d2" value="0" />
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionColon">
+                                                        :
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStartSecondId" class="spinner d2" value="0" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="inputLabel">
+                                                        Step
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStepPercentId" class="spinner d3" value="0" />
+                                                        %
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionOr">
+                                                        or
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStepHourId" class="spinner d2" value="0" />
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionColon">
+                                                        :
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStepMinuteId" class="spinner d2" value="0" />
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionColon">
+                                                        :
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationStepSecondId" class="spinner d2" value="0" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="inputLabel">
+                                                        Range
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationRangePercentId" class="spinner d3" value="0" />
+                                                        %
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionOr">
+                                                        or
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationRangeHourId" class="spinner d2" value="0" />
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionColon">
+                                                        :
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationRangeMinuteId" class="spinner d2" value="0" />
+                                                    </td>
+                                                    <td class="mediaProcessorConfigOptionColon">
+                                                        :
+                                                    </td>
+                                                    <td>
+                                                        <input id="@encoderThumbnailGenerationRangeSecondId" class="spinner d2" value="0" />
+                                                    </td>
+                                                    <td style="width:100%" />
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
             <tr id="@encoderContentProtectionRowId" class="contentProtectionRow" style="display:none">
                 <td colspan="2">
                     <table>
                         <tr>
-                            <td class="contentProtectionLabel">
-                                <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview')">
+                            <td>
+                                <span class="siteLink inputLabelMultiLine" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview')">
                                     Content<br>Protection
                                 </span>
                             </td>
                             <td>
-                                <table class="contentProtectionOptions">
+                                <table class="mediaProcessorConfigOptions encoderContentProtectionOptions">
                                     <tr>
                                         <td class="inputLabel">
                                             Encryption
@@ -353,7 +554,7 @@
                                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-protect-with-aes128')">
                                                 AES
                                             </span>
-                                            <span class="contentProtectionOptionsEncryption">
+                                            <span class="mediaProcessorConfigOptionOr">
                                                 or
                                             </span>
                                             <span class="contentProtectionOptionsEncryptionDrm">
@@ -375,7 +576,7 @@
                                     <tr>
                                         <td class="inputLabel">
                                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-configure-content-key-auth-policy')">
-                                                Authorization
+                                                Auth Policy
                                             </span>
                                         </td>
                                         <td>

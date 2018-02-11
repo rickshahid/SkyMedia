@@ -86,8 +86,8 @@ namespace AzureSkyMedia.PlatformServices
 
     public enum MediaThumbnailFormat
     {
-        JPG,
-        PNG,
-        BMP
+        Png,
+        Jpg,
+        Bmp
     }
 }

@@ -7,7 +7,7 @@
         }
     }
 }
-function LoadGrid(gridId, columns, rows, height) {
+function LoadGrid(gridId, columns, rows) {
     $("#" + gridId).jqGrid({
         colModel: columns,
         datatype: "local",
@@ -15,7 +15,7 @@ function LoadGrid(gridId, columns, rows, height) {
         loadComplete: ClearTitles,
         viewsortcols: [false, "horizontal", true],
         sortname: "name",
-        height: height
+        height: 500
     });
 }
 function FormatColumn(value, grid, row) {
