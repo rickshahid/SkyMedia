@@ -157,7 +157,7 @@ function SetJobTaskInputs(taskNumber) {
     });
     $("#encoderThumbnailGenerationWidthPixel" + taskNumber).spinner({
         min: 0,
-        max: 100,
+        max: 999,
         spin: function (event, ui) {
             ClearWidthPercent(this);
         }
@@ -171,7 +171,7 @@ function SetJobTaskInputs(taskNumber) {
     });
     $("#encoderThumbnailGenerationHeightPixel" + taskNumber).spinner({
         min: 0,
-        max: 100,
+        max: 999,
         spin: function (event, ui) {
             ClearHeightPercent(this);
         }

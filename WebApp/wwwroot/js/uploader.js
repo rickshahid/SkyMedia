@@ -58,7 +58,7 @@ function CreateUploader() {
         UploadComplete: function (uploader, files) {
             if (uploader.total.failed == 0) {
                 var elapsedTime = GetElapsedTime();
-                $("#uploadMessage").text("Upload Elapsed Time: " + elapsedTime);
+                $("#mediaUploadMessage").text("Upload Elapsed Time: " + elapsedTime);
                 IngestAssets();
             }
         },
