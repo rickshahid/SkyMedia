@@ -46,6 +46,9 @@ namespace AzureSkyMedia.PlatformServices
             using (DocumentClient documentClient = new DocumentClient())
             {
                 processorConfig = documentClient.GetDocument(collectionId, documentId);
+            }
+            if (processorConfig != null)
+            {
                 processorConfig.Remove("PresetName");
                 processorConfig.Remove("MediaProcessor");
                 processorConfig.Remove("id");
