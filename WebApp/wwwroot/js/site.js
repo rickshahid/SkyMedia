@@ -129,7 +129,7 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
     mediaPlayer.src(
         [{
             src: mediaStream.source.src,
-            protectionInfo: mediaStream.streamProtection
+            protectionInfo: mediaStream.source.protectionInfo
         }],
         mediaStream.textTracks
     );

@@ -27,15 +27,15 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            Asset[] assets = mediaClient.GetAssets(authToken, null);
+            Asset[] assets = mediaClient.GetAssets(authToken, null, false);
             return Json(assets);
         }
 
-        public JsonResult children(string assetId)
+        public JsonResult children(string assetId, bool getFiles)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            Asset[] assets = mediaClient.GetAssets(authToken, assetId);
+            Asset[] assets = mediaClient.GetAssets(authToken, assetId, getFiles);
             return Json(assets);
         }
 

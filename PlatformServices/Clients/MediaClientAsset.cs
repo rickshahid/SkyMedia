@@ -51,7 +51,7 @@ namespace AzureSkyMedia.PlatformServices
             return assets.ToArray();
         }
 
-        public Asset[] GetAssets(string authToken, string assetId)
+        public Asset[] GetAssets(string authToken, string assetId, bool getFiles)
         {
             List<Asset> assets = new List<Asset>();
             if (string.IsNullOrEmpty(assetId))
@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     if (asset.ParentAssets.Count == 0)
                     {
-                        Asset assetNode = new Asset(authToken, asset);
+                        Asset assetNode = new Asset(authToken, asset, getFiles);
                         assets.Add(assetNode);
                     }
                 }
@@ -82,7 +82,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         if (string.Equals(parentAsset.Id, rootAsset.Id, StringComparison.OrdinalIgnoreCase))
                         {
-                            Asset assetNode = new Asset(authToken, asset);
+                            Asset assetNode = new Asset(authToken, asset, getFiles);
                             assets.Add(assetNode);
                         }
                     }
