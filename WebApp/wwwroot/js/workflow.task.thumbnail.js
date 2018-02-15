@@ -11,8 +11,10 @@ function GetThumbnailGeneration(taskNumber) {
     var thumbnailGeneration = null;
     var idPrefix = "#encoderThumbnailGeneration";
     if ($(idPrefix + taskNumber).prop("checked")) {
+        var columns = null;
         var format = $(idPrefix + "Format" + taskNumber).val();
         if (format == "Sprite") {
+            columns = $(idPrefix + "SpriteColumns" + taskNumber).val();
             format = "Jpg";
         }
         var width = $(idPrefix + "WidthPercent" + taskNumber).val();
@@ -58,7 +60,7 @@ function GetThumbnailGeneration(taskNumber) {
             Format: format,
             Best: $(idPrefix + "Best" + taskNumber).prop("checked"),
             Single: $(idPrefix + "Single" + taskNumber).prop("checked"),
-            Columns: $(idPrefix + "SpriteColumns" + taskNumber).val(),
+            Columns: columns,
             Width: width,
             Height: height,
             Start: start,

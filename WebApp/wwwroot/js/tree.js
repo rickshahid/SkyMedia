@@ -1,5 +1,5 @@
 ﻿function SetNodeTips(node) {
-    var targetId = node.data.clientId + "_anchor";
+    var targetId = node.data.clientId + "-anchor";
     var protectionTip = node.data.contentProtectionTip;
     if (protectionTip != "") {
         CreateTipRight(targetId, protectionTip);
@@ -13,7 +13,8 @@ function LoadTreeNodes(filesView) {
             },
             "data": {
                 "url": function (node) {
-                    return node.id == "#" ? "/asset/parents" : "/asset/children?assetId=" + node.data.entityId + "&getFiles=true"
+                    var queryString = node.id == "#" ? "" : "?assetId=" + node.data.entityId + "&getFiles=true";
+                    return "/asset/assets" + queryString;
                 },
                 "data": function (node) {
                     return { "id": node.id };

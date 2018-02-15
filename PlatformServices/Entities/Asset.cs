@@ -72,7 +72,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Id
         {
-            get { return GetEntityId(true); }
+            get { return GetEntityId(false); }
         }
 
         public string Text
@@ -149,14 +149,16 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
+                string clientId = GetEntityId(true);
+                clientId = string.Concat(clientId, "-anchor");
                 if (_file != null)
                 {
                     string cssClass = _file.IsPrimary ? "mediaFile primary" : "mediaFile";
-                    return new { @class = cssClass };
+                    return new { id = clientId, @class = cssClass };
                 }
                 else
                 {
-                    return new { @class = "mediaAsset" };
+                    return new { id = clientId, @class = "mediaAsset" };
                 }
             }
         }

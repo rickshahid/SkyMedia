@@ -23,15 +23,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return insightQueue.Value ? MediaClient.PublishInsight(queueName) : MediaClient.PublishContent(queueName);
         }
 
-        public JsonResult parents()
-        {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            Asset[] assets = mediaClient.GetAssets(authToken, null, false);
-            return Json(assets);
-        }
-
-        public JsonResult children(string assetId, bool getFiles)
+        public JsonResult assets(string assetId, bool getFiles)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);

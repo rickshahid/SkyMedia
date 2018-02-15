@@ -30,7 +30,7 @@ function GetStreamName(mediaStream, streamSlider) {
         }
         for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
             if (!streamSlider || i > 0) {
-                streamName = streamName + ", ";
+                streamName = streamName + " + ";
             }
             streamName = streamName + mediaStream.source.protectionInfo[i].type;
         }

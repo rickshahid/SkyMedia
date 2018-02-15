@@ -49,6 +49,7 @@ namespace AzureSkyMedia.PlatformServices
             List<StreamProtection> streamProtections = new List<StreamProtection>();
             if (!string.IsNullOrEmpty(protectionTypes))
             {
+                authToken = string.Concat("Bearer=", authToken);
                 string[] streamProtectionTypes = protectionTypes.Split(Constant.TextDelimiter.Application);
                 foreach (string streamProtectionType in streamProtectionTypes)
                 {
@@ -57,7 +58,7 @@ namespace AzureSkyMedia.PlatformServices
                         Type = (MediaProtection)Enum.Parse(typeof(MediaProtection), streamProtectionType),
                         AuthenticationToken = authToken
                     };
-                streamProtections.Add(streamProtection);
+                    streamProtections.Add(streamProtection);
                 }
             }
             return streamProtections.ToArray();
@@ -66,6 +67,7 @@ namespace AzureSkyMedia.PlatformServices
         public StreamProtection[] GetStreamProtections(string authToken, IAsset asset)
         {
             List<StreamProtection> streamProtections = new List<StreamProtection>();
+            authToken = string.Concat("Bearer=", authToken);
 
             IAssetDeliveryPolicy[] deliveryPolicies = asset.DeliveryPolicies.Where(dp => dp.AssetDeliveryPolicyType == AssetDeliveryPolicyType.DynamicEnvelopeEncryption).ToArray();
             if (deliveryPolicies.Length > 0)

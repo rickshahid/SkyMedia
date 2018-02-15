@@ -6,16 +6,16 @@ namespace AzureSkyMedia.PlatformServices
     {
         public MediaProtection Type { get; set; }
 
-        public string CertificateUrl { get; set; }
-
         public string AuthenticationToken { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string CertificateUrl { get; set; }
     }
 
     public class StreamSource
     {
         public string Src { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public StreamProtection[] ProtectionInfo { get; set; }
     }
 

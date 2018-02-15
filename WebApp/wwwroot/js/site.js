@@ -126,13 +126,22 @@ function SetPlayerSpinner(visible) {
 }
 function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
     mediaPlayer.autoplay(autoPlay);
-    mediaPlayer.src(
-        [{
-            src: mediaStream.source.src,
-            protectionInfo: mediaStream.source.protectionInfo
-        }],
-        mediaStream.textTracks
-    );
+    if (mediaStream.source.protectionInfo.length > 0 && window.location.href.indexOf("auth=off") == -1) {
+        mediaPlayer.src(
+            [{
+                src: mediaStream.source.src,
+                protectionInfo: mediaStream.source.protectionInfo
+            }],
+            mediaStream.textTracks
+        );
+    } else {
+        mediaPlayer.src(
+            [{
+                src: mediaStream.source.src
+            }],
+            mediaStream.textTracks
+        );
+    }
     if (languageCode != "") {
         for (var i = 0; i < mediaPlayer.textTracks_.length; i++) {
             if (mediaPlayer.textTracks_.tracks_[i].language == languageCode) {
