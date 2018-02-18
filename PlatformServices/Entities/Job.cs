@@ -6,7 +6,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         public string Name { get; set; }
 
-        public ReservedUnitType NodeType { get; set; }
+        public MediaJobNodeType NodeType { get; set; }
 
         public int Priority { get; set; }
 

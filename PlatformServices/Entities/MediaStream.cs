@@ -23,20 +23,15 @@ namespace AzureSkyMedia.PlatformServices
     {
         public MediaStream DeepCopy()
         {
-            MediaStream mediaStream = new MediaStream()
+            MediaStream mediaStream = (MediaStream)this.MemberwiseClone();
+            mediaStream.Source = new StreamSource()
             {
-                Id = this.Id,
-                Name = this.Name,
-                Type = this.Type,
-                Thumbnails = this.Thumbnails == null ? null : (string[])this.Thumbnails.Clone(),
-                Source = new StreamSource()
-                {
-                    Src = this.Source.Src,
-                    ProtectionInfo = this.Source.ProtectionInfo == null ? null : (StreamProtection[])this.Source.ProtectionInfo.Clone(),
-                },
-                TextTracks = this.TextTracks == null ? null : (MediaTrack[])this.TextTracks.Clone(),
-                ContentInsight = this.ContentInsight == null ? null : (MediaInsight[])this.ContentInsight.Clone()
+                Src = this.Source.Src,
+                ProtectionInfo = this.Source.ProtectionInfo == null ? null : (StreamProtection[])this.Source.ProtectionInfo.Clone(),
             };
+            mediaStream.Thumbnails = this.Thumbnails == null ? null : (string[])this.Thumbnails.Clone();
+            mediaStream.TextTracks = this.TextTracks == null ? null : (MediaTrack[])this.TextTracks.Clone();
+            mediaStream.ContentInsight = this.ContentInsight == null ? null : (MediaInsight[])this.ContentInsight.Clone();
             return mediaStream;
         }
 
@@ -46,9 +41,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Type { get; set; }
 
-        public string[] Thumbnails { get; set; }
-
         public StreamSource Source { get; set; }
+
+        public string[] Thumbnails { get; set; }
 
         public MediaTrack[] TextTracks { get; set; }
 

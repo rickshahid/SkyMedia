@@ -291,9 +291,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string ReadWritePolicyName = "Default Read Write Policy";
             }
 
-            public struct JobNotification
+            public struct Job
             {
-                public const string EndpointName = "Job Notification Web Hook";
+                public const string MultipleInputAssets = "Multiple Input Assets";
+                public const string NotificationEndpointName = "Job Notification Web Hook";
             }
 
             public struct TreeIcon

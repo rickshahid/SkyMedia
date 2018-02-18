@@ -67,7 +67,25 @@ namespace AzureSkyMedia.PlatformServices
             Array.Sort<ILocator>(locators, OrderByDate);
             return locators;
         }
-        
+
+        private static string[] GetThumbnailUrls(MediaClient mediaClient, IAsset asset)
+        {
+            List<string> thumbnailUrls = new List<string>();
+            foreach (IAssetFile assetFile in asset.AssetFiles)
+            {
+                string fileName = assetFile.Name.Replace(" ", "%20");
+                if (fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                    fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                    fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
+                {
+                    string thumbnailUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, fileName, true);
+                    thumbnailUrls.Add(thumbnailUrl);
+                }
+            }
+            thumbnailUrls.Sort();
+            return thumbnailUrls.ToArray();
+        }
+
         private static string GetTextTrackType(string webVttData)
         {
             string webVttType;
@@ -197,6 +215,7 @@ namespace AzureSkyMedia.PlatformServices
                     Src = mediaClient.GetLocatorUrl(asset),
                     ProtectionInfo = mediaClient.GetStreamProtections(authToken, asset)
                 },
+                Thumbnails = GetThumbnailUrls(mediaClient, asset),
                 TextTracks = GetTextTracks(mediaClient, indexerClient, asset),
                 ContentInsight = contentInsight.ToArray(),
             };

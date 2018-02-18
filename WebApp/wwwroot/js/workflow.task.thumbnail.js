@@ -7,10 +7,10 @@
     }
     ScrollToBottom();
 }
-function GetThumbnailGeneration(taskNumber) {
+function GetThumbnailGeneration(taskNumber, encoderConfig) {
     var thumbnailGeneration = null;
     var idPrefix = "#encoderThumbnailGeneration";
-    if ($(idPrefix + taskNumber).prop("checked")) {
+    if ($(idPrefix + taskNumber).prop("checked") || encoderConfig.indexOf("Thumbnail Generation") > -1) {
         var columns = null;
         var format = $(idPrefix + "Format" + taskNumber).val();
         if (format == "Sprite") {

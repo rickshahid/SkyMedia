@@ -9,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private INotificationEndPoint GetNotificationEndpoint()
         {
-            string endpointName = Constant.Media.JobNotification.EndpointName;
+            string endpointName = Constant.Media.Job.NotificationEndpointName;
             INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName) as INotificationEndPoint;
             if (notificationEndpoint == null)
             {
@@ -21,12 +21,12 @@ namespace AzureSkyMedia.PlatformServices
             return notificationEndpoint;
         }
 
-        private void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, ReservedUnitType nodeType, bool newJob)
+        private void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, MediaJobNodeType nodeType, bool newJob)
         {
             int unitCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
             IEncodingReservedUnit processorUnit = processorUnits[0];
-            processorUnit.ReservedUnitType = nodeType;
+            processorUnit.ReservedUnitType = (ReservedUnitType)nodeType;
             if (newJob)
             {
                 processorUnit.CurrentReservedUnits += unitCount;
@@ -99,7 +99,7 @@ namespace AzureSkyMedia.PlatformServices
             mediaJob.Tasks = jobTasks.ToArray();
             if (string.IsNullOrEmpty(mediaJob.Name))
             {
-                mediaJob.Name = jobInputs[0].AssetName;
+                mediaJob.Name = jobInputs.Length > 1 ? Constant.Media.Job.MultipleInputAssets : jobInputs[0].AssetName;
             }
             return mediaJob;
         }

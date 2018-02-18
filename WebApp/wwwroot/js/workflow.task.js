@@ -33,7 +33,7 @@ function GetJobTask(taskNumber) {
                 if ($("#encoderFragmentOutput" + taskNumber).prop("checked")) {
                     jobTask.OutputAssetFormat = 1; // AssetFormatOption.AdaptiveStreaming
                 }
-                jobTask.ThumbnailGeneration = GetThumbnailGeneration(taskNumber);
+                jobTask.ThumbnailGeneration = GetThumbnailGeneration(taskNumber, encoderConfig);
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "VideoIndexer":

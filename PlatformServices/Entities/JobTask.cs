@@ -6,6 +6,15 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaJobTask
     {
+        public MediaJobTask DeepCopy()
+        {
+            MediaJobTask jobTask = (MediaJobTask)this.MemberwiseClone();
+            jobTask.ProcessorConfigString = new Dictionary<string, string>(this.ProcessorConfigString);
+            jobTask.ProcessorConfigBoolean = new Dictionary<string, bool>(this.ProcessorConfigBoolean);
+            jobTask.ProcessorConfigInteger = new Dictionary<string, int>(this.ProcessorConfigInteger);
+            return jobTask;
+        }
+
         public MediaJobTask()
         {
             this.ProcessorConfigString = new Dictionary<string, string>();

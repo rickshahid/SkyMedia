@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using System.Collections.Generic;
+
+using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json.Linq;
 
@@ -40,30 +43,45 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public JsonResult clip(string clipData)
         {
+            object clipOutput = null;
+            string directoryId = homeController.GetDirectoryId(this.Request);
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            MediaClient mediaClient = new MediaClient(authToken);
             JObject clip = JObject.Parse(clipData);
-            return Json(clip);
-        }
+            switch (clip["type"].ToString())
+            {
+                case "asset":
+                    List<MediaJobInput> jobInputs = new List<MediaJobInput>();
+                    JToken[] inputIds = clip["inputsIds"].ToArray();
+                    foreach (JToken inputId in inputIds)
+                    {
+                        MediaJobInput jobInput = new MediaJobInput()
+                        {
+                            AssetId = inputId["id"].ToString()
+                        };
+                        jobInputs.Add(jobInput);
+                    }
+                    MediaJobTask jobTask = new MediaJobTask()
+                    {
+                        MediaProcessor = MediaProcessor.EncoderStandard,
+                        ProcessorConfig = clip["output"]["job"].ToString()
+                    };
+                    MediaJob mediaJob = new MediaJob()
+                    {
+                        Name = clip["name"].ToString(),
+                        NodeType = MediaJobNodeType.Premium,
+                        Tasks = new MediaJobTask[] { jobTask }
+                    };
+                    mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs.ToArray());
+                    clipOutput = Workflow.SubmitJob(directoryId, authToken, mediaClient, mediaJob, jobInputs.ToArray());
+                    break;
 
-        //public JsonResult clip(int clipMode, string clipName, string sourceUrl, int markIn, int markOut)
-        //{
-        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
-        //    MediaClient mediaClient = new MediaClient(authToken);
-        //    if (string.IsNullOrEmpty(clipName))
-        //    {
-        //        clipName = string.Concat(markIn.ToString(), markOut.ToString());
-        //    }
-        //    object result;
-        //    if (clipMode == Constant.Media.RenderedClipMode)
-        //    {
-        //        string directoryId = homeController.GetDirectoryId(this.Request);
-        //        result = MediaClient.SubmitJob(directoryId, authToken, mediaClient, sourceUrl, markIn, markOut);
-        //    }
-        //    else
-        //    {
-        //        result = MediaClient.CreateFilter(clipName, mediaClient, sourceUrl, markIn, markOut);
-        //    }
-        //    return Json(result);
-        //}
+                case "filter":
+                    //clipOutput = MediaClient.CreateFilter();
+                    break;
+            }
+            return Json(clipOutput);
+        }
 
         public IActionResult clipper()
         {

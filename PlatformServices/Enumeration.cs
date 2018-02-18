@@ -84,6 +84,13 @@ namespace AzureSkyMedia.PlatformServices
         FairPlay
     }
 
+    public enum MediaJobNodeType
+    {
+        Basic = 0,
+        Standard = 1,
+        Premium = 2
+    }
+
     public enum MediaThumbnailFormat
     {
         Png,

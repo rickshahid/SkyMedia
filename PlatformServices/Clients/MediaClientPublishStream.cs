@@ -71,7 +71,7 @@ namespace AzureSkyMedia.PlatformServices
             MediaPublished mediaPublished = null;
             if (job != null)
             {
-                mediaClient.SetProcessorUnits(job, null, ReservedUnitType.Basic, false);
+                mediaClient.SetProcessorUnits(job, null, MediaJobNodeType.Basic, false);
                 PublishJob(mediaClient, job, contentPublish);
                 mediaPublished = new MediaPublished()
                 {

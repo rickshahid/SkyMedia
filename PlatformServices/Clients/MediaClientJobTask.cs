@@ -62,18 +62,19 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobTask GetJobTask(MediaClient mediaClient, MediaJobTask jobTask, string assetName)
         {
-            jobTask.Name = Processor.GetProcessorName(jobTask.MediaProcessor);
-            if (string.IsNullOrEmpty(jobTask.OutputAssetName))
+            MediaJobTask newJobTask = jobTask.DeepCopy();
+            newJobTask.Name = Processor.GetProcessorName(newJobTask.MediaProcessor);
+            if (string.IsNullOrEmpty(newJobTask.OutputAssetName))
             {
                 string outputAssetName = Path.GetFileNameWithoutExtension(assetName);
-                jobTask.OutputAssetName = string.Concat(outputAssetName, " (", jobTask.Name, ")");
+                newJobTask.OutputAssetName = string.Concat(outputAssetName, " (", newJobTask.Name, ")");
             }
-            jobTask.OutputAssetEncryption = AssetCreationOptions.None;
-            if (jobTask.ContentProtection != null)
+            newJobTask.OutputAssetEncryption = AssetCreationOptions.None;
+            if (newJobTask.ContentProtection != null)
             {
-                jobTask.OutputAssetEncryption = AssetCreationOptions.StorageEncrypted;
+                newJobTask.OutputAssetEncryption = AssetCreationOptions.StorageEncrypted;
             }
-            return jobTask;
+            return newJobTask;
         }
 
         private static MediaJobTask[] GetJobTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs, bool multipleInputTask)
@@ -89,9 +90,9 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (MediaJobInput jobInput in jobInputs)
                 {
-                    jobTask = GetJobTask(mediaClient, jobTask, jobInput.AssetName);
-                    jobTask.InputAssetIds = new string[] { jobInput.AssetId };
-                    jobTasks.Add(jobTask);
+                    MediaJobTask jobInputTask = GetJobTask(mediaClient, jobTask, jobInput.AssetName);
+                    jobInputTask.InputAssetIds = new string[] { jobInput.AssetId };
+                    jobTasks.Add(jobInputTask);
                 }
             }
             return jobTasks.ToArray();
