@@ -558,6 +558,14 @@ body {
     width: 76px;
 }
 
+.encoderThumbnailGenerationSprite {
+    padding-right: 0px !important;
+}
+
+.encoderThumbnailGenerationSpriteColumns {
+    padding-left: 0px !important;
+}
+
 .indexerLanguage {
     font-weight: bold;
     width: 187px;

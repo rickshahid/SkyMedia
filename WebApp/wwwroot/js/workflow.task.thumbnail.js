@@ -11,12 +11,7 @@ function GetThumbnailGeneration(taskNumber, encoderConfig) {
     var thumbnailGeneration = null;
     var idPrefix = "#encoderThumbnailGeneration";
     if ($(idPrefix + taskNumber).prop("checked") || encoderConfig.indexOf("Thumbnail Generation") > -1) {
-        var columns = null;
         var format = $(idPrefix + "Format" + taskNumber).val();
-        if (format == "Sprite") {
-            columns = $(idPrefix + "SpriteColumns" + taskNumber).val();
-            format = "Jpg";
-        }
         var width = $(idPrefix + "WidthPercent" + taskNumber).val();
         if (width == 0) {
             width = $(idPrefix + "WidthPixel" + taskNumber).val() + "px";
@@ -60,7 +55,8 @@ function GetThumbnailGeneration(taskNumber, encoderConfig) {
             Format: format,
             Best: $(idPrefix + "Best" + taskNumber).prop("checked"),
             Single: $(idPrefix + "Single" + taskNumber).prop("checked"),
-            Columns: columns,
+            Sprite: $(idPrefix + "Sprite" + taskNumber).prop("checked"),
+            Columns: $(idPrefix + "SpriteColumns" + taskNumber).val(),
             Width: width,
             Height: height,
             Start: start,
@@ -71,72 +67,35 @@ function GetThumbnailGeneration(taskNumber, encoderConfig) {
     return thumbnailGeneration;
 }
 function SetThumbnailFormat(input) {
-    var encoderThumbnailGenerationBestId = input.id.replace("encoderThumbnailGenerationFormat", "encoderThumbnailGenerationBest");
-    var encoderThumbnailGenerationSingleId = input.id.replace("encoderThumbnailGenerationFormat", "encoderThumbnailGenerationSingle");
-    var encoderThumbnailGenerationSpriteColumnsId = input.id.replace("encoderThumbnailGenerationFormat", "encoderThumbnailGenerationSpriteColumns");
-    if (input.value == "Sprite") {
-        $("#" + encoderThumbnailGenerationBestId).prop("checked", false);
-        $("#" + encoderThumbnailGenerationBestId).change();
-        $("#" + encoderThumbnailGenerationSingleId).prop("checked", false);
-        $("#" + encoderThumbnailGenerationSingleId).change();
-        $("#" + encoderThumbnailGenerationBestId).prop("disabled", true);
-        $("#" + encoderThumbnailGenerationSingleId).prop("disabled", true);
-        $("#" + encoderThumbnailGenerationSpriteColumnsId).spinner("enable");
-    } else {
-        $("#" + encoderThumbnailGenerationBestId).prop("disabled", false);
-        $("#" + encoderThumbnailGenerationSingleId).prop("disabled", false);
-        $("#" + encoderThumbnailGenerationSpriteColumnsId).spinner("disable");
+    var encoderThumbnailGenerationSpriteId = input.id.replace("encoderThumbnailGenerationFormat", "encoderThumbnailGenerationSprite");
+    switch (input.value) {
+        case "Jpg":
+            $("#" + encoderThumbnailGenerationSpriteId).prop("checked", false);
+            $("#" + encoderThumbnailGenerationSpriteId).change();
+            $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", true);
+            break;
+        case "Sprite":
+            $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", false);
+            $("#" + encoderThumbnailGenerationSpriteId).prop("checked", true);
+            $("#" + encoderThumbnailGenerationSpriteId).change();
+            break;
+        default:
+            $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", false);
+            break;
     }
 }
 function SetThumbnailBest(checkbox) {
-    var disableEnable = checkbox.checked ? "disable" : "enable";
     var encoderThumbnailGenerationSingleId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationSingle");
-    var encoderThumbnailGenerationStartPercentId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStartPercent");
-    var encoderThumbnailGenerationStartHourId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStartHour");
-    var encoderThumbnailGenerationStartMinuteId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStartMinute");
-    var encoderThumbnailGenerationStartSecondId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStartSecond");
-    var encoderThumbnailGenerationStepPercentId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStepPercent");
-    var encoderThumbnailGenerationStepHourId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStepHour");
-    var encoderThumbnailGenerationStepMinuteId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStepMinute");
-    var encoderThumbnailGenerationStepSecondId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationStepSecond");
-    var encoderThumbnailGenerationRangePercentId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationRangePercent");
-    var encoderThumbnailGenerationRangeHourId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationRangeHour");
-    var encoderThumbnailGenerationRangeMinuteId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationRangeMinute");
-    var encoderThumbnailGenerationRangeSecondId = checkbox.id.replace("encoderThumbnailGenerationBest", "encoderThumbnailGenerationRangeSecond");
     $("#" + encoderThumbnailGenerationSingleId).prop("disabled", checkbox.checked);
-    $("#" + encoderThumbnailGenerationStartPercentId).spinner(disableEnable);
-    $("#" + encoderThumbnailGenerationStartHourId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationStartMinuteId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationStartSecondId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationStepPercentId).spinner(disableEnable);
-    $("#" + encoderThumbnailGenerationStepHourId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationStepMinuteId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationStepSecondId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationRangePercentId).spinner(disableEnable);
-    $("#" + encoderThumbnailGenerationRangeHourId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationRangeMinuteId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationRangeSecondId).spinnerEx(disableEnable);
 }
 function SetThumbnailSingle(checkbox) {
-    var disableEnable = checkbox.checked ? "disable" : "enable";
     var encoderThumbnailGenerationBestId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationBest");
-    var encoderThumbnailGenerationStepPercentId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationStepPercent");
-    var encoderThumbnailGenerationStepHourId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationStepHour");
-    var encoderThumbnailGenerationStepMinuteId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationStepMinute");
-    var encoderThumbnailGenerationStepSecondId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationStepSecond");
-    var encoderThumbnailGenerationRangePercentId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationRangePercent");
-    var encoderThumbnailGenerationRangeHourId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationRangeHour");
-    var encoderThumbnailGenerationRangeMinuteId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationRangeMinute");
-    var encoderThumbnailGenerationRangeSecondId = checkbox.id.replace("encoderThumbnailGenerationSingle", "encoderThumbnailGenerationRangeSecond");
     $("#" + encoderThumbnailGenerationBestId).prop("disabled", checkbox.checked);
-    $("#" + encoderThumbnailGenerationStepPercentId).spinner(disableEnable);
-    $("#" + encoderThumbnailGenerationStepHourId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationStepMinuteId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationStepSecondId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationRangePercentId).spinner(disableEnable);
-    $("#" + encoderThumbnailGenerationRangeHourId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationRangeMinuteId).spinnerEx(disableEnable);
-    $("#" + encoderThumbnailGenerationRangeSecondId).spinnerEx(disableEnable);
+}
+function SetThumbnailSprite(checkbox) {
+    var enableDisable = checkbox.checked ? "enable" : "disable";
+    var encoderThumbnailGenerationSpriteColumnsId = checkbox.id.replace("encoderThumbnailGenerationSprite", "encoderThumbnailGenerationSpriteColumns");
+    $("#" + encoderThumbnailGenerationSpriteColumnsId).spinner(enableDisable);
 }
 function ClearWidthPercent(input) {
     var encoderThumbnailGenerationWidthPercentId = input.id.replace("encoderThumbnailGenerationWidthPixel", "encoderThumbnailGenerationWidthPercent");

@@ -179,7 +179,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStartPercent" + taskNumber).spinner({
         min: 0,
         max: 100,
-        disabled: true,
         spin: function (event, ui) {
             ClearStartTime(this);
         }
@@ -187,7 +186,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStartHour" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearStartPercent(this, "encoderThumbnailGenerationStartHour");
         }
@@ -195,7 +193,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStartMinute" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearStartPercent(this, "encoderThumbnailGenerationStartMinute");
         }
@@ -203,7 +200,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStartSecond" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearStartPercent(this, "encoderThumbnailGenerationStartSecond");
         }
@@ -211,7 +207,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStepPercent" + taskNumber).spinner({
         min: 0,
         max: 100,
-        disabled: true,
         spin: function (event, ui) {
             ClearStepTime(this);
         }
@@ -219,7 +214,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStepHour" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearStepPercent(this, "encoderThumbnailGenerationStepHour");
         }
@@ -227,7 +221,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStepMinute" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearStepPercent(this, "encoderThumbnailGenerationStepMinute");
         }
@@ -235,7 +228,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationStepSecond" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearStepPercent(this, "encoderThumbnailGenerationStepSecond");
         }
@@ -243,7 +235,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationRangePercent" + taskNumber).spinner({
         min: 0,
         max: 100,
-        disabled: true,
         spin: function (event, ui) {
             ClearRangeTime(this);
         }
@@ -251,7 +242,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationRangeHour" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearRangePercent(this, "encoderThumbnailGenerationRangeHour");
         }
@@ -259,7 +249,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationRangeMinute" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearRangePercent(this, "encoderThumbnailGenerationRangeMinute");
         }
@@ -267,7 +256,6 @@ function SetJobTaskInputs(taskNumber) {
     $("#encoderThumbnailGenerationRangeSecond" + taskNumber).spinnerEx({
         min: 0,
         max: 59,
-        disabled: true,
         spin: function (event, ui) {
             ClearRangePercent(this, "encoderThumbnailGenerationRangeSecond");
         }

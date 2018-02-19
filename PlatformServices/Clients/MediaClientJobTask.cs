@@ -54,7 +54,7 @@ namespace AzureSkyMedia.PlatformServices
                 processorConfig.Remove("id");
                 if (jobTask.ThumbnailGeneration != null)
                 {
-                    processorConfig = UpdateThumbnailGeneration(processorConfig, jobTask.ThumbnailGeneration);
+                    SetThumbnailGeneration(processorConfig, jobTask.ThumbnailGeneration);
                 }
             }
             return processorConfig;
@@ -98,10 +98,60 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static JObject UpdateThumbnailGeneration(JObject processorConfig, ThumbnailGeneration thumbnailGeneration)
+        private static void SetThumbnailLayers(JToken codec, ThumbnailGeneration thumbnailGeneration)
         {
+            JProperty pngLayers = codec["PngLayers"].Parent as JProperty;
+            pngLayers.Remove();
+            JObject layer = new JObject();
             string format = thumbnailGeneration.Format.ToString();
-            JToken[] codecs = processorConfig["Codecs"].ToArray();
+            layer["Type"] = string.Concat(format, "Layer");
+            layer["Width"] = thumbnailGeneration.Width;
+            layer["Height"] = thumbnailGeneration.Height;
+            if (format == "Jpg")
+            {
+                layer["Quality"] = 90;
+            }
+            string layers = string.Concat(format, "Layers");
+            codec[layers] = new JArray(layer);
+        }
+
+        private static void SetThumbnailSprite(JArray codecs, JToken thumbnailsCodec, JToken spriteCodec, JArray outputs, ThumbnailGeneration thumbnailGeneration)
+        {
+            if (thumbnailsCodec == null)
+            {
+                spriteCodec["SpriteColumn"] = thumbnailGeneration.Columns;
+                spriteCodec["JpgLayers"][0]["Quality"] = 90;
+            }
+            else
+            {
+                string format = thumbnailGeneration.Format.ToString();
+                string spriteJson = spriteCodec.ToString();
+                spriteJson = spriteJson.Replace(format, "Jpg");
+                spriteCodec = JObject.Parse(spriteJson);
+                spriteCodec["SpriteColumn"] = thumbnailGeneration.Columns;
+                spriteCodec["JpgLayers"][0]["Quality"] = 90;
+                codecs.Add(spriteCodec);
+                JObject outputFormat = new JObject();
+                outputFormat["Type"] = "JpgFormat";
+                JObject output = new JObject();
+                output["FileName"] = "{Basename}_{Index}{Extension}";
+                output["Format"] = outputFormat;
+                outputs.Add(output);
+            }
+        }
+
+        private static void SetThumbnailGeneration(JObject processorConfig, ThumbnailGeneration thumbnailGeneration)
+        {
+            JToken thumbnailsCodec = null;
+            JToken spriteCodec = null;
+            bool spriteOnly = false;
+            if (thumbnailGeneration.Format == MediaThumbnailFormat.Sprite)
+            {
+                thumbnailGeneration.Format = MediaThumbnailFormat.Jpg;
+                spriteOnly = true;
+            }
+            string format = thumbnailGeneration.Format.ToString();
+            JArray codecs = (JArray)processorConfig["Codecs"];
             foreach (JToken codec in codecs)
             {
                 if (codec["Type"].ToString().Contains("Image"))
@@ -125,25 +175,19 @@ namespace AzureSkyMedia.PlatformServices
                             codec["Range"] = thumbnailGeneration.Range;
                         }
                     }
-                    if (thumbnailGeneration.Columns.HasValue)
+                    SetThumbnailLayers(codec, thumbnailGeneration);
+                    if (spriteOnly)
                     {
-                        codec["SpriteColumn"] = thumbnailGeneration.Columns.Value;
+                        spriteCodec = codec;
                     }
-                    JObject layer = new JObject();
-                    layer["Type"] = string.Concat(format, "Layer");
-                    layer["Width"] = thumbnailGeneration.Width;
-                    layer["Height"] = thumbnailGeneration.Height;
-                    if (format == "Jpg")
+                    else
                     {
-                        layer["Quality"] = 90;
+                        thumbnailsCodec = codec;
+                        spriteCodec = codec.DeepClone();
                     }
-                    JProperty pngLayers = codec["PngLayers"].Parent as JProperty;
-                    pngLayers.Remove();
-                    JArray layers = new JArray(layer);
-                    codec[string.Concat(format, "Layers")] = layers;
                 }
             }
-            JToken[] outputs = processorConfig["Outputs"].ToArray();
+            JArray outputs = (JArray)processorConfig["Outputs"];
             foreach (JToken output in outputs)
             {
                 if (output["Format"]["Type"].ToString().Contains("Png"))
@@ -151,7 +195,10 @@ namespace AzureSkyMedia.PlatformServices
                     output["Format"]["Type"] = string.Concat(format, "Format");
                 }
             }
-            return processorConfig;
+            if (thumbnailGeneration.Sprite)
+            {
+                SetThumbnailSprite(codecs, thumbnailsCodec, spriteCodec, outputs, thumbnailGeneration);
+            }
         }
     }
 }

@@ -95,6 +95,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         Png,
         Jpg,
-        Bmp
+        Bmp,
+        Sprite
     }
 }

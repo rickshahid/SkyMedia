@@ -8,7 +8,9 @@
 
         public bool Single { get; set; }
 
-        public int? Columns { get; set; }
+        public bool Sprite { get; set; }
+
+        public int Columns { get; set; }
 
         public string Width { get; set; }
 

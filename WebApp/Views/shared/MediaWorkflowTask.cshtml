@@ -16,6 +16,7 @@
     string encoderThumbnailGenerationFormatId = string.Concat(encoderThumbnailGenerationIdPrefix, "Format", taskNumber);
     string encoderThumbnailGenerationBestId = string.Concat(encoderThumbnailGenerationIdPrefix, "Best", taskNumber);
     string encoderThumbnailGenerationSingleId = string.Concat(encoderThumbnailGenerationIdPrefix, "Single", taskNumber);
+    string encoderThumbnailGenerationSpriteId = string.Concat(encoderThumbnailGenerationIdPrefix, "Sprite", taskNumber);
     string encoderThumbnailGenerationSpriteColumnsId = string.Concat(encoderThumbnailGenerationIdPrefix, "SpriteColumns", taskNumber);
     string encoderThumbnailGenerationWidthPercentId = string.Concat(encoderThumbnailGenerationIdPrefix, "WidthPercent", taskNumber);
     string encoderThumbnailGenerationWidthPixelId = string.Concat(encoderThumbnailGenerationIdPrefix, "WidthPixel", taskNumber);
@@ -388,18 +389,21 @@
                                             </select>
                                         </td>
                                         <td>
-                                            @Html.CheckBox(encoderThumbnailGenerationBestId, true, new { onchange = "SetThumbnailBest(this)" })
+                                            @Html.CheckBox(encoderThumbnailGenerationBestId, false, new { onchange = "SetThumbnailBest(this)" })
                                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes#example-of-a-single-png-file-preset')">
                                                 Best
                                             </span>
                                         </td>
                                         <td>
-                                            @Html.CheckBox(encoderThumbnailGenerationSingleId, false, new { onchange = "SetThumbnailSingle(this)", disabled = "disabled" })
+                                            @Html.CheckBox(encoderThumbnailGenerationSingleId, false, new { onchange = "SetThumbnailSingle(this)" })
                                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes#example-of-a-one-image-at-a-specific-timestamp-preset')">
                                                 Single
                                             </span>
                                         </td>
-                                        <td>
+                                        <td class="encoderThumbnailGenerationSprite">
+                                            @Html.CheckBox(encoderThumbnailGenerationSpriteId, false, new { onchange = "SetThumbnailSprite(this)" })
+                                        </td>
+                                        <td class="encoderThumbnailGenerationSpriteColumns">
                                             <span class="siteLink inputLabelMultiLine" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-generate-thumbnail-with-mes')">
                                                 Sprite<br>Columns
                                             </span>
@@ -409,7 +413,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5" class="encoderThumbnailGenerationOptionsTable">
+                                        <td colspan="6" class="encoderThumbnailGenerationOptionsTable">
                                             <table>
                                                 <tr>
                                                     <td class="inputLabel">

@@ -20,6 +20,7 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationFormat" + lastTaskNumber, "encoderThumbnailGenerationFormat" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationBest" + lastTaskNumber, "encoderThumbnailGenerationBest" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationSingle" + lastTaskNumber, "encoderThumbnailGenerationSingle" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationSprite" + lastTaskNumber, "encoderThumbnailGenerationSprite" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationSpriteColumns" + lastTaskNumber, "encoderThumbnailGenerationSpriteColumns" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationWidthPercent" + lastTaskNumber, "encoderThumbnailGenerationWidthPercent" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderThumbnailGenerationWidthPixel" + lastTaskNumber, "encoderThumbnailGenerationWidthPixel" + newTaskNumber);
