@@ -54,7 +54,7 @@ namespace AzureSkyMedia.PlatformServices
                 processorConfig.Remove("id");
                 if (jobTask.ThumbnailGeneration != null)
                 {
-                    SetThumbnailGeneration(processorConfig, jobTask.ThumbnailGeneration);
+                    SetThumbnailGeneration(jobTask.ThumbnailGeneration, processorConfig);
                 }
             }
             return processorConfig;
@@ -98,9 +98,9 @@ namespace AzureSkyMedia.PlatformServices
             return jobTasks.ToArray();
         }
 
-        private static void SetThumbnailLayers(JToken codec, ThumbnailGeneration thumbnailGeneration)
+        private static void SetThumbnailLayers(ThumbnailGeneration thumbnailGeneration, JToken thumbnailCodec)
         {
-            JProperty pngLayers = codec["PngLayers"].Parent as JProperty;
+            JProperty pngLayers = (JProperty)thumbnailCodec["PngLayers"].Parent;
             pngLayers.Remove();
             JObject layer = new JObject();
             string format = thumbnailGeneration.Format.ToString();
@@ -109,27 +109,29 @@ namespace AzureSkyMedia.PlatformServices
             layer["Height"] = thumbnailGeneration.Height;
             if (format == "Jpg")
             {
-                layer["Quality"] = 90;
+                layer["Quality"] = Constant.Media.ProcessorConfig.ThumbnailJpgQuality;
             }
             string layers = string.Concat(format, "Layers");
-            codec[layers] = new JArray(layer);
+            thumbnailCodec[layers] = new JArray(layer);
         }
 
-        private static void SetThumbnailSprite(JArray codecs, JToken thumbnailsCodec, JToken spriteCodec, JArray outputs, ThumbnailGeneration thumbnailGeneration)
+        private static void SetThumbnailSprite(ThumbnailGeneration thumbnailGeneration, JToken spriteCodec, JArray codecs, JArray outputs)
         {
-            if (thumbnailsCodec == null)
+            string format = thumbnailGeneration.Format.ToString();
+            if (format != "Jpg")
             {
-                spriteCodec["SpriteColumn"] = thumbnailGeneration.Columns;
-                spriteCodec["JpgLayers"][0]["Quality"] = 90;
+                string layers = string.Concat(format, "Layers");
+                JToken jpgLayers = spriteCodec[layers].DeepClone();
+                JProperty oldLayers = (JProperty)spriteCodec[layers].Parent;
+                oldLayers.Remove();
+                spriteCodec["Type"] = "JpgImage";
+                jpgLayers[0]["Type"] = "JpgLayer";
+                jpgLayers[0]["Quality"] = Constant.Media.ProcessorConfig.ThumbnailJpgQuality;
+                spriteCodec["JpgLayers"] = jpgLayers;
             }
-            else
+            spriteCodec["SpriteColumn"] = thumbnailGeneration.Columns;
+            if (codecs != null)
             {
-                string format = thumbnailGeneration.Format.ToString();
-                string spriteJson = spriteCodec.ToString();
-                spriteJson = spriteJson.Replace(format, "Jpg");
-                spriteCodec = JObject.Parse(spriteJson);
-                spriteCodec["SpriteColumn"] = thumbnailGeneration.Columns;
-                spriteCodec["JpgLayers"][0]["Quality"] = 90;
                 codecs.Add(spriteCodec);
                 JObject outputFormat = new JObject();
                 outputFormat["Type"] = "JpgFormat";
@@ -140,15 +142,14 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        private static void SetThumbnailGeneration(JObject processorConfig, ThumbnailGeneration thumbnailGeneration)
+        private static void SetThumbnailGeneration(ThumbnailGeneration thumbnailGeneration, JObject processorConfig)
         {
-            JToken thumbnailsCodec = null;
-            JToken spriteCodec = null;
             bool spriteOnly = false;
+            JToken spriteCodec = null;
             if (thumbnailGeneration.Format == MediaThumbnailFormat.Sprite)
             {
-                thumbnailGeneration.Format = MediaThumbnailFormat.Jpg;
                 spriteOnly = true;
+                thumbnailGeneration.Format = MediaThumbnailFormat.Jpg;
             }
             string format = thumbnailGeneration.Format.ToString();
             JArray codecs = (JArray)processorConfig["Codecs"];
@@ -164,40 +165,31 @@ namespace AzureSkyMedia.PlatformServices
                     else
                     {
                         codec["Start"] = thumbnailGeneration.Start;
-                        if (thumbnailGeneration.Single)
-                        {
-                            codec["Step"] = "1";
-                            codec["Range"] = "1";
-                        }
-                        else
-                        {
-                            codec["Step"] = thumbnailGeneration.Step;
-                            codec["Range"] = thumbnailGeneration.Range;
-                        }
+                        codec["Step"] = thumbnailGeneration.Single ? "1" : thumbnailGeneration.Step;
+                        codec["Range"] = thumbnailGeneration.Single ? "1" : thumbnailGeneration.Range;
                     }
-                    SetThumbnailLayers(codec, thumbnailGeneration);
-                    if (spriteOnly)
-                    {
-                        spriteCodec = codec;
-                    }
-                    else
-                    {
-                        thumbnailsCodec = codec;
-                        spriteCodec = codec.DeepClone();
-                    }
+                    SetThumbnailLayers(thumbnailGeneration, codec);
+                    spriteCodec = spriteOnly ? codec : codec.DeepClone();
                 }
             }
-            JArray outputs = (JArray)processorConfig["Outputs"];
-            foreach (JToken output in outputs)
+            if (spriteOnly)
             {
-                if (output["Format"]["Type"].ToString().Contains("Png"))
+                codecs = null;
+            }
+            JArray outputs = (JArray)processorConfig["Outputs"];
+            if (format != "Png")
+            {
+                foreach (JToken output in outputs)
                 {
-                    output["Format"]["Type"] = string.Concat(format, "Format");
+                    if (output["Format"]["Type"].ToString().Contains("Png"))
+                    {
+                        output["Format"]["Type"] = string.Concat(format, "Format");
+                    }
                 }
             }
             if (thumbnailGeneration.Sprite)
             {
-                SetThumbnailSprite(codecs, thumbnailsCodec, spriteCodec, outputs, thumbnailGeneration);
+                SetThumbnailSprite(thumbnailGeneration, spriteCodec, codecs, outputs);
             }
         }
     }

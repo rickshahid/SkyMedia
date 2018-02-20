@@ -234,6 +234,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct ProcessorConfig
             {
+                public const int ThumbnailJpgQuality = 90;
+
                 public const string DirectoryModels = @"\Models";
                 public const string DirectoryPresets = @"\Models\ProcessorPresets\";
 

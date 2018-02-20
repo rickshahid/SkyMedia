@@ -67,20 +67,21 @@ function GetThumbnailGeneration(taskNumber, encoderConfig) {
     return thumbnailGeneration;
 }
 function SetThumbnailFormat(input) {
+    var encoderThumbnailGenerationBestId = input.id.replace("encoderThumbnailGenerationFormat", "encoderThumbnailGenerationBest");
+    var encoderThumbnailGenerationSingleId = input.id.replace("encoderThumbnailGenerationFormat", "encoderThumbnailGenerationSingle");
     var encoderThumbnailGenerationSpriteId = input.id.replace("encoderThumbnailGenerationFormat", "encoderThumbnailGenerationSprite");
+    $("#" + encoderThumbnailGenerationBestId).prop("disabled", false);
+    $("#" + encoderThumbnailGenerationSingleId).prop("disabled", false);
+    $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", false);
+    $("#" + encoderThumbnailGenerationSpriteId).prop("checked", false);
+    $("#" + encoderThumbnailGenerationSpriteId).change();
     switch (input.value) {
         case "Jpg":
-            $("#" + encoderThumbnailGenerationSpriteId).prop("checked", false);
-            $("#" + encoderThumbnailGenerationSpriteId).change();
             $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", true);
             break;
         case "Sprite":
-            $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", false);
             $("#" + encoderThumbnailGenerationSpriteId).prop("checked", true);
             $("#" + encoderThumbnailGenerationSpriteId).change();
-            break;
-        default:
-            $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", false);
             break;
     }
 }
@@ -93,9 +94,20 @@ function SetThumbnailSingle(checkbox) {
     $("#" + encoderThumbnailGenerationBestId).prop("disabled", checkbox.checked);
 }
 function SetThumbnailSprite(checkbox) {
-    var enableDisable = checkbox.checked ? "enable" : "disable";
+    var encoderThumbnailGenerationBestId = checkbox.id.replace("encoderThumbnailGenerationSprite", "encoderThumbnailGenerationBest");
+    var encoderThumbnailGenerationSingleId = checkbox.id.replace("encoderThumbnailGenerationSprite", "encoderThumbnailGenerationSingle");
     var encoderThumbnailGenerationSpriteColumnsId = checkbox.id.replace("encoderThumbnailGenerationSprite", "encoderThumbnailGenerationSpriteColumns");
-    $("#" + encoderThumbnailGenerationSpriteColumnsId).spinner(enableDisable);
+    if (checkbox.checked) {
+        $("#" + encoderThumbnailGenerationBestId).prop("checked", false);
+        $("#" + encoderThumbnailGenerationBestId).prop("disabled", true);
+        $("#" + encoderThumbnailGenerationSingleId).prop("checked", false);
+        $("#" + encoderThumbnailGenerationSingleId).prop("disabled", true);
+        $("#" + encoderThumbnailGenerationSpriteColumnsId).spinner("enable");
+    } else {
+        $("#" + encoderThumbnailGenerationBestId).prop("disabled", false);
+        $("#" + encoderThumbnailGenerationSingleId).prop("disabled", false);
+        $("#" + encoderThumbnailGenerationSpriteColumnsId).spinner("disable");
+    }
 }
 function ClearWidthPercent(input) {
     var encoderThumbnailGenerationWidthPercentId = input.id.replace("encoderThumbnailGenerationWidthPixel", "encoderThumbnailGenerationWidthPercent");
