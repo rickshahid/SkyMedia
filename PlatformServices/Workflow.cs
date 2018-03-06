@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -68,7 +69,12 @@ namespace AzureSkyMedia.PlatformServices
             List<MediaJobInput> jobInputs = new List<MediaJobInput>();
             if (multipleFileAsset)
             {
-                IAsset asset = mediaClient.CreateAsset(authToken, inputAssetName, storageAccount, storageEncryption, fileNames);
+                string assetName = inputAssetName;
+                if (string.IsNullOrEmpty(assetName))
+                {
+                    assetName = Path.GetFileNameWithoutExtension(fileNames[0]);
+                }
+                IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, fileNames);
                 MediaJobInput jobInput = GetJobInput(asset);
                 jobInputs.Add(jobInput);
             }
@@ -76,10 +82,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (string fileName in fileNames)
                 {
-                    string assetName = fileName;
-                    if (fileNames.Length == 1 && !string.IsNullOrEmpty(inputAssetName))
+                    string assetName = inputAssetName;
+                    if (string.IsNullOrEmpty(assetName))
                     {
-                        assetName = inputAssetName;
+                        assetName = fileName;
                     }
                     IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
                     MediaJobInput jobInput = GetJobInput(asset);

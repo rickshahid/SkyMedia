@@ -234,6 +234,10 @@ body {
     width: 490px;
 }
 
+.encoderVideoOverlayOptions {
+    width: 506px;
+}
+
 .mediaCertification {
     text-align: center;
     padding-top: 20px;

@@ -45,6 +45,8 @@
     string encoderContentProtectionAuthTypeTokenId = string.Concat(encoderContentProtectionIdPrefix, "AuthTypeToken" + taskNumber);
     string encoderContentProtectionAuthTypeAddressId = string.Concat(encoderContentProtectionIdPrefix, "AuthTypeAddress" + taskNumber);
     string encoderContentProtectionAuthAddressRangeId = string.Concat(encoderContentProtectionIdPrefix, "AuthAddressRange" + taskNumber);
+    string encoderVideoOverlayId = string.Concat("encoderVideoOverlay", taskNumber);
+    string encoderVideoOverlayRowId = string.Concat("encoderVideoOverlayRow" + taskNumber);
     string indexerRowId = string.Concat("indexerRow", taskNumber);
     string indexerLanguageId = string.Concat("indexerLanguageId", taskNumber);
     string indexerSearchPartitionId = string.Concat("indexerSearchPartition", taskNumber);
@@ -145,6 +147,13 @@
                                             @Html.CheckBox(encoderContentProtectionId, false, new { onclick = "ShowContentProtection(this)" })
                                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview')">
                                                 Content Protection
+                                            </span>
+                                        </td>
+                                        <td>
+                                            &nbsp;
+                                            @Html.CheckBox(encoderVideoOverlayId, false, new { onclick = "ShowVideoOverlay(this)" })
+                                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-advanced-encoding-with-mes#overlay')">
+                                                Video Overlay Image
                                             </span>
                                         </td>
                                     </tr>
@@ -538,7 +547,7 @@
                     </table>
                 </td>
             </tr>
-            <tr id="@encoderContentProtectionRowId" class="contentProtectionRow" style="display:none">
+            <tr id="@encoderContentProtectionRowId" style="display:none">
                 <td colspan="2">
                     <table>
                         <tr>
@@ -594,6 +603,28 @@
                                                 Address Range
                                             </span>
                                             @Html.TextBox(encoderContentProtectionAuthAddressRangeId, null, new { @class = "contentAuthAddressRange", placeholder = "Start IPv4, End IPv4", disabled = "disabled" })
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="@encoderVideoOverlayRowId" style="display:none">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td>
+                                <span class="siteLink inputLabelMultiLine" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-advanced-encoding-with-mes#overlay')">
+                                    Video<br>Overlay<br>Image
+                                </span>
+                            </td>
+                            <td>
+                                <table class="mediaProcessorConfigOptions encoderVideoOverlayOptions">
+                                    <tr>
+                                        <td>
+
                                         </td>
                                     </tr>
                                 </table>

@@ -48,6 +48,7 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeToken" + lastTaskNumber, "encoderContentProtectionAuthTypeToken" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "encoderVideoOverlay" + lastTaskNumber, "encoderVideoOverlay" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerRow" + lastTaskNumber, "indexerRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerLanguageId" + lastTaskNumber, "indexerLanguageId" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSearchPartition" + lastTaskNumber, "indexerSearchPartition" + newTaskNumber);

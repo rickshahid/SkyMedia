@@ -57,7 +57,6 @@ function GetJobTask(taskNumber) {
                 jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();
                 switch (jobTask.ProcessorConfigString["FaceDetectionMode"]) {
                     case "Redact":
-                        jobTask.ProcessorConfigString["FaceDetectionMode"] = "Combined";
                         jobTask.ProcessorConfigString["FaceRedactionBlurMode"] = $("#faceRedactionBlurMode" + taskNumber).val();
                         break;
                     case "Emotion":

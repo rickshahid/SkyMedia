@@ -41,44 +41,51 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(streams);
         }
 
+        private MediaJobInput[] GetJobInputs(JObject clip)
+        {
+            List<MediaJobInput> jobInputs = new List<MediaJobInput>();
+            JToken[] inputIds = clip["inputsIds"].ToArray();
+            foreach (JToken inputId in inputIds)
+            {
+                MediaJobInput jobInput = new MediaJobInput()
+                {
+                    AssetId = inputId["id"].ToString(),
+                    AssetFilter = string.Equals(inputId["type"], "filter")
+                };
+                jobInputs.Add(jobInput);
+            }
+            return jobInputs.ToArray();
+        }
+
         public JsonResult clip(string clipData)
         {
             object clipOutput = null;
-            string directoryId = homeController.GetDirectoryId(this.Request);
+            JObject clip = JObject.Parse(clipData);
+            MediaJobInput[] jobInputs = GetJobInputs(clip);
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            JObject clip = JObject.Parse(clipData);
-            switch (clip["type"].ToString())
+            if (jobInputs[0].AssetFilter)
             {
-                case "asset":
-                    List<MediaJobInput> jobInputs = new List<MediaJobInput>();
-                    JToken[] inputIds = clip["inputsIds"].ToArray();
-                    foreach (JToken inputId in inputIds)
-                    {
-                        MediaJobInput jobInput = new MediaJobInput()
-                        {
-                            AssetId = inputId["id"].ToString()
-                        };
-                        jobInputs.Add(jobInput);
-                    }
-                    MediaJobTask jobTask = new MediaJobTask()
-                    {
-                        MediaProcessor = MediaProcessor.EncoderStandard,
-                        ProcessorConfig = clip["output"]["job"].ToString()
-                    };
-                    MediaJob mediaJob = new MediaJob()
-                    {
-                        Name = clip["name"].ToString(),
-                        NodeType = MediaJobNodeType.Premium,
-                        Tasks = new MediaJobTask[] { jobTask }
-                    };
-                    mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs.ToArray());
-                    clipOutput = Workflow.SubmitJob(directoryId, authToken, mediaClient, mediaJob, jobInputs.ToArray());
-                    break;
-
-                case "filter":
-                    //clipOutput = MediaClient.CreateFilter();
-                    break;
+                string filterName = clip["name"].ToString();
+                string assetId = jobInputs[0].AssetId;
+                //clipOutput = MediaClient.CreateFilter()
+            }
+            else
+            {
+                MediaJobTask jobTask = new MediaJobTask()
+                {
+                    MediaProcessor = MediaProcessor.EncoderStandard,
+                    ProcessorConfig = clip["output"]["job"].ToString()
+                };
+                MediaJob mediaJob = new MediaJob()
+                {
+                    Name = clip["name"].ToString(),
+                    NodeType = MediaJobNodeType.Premium,
+                    Tasks = new MediaJobTask[] { jobTask }
+                };
+                string directoryId = homeController.GetDirectoryId(this.Request);
+                mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs.ToArray());
+                clipOutput = Workflow.SubmitJob(directoryId, authToken, mediaClient, mediaJob, jobInputs.ToArray());
             }
             return Json(clipOutput);
         }

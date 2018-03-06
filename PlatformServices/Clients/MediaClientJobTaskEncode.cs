@@ -33,8 +33,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Array.Sort(jobInputs, OrderByWorkflow);
             }
-            JObject processorConfig = GetProcessorConfig(jobTask);
-            jobTask.ProcessorConfig = processorConfig == null ? jobTask.ProcessorConfigId : processorConfig.ToString();
+            if (string.IsNullOrEmpty(jobTask.ProcessorConfig))
+            {
+                JObject processorConfig = GetProcessorConfig(jobTask);
+                jobTask.ProcessorConfig = processorConfig == null ? jobTask.ProcessorConfigId : processorConfig.ToString();
+            }
             bool multipleInputTask = jobTask.MediaProcessor != MediaProcessor.EncoderStandard;
             return GetJobTasks(mediaClient, jobTask, jobInputs, multipleInputTask);
         }

@@ -64,8 +64,6 @@ namespace AzureSkyMedia.WebApp
             settingKey = Constant.AppSettingKey.AppApiVersion;
             string apiVersion = AppSetting.GetValue(settingKey);
             options.SwaggerEndpoint(endpointUrl, apiVersion);
-            options.ShowRequestHeaders();
-            options.ShowJsonEditor();
         }
 
         private static string GetPolicyId(RedirectContext context)

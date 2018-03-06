@@ -13,6 +13,11 @@ namespace AzureSkyMedia.PlatformServices
             return fileName.EndsWith(Constant.Media.FileExtension.Manifest, StringComparison.OrdinalIgnoreCase);
         }
 
+        private bool IsPrimaryFile(IAssetFile assetFile)
+        {
+            return IsManifestFile(assetFile.Name) || assetFile.MimeType.Contains("video");
+        }
+
         private IAccessPolicy GetAccessPolicy(bool readWrite)
         {
             string policyName = readWrite ? Constant.Media.AccessPolicy.ReadWritePolicyName : Constant.Media.AccessPolicy.ReadOnlyPolicyName;
@@ -80,7 +85,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAssetFile assetFile in asset.AssetFiles)
                 {
-                    if (IsManifestFile(assetFile.Name))
+                    if (IsPrimaryFile(assetFile))
                     {
                         assetFile.IsPrimary = true;
                         assetFile.Update();

@@ -307,6 +307,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct FileExtension
             {
+                public const string Annotations = "_annotations.json";
                 public const string Workflow = ".workflow";
                 public const string Manifest = ".ism";
                 public const string WebVtt = ".vtt";

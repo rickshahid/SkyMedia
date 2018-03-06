@@ -6,6 +6,8 @@
 
         public string AssetName { get; set; }
 
+        public bool AssetFilter { get; set; }
+
         public string PrimaryFile { get; set; }
     }
 }

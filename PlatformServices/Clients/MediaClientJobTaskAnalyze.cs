@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 
+using Microsoft.WindowsAzure.MediaServices.Client;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
@@ -27,9 +29,25 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
         {
             jobTask.MediaProcessor = MediaProcessor.FaceDetection;
+            string faceDetectionMode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
+            if (faceDetectionMode == "Redact")
+            {
+                faceDetectionMode = "Combined";
+                foreach (MediaJobInput jobInput in jobInputs)
+                {
+                    IAsset asset = (IAsset)mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId);
+                    foreach (IAssetFile assetFile in asset.AssetFiles)
+                    {
+                        if (assetFile.Name.EndsWith(Constant.Media.FileExtension.Annotations))
+                        {
+                            faceDetectionMode = "Redact";
+                        }
+                    }
+                }
+            }
             JObject processorConfig = GetProcessorConfig(jobTask);
             JToken processorOptions = processorConfig["Options"];
-            processorOptions["Mode"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
+            processorOptions["Mode"] = faceDetectionMode;
             if (jobTask.ProcessorConfigString.ContainsKey(MediaProcessorConfig.FaceRedactionBlurMode.ToString()))
             {
                 processorOptions["BlurType"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceRedactionBlurMode.ToString()];
