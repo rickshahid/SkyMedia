@@ -2,12 +2,12 @@
   "name": "asp.net",
   "private": true,
   "dependencies": {
-    "jqgrid": "5.2.1",
-    "jquery": "3.2.1",
+    "jqgrid": "5.3.0",
+    "jquery": "3.3.1",
     "jquery-cookie": "1.4.1",
     "jquery-editable-select": "2.2.5",
-    "jquery.scrollTo": "2.1.2",
+    "jquery.scrollto": "2.1.2",
     "jquery-ui": "1.12.1",
-    "jstree": "3.3.4"
+    "jstree": "3.3.5"
   }
 }

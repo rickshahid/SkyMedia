@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -16,6 +13,21 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static class InsightPublishHttpPost
     {
+        [FunctionName("InsightPublish-HttpPost")]
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request, TraceWriter log)
+        {
+            string accountId = request.Query["account"];
+            string indexId = request.Query["id"];
+            log.Info($"Account Id: {accountId}");
+            log.Info($"Index Id: {indexId}");
+            if (!string.IsNullOrEmpty(accountId) && !string.IsNullOrEmpty(indexId))
+            {
+                MediaPublish insightPublish = EnqueuePublish(accountId, indexId);
+                log.Info($"Insight Publish: {JsonConvert.SerializeObject(insightPublish)}");
+            }
+            return new OkResult();
+        }
+
         private static MediaPublish EnqueuePublish(string accountId, string indexId)
         {
             TableClient tableClient = new TableClient();
@@ -31,23 +43,6 @@ namespace AzureSkyMedia.FunctionApp
                 queueClient.AddMessage(queueName, insightPublish);
             }
             return insightPublish;
-        }
-
-        [FunctionName("InsightPublish-HttpPost")]
-        public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestMessage req, TraceWriter log)
-        {
-            StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
-            IEnumerable<KeyValuePair<string, string>> urlParameters = req.GetQueryNameValuePairs();
-            string accountId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "account", stringComparison)).Value;
-            string indexId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "id", stringComparison)).Value;
-            log.Info($"Account Id: {accountId}");
-            log.Info($"Index Id: {indexId}");
-            if (!string.IsNullOrEmpty(accountId) && !string.IsNullOrEmpty(indexId))
-            {
-                MediaPublish insightPublish = EnqueuePublish(accountId, indexId);
-                log.Info($"Insight Publish: {JsonConvert.SerializeObject(insightPublish)}");
-            }
-            return req.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

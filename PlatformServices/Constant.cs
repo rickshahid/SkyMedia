@@ -64,7 +64,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string StorageManagementUrl = "Storage.ManagementUrl";
 
             public const string DatabaseCollectionThroughputUnits = "Database.Collection.ThroughputUnits";
-            public const string DatabaseDocumentMaxSizeBytes = "Database.Document.MaxSizeBytes";
 
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
@@ -340,15 +339,6 @@ namespace AzureSkyMedia.PlatformServices
                     public const string Thumbnails = "thumbnails";
                     public const string ThumbnailsData = "#xywh=";
                 }
-            }
-        }
-
-        public struct Cache
-        {
-            public struct ItemKey
-            {
-                public const string MediaProcessors = "MediaProcessors";
-                public const string MediaProcessorPresets = "MediaProcessorPresets";
             }
         }
 

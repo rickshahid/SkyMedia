@@ -30,9 +30,7 @@
 .ui-jqgrid .ui-jqgrid-title { 
 	padding-top: 5px; 
 	vertical-align: middle;
-	position: absolute;
 }
-
 .ui-jqgrid .ui-jqgrid-titlebar-close { 
 	color: inherit; 
 	position: absolute;
@@ -65,7 +63,7 @@
 }
 .ui-jqgrid .ui-jqgrid-htable thead th {
 	overflow : hidden; 
-	border-bottom : none;
+	/*border-bottom : none;*/
 	padding-right: 2px;
 }
 .ui-jqgrid .ui-jqgrid-htable thead th div {
@@ -440,6 +438,7 @@ div.tablediv > .table-bordered {
 }
 .ui-jqgrid .jqgrid-overlay { 
 	display:none;
+	z-index:100;
 }
 /* IE * html .jqgrid-overlay {width: expression(this.parentNode.offsetWidth+'px');height: expression(this.parentNode.offsetHeight+'px');} */
 * .jqgrid-overlay iframe {
@@ -476,7 +475,7 @@ div.tablediv > .table-bordered {
 }
 .ui-jqdialog .ui-jqdialog-titlebar {
 	padding: .1em .1em; 
-	min-height: 35px; 
+	min-height: 45px; 
 }
 .ui-jqdialog .ui-jqdialog-title { 
 	margin: .3em 0 .2em;  
@@ -771,7 +770,7 @@ a.g-menu-item, a.soptclass, a.clearsearchclass {
 }
 .ui-resizable-handle {
 	/*position: absolute;*/
-	display: block;
+	display: none;
 	left :97%;
 }
 .ui-jqdialog .ui-resizable-se {
@@ -889,8 +888,8 @@ ul.ui-search-menu li, ul.ui-nav-menu li {
 }
 
 .ui-jqgrid .ui-jqgrid-htable .ui-th-div {
-	height:17px;
-	margin-top:5px;
+	/*height:17px;
+	margin-top:5px;*/
 }
 .column-menu, .ui-search-menu {
 	padding: 10px 15px;
@@ -930,6 +929,11 @@ td.menu_text {
 }
 .search_buttons #bs_search {
 	margin-left: 3px;
+}
+div[id^='searchcnt'] .fm-button .oi,
+div[id^='searchcnt'] .fm-button .octicon
+{
+	padding-right:  4px;
 }
 /*menubar*/
 .ui-jqgrid .ui-jqgrid-menubar {

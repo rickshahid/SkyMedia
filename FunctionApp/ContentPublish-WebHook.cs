@@ -1,9 +1,11 @@
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.IO;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 
 using Newtonsoft.Json;
 
@@ -13,6 +15,24 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static class ContentPublishWebHook
     {
+        [FunctionName("ContentPublish-WebHook")]
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, WebHookType = "genericJson")] HttpRequest request, TraceWriter log)
+        {
+            StreamReader streamReader = new StreamReader(request.Body);
+            string notificationMessage = streamReader.ReadToEnd();
+            log.Info($"Notification Message: {notificationMessage}");
+            if (!string.IsNullOrEmpty(notificationMessage))
+            {
+                MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(notificationMessage);
+                if (jobNotification != null)
+                {
+                    MediaPublish contentPublish = EnqueuePublish(jobNotification);
+                    log.Info($"Content Publish: {JsonConvert.SerializeObject(contentPublish)}");
+                }
+            }
+            return new OkResult();
+        }
+
         private static MediaPublish EnqueuePublish(MediaJobNotification jobNotification)
         {
             MediaPublish contentPublish = null;
@@ -34,23 +54,6 @@ namespace AzureSkyMedia.FunctionApp
                 }
             }
             return contentPublish;
-        }
-
-        [FunctionName("ContentPublish-WebHook")]
-        public static async Task<object> Run([HttpTrigger(WebHookType = "genericJson")] HttpRequestMessage req, TraceWriter log)
-        {
-            string notificationMessage = await req.Content.ReadAsStringAsync();
-            log.Info($"Notification Message: {notificationMessage}");
-            if (!string.IsNullOrEmpty(notificationMessage))
-            {
-                MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(notificationMessage);
-                if (jobNotification != null)
-                {
-                    MediaPublish contentPublish = EnqueuePublish(jobNotification);
-                    log.Info($"Content Publish: {JsonConvert.SerializeObject(contentPublish)}");
-                }
-            }
-            return req.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

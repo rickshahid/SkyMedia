@@ -34,6 +34,8 @@
 
         public bool DrmFairPlay { get; set; }
 
+        public bool DrmOffline { get; set; }
+
         public bool ContentAuthTypeToken { get; set; }
 
         public bool ContentAuthTypeAddress { get; set; }

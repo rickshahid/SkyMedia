@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
-[assembly: Guid("f4ae2ad9-afe3-4473-b14c-b4f5f88be5a5")]
+[assembly: Guid("292760d3-8eb6-414a-8367-55330be35b24")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

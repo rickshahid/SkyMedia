@@ -1,5 +1,6 @@
 ﻿using System.IO;
 
+using Microsoft.Azure.Documents;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -9,28 +10,20 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static bool ValidDocument(IAsset asset, string fileName)
-        {
-            bool validDocument = true;
-            if (!string.IsNullOrEmpty(fileName))
-            {
-                IAssetFile assetFile = GetAssetFile(asset, fileName);
-                string settingKey = Constant.AppSettingKey.DatabaseDocumentMaxSizeBytes;
-                string maxDocumentSizeBytes = AppSetting.GetValue(settingKey);
-                validDocument = assetFile.ContentFileSize <= int.Parse(maxDocumentSizeBytes);
-            }
-            return validDocument;
-        }
-
         private static string UpsertDocument(DocumentClient documentClient, JObject document, MediaProcessor processor, IAsset asset, string fileName)
         {
             string documentId = string.Empty;
-            if (ValidDocument(asset, fileName))
+            try
             {
                 string collectionId = Constant.Database.Collection.ContentInsight;
                 documentId = documentClient.UpsertDocument(collectionId, document);
                 asset.AlternateId = string.Concat(processor.ToString(), Constant.TextDelimiter.Identifier, documentId);
                 asset.Update();
+            }
+            catch (DocumentClientException ex)
+            {
+                // TODO: If document > 2 MB (Microsoft.Azure.Documents.RequestEntityTooLargeException),
+                //       then split it into multiple documents based on the standard metadata sections
             }
             return documentId;
         }

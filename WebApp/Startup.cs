@@ -140,14 +140,6 @@ namespace AzureSkyMedia.WebApp
 
         internal static RedirectToActionResult OnSignIn(ControllerBase controller, string authToken)
         {
-            try
-            {
-                CacheClient cacheClient = new CacheClient(authToken);
-                string itemKey = Constant.Cache.ItemKey.MediaProcessors;
-                cacheClient.SetValue<NameValueCollection>(itemKey, null);
-            }
-            catch { }
-
             RedirectToActionResult redirectAction = null;
             string requestError = controller.Request.Form["error_description"];
             if (!string.IsNullOrEmpty(requestError) && requestError.Contains(Constant.Message.UserPasswordForgotten))

@@ -10,14 +10,14 @@ namespace AzureSkyMedia.FunctionApp
     public static class ContentPublishStorageQueue
     {
         [FunctionName("ContentPublish-StorageQueue")]
-        public static void Run([QueueTrigger("publish-content")] string queueMessage, TraceWriter log)
+        public static void Run([QueueTrigger("publish-content")] string message, TraceWriter log)
         {
-            log.Info($"Queue Message: {queueMessage}");
-            MediaPublish contentPublish = JsonConvert.DeserializeObject<MediaPublish>(queueMessage);
+            log.Info($"Queue Message: {message}");
+            MediaPublish contentPublish = JsonConvert.DeserializeObject<MediaPublish>(message);
             if (contentPublish != null)
             {
-                MediaPublished contentPublished = MediaClient.PublishContent(contentPublish);
                 log.Info($"Content Publish: {JsonConvert.SerializeObject(contentPublish)}");
+                MediaPublished contentPublished = MediaClient.PublishContent(contentPublish);
                 log.Info($"Content Published: {JsonConvert.SerializeObject(contentPublished)}");
             }
         }

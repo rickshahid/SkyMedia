@@ -41,35 +41,11 @@ namespace AzureSkyMedia.PlatformServices
             return processorIds.ToArray();
         }
 
-        private static MediaProcessor[] GetProcessors(string authToken, bool presetsView)
+        private static MediaProcessor[] GetMediaProcessors(string authToken, bool presetsView)
         {
             MediaClient mediaClient = new MediaClient(authToken);
             IMediaProcessor[] processors = mediaClient.GetEntities(MediaEntity.Processor) as IMediaProcessor[];
             return GetMediaProcessors(processors, presetsView);
-        }
-
-        private static MediaProcessor[] GetMediaProcessors(string authToken, bool presetsView)
-        {
-            MediaProcessor[] mediaProcessors = null;
-            try
-            {
-                CacheClient cacheClient = new CacheClient(authToken);
-                string itemKey = Constant.Cache.ItemKey.MediaProcessors;
-                mediaProcessors = cacheClient.GetValues<MediaProcessor>(itemKey);
-                if (mediaProcessors.Length == 0)
-                {
-                    mediaProcessors = GetProcessors(authToken, presetsView);
-                    cacheClient.SetValue<MediaProcessor[]>(itemKey, mediaProcessors);
-                }
-            }
-            finally
-            {
-                if (mediaProcessors == null)
-                {
-                    mediaProcessors = GetProcessors(authToken, presetsView);
-                }
-            }
-            return mediaProcessors;
         }
 
         private static MediaProcessor[] GetMediaProcessors(IMediaProcessor[] processors, bool presetsView)
