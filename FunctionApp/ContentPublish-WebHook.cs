@@ -16,7 +16,7 @@ namespace AzureSkyMedia.FunctionApp
     public static class ContentPublishWebHook
     {
         [FunctionName("ContentPublish-WebHook")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, WebHookType = "genericJson")] HttpRequest request, TraceWriter log)
+        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request, TraceWriter log)
         {
             StreamReader streamReader = new StreamReader(request.Body);
             string notificationMessage = streamReader.ReadToEnd();
