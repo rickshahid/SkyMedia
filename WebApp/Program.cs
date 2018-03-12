@@ -19,14 +19,12 @@ namespace AzureSkyMedia.WebApp
             webHostBuilder.UseStartup<Startup>();
             webHostBuilder.UseApplicationInsights();
             IWebHost webHost = webHostBuilder.Build();
-
             if (Debugger.IsAttached)
             {
                 string modelsDirectory = string.Concat(appDirectory, Constant.Media.ProcessorConfig.DirectoryModels);
                 DocumentClient documentClient = new DocumentClient();
                 documentClient.Initialize(modelsDirectory);
             }
-
             webHost.Run();
         }
     }

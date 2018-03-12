@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Collections.Specialized;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;

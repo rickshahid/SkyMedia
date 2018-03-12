@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net47</TargetFramework>
     <AssemblyName>AzureSkyMedia.WebApp</AssemblyName>
+    <UserSecretsId>52935615-32bf-47d2-a401-02591ece915f</UserSecretsId>
     <RootNamespace>AzureSkyMedia.WebApp</RootNamespace>
-    <UserSecretsId>82bbf436-dda1-4774-88c0-8c8b2355763d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,10 +19,9 @@
     <PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.3" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.19.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.2.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.1" />
-    <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
 
   <ItemGroup>

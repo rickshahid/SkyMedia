@@ -19,17 +19,11 @@ function LoadGrid(gridId, columns, rows) {
     });
 }
 function FormatColumn(value, grid, row) {
-    var title = row.name;
-    var message = row.id;
-    if (row.description != null && row.description != row.name) {
-        message = message + "<br><br>" + row.description;
-    }
     var displayValue = "";
     switch (grid.colModel.name) {
         case "name":
             if (value == null) {
                 value = row.id;
-                title = row.id;
             }
             break;
         case "contentKeyType":
@@ -96,6 +90,12 @@ function FormatColumn(value, grid, row) {
             }
             break;
     }
+    var title = grid.colModel.label;
+    var message = value;
+    if (row.description != null && row.description != row.name) {
+        message = message + "<br><br>" + row.description;
+    }
+    message = message + "<br><br>" + row.id;
     displayValue = displayValue != "" ? displayValue + " (" + value + ")" : value;
-    return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "', null, 600)\">" + displayValue + "</span>";
+    return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "')\">" + displayValue + "</span>";
 }

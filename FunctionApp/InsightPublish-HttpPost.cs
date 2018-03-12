@@ -1,5 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -14,10 +18,12 @@ namespace AzureSkyMedia.FunctionApp
     public static class InsightPublishHttpPost
     {
         [FunctionName("InsightPublish-HttpPost")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestMessage request, TraceWriter log)
         {
-            string accountId = request.Query["account"];
-            string indexId = request.Query["id"];
+            StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
+            IEnumerable<KeyValuePair<string, string>> urlParameters = request.GetQueryNameValuePairs();
+            string accountId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "account", stringComparison)).Value;
+            string indexId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "id", stringComparison)).Value;
             log.Info($"Account Id: {accountId}");
             log.Info($"Index Id: {indexId}");
             if (!string.IsNullOrEmpty(accountId) && !string.IsNullOrEmpty(indexId))
@@ -25,7 +31,7 @@ namespace AzureSkyMedia.FunctionApp
                 MediaPublish insightPublish = EnqueuePublish(accountId, indexId);
                 log.Info($"Insight Publish: {JsonConvert.SerializeObject(insightPublish)}");
             }
-            return new OkResult();
+            return request.CreateResponse(HttpStatusCode.OK);
         }
 
         private static MediaPublish EnqueuePublish(string accountId, string indexId)

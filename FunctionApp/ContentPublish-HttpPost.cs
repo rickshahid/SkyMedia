@@ -1,7 +1,6 @@
-using System.IO;
-
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -13,13 +12,12 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.FunctionApp
 {
-    public static class ContentPublishWebHook
+    public static class ContentPublishHttpPost
     {
-        [FunctionName("ContentPublish-WebHook")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request, TraceWriter log)
+        [FunctionName("ContentPublish-HttpPost")]
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestMessage request, TraceWriter log)
         {
-            StreamReader streamReader = new StreamReader(request.Body);
-            string notificationMessage = streamReader.ReadToEnd();
+            string notificationMessage = await request.Content.ReadAsStringAsync();
             log.Info($"Notification Message: {notificationMessage}");
             if (!string.IsNullOrEmpty(notificationMessage))
             {
@@ -30,7 +28,7 @@ namespace AzureSkyMedia.FunctionApp
                     log.Info($"Content Publish: {JsonConvert.SerializeObject(contentPublish)}");
                 }
             }
-            return new OkResult();
+            return request.CreateResponse(HttpStatusCode.OK);
         }
 
         private static MediaPublish EnqueuePublish(MediaJobNotification jobNotification)

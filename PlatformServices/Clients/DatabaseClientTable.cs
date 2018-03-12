@@ -28,12 +28,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 entity.CreatedOn = DateTime.UtcNow;
             }
-
             OperationContext context = new OperationContext();
             IDictionary<string, EntityProperty> properties = TableEntity.Flatten(entity, context);
             properties.Remove("PartitionKey");
             properties.Remove("RowKey");
-
             DynamicTableEntity dynamicEntity = new DynamicTableEntity(entity.PartitionKey, entity.RowKey)
             {
                 ETag = "*",

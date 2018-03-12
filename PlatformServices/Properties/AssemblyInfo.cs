@@ -19,4 +19,3 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("AzureSkyMedia.WebApp")]
 [assembly: InternalsVisibleTo("AzureSkyMedia.FunctionApp")]
-[assembly: InternalsVisibleTo("AzureSkyMedia.PlatformTests")]

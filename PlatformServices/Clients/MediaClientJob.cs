@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -9,13 +10,18 @@ namespace AzureSkyMedia.PlatformServices
     {
         private INotificationEndPoint GetNotificationEndpoint()
         {
+            string settingKey = Constant.AppSettingKey.MediaPublishContentUrl;
+            string endpointAddress = AppSetting.GetValue(settingKey);
             string endpointName = Constant.Media.Job.NotificationEndpointName;
             INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName) as INotificationEndPoint;
+            if (notificationEndpoint != null && !string.Equals(notificationEndpoint.EndPointAddress, endpointAddress, StringComparison.OrdinalIgnoreCase))
+            {
+                notificationEndpoint.Delete();
+                notificationEndpoint = null;
+            }
             if (notificationEndpoint == null)
             {
                 NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
-                string settingKey = Constant.AppSettingKey.MediaPublishContentUrl;
-                string endpointAddress = AppSetting.GetValue(settingKey);
                 notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
             }
             return notificationEndpoint;
