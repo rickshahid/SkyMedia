@@ -79,28 +79,6 @@
         "description": "Unique identifier of the document database."
       }
     },
-    "cacheServiceName": {
-      "type": "string",
-      "minLength": 3,
-      "maxLength": 31,
-      "metadata": {
-        "description": "Name must be between 3 and 31 characters (letters, numbers and hyphens only)."
-      }
-    },
-    "cacheServiceTier": {
-      "type": "string",
-      "defaultValue": "Standard",
-      "metadata": {
-        "description": "Resource tier for the Cache service for the web application."
-      }
-    },
-    "cacheServiceSize": {
-      "type": "int",
-      "defaultValue": 0,
-      "metadata": {
-        "description": "Size of the Cache service for the web application."
-      }
-    },
     "appServicePlanName": {
       "type": "string",
       "metadata": {
@@ -164,12 +142,10 @@
     }
   },
   "variables": {
-    "storageApiVersion": "2017-06-01",
+    "storageApiVersion": "2017-10-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
-    "cacheApiVersion": "2017-02-01",
-    "cacheServiceName": "[toLower(parameters('cacheServiceName'))]",
     "webServerApiVersion": "2016-09-01",
     "webSiteApiVersion": "2016-08-01",
     "webAppSubdomainName": "[toLower(parameters('appSubdomainName'))]",
@@ -177,19 +153,6 @@
     "appInsightsApiVersion": "2015-05-01"
   },
   "resources": [
-    {
-      "type": "Microsoft.Cache/redis",
-      "apiVersion": "[variables('cacheApiVersion')]",
-      "location": "[resourceGroup().location]",
-      "name": "[variables('cacheServiceName')]",
-      "properties": {
-        "sku": {
-          "name": "[parameters('cacheServiceTier')]",
-          "family": "C",
-          "capacity": "[parameters('cacheServiceSize')]"
-        }
-      }
-    },
     {
       "type": "Microsoft.Web/serverFarms",
       "apiVersion": "[variables('webServerApiVersion')]",
@@ -208,7 +171,6 @@
       "name": "[variables('webAppSubdomainName')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
-        "[resourceId('Microsoft.Cache/redis', variables('cacheServiceName'))]"
       ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
@@ -253,10 +215,6 @@
             {
               "name": "Database.Table",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseServiceName'), ';AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';TableEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com')]"
-            },
-            {
-              "name": "Cache",
-              "value": "[concat(variables('cacheServiceName'), '.redis.cache.windows.net:6380,password=', listKeys(resourceId('Microsoft.Cache/redis', variables('cacheServiceName')), variables('cacheApiVersion')).primaryKey, ',ssl=True,abortConnect=False')]"
             }
           ]
         },
@@ -326,10 +284,6 @@
                 {
                   "name": "Database.Table",
                   "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('databaseServiceName'), ';AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';TableEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com')]"
-                },
-                {
-                  "name": "Cache",
-                  "value": "[concat(variables('cacheServiceName'), '.redis.cache.windows.net:6380,password=', listKeys(resourceId('Microsoft.Cache/redis', variables('cacheServiceName')), variables('cacheApiVersion')).primaryKey, ',ssl=True,abortConnect=False')]"
                 }
               ]
             },

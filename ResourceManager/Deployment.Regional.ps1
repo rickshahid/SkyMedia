@@ -1,5 +1,9 @@
-﻿# (Get-Module Azure -ListAvailable).Version (v5.0.1 - November 2017)
-# Login-AzureRmAccount
+﻿# Install-Module -Name AzureRM -Repository PSGallery -Force
+# Update-Module -Name AzureRM
+# Get-Module AzureRM -ListAvailable | Select-Object -Property Name, Version, Path
+# v5.4.1 - February 2018
+
+# Connect-AzureRmAccount
 
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Cache).ResourceTypes | Where-Object ResourceTypeName -eq redis).ApiVersions
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Web).ResourceTypes | Where-Object ResourceTypeName -eq serverFarms).ApiVersions
@@ -8,11 +12,6 @@
 $appName = "Azure.Sky.Media"
 
 $templateFile = ($PSScriptRoot + "\Template.Regional.json")
-
-$resourceGroupName = ($appName + "-US.West")
-
-$regionName = "US West"
-$regionLocation = "West US"
 
 $templateParameters = @{
 	"globalServicesResourceGroup" = ($appName + "-US.Central")
@@ -41,17 +40,16 @@ $templateParameters = @{
     "appInsightsName" = "Azure Sky Media"
 }
 
+$regionLocation = "West US"
+
+$resourceGroupName = ($appName + "-US.West")
+
 $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
 if (!$resourceGroup)
 {
 	New-AzureRmResourceGroup -Name $resourceGroupName -Location $regionLocation
 }
 New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFile -TemplateParameterObject $templateParameters 
-
-$resourceGroupName = ($appName + "-US.East")
-
-$regionName = "US East"
-$regionLocation = "East US"
 
 $templateParameters = @{
 	"globalServicesResourceGroup" = ($appName + "-US.Central")
@@ -79,6 +77,10 @@ $templateParameters = @{
 	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
     "appInsightsName" = "Azure Sky Media"
 }
+
+$regionLocation = "East US"
+
+$resourceGroupName = ($appName + "-US.East")
 
 $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
 if (!$resourceGroup)

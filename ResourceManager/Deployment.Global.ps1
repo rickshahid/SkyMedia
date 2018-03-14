@@ -1,5 +1,9 @@
-﻿# (Get-Module Azure -ListAvailable).Version (v5.0.1 - November 2017)
-# Login-AzureRmAccount
+﻿# Install-Module -Name AzureRM -Repository PSGallery -Force
+# Update-Module -Name AzureRM
+# Get-Module AzureRM -ListAvailable | Select-Object -Property Name, Version, Path
+# v5.4.1 - February 2018
+
+# Connect-AzureRmAccount
 
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Storage).ResourceTypes | Where-Object ResourceTypeName -eq storageAccounts).ApiVersions
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDB).ResourceTypes | Where-Object ResourceTypeName -eq databaseAccounts).ApiVersions
@@ -12,10 +16,6 @@
 $appName = "Azure.Sky.Media"
 
 $templateFile = ($PSScriptRoot + "\Template.Global.json")
-
-$resourceGroupName = ($appName + "-US.Central")
-
-$regionLocation = "Central US"
 
 $templateParameters = @{
 	"directoryB2bTenantId" = "26baf8c5-e851-410f-8789-b491c6396ecf"
@@ -44,6 +44,10 @@ $templateParameters = @{
 	"appInsightsName" = "Azure Sky Media"
 	"appInsightsRegion" = "South Central US"
 }
+
+$regionLocation = "Central US"
+
+$resourceGroupName = ($appName + "-US.Central")
 
 $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
 if (!$resourceGroup)

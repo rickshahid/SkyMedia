@@ -55,7 +55,7 @@
     }
   },
   "variables": {
-    "storageApiVersion": "2017-06-01",
+    "storageApiVersion": "2017-10-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "storageService1Name": "[concat(variables('storageServiceName'), '1')]",
     "storageService2Name": "[concat(variables('storageServiceName'), '2')]",
@@ -64,7 +64,7 @@
     "batchServiceName": "[toLower(parameters('batchServiceName'))]",
     "mediaApiVersion": "2015-10-01",
     "mediaServiceName": "[toLower(parameters('mediaServiceName'))]",
-    "contentDeliveryApiVersion": "2017-04-02"
+    "contentDeliveryApiVersion": "2017-10-12"
   },
   "resources": [
     {

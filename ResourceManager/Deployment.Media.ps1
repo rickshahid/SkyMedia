@@ -1,5 +1,9 @@
-﻿# (Get-Module Azure -ListAvailable).Version (v5.0.1 - November 2017)
-# Login-AzureRmAccount
+﻿# Install-Module -Name AzureRM -Repository PSGallery -Force
+# Update-Module -Name AzureRM
+# Get-Module AzureRM -ListAvailable | Select-Object -Property Name, Version, Path
+# v5.4.1 - February 2018
+
+# Connect-AzureRmAccount
 
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Storage).ResourceTypes | Where-Object ResourceTypeName -eq storageAccounts).ApiVersions
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Batch).ResourceTypes | Where-Object ResourceTypeName -eq batchAccounts).ApiVersions
@@ -10,10 +14,6 @@ $appName = "Azure.Sky.Media"
 
 $templateFile = ($PSScriptRoot + "\Template.Media.json")
 
-$resourceGroupName = ($appName + "-US.West")
-
-$regionLocation = "West US"
-
 $templateParameters = @{
 	"storageServiceName" = "SkyMediaUSWest"
 	"batchServiceName" = "SkyMedia"
@@ -23,6 +23,10 @@ $templateParameters = @{
 	"contentDeliveryProfileTier" = "Standard_Akamai"
 }
 
+$regionLocation = "West US"
+
+$resourceGroupName = ($appName + "-US.West")
+
 $resourceGroup = Get-AzureRmResourceGroup -Name $resourceGroupName -ErrorAction Ignore
 if (!$resourceGroup)
 {
@@ -30,9 +34,9 @@ if (!$resourceGroup)
 }
 New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFile -TemplateParameterObject $templateParameters
 
-$resourceGroupName = ($appName + "-US.East")
-
 $regionLocation = "East US"
+
+$resourceGroupName = ($appName + "-US.East")
 
 $templateParameters = @{
 	"storageServiceName" = "SkyMediaUSEast"
