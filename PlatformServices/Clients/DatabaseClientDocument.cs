@@ -35,8 +35,17 @@ namespace AzureSkyMedia.PlatformServices
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];
+
+            settingKey = Constant.AppSettingKey.DatabaseRegionsRead;
+            string[] dataRegionsRead = AppSetting.GetValue(settingKey, true);
+            ConnectionPolicy connectionPolicy = new ConnectionPolicy();
+            foreach (string dataRegionRead in dataRegionsRead)
+            {
+                connectionPolicy.PreferredLocations.Add(dataRegionRead);
+            }
+
             _databaseId = accountCredentials[2];
-            _database = new DocClient(new Uri(accountEndpoint), accountKey);
+            _database = new DocClient(new Uri(accountEndpoint), accountKey, connectionPolicy);
         }
 
         private IQueryable<Document> GetDocumentQuery(string collectionId)

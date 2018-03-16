@@ -63,6 +63,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string StorageLoginUrl = "Storage.LoginUrl";
             public const string StorageManagementUrl = "Storage.ManagementUrl";
 
+            public const string DatabaseRegionsRead = "Database.Regions.Read";
             public const string DatabaseCollectionThroughputUnits = "Database.Collection.ThroughputUnits";
 
             public const string MediaStream1Name = "Media.Stream1.Name";

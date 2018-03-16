@@ -33,6 +33,10 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     parsedValue.Add(accountSetting.Remove(0, Constant.AppSettingKey.DatabaseIdPrefix.Length));
                 }
+                else
+                {
+                    parsedValue.Add(accountSetting);
+                }
             }
             return parsedValue.ToArray();
         }

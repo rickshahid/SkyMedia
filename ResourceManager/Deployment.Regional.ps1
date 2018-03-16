@@ -5,7 +5,6 @@
 
 # Connect-AzureRmAccount
 
-# ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Cache).ResourceTypes | Where-Object ResourceTypeName -eq redis).ApiVersions
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Web).ResourceTypes | Where-Object ResourceTypeName -eq serverFarms).ApiVersions
 # ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Web).ResourceTypes | Where-Object ResourceTypeName -eq sites).ApiVersions
 
@@ -23,12 +22,11 @@ $templateParameters = @{
 	"directoryB2cClientSecret" = "ZX{liJ5As1[EL6DY"
 	"directoryB2cClientIdStaging" = "2f0b5e56-a49d-457a-b603-4e9bd694648b"
 	"directoryB2cClientSecretStaging" = "4H#/M:7|uQo%A13n"
+	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
 	"storageServiceName" = "SkyMedia"
 	"databaseServiceName" = "SkyMedia"
+    "databaseRegionsRead" = "West US;South Central US;East US"
 	"databaseIdentifier" = "Media"
-	"cacheServiceName" = "SkyMedia-USWest"
-	"cacheServiceTier" = "Standard"
-    "cacheServiceSize" = 0 # 250 MB
 	"appServicePlanName" = "SkyMedia-USWest"
 	"appServicePlanTier" = "Standard"
 	"appServicePlanNodeSize" = "S1"
@@ -36,7 +34,6 @@ $templateParameters = @{
 	"appServicePlanNodeCountMaximum" = 5
 	"appSubdomainName" = "SkyMedia-USWest"
 	"appRegionName" = "US West"
-	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
     "appInsightsName" = "Azure Sky Media"
 }
 
@@ -61,12 +58,11 @@ $templateParameters = @{
 	"directoryB2cClientSecret" = "ZX{liJ5As1[EL6DY"
 	"directoryB2cClientIdStaging" = "2f0b5e56-a49d-457a-b603-4e9bd694648b"
 	"directoryB2cClientSecretStaging" = "4H#/M:7|uQo%A13n"
+	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
 	"storageServiceName" = "SkyMedia"
 	"databaseServiceName" = "SkyMedia"
+    "databaseRegionsRead" = "East US;South Central US;West US"
 	"databaseIdentifier" = "Media"
-	"cacheServiceName" = "SkyMedia-USEast"
-	"cacheServiceTier" = "Standard"
-    "cacheServiceSize" = 0 # 250 MB
 	"appServicePlanName" = "SkyMedia-USEast"
 	"appServicePlanTier" = "Standard"
 	"appServicePlanNodeSize" = "S1"
@@ -74,7 +70,6 @@ $templateParameters = @{
 	"appServicePlanNodeCountMaximum" = 5
 	"appSubdomainName" = "SkyMedia-USEast"
 	"appRegionName" = "US East"
-	"appSubscriptionId" = "3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
     "appInsightsName" = "Azure Sky Media"
 }
 
