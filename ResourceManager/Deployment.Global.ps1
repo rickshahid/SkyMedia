@@ -1,7 +1,8 @@
 ﻿# Install-Module -Name AzureRM -Repository PSGallery -Force
+# Uninstall-Module -Name AzureRM
 # Update-Module -Name AzureRM
 # Get-Module AzureRM -ListAvailable | Select-Object -Property Name, Version, Path
-# v5.4.1 - February 2018
+# v5.5.0 - March 2018
 
 # Connect-AzureRmAccount
 

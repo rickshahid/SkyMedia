@@ -60,7 +60,7 @@
     "storageService1Name": "[concat(variables('storageServiceName'), '1')]",
     "storageService2Name": "[concat(variables('storageServiceName'), '2')]",
     "storageService3Name": "[concat(variables('storageServiceName'), '3')]",
-    "batchApiVersion": "2017-05-01",
+    "batchApiVersion": "2017-09-01",
     "batchServiceName": "[toLower(parameters('batchServiceName'))]",
     "mediaApiVersion": "2015-10-01",
     "mediaServiceName": "[toLower(parameters('mediaServiceName'))]",
