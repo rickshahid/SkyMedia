@@ -73,11 +73,13 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult signup()
         {
+            ViewData["cssHost"] = string.Concat(this.Request.Scheme, "://", this.Request.Host.Value);
             return View();
         }
 
         public IActionResult profile()
         {
+            ViewData["cssHost"] = string.Concat(this.Request.Scheme, "://", this.Request.Host.Value);
             return View();
         }
 

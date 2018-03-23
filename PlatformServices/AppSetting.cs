@@ -17,17 +17,17 @@ namespace AzureSkyMedia.PlatformServices
             string[] accountSettings = accountConnection.Split(Constant.TextDelimiter.Connection);
             foreach (string accountSetting in accountSettings)
             {
-                if (accountSetting.StartsWith(Constant.AppSettingKey.AccountEndpointPrefix, comparisonType))
-                {
-                    parsedValue.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountEndpointPrefix.Length));
-                }
-                else if (accountSetting.StartsWith(Constant.AppSettingKey.AccountNamePrefix, comparisonType))
+                if (accountSetting.StartsWith(Constant.AppSettingKey.AccountNamePrefix, comparisonType))
                 {
                     parsedValue.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountNamePrefix.Length));
                 }
                 else if (accountSetting.StartsWith(Constant.AppSettingKey.AccountKeyPrefix, comparisonType))
                 {
                     parsedValue.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountKeyPrefix.Length));
+                }
+                else if (accountSetting.StartsWith(Constant.AppSettingKey.AccountEndpointPrefix, comparisonType))
+                {
+                    parsedValue.Add(accountSetting.Remove(0, Constant.AppSettingKey.AccountEndpointPrefix.Length));
                 }
                 else if (accountSetting.StartsWith(Constant.AppSettingKey.DatabaseIdPrefix, comparisonType))
                 {
@@ -43,11 +43,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public static string[] GetValue(string settingKey, bool parseValue)
         {
-            string settingValue = ConfigRoot == null ? Environment.GetEnvironmentVariable(settingKey) : ConfigRoot[settingKey];
-            if (string.IsNullOrEmpty(settingValue))
-            {
-                settingValue = ConfigurationManager.AppSettings[settingKey];
-            }
+            string settingValue = ConfigRoot == null ? ConfigurationManager.AppSettings[settingKey] : ConfigRoot[settingKey];
             if (settingValue == null)
             {
                 settingValue = string.Empty;

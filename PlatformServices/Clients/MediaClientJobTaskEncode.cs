@@ -10,7 +10,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static bool IsPremiumWorkflow(MediaJobInput jobInput)
         {
-            return jobInput.PrimaryFile.EndsWith(Constant.Media.FileExtension.Workflow, StringComparison.OrdinalIgnoreCase);
+            return jobInput.PrimaryFile.EndsWith(Constant.Media.FileExtension.PremiumWorkflow, StringComparison.OrdinalIgnoreCase);
         }
 
         private static int OrderByWorkflow(MediaJobInput leftItem, MediaJobInput rightIten)

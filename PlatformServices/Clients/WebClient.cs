@@ -1,9 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Http;
-using System.IdentityModel.Tokens.Jwt;
-
-using RequestEncoding = System.Text.UTF8Encoding;
+using System.Text;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,7 +11,6 @@ namespace AzureSkyMedia.PlatformServices
     internal class WebClient
     {
         private string _apimKey;
-        private string _authToken;
 
         public WebClient()
         {
@@ -22,11 +19,6 @@ namespace AzureSkyMedia.PlatformServices
         public WebClient(string apimKey)
         {
             _apimKey = apimKey;
-        }
-
-        public WebClient(JwtSecurityToken authToken)
-        {
-            _authToken = authToken.EncodedPayload;
         }
 
         private T GetResponseData<T>(HttpContent responseContent)
@@ -63,7 +55,7 @@ namespace AzureSkyMedia.PlatformServices
             if (requestData != null)
             {
                 string requestJson = JsonConvert.SerializeObject(requestData);
-                byte[] requestBytes = RequestEncoding.UTF8.GetBytes(requestJson);
+                byte[] requestBytes = UTF8Encoding.UTF8.GetBytes(requestJson);
                 requestMessage.Content = new ByteArrayContent(requestBytes);
             }
             return requestMessage;
@@ -81,11 +73,6 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(_apimKey))
             {
                 httpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, _apimKey);
-            }
-            else if (!string.IsNullOrEmpty(_authToken))
-            {
-                string authHeader = string.Concat(Constant.HttpHeader.AuthPrefix, _authToken);
-                httpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.AuthHeader, authHeader);
             }
             using (HttpResponseMessage responseMessage = httpClient.SendAsync(requestMessage).Result)
             {

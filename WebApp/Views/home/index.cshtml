@@ -146,14 +146,7 @@
                 var streamName = GetStreamName(mediaStream, false);
                 $("#streamName").html(streamName);
             }
-            var title = "Azure Media Streaming Endpoint";
-            if (accountMessage == "AMS01") {
-                StartStreamingEndpoint(title);
-            }
-            else if (accountMessage == "AMS02") {
-                var message = "Your media account streaming endpoint is in the process of starting.";
-                DisplayMessage(title, message);
-            } else if (accountMessage != "") {
+            if (accountMessage != "") {
                 DisplayMessage("Account Message", accountMessage);
             }
         })

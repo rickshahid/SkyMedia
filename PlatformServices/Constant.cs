@@ -116,8 +116,6 @@ namespace AzureSkyMedia.PlatformServices
         public struct HttpHeader
         {
             public const string ApiManagementKey = "Ocp-Apim-Subscription-Key";
-            public const string AuthHeader = "Authorization";
-            public const string AuthPrefix = "Bearer=";
         }
 
         public struct HttpForm
@@ -167,8 +165,8 @@ namespace AzureSkyMedia.PlatformServices
                 public struct Container
                 {
                     public const string FileUpload = "upload";
+                    public const string AssetIngest = "ams";
                     public const string ContentDelivery = "cdn";
-                    public const string AzureMediaServices = "ams";
                 }
             }
 
@@ -307,12 +305,13 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct FileExtension
             {
-                public const string Annotations = "_annotations.json";
-                public const string Workflow = ".workflow";
-                public const string Manifest = ".ism";
-                public const string WebVtt = ".vtt";
+                public const string ManifestAsset = ".txt";
+                public const string ManifestStream = ".ism";
+                public const string PremiumWorkflow = ".workflow";
+
                 public const string Json = ".json";
-                public const string MP4 = ".mp4";
+                public const string WebVtt = ".vtt";
+                public const string Annotations = "_annotations.json";
             }
 
             public struct Live
@@ -329,7 +328,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Stream
             {
-                public const string DefaultEndpointName = "default";
                 public const string LocatorIdPrefix = "nb:lid:UUID:";
                 public const string LocatorManifestSuffix = "/manifest";
 
@@ -346,8 +344,7 @@ namespace AzureSkyMedia.PlatformServices
         public struct Message
         {
             public const string UserPasswordForgotten = "AADB2C90118";
-            public const string StreamingEndpointNotRunning = "AMS01";
-            public const string StreamingEndpointStarting = "AMS02";
+            public const string StreamingEndpointNotStarted = "Your media account streaming endpoint has not been started.";
         }
     }
 }

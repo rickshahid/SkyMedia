@@ -37,25 +37,3 @@ function GetStreamName(mediaStream, streamSlider) {
     }
     return streamName;
 }
-function StartStreamingEndpoint(title) {
-    var message = "Your media account streaming endpoint is not running.<br><br>Do you want to start your streaming endpoint now?"
-    var buttons = {
-        Yes: function () {
-            $(this).dialog("close");
-            SetCursor(true);
-            $.post("/home/endpoint", { },
-                function (endpointName) {
-                    SetCursor(false);
-                    if (endpointName != "") {
-                        message = "A request to start your " + endpointName + " streaming endpoint has been submitted.";
-                        DisplayMessage(title, message);
-                    }
-                }
-            );
-        },
-        No: function () {
-            $(this).dialog("close");
-        }
-    };
-    DisplayMessage(title, message, buttons);
-}

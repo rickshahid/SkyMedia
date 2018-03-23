@@ -92,8 +92,8 @@ namespace AzureSkyMedia.WebApp
 
         private static void SetOpenIdOptions(OpenIdConnectOptions options, string directoryId, string directoryTenantId)
         {
-            options.Authority = Account.GetIssuerUrl(directoryId, directoryTenantId);
-            options.MetadataAddress = Account.GetDiscoveryUrl(directoryId, directoryTenantId);
+            options.Authority = AuthToken.GetIssuerUrl(directoryId, directoryTenantId);
+            options.MetadataAddress = AuthToken.GetDiscoveryUrl(directoryId, directoryTenantId);
 
             string settingKey = Constant.AppSettingKey.DirectoryClientId;
             settingKey = string.Format(settingKey, directoryId);
@@ -115,7 +115,7 @@ namespace AzureSkyMedia.WebApp
 
                 SetOpenIdOptions(context.Options, directoryId, directoryTenantId);
 
-                context.ProtocolMessage.IssuerAddress = Account.GetAuthorizeUrl(directoryId, directoryTenantId);
+                context.ProtocolMessage.IssuerAddress = AuthToken.GetAuthorizeUrl(directoryId, directoryTenantId);
                 context.ProtocolMessage.ClientId = context.Options.ClientId;
             }
 

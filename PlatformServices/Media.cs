@@ -328,5 +328,21 @@ namespace AzureSkyMedia.PlatformServices
             }
             return mediaStreams.ToArray();
         }
+
+        public static bool IsStreamingEnabled(MediaClient mediaClient)
+        {
+            bool streamingEnabled = false;
+            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
+            {
+                if (streamingEndpoint.State == StreamingEndpointState.Starting ||
+                    streamingEndpoint.State == StreamingEndpointState.Running ||
+                    streamingEndpoint.State == StreamingEndpointState.Scaling)
+                {
+                    streamingEnabled = true;
+                }
+            }
+            return streamingEnabled;
+        }
     }
 }

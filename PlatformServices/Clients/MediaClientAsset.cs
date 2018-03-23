@@ -11,6 +11,38 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private void UploadAssetFiles(BlobClient blobClient, string sourceContainer, IAsset asset, string[] fileNames)
+        {
+            if (fileNames.Length == 1)
+            {
+                string fileName = fileNames[0];
+                IAssetFile assetFile = asset.AssetFiles.Create(fileName);
+                CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
+                Stream sourceStream = sourceBlob.OpenRead();
+                assetFile.Upload(sourceStream);
+                foreach (ILocator locator in asset.Locators)
+                {
+                    locator.Delete();
+                }
+            }
+            else
+            {
+                BlobTransferClient transferClient = new BlobTransferClient();
+                ILocator sasLocator = CreateLocator(LocatorType.Sas, asset, true);
+                List<Task> uploadTasks = new List<Task>();
+                foreach (string fileName in fileNames)
+                {
+                    IAssetFile assetFile = asset.AssetFiles.Create(fileName);
+                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
+                    Stream sourceStream = sourceBlob.OpenRead();
+                    Task uploadTask = assetFile.UploadAsync(sourceStream, transferClient, sasLocator, CancellationToken.None);
+                    uploadTasks.Add(uploadTask);
+                }
+                Task.WaitAll(uploadTasks.ToArray());
+                sasLocator.Delete();
+            }
+        }
+
         private static IAssetFile GetAssetFile(IAsset asset, string fileName)
         {
             IAssetFile assetFile = null;
@@ -91,6 +123,21 @@ namespace AzureSkyMedia.PlatformServices
             return assets.ToArray();
         }
 
+        public string CreateAsset(string assetName, string[] fileNames)
+        {
+            string storageAccount = null;
+            AssetCreationOptions assetEncryption = AssetCreationOptions.None;
+            IAsset asset = _media.Assets.Create(assetName, storageAccount, assetEncryption);
+
+            BlobClient blobClient = new BlobClient();
+            string sourceContainer = Constant.Storage.Blob.Container.AssetIngest;
+
+            UploadAssetFiles(blobClient, sourceContainer, asset, fileNames);
+            SetPrimaryFile(asset);
+
+            return asset.Id;
+        }
+
         public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames)
         {
             AssetCreationOptions assetEncryption = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
@@ -99,36 +146,9 @@ namespace AzureSkyMedia.PlatformServices
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             string sourceContainer = Constant.Storage.Blob.Container.FileUpload;
 
-            if (fileNames.Length == 1)
-            {
-                string fileName = fileNames[0];
-                IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-                CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
-                Stream sourceStream = sourceBlob.OpenRead();
-                assetFile.Upload(sourceStream);
-                foreach (ILocator locator in asset.Locators)
-                {
-                    locator.Delete();
-                }
-            }
-            else
-            {
-                BlobTransferClient transferClient = new BlobTransferClient();
-                ILocator sasLocator = CreateLocator(LocatorType.Sas, asset, true);
-                List<Task> uploadTasks = new List<Task>();
-                foreach (string fileName in fileNames)
-                {
-                    IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
-                    Stream sourceStream = sourceBlob.OpenRead();
-                    Task uploadTask = assetFile.UploadAsync(sourceStream, transferClient, sasLocator, CancellationToken.None);
-                    uploadTasks.Add(uploadTask);
-                }
-                Task.WaitAll(uploadTasks.ToArray());
-                sasLocator.Delete();
-            }
-
+            UploadAssetFiles(blobClient, sourceContainer, asset, fileNames);
             SetPrimaryFile(asset);
+
             return asset;
         }
 

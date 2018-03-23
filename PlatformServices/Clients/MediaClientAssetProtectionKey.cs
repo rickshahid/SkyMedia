@@ -103,7 +103,7 @@ namespace AzureSkyMedia.PlatformServices
                 settingKey = string.Format(settingKey, contentProtection.DirectoryId);
                 string directoryTenantDomain = AppSetting.GetValue(settingKey);
 
-                string discoveryUrl = Account.GetDiscoveryUrl(contentProtection.DirectoryId, directoryTenantDomain);
+                string discoveryUrl = AuthToken.GetDiscoveryUrl(contentProtection.DirectoryId, directoryTenantDomain);
                 if (string.Equals(contentProtection.DirectoryId, Constant.DirectoryService.B2C, StringComparison.OrdinalIgnoreCase))
                 {
                     settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
@@ -113,7 +113,7 @@ namespace AzureSkyMedia.PlatformServices
 
                 TokenRestrictionTemplate tokenTemplate = new TokenRestrictionTemplate(TokenType.JWT);
                 tokenTemplate.OpenIdConnectDiscoveryDocument = new OpenIdConnectDiscoveryDocument(discoveryUrl);
-                tokenTemplate.Issuer = Account.GetIssuerUrl(contentProtection.DirectoryId, directoryTenantId);
+                tokenTemplate.Issuer = AuthToken.GetIssuerUrl(contentProtection.DirectoryId, directoryTenantId);
                 tokenTemplate.Audience = contentProtection.Audience;
 
                 ContentKeyAuthorizationPolicyRestriction policyRestriction = new ContentKeyAuthorizationPolicyRestriction();

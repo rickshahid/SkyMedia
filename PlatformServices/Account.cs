@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -32,29 +31,11 @@ namespace AzureSkyMedia.PlatformServices
             return unitCount;
         }
 
-        private static IStreamingEndpoint GetStreamingEndpoint(MediaClient mediaClient)
-        {
-            IStreamingEndpoint streamingEndpoint = null;
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
-            if (streamingEndpoints.Length > 1)
-            {
-                streamingEndpoint = mediaClient.GetEntityByName(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpointName) as IStreamingEndpoint;
-            }
-            else if (streamingEndpoints.Length == 1)
-            {
-                streamingEndpoint = streamingEndpoints[0];
-            }
-            return streamingEndpoint;
-        }
-
         private static void DeleteAsset(string authToken, string accountId, MediaClient mediaClient, IAsset asset)
         {
             string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
             if (!string.IsNullOrEmpty(documentId))
             {
-                DocumentClient documentClient = new DocumentClient();
-                string collectionId = Constant.Database.Collection.ContentInsight;
-                documentClient.DeleteDocument(collectionId, documentId);
                 if (videoIndexer)
                 {
                     IndexerClient indexerClient = new IndexerClient(authToken);
@@ -62,7 +43,6 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         indexerClient.DeleteVideo(documentId, true);
                     }
-
                     TableClient tableClient = new TableClient();
                     string tableName = Constant.Storage.Table.InsightPublish;
                     MediaPublish insightPublish = tableClient.GetEntity<MediaPublish>(tableName, accountId, documentId);
@@ -71,6 +51,9 @@ namespace AzureSkyMedia.PlatformServices
                         tableClient.DeleteEntity(tableName, insightPublish);
                     }
                 }
+                DocumentClient documentClient = new DocumentClient();
+                string collectionId = Constant.Database.Collection.ContentInsight;
+                documentClient.DeleteDocument(collectionId, documentId);
             }
             foreach (ILocator locator in asset.Locators)
             {
@@ -83,13 +66,16 @@ namespace AzureSkyMedia.PlatformServices
             asset.Delete();
         }
 
-        private static void DeleteLive(string authToken, string accountId, MediaClient mediaClient)
+        private static void DeleteLive(string authToken, string accountId, MediaClient mediaClient, bool deleteAssets)
         {
             IProgram[] programs = mediaClient.GetEntities(MediaEntity.Program) as IProgram[];
             foreach (IProgram program in programs)
             {
                 program.Delete();
-                DeleteAsset(authToken, accountId, mediaClient, program.Asset);
+                if (deleteAssets)
+                {
+                    DeleteAsset(authToken, accountId, mediaClient, program.Asset);
+                }
             }
             IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
             foreach (IChannel channel in channels)
@@ -117,7 +103,7 @@ namespace AzureSkyMedia.PlatformServices
             MediaClient mediaClient = new MediaClient(authToken);
             if (liveOnly)
             {
-                DeleteLive(authToken, authUser.MediaAccount.Id, mediaClient);
+                DeleteLive(authToken, authUser.MediaAccount.Id, mediaClient, false);
             }
             else if (!allEntities)
             {
@@ -132,7 +118,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                DeleteLive(authToken, authUser.MediaAccount.Id, mediaClient);
+                DeleteLive(authToken, authUser.MediaAccount.Id, mediaClient, true);
                 IIngestManifest[] manifests = mediaClient.GetEntities(MediaEntity.Manifest) as IIngestManifest[];
                 foreach (IIngestManifest manifest in manifests)
                 {
@@ -266,72 +252,6 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString() });
             entityCounts.Add(new string[] { "Locators", locators.Length.ToString() });
             return entityCounts.ToArray();
-        }
-
-        public static string GetIssuerUrl(string directoryId, string directoryTenant)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-            string issuerUrl = AppSetting.GetValue(settingKey);
-            issuerUrl = string.Format(issuerUrl, directoryTenant);
-            if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
-            {
-                issuerUrl = issuerUrl.Replace("/v2.0", string.Empty);
-            }
-            return issuerUrl;
-        }
-
-        public static string GetDiscoveryUrl(string directoryId, string directoryTenantId)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryDiscoveryUrl;
-            string discoveryUrl = AppSetting.GetValue(settingKey);
-            discoveryUrl = string.Format(discoveryUrl, directoryTenantId);
-            if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
-            {
-                discoveryUrl = discoveryUrl.Replace("/v2.0", string.Empty);
-            }
-            return discoveryUrl;
-        }
-
-        public static string GetAuthorizeUrl(string directoryId, string directoryTenantId)
-        {
-            string issuerUrl = GetIssuerUrl(directoryId, directoryTenantId);
-            issuerUrl = issuerUrl.Replace("/v2.0", string.Empty);
-            string authorizeUrl = string.Concat(issuerUrl, "oauth2/v2.0/authorize");
-            if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
-            {
-                authorizeUrl = authorizeUrl.Replace("/v2.0", string.Empty);
-            }
-            return authorizeUrl;
-        }
-
-        public static bool IsStreamingEnabled(MediaClient mediaClient, out bool endpointStarting)
-        {
-            endpointStarting = false;
-            bool streamingEnabled = false;
-            IStreamingEndpoint streamingEndpoint = GetStreamingEndpoint(mediaClient);
-            if (streamingEndpoint != null)
-            {
-                endpointStarting = streamingEndpoint.State == StreamingEndpointState.Starting;
-                if (streamingEndpoint.State == StreamingEndpointState.Starting ||
-                    streamingEndpoint.State == StreamingEndpointState.Running ||
-                    streamingEndpoint.State == StreamingEndpointState.Scaling)
-                {
-                    streamingEnabled = true;
-                }
-            }
-            return streamingEnabled;
-        }
-
-        public static string StartStreamingEndpoint(MediaClient mediaClient)
-        {
-            string endpointName = string.Empty;
-            IStreamingEndpoint streamingEndpoint = GetStreamingEndpoint(mediaClient);
-            if (streamingEndpoint != null)
-            {
-                streamingEndpoint.StartAsync();
-                endpointName = streamingEndpoint.Name;
-            }
-            return endpointName;
         }
     }
 }
