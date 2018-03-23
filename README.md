@@ -1,6 +1,6 @@
 # Azure Sky Media
 
-Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.io
+Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.tv
 
 As an illustration, here is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. Azure Media Services content is adaptive, scaled and globally consumable across a wide range of devices and platforms.
 
@@ -20,7 +20,7 @@ The following set of media functionality has been integrated and enabled within 
 
 * Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
 
-The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.io
+The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
 ![](http://skystorage.azureedge.net/Shot02-ApplicationArchitecture.png)
 
