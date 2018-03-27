@@ -79,10 +79,10 @@
       <HintPath>..\packages\TransientFaultHandling.Core.5.1.1209.1\lib\NET4\Microsoft.Practices.TransientFaultHandling.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Rest.ClientRuntime, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Rest.ClientRuntime.2.3.10\lib\net452\Microsoft.Rest.ClientRuntime.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Rest.ClientRuntime.2.3.11\lib\net452\Microsoft.Rest.ClientRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Rest.ClientRuntime.Azure, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Rest.ClientRuntime.Azure.3.3.10\lib\net452\Microsoft.Rest.ClientRuntime.Azure.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Rest.ClientRuntime.Azure.3.3.12\lib\net452\Microsoft.Rest.ClientRuntime.Azure.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.MediaServices.Client, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\windowsazure.mediaservices.4.1.0.1\lib\net45\Microsoft.WindowsAzure.MediaServices.Client.dll</HintPath>
@@ -214,7 +214,7 @@
     <Compile Include="Clients\WebClient.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="Entities\Asset.cs" />
-    <Compile Include="Entities\Block.cs" />
+    <Compile Include="Entities\File.cs" />
     <Compile Include="Entities\Job.cs" />
     <Compile Include="Entities\JobInput.cs" />
     <Compile Include="Entities\JobNotification.cs" />

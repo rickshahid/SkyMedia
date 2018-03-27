@@ -143,8 +143,6 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     AssetId = assetId,
                     IndexId = indexId,
-                    DocumentId = documentId,
-                    UserId = insightPublish.UserId,
                     MobileNumber = insightPublish.MobileNumber,
                     StatusMessage = string.Empty
                 };

@@ -118,28 +118,28 @@ namespace AzureSkyMedia.PlatformServices
 
             if (blockIndex == 0)
             {
-                BlockUpload blockUpload = new BlockUpload()
+                FileUpload fileUpload = new FileUpload()
                 {
                     PartitionKey = partitionKey,
                     RowKey = rowKey,
                     BlockIds = new string[] { blockId }
                 };
-                _tracker.UpsertEntity(tableName, blockUpload);
+                _tracker.UpsertEntity(tableName, fileUpload);
             }
             else
             {
-                BlockUpload blockUpload = _tracker.GetEntity<BlockUpload>(tableName, partitionKey, rowKey);
-                List<string> blockIds = new List<string>(blockUpload.BlockIds);
+                FileUpload fileUpload = _tracker.GetEntity<FileUpload>(tableName, partitionKey, rowKey);
+                List<string> blockIds = new List<string>(fileUpload.BlockIds);
                 blockIds.Add(blockId);
-                blockUpload.BlockIds = blockIds.ToArray();
-                _tracker.UpdateEntity(tableName, blockUpload);
+                fileUpload.BlockIds = blockIds.ToArray();
+                _tracker.UpdateEntity(tableName, fileUpload);
             }
 
             if (lastBlock)
             {
-                BlockUpload blockUpload = _tracker.GetEntity<BlockUpload>(tableName, partitionKey, rowKey);
-                blob.PutBlockList(blockUpload.BlockIds);
-                _tracker.DeleteEntity(tableName, blockUpload);
+                FileUpload fileUpload = _tracker.GetEntity<FileUpload>(tableName, partitionKey, rowKey);
+                blob.PutBlockList(fileUpload.BlockIds);
+                _tracker.DeleteEntity(tableName, fileUpload);
             }
         }
     }

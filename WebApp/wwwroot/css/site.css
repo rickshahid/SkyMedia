@@ -291,7 +291,7 @@ body {
 }
 
 .slider.jobPriority {
-    width: 110px;
+    width: 112px;
 }
 
 .ui-dialog-title {
@@ -611,14 +611,8 @@ body {
 }
 
 .jobName {
-    background-color: white !important;
-    border: none !important;
     font-weight: bold;
-    width: 170px;
-}
-
-.jobNodeType {
-    font-weight: bold;
+    width: 348px;
 }
 
 .jobTask {

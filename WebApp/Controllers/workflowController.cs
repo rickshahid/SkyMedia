@@ -6,13 +6,17 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class workflowController : Controller
     {
-        public JsonResult ingest(string storageAccount, bool storageEncryption, string inputAssetName, bool multipleFileAsset, string[] fileNames, MediaJob mediaJob)
+        public JsonResult create(string storageAccount, bool storageEncryption, string inputAssetName, bool multipleFileAsset, string[] fileNames, MediaJob mediaJob)
         {
             string directoryId = homeController.GetDirectoryId(this.Request);
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
             MediaJobInput[] jobInputs = Workflow.GetJobInputs(authToken, mediaClient, storageAccount, storageEncryption, inputAssetName, multipleFileAsset, fileNames);
-            object jobOutput = Workflow.SubmitJob(directoryId, authToken, mediaClient, mediaJob, jobInputs);
+            object jobOutput = jobInputs;
+            if (mediaJob.Tasks != null)
+            {
+                jobOutput = Workflow.SubmitJob(directoryId, authToken, mediaClient, mediaJob, jobInputs);
+            }
             return Json(jobOutput);
         }
 

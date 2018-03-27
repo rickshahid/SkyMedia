@@ -3,14 +3,10 @@
     $.scrollTo("#mediaWorkflowTaskRemove");
 }
 function GetJob() {
-    var jobTasks = GetJobTasks();
-    var jobTemplateId = GetJobTemplateId();
     var job = {
         Name: $("#jobName").val(),
-        NodeType: $("#jobNodeType").val(),
         Priority: $("#jobPriorityLabel").text(),
-        Tasks: jobTasks,
-        TemplateId: jobTemplateId,
+        Tasks: GetJobTasks()
     };
     return job;
 }
@@ -25,17 +21,6 @@ function GetJobTasks() {
         taskNumber = taskNumber + 1;
     } while (jobTask != null)
     return jobTasks;
-}
-function GetJobTemplateId() {
-    var jobTemplateId = "";
-    var jobName = $("#jobName").val();
-    var jobTemplates = document.getElementsByClassName("es-visible");
-    for (var i = 0; i < jobTemplates.length; i++) {
-        if (jobName == jobTemplates[i].textContent) {
-            jobTemplateId = jobTemplates[i].attributes["value"].value;
-        }
-    }
-    return jobTemplateId;
 }
 function AddJobTaskLink(workflowTable, taskRowIndex) {
     var taskLinkRow = workflowTable.insertRow(taskRowIndex);

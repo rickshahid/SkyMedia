@@ -71,11 +71,10 @@ namespace AzureSkyMedia.PlatformServices
             MediaPublished mediaPublished = null;
             if (job != null)
             {
-                mediaClient.SetProcessorUnits(job, null, MediaJobNodeType.Basic, false);
+                mediaClient.SetProcessorUnits(job, MediaJobNodeType.Basic, false);
                 PublishJob(mediaClient, job, contentPublish);
                 mediaPublished = new MediaPublished()
                 {
-                    UserId = contentPublish.UserId,
                     MobileNumber = contentPublish.MobileNumber,
                     StatusMessage = GetNotificationMessage(accountId, job)
                 };

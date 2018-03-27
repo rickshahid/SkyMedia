@@ -1,6 +1,6 @@
 ﻿namespace AzureSkyMedia.PlatformServices
 {
-    internal class BlockUpload : StorageEntity
+    internal class FileUpload : StorageEntity
     {
         private string _blocks;
         private string[] _blockIds;

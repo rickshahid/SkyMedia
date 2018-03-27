@@ -27,9 +27,9 @@ namespace AzureSkyMedia.PlatformServices
             return notificationEndpoint;
         }
 
-        private void SetProcessorUnits(IJob job, IJobTemplate jobTemplate, MediaJobNodeType nodeType, bool newJob)
+        private void SetProcessorUnits(IJob job, MediaJobNodeType nodeType, bool newJob)
         {
-            int unitCount = jobTemplate != null ? jobTemplate.TaskTemplates.Count : job.Tasks.Count;
+            int unitCount = job.Tasks.Count;
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
             IEncodingReservedUnit processorUnit = processorUnits[0];
             processorUnit.ReservedUnitType = (ReservedUnitType)nodeType;
@@ -110,60 +110,30 @@ namespace AzureSkyMedia.PlatformServices
             return mediaJob;
         }
 
-        public IJob CreateJob(MediaJob mediaJob, MediaJobInput[] jobInputs, out IJobTemplate jobTemplate)
+        public IJob CreateJob(MediaJob mediaJob, MediaJobInput[] jobInputs)
         {
-            IJob job = null;
-            jobTemplate = null;
-            if (!string.IsNullOrEmpty(mediaJob.TemplateId))
+            IJob job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
+            foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
-                List<IAsset> inputAssets = new List<IAsset>();
-                foreach (MediaJobInput jobInput in jobInputs)
+                string processorId = Processor.GetProcessorId(jobTask.MediaProcessor, jobTask.ProcessorConfig);
+                IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
+                ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
+                if (jobTask.ParentIndex.HasValue)
                 {
-                    IAsset asset = GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                    if (asset != null)
-                    {
-                        inputAssets.Add(asset);
-                    }
-                }
-                jobTemplate = GetEntityById(MediaEntity.JobTemplate, mediaJob.TemplateId) as IJobTemplate;
-                job = _media.Jobs.Create(mediaJob.Name, jobTemplate, inputAssets, mediaJob.Priority);
-            }
-            else if (mediaJob.Tasks.Length > 0)
-            {
-                job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
-                foreach (MediaJobTask jobTask in mediaJob.Tasks)
-                {
-                    string processorId = Processor.GetProcessorId(jobTask.MediaProcessor, jobTask.ProcessorConfig);
-                    IMediaProcessor processor = GetEntityById(MediaEntity.Processor, processorId) as IMediaProcessor;
-                    ITask currentTask = job.Tasks.AddNew(jobTask.Name, processor, jobTask.ProcessorConfig, jobTask.Options);
-                    if (jobTask.ParentIndex.HasValue)
-                    {
-                        ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
-                        currentTask.InputAssets.AddRange(parentTask.OutputAssets);
-                    }
-                    else
-                    {
-                        IAsset[] assets = GetAssets(jobTask.InputAssetIds);
-                        currentTask.InputAssets.AddRange(assets);
-                    }
-                    currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
-                }
-                INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
-                job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
-            }
-            if (job != null)
-            {
-                if (mediaJob.SaveWorkflow)
-                {
-                    string templateName = mediaJob.Name;
-                    jobTemplate = job.SaveAsTemplate(templateName);
+                    ITask parentTask = job.Tasks[jobTask.ParentIndex.Value];
+                    currentTask.InputAssets.AddRange(parentTask.OutputAssets);
                 }
                 else
                 {
-                    SetProcessorUnits(job, jobTemplate, mediaJob.NodeType, true);
-                    job.Submit();
+                    IAsset[] assets = GetAssets(jobTask.InputAssetIds);
+                    currentTask.InputAssets.AddRange(assets);
                 }
+                currentTask.OutputAssets.AddNew(jobTask.OutputAssetName, jobTask.OutputAssetEncryption, jobTask.OutputAssetFormat);
             }
+            INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
+            job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
+            SetProcessorUnits(job, MediaJobNodeType.Premium, true);
+            job.Submit();
             return job;
         }
 

@@ -189,6 +189,24 @@
       "metadata": {
         "description": "Azure region name for deployment of the Application Insights service resource."
       }
+    },
+    "twilioAccountId": {
+      "type": "string",
+      "metadata": {
+        "description": "Twilio account identifier."
+      }
+    },
+    "twilioAccountToken": {
+      "type": "string",
+      "metadata": {
+        "description": "Twilio account auth token."
+      }
+    },
+    "twilioMessageFrom": {
+      "type": "string",
+      "metadata": {
+        "description": "Twilio message from number."
+      }
     }
   },
   "variables": {
@@ -362,6 +380,18 @@
             {
               "name": "Media.Locator.AutoRenewal",
               "value": true
+            },
+            {
+              "name": "Twilio.Account.Id",
+              "value": "[parameters('twilioAccountId')]"
+            },
+            {
+              "name": "Twilio.Account.Token",
+              "value": "[parameters('twilioAccountToken')]"
+            },
+            {
+              "name": "Twilio.Message.From",
+              "value": "[parameters('twilioMessageFrom')]"
             }
           ]
         }

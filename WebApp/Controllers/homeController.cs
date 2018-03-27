@@ -29,21 +29,21 @@ namespace AzureSkyMedia.WebApp.Controllers
             return storageAccounts.ToArray();
         }
 
-        private static SelectListItem[] GetJobTemplates(string authToken)
-        {
-            List<SelectListItem> jobTemplates = new List<SelectListItem>();
-            NameValueCollection templates = MediaClient.GetJobTemplates(authToken);
-            foreach (string templateName in templates.Keys)
-            {
-                SelectListItem jobTemplate = new SelectListItem()
-                {
-                    Text = templateName,
-                    Value = templates[templateName]
-                };
-                jobTemplates.Add(jobTemplate);
-            }
-            return jobTemplates.ToArray();
-        }
+        //private static SelectListItem[] GetJobTemplates(string authToken)
+        //{
+        //    List<SelectListItem> jobTemplates = new List<SelectListItem>();
+        //    NameValueCollection templates = MediaClient.GetJobTemplates(authToken);
+        //    foreach (string templateName in templates.Keys)
+        //    {
+        //        SelectListItem jobTemplate = new SelectListItem()
+        //        {
+        //            Text = templateName,
+        //            Value = templates[templateName]
+        //        };
+        //        jobTemplates.Add(jobTemplate);
+        //    }
+        //    return jobTemplates.ToArray();
+        //}
 
         internal static SelectListItem[] GetMediaProcessors(string authToken, bool presetsView)
         {
@@ -96,7 +96,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             User authUser = new User(authToken);
             viewData["storageAccount"] = GetStorageAccounts(authToken);
-            viewData["jobName"] = GetJobTemplates(authToken);
+            //viewData["jobName"] = GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = GetMediaProcessors(authToken, false);
             viewData["encoderConfig1"] = new List<SelectListItem>();
             viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccount.Id, true);

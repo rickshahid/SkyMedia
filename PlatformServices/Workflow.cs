@@ -13,40 +13,25 @@ namespace AzureSkyMedia.PlatformServices
             {
                 AssetId = asset.Id,
                 AssetName = asset.Name,
-                PrimaryFile = MediaClient.GetPrimaryFile(asset)
+                AssetType = asset.AssetType.ToString()
             };
             return jobInput;
         }
 
-        private static object GetJobOutput(IJob job, IJobTemplate jobTemplate, MediaJobInput[] jobInputs)
-        {
-            object jobOutput = job;
-            if (jobTemplate != null)
-            {
-                jobOutput = jobTemplate;
-            }
-            else if (jobOutput == null)
-            {
-                jobOutput = jobInputs;
-            }
-            return jobOutput;
-        }
-
         private static void TrackJob(string directoryId, string authToken, IJob job, MediaJobTask[] jobTasks)
         {
-            User authUser = new User(authToken);
-
             string storageAccountName = job.InputMediaAssets[0].StorageAccountName;
             string storageAccountKey = Storage.GetAccountKey(authToken, storageAccountName);
 
+            User authUser = new User(authToken);
             MediaPublish contentPublish = new MediaPublish()
             {
+                UserId = authUser.Id,
                 PartitionKey = authUser.MediaAccount.Id,
                 RowKey = job.Id,
                 MediaAccount = authUser.MediaAccount,
                 StorageAccountName = storageAccountName,
                 StorageAccountKey = storageAccountKey,
-                UserId = authUser.Id,
                 MobileNumber = authUser.MobileNumber
             };
 
@@ -58,7 +43,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (ContentProtection contentProtection in contentProtections)
             {
                 tableName = Constant.Storage.Table.ContentProtection;
-                contentProtection.PartitionKey = contentPublish.RowKey;
+                contentProtection.PartitionKey = contentPublish.PartitionKey;
                 tableClient.InsertEntity(tableName, contentProtection);
             }
         }
@@ -112,21 +97,17 @@ namespace AzureSkyMedia.PlatformServices
 
         public static object SubmitJob(string directoryId, string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
         {
-            IJob job = null;
-            IJobTemplate jobTemplate = null;
-            if (mediaJob.Tasks != null)
-            {
-                mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
-            }
-            if (mediaJob.Tasks != null || !string.IsNullOrEmpty(mediaJob.TemplateId))
-            {
-                job = mediaClient.CreateJob(mediaJob, jobInputs, out jobTemplate);
-            }
-            if (job != null && !string.IsNullOrEmpty(job.Id))
-            {
-                TrackJob(directoryId, authToken, job, mediaJob.Tasks);
-            }
-            return GetJobOutput(job, jobTemplate, jobInputs);
+            mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
+            IJob job = mediaClient.CreateJob(mediaJob, jobInputs);
+            TrackJob(directoryId, authToken, job, mediaJob.Tasks);
+            return job;
+        }
+
+        public static string SubmitJob(MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
+        {
+            string directoryId = Constant.DirectoryService.B2C;
+            IJob job = SubmitJob(directoryId, null, mediaClient, mediaJob, jobInputs) as IJob;
+            return job == null ? string.Empty : job.Id;
         }
     }
 }

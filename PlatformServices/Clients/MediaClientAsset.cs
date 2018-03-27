@@ -130,7 +130,7 @@ namespace AzureSkyMedia.PlatformServices
             IAsset asset = _media.Assets.Create(assetName, storageAccount, assetEncryption);
 
             BlobClient blobClient = new BlobClient();
-            string sourceContainer = Constant.Storage.Blob.Container.AssetIngest;
+            string sourceContainer = Constant.Storage.Blob.Container.ContentProcess;
 
             UploadAssetFiles(blobClient, sourceContainer, asset, fileNames);
             SetPrimaryFile(asset);

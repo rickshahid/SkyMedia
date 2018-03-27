@@ -165,7 +165,7 @@ namespace AzureSkyMedia.PlatformServices
                 public struct Container
                 {
                     public const string FileUpload = "upload";
-                    public const string AssetIngest = "ams";
+                    public const string ContentProcess = "ams";
                     public const string ContentDelivery = "cdn";
                 }
             }

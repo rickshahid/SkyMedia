@@ -31,6 +31,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             if (jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
             {
+                foreach (MediaJobInput jobInput in jobInputs)
+                {
+                    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
+                    if (asset != null)
+                    {
+                        jobInput.PrimaryFile = MediaClient.GetPrimaryFile(asset);
+                    }
+                }
                 Array.Sort(jobInputs, OrderByWorkflow);
             }
             if (string.IsNullOrEmpty(jobTask.ProcessorConfig))

@@ -59,7 +59,7 @@ function CreateUploader() {
             if (uploader.total.failed == 0) {
                 var elapsedTime = GetElapsedTime();
                 $("#mediaUploadMessage").text("Upload Elapsed Time: " + elapsedTime);
-                IngestAssets();
+                CreateWorkflow();
             }
         },
         Error: function (uploader, error) {

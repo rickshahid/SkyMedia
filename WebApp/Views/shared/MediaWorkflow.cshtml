@@ -13,16 +13,7 @@
             Job Name
         </td>
         <td>
-            @Html.DropDownList("jobName", null, new { @class = "jobName" })
-            &nbsp;
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-scale-media-processing-overview')">
-                Job Node Type
-            </span>
-            <select id="jobNodeType" class="jobNodeType">
-                <option value="0">S1</option>
-                <option value="1">S2</option>
-                <option value="2" selected>S3</option>
-            </select>
+            @Html.TextBox("jobName", null, new { @class = "jobName" })
             &nbsp;
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/rest/api/media/operations/job')">
                 Job Priority
@@ -38,7 +29,7 @@
             <table>
                 <tr>
                     <td>
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowSave", "MediaWorkflowSave.png", "ValidWorkflow(" + uploadView + ", true)" })
+                        @*@Html.Partial("SiteButton", new string[] { "mediaWorkflowSave", "MediaWorkflowSave.png", "ValidWorkflow(" + uploadView + ", true)" })*@
                     </td>
                     <td class="mediaWorkflowTaskButtons">
                         @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)" })

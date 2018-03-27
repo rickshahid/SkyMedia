@@ -2,7 +2,7 @@
     if (!uploadView) {
         $("#mediaAssetsRow").show();
     }
-    $("#jobName").editableSelect();
+    //$("#jobName").editableSelect();
     $("#jobPriority").slider({
         min: 0,
         max: 9,
@@ -71,10 +71,7 @@ function ValidWorkflowTasks(validInput) {
 }
 function ValidWorkflow(uploadView, saveWorkflow) {
     var validWorkflow = ValidWorkflowInput(uploadView, saveWorkflow);
-    var jobTemplateId = GetJobTemplateId();
-    if (jobTemplateId == "") {
-        validWorkflow = ValidWorkflowTasks(validWorkflow);
-    }
+    validWorkflow = ValidWorkflowTasks(validWorkflow);
     if (validWorkflow) {
         if (uploadView) {
             _fileUploader.start();
@@ -122,11 +119,11 @@ function GetAssetInfo(result, i) {
     }
     return assetInfo + result[i].assetId;
 }
-function IngestAssets() {
+function CreateWorkflow() {
     var job = GetJob();
     var fileNames = GetFileNames();
     SetCursor(true);
-    $.post("/workflow/ingest",
+    $.post("/workflow/create",
         {
             storageAccount: $("#storageAccount").val(),
             storageEncryption: $("#storageEncryption").prop("checked"),

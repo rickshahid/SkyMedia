@@ -15,10 +15,6 @@
 
         public string IndexId { get; set; }
 
-        public string DocumentId { get; set; }
-
-        public string UserId { get; set; }
-
         public string MobileNumber { get; set; }
 
         public string StatusMessage { get; set; }
