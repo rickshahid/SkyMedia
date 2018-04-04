@@ -6,40 +6,47 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private AzureEnvironment _azure = AzureEnvironments.AzureCloudEnvironment;
+        private MediaAccount _account;
         private CloudMediaContext _media;
 
         public MediaClient(string authToken)
         {
             User authUser = new User(authToken);
-            AzureAdTokenCredentials tokenCredentials;
-            if (string.IsNullOrEmpty(authUser.MediaAccount.ClientId))
-            {
-                tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccount.DomainName, _azure);
-            }
-            else
-            {
-                AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(authUser.MediaAccount.ClientId, authUser.MediaAccount.ClientKey);
-                tokenCredentials = new AzureAdTokenCredentials(authUser.MediaAccount.DomainName, symmetricKey, _azure);
-            }
-            BindContext(authUser.MediaAccount.EndpointUrl, tokenCredentials);
+            _account = authUser.MediaAccount;
+            BindContext();
         }
 
         public MediaClient(MediaAccount mediaAccount)
         {
-            AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(mediaAccount.ClientId, mediaAccount.ClientKey);
-            AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(mediaAccount.DomainName, symmetricKey, _azure);
-            BindContext(mediaAccount.EndpointUrl, tokenCredentials);
+            _account = mediaAccount;
+            BindContext();
         }
 
-        private void BindContext(string accountEndpoint, AzureAdTokenCredentials tokenCredentials)
+        private void BindContext()
         {
+            AzureAdTokenCredentials tokenCredentials;
+            AzureEnvironment azureEnvironment = AzureEnvironments.AzureCloudEnvironment;
+            if (string.IsNullOrEmpty(_account.ClientId))
+            {
+                tokenCredentials = new AzureAdTokenCredentials(_account.DomainName, azureEnvironment);
+            }
+            else
+            {
+                AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(_account.ClientId, _account.ClientKey);
+                tokenCredentials = new AzureAdTokenCredentials(_account.DomainName, symmetricKey, azureEnvironment);
+            }
+            Uri accountEndpoint = new Uri(_account.EndpointUrl);
             AzureAdTokenProvider tokenProvider = new AzureAdTokenProvider(tokenCredentials);
-            _media = new CloudMediaContext(new Uri(accountEndpoint), tokenProvider);
-            IStorageAccount storageAccount = this.DefaultStorageAccount;
+            _media = new CloudMediaContext(accountEndpoint, tokenProvider);
+            IStorageAccount storageAccount = this.StorageAccount;
         }
 
-        public IStorageAccount DefaultStorageAccount
+        public MediaAccount MediaAccount
+        {
+            get { return _account; }
+        }
+
+        public IStorageAccount StorageAccount
         {
             get { return _media.DefaultStorageAccount; }
         }

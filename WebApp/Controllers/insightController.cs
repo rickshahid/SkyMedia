@@ -16,17 +16,17 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
         {
             JObject metadata;
-            string collectionId = Constant.Database.Collection.ContentInsight;
+            string collectionId = Constant.Database.Collection.MediaInsight;
             string procedureId = Constant.Database.Procedure.MetadataFragment;
-            using (DocumentClient documentClient = new DocumentClient())
+            using (DatabaseClient databaseClient = new DatabaseClient())
             {
                 if (mediaProcessor == MediaProcessor.VideoIndexer)
                 {
-                    metadata = documentClient.GetDocument(collectionId, documentId);
+                    metadata = databaseClient.GetDocument(collectionId, documentId);
                 }
                 else
                 {
-                    metadata = documentClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
+                    metadata = databaseClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
                 }
             }
             return Json(metadata);
@@ -40,7 +40,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
-                IndexerClient indexerClient = new IndexerClient(authToken);
+                MediaClient mediaClient = new MediaClient(authToken);
+                IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
                 if (indexerClient.IndexerEnabled)
                 {
                     accounts = indexerClient.GetAccounts();
@@ -57,7 +58,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
-                IndexerClient indexerClient = new IndexerClient(authToken);
+                MediaClient mediaClient = new MediaClient(authToken);
+                IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
                 if (indexerClient.IndexerEnabled)
                 {
                     index = indexerClient.GetIndex(indexId, languageId, processingState);
@@ -73,15 +75,16 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
-                IndexerClient indexerClient = new IndexerClient(authToken);
+                MediaClient mediaClient = new MediaClient(authToken);
+                IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
                 if (indexerClient.IndexerEnabled)
                 {
                     indexerClient.DeleteVideo(indexId, deleteInsight);
                 }
 
-                DocumentClient documentClient = new DocumentClient();
-                string collectionId = Constant.Database.Collection.ContentInsight;
-                documentClient.DeleteDocument(collectionId, indexId);
+                DatabaseClient databaseClient = new DatabaseClient();
+                string collectionId = Constant.Database.Collection.MediaInsight;
+                databaseClient.DeleteDocument(collectionId, indexId);
             }
         }
     }

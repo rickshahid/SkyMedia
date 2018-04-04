@@ -22,8 +22,10 @@ namespace AzureSkyMedia.WebApp
             if (Debugger.IsAttached)
             {
                 string modelsDirectory = string.Concat(appDirectory, Constant.Media.ProcessorConfig.DirectoryModels);
-                DocumentClient documentClient = new DocumentClient();
-                documentClient.Initialize(modelsDirectory);
+                using (DatabaseClient databaseClient = new DatabaseClient())
+                {
+                    databaseClient.Initialize(modelsDirectory);
+                }
             }
             webHost.Run();
         }

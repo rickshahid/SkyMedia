@@ -188,8 +188,7 @@
     <Compile Include="AuthToken.cs" />
     <Compile Include="Clients\BotClient.cs" />
     <Compile Include="Clients\CacheClient.cs" />
-    <Compile Include="Clients\DatabaseClientDocument.cs" />
-    <Compile Include="Clients\DatabaseClientTable.cs" />
+    <Compile Include="Clients\DatabaseClient.cs" />
     <Compile Include="Clients\MediaClient.cs" />
     <Compile Include="Clients\MediaClientAsset.cs" />
     <Compile Include="Clients\MediaClientAssetClipper.cs" />
@@ -211,10 +210,10 @@
     <Compile Include="Clients\MediaClientPublishInsight.cs" />
     <Compile Include="Clients\StorageClientBlob.cs" />
     <Compile Include="Clients\StorageClientQueue.cs" />
+    <Compile Include="Clients\StorageClientTable.cs" />
     <Compile Include="Clients\WebClient.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="Entities\Asset.cs" />
-    <Compile Include="Entities\File.cs" />
     <Compile Include="Entities\Job.cs" />
     <Compile Include="Entities\JobInput.cs" />
     <Compile Include="Entities\JobNotification.cs" />

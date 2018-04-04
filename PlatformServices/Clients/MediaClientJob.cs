@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -10,7 +9,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private INotificationEndPoint GetNotificationEndpoint()
         {
-            string settingKey = Constant.AppSettingKey.MediaPublishContentUrl;
+            string settingKey = Constant.AppSettingKey.MediaPublishUrl;
             string endpointAddress = AppSetting.GetValue(settingKey);
             string endpointName = Constant.Media.Job.NotificationEndpointName;
             INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName) as INotificationEndPoint;
@@ -57,20 +56,20 @@ namespace AzureSkyMedia.PlatformServices
                         tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
                         break;
                     case MediaProcessor.VideoIndexer:
-                        IndexerClient indexerClient = new IndexerClient(authToken);
+                        IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
                         if (indexerClient.IndexerEnabled)
                         {
                             foreach (MediaJobInput jobInput in jobInputs)
                             {
                                 IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                                string documentId = DocumentClient.GetDocumentId(asset, out bool videoIndexer);
+                                string documentId = DatabaseClient.GetDocumentId(asset, out bool videoIndexer);
                                 if (videoIndexer)
                                 {
-                                    indexerClient.ResetIndex(authToken, documentId);
+                                    indexerClient.ResetIndex(documentId);
                                 }
                                 else
                                 {
-                                    indexerClient.IndexVideo(authToken, mediaClient, asset, jobTask.ContentIndexer);
+                                    indexerClient.IndexVideo(mediaClient, asset, jobTask.VideoIndexer);
                                 }
                             }
                         }
@@ -135,18 +134,6 @@ namespace AzureSkyMedia.PlatformServices
             SetProcessorUnits(job, MediaJobNodeType.Premium, true);
             job.Submit();
             return job;
-        }
-
-        public static NameValueCollection GetJobTemplates(string authToken)
-        {
-            NameValueCollection jobTemplates = new NameValueCollection();
-            MediaClient mediaClient = new MediaClient(authToken);
-            IJobTemplate[] templates = mediaClient.GetEntities(MediaEntity.JobTemplate) as IJobTemplate[];
-            foreach (IJobTemplate template in templates)
-            {
-                jobTemplates.Add(template.Name, template.Id);
-            }
-            return jobTemplates;
         }
     }
 }

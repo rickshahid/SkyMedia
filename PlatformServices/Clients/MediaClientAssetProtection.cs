@@ -12,14 +12,14 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static ContentProtection GetContentProtection(string jobId, string taskId)
         {
-            TableClient tableClient = new TableClient();
-            string tableName = Constant.Storage.Table.ContentProtection;
-            return tableClient.GetEntity<ContentProtection>(tableName, jobId, taskId);
+            DatabaseClient databaseClient = new DatabaseClient();
+            string collectionId = Constant.Database.Collection.MediaPublish;
+            return databaseClient.GetDocument<ContentProtection>(collectionId, taskId);
         }
 
-        public static ContentProtection[] GetContentProtections(string directoryId, IJob job, MediaJobTask[] jobTasks)
+        public static ContentProtection[] GetJobProtection(string directoryId, IJob job, MediaJobTask[] jobTasks)
         {
-            List<ContentProtection> contentProtections = new List<ContentProtection>();
+            List<ContentProtection> jobProtection = new List<ContentProtection>();
             string settingKey = Constant.AppSettingKey.DirectoryClientId;
             settingKey = string.Format(settingKey, directoryId);
             string directoryClientId = AppSetting.GetValue(settingKey);
@@ -28,21 +28,21 @@ namespace AzureSkyMedia.PlatformServices
                 if (jobTasks[i].ContentProtection != null)
                 {
                     ContentProtection contentProtection = jobTasks[i].ContentProtection;
-                    contentProtection.RowKey = job.Tasks[i].Id;
+                    contentProtection.Id = job.Tasks[i].Id;
                     contentProtection.DirectoryId = directoryId;
                     contentProtection.Audience = directoryClientId;
-                    contentProtections.Add(contentProtection);
+                    jobProtection.Add(contentProtection);
                 }
             }
-            return contentProtections.ToArray();
+            return jobProtection.ToArray();
         }
 
-        public static void DeleteContentProtections(TableClient tableClient, string jobId)
-        {
-            string tableName = Constant.Storage.Table.ContentProtection;
-            ContentProtection[] contentProtections = tableClient.GetEntities<ContentProtection>(tableName, jobId);
-            tableClient.DeleteEntities(tableName, contentProtections);
-        }
+        //public static void DeleteContentProtection(TableClient tableClient, string jobId)
+        //{
+        //    string tableName = Constant.Storage.Table.ContentProtection;
+        //    ContentProtection[] contentProtection = tableClient.GetEntities<ContentProtection>(tableName, jobId);
+        //    tableClient.DeleteEntities(tableName, contentProtection);
+        //}
 
         public static StreamProtection[] GetStreamProtections(string authToken, string protectionTypes)
         {

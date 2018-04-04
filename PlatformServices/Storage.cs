@@ -87,7 +87,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 CloudAnalyticsClient storageAnalytics = storageAccount.CreateCloudAnalyticsClient();
                 TableQuery<CapacityEntity> capacityQuery = storageAnalytics.CreateCapacityQuery();
-                IQueryable<CapacityEntity> capacityData = capacityQuery.Where(x => x.RowKey == Constant.Storage.Table.Key.CapacityData);
+                IQueryable<CapacityEntity> capacityData = capacityQuery.Where(x => x.RowKey == Constant.Storage.CapacityData);
                 try
                 {
                     List<CapacityEntity> capacities = capacityData.ToList();
@@ -222,7 +222,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             NameValueCollection storageAccounts = new NameValueCollection();
             MediaClient mediaClient = new MediaClient(authToken);
-            IStorageAccount defaultStorage = mediaClient.DefaultStorageAccount;
+            IStorageAccount defaultStorage = mediaClient.StorageAccount;
             string accountInfo = GetAccountInfo(authToken, defaultStorage);
             storageAccounts.Add(accountInfo, defaultStorage.Name);
             IStorageAccount[] accounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
@@ -238,19 +238,17 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public static void UploadFile(string authToken, string storageAccount, string containerName,
-                                      Stream readStream, string fileName, int chunkIndex, int chunksCount)
+                                      Stream fileStream, string fileName, int chunkIndex, int chunksCount)
         {
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             if (chunksCount == 0)
             {
-                blobClient.UploadFile(readStream, containerName, null, fileName);
+                blobClient.UploadFile(fileStream, containerName, null, fileName);
             }
             else
             {
-                User authUser = new User(authToken);
-                string partitionKey = authUser.Id;
                 bool lastBlock = (chunkIndex == chunksCount - 1);
-                blobClient.UploadBlock(readStream, containerName, null, fileName, partitionKey, chunkIndex, lastBlock);
+                blobClient.UploadBlock(fileStream, containerName, null, fileName, chunkIndex, lastBlock);
             }
         }
     }

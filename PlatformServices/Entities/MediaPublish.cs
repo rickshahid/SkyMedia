@@ -1,12 +1,18 @@
-﻿namespace AzureSkyMedia.PlatformServices
+﻿using Newtonsoft.Json;
+
+namespace AzureSkyMedia.PlatformServices
 {
-    internal class MediaPublish : StorageEntity
+    internal class MediaPublish
     {
+        [JsonProperty(PropertyName = "id")]
+
+        public string Id { get; set; }
+
         public MediaAccount MediaAccount { get; set; }
 
-        public string StorageAccountName { get; set; }
+        public bool MediaInsight { get; set; }
 
-        public string StorageAccountKey { get; set; }
+        public string MobileNumber { get; set; }
     }
 
     public class MediaPublished

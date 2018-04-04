@@ -12,13 +12,16 @@ namespace AzureSkyMedia.PlatformServices
     {
         private string _apimKey;
 
-        public WebClient()
-        {
-        }
-
         public WebClient(string apimKey)
         {
             _apimKey = apimKey;
+        }
+
+        public static string GetData(string requestUrl)
+        {
+            WebClient webClient = new WebClient(null);
+            HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, requestUrl);
+            return webClient.GetResponse<string>(requestMessage);
         }
 
         private T GetResponseData<T>(HttpContent responseContent)

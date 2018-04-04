@@ -37,7 +37,7 @@ function GetJobTask(taskNumber) {
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
             case "VideoIndexer":
-                jobTask.ContentIndexer = {
+                jobTask.VideoIndexer = {
                     LanguageId: $("#indexerLanguageId" + taskNumber).val(),
                     SearchPartition: $("#indexerSearchPartition" + taskNumber).val(),
                     VideoDescription: $("#indexerVideoDescription" + taskNumber).val(),

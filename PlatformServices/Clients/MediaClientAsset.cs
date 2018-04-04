@@ -17,7 +17,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string fileName = fileNames[0];
                 IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-                CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
+                CloudBlockBlob sourceBlob = blobClient.GetBlockBlob(sourceContainer, null, fileName, true);
                 Stream sourceStream = sourceBlob.OpenRead();
                 assetFile.Upload(sourceStream);
                 foreach (ILocator locator in asset.Locators)
@@ -33,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (string fileName in fileNames)
                 {
                     IAssetFile assetFile = asset.AssetFiles.Create(fileName);
-                    CloudBlockBlob sourceBlob = blobClient.GetBlob(sourceContainer, null, fileName, true);
+                    CloudBlockBlob sourceBlob = blobClient.GetBlockBlob(sourceContainer, null, fileName, true);
                     Stream sourceStream = sourceBlob.OpenRead();
                     Task uploadTask = assetFile.UploadAsync(sourceStream, transferClient, sasLocator, CancellationToken.None);
                     uploadTasks.Add(uploadTask);
@@ -130,7 +130,7 @@ namespace AzureSkyMedia.PlatformServices
             IAsset asset = _media.Assets.Create(assetName, storageAccount, assetEncryption);
 
             BlobClient blobClient = new BlobClient();
-            string sourceContainer = Constant.Storage.Blob.Container.ContentProcess;
+            string sourceContainer = Constant.Storage.Blob.Container.MediaProcess;
 
             UploadAssetFiles(blobClient, sourceContainer, asset, fileNames);
             SetPrimaryFile(asset);

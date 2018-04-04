@@ -11,8 +11,18 @@
         public string SourceUrl { get; set; }
     }
 
-    public class ContentIndexer
+    public class VideoIndexer
     {
+        public VideoIndexer()
+        {
+            LanguageId = string.Empty;
+            SearchPartition = string.Empty;
+            VideoDescription = string.Empty;
+            VideoMetadata = string.Empty;
+            VideoPublic = false;
+            AudioOnly = false;
+        }
+
         public string LanguageId { get; set; }
 
         public string SearchPartition { get; set; }

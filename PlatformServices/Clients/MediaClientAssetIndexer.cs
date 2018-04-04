@@ -11,7 +11,6 @@ namespace AzureSkyMedia.PlatformServices
     {
         private WebClient _indexer;
         private string _serviceUrl;
-        private string _accountId;
 
         private IndexerClient()
         {
@@ -19,20 +18,12 @@ namespace AzureSkyMedia.PlatformServices
             _serviceUrl = AppSetting.GetValue(settingKey);
         }
 
-        public IndexerClient(string authToken) : this()
+        public IndexerClient(MediaAccount mediaAccount) : this()
         {
-            User authUser = new User(authToken);
-            if (!string.IsNullOrEmpty(authUser.MediaAccount.IndexerKey))
+            if (!string.IsNullOrEmpty(mediaAccount.IndexerKey))
             {
-                _indexer = new WebClient(authUser.MediaAccount.IndexerKey);
+                _indexer = new WebClient(mediaAccount.IndexerKey);
             }
-            _accountId = authUser.MediaAccount.Id;
-        }
-
-        public IndexerClient(string accountId, string indexerKey) : this()
-        {
-            _indexer = new WebClient(indexerKey);
-            _accountId = accountId;
         }
 
         public bool IndexerEnabled
@@ -47,40 +38,39 @@ namespace AzureSkyMedia.PlatformServices
 
         private string GetCallbackUrl()
         {
-            string settingKey = Constant.AppSettingKey.MediaPublishInsightUrl;
+            string settingKey = Constant.AppSettingKey.MediaPublishUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
-            callbackUrl = string.Format(callbackUrl, _accountId);
             return WebUtility.UrlEncode(callbackUrl);
         }
 
-        private void PublishInsight(string authToken, string indexId)
+        private void PublishInsight(string indexId)
         {
-            User authUser = new User(authToken);
-            MediaPublish insightPublish = new MediaPublish
-            {
-                PartitionKey = authUser.MediaAccount.Id,
-                RowKey = indexId,
-                MediaAccount = authUser.MediaAccount
-            };
-            TableClient tableClient = new TableClient();
-            string tableName = Constant.Storage.Table.InsightPublish;
-            tableClient.UpsertEntity(tableName, insightPublish);
+            //User authUser = new User(authToken);
+            //MediaPublish insightPublish = new MediaPublish
+            //{
+            //    PartitionKey = authUser.MediaAccount.Id,
+            //    RowKey = indexId,
+            //    MediaAccount = authUser.MediaAccount
+            //};
+            //TableClient tableClient = new TableClient();
+            //string tableName = Constant.Storage.Table.InsightPublish;
+            //tableClient.UpsertEntity(tableName, insightPublish);
         }
 
-        private string IndexVideo(IAsset asset, string locatorUrl, ContentIndexer contentIndexer)
+        private string IndexVideo(IAsset asset, string locatorUrl, VideoIndexer videoIndexer)
         {
             string indexId = string.Empty;
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
             requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(asset.Name));
-            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(contentIndexer.VideoDescription));
-            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(contentIndexer.VideoMetadata));
+            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(videoIndexer.VideoDescription));
+            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(videoIndexer.VideoMetadata));
             requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
             requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
-            requestUrl = string.Concat(requestUrl, "&language=", contentIndexer.LanguageId);
-            requestUrl = string.Concat(requestUrl, "&partition=", contentIndexer.SearchPartition);
+            requestUrl = string.Concat(requestUrl, "&language=", videoIndexer.LanguageId);
+            requestUrl = string.Concat(requestUrl, "&partition=", videoIndexer.SearchPartition);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
-            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(contentIndexer.VideoPublic));
-            if (contentIndexer.AudioOnly)
+            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(videoIndexer.VideoPublic));
+            if (videoIndexer.AudioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=audioOnly");
             }
@@ -180,7 +170,7 @@ namespace AzureSkyMedia.PlatformServices
             return index;
         }
 
-        public void ResetIndex(string authToken, string indexId)
+        public void ResetIndex(string indexId)
         {
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/reindex/", indexId);
             requestUrl = string.Concat(requestUrl, "?callbackUrl=", GetCallbackUrl());
@@ -188,18 +178,19 @@ namespace AzureSkyMedia.PlatformServices
             {
                 _indexer.GetResponse<object>(request);
             }
-            PublishInsight(authToken, indexId);
+            PublishInsight(indexId);
         }
 
-        public void IndexVideo(string authToken, MediaClient mediaClient, IAsset asset, ContentIndexer contentIndexer)
+        public void IndexVideo(MediaClient mediaClient, IAsset asset, VideoIndexer videoIndexer)
         {
+            if (videoIndexer == null) videoIndexer = new VideoIndexer();
             string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
-            string indexId = IndexVideo(asset, locatorUrl, contentIndexer);
+            string indexId = IndexVideo(asset, locatorUrl, videoIndexer);
             if (!string.IsNullOrEmpty(indexId))
             {
                 asset.AlternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, indexId);
                 asset.Update();
-                PublishInsight(authToken, indexId);
+                PublishInsight(indexId);
             }
         }
 

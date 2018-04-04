@@ -1,6 +1,8 @@
-﻿namespace AzureSkyMedia.PlatformServices
+﻿using Newtonsoft.Json;
+
+namespace AzureSkyMedia.PlatformServices
 {
-    public class ContentProtection : StorageEntity
+    public class ContentProtection
     {
         public ContentProtection()
         {
@@ -21,6 +23,9 @@
             this.DirectoryId = directoryId;
             this.Audience = AppSetting.GetValue(settingKey);
         }
+
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
 
         public string DirectoryId { get; set; }
 

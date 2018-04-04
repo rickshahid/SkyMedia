@@ -17,6 +17,7 @@ namespace AzureSkyMedia.PlatformServices
             public const char Connection = ';';
             public const char Identifier = '_';
             public const char Application = ',';
+            public const char File = '-';
         }
 
         public struct TextFormatter
@@ -84,16 +85,13 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
 
-            public const string MediaPublishContentUrl = "Media.Publish.ContentUrl";
-            public const string MediaPublishContentQueue = "Media.Publish.ContentQueue";
-
-            public const string MediaPublishInsightUrl = "Media.Publish.InsightUrl";
-            public const string MediaPublishInsightQueue = "Media.Publish.InsightQueue";
-
             public const string MediaLocatorWriteDurationMinutes = "Media.Locator.WriteDurationMinutes";
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
             public const string MediaLocatorTunerPageSize = "Media.Locator.TunerPageSize";
             public const string MediaLocatorAutoRenewal = "Media.Locator.AutoRenewal";
+
+            public const string MediaPublishUrl = "Media.Publish.Url";
+            public const string MediaPublishQueue = "Media.Publish.Queue";
 
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
@@ -108,8 +106,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string DatabaseIdPrefix = "DatabaseId=";
 
             public const string AzureStorage = "Storage";
-            public const string AzureDatabaseDocument = "Database.Document";
-            public const string AzureDatabaseTable = "Database.Table";
+            public const string AzureDatabase = "Database";
             public const string AzureCache = "Cache";
         }
 
@@ -154,6 +151,7 @@ namespace AzureSkyMedia.PlatformServices
         public struct Storage
         {
             public const string NotAvailable = "N/A";
+            public const string CapacityData = "data";
 
             public struct Account
             {
@@ -165,21 +163,8 @@ namespace AzureSkyMedia.PlatformServices
                 public struct Container
                 {
                     public const string FileUpload = "upload";
-                    public const string ContentProcess = "ams";
+                    public const string MediaProcess = "ams";
                     public const string ContentDelivery = "cdn";
-                }
-            }
-
-            public struct Table
-            {
-                public const string FileUpload = "FileUpload";
-                public const string ContentProtection = "ContentProtection";
-                public const string ContentPublish = "ContentPublish";
-                public const string InsightPublish = "InsightPublish";
-
-                public struct Key
-                {
-                    public const string CapacityData = "data";
                 }
             }
 
@@ -193,8 +178,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
+                public const string MediaInsight = "MediaInsight";
+                public const string MediaPublish = "MediaPublish";
                 public const string ProcessorConfig = "ProcessorConfig";
-                public const string ContentInsight = "ContentInsight";
             }
 
             public struct Procedure
@@ -212,7 +198,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Media
         {
-            public const string AccountFileName = "MediaAccount.json";
+            public const string AssetIdPrefix = "nb:cid:";
 
             public struct ProcessorId
             {
@@ -305,8 +291,9 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct FileExtension
             {
-                public const string ManifestAsset = ".txt";
-                public const string ManifestStream = ".ism";
+                public const string JobLog = ".log";
+                public const string JobManifest = ".txt";
+                public const string StreamManifest = ".ism";
                 public const string PremiumWorkflow = ".workflow";
 
                 public const string Json = ".json";

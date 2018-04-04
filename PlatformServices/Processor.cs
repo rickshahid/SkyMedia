@@ -198,10 +198,10 @@ namespace AzureSkyMedia.PlatformServices
         public static NameValueCollection GetProcessorPresets(MediaProcessor mediaProcessor, string accountId)
         {
             NameValueCollection processorPresets = new NameValueCollection();
-            DocumentClient documentClient = new DocumentClient();
+            DatabaseClient databaseClient = new DatabaseClient();
             string collectionId = Constant.Database.Collection.ProcessorConfig;
             string accountPresetId = string.Concat(accountId, Constant.TextDelimiter.Identifier, mediaProcessor.ToString());
-            JObject[] presets = documentClient.GetDocuments(collectionId);
+            JObject[] presets = databaseClient.GetDocuments(collectionId);
             foreach (JObject preset in presets)
             {
                 string presetId = preset["id"].ToString();

@@ -10,7 +10,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         private bool IsManifestFile(string fileName)
         {
-            return fileName.EndsWith(Constant.Media.FileExtension.ManifestStream, StringComparison.OrdinalIgnoreCase);
+            return fileName.EndsWith(Constant.Media.FileExtension.StreamManifest, StringComparison.OrdinalIgnoreCase);
         }
 
         private bool IsPrimaryFile(IAssetFile assetFile)

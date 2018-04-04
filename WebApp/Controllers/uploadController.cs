@@ -8,15 +8,12 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class uploadController : Controller
     {
-        public JsonResult file(string name, int chunk, int chunks, string storageAccount, string containerName)
+        public JsonResult file(string name, int chunk, int chunks, string storageAccount)
         {
-            if (string.IsNullOrEmpty(containerName))
-            {
-                containerName = Constant.Storage.Blob.Container.FileUpload;
-            }
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            Stream readStream = this.Request.Form.Files[0].OpenReadStream();
-            Storage.UploadFile(authToken, storageAccount, containerName, readStream, name, chunk, chunks);
+            string containerName = Constant.Storage.Blob.Container.FileUpload;
+            Stream fileStream = this.Request.Form.Files[0].OpenReadStream();
+            Storage.UploadFile(authToken, storageAccount, containerName, fileStream, name, chunk, chunks);
             return Json(chunk);
         }
 

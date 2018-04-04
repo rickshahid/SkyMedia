@@ -14,7 +14,7 @@ function LoadTreeNodes(filesView) {
             "data": {
                 "url": function (node) {
                     var queryString = node.id == "#" ? "" : "?assetId=" + node.data.entityId + "&getFiles=true";
-                    return "/asset/assets" + queryString;
+                    return "/asset/nodes" + queryString;
                 },
                 "data": function (node) {
                     return { "id": node.id };

@@ -91,9 +91,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             JObject preset;
             string collectionId = Constant.Database.Collection.ProcessorConfig;
             string procedureId = Constant.Database.Procedure.ProcessorConfig;
-            using (DocumentClient documentClient = new DocumentClient())
+            using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                preset = documentClient.GetDocument(collectionId, procedureId, "id", presetId);
+                preset = databaseClient.GetDocument(collectionId, procedureId, "id", presetId);
             }
             return Json(preset);
         }
@@ -104,9 +104,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             if (HasUniqueName(processorPreset, out JObject presetConfig))
             {
                 string collectionId = Constant.Database.Collection.ProcessorConfig;
-                using (DocumentClient documentClient = new DocumentClient())
+                using (DatabaseClient databaseClient = new DatabaseClient())
                 {
-                    documentClient.UpsertDocument(collectionId, presetConfig);
+                    databaseClient.UpsertDocument(collectionId, presetConfig);
                     saved = true;
                 }
             }
@@ -120,9 +120,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 string collectionId = Constant.Database.Collection.ProcessorConfig;
                 string documentId = presetConfig["id"].ToString();
-                using (DocumentClient documentClient = new DocumentClient())
+                using (DatabaseClient databaseClient = new DatabaseClient())
                 {
-                    documentClient.DeleteDocument(collectionId, documentId);
+                    databaseClient.DeleteDocument(collectionId, documentId);
                     deleted = true;
                 }
             }

@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
-        public ContentIndexer ContentIndexer { get; set; }
+        public VideoIndexer VideoIndexer { get; set; }
 
         public TaskOptions Options { get; set; }
     }

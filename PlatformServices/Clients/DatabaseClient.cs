@@ -11,27 +11,25 @@ using Microsoft.WindowsAzure.MediaServices.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using DocClient = Microsoft.Azure.Documents.Client.DocumentClient;
-
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class DocumentClient : IDisposable
+    internal class DatabaseClient : IDisposable
     {
-        private DocClient _database;
+        private DocumentClient _cosmos;
         private string _databaseId;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && _database != null)
+            if (disposing && _cosmos != null)
             {
-                _database.Dispose();
-                _database = null;
+                _cosmos.Dispose();
+                _cosmos = null;
             }
         }
 
-        public DocumentClient()
+        public DatabaseClient()
         {
-            string settingKey = Constant.AppSettingKey.AzureDatabaseDocument;
+            string settingKey = Constant.AppSettingKey.AzureDatabase;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];
@@ -45,7 +43,7 @@ namespace AzureSkyMedia.PlatformServices
             }
 
             _databaseId = accountCredentials[2];
-            _database = new DocClient(new Uri(accountEndpoint), accountKey, connectionPolicy);
+            _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey, connectionPolicy);
         }
 
         private IQueryable<Document> GetDocumentQuery(string collectionId)
@@ -55,7 +53,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 EnableCrossPartitionQuery = true
             };
-            return _database.CreateDocumentQuery(collectionLink, feedOptions);
+            return _cosmos.CreateDocumentQuery(collectionLink, feedOptions);
         }
 
         private JObject ParseDocument(string documentData)
@@ -76,12 +74,8 @@ namespace AzureSkyMedia.PlatformServices
             return document;
         }
 
-        public void Initialize(string modelsDirectory)
+        private Uri CreateCollection(Uri databaseUri, string collectionId)
         {
-            Database databaseId = new Database { Id = _databaseId };
-            ResourceResponse<Database> database = _database.CreateDatabaseIfNotExistsAsync(databaseId).Result;
-            Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
-
             string settingKey = Constant.AppSettingKey.DatabaseCollectionThroughputUnits;
             string throughputUnits = AppSetting.GetValue(settingKey);
 
@@ -92,13 +86,26 @@ namespace AzureSkyMedia.PlatformServices
 
             DocumentCollection documentCollection = new DocumentCollection()
             {
-                Id = Constant.Database.Collection.ContentInsight
+                Id = collectionId
             };
 
-            ResourceResponse<DocumentCollection> collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
-            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, documentCollection.Id);
+            ResourceResponse<DocumentCollection> collection = _cosmos.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
+            return UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
+        }
 
-            string collectionDirectory = string.Concat(modelsDirectory, @"\", documentCollection.Id);
+        public void Initialize(string modelsDirectory)
+        {
+            Database databaseId = new Database { Id = _databaseId };
+            ResourceResponse<Database> database = _cosmos.CreateDatabaseIfNotExistsAsync(databaseId).Result;
+            Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
+
+            string collectionId = Constant.Database.Collection.MediaPublish;
+            Uri collectionUri = CreateCollection(databaseUri, collectionId);
+
+            collectionId = Constant.Database.Collection.MediaInsight;
+            collectionUri = CreateCollection(databaseUri, collectionId);
+
+            string collectionDirectory = string.Concat(modelsDirectory, @"\", collectionId);
 
             string jsFile = string.Concat(collectionDirectory, @"\Functions\isTimecodeFragment.js");
             UserDefinedFunction function = new UserDefinedFunction()
@@ -106,7 +113,7 @@ namespace AzureSkyMedia.PlatformServices
                 Id = "isTimecodeFragment",
                 Body = File.ReadAllText(jsFile)
             };
-            _database.CreateUserDefinedFunctionAsync(collectionUri, function);
+            _cosmos.CreateUserDefinedFunctionAsync(collectionUri, function);
 
             jsFile = string.Concat(collectionDirectory, @"\Procedures\getTimecodeFragment.js");
             StoredProcedure procedure = new StoredProcedure()
@@ -114,17 +121,12 @@ namespace AzureSkyMedia.PlatformServices
                 Id = "getTimecodeFragment",
                 Body = File.ReadAllText(jsFile)
             };
-            _database.CreateStoredProcedureAsync(collectionUri, procedure);
+            _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
 
-            documentCollection = new DocumentCollection()
-            {
-                Id = Constant.Database.Collection.ProcessorConfig
-            };
+            collectionId = Constant.Database.Collection.ProcessorConfig;
+            collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collection = _database.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
-            collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, documentCollection.Id);
-
-            collectionDirectory = string.Concat(modelsDirectory, @"\", documentCollection.Id);
+            collectionDirectory = string.Concat(modelsDirectory, @"\", collectionId);
 
             jsFile = string.Concat(collectionDirectory, @"\Procedures\getProcessorConfig.js");
             procedure = new StoredProcedure()
@@ -132,7 +134,7 @@ namespace AzureSkyMedia.PlatformServices
                 Id = "getProcessorConfig",
                 Body = File.ReadAllText(jsFile)
             };
-            _database.CreateStoredProcedureAsync(collectionUri, procedure);
+            _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
 
             string presetsDirectory = string.Concat(modelsDirectory, @"\ProcessorPresets");
             string[] mediaProcessors = Directory.GetDirectories(presetsDirectory);
@@ -146,7 +148,7 @@ namespace AzureSkyMedia.PlatformServices
                         StreamReader streamReader = new StreamReader(processorPreset);
                         JsonTextReader presetReader = new JsonTextReader(streamReader);
                         JObject presetConfig = JObject.Load(presetReader);
-                        UpsertDocument(documentCollection.Id, presetConfig);
+                        UpsertDocument(collectionId, presetConfig);
                     }
                 }
             }
@@ -194,6 +196,12 @@ namespace AzureSkyMedia.PlatformServices
             return documents.ToArray();
         }
 
+        public T GetDocument<T>(string collectionId, string documentId)
+        {
+            JObject document = GetDocument(collectionId, documentId);
+            return document == null ? default(T): document.ToObject<T>();
+        }
+
         public JObject GetDocument(string collectionId, string documentId)
         {
             JObject document = null;
@@ -212,17 +220,23 @@ namespace AzureSkyMedia.PlatformServices
         {
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
-            Task<StoredProcedureResponse<JValue>> procedureTask = _database.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
+            Task<StoredProcedureResponse<JValue>> procedureTask = _cosmos.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
             procedureTask.Wait();
             StoredProcedureResponse<JValue> procedureResponse = procedureTask.Result;
             JValue procedureValue = procedureResponse.Response;
             return ParseDocument(procedureValue.ToString());
         }
 
+        public string UpsertDocument(string collectionId, object entity)
+        {
+            JObject document = JObject.FromObject(entity);
+            return UpsertDocument(collectionId, document);
+        }
+
         public string UpsertDocument(string collectionId, JObject document)
         {
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-            Task<ResourceResponse<Document>> upsertTask = _database.UpsertDocumentAsync(collectionUri, document);
+            Task<ResourceResponse<Document>> upsertTask = _cosmos.UpsertDocumentAsync(collectionUri, document);
             upsertTask.Wait();
             ResourceResponse<Document> resourceResponse = upsertTask.Result;
             return resourceResponse.Resource.Id;
@@ -234,7 +248,7 @@ namespace AzureSkyMedia.PlatformServices
             if (document != null)
             {
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                Task<ResourceResponse<Document>> deleteTask = _database.DeleteDocumentAsync(documentUri);
+                Task<ResourceResponse<Document>> deleteTask = _cosmos.DeleteDocumentAsync(documentUri);
                 deleteTask.Wait();
             }
         }

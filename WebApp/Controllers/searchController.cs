@@ -12,7 +12,8 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             JObject results = null;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            IndexerClient indexerClient = new IndexerClient(authToken);
+            MediaClient mediaClient = new MediaClient(authToken);
+            IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
             if (indexerClient.IndexerEnabled)
             {
                 results = indexerClient.Search(searchCriteria);

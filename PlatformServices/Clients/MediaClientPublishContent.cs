@@ -43,7 +43,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (IAsset inputAsset in job.InputMediaAssets)
                 {
-                    PublishAnalytics(mediaClient, contentPublish, job, encoderTasks);
+                    //PublishAnalytics(mediaClient, contentPublish, job, encoderTasks);
                 }
             }
             else
@@ -54,29 +54,25 @@ namespace AzureSkyMedia.PlatformServices
                     foreach (IAsset outputAsset in encoderTask.OutputAssets)
                     {
                         PublishAsset(mediaClient, outputAsset, contentProtection);
-                        PublishAnalytics(mediaClient, contentPublish, job, encoderTasks);
+                        //PublishAnalytics(mediaClient, contentPublish, job, encoderTasks);
                     }
                 }
             }
         }
 
-        public static MediaPublished PublishContent(MediaPublish contentPublish)
+        public static MediaPublished PublishContent(MediaPublish mediaPublish)
         {
-            string accountId = contentPublish.PartitionKey;
-            string jobId = contentPublish.RowKey;
-
-            MediaClient mediaClient = new MediaClient(contentPublish.MediaAccount);
-            IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
-
             MediaPublished mediaPublished = null;
+            MediaClient mediaClient = new MediaClient(mediaPublish.MediaAccount);
+            IJob job = mediaClient.GetEntityById(MediaEntity.Job, mediaPublish.Id) as IJob;
             if (job != null)
             {
                 mediaClient.SetProcessorUnits(job, MediaJobNodeType.Basic, false);
-                PublishJob(mediaClient, job, contentPublish);
+                PublishJob(mediaClient, job, mediaPublish);
                 mediaPublished = new MediaPublished()
                 {
-                    MobileNumber = contentPublish.MobileNumber,
-                    StatusMessage = GetNotificationMessage(accountId, job)
+                    MobileNumber = mediaPublish.MobileNumber,
+                    StatusMessage = GetNotificationMessage(mediaPublish.MediaAccount.Id, job)
                 };
             }
             return mediaPublished;

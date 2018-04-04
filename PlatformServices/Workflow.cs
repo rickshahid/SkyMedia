@@ -18,33 +18,30 @@ namespace AzureSkyMedia.PlatformServices
             return jobInput;
         }
 
-        private static void TrackJob(string directoryId, string authToken, IJob job, MediaJobTask[] jobTasks)
+        private static void TrackJob(string directoryId, string authToken, MediaAccount mediaAccount, IJob job, MediaJobTask[] jobTasks)
         {
-            string storageAccountName = job.InputMediaAssets[0].StorageAccountName;
-            string storageAccountKey = Storage.GetAccountKey(authToken, storageAccountName);
+            string mobileNumber = string.Empty;
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                User authUser = new User(authToken);
+                mobileNumber = authUser.MobileNumber;
+            }
 
-            User authUser = new User(authToken);
             MediaPublish contentPublish = new MediaPublish()
             {
-                UserId = authUser.Id,
-                PartitionKey = authUser.MediaAccount.Id,
-                RowKey = job.Id,
-                MediaAccount = authUser.MediaAccount,
-                StorageAccountName = storageAccountName,
-                StorageAccountKey = storageAccountKey,
-                MobileNumber = authUser.MobileNumber
+                Id = job.Id,
+                MediaAccount = mediaAccount,
+                MobileNumber = mobileNumber
             };
 
-            TableClient tableClient = new TableClient();
-            string tableName = Constant.Storage.Table.ContentPublish;
-            tableClient.InsertEntity(tableName, contentPublish);
+            DatabaseClient databaseClient = new DatabaseClient();
+            string collectionId = Constant.Database.Collection.MediaPublish;
+            databaseClient.UpsertDocument(collectionId, contentPublish);
 
-            ContentProtection[] contentProtections = MediaClient.GetContentProtections(directoryId, job, jobTasks);
-            foreach (ContentProtection contentProtection in contentProtections)
+            ContentProtection[] jobProtection = MediaClient.GetJobProtection(directoryId, job, jobTasks);
+            foreach (ContentProtection contentProtection in jobProtection)
             {
-                tableName = Constant.Storage.Table.ContentProtection;
-                contentProtection.PartitionKey = contentPublish.PartitionKey;
-                tableClient.InsertEntity(tableName, contentProtection);
+                databaseClient.UpsertDocument(collectionId, contentProtection);
             }
         }
 
@@ -99,7 +96,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs);
             IJob job = mediaClient.CreateJob(mediaJob, jobInputs);
-            TrackJob(directoryId, authToken, job, mediaJob.Tasks);
+            TrackJob(directoryId, authToken, mediaClient.MediaAccount, job, mediaJob.Tasks);
             return job;
         }
 
@@ -107,7 +104,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string directoryId = Constant.DirectoryService.B2C;
             IJob job = SubmitJob(directoryId, null, mediaClient, mediaJob, jobInputs) as IJob;
-            return job == null ? string.Empty : job.Id;
+            return job.Id;
         }
     }
 }

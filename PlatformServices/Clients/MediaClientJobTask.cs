@@ -43,9 +43,9 @@ namespace AzureSkyMedia.PlatformServices
             {
                 documentId = string.Concat(jobTask.MediaProcessor.ToString(), Constant.Database.Document.DefaultIdSuffix);
             }
-            using (DocumentClient documentClient = new DocumentClient())
+            using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                processorConfig = documentClient.GetDocument(collectionId, documentId);
+                processorConfig = databaseClient.GetDocument(collectionId, documentId);
             }
             if (processorConfig != null)
             {
