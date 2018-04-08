@@ -8,9 +8,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Id { get; set; }
 
-        public MediaAccount MediaAccount { get; set; }
+        public string[] TaskIds { get; set; }
 
-        public bool MediaInsight { get; set; }
+        public MediaAccount MediaAccount { get; set; }
 
         public string MobileNumber { get; set; }
     }

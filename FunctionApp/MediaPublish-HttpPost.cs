@@ -27,7 +27,12 @@ namespace AzureSkyMedia.FunctionApp
             string indexId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "id", StringComparison.OrdinalIgnoreCase)).Value;
             log.Info($"Index Id: {indexId}");
 
-            if (!string.IsNullOrEmpty(notificationMessage))
+            if (!string.IsNullOrEmpty(indexId))
+            {
+                MediaPublish mediaPublish = EnqueuePublish(indexId);
+                log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
+            }
+            else
             {
                 MediaJobNotification jobNotification = JsonConvert.DeserializeObject<MediaJobNotification>(notificationMessage);
                 if (jobNotification != null)
@@ -35,11 +40,6 @@ namespace AzureSkyMedia.FunctionApp
                     MediaPublish mediaPublish = EnqueuePublish(jobNotification);
                     log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
                 }
-            }
-            else if (!string.IsNullOrEmpty(indexId))
-            {
-                MediaPublish mediaPublish = EnqueuePublish(indexId);
-                log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
             }
 
             return request.CreateResponse(HttpStatusCode.OK);
@@ -52,29 +52,18 @@ namespace AzureSkyMedia.FunctionApp
                 jobNotification.Properties.OldState == MediaJobState.Processing &&
                 jobNotification.Properties.NewState == MediaJobState.Finished)
             {
-                DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.MediaPublish;
-                string documentId = jobNotification.Properties.JobId;
-                mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, documentId);
-                if (mediaPublish != null)
-                {
-                    string settingKey = Constant.AppSettingKey.MediaPublishQueue;
-                    string queueName = AppSetting.GetValue(settingKey);
-                    QueueClient queueClient = new QueueClient();
-                    queueClient.AddMessage(queueName, mediaPublish);
-                }
+                mediaPublish = EnqueuePublish(jobNotification.Properties.JobId);
             }
             return mediaPublish;
         }
 
-        private static MediaPublish EnqueuePublish(string indexId)
+        private static MediaPublish EnqueuePublish(string documentId)
         {
             DatabaseClient databaseClient = new DatabaseClient();
             string collectionId = Constant.Database.Collection.MediaPublish;
-            MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, indexId);
+            MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, documentId);
             if (mediaPublish != null)
             {
-                mediaPublish.MediaInsight = true;
                 string settingKey = Constant.AppSettingKey.MediaPublishQueue;
                 string queueName = AppSetting.GetValue(settingKey);
                 QueueClient queueClient = new QueueClient();

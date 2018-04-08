@@ -206,8 +206,7 @@
     <Compile Include="Clients\MediaClientLive.cs" />
     <Compile Include="Clients\MediaClientNotify.cs" />
     <Compile Include="Clients\MediaClientPublish.cs" />
-    <Compile Include="Clients\MediaClientPublishContent.cs" />
-    <Compile Include="Clients\MediaClientPublishInsight.cs" />
+    <Compile Include="Clients\MediaClientTelemetry.cs" />
     <Compile Include="Clients\StorageClientBlob.cs" />
     <Compile Include="Clients\StorageClientQueue.cs" />
     <Compile Include="Clients\StorageClientTable.cs" />

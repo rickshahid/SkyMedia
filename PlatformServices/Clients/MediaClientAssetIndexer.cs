@@ -43,18 +43,16 @@ namespace AzureSkyMedia.PlatformServices
             return WebUtility.UrlEncode(callbackUrl);
         }
 
-        private void PublishInsight(string indexId)
+        private void PublishInsight(MediaAccount mediaAccount, string indexId)
         {
-            //User authUser = new User(authToken);
-            //MediaPublish insightPublish = new MediaPublish
-            //{
-            //    PartitionKey = authUser.MediaAccount.Id,
-            //    RowKey = indexId,
-            //    MediaAccount = authUser.MediaAccount
-            //};
-            //TableClient tableClient = new TableClient();
-            //string tableName = Constant.Storage.Table.InsightPublish;
-            //tableClient.UpsertEntity(tableName, insightPublish);
+            MediaPublish mediaPublish = new MediaPublish
+            {
+                Id = indexId,
+                MediaAccount = mediaAccount
+            };
+            DatabaseClient databaseClient = new DatabaseClient();
+            string collectionId = Constant.Database.Collection.MediaPublish;
+            databaseClient.UpsertDocument(collectionId, mediaPublish);
         }
 
         private string IndexVideo(IAsset asset, string locatorUrl, VideoIndexer videoIndexer)
@@ -170,7 +168,7 @@ namespace AzureSkyMedia.PlatformServices
             return index;
         }
 
-        public void ResetIndex(string indexId)
+        public void ResetIndex(MediaClient mediaClient, string indexId)
         {
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns/reindex/", indexId);
             requestUrl = string.Concat(requestUrl, "?callbackUrl=", GetCallbackUrl());
@@ -178,7 +176,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 _indexer.GetResponse<object>(request);
             }
-            PublishInsight(indexId);
+            PublishInsight(mediaClient.MediaAccount, indexId);
         }
 
         public void IndexVideo(MediaClient mediaClient, IAsset asset, VideoIndexer videoIndexer)
@@ -190,7 +188,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 asset.AlternateId = string.Concat(MediaProcessor.VideoIndexer.ToString(), Constant.TextDelimiter.Identifier, indexId);
                 asset.Update();
-                PublishInsight(indexId);
+                PublishInsight(mediaClient.MediaAccount, indexId);
             }
         }
 

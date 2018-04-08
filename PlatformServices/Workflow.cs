@@ -7,19 +7,14 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Workflow
     {
-        private static MediaJobInput GetJobInput(IAsset asset)
-        {
-            MediaJobInput jobInput = new MediaJobInput()
-            {
-                AssetId = asset.Id,
-                AssetName = asset.Name,
-                AssetType = asset.AssetType.ToString()
-            };
-            return jobInput;
-        }
-
         private static void TrackJob(string directoryId, string authToken, MediaAccount mediaAccount, IJob job, MediaJobTask[] jobTasks)
         {
+            List<string> taskIds = new List<string>();
+            foreach (ITask task in job.Tasks)
+            {
+                taskIds.Add(task.Id);
+            }
+
             string mobileNumber = string.Empty;
             if (!string.IsNullOrEmpty(authToken))
             {
@@ -30,6 +25,7 @@ namespace AzureSkyMedia.PlatformServices
             MediaPublish contentPublish = new MediaPublish()
             {
                 Id = job.Id,
+                TaskIds = taskIds.ToArray(),
                 MediaAccount = mediaAccount,
                 MobileNumber = mobileNumber
             };
@@ -57,7 +53,7 @@ namespace AzureSkyMedia.PlatformServices
                     assetName = Path.GetFileNameWithoutExtension(fileNames[0]);
                 }
                 IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, fileNames);
-                MediaJobInput jobInput = GetJobInput(asset);
+                MediaJobInput jobInput = MediaClient.GetJobInput(asset);
                 jobInputs.Add(jobInput);
             }
             else
@@ -70,7 +66,7 @@ namespace AzureSkyMedia.PlatformServices
                         assetName = fileName;
                     }
                     IAsset asset = mediaClient.CreateAsset(authToken, assetName, storageAccount, storageEncryption, new string[] { fileName });
-                    MediaJobInput jobInput = GetJobInput(asset);
+                    MediaJobInput jobInput = MediaClient.GetJobInput(asset);
                     jobInputs.Add(jobInput);
                 }
             }
@@ -85,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
                 IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
                 if (asset != null)
                 {
-                    MediaJobInput jobInput = GetJobInput(asset);
+                    MediaJobInput jobInput = MediaClient.GetJobInput(asset);
                     jobInputs.Add(jobInput);
                 }
             }

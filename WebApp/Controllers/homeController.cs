@@ -29,22 +29,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return storageAccounts.ToArray();
         }
 
-        //private static SelectListItem[] GetJobTemplates(string authToken)
-        //{
-        //    List<SelectListItem> jobTemplates = new List<SelectListItem>();
-        //    NameValueCollection templates = MediaClient.GetJobTemplates(authToken);
-        //    foreach (string templateName in templates.Keys)
-        //    {
-        //        SelectListItem jobTemplate = new SelectListItem()
-        //        {
-        //            Text = templateName,
-        //            Value = templates[templateName]
-        //        };
-        //        jobTemplates.Add(jobTemplate);
-        //    }
-        //    return jobTemplates.ToArray();
-        //}
-
         internal static SelectListItem[] GetMediaProcessors(string authToken, bool presetsView)
         {
             List<SelectListItem> mediaProcessors = new List<SelectListItem>();

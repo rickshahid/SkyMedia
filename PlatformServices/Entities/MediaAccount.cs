@@ -2,7 +2,15 @@
 {
     public struct MediaAccount
     {
-        public string Id { get; set; }
+        public string Id
+        {
+            get
+            {
+                string accountId = this.EndpointUrl;
+                accountId = accountId.Split('/')[2];
+                return accountId.Split('.')[0];
+            }
+        }
 
         public string DomainName { get; set; }
 

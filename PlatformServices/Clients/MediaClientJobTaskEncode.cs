@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
                     IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
                     if (asset != null)
                     {
-                        jobInput.PrimaryFile = MediaClient.GetPrimaryFile(asset);
+                        jobInput.PrimaryFile = GetPrimaryFile(asset);
                     }
                 }
                 Array.Sort(jobInputs, OrderByWorkflow);

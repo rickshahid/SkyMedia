@@ -17,7 +17,6 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaAccount mediaAccount = new MediaAccount()
             {
-                Id = GetMediaAccountId(),
                 DomainName = GetMediaAccountDomainName(),
                 EndpointUrl = GetMediaAccountEndpointUrl(),
                 ClientId = GetMediaAccountClientId(),
@@ -25,13 +24,6 @@ namespace AzureSkyMedia.PlatformServices
                 IndexerKey = GetMediaAccountIndexerKey()
             };
             return mediaAccount;
-        }
-
-        private string GetMediaAccountId()
-        {
-            string accountId = GetMediaAccountEndpointUrl();
-            accountId = accountId.Split('/')[2];
-            return accountId.Split('.')[0];
         }
 
         private string GetMediaAccountDomainName()

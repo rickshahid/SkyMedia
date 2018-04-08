@@ -65,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
                                 string documentId = DatabaseClient.GetDocumentId(asset, out bool videoIndexer);
                                 if (videoIndexer)
                                 {
-                                    indexerClient.ResetIndex(documentId);
+                                    indexerClient.ResetIndex(mediaClient, documentId);
                                 }
                                 else
                                 {
@@ -107,6 +107,23 @@ namespace AzureSkyMedia.PlatformServices
                 mediaJob.Name = jobInputs.Length > 1 ? Constant.Media.Job.MultipleInputAssets : jobInputs[0].AssetName;
             }
             return mediaJob;
+        }
+
+        public static MediaJobInput GetJobInput(MediaClient mediaClient, string assetId)
+        {
+            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+            return asset == null ? new MediaJobInput() : GetJobInput(asset);
+        }
+
+        public static MediaJobInput GetJobInput(IAsset asset)
+        {
+            MediaJobInput jobInput = new MediaJobInput()
+            {
+                AssetId = asset.Id,
+                AssetName = asset.Name,
+                AssetType = asset.AssetType.ToString()
+            };
+            return jobInput;
         }
 
         public IJob CreateJob(MediaJob mediaJob, MediaJobInput[] jobInputs)

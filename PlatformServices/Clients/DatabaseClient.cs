@@ -17,22 +17,19 @@ namespace AzureSkyMedia.PlatformServices
     {
         private DocumentClient _cosmos;
         private string _databaseId;
+        private string _sessionId;
 
-        protected virtual void Dispose(bool disposing)
+        public DatabaseClient() : this(string.Empty)
         {
-            if (disposing && _cosmos != null)
-            {
-                _cosmos.Dispose();
-                _cosmos = null;
-            }
         }
 
-        public DatabaseClient()
+        public DatabaseClient(string sessionId)
         {
             string settingKey = Constant.AppSettingKey.AzureDatabase;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];
+            _databaseId = accountCredentials[2];
 
             settingKey = Constant.AppSettingKey.DatabaseRegionsRead;
             string[] dataRegionsRead = AppSetting.GetValue(settingKey, true);
@@ -42,8 +39,8 @@ namespace AzureSkyMedia.PlatformServices
                 connectionPolicy.PreferredLocations.Add(dataRegionRead);
             }
 
-            _databaseId = accountCredentials[2];
             _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey, connectionPolicy);
+            _sessionId = sessionId;
         }
 
         private IQueryable<Document> GetDocumentQuery(string collectionId)
@@ -51,52 +48,43 @@ namespace AzureSkyMedia.PlatformServices
             string collectionLink = string.Concat("dbs/", _databaseId, "/colls/", collectionId);
             FeedOptions feedOptions = new FeedOptions()
             {
-                EnableCrossPartitionQuery = true
+                SessionToken = _sessionId
             };
             return _cosmos.CreateDocumentQuery(collectionLink, feedOptions);
         }
 
-        private JObject ParseDocument(string documentData)
+        private JObject GetJDocument(string jsonData)
         {
-            JObject document = null;
-            if (!string.IsNullOrEmpty(documentData))
+            JObject jDocument = null;
+            if (!string.IsNullOrEmpty(jsonData))
             {
-                document = JObject.Parse(documentData);
-                JProperty[] properties = document.Properties().ToArray();
-                foreach (JProperty property in properties)
+                jDocument = JObject.Parse(jsonData);
+                JProperty[] jProperties = jDocument.Properties().ToArray();
+                foreach (JProperty jProperty in jProperties)
                 {
-                    if (property.Name.StartsWith(Constant.Database.Document.SystemPropertyPrefix))
+                    if (jProperty.Name.StartsWith(Constant.Database.Document.SystemPropertyPrefix))
                     {
-                        document.Remove(property.Name);
+                        jDocument.Remove(jProperty.Name);
                     }
                 }
             }
-            return document;
+            return jDocument;
         }
 
         private Uri CreateCollection(Uri databaseUri, string collectionId)
         {
             string settingKey = Constant.AppSettingKey.DatabaseCollectionThroughputUnits;
             string throughputUnits = AppSetting.GetValue(settingKey);
-
-            RequestOptions collectionOptions = new RequestOptions()
-            {
-                OfferThroughput = int.Parse(throughputUnits)
-            };
-
-            DocumentCollection documentCollection = new DocumentCollection()
-            {
-                Id = collectionId
-            };
-
+            RequestOptions collectionOptions = new RequestOptions() { OfferThroughput = int.Parse(throughputUnits) };
+            DocumentCollection documentCollection = new DocumentCollection() { Id = collectionId };
             ResourceResponse<DocumentCollection> collection = _cosmos.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection, collectionOptions).Result;
             return UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
         }
 
         public void Initialize(string modelsDirectory)
         {
-            Database databaseId = new Database { Id = _databaseId };
-            ResourceResponse<Database> database = _cosmos.CreateDatabaseIfNotExistsAsync(databaseId).Result;
+            Database database = new Database { Id = _databaseId };
+            _cosmos.CreateDatabaseIfNotExistsAsync(database).Wait();
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
             string collectionId = Constant.Database.Collection.MediaPublish;
@@ -145,24 +133,15 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     if (processorPreset.EndsWith(Constant.Media.FileExtension.Json, StringComparison.OrdinalIgnoreCase))
                     {
-                        StreamReader streamReader = new StreamReader(processorPreset);
-                        JsonTextReader presetReader = new JsonTextReader(streamReader);
-                        JObject presetConfig = JObject.Load(presetReader);
-                        UpsertDocument(collectionId, presetConfig);
+                        StreamReader fileReader = new StreamReader(processorPreset);
+                        using (JsonTextReader presetReader = new JsonTextReader(fileReader))
+                        {
+                            JObject presetConfig = JObject.Load(presetReader);
+                            UpsertDocument(collectionId, presetConfig);
+                        }
                     }
                 }
             }
-        }
-
-        public static JObject SetContext(JObject document, MediaAccount mediaAccount, string assetId)
-        {
-            document["accountId"] = mediaAccount.Id;
-            document["accountDomain"] = mediaAccount.DomainName;
-            document["accountEndpoint"] = mediaAccount.EndpointUrl;
-            document["clientId"] = mediaAccount.ClientId;
-            document["clientKey"] = mediaAccount.ClientKey;
-            document["assetId"] = assetId;
-            return document;
         }
 
         public static string GetDocumentId(IAsset asset, out bool videoIndexer)
@@ -190,8 +169,11 @@ namespace AzureSkyMedia.PlatformServices
             IEnumerable<Document> docs = query.AsEnumerable<Document>();
             foreach (Document doc in docs)
             {
-                JObject document = ParseDocument(doc.ToString());
-                documents.Add(document);
+                JObject document = GetJDocument(doc.ToString());
+                if (document != null)
+                {
+                    documents.Add(document);
+                }
             }
             return documents.ToArray();
         }
@@ -211,7 +193,7 @@ namespace AzureSkyMedia.PlatformServices
             Document doc = documents.FirstOrDefault();
             if (doc != null)
             {
-                document = ParseDocument(doc.ToString());
+                document = GetJDocument(doc.ToString());
             }
             return document;
         }
@@ -224,7 +206,7 @@ namespace AzureSkyMedia.PlatformServices
             procedureTask.Wait();
             StoredProcedureResponse<JValue> procedureResponse = procedureTask.Result;
             JValue procedureValue = procedureResponse.Response;
-            return ParseDocument(procedureValue.ToString());
+            return GetJDocument(procedureValue.ToString());
         }
 
         public string UpsertDocument(string collectionId, object entity)
@@ -257,6 +239,15 @@ namespace AzureSkyMedia.PlatformServices
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && _cosmos != null)
+            {
+                _cosmos.Dispose();
+                _cosmos = null;
+            }
         }
     }
 }

@@ -14,14 +14,17 @@ namespace AzureSkyMedia.FunctionApp
         [return: TwilioSms(AccountSidSetting = "Twilio.Account.Id", AuthTokenSetting = "Twilio.Account.Token", From = "%Twilio.Message.From%")]
         public static SMSMessage Run([QueueTrigger("media-publish")] string message, TraceWriter log)
         {
-            SMSMessage publishMessage = null;
-            log.Info($"Queue Message: {message}");
+            SMSMessage userMessage = null;
             MediaPublish mediaPublish = JsonConvert.DeserializeObject<MediaPublish>(message);
-            if (mediaPublish != null)
+            if (mediaPublish == null)
+            {
+                log.Info($"Queue Message: {message}");
+            }
+            else
             {
                 MediaPublished mediaPublished;
                 log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
-                if (mediaPublish.MediaInsight)
+                if (mediaPublish.TaskIds.Length == 0)
                 {
                     mediaPublished = MediaClient.PublishInsight(mediaPublish);
                 }
@@ -33,14 +36,14 @@ namespace AzureSkyMedia.FunctionApp
                 if (!string.IsNullOrEmpty(mediaPublished.MobileNumber) &&
                     !string.IsNullOrEmpty(mediaPublished.StatusMessage))
                 {
-                    publishMessage = new SMSMessage()
+                    userMessage = new SMSMessage()
                     {
                         To = mediaPublished.MobileNumber,
                         Body = mediaPublished.StatusMessage
                     };
                 }
             }
-            return publishMessage;
+            return userMessage;
         }
     }
 }

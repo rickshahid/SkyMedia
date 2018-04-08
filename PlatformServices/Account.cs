@@ -36,17 +36,19 @@ namespace AzureSkyMedia.PlatformServices
             string documentId = DatabaseClient.GetDocumentId(asset, out bool videoIndexer);
             if (!string.IsNullOrEmpty(documentId))
             {
+                DatabaseClient databaseClient = new DatabaseClient();
+                string collectionId = Constant.Database.Collection.MediaInsight;
+                databaseClient.DeleteDocument(collectionId, documentId);
                 if (videoIndexer)
                 {
+                    collectionId = Constant.Database.Collection.MediaPublish;
+                    databaseClient.DeleteDocument(collectionId, documentId);
                     IndexerClient indexerClient = new IndexerClient(mediaAccount);
                     if (indexerClient.IndexerEnabled)
                     {
                         indexerClient.DeleteVideo(documentId, true);
                     }
                 }
-                DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.MediaInsight;
-                databaseClient.DeleteDocument(collectionId, documentId);
             }
             foreach (ILocator locator in asset.Locators)
             {

@@ -44,7 +44,7 @@ namespace AzureSkyMedia.FunctionApp
                     }
 
                     MediaJob mediaJob = GetMediaJob(assetName, taskConfig);
-                    MediaJobInput[] jobInputs = GetJobInputs(assetIds);
+                    MediaJobInput[] jobInputs = GetJobInputs(mediaClient, assetIds);
 
                     string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
                     log.Info($"Job Id: {jobId}");
@@ -137,15 +137,12 @@ namespace AzureSkyMedia.FunctionApp
             return mediaJob;
         }
 
-        private static MediaJobInput[] GetJobInputs(string[] assetIds)
+        private static MediaJobInput[] GetJobInputs(MediaClient mediaClient, string[] assetIds)
         {
             List<MediaJobInput> jobInputs = new List<MediaJobInput>();
             foreach (string assetId in assetIds)
             {
-                MediaJobInput jobInput = new MediaJobInput()
-                {
-                    AssetId = assetId
-                };
+                MediaJobInput jobInput = MediaClient.GetJobInput(mediaClient, assetId);
                 jobInputs.Add(jobInput);
             }
             return jobInputs.ToArray();
