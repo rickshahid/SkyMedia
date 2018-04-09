@@ -62,7 +62,7 @@ namespace AzureSkyMedia.PlatformServices
                             foreach (MediaJobInput jobInput in jobInputs)
                             {
                                 IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                                string documentId = DatabaseClient.GetDocumentId(asset, out bool videoIndexer);
+                                string documentId = Media.GetDocumentId(asset, out bool videoIndexer);
                                 if (videoIndexer)
                                 {
                                     indexerClient.ResetIndex(mediaClient, documentId);

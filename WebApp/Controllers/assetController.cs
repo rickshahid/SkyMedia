@@ -14,6 +14,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(assets);
         }
 
+        public IActionResult sprite()
+        {
+            return View();
+        }
+
         public IActionResult index()
         {
             return View();

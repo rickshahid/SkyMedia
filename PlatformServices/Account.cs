@@ -33,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void DeleteAsset(MediaAccount mediaAccount, IAsset asset)
         {
-            string documentId = DatabaseClient.GetDocumentId(asset, out bool videoIndexer);
+            string documentId = Media.GetDocumentId(asset, out bool videoIndexer);
             if (!string.IsNullOrEmpty(documentId))
             {
                 DatabaseClient databaseClient = new DatabaseClient();

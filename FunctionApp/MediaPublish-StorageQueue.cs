@@ -24,7 +24,7 @@ namespace AzureSkyMedia.FunctionApp
             {
                 MediaPublished mediaPublished;
                 log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
-                if (mediaPublish.TaskIds.Length == 0)
+                if (mediaPublish.TaskIds == null)
                 {
                     mediaPublished = MediaClient.PublishInsight(mediaPublish);
                 }

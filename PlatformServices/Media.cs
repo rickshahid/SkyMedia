@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -86,6 +85,24 @@ namespace AzureSkyMedia.PlatformServices
             return thumbnailUrls.ToArray();
         }
 
+        public static string GetDocumentId(IAsset asset, out bool videoIndexer)
+        {
+            videoIndexer = false;
+            string documentId = string.Empty;
+            string alternateId = asset.AlternateId;
+            if (string.IsNullOrEmpty(alternateId) && asset.ParentAssets.Count == 1)
+            {
+                alternateId = asset.ParentAssets[0].AlternateId;
+            }
+            if (!string.IsNullOrEmpty(alternateId) && alternateId.Contains(Constant.TextDelimiter.Identifier.ToString()))
+            {
+                string[] alternateIdInfo = alternateId.Split(Constant.TextDelimiter.Identifier);
+                videoIndexer = string.Equals(alternateIdInfo[0], MediaProcessor.VideoIndexer.ToString(), StringComparison.OrdinalIgnoreCase);
+                documentId = alternateIdInfo[1];
+            }
+            return documentId;
+        }
+
         private static string GetTextTrackType(string webVttData)
         {
             string webVttType;
@@ -124,7 +141,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
-            string documentId = DatabaseClient.GetDocumentId(asset, out bool videoIndexer);
+            string documentId = GetDocumentId(asset, out bool videoIndexer);
             if (!string.IsNullOrEmpty(documentId) && videoIndexer && indexerClient.IndexerEnabled)
             {
                 string webVttUrl = indexerClient.GetWebVttUrl(documentId, null);
@@ -168,7 +185,7 @@ namespace AzureSkyMedia.PlatformServices
             List<MediaInsight> contentInsight = new List<MediaInsight>();
             if (!clipperView)
             {
-                string documentId = DatabaseClient.GetDocumentId(asset, out bool videoIndexer);
+                string documentId = GetDocumentId(asset, out bool videoIndexer);
                 if (!string.IsNullOrEmpty(documentId) && videoIndexer && indexerClient.IndexerEnabled)
                 {
                     MediaInsight insight = new MediaInsight()

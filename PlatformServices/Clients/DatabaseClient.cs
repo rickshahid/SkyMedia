@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using Microsoft.WindowsAzure.MediaServices.Client;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -43,6 +42,24 @@ namespace AzureSkyMedia.PlatformServices
             _sessionId = sessionId;
         }
 
+        private JObject GetDocument(string jsonData)
+        {
+            JObject document = null;
+            if (!string.IsNullOrEmpty(jsonData))
+            {
+                document = JObject.Parse(jsonData);
+                JProperty[] properties = document.Properties().ToArray();
+                foreach (JProperty property in properties)
+                {
+                    if (property.Name.StartsWith(Constant.Database.Document.SystemPropertyPrefix))
+                    {
+                        document.Remove(property.Name);
+                    }
+                }
+            }
+            return document;
+        }
+
         private IQueryable<Document> GetDocumentQuery(string collectionId)
         {
             string collectionLink = string.Concat("dbs/", _databaseId, "/colls/", collectionId);
@@ -51,24 +68,6 @@ namespace AzureSkyMedia.PlatformServices
                 SessionToken = _sessionId
             };
             return _cosmos.CreateDocumentQuery(collectionLink, feedOptions);
-        }
-
-        private JObject GetJDocument(string jsonData)
-        {
-            JObject jDocument = null;
-            if (!string.IsNullOrEmpty(jsonData))
-            {
-                jDocument = JObject.Parse(jsonData);
-                JProperty[] jProperties = jDocument.Properties().ToArray();
-                foreach (JProperty jProperty in jProperties)
-                {
-                    if (jProperty.Name.StartsWith(Constant.Database.Document.SystemPropertyPrefix))
-                    {
-                        jDocument.Remove(jProperty.Name);
-                    }
-                }
-            }
-            return jDocument;
         }
 
         private Uri CreateCollection(Uri databaseUri, string collectionId)
@@ -144,24 +143,6 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static string GetDocumentId(IAsset asset, out bool videoIndexer)
-        {
-            videoIndexer = false;
-            string documentId = string.Empty;
-            string alternateId = asset.AlternateId;
-            if (string.IsNullOrEmpty(alternateId) && asset.ParentAssets.Count == 1)
-            {
-                alternateId = asset.ParentAssets[0].AlternateId;
-            }
-            if (!string.IsNullOrEmpty(alternateId) && alternateId.Contains(Constant.TextDelimiter.Identifier.ToString()))
-            {
-                string[] alternateIdInfo = alternateId.Split(Constant.TextDelimiter.Identifier);
-                videoIndexer = string.Equals(alternateIdInfo[0], MediaProcessor.VideoIndexer.ToString(), StringComparison.OrdinalIgnoreCase);
-                documentId = alternateIdInfo[1];
-            }
-            return documentId;
-        }
-
         public JObject[] GetDocuments(string collectionId)
         {
             List<JObject> documents = new List<JObject>();
@@ -169,11 +150,8 @@ namespace AzureSkyMedia.PlatformServices
             IEnumerable<Document> docs = query.AsEnumerable<Document>();
             foreach (Document doc in docs)
             {
-                JObject document = GetJDocument(doc.ToString());
-                if (document != null)
-                {
-                    documents.Add(document);
-                }
+                JObject document = GetDocument(doc.ToString());
+                documents.Add(document);
             }
             return documents.ToArray();
         }
@@ -189,11 +167,11 @@ namespace AzureSkyMedia.PlatformServices
             JObject document = null;
             IQueryable<Document> query = GetDocumentQuery(collectionId);
             query = query.Where(d => d.Id == documentId);
-            IEnumerable<Document> documents = query.AsEnumerable<Document>();
-            Document doc = documents.FirstOrDefault();
+            IEnumerable<Document> docs = query.AsEnumerable<Document>();
+            Document doc = docs.FirstOrDefault();
             if (doc != null)
             {
-                document = GetJDocument(doc.ToString());
+                document = GetDocument(doc.ToString());
             }
             return document;
         }
@@ -203,10 +181,9 @@ namespace AzureSkyMedia.PlatformServices
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
             Task<StoredProcedureResponse<JValue>> procedureTask = _cosmos.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
-            procedureTask.Wait();
-            StoredProcedureResponse<JValue> procedureResponse = procedureTask.Result;
-            JValue procedureValue = procedureResponse.Response;
-            return GetJDocument(procedureValue.ToString());
+            StoredProcedureResponse<JValue> procedureResult = procedureTask.Result;
+            JValue procedureValue = procedureResult.Response;
+            return GetDocument(procedureValue.ToString());
         }
 
         public string UpsertDocument(string collectionId, object entity)
@@ -219,9 +196,8 @@ namespace AzureSkyMedia.PlatformServices
         {
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Task<ResourceResponse<Document>> upsertTask = _cosmos.UpsertDocumentAsync(collectionUri, document);
-            upsertTask.Wait();
-            ResourceResponse<Document> resourceResponse = upsertTask.Result;
-            return resourceResponse.Resource.Id;
+            ResourceResponse<Document> upsertResult = upsertTask.Result;
+            return upsertResult.Resource.Id;
         }
 
         public void DeleteDocument(string collectionId, string documentId)
@@ -230,8 +206,7 @@ namespace AzureSkyMedia.PlatformServices
             if (document != null)
             {
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                Task<ResourceResponse<Document>> deleteTask = _cosmos.DeleteDocumentAsync(documentUri);
-                deleteTask.Wait();
+                _cosmos.DeleteDocumentAsync(documentUri);
             }
         }
 

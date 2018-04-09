@@ -69,7 +69,8 @@
     ViewData["accountProfileEdit"] = "/account/profileEdit";
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
-    if (!requestUrl.Contains("/account/signup") && !requestUrl.Contains("/account/profile"))
+    if (!requestUrl.Contains("/account/signup") && !requestUrl.Contains("/account/profile") &&
+        !requestUrl.Contains("/asset/sprite"))
     {
         Layout = "_Layout";
     }
