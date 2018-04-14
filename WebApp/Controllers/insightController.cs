@@ -42,10 +42,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 MediaClient mediaClient = new MediaClient(authToken);
                 IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                if (indexerClient.IndexerEnabled)
-                {
-                    accounts = indexerClient.GetAccounts();
-                }
+                accounts = indexerClient.GetAccounts();
             }
             return accounts;
         }
@@ -60,10 +57,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 MediaClient mediaClient = new MediaClient(authToken);
                 IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                if (indexerClient.IndexerEnabled)
-                {
-                    index = indexerClient.GetIndex(indexId, languageId, processingState);
-                }
+                index = indexerClient.GetIndex(indexId, languageId, processingState);
             }
             return index;
         }
@@ -77,10 +71,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 MediaClient mediaClient = new MediaClient(authToken);
                 IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                if (indexerClient.IndexerEnabled)
-                {
-                    indexerClient.DeleteVideo(indexId, deleteInsight);
-                }
+                indexerClient.DeleteVideo(indexId, deleteInsight);
 
                 DatabaseClient databaseClient = new DatabaseClient();
                 string collectionId = Constant.Database.Collection.MediaInsight;

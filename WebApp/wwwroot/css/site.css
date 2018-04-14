@@ -467,16 +467,16 @@ body {
     width: 685px;
 }
 
+.mediaLock {
+    vertical-align: text-bottom;
+}
+
 .mediaFile > .jstree-checkbox {
     display: none !important;
 }
 
 .mediaFile.primary {
     color: blueviolet !important;
-}
-
-.mediaLock {
-    vertical-align: text-bottom;
 }
 
 .jstree-hovered {

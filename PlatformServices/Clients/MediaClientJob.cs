@@ -57,20 +57,17 @@ namespace AzureSkyMedia.PlatformServices
                         break;
                     case MediaProcessor.VideoIndexer:
                         IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                        if (indexerClient.IndexerEnabled)
+                        foreach (MediaJobInput jobInput in jobInputs)
                         {
-                            foreach (MediaJobInput jobInput in jobInputs)
+                            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
+                            string indexId = asset.AlternateId;
+                            if (!string.IsNullOrEmpty(indexId))
                             {
-                                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                                string documentId = Media.GetDocumentId(asset, out bool videoIndexer);
-                                if (videoIndexer)
-                                {
-                                    indexerClient.ResetIndex(mediaClient, documentId);
-                                }
-                                else
-                                {
-                                    indexerClient.IndexVideo(mediaClient, asset, jobTask.VideoIndexer);
-                                }
+                                indexerClient.ResetIndex(mediaClient, indexId);
+                            }
+                            else
+                            {
+                                indexerClient.IndexVideo(mediaClient, asset, jobTask.VideoIndexer);
                             }
                         }
                         break;

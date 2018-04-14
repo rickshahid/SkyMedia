@@ -85,24 +85,6 @@ namespace AzureSkyMedia.PlatformServices
             return thumbnailUrls.ToArray();
         }
 
-        public static string GetDocumentId(IAsset asset, out bool videoIndexer)
-        {
-            videoIndexer = false;
-            string documentId = string.Empty;
-            string alternateId = asset.AlternateId;
-            if (string.IsNullOrEmpty(alternateId) && asset.ParentAssets.Count == 1)
-            {
-                alternateId = asset.ParentAssets[0].AlternateId;
-            }
-            if (!string.IsNullOrEmpty(alternateId) && alternateId.Contains(Constant.TextDelimiter.Identifier.ToString()))
-            {
-                string[] alternateIdInfo = alternateId.Split(Constant.TextDelimiter.Identifier);
-                videoIndexer = string.Equals(alternateIdInfo[0], MediaProcessor.VideoIndexer.ToString(), StringComparison.OrdinalIgnoreCase);
-                documentId = alternateIdInfo[1];
-            }
-            return documentId;
-        }
-
         private static string GetTextTrackType(string webVttData)
         {
             string webVttType;
@@ -141,12 +123,12 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
-            string documentId = GetDocumentId(asset, out bool videoIndexer);
-            if (!string.IsNullOrEmpty(documentId) && videoIndexer && indexerClient.IndexerEnabled)
+            string indexId = asset.AlternateId;
+            if (!string.IsNullOrEmpty(indexId))
             {
-                string webVttUrl = indexerClient.GetWebVttUrl(documentId, null);
+                string webVttUrl = indexerClient.GetWebVttUrl(indexId, null);
                 string webVttData = WebClient.GetData(webVttUrl);
-                JObject index = indexerClient.GetIndex(documentId, null, false);
+                JObject index = indexerClient.GetIndex(indexId, null, false);
                 string languageLabel = IndexerClient.GetLanguageLabel(index);
                 MediaTrack textTrack = new MediaTrack()
                 {
@@ -185,15 +167,15 @@ namespace AzureSkyMedia.PlatformServices
             List<MediaInsight> contentInsight = new List<MediaInsight>();
             if (!clipperView)
             {
-                string documentId = GetDocumentId(asset, out bool videoIndexer);
-                if (!string.IsNullOrEmpty(documentId) && videoIndexer && indexerClient.IndexerEnabled)
+                string indexId = asset.AlternateId;
+                if (!string.IsNullOrEmpty(indexId))
                 {
                     MediaInsight insight = new MediaInsight()
                     {
                         ProcessorId = Processor.GetProcessorId(MediaProcessor.VideoIndexer, null),
                         ProcessorName = Processor.GetProcessorName(MediaProcessor.VideoIndexer),
-                        DocumentId = documentId,
-                        SourceUrl = indexerClient.GetInsightUrl(documentId, true)
+                        DocumentId = indexId,
+                        SourceUrl = indexerClient.GetInsightUrl(indexId, true)
                     };
                     contentInsight.Add(insight);
                 }
@@ -204,7 +186,7 @@ namespace AzureSkyMedia.PlatformServices
                     string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
                     if (Enum.TryParse(fileNameInfo[0], out MediaProcessor processor) && fileNameInfo.Length == 2)
                     {
-                        documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
+                        string documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
                         MediaInsight insight = new MediaInsight()
                         {
                             ProcessorId = Processor.GetProcessorId(processor, null),

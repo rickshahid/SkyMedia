@@ -16,6 +16,7 @@ namespace AzureSkyMedia.FunctionApp
         public static void Run([BlobTrigger("ams/{name}")] Stream blob, string name, TraceWriter log)
         {
             bool createNewLog = true;
+            BlobClient blobClient = new BlobClient();
             try
             {
                 log.Info($"Media File: {name}");
@@ -33,50 +34,64 @@ namespace AzureSkyMedia.FunctionApp
                     };
                     MediaClient mediaClient = new MediaClient(mediaAccount);
 
-                    string[] assetIds = ParseJobManifest(jobReader, out string[] assetFiles, out IDictionary<MediaProcessor, string> taskConfig);
-                    string assetName = Path.GetFileNameWithoutExtension(name);
-                    if (assetIds.Length == 0)
+                    string[] assetIds = ParseJobManifest(blobClient, jobReader, out bool manifestComplete, out string[] assetFiles, out IDictionary<MediaProcessor, string> taskConfig);
+                    if (!manifestComplete)
                     {
-                        string assetId = mediaClient.CreateAsset(assetName, assetFiles);
-                        assetIds = new string[] { assetId };
-                        log.Info($"Asset Id: {assetId}");
-                        createNewLog = UpdateJobLog(name, assetId, createNewLog);
+
                     }
+                    else
+                    {
+                        string assetName = Path.GetFileNameWithoutExtension(name);
+                        if (assetIds.Length == 0)
+                        {
+                            string assetId = mediaClient.CreateAsset(assetName, assetFiles);
+                            assetIds = new string[] { assetId };
+                            log.Info($"Asset Id: {assetId}");
+                            createNewLog = UpdateJobLog(blobClient, name, assetId, createNewLog);
+                        }
 
-                    MediaJob mediaJob = GetMediaJob(assetName, taskConfig);
-                    MediaJobInput[] jobInputs = GetJobInputs(mediaClient, assetIds);
+                        MediaJob mediaJob = GetMediaJob(assetName, taskConfig);
+                        MediaJobInput[] jobInputs = GetJobInputs(mediaClient, assetIds);
 
-                    string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
-                    log.Info($"Job Id: {jobId}");
-                    createNewLog = UpdateJobLog(name, jobId, createNewLog);
+                        string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
+                        log.Info($"Job Id: {jobId}");
+                        createNewLog = UpdateJobLog(blobClient, name, jobId, createNewLog);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 string logData = ex.ToString();
-                UpdateJobLog(name, logData, createNewLog);
+                UpdateJobLog(blobClient, name, logData, createNewLog);
                 log.Info(logData);
             }
         }
 
-        private static Stream GetReadStream(string blobName)
+        private static bool FileExists(BlobClient blobClient, string blobName)
         {
-            BlobClient blobClient = new BlobClient();
+            string containerName = Constant.Storage.Blob.Container.MediaProcess;
+            CloudBlockBlob blob = blobClient.GetBlockBlob(containerName, null, blobName);
+            return blob.Exists();
+        }
+
+        private static Stream GetReadStream(BlobClient blobClient, string blobName)
+        {
             string containerName = Constant.Storage.Blob.Container.MediaProcess;
             CloudBlockBlob blob = blobClient.GetBlockBlob(containerName, null, blobName);
             return blob.OpenRead();
         }
 
-        private static CloudBlobStream GetWriteStream(string blobName, bool createNew)
+        private static CloudBlobStream GetWriteStream(BlobClient blobClient, string blobName, bool createNew)
         {
-            BlobClient blobClient = new BlobClient();
             string containerName = Constant.Storage.Blob.Container.MediaProcess;
             CloudAppendBlob blob = blobClient.GetAppendBlob(containerName, null, blobName);
             return blob.OpenWrite(createNew);
         }
 
-        private static string[] ParseJobManifest(StreamReader jobReader, out string[] assetFiles, out IDictionary<MediaProcessor, string> taskConfig)
+        private static string[] ParseJobManifest(BlobClient blobClient, StreamReader jobReader, out bool manifestComplete,
+                                                 out string[] assetFiles, out IDictionary<MediaProcessor, string> taskConfig)
         {
+            manifestComplete = true;
             List<string> assetIds = new List<string>();
             List<string> fileNames = new List<string>();
             taskConfig = new Dictionary<MediaProcessor, string>();
@@ -87,11 +102,15 @@ namespace AzureSkyMedia.FunctionApp
                 {
                     assetIds.Add(jobLine);
                 }
+                else if (!FileExists(blobClient, jobLine))
+                {
+                    manifestComplete = false;
+                }
                 else if (jobLine.EndsWith(Constant.Media.FileExtension.Json))
                 {
                     string[] processorConfig = Path.GetFileNameWithoutExtension(jobLine).Split(Constant.TextDelimiter.File);
                     MediaProcessor mediaProcessor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), processorConfig[0]);
-                    Stream configStream = GetReadStream(jobLine);
+                    Stream configStream = GetReadStream(blobClient, jobLine);
                     using (StreamReader configReader = new StreamReader(configStream))
                     {
                         taskConfig.Add(mediaProcessor, configReader.ReadToEnd());
@@ -106,10 +125,10 @@ namespace AzureSkyMedia.FunctionApp
             return assetIds.ToArray();
         }
 
-        private static bool UpdateJobLog(string manifestName, string logData, bool createNew)
+        private static bool UpdateJobLog(BlobClient blobClient, string manifestName, string logData, bool createNew)
         {
             string logName = manifestName.Replace(Constant.Media.FileExtension.JobManifest, Constant.Media.FileExtension.JobLog);
-            CloudBlobStream logStream = GetWriteStream(logName, createNew);
+            CloudBlobStream logStream = GetWriteStream(blobClient, logName, createNew);
             using (StreamWriter logWriter = new StreamWriter(logStream))
             {
                 logWriter.WriteLine(logData);

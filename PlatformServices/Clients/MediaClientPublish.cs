@@ -152,8 +152,6 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string collectionId = Constant.Database.Collection.MediaInsight;
                 documentId = databaseClient.UpsertDocument(collectionId, document);
-                asset.AlternateId = string.Concat(processor.ToString(), Constant.TextDelimiter.Identifier, documentId);
-                asset.Update();
             }
             catch (DocumentClientException ex)
             {

@@ -1,4 +1,8 @@
-﻿@section head {
+﻿@{
+    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
+}
+
+@section head {
     <script type="text/javascript">
         $(function () {
             var rows = @Json.Serialize(ViewData["notificationEndpoints"]);
@@ -26,9 +30,15 @@
                     name: "endPointAddress",
                     label: "Endpoint Address",
                     formatter: FormatColumn
+                },
+                {
+                    width: 100,
+                    label: "Delete",
+                    formatter: FormatDelete,
+                    align: "center"
                 }
             ];
-            LoadGrid("notificationEndpoints", columns, rows);
+            LoadGrid("notificationEndpoints", columns, rows, "@storageCdnUrl", "notification endpoint");
         })
     </script>
 }

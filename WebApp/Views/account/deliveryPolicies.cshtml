@@ -5,7 +5,7 @@
 @section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["contentKeys"]);
+            var rows = @Json.Serialize(ViewData["deliveryPolicies"]);
             var columns = [
                 {
                     name: "id",
@@ -14,14 +14,7 @@
                 {
                     width: 500,
                     name: "name",
-                    label: "Content Key Name",
-                    formatter: FormatColumn,
-                    align: "center"
-                },
-                {
-                    width: 300,
-                    name: "contentKeyType",
-                    label: "Content Key Type",
+                    label: "Delivery Policy Name",
                     formatter: FormatColumn,
                     align: "center"
                 },
@@ -32,13 +25,13 @@
                     align: "center"
                 }
             ];
-            LoadGrid("contentKeys", columns, rows, "@storageCdnUrl", "content key");
+            LoadGrid("deliveryPolicies", columns, rows, "@storageCdnUrl", "delivery policy");
         })
     </script>
 }
 
 @section title {
-    Content Keys
+    Delivery Policies
 }
 
-<table id="contentKeys"></table>
+<table id="deliveryPolicies"></table>

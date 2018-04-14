@@ -36,12 +36,12 @@
             }
             $("#inventoryRight").html(innerHtml);
         }
-        function ClearAccount(allEntities, liveOnly) {
+        function ClearAccount(allEntities, liveChannels) {
             SetCursor(true);
             $.post("/account/clear",
                 {
                     allEntities: allEntities,
-                    liveOnly: liveOnly
+                    liveChannels: liveChannels
                 },
                 function () {
                     SetCursor(false);
@@ -61,7 +61,7 @@
                     ClearAccount(false, false);
                     $(this).dialog("close");
                 },
-                "Live Only": function () {
+                "Live Channels": function () {
                     ClearAccount(false, true);
                     $(this).dialog("close");
                 },

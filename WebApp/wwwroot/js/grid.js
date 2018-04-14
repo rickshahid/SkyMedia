@@ -1,4 +1,5 @@
-﻿function ClearTitles(grid) {
+﻿var _storageCdnUrl, _accountEntityType;
+function ClearTitles(grid) {
     for (var i = 0; i < grid.rows.length; i++) {
         var rowId = grid.rows[i].id;
         var row = document.getElementById(rowId);
@@ -7,7 +8,9 @@
         }
     }
 }
-function LoadGrid(gridId, columns, rows) {
+function LoadGrid(gridId, columns, rows, storageCdnUrl, accountEntityType) {
+    _storageCdnUrl = storageCdnUrl;
+    _accountEntityType = accountEntityType;
     $("#" + gridId).jqGrid({
         colModel: columns,
         datatype: "local",
@@ -98,4 +101,29 @@ function FormatColumn(value, grid, row) {
     message = message + "<br><br>" + row.id;
     displayValue = displayValue != "" ? displayValue + " (" + value + ")" : value;
     return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "')\">" + displayValue + "</span>";
+}
+function FormatDelete(value, grid, row) {
+    var itemName = row.name == null ? row.id : row.name;
+    var onClick = "DeleteEntity('" + grid.gid + "','" + row.id + "','" + encodeURIComponent(itemName) + "')";
+    var buttonHtml = "<button class='siteButton' onclick=" + onClick + ">";
+    return buttonHtml + "<img src='" + _storageCdnUrl + "/MediaDelete.png'></button>";
+}
+function DeleteEntity(entityGrid, entityId, entityName) {
+    var title = "Confirm Permanent Delete";
+    var message = "Are you sure you want to permanently delete the '" + entityName + "' " + _accountEntityType + "?";
+    var onConfirm = function () {
+        SetCursor(true);
+        $.post("/account/delete",
+            {
+                "entityGrid": entityGrid,
+                "entityId": entityId
+            },
+            function () {
+                SetCursor(false);
+                window.location = window.location.href;
+            }
+        );
+        $(this).dialog("close");
+    }
+    ConfirmMessage(title, message, onConfirm);
 }

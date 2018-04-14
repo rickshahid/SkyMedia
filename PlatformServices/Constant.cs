@@ -199,6 +199,7 @@ namespace AzureSkyMedia.PlatformServices
         public struct Media
         {
             public const string AssetIdPrefix = "nb:cid:";
+            public const string MetadataManifest = "MediaProcessor_MetadataManifest.txt";
 
             public struct ProcessorId
             {

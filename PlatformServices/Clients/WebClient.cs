@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -21,7 +22,24 @@ namespace AzureSkyMedia.PlatformServices
         {
             WebClient webClient = new WebClient(null);
             HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, requestUrl);
-            return webClient.GetResponse<string>(requestMessage);
+            return webClient.GetResponse<string>(requestMessage, out HttpStatusCode statusCode);
+        }
+
+        public static Stream GetStream(string requestUrl)
+        {
+            WebClient webClient = new WebClient(null);
+            HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, requestUrl);
+            return webClient.GetResponse(requestMessage, out HttpStatusCode statusCode);
+        }
+
+        private HttpClient GetClient()
+        {
+            HttpClient httpClient = new HttpClient();
+            if (!string.IsNullOrEmpty(_apimKey))
+            {
+                httpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, _apimKey);
+            }
+            return httpClient;
         }
 
         private T GetResponseData<T>(HttpContent responseContent)
@@ -72,11 +90,7 @@ namespace AzureSkyMedia.PlatformServices
         public T GetResponse<T>(HttpRequestMessage requestMessage, out HttpStatusCode statusCode)
         {
             T responseData = default(T);
-            HttpClient httpClient = new HttpClient();
-            if (!string.IsNullOrEmpty(_apimKey))
-            {
-                httpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, _apimKey);
-            }
+            HttpClient httpClient = GetClient();
             using (HttpResponseMessage responseMessage = httpClient.SendAsync(requestMessage).Result)
             {
                 statusCode = responseMessage.StatusCode;
@@ -93,6 +107,20 @@ namespace AzureSkyMedia.PlatformServices
         public T GetResponse<T>(HttpRequestMessage requestMessage)
         {
             return GetResponse<T>(requestMessage, out HttpStatusCode statusCode);
+        }
+
+        private Stream GetResponse(HttpRequestMessage requestMessage, out HttpStatusCode statusCode)
+        {
+            Stream responseData = null;
+            HttpClient httpClient = GetClient();
+            HttpResponseMessage responseMessage = httpClient.SendAsync(requestMessage).Result;
+            statusCode = responseMessage.StatusCode;
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                HttpContent responseContent = responseMessage.Content;
+                responseData = responseContent.ReadAsStreamAsync().Result;
+            }
+            return responseData;
         }
     }
 }

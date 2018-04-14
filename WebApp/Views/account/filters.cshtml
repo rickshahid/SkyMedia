@@ -5,7 +5,7 @@
 @section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["contentKeys"]);
+            var rows = @Json.Serialize(ViewData["filters"]);
             var columns = [
                 {
                     name: "id",
@@ -14,14 +14,7 @@
                 {
                     width: 500,
                     name: "name",
-                    label: "Content Key Name",
-                    formatter: FormatColumn,
-                    align: "center"
-                },
-                {
-                    width: 300,
-                    name: "contentKeyType",
-                    label: "Content Key Type",
+                    label: "Streaming Filter Name",
                     formatter: FormatColumn,
                     align: "center"
                 },
@@ -32,13 +25,13 @@
                     align: "center"
                 }
             ];
-            LoadGrid("contentKeys", columns, rows, "@storageCdnUrl", "content key");
+            LoadGrid("filters", columns, rows, "@storageCdnUrl", "streaming filter");
         })
     </script>
 }
 
 @section title {
-    Content Keys
+    Streaming Filters
 }
 
-<table id="contentKeys"></table>
+<table id="filters"></table>

@@ -1,7 +1,11 @@
-﻿@section head {
+﻿@{
+    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
+}
+
+@section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["contentKeyAuthZPolicyOptions"]);
+            var rows = @Json.Serialize(ViewData["contentKeyAuthPolicyOptions"]);
             var columns = [
                 {
                     name: "id",
@@ -20,9 +24,15 @@
                     label: "Content Key Delivery Type",
                     formatter: FormatColumn,
                     align: "center"
+                },
+                {
+                    width: 100,
+                    label: "Delete",
+                    formatter: FormatDelete,
+                    align: "center"
                 }
             ];
-            LoadGrid("contentKeyAuthZPolicyOptions", columns, rows);
+            LoadGrid("contentKeyAuthPolicyOptions", columns, rows, "@storageCdnUrl", "content key authorization policy option");
         })
     </script>
 }
@@ -31,4 +41,4 @@
     Content Key<br>Authorization Policy Options
 }
 
-<table id="contentKeyAuthZPolicyOptions"></table>
+<table id="contentKeyAuthPolicyOptions"></table>
