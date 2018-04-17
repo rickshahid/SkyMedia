@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             ILocator[] locators;
             if (string.IsNullOrEmpty(assetName))
             {
-                locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
+                locators = mediaClient.GetEntities(MediaEntity.StreamingLocator) as ILocator[];
             }
             else
             {

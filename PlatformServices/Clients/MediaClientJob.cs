@@ -26,7 +26,7 @@ namespace AzureSkyMedia.PlatformServices
             return notificationEndpoint;
         }
 
-        private void SetProcessorUnits(IJob job, MediaJobNodeType nodeType, bool newJob)
+        private void SetProcessorUnits(IJob job, ReservedUnitType nodeType, bool newJob)
         {
             int unitCount = job.Tasks.Count;
             IEncodingReservedUnit[] processorUnits = GetEntities(MediaEntity.ProcessorUnit) as IEncodingReservedUnit[];
@@ -145,7 +145,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             INotificationEndPoint notificationEndpoint = GetNotificationEndpoint();
             job.JobNotificationSubscriptions.AddNew(NotificationJobState.FinalStatesOnly, notificationEndpoint);
-            SetProcessorUnits(job, MediaJobNodeType.Premium, true);
+            SetProcessorUnits(job, ReservedUnitType.Premium, true);
             job.Submit();
             return job;
         }

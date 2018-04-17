@@ -179,6 +179,7 @@ namespace AzureSkyMedia.PlatformServices
             public struct Collection
             {
                 public const string MediaInsight = "MediaInsight";
+                public const string MediaProcess = "MediaProcess";
                 public const string MediaPublish = "MediaPublish";
                 public const string ProcessorConfig = "ProcessorConfig";
             }

@@ -113,7 +113,7 @@ function DeleteEntity(entityGrid, entityId, entityName) {
     var message = "Are you sure you want to permanently delete the '" + entityName + "' " + _accountEntityType + "?";
     var onConfirm = function () {
         SetCursor(true);
-        $.post("/account/delete",
+        $.post("/account/deleteEntity",
             {
                 "entityGrid": entityGrid,
                 "entityId": entityId

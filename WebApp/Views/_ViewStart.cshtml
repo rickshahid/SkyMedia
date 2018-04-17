@@ -60,7 +60,7 @@
         ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/services/active-directory-b2c/";
     }
 
-    string accountSignUpIn = "/account/signupin";
+    string accountSignUpIn = "/account/signUpIn";
     if (request.QueryString.HasValue)
     {
         accountSignUpIn = string.Concat(accountSignUpIn, request.QueryString.Value);
@@ -69,7 +69,7 @@
     ViewData["accountProfileEdit"] = "/account/profileEdit";
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
-    if (!requestUrl.Contains("/account/signup") && !requestUrl.Contains("/account/profile") &&
+    if (!requestUrl.Contains("/account/signIn") && !requestUrl.Contains("/account/profile") &&
         !requestUrl.Contains("/asset/sprite"))
     {
         Layout = "_Layout";

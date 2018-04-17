@@ -5,7 +5,6 @@ namespace AzureSkyMedia.PlatformServices
     internal class MediaPublish
     {
         [JsonProperty(PropertyName = "id")]
-
         public string Id { get; set; }
 
         public string[] TaskIds { get; set; }

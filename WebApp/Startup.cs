@@ -70,16 +70,16 @@ namespace AzureSkyMedia.WebApp
             string policyId = string.Empty;
             string settingKey = string.Empty;
             string[] requestPath = context.Request.Path.Value.Split('/');
-            string requestAction = requestPath[requestPath.Length - 1].ToLower();
+            string requestAction = requestPath[requestPath.Length - 1];
             switch (requestAction)
             {
-                case "signupin":
+                case "signUpIn":
                     settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
                     break;
-                case "profileedit":
+                case "profileEdit":
                     settingKey = Constant.AppSettingKey.DirectoryPolicyIdProfileEdit;
                     break;
-                case "passwordreset":
+                case "passwordReset":
                     settingKey = Constant.AppSettingKey.DirectoryPolicyIdPasswordReset;
                     break;
             }
@@ -143,7 +143,7 @@ namespace AzureSkyMedia.WebApp
             string requestError = controller.Request.Form["error_description"];
             if (!string.IsNullOrEmpty(requestError) && requestError.Contains(Constant.Message.UserPasswordForgotten))
             {
-                redirectAction = controller.RedirectToAction("passwordreset", "account");
+                redirectAction = controller.RedirectToAction("passwordReset", "account");
             }
             return redirectAction;
         }

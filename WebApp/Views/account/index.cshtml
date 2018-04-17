@@ -36,9 +36,9 @@
             }
             $("#inventoryRight").html(innerHtml);
         }
-        function ClearAccount(allEntities, liveChannels) {
+        function DeleteEntities(allEntities, liveChannels) {
             SetCursor(true);
-            $.post("/account/clear",
+            $.post("/account/deleteEntities",
                 {
                     allEntities: allEntities,
                     liveChannels: liveChannels
@@ -49,20 +49,20 @@
                 }
             );
         }
-        function ConfirmClear() {
+        function ConfirmDelete() {
             var title = "Confirm Media Account Content Deletion (Permanent)";
             var message = "Which set of entities do you want permanently deleted from your media account?";
             var buttons = {
                 "All Entities": function () {
-                    ClearAccount(true, false);
+                    DeleteEntities(true, false);
                     $(this).dialog("close");
                 },
                 "Child Assets": function () {
-                    ClearAccount(false, false);
+                    DeleteEntities(false, false);
                     $(this).dialog("close");
                 },
                 "Live Channels": function () {
-                    ClearAccount(false, true);
+                    DeleteEntities(false, true);
                     $(this).dialog("close");
                 },
                 Cancel: function () {
@@ -99,7 +99,7 @@
     @Html.Partial("SiteButton", new string[] { "accountToken", "AccountToken.png", "ToggleToken()" })
     @if (Debugger.IsAttached)
     {
-        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmClear()" })
+        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmDelete()" })
     }
 </div>
 

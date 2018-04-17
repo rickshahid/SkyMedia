@@ -86,8 +86,11 @@ namespace AzureSkyMedia.PlatformServices
             _cosmos.CreateDatabaseIfNotExistsAsync(database).Wait();
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            string collectionId = Constant.Database.Collection.MediaPublish;
+            string collectionId = Constant.Database.Collection.MediaProcess;
             Uri collectionUri = CreateCollection(databaseUri, collectionId);
+
+            collectionId = Constant.Database.Collection.MediaPublish;
+            collectionUri = CreateCollection(databaseUri, collectionId);
 
             collectionId = Constant.Database.Collection.MediaInsight;
             collectionUri = CreateCollection(databaseUri, collectionId);

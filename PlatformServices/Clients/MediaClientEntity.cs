@@ -75,11 +75,11 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.StreamingEndpoint:
                     entity = _media.StreamingEndpoints.Where(x => x.Id.Equals(entityId, comparisonType)).SingleOrDefault();
                     break;
+                case MediaEntity.StreamingLocator:
+                    entity = _media.Locators.Where(x => x.Id.Equals(entityId, comparisonType)).SingleOrDefault();
+                    break;
                 case MediaEntity.StreamingFilter:
                     entity = _media.Filters.Where(x => x.Name.Equals(entityId, comparisonType)).SingleOrDefault();
-                    break;
-                case MediaEntity.Locator:
-                    entity = _media.Locators.Where(x => x.Id.Equals(entityId, comparisonType)).SingleOrDefault();
                     break;
             }
             return entity;
@@ -170,13 +170,13 @@ namespace AzureSkyMedia.PlatformServices
                     IQueryable<IStreamingEndpoint> streamingEndpoints = _media.StreamingEndpoints.Where(x => x.Name.Contains(entityName));
                     entity = streamingEndpoints.SingleOrDefault();
                     break;
+                case MediaEntity.StreamingLocator:
+                    IQueryable<ILocator> locators = _media.Locators.Where(x => x.Asset.Name.Contains(entityName));
+                    entity = locators.SingleOrDefault();
+                    break;
                 case MediaEntity.StreamingFilter:
                     IQueryable<IStreamingFilter> streamingFilters = _media.Filters.Where(x => x.Name.Contains(entityName));
                     entity = streamingFilters.SingleOrDefault();
-                    break;
-                case MediaEntity.Locator:
-                    IQueryable<ILocator> locators = _media.Locators.Where(x => x.Asset.Name.Contains(entityName));
-                    entity = locators.SingleOrDefault();
                     break;
             }
             return entity;
@@ -387,6 +387,16 @@ namespace AzureSkyMedia.PlatformServices
                         entities = _media.StreamingEndpoints.Where(x => x.Name.Contains(entityName)).ToArray();
                     }
                     break;
+                case MediaEntity.StreamingLocator:
+                    if (string.IsNullOrEmpty(entityName))
+                    {
+                        entities = _media.Locators.ToArray();
+                    }
+                    else
+                    {
+                        entities = _media.Locators.Where(x => x.Name.Contains(entityName)).ToArray();
+                    }
+                    break;
                 case MediaEntity.StreamingFilter:
                     if (string.IsNullOrEmpty(entityName))
                     {
@@ -395,16 +405,6 @@ namespace AzureSkyMedia.PlatformServices
                     else
                     {
                         entities = _media.Filters.Where(x => x.Name.Contains(entityName)).ToArray();
-                    }
-                    break;
-                case MediaEntity.Locator:
-                    if (string.IsNullOrEmpty(entityName))
-                    {
-                        entities = _media.Locators.ToArray();
-                    }
-                    else
-                    {
-                        entities = _media.Locators.Where(x => x.Name.Contains(entityName)).ToArray();
                     }
                     break;
             }

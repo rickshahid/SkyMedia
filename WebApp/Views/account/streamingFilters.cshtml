@@ -5,7 +5,7 @@
 @section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["locators"]);
+            var rows = @Json.Serialize(ViewData["streamingFilters"]);
             var columns = [
                 {
                     name: "id",
@@ -14,7 +14,7 @@
                 {
                     width: 500,
                     name: "name",
-                    label: "Locator Name",
+                    label: "Streaming Filter Name",
                     formatter: FormatColumn,
                     align: "center"
                 },
@@ -25,13 +25,13 @@
                     align: "center"
                 }
             ];
-            LoadGrid("locators", columns, rows, "@storageCdnUrl", "locator");
+            LoadGrid("streamingFilters", columns, rows, "@storageCdnUrl", "streaming filter");
         })
     </script>
 }
 
 @section title {
-    Locators
+    Streaming Filters
 }
 
-<table id="locators"></table>
+<table id="streamingFilters"></table>

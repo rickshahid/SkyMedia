@@ -121,7 +121,7 @@ namespace AzureSkyMedia.PlatformServices
             IJob job = mediaClient.GetEntityById(MediaEntity.Job, mediaPublish.Id) as IJob;
             if (job != null)
             {
-                mediaClient.SetProcessorUnits(job, MediaJobNodeType.Basic, false);
+                mediaClient.SetProcessorUnits(job, ReservedUnitType.Basic, false);
                 PublishJob(mediaClient, job, mediaPublish);
                 mediaPublished = new MediaPublished()
                 {

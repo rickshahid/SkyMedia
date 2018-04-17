@@ -51,7 +51,7 @@ function SetLayout(b2b) {
 }
 function SignOut(cookieName) {
     $.removeCookie(cookieName);
-    window.location.href = "/account/signout";
+    window.location.href = "/account/signOut";
 }
 function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose) {
     if (buttons == null) {

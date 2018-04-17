@@ -9,30 +9,30 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class accountController : Controller
     {
-        public void signupin()
+        public void signUpIn()
         {
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public void profileedit()
+        public void profileEdit()
         {
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public void passwordreset()
+        public void passwordReset()
         {
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public void clear(bool allEntities, bool liveChannels)
+        public void deleteEntities(bool allEntities, bool liveChannels)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             Account.DeleteEntities(authToken, allEntities, liveChannels);
         }
 
-        public JsonResult delete(string entityGrid, string entityId)
+        public JsonResult deleteEntity(string entityGrid, string entityId)
         {
-            MediaEntity entityType = MediaEntity.StorageAccount;
+            MediaEntity entityType = MediaEntity.MonitoringConfiguration;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             switch (entityGrid)
             {
@@ -60,10 +60,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                 case "accessPolicies":
                     entityType = MediaEntity.AccessPolicy;
                     break;
-                case "locators":
-                    entityType = MediaEntity.Locator;
+                case "streamingLocators":
+                    entityType = MediaEntity.StreamingLocator;
                     break;
-                case "filters":
+                case "streamingFilters":
                     entityType = MediaEntity.StreamingFilter;
                     break;
             }
@@ -134,27 +134,27 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult locators()
+        public IActionResult streamingLocators()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            ViewData["locators"] = Account.GetEntities(authToken, MediaEntity.Locator);
+            ViewData["streamingLocators"] = Account.GetEntities(authToken, MediaEntity.StreamingLocator);
             return View();
         }
 
-        public IActionResult filters()
+        public IActionResult streamingFilters()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            ViewData["filters"] = Account.GetEntities(authToken, MediaEntity.StreamingFilter);
+            ViewData["streamingFilters"] = Account.GetEntities(authToken, MediaEntity.StreamingFilter);
             return View();
         }
 
-        public IActionResult signout()
+        public IActionResult signOut()
         {
             this.SignOut(OpenIdConnectDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("index", "home");
         }
 
-        public IActionResult signup()
+        public IActionResult signIn()
         {
             ViewData["cssHost"] = string.Concat(this.Request.Scheme, "://", this.Request.Host.Value);
             return View();

@@ -25,8 +25,8 @@ namespace AzureSkyMedia.PlatformServices
         AccessPolicy,
         DeliveryPolicy,
         StreamingEndpoint,
-        StreamingFilter,
-        Locator
+        StreamingLocator,
+        StreamingFilter
     }
 
     internal enum MediaProcessorConfig
@@ -63,8 +63,7 @@ namespace AzureSkyMedia.PlatformServices
     public enum MediaProtocol
     {
         FMP4,
-        RTMP,
-        RTP
+        RTMP
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -82,13 +81,6 @@ namespace AzureSkyMedia.PlatformServices
         PlayReady,
         Widevine,
         FairPlay
-    }
-
-    public enum MediaJobNodeType
-    {
-        Basic = 0,
-        Standard = 1,
-        Premium = 2
     }
 
     public enum MediaThumbnailFormat

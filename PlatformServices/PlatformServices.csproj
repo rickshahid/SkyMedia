@@ -219,6 +219,7 @@
     <Compile Include="Entities\JobTask.cs" />
     <Compile Include="Entities\MediaAccount.cs" />
     <Compile Include="Entities\MediaInsight.cs" />
+    <Compile Include="Entities\MediaProcess.cs" />
     <Compile Include="Entities\MediaProtection.cs" />
     <Compile Include="Entities\MediaPublish.cs" />
     <Compile Include="Entities\MediaSearch.cs" />

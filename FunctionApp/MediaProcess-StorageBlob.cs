@@ -22,40 +22,34 @@ namespace AzureSkyMedia.FunctionApp
                 log.Info($"Media File: {name}");
                 if (name.EndsWith(Constant.Media.FileExtension.JobManifest))
                 {
-                    StreamReader jobReader = new StreamReader(blob);
+                    ParseJobManifest(blobClient, blob, name, log, createNewLog);
+                }
+                else
+                {
+                    DatabaseClient databaseClient = new DatabaseClient();
+                    string collectionId = Constant.Database.Collection.MediaProcess;
+                    MediaProcess mediaProcess = databaseClient.GetDocument<MediaProcess>(collectionId, name);
 
-                    MediaAccount mediaAccount = new MediaAccount()
+                    if (mediaProcess != null)
                     {
-                        DomainName = jobReader.ReadLine(),
-                        EndpointUrl = jobReader.ReadLine(),
-                        ClientId = jobReader.ReadLine(),
-                        ClientKey = jobReader.ReadLine(),
-                        IndexerKey = jobReader.ReadLine()
-                    };
-                    MediaClient mediaClient = new MediaClient(mediaAccount);
-
-                    string[] assetIds = ParseJobManifest(blobClient, jobReader, out bool manifestComplete, out string[] assetFiles, out IDictionary<MediaProcessor, string> taskConfig);
-                    if (!manifestComplete)
-                    {
-
-                    }
-                    else
-                    {
-                        string assetName = Path.GetFileNameWithoutExtension(name);
-                        if (assetIds.Length == 0)
+                        List<string> missingFiles = new List<string>();
+                        foreach (string missingFile in mediaProcess.MissingFiles)
                         {
-                            string assetId = mediaClient.CreateAsset(assetName, assetFiles);
-                            assetIds = new string[] { assetId };
-                            log.Info($"Asset Id: {assetId}");
-                            createNewLog = UpdateJobLog(blobClient, name, assetId, createNewLog);
+                            if (!string.Equals(missingFile, name, StringComparison.OrdinalIgnoreCase))
+                            {
+                                missingFiles.Add(name);
+                            }
                         }
-
-                        MediaJob mediaJob = GetMediaJob(assetName, taskConfig);
-                        MediaJobInput[] jobInputs = GetJobInputs(mediaClient, assetIds);
-
-                        string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
-                        log.Info($"Job Id: {jobId}");
-                        createNewLog = UpdateJobLog(blobClient, name, jobId, createNewLog);
+                        if (missingFiles.Count == 0)
+                        {
+                            databaseClient.DeleteDocument(collectionId, mediaProcess.Id);
+                            ParseJobManifest(blobClient, blob, name, log, createNewLog);
+                        }
+                        else
+                        {
+                            mediaProcess.MissingFiles = missingFiles.ToArray();
+                            databaseClient.UpsertDocument(collectionId, mediaProcess);
+                        }
                     }
                 }
             }
@@ -88,12 +82,59 @@ namespace AzureSkyMedia.FunctionApp
             return blob.OpenWrite(createNew);
         }
 
-        private static string[] ParseJobManifest(BlobClient blobClient, StreamReader jobReader, out bool manifestComplete,
+        private static void ParseJobManifest(BlobClient blobClient, Stream blob, string blobName, TraceWriter log, bool createNewLog)
+        {
+            StreamReader jobReader = new StreamReader(blob);
+
+            MediaAccount mediaAccount = new MediaAccount()
+            {
+                DomainName = jobReader.ReadLine(),
+                EndpointUrl = jobReader.ReadLine(),
+                ClientId = jobReader.ReadLine(),
+                ClientKey = jobReader.ReadLine(),
+                IndexerKey = jobReader.ReadLine()
+            };
+            MediaClient mediaClient = new MediaClient(mediaAccount);
+
+            string[] assetIds = ParseJobManifest(blobClient, jobReader, out string[] missingFiles, out string[] assetFiles, out IDictionary<MediaProcessor, string> taskConfig);
+            if (missingFiles.Length > 0)
+            {
+                MediaProcess mediaProcess = new MediaProcess()
+                {
+                    Id = blobName,
+                    MissingFiles = missingFiles
+                };
+
+                DatabaseClient databaseClient = new DatabaseClient();
+                string collectionId = Constant.Database.Collection.MediaProcess;
+                databaseClient.UpsertDocument(collectionId, mediaProcess);
+            }
+            else
+            {
+                string assetName = Path.GetFileNameWithoutExtension(blobName);
+                if (assetIds.Length == 0)
+                {
+                    string assetId = mediaClient.CreateAsset(assetName, assetFiles);
+                    assetIds = new string[] { assetId };
+                    log.Info($"Asset Id: {assetId}");
+                    createNewLog = UpdateJobLog(blobClient, blobName, assetId, createNewLog);
+                }
+
+                MediaJob mediaJob = GetMediaJob(assetName, taskConfig);
+                MediaJobInput[] jobInputs = GetJobInputs(mediaClient, assetIds);
+
+                string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
+                log.Info($"Job Id: {jobId}");
+                createNewLog = UpdateJobLog(blobClient, blobName, jobId, createNewLog);
+            }
+        }
+
+        private static string[] ParseJobManifest(BlobClient blobClient, StreamReader jobReader, out string[] missingFiles,
                                                  out string[] assetFiles, out IDictionary<MediaProcessor, string> taskConfig)
         {
-            manifestComplete = true;
             List<string> assetIds = new List<string>();
-            List<string> fileNames = new List<string>();
+            List<string> assetFileNames = new List<string>();
+            List<string> missingFileNames = new List<string>();
             taskConfig = new Dictionary<MediaProcessor, string>();
             while (!jobReader.EndOfStream)
             {
@@ -104,7 +145,7 @@ namespace AzureSkyMedia.FunctionApp
                 }
                 else if (!FileExists(blobClient, jobLine))
                 {
-                    manifestComplete = false;
+                    missingFileNames.Add(jobLine);
                 }
                 else if (jobLine.EndsWith(Constant.Media.FileExtension.Json))
                 {
@@ -118,10 +159,11 @@ namespace AzureSkyMedia.FunctionApp
                 }
                 else
                 {
-                    fileNames.Add(jobLine);
+                    assetFileNames.Add(jobLine);
                 }
             }
-            assetFiles = fileNames.ToArray();
+            assetFiles = assetFileNames.ToArray();
+            missingFiles = missingFileNames.ToArray();
             return assetIds.ToArray();
         }
 

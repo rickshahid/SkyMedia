@@ -169,14 +169,14 @@ namespace AzureSkyMedia.PlatformServices
                     accessPolicy.Delete();
                     break;
 
-                case MediaEntity.Locator:
-                    ILocator locator = mediaClient.GetEntityById(entityType, entityId) as ILocator;
-                    locator.Delete();
+                case MediaEntity.StreamingLocator:
+                    ILocator streamingLocator = mediaClient.GetEntityById(entityType, entityId) as ILocator;
+                    streamingLocator.Delete();
                     break;
 
                 case MediaEntity.StreamingFilter:
-                    IStreamingFilter filter = mediaClient.GetEntityById(entityType, entityId) as IStreamingFilter;
-                    filter.Delete();
+                    IStreamingFilter streamingFilter = mediaClient.GetEntityById(entityType, entityId) as IStreamingFilter;
+                    streamingFilter.Delete();
                     break;
             }
         }
@@ -290,8 +290,8 @@ namespace AzureSkyMedia.PlatformServices
             IAccessPolicy[] accessPolicies = mediaClient.GetEntities(MediaEntity.AccessPolicy) as IAccessPolicy[];
             IAssetDeliveryPolicy[] deliveryPolicies = mediaClient.GetEntities(MediaEntity.DeliveryPolicy) as IAssetDeliveryPolicy[];
             IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
+            ILocator[] locators = mediaClient.GetEntities(MediaEntity.StreamingLocator) as ILocator[];
             IStreamingFilter[] streamingFilters = mediaClient.GetEntities(MediaEntity.StreamingFilter) as IStreamingFilter[];
-            ILocator[] locators = mediaClient.GetEntities(MediaEntity.Locator) as ILocator[];
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", storageAccounts.Length.ToString() });
@@ -314,8 +314,8 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Delivery Policies", deliveryPolicies.Length.ToString(), "/account/deliveryPolicies" });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.Length.ToString() });
             entityCounts.Add(new string[] { "Streaming Units", GetStreamingUnitCount(streamingEndpoints).ToString() });
-            entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString(), "/account/filters" });
-            entityCounts.Add(new string[] { "Locators", locators.Length.ToString(), "/account/locators" });
+            entityCounts.Add(new string[] { "Streaming Locators", locators.Length.ToString(), "/account/streamingLocators" });
+            entityCounts.Add(new string[] { "Streaming Filters", streamingFilters.Length.ToString(), "/account/streamingFilters" });
             return entityCounts.ToArray();
         }
     }
