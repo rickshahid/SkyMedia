@@ -146,6 +146,18 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        public T[] GetDocuments<T>(string collectionId)
+        {
+            List<T> documents = new List<T>();
+            JObject[] docs = GetDocuments(collectionId);
+            foreach (JObject doc in docs)
+            {
+                T document = doc.ToObject<T>();
+                documents.Add(document);
+            }
+            return documents.ToArray();
+        }
+
         public JObject[] GetDocuments(string collectionId)
         {
             List<JObject> documents = new List<JObject>();
