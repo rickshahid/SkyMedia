@@ -100,7 +100,7 @@ namespace AzureSkyMedia.FunctionApp
             {
                 if (assetFiles.Length > 0)
                 {
-                    string assetName = Path.GetFileNameWithoutExtension(assetFiles[0]);
+                    string assetName = assetFiles[0];
                     string assetId = mediaClient.CreateAsset(assetName, assetFiles);
                     createLog = UpdateJobLog(blobClient, blobName, assetId, createLog);
                     log.Info($"Asset Id: {assetId}");
@@ -112,6 +112,11 @@ namespace AzureSkyMedia.FunctionApp
                 string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
                 createLog = UpdateJobLog(blobClient, blobName, jobId, createLog);
                 log.Info($"Job Id: {jobId}");
+                foreach (KeyValuePair<MediaProcessor, string> processorConfig in taskConfig)
+                {
+                    createLog = UpdateJobLog(blobClient, blobName, processorConfig.Key.ToString(), createLog);
+                    log.Info($"Job Task: {processorConfig.Key}");
+                }
             }
         }
 
