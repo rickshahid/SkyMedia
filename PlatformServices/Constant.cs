@@ -199,12 +199,19 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Media
         {
-            public const string AssetIdPrefix = "nb:cid:";
-            public const string MetadataManifest = "MediaProcessor_MetadataManifest.txt";
+            public struct Insight
+            {
+                public const string MetadataManifest = "MediaInsight_MetadataManifest.txt";
+            }
+
+            public struct IdPrefix
+            {
+                public const string Asset = "nb:cid:";
+                public const string Processor = "nb:mpid:";
+            }
 
             public struct ProcessorId
             {
-                public const string Prefix = "nb:mpid:";
                 public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
                 public const string EncoderPremium = "nb:mpid:UUID:77fea72a-107c-439e-b0bb-f88153b93461";
                 public const string VideoIndexer = "VideoIndexer";
@@ -317,7 +324,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Stream
             {
-                public const string LocatorIdPrefix = "nb:lid:UUID:";
                 public const string LocatorManifestSuffix = "/manifest";
 
                 public struct TextTrack

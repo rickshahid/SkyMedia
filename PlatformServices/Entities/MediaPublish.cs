@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 
+using Microsoft.Azure.Documents;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal class MediaPublish
@@ -12,6 +14,14 @@ namespace AzureSkyMedia.PlatformServices
         public MediaAccount MediaAccount { get; set; }
 
         public string MobileNumber { get; set; }
+    }
+
+    internal class MediaPublishError
+    {
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        public DocumentClientException Exception { get; set; }
     }
 
     public class MediaPublished

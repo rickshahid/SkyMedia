@@ -54,7 +54,7 @@ namespace AzureSkyMedia.PlatformServices
             string[] processorIds = GetProcessorIds(presetsView);
             foreach (string processorId in processorIds)
             {
-                if (!processorId.StartsWith(Constant.Media.ProcessorId.Prefix, StringComparison.OrdinalIgnoreCase))
+                if (!processorId.StartsWith(Constant.Media.IdPrefix.Processor, StringComparison.OrdinalIgnoreCase))
                 {
                     MediaProcessor mediaProcessor = (MediaProcessor)Enum.Parse(typeof(MediaProcessor), processorId);
                     mediaProcessors.Add(mediaProcessor);

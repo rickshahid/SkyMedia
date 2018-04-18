@@ -140,7 +140,7 @@ namespace AzureSkyMedia.FunctionApp
             while (!jobReader.EndOfStream)
             {
                 string jobLine = jobReader.ReadLine();
-                if (jobLine.StartsWith(Constant.Media.AssetIdPrefix))
+                if (jobLine.StartsWith(Constant.Media.IdPrefix.Asset))
                 {
                     assetIds.Add(jobLine);
                 }

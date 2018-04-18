@@ -39,7 +39,7 @@ namespace AzureSkyMedia.PlatformServices
                     ContentAuthTypeToken = true,
                     Aes = true
                 };
-                AddDeliveryPolicies(asset, contentProtection);
+                SetDeliveryPolicies(asset, contentProtection);
                 CreateProgram(channel, asset, archiveWindowMinutes);
 
                 assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramDrmSuffix);
@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
                     DrmPlayReady = true,
                     DrmWidevine = true
                 };
-                AddDeliveryPolicies(asset, contentProtection);
+                SetDeliveryPolicies(asset, contentProtection);
                 CreateProgram(channel, asset, archiveWindowMinutes);
             }
         }

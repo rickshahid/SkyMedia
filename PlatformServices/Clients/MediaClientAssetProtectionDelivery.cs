@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -115,14 +116,24 @@ namespace AzureSkyMedia.PlatformServices
             return deliveryPolicies.ToArray();
         }
 
-        public void AddDeliveryPolicies(IAsset asset, ContentProtection contentProtection)
+        public void SetDeliveryPolicies(IAsset asset, ContentProtection contentProtection)
         {
             IContentKey[] contentKeys = GetContentKeys(contentProtection);
             foreach (IContentKey contentKey in contentKeys)
             {
+                IContentKey[] assetKeys = asset.ContentKeys.Where(k => k.ContentKeyType == contentKey.ContentKeyType).ToArray();
+                foreach (IContentKey assetKey in assetKeys)
+                {
+                    asset.ContentKeys.Remove(assetKey);
+                }
                 asset.ContentKeys.Add(contentKey);
             }
-            IAssetDeliveryPolicy[] deliveryPolicies = GetDeliveryPolicies(contentProtection);
+            IAssetDeliveryPolicy[] deliveryPolicies = asset.DeliveryPolicies.ToArray();
+            foreach (IAssetDeliveryPolicy deliveryPolicy in deliveryPolicies)
+            {
+                asset.DeliveryPolicies.Remove(deliveryPolicy);
+            }
+            deliveryPolicies = GetDeliveryPolicies(contentProtection);
             foreach (IAssetDeliveryPolicy deliveryPolicy in deliveryPolicies)
             {
                 asset.DeliveryPolicies.Add(deliveryPolicy);

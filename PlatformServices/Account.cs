@@ -37,7 +37,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             foreach (IAssetFile assetFile in asset.AssetFiles)
             {
-                if (assetFile.Name.Equals(Constant.Media.MetadataManifest, StringComparison.OrdinalIgnoreCase))
+                if (assetFile.Name.Equals(Constant.Media.Insight.MetadataManifest, StringComparison.OrdinalIgnoreCase))
                 {
                     string manifestUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, assetFile.Name, false);
                     Stream manifestStream = WebClient.GetStream(manifestUrl);
