@@ -1,15 +1,32 @@
-﻿namespace AzureSkyMedia.PlatformServices
+﻿using Newtonsoft.Json;
+
+namespace AzureSkyMedia.PlatformServices
 {
-    public struct MediaInsight
+    internal class MediaInsightSource
     {
-        public string ProcessorId { get; set; }
+        public MediaProcessor MediaProcessor { get; set; }
 
-        public string ProcessorName { get; set; }
-
-        public string DocumentId { get; set; }
-
-        public string SourceUrl { get; set; }
+        public string OutputId { get; set; }
     }
+
+    internal class MediaInsight
+    {
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        public MediaInsightSource[] Sources { get; set; }
+    }
+
+    //public struct MediaInsight
+    //{
+    //    public string ProcessorId { get; set; }
+
+    //    public string ProcessorName { get; set; }
+
+    //    public string DocumentId { get; set; }
+
+    //    public string SourceUrl { get; set; }
+    //}
 
     public class VideoIndexer
     {

@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
 
-using Microsoft.Azure.Documents;
+using Newtonsoft.Json;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -21,7 +21,7 @@ namespace AzureSkyMedia.PlatformServices
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
-        public DocumentClientException Exception { get; set; }
+        public Exception Exception { get; set; }
     }
 
     public class MediaPublished

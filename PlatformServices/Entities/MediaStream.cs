@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
             };
             mediaStream.Thumbnails = this.Thumbnails == null ? null : (string[])this.Thumbnails.Clone();
             mediaStream.TextTracks = this.TextTracks == null ? null : (MediaTrack[])this.TextTracks.Clone();
-            mediaStream.ContentInsight = this.ContentInsight == null ? null : (MediaInsight[])this.ContentInsight.Clone();
+            //mediaStream.ContentInsight = this.ContentInsight == null ? null : (MediaInsight[])this.ContentInsight.Clone();
             return mediaStream;
         }
 
@@ -47,6 +47,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaTrack[] TextTracks { get; set; }
 
-        public MediaInsight[] ContentInsight { get; set; }
+        //public MediaInsight[] ContentInsight { get; set; }
     }
 }

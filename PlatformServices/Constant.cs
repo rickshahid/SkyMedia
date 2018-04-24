@@ -84,6 +84,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream4TextTracks = "Media.Stream4.TextTracks";
 
             public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
+            public const string MediaChannelAdDurationSeconds = "Media.Channel.AdDurationSeconds";
 
             public const string MediaLocatorWriteDurationMinutes = "Media.Locator.WriteDurationMinutes";
             public const string MediaLocatorReadDurationDays = "Media.Locator.ReadDurationDays";
@@ -199,11 +200,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Media
         {
-            public struct Insight
-            {
-                public const string MetadataManifest = "MediaInsight_MetadataManifest.txt";
-            }
-
             public struct IdPrefix
             {
                 public const string Asset = "nb:cid:";
@@ -314,9 +310,9 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string ChannelEncodingPreset = "Default720p";
 
-                public const string ProgramClearSuffix = "-Clear";
-                public const string ProgramAesSuffix = "-AES";
-                public const string ProgramDrmSuffix = "-DRM";
+                public const string ProgramSuffixClear = "-Clear";
+                public const string ProgramSuffixAes = "-AES";
+                public const string ProgramSuffixDrm = "-DRM";
 
                 public const string AllowAnyAddress = "Allow Any Address";
                 public const string AllowAuthorizedAddress = "Authorized Address Only";

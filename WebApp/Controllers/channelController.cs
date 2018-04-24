@@ -11,25 +11,27 @@ namespace AzureSkyMedia.WebApp.Controllers
         public string Create(string channelName, MediaEncoding channelEncoding, MediaProtocol inputProtocol,
                              string inputAddressAuthorized, int? inputSubnetPrefixLength,
                              string previewAddressAuthorized, int? previewSubnetPrefixLength,
-                             int? archiveWindowMinutes, bool? archiveEncryption)
+                             int? archiveWindowMinutes, bool archiveEncryptionClear,
+                             bool archiveEncryptionAes, bool archiveEncryptionDrm)
         {
-            if (!archiveEncryption.HasValue) archiveEncryption = false;
             string channelId = string.Empty;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                channelId = mediaClient.CreateChannel(channelName, channelEncoding, inputProtocol, inputAddressAuthorized, inputSubnetPrefixLength, previewAddressAuthorized, previewSubnetPrefixLength, archiveWindowMinutes, archiveEncryption.Value);
+                channelId = mediaClient.CreateChannel(channelName, channelEncoding, inputProtocol, inputAddressAuthorized, inputSubnetPrefixLength, previewAddressAuthorized, previewSubnetPrefixLength, archiveWindowMinutes, archiveEncryptionClear, archiveEncryptionAes, archiveEncryptionDrm);
             }
             return channelId;
         }
 
-        public JsonResult marker(string channelName, int durationSeconds, int cueId, bool showSlate)
+        [HttpPost]
+        [Route("/channel/mark")]
+        public JsonResult Mark(string channelName, int durationSeconds, int cueId, bool showSlate)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            mediaClient.InsertCue(channelName, durationSeconds, cueId, showSlate);
-            return Json(cueId);
+            bool inserted = mediaClient.InsertMarker(channelName, durationSeconds, cueId, showSlate);
+            return Json(inserted);
         }
     }
 }

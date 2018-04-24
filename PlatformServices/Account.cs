@@ -35,44 +35,26 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void DeleteAsset(MediaClient mediaClient, IAsset asset)
         {
-            foreach (IAssetFile assetFile in asset.AssetFiles)
+            string insightId = asset.AlternateId;
+            if (!string.IsNullOrEmpty(insightId))
             {
-                if (assetFile.Name.Equals(Constant.Media.Insight.MetadataManifest, StringComparison.OrdinalIgnoreCase))
+                DatabaseClient databaseClient = new DatabaseClient();
+                string collectionId = Constant.Database.Collection.MediaInsight;
+                MediaInsight mediaInsight = databaseClient.GetDocument<MediaInsight>(collectionId, insightId);
+                if (mediaInsight != null)
                 {
-                    string manifestUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, assetFile.Name, false);
-                    Stream manifestStream = WebClient.GetStream(manifestUrl);
-                    using (StreamReader manifestReader = new StreamReader(manifestStream))
+                    foreach (MediaInsightSource insightSource in mediaInsight.Sources)
                     {
-                        while (!manifestReader.EndOfStream)
+                        string documentId = insightSource.OutputId;
+                        if (insightSource.MediaProcessor == MediaProcessor.VideoIndexer)
                         {
-                            string mediaProcessor = manifestReader.ReadLine();
-                            string[] mediaInsight = mediaProcessor.Split(Constant.TextDelimiter.Identifier);
-                            bool videoIndexer = string.Equals(mediaInsight[0], MediaProcessor.VideoIndexer.ToString(), StringComparison.OrdinalIgnoreCase);
-                            string documentId = mediaInsight[1];
-
-                            DatabaseClient databaseClient = new DatabaseClient();
-                            string collectionId = Constant.Database.Collection.MediaInsight;
-                            databaseClient.DeleteDocument(collectionId, documentId);
-
-                            if (videoIndexer)
-                            {
-                                collectionId = Constant.Database.Collection.MediaPublish;
-                                databaseClient.DeleteDocument(collectionId, documentId);
-
-                                IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                                indexerClient.DeleteVideo(documentId, true);
-
-                                foreach (IAsset parentAsset in asset.ParentAssets)
-                                {
-                                    if (string.Equals(parentAsset.AlternateId, documentId, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        parentAsset.AlternateId = string.Empty;
-                                        parentAsset.Update();
-                                    }
-                                }
-                            }
+                            IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
+                            indexerClient.DeleteVideo(documentId, true);
+                            databaseClient.DeleteDocument(Constant.Database.Collection.MediaPublish, documentId);
                         }
+                        databaseClient.DeleteDocument(collectionId, documentId);
                     }
+                    databaseClient.DeleteDocument(collectionId, mediaInsight.Id);
                 }
             }
             foreach (ILocator locator in asset.Locators)
@@ -95,11 +77,11 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     program.Stop();
                 }
+                program.Delete();
                 if (deleteAssets)
                 {
                     DeleteAsset(mediaClient, program.Asset);
                 }
-                program.Delete();
             }
             IChannel[] channels = mediaClient.GetEntities(MediaEntity.Channel) as IChannel[];
             foreach (IChannel channel in channels)

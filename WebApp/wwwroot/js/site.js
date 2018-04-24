@@ -43,7 +43,9 @@ function SetLayout(b2b) {
     CreateTipBottom("mediaCertification", "Azure Media Services<br><br>Security Certification");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);
-        DisplayMessage("Error Message", error);
+        if (error != "") {
+            DisplayMessage("Error Message", error);
+        }
     });
     $.ajaxSetup({
         cache: false

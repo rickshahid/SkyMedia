@@ -38,7 +38,7 @@ namespace AzureSkyMedia.PlatformServices
             return WebUtility.UrlEncode(callbackUrl);
         }
 
-        private void PublishInsight(MediaAccount mediaAccount, string indexId)
+        private void SetPublish(MediaAccount mediaAccount, string indexId)
         {
             MediaPublish mediaPublish = new MediaPublish
             {
@@ -86,6 +86,29 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return assetId;
+        }
+
+        public static string GetIndexId(IAsset asset)
+        {
+            string indexId = string.Empty;
+            string insightId = asset.AlternateId;
+            if (!string.IsNullOrEmpty(insightId))
+            {
+                DatabaseClient databaseClient = new DatabaseClient();
+                string collectionId = Constant.Database.Collection.MediaInsight;
+                MediaInsight mediaInsight = databaseClient.GetDocument<MediaInsight>(collectionId, insightId);
+                if (mediaInsight != null)
+                {
+                    foreach (MediaInsightSource insightSource in mediaInsight.Sources)
+                    {
+                        if (insightSource.MediaProcessor == MediaProcessor.VideoIndexer)
+                        {
+                            indexId = insightSource.OutputId;
+                        }
+                    }
+                }
+            }
+            return indexId;
         }
 
         public static string GetLanguageLabel(JObject index)
@@ -185,24 +208,21 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     _indexer.GetResponse<object>(request);
                 }
-                PublishInsight(mediaClient.MediaAccount, indexId);
+                SetPublish(mediaClient.MediaAccount, indexId);
             }
         }
 
-        public void IndexVideo(MediaClient mediaClient, IAsset asset, VideoIndexer videoIndexer)
+        public string IndexVideo(MediaClient mediaClient, IAsset asset, VideoIndexer videoIndexer)
         {
+            string indexId = string.Empty;
             if (_indexer != null)
             {
                 if (videoIndexer == null) videoIndexer = new VideoIndexer();
                 string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
-                string indexId = IndexVideo(asset, locatorUrl, videoIndexer);
-                if (!string.IsNullOrEmpty(indexId))
-                {
-                    asset.AlternateId = indexId;
-                    asset.Update();
-                    PublishInsight(mediaClient.MediaAccount, indexId);
-                }
+                indexId = IndexVideo(asset, locatorUrl, videoIndexer);
+                SetPublish(mediaClient.MediaAccount, indexId);
             }
+            return indexId;
         }
 
         public void DeleteVideo(string indexId, bool deleteInsight)

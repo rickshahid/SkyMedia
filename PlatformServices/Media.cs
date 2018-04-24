@@ -20,12 +20,12 @@ namespace AzureSkyMedia.PlatformServices
             return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
         }
 
-        private static int OrderByProcessor(MediaInsight leftItem, MediaInsight rightItem)
-        {
-            MediaProcessor leftProcessor = Processor.GetMediaProcessor(leftItem.ProcessorId).Value;
-            MediaProcessor rightProcessor = Processor.GetMediaProcessor(rightItem.ProcessorId).Value;
-            return leftProcessor.CompareTo(rightProcessor);
-        }
+        //private static int OrderByProcessor(MediaInsight leftItem, MediaInsight rightItem)
+        //{
+        //    MediaProcessor leftProcessor = Processor.GetMediaProcessor(leftItem.ProcessorId).Value;
+        //    MediaProcessor rightProcessor = Processor.GetMediaProcessor(rightItem.ProcessorId).Value;
+        //    return leftProcessor.CompareTo(rightProcessor);
+        //}
 
         private static void AddMediaStream(List<MediaStream> mediaStreams, string settingStreamName, string settingSourceUrl, string settingTextTrack)
         {
@@ -123,7 +123,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
-            string indexId = asset.AlternateId;
+            string indexId = IndexerClient.GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId))
             {
                 string webVttUrl = indexerClient.GetWebVttUrl(indexId, null);
@@ -164,42 +164,42 @@ namespace AzureSkyMedia.PlatformServices
 
             IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
 
-            List<MediaInsight> contentInsight = new List<MediaInsight>();
-            if (!clipperView)
-            {
-                string indexId = asset.AlternateId;
-                if (!string.IsNullOrEmpty(indexId))
-                {
-                    MediaInsight insight = new MediaInsight()
-                    {
-                        ProcessorId = Processor.GetProcessorId(MediaProcessor.VideoIndexer, null),
-                        ProcessorName = Processor.GetProcessorName(MediaProcessor.VideoIndexer),
-                        DocumentId = indexId,
-                        SourceUrl = indexerClient.GetInsightUrl(indexId, true)
-                    };
-                    contentInsight.Add(insight);
-                }
+            //List<MediaInsight> contentInsight = new List<MediaInsight>();
+            //if (!clipperView)
+            //{
+            //    string indexId = IndexerClient.GetIndexId(asset);
+            //    if (!string.IsNullOrEmpty(indexId))
+            //    {
+            //        MediaInsight insight = new MediaInsight()
+            //        {
+            //            ProcessorId = Processor.GetProcessorId(MediaProcessor.VideoIndexer, null),
+            //            ProcessorName = Processor.GetProcessorName(MediaProcessor.VideoIndexer),
+            //            DocumentId = indexId,
+            //            SourceUrl = indexerClient.GetInsightUrl(indexId, true)
+            //        };
+            //        contentInsight.Add(insight);
+            //    }
 
-                string[] fileNames = MediaClient.GetFileNames(asset, Constant.Media.FileExtension.Json);
-                foreach (string fileName in fileNames)
-                {
-                    string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
-                    if (Enum.TryParse(fileNameInfo[0], out MediaProcessor processor) && fileNameInfo.Length == 2)
-                    {
-                        string documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
-                        MediaInsight insight = new MediaInsight()
-                        {
-                            ProcessorId = Processor.GetProcessorId(processor, null),
-                            ProcessorName = Processor.GetProcessorName(processor),
-                            DocumentId = documentId,
-                            SourceUrl = string.Empty
-                        };
-                        contentInsight.Add(insight);
-                    }
-                }
+            //    string[] fileNames = MediaClient.GetFileNames(asset, Constant.Media.FileExtension.Json);
+            //    foreach (string fileName in fileNames)
+            //    {
+            //        string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
+            //        if (Enum.TryParse(fileNameInfo[0], out MediaProcessor processor) && fileNameInfo.Length == 2)
+            //        {
+            //            string documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
+            //            MediaInsight insight = new MediaInsight()
+            //            {
+            //                ProcessorId = Processor.GetProcessorId(processor, null),
+            //                ProcessorName = Processor.GetProcessorName(processor),
+            //                DocumentId = documentId,
+            //                SourceUrl = string.Empty
+            //            };
+            //            contentInsight.Add(insight);
+            //        }
+            //    }
 
-                contentInsight.Sort(OrderByProcessor);
-            }
+            //    contentInsight.Sort(OrderByProcessor);
+            //}
 
             MediaStream mediaStream = new MediaStream()
             {
@@ -213,7 +213,7 @@ namespace AzureSkyMedia.PlatformServices
                 },
                 Thumbnails = GetThumbnailUrls(mediaClient, asset),
                 TextTracks = GetTextTracks(mediaClient, indexerClient, asset),
-                ContentInsight = contentInsight.ToArray(),
+                //ContentInsight = contentInsight.ToArray()
             };
             if (!filtersOnly)
             {

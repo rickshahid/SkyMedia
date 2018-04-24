@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 
-using Microsoft.Azure.Documents;
 using Microsoft.WindowsAzure.MediaServices.Client;
 
 using Newtonsoft.Json.Linq;
@@ -11,25 +10,23 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string UpsertIndex(JObject index)
+        private static void UpsertIndex(JObject index)
         {
-            string documentId = string.Empty;
             DatabaseClient databaseClient = new DatabaseClient();
             string collectionId = Constant.Database.Collection.MediaInsight;
             try
             {
-                documentId = databaseClient.UpsertDocument(collectionId, index);
+                databaseClient.UpsertDocument(collectionId, index);
             }
-            catch (DocumentClientException ex)
+            catch (Exception ex)
             {
                 MediaPublishError publishError = new MediaPublishError()
                 {
                     Id = index["id"].ToString(),
                     Exception = ex
                 };
-                documentId = databaseClient.UpsertDocument(collectionId, publishError);
+                databaseClient.UpsertDocument(collectionId, publishError);
             }
-            return documentId;
         }
 
         private static MediaAccount GetMediaAccount(JObject document)
@@ -43,24 +40,6 @@ namespace AzureSkyMedia.PlatformServices
                 IndexerKey = document["MediaAccount"]["IndexerKey"].ToString()
             };
             return mediaAccount;
-        }
-
-        private static IAssetFile GetMetadataManifest(IAsset encoderOutput)
-        {
-            IAssetFile metadataManifest = null;
-            string fileName = Constant.Media.Insight.MetadataManifest;
-            foreach (IAssetFile assetFile in encoderOutput.AssetFiles)
-            {
-                if (string.Equals(assetFile.Name, fileName, StringComparison.OrdinalIgnoreCase))
-                {
-                    metadataManifest = assetFile;
-                }
-            }
-            if (metadataManifest == null)
-            {
-                metadataManifest = encoderOutput.AssetFiles.Create(fileName);
-            }
-            return metadataManifest;
         }
 
         private static void PublishAsset(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection, LocatorType locatorType)
@@ -112,21 +91,12 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string insightUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, insightOutput, insightFile.Name, false);
                 string insightData = WebClient.GetData(insightUrl);
-
-                string collectionId = Constant.Database.Collection.MediaInsight;
                 JObject insight = JObject.Parse(insightData);
+                string collectionId = Constant.Database.Collection.MediaInsight;
                 string documentId = databaseClient.UpsertDocument(collectionId, insight);
-
                 if (encoderOutput != null)
                 {
-                    IAssetFile metadataManifest = GetMetadataManifest(encoderOutput);
-                    string manifestUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, encoderOutput, metadataManifest.Name, false);
-                    Stream manifestStream = WebClient.GetStream(manifestUrl);
-                    using (StreamWriter manifestWriter = new StreamWriter(manifestStream))
-                    {
-                        string insightManifest = string.Concat(insightProcessor.Value, Constant.TextDelimiter.Identifier, documentId);
-                        manifestWriter.WriteLine(insightManifest);
-                    }
+                    //TODO: Add insightProcessor and documentId into the metadata of the encoderOutput asset
                 }
             }
         }
@@ -202,28 +172,18 @@ namespace AzureSkyMedia.PlatformServices
         public static MediaPublished PublishInsight(MediaPublish mediaPublish)
         {
             string indexId = mediaPublish.Id;
-            string accountId = mediaPublish.MediaAccount.Id;
-
             IndexerClient indexerClient = new IndexerClient(mediaPublish.MediaAccount);
             JObject index = indexerClient.GetIndex(indexId, null, false);
+            UpsertIndex(index);
 
-            MediaPublished mediaPublished = null;
             string assetId = IndexerClient.GetAssetId(index);
-            if (!string.IsNullOrEmpty(assetId))
+            MediaPublished mediaPublished = new MediaPublished
             {
-                MediaClient mediaClient = new MediaClient(mediaPublish.MediaAccount);
-                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-
-                string documentId = UpsertIndex(index);
-
-                mediaPublished = new MediaPublished
-                {
-                    AssetId = assetId,
-                    IndexId = indexId,
-                    MobileNumber = mediaPublish.MobileNumber,
-                    StatusMessage = string.Empty
-                };
-            }
+                AssetId = assetId,
+                IndexId = indexId,
+                MobileNumber = mediaPublish.MobileNumber,
+                StatusMessage = string.Empty
+            };
             return mediaPublished;
         }
 

@@ -7,7 +7,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private void CreateProgram(IChannel channel, IAsset asset, int? archiveWindowMinutes)
+        private void CreateProgram(string programName, IChannel channel, IAsset asset, int? archiveWindowMinutes)
         {
             if (!archiveWindowMinutes.HasValue)
             {
@@ -17,41 +17,46 @@ namespace AzureSkyMedia.PlatformServices
             }
             ProgramCreationOptions programOptions = new ProgramCreationOptions()
             {
-                Name = asset.Name,
+                Name = string.IsNullOrEmpty(programName) ? asset.Name : programName,
                 AssetId = asset.Id,
                 ArchiveWindowLength = new TimeSpan(0, archiveWindowMinutes.Value, 0)
             };
             channel.Programs.Create(programOptions);
         }
 
-        private void CreatePrograms(IChannel channel, int? archiveWindowMinutes, bool archiveEncryption)
+        private void CreatePrograms(IChannel channel, int? archiveWindowMinutes, bool archiveEncryptionClear,
+                                    bool archiveEncryptionAes, bool archiveEncryptionDrm)
         {
-            string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramClearSuffix);
-            IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.None);
-            CreateProgram(channel, asset, archiveWindowMinutes);
-
-            if (archiveEncryption)
+            if (archiveEncryptionClear)
             {
-                assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramAesSuffix);
-                asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+                string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramSuffixClear);
+                IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.None);
+                CreateProgram(null, channel, asset, archiveWindowMinutes);
+            }
+            if (archiveEncryptionAes)
+            {
+                string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramSuffixAes);
+                IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
                 ContentProtection contentProtection = new ContentProtection()
                 {
                     ContentAuthTypeToken = true,
                     Aes = true
                 };
+                CreateProgram(null, channel, asset, archiveWindowMinutes);
                 SetDeliveryPolicies(asset, contentProtection);
-                CreateProgram(channel, asset, archiveWindowMinutes);
-
-                assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramDrmSuffix);
-                asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
-                contentProtection = new ContentProtection()
+            }
+            if (archiveEncryptionDrm)
+            {
+                string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramSuffixDrm);
+                IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+                ContentProtection contentProtection = new ContentProtection()
                 {
                     ContentAuthTypeToken = true,
                     DrmPlayReady = true,
                     DrmWidevine = true
                 };
+                CreateProgram(null, channel, asset, archiveWindowMinutes);
                 SetDeliveryPolicies(asset, contentProtection);
-                CreateProgram(channel, asset, archiveWindowMinutes);
             }
         }
 
@@ -122,12 +127,13 @@ namespace AzureSkyMedia.PlatformServices
         public string CreateChannel(string channelName, MediaEncoding channelEncoding, MediaProtocol inputProtocol,
                                     string inputAddressAuthorized, int? inputSubnetPrefixLength,
                                     string previewAddressAuthorized, int? previewSubnetPrefixLength,
-                                    int? archiveWindowMinutes, bool archiveEncryption)
+                                    int? archiveWindowMinutes, bool archiveEncryptionClear,
+                                    bool archiveEncryptionAes, bool archiveEncryptionDrm)
         {
             ChannelEncodingType channelType = (ChannelEncodingType)channelEncoding;
             StreamingProtocol channelProtocol = (StreamingProtocol)inputProtocol;
             IChannel channel = CreateChannel(channelName, channelType, channelProtocol, inputAddressAuthorized, inputSubnetPrefixLength, previewAddressAuthorized, previewSubnetPrefixLength);
-            CreatePrograms(channel, archiveWindowMinutes, archiveEncryption);
+            CreatePrograms(channel, archiveWindowMinutes, archiveEncryptionClear, archiveEncryptionAes, archiveEncryptionDrm);
             foreach (IProgram program in channel.Programs)
             {
                 CreateLocator(LocatorType.OnDemandOrigin, program.Asset);
@@ -135,11 +141,23 @@ namespace AzureSkyMedia.PlatformServices
             return channel.Id;
         }
 
-        public void InsertCue(string channelName, int durationSeconds, int cueId, bool showSlate)
+        public bool InsertMarker(string channelName, int? durationSeconds, int cueId, bool showSlate)
         {
+            bool inserted = false;
             IChannel channel = GetEntityByName(MediaEntity.Channel, channelName) as IChannel;
-            TimeSpan duration = new TimeSpan(0, 0, 0, durationSeconds);
-            channel.StartAdvertisement(duration, cueId, showSlate);
+            if (channel != null)
+            {
+                if (!durationSeconds.HasValue)
+                {
+                    string settingKey = Constant.AppSettingKey.MediaChannelAdDurationSeconds;
+                    string adDurationSeconds = AppSetting.GetValue(settingKey);
+                    durationSeconds = int.Parse(adDurationSeconds);
+                }
+                TimeSpan adDuration = new TimeSpan(0, 0, 0, durationSeconds.Value);
+                channel.StartAdvertisement(adDuration, cueId, showSlate);
+                inserted = true;
+            }
+            return inserted;
         }
     }
 }
