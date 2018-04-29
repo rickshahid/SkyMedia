@@ -27,8 +27,6 @@
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
-    <script type="text/javascript" src="~/js/amp/vtt.min.js"></script>
-    <script type="text/javascript" src="~/js/amp/amp-spriteTip.js"></script>
     <script type="text/javascript" src="~/js/amp/amp-appInsights.min.js"></script>
     <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
@@ -95,22 +93,22 @@
                         });
                         CreateTipTop("markerButton", "Insert Live<br><br>Marker");
                     }
-                    var indexerInsight = GetIndexerInsight(mediaStream, "@videoIndexer");
-                    if (indexerInsight != null) {
-                        var insightImage = document.createElement("img");
-                        insightImage.id = "insightImage";
-                        insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
-                        var insightButton = document.createElement("button");
-                        insightButton.id = "insightButton";
-                        insightButton.className = controlButtonCss;
-                        insightButton.appendChild(insightImage);
-                        controlBarRight.appendChild(insightButton);
-                        $("#insightButton").click(function () {
-                            ToggleIndexerInsight(indexerInsight);
-                        });
-                        CreateTipTop("insightButton", "Video Indexer<br><br>Insight");
-                    }
-                    if (mediaStream.contentInsight.length > 0) {
+                    if (mediaStream.contentInsight != null) {
+                        var indexerInsight = GetIndexerInsight(mediaStream.contentInsight, "@videoIndexer");
+                        if (indexerInsight != null) {
+                            var insightImage = document.createElement("img");
+                            insightImage.id = "insightImage";
+                            insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
+                            var insightButton = document.createElement("button");
+                            insightButton.id = "insightButton";
+                            insightButton.className = controlButtonCss;
+                            insightButton.appendChild(insightImage);
+                            controlBarRight.appendChild(insightButton);
+                            $("#insightButton").click(function () {
+                                ToggleIndexerInsight(indexerInsight);
+                            });
+                            CreateTipTop("insightButton", "Video Indexer<br><br>Insight");
+                        }
                         var analyticsImage = document.createElement("img");
                         analyticsImage.id = "analyticsImage";
                         analyticsImage.src = "@storageCdnUrl" + "/MediaAnalyticsOpen.png";

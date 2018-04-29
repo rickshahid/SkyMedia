@@ -9,7 +9,14 @@
           "WebVTT"
         ],
         "Language": "EnUs",
-        "Type": "RecoOptions"
+        "Type": "RecoOptions",
+        "CaptionStyle": {
+          "Mode": "Rollover",
+          "MaxLines": 1,
+          "TruncateLongWords": true,
+          "MaxCharsPerLine": 70,
+          "MaxLineDuration": "00:00:08"
+        }
       },
       "Type": "SpReco"
     }

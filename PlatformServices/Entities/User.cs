@@ -10,57 +10,14 @@ namespace AzureSkyMedia.PlatformServices
         public User(string authToken)
         {
             _authToken = authToken;
-            _mediaAccount = GetMediaAccount();
-        }
-
-        private MediaAccount GetMediaAccount()
-        {
-            MediaAccount mediaAccount = new MediaAccount()
+            _mediaAccount = new MediaAccount()
             {
-                DomainName = GetMediaAccountDomainName(),
-                EndpointUrl = GetMediaAccountEndpointUrl(),
-                ClientId = GetMediaAccountClientId(),
-                ClientKey = GetMediaAccountClientKey(),
-                IndexerKey = GetMediaAccountIndexerKey()
+                DomainName = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName),
+                EndpointUrl = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl),
+                ClientId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientId),
+                ClientKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientKey),
+                IndexerKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey)
             };
-            return mediaAccount;
-        }
-
-        private string GetMediaAccountDomainName()
-        {
-            string accountDomain = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName);
-            if (string.IsNullOrEmpty(accountDomain))
-            {
-                string settingKey = Constant.AppSettingKey.DirectoryMediaAccountTenantDomain;
-                accountDomain = AppSetting.GetValue(settingKey);
-            }
-            return accountDomain;
-        }
-
-        private string GetMediaAccountEndpointUrl()
-        {
-            string endpointUrl = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl);
-            if (string.IsNullOrEmpty(endpointUrl))
-            {
-                string settingKey = Constant.AppSettingKey.DirectoryMediaAccountEndpointUrl;
-                endpointUrl = AppSetting.GetValue(settingKey);
-            }
-            return endpointUrl;
-        }
-
-        private string GetMediaAccountClientId()
-        {
-            return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientId);
-        }
-
-        private string GetMediaAccountClientKey()
-        {
-            return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientKey);
-        }
-
-        private string GetMediaAccountIndexerKey()
-        {
-            return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey);
         }
 
         public string Id

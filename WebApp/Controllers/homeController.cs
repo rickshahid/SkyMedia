@@ -51,10 +51,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             return mediaProcessors.ToArray();
         }
 
-        internal static SelectListItem[] GetSpokenLanguages(bool videoIndexer, bool defaultEmpty)
+        internal static SelectListItem[] GetSpokenLanguages(bool videoIndexer, bool includeEmpty)
         {
             List<SelectListItem> spokenLanguages = new List<SelectListItem>();
-            if (defaultEmpty)
+            if (includeEmpty)
             {
                 SelectListItem spokenLanguage = new SelectListItem()
                 {
@@ -63,7 +63,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 };
                 spokenLanguages.Add(spokenLanguage);
             }
-            NameValueCollection languages = Language.GetSpokenLanguages(videoIndexer);
+            NameValueCollection languages = Language.GetLanguages(videoIndexer);
             foreach (string languageName in languages.Keys)
             {
                 SelectListItem spokenLanguage = new SelectListItem()
@@ -130,6 +130,11 @@ namespace AzureSkyMedia.WebApp.Controllers
         public static string GetAppSetting(string settingKey)
         {
             return AppSetting.GetValue(settingKey);
+        }
+
+        public IActionResult player()
+        {
+            return View();
         }
 
         public IActionResult index()

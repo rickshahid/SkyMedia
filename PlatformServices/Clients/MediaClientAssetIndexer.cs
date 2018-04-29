@@ -55,17 +55,33 @@ namespace AzureSkyMedia.PlatformServices
             string indexId = string.Empty;
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
             requestUrl = string.Concat(requestUrl, "?name=", WebUtility.UrlEncode(asset.Name));
-            requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(videoIndexer.VideoDescription));
-            requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(videoIndexer.VideoMetadata));
             requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
             requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
-            requestUrl = string.Concat(requestUrl, "&language=", videoIndexer.LanguageId);
-            requestUrl = string.Concat(requestUrl, "&partition=", videoIndexer.SearchPartition);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
             requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(videoIndexer.VideoPublic));
+            if (!string.IsNullOrEmpty(videoIndexer.VideoDescription))
+            {
+                requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(videoIndexer.VideoDescription));
+            }
+            if (!string.IsNullOrEmpty(videoIndexer.VideoMetadata))
+            {
+                requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(videoIndexer.VideoMetadata));
+            }
+            if (!string.IsNullOrEmpty(videoIndexer.LanguageId))
+            {
+                requestUrl = string.Concat(requestUrl, "&language=", videoIndexer.LanguageId);
+            }
+            if (!string.IsNullOrEmpty(videoIndexer.LinguisticModelId))
+            {
+                requestUrl = string.Concat(requestUrl, "&linguisticModelId=", videoIndexer.LinguisticModelId);
+            }
+            if (!string.IsNullOrEmpty(videoIndexer.SearchPartition))
+            {
+                requestUrl = string.Concat(requestUrl, "&partition=", videoIndexer.SearchPartition);
+            }
             if (videoIndexer.AudioOnly)
             {
-                requestUrl = string.Concat(requestUrl, "&indexingPreset=audioOnly");
+                requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
             }
             using (HttpRequestMessage request = _indexer.GetRequest(HttpMethod.Post, requestUrl))
             {

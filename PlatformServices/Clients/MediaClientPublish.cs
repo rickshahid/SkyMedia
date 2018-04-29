@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -61,22 +62,20 @@ namespace AzureSkyMedia.PlatformServices
             mediaClient.CreateLocator(locatorId, locatorType, asset, false);
         }
 
-        private static void PublishWebVtt(MediaClient mediaClient, ITask insightTask, IAsset encoderOutput)
+        private static void PublishWebVtt(MediaClient mediaClient, ITask analyzerTask, IAsset encoderOutput)
         {
             if (encoderOutput != null)
             {
-                IAsset insightOutput = insightTask.OutputAssets[0];
-                IAssetFile[] webVttFiles = GetAssetFiles(insightOutput, Constant.Media.FileExtension.WebVtt);
+                IAsset analyzerOutput = analyzerTask.OutputAssets[0];
+                IAssetFile[] webVttFiles = GetAssetFiles(analyzerOutput, Constant.Media.FileExtension.WebVtt);
                 foreach (IAssetFile webVttFile in webVttFiles)
                 {
-                    JObject processorConfig = JObject.Parse(insightTask.Configuration);
-                    string languageId = Language.GetLanguageId(processorConfig);
-                    string fileName = string.Concat(MediaProcessor.SpeechAnalyzer, Constant.TextDelimiter.Identifier, languageId, Constant.Media.FileExtension.WebVtt);
-
+                    string languageId = Language.GetLanguageId(analyzerTask.Configuration);
+                    string webVttFileName = string.Concat(MediaProcessor.SpeechAnalyzer, Constant.TextDelimiter.Identifier, languageId, Constant.Media.FileExtension.WebVtt);
                     string webVttUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, webVttFile.Asset, webVttFile.Name, false);
                     using (Stream webVttStream = WebClient.GetStream(webVttUrl))
                     {
-                        IAssetFile encoderOutputFile = encoderOutput.AssetFiles.Create(fileName);
+                        IAssetFile encoderOutputFile = encoderOutput.AssetFiles.Create(webVttFileName);
                         encoderOutputFile.Upload(webVttStream);
                     }
                 }
@@ -85,19 +84,55 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void PublishInsight(MediaClient mediaClient, DatabaseClient databaseClient, ITask insightTask, IAsset encoderOutput)
         {
+            MediaInsight mediaInsight = null;
+            List<MediaInsightSource> insightSources = null;
+
+            string collectionId = Constant.Database.Collection.MediaInsight;
+            string insightId = encoderOutput == null ? null : encoderOutput.AlternateId;
+
+            if (!string.IsNullOrEmpty(insightId))
+            {
+                mediaInsight = databaseClient.GetDocument<MediaInsight>(collectionId, insightId);
+            }
+            if (mediaInsight == null)
+            {
+                mediaInsight = new MediaInsight();
+                mediaInsight.Id = databaseClient.UpsertDocument(collectionId, mediaInsight);
+            }
+            if (mediaInsight.Sources != null)
+            {
+                insightSources = new List<MediaInsightSource>(mediaInsight.Sources);
+            }
+            else
+            {
+                insightSources = new List<MediaInsightSource>();
+            }
+
             MediaProcessor? insightProcessor = Processor.GetMediaProcessor(insightTask.MediaProcessorId);
             IAsset insightOutput = insightTask.OutputAssets[0];
-            foreach (IAssetFile insightFile in insightOutput.AssetFiles)
+            IAssetFile[] insightFiles = GetAssetFiles(insightOutput, Constant.Media.FileExtension.Json);
+            foreach (IAssetFile insightFile in insightFiles)
             {
-                string insightUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, insightOutput, insightFile.Name, false);
+                string insightUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, insightFile.Asset, insightFile.Name, false);
                 string insightData = WebClient.GetData(insightUrl);
                 JObject insight = JObject.Parse(insightData);
-                string collectionId = Constant.Database.Collection.MediaInsight;
                 string documentId = databaseClient.UpsertDocument(collectionId, insight);
-                if (encoderOutput != null)
+
+                MediaInsightSource insightSource = new MediaInsightSource()
                 {
-                    //TODO: Add insightProcessor and documentId into the metadata of the encoderOutput asset
-                }
+                    MediaProcessor = insightProcessor.Value,
+                    OutputId = documentId
+                };
+                insightSources.Add(insightSource);
+            }
+
+            mediaInsight.Sources = insightSources.ToArray();
+            databaseClient.UpsertDocument(collectionId, mediaInsight);
+
+            if (string.IsNullOrEmpty(insightId) && encoderOutput != null)
+            {
+                encoderOutput.AlternateId = mediaInsight.Id;
+                encoderOutput.Update();
             }
         }
 

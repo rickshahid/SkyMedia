@@ -53,9 +53,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryClientId = "Directory.{0}.ClientId";
             public const string DirectoryClientSecret = "Directory.{0}.ClientSecret";
 
-            public const string DirectoryMediaAccountTenantDomain = "Directory.B2B.MediaAccount.TenantDomain";
-            public const string DirectoryMediaAccountEndpointUrl = "Directory.B2B.MediaAccount.EndpointUrl";
-
             public const string DirectoryPolicyIdSignUpIn = "Directory.B2C.PolicyId.SignUpIn";
             public const string DirectoryPolicyIdProfileEdit = "Directory.B2C.PolicyId.ProfileEdit";
             public const string DirectoryPolicyIdPasswordReset = "Directory.B2C.PolicyId.PasswordReset";
@@ -310,9 +307,9 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string ChannelEncodingPreset = "Default720p";
 
-                public const string ProgramSuffixClear = "-Clear";
-                public const string ProgramSuffixAes = "-AES";
-                public const string ProgramSuffixDrm = "-DRM";
+                public const string ProgramSuffixClear = " Clear";
+                public const string ProgramSuffixAes = " AES";
+                public const string ProgramSuffixDrm = " DRM";
 
                 public const string AllowAnyAddress = "Allow Any Address";
                 public const string AllowAuthorizedAddress = "Authorized Address Only";
@@ -325,9 +322,9 @@ namespace AzureSkyMedia.PlatformServices
                 public struct TextTrack
                 {
                     public const string Captions = "captions";
-                    public const string Subtitles = "subtitles";
-                    public const string Thumbnails = "thumbnails";
-                    public const string ThumbnailsData = "#xywh=";
+                    //public const string Subtitles = "subtitles";
+                    //public const string Thumbnails = "thumbnails";
+                    //public const string ThumbnailsData = "#xywh=";
                 }
             }
         }

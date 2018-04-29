@@ -14,7 +14,8 @@ namespace AzureSkyMedia.PlatformServices
 
     public class StreamSource
     {
-        public string Src { get; set; }
+        [JsonProperty(PropertyName = "src")]
+        public string Url { get; set; }
 
         public StreamProtection[] ProtectionInfo { get; set; }
     }
@@ -26,12 +27,12 @@ namespace AzureSkyMedia.PlatformServices
             MediaStream mediaStream = (MediaStream)this.MemberwiseClone();
             mediaStream.Source = new StreamSource()
             {
-                Src = this.Source.Src,
+                Url = this.Source.Url,
                 ProtectionInfo = this.Source.ProtectionInfo == null ? null : (StreamProtection[])this.Source.ProtectionInfo.Clone(),
             };
-            mediaStream.Thumbnails = this.Thumbnails == null ? null : (string[])this.Thumbnails.Clone();
+            mediaStream.ThumbnailUrls = this.ThumbnailUrls == null ? null : (string[])this.ThumbnailUrls.Clone();
             mediaStream.TextTracks = this.TextTracks == null ? null : (MediaTrack[])this.TextTracks.Clone();
-            //mediaStream.ContentInsight = this.ContentInsight == null ? null : (MediaInsight[])this.ContentInsight.Clone();
+            mediaStream.ContentInsight = this.ContentInsight;
             return mediaStream;
         }
 
@@ -43,10 +44,11 @@ namespace AzureSkyMedia.PlatformServices
 
         public StreamSource Source { get; set; }
 
-        public string[] Thumbnails { get; set; }
+        [JsonProperty(PropertyName = "thumbnails")]
+        public string[] ThumbnailUrls { get; set; }
 
         public MediaTrack[] TextTracks { get; set; }
 
-        //public MediaInsight[] ContentInsight { get; set; }
+        public MediaInsight ContentInsight { get; set; }
     }
 }

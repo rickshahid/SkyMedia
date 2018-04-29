@@ -1,12 +1,12 @@
-﻿function GetIndexerInsight(mediaStream, videoIndexer) {
-    var insight = null;
-    for (var i = 0; i < mediaStream.contentInsight.length; i++) {
-        var processorName = mediaStream.contentInsight[i].processorName;
-        if (processorName == videoIndexer) {
-            insight = mediaStream.contentInsight[i];
+﻿function GetIndexerInsight(contentInsight, videoIndexer) {
+    var insightSource = null;
+    for (var i = 0; i < contentInsight.sources.length; i++) {
+        var mediaProcessor = contentInsight.sources[i].mediaProcessor;
+        if (mediaProcessor == videoIndexer) {
+            insightSource = contentInsight.sources[i];
         }
     }
-    return insight;
+    return insightSource;
 }
 function ToggleIndexerInsight(indexerInsight) {
     var insightImage = document.getElementById("insightImage");
