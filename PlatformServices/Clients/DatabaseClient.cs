@@ -16,13 +16,13 @@ namespace AzureSkyMedia.PlatformServices
     {
         private DocumentClient _cosmos;
         private string _databaseId;
-        private string _sessionId;
+        private string _authToken;
 
         public DatabaseClient() : this(string.Empty)
         {
         }
 
-        public DatabaseClient(string sessionId)
+        public DatabaseClient(string authToken)
         {
             string settingKey = Constant.AppSettingKey.AzureDatabase;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
@@ -38,23 +38,19 @@ namespace AzureSkyMedia.PlatformServices
                 connectionPolicy.PreferredLocations.Add(dataRegionRead);
             }
 
+            _authToken = authToken;
             _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey, connectionPolicy);
-            _sessionId = sessionId;
         }
 
         private JObject GetDocument(string jsonData)
         {
-            JObject document = null;
-            if (!string.IsNullOrEmpty(jsonData))
+            JObject document = JObject.Parse(jsonData);
+            JProperty[] properties = document.Properties().ToArray();
+            foreach (JProperty property in properties)
             {
-                document = JObject.Parse(jsonData);
-                JProperty[] properties = document.Properties().ToArray();
-                foreach (JProperty property in properties)
+                if (property.Name.StartsWith(Constant.Database.Document.SystemPropertyPrefix))
                 {
-                    if (property.Name.StartsWith(Constant.Database.Document.SystemPropertyPrefix))
-                    {
-                        document.Remove(property.Name);
-                    }
+                    document.Remove(property.Name);
                 }
             }
             return document;
@@ -65,7 +61,7 @@ namespace AzureSkyMedia.PlatformServices
             string collectionLink = string.Concat("dbs/", _databaseId, "/colls/", collectionId);
             FeedOptions feedOptions = new FeedOptions()
             {
-                SessionToken = _sessionId
+                SessionToken = _authToken
             };
             return _cosmos.CreateDocumentQuery(collectionLink, feedOptions);
         }
@@ -86,47 +82,48 @@ namespace AzureSkyMedia.PlatformServices
             _cosmos.CreateDatabaseIfNotExistsAsync(database).Wait();
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            string collectionId = Constant.Database.Collection.MediaProcess;
+            string collectionId = Constant.Database.Collection.InputWorkflow;
             Uri collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionId = Constant.Database.Collection.MediaPublish;
+            collectionId = Constant.Database.Collection.OutputPublish;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionId = Constant.Database.Collection.MediaInsight;
+            collectionId = Constant.Database.Collection.OutputInsight;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
-            string collectionDirectory = string.Concat(modelsDirectory, @"\", collectionId);
+            string collectionDirectory = string.Concat(modelsDirectory, collectionId);
 
-            string jsFile = string.Concat(collectionDirectory, @"\Functions\isTimecodeFragment.js");
+            string scriptFile = string.Concat(collectionDirectory, @"\isTimecodeFragment.js");
             UserDefinedFunction function = new UserDefinedFunction()
             {
                 Id = "isTimecodeFragment",
-                Body = File.ReadAllText(jsFile)
+                Body = File.ReadAllText(scriptFile)
             };
             _cosmos.CreateUserDefinedFunctionAsync(collectionUri, function);
 
-            jsFile = string.Concat(collectionDirectory, @"\Procedures\getTimecodeFragment.js");
+            scriptFile = string.Concat(collectionDirectory, @"\getTimecodeFragment.js");
             StoredProcedure procedure = new StoredProcedure()
             {
                 Id = "getTimecodeFragment",
-                Body = File.ReadAllText(jsFile)
+                Body = File.ReadAllText(scriptFile)
             };
             _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
 
-            collectionId = Constant.Database.Collection.ProcessorConfig;
+            collectionId = Constant.Database.Collection.ProcessorPreset;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionDirectory = string.Concat(modelsDirectory, @"\", collectionId);
+            collectionDirectory = string.Concat(modelsDirectory, collectionId);
 
-            jsFile = string.Concat(collectionDirectory, @"\Procedures\getProcessorConfig.js");
+            scriptFile = string.Concat(collectionDirectory, @"\getProcessorPreset.js");
             procedure = new StoredProcedure()
             {
-                Id = "getProcessorConfig",
-                Body = File.ReadAllText(jsFile)
+                Id = "getProcessorPreset",
+                Body = File.ReadAllText(scriptFile)
             };
             _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
 
-            string presetsDirectory = string.Concat(modelsDirectory, @"\ProcessorPresets");
+            string presetsDirectory = string.Concat(modelsDirectory, Constant.Media.Presets);
+
             string[] mediaProcessors = Directory.GetDirectories(presetsDirectory);
             foreach (string mediaProcessor in mediaProcessors)
             {

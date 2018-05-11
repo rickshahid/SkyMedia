@@ -37,7 +37,7 @@ namespace AzureSkyMedia.PlatformServices
         private static JObject GetProcessorConfig(MediaJobTask jobTask)
         {
             JObject processorConfig;
-            string collectionId = Constant.Database.Collection.ProcessorConfig;
+            string collectionId = Constant.Database.Collection.ProcessorPreset;
             string documentId = jobTask.ProcessorConfigId;
             if (string.IsNullOrEmpty(documentId))
             {
@@ -109,7 +109,7 @@ namespace AzureSkyMedia.PlatformServices
             layer["Height"] = thumbnailGeneration.Height;
             if (format == "Jpg")
             {
-                layer["Quality"] = Constant.Media.ProcessorConfig.ThumbnailJpgQuality;
+                layer["Quality"] = Constant.Media.ProcessorPreset.ThumbnailJpgQuality;
             }
             string layers = string.Concat(format, "Layers");
             thumbnailCodec[layers] = new JArray(layer);
@@ -126,7 +126,7 @@ namespace AzureSkyMedia.PlatformServices
                 oldLayers.Remove();
                 spriteCodec["Type"] = "JpgImage";
                 jpgLayers[0]["Type"] = "JpgLayer";
-                jpgLayers[0]["Quality"] = Constant.Media.ProcessorConfig.ThumbnailJpgQuality;
+                jpgLayers[0]["Quality"] = Constant.Media.ProcessorPreset.ThumbnailJpgQuality;
                 spriteCodec["JpgLayers"] = jpgLayers;
             }
             spriteCodec["SpriteColumn"] = thumbnailGeneration.Columns;

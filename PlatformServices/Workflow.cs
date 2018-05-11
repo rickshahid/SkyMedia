@@ -7,6 +7,19 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Workflow
     {
+        private static MediaInsightConfig GetInsightConfig(MediaJobTask[] jobTasks)
+        {
+            MediaInsightConfig insightConfig = null;
+            foreach (MediaJobTask jobTask in jobTasks)
+            {
+                if (jobTask.InsightConfig != null)
+                {
+                    insightConfig = jobTask.InsightConfig;
+                }
+            }
+            return insightConfig;
+        }
+
         private static void TrackJob(string directoryId, string authToken, MediaAccount mediaAccount, IJob job, MediaJobTask[] jobTasks)
         {
             List<string> taskIds = new List<string>();
@@ -22,16 +35,18 @@ namespace AzureSkyMedia.PlatformServices
                 mobileNumber = authUser.MobileNumber;
             }
 
+            MediaInsightConfig insightConfig = GetInsightConfig(jobTasks);
             MediaPublish contentPublish = new MediaPublish()
             {
                 Id = job.Id,
                 TaskIds = taskIds.ToArray(),
+                InsightConfig = insightConfig,
                 MediaAccount = mediaAccount,
                 MobileNumber = mobileNumber
             };
 
             DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constant.Database.Collection.MediaPublish;
+            string collectionId = Constant.Database.Collection.OutputPublish;
             databaseClient.UpsertDocument(collectionId, contentPublish);
 
             ContentProtection[] jobProtection = MediaClient.GetJobProtection(directoryId, job, jobTasks);

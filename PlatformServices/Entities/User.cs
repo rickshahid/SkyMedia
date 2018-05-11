@@ -2,21 +2,21 @@
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class User
+    internal class User
     {
         private string _authToken;
-        private MediaAccount _mediaAccount;
 
         public User(string authToken)
         {
             _authToken = authToken;
-            _mediaAccount = new MediaAccount()
+            this.MediaAccount = new MediaAccount()
             {
-                DomainName = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDomainName),
-                EndpointUrl = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountEndpointUrl),
-                ClientId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientId),
-                ClientKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientKey),
-                IndexerKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.VideoIndexerKey)
+                Name = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountName),
+                SubscriptionId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountSubscriptionId),
+                ResourceGroupName = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountResourceGroupName),
+                DirectoryTenantId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDirectoryTenantId),
+                ClientApplicationId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationId),
+                ClientApplicationKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationKey)
             };
         }
 
@@ -41,10 +41,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public MediaAccount MediaAccount
-        {
-            get { return _mediaAccount; }
-        }
+        public MediaAccount MediaAccount { get; private set; }
 
         public string[] StorageAccountNames
         {

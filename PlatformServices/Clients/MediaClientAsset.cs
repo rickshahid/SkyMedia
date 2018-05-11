@@ -56,19 +56,6 @@ namespace AzureSkyMedia.PlatformServices
             return assetFile;
         }
 
-        private static IAssetFile[] GetAssetFiles(IAsset asset, string fileExtension)
-        {
-            List<IAssetFile> assetFiles = new List<IAssetFile>();
-            foreach (IAssetFile file in asset.AssetFiles)
-            {
-                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    assetFiles.Add(file);
-                }
-            }
-            return assetFiles.ToArray();
-        }
-
         private IAsset[] GetAssets(string[] assetIds)
         {
             List<IAsset> assets = new List<IAsset>();
@@ -88,7 +75,7 @@ namespace AzureSkyMedia.PlatformServices
             List<Asset> assets = new List<Asset>();
             if (string.IsNullOrEmpty(assetId))
             {
-                foreach (IAsset asset in _media.Assets)
+                foreach (IAsset asset in _media2.Assets)
                 {
                     if (asset.ParentAssets.Count == 0)
                     {
@@ -108,7 +95,7 @@ namespace AzureSkyMedia.PlatformServices
                         assets.Add(fileNode);
                     }
                 }
-                foreach (IAsset asset in _media.Assets)
+                foreach (IAsset asset in _media2.Assets)
                 {
                     foreach (IAsset parentAsset in asset.ParentAssets)
                     {
@@ -127,7 +114,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string storageAccount = null;
             AssetCreationOptions assetEncryption = AssetCreationOptions.None;
-            IAsset asset = _media.Assets.Create(assetName, storageAccount, assetEncryption);
+            IAsset asset = _media2.Assets.Create(assetName, storageAccount, assetEncryption);
 
             BlobClient blobClient = new BlobClient();
             string sourceContainer = Constant.Storage.Blob.Container.MediaProcess;
@@ -141,7 +128,7 @@ namespace AzureSkyMedia.PlatformServices
         public IAsset CreateAsset(string authToken, string assetName, string storageAccount, bool storageEncryption, string[] fileNames)
         {
             AssetCreationOptions assetEncryption = storageEncryption ? AssetCreationOptions.StorageEncrypted : AssetCreationOptions.None;
-            IAsset asset = _media.Assets.Create(assetName, storageAccount, assetEncryption);
+            IAsset asset = _media2.Assets.Create(assetName, storageAccount, assetEncryption);
 
             BlobClient blobClient = new BlobClient(authToken, storageAccount);
             string sourceContainer = Constant.Storage.Blob.Container.FileUpload;
@@ -150,6 +137,19 @@ namespace AzureSkyMedia.PlatformServices
             SetPrimaryFile(asset);
 
             return asset;
+        }
+
+        public static IAssetFile[] GetAssetFiles(IAsset asset, string fileExtension)
+        {
+            List<IAssetFile> assetFiles = new List<IAssetFile>();
+            foreach (IAssetFile file in asset.AssetFiles)
+            {
+                if (file.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    assetFiles.Add(file);
+                }
+            }
+            return assetFiles.ToArray();
         }
 
         public static string[] GetFileNames(IAsset asset, string fileExtension)

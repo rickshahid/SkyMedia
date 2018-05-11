@@ -39,7 +39,7 @@ namespace AzureSkyMedia.PlatformServices
                     string durationDays = AppSetting.GetValue(settingKey);
                     policyDuration = new TimeSpan(int.Parse(durationDays), 0, 0, 0);
                 }
-                accessPolicy = _media.AccessPolicies.Create(policyName, policyDuration, policyPermissions);
+                accessPolicy = _media2.AccessPolicies.Create(policyName, policyDuration, policyPermissions);
             }
             return accessPolicy;
         }
@@ -158,7 +158,7 @@ namespace AzureSkyMedia.PlatformServices
             if (locator == null)
             {
                 IAccessPolicy accessPolicy = GetAccessPolicy(readWrite);
-                locator = _media.Locators.CreateLocator(locatorId, locatorType, asset, accessPolicy, null);
+                locator = _media2.Locators.CreateLocator(locatorId, locatorType, asset, accessPolicy, null);
             }
             return locator;
         }

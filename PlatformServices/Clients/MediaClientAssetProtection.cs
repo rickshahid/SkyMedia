@@ -13,7 +13,7 @@ namespace AzureSkyMedia.PlatformServices
         private static ContentProtection GetContentProtection(string jobId, string taskId)
         {
             DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constant.Database.Collection.MediaPublish;
+            string collectionId = Constant.Database.Collection.OutputPublish;
             return databaseClient.GetDocument<ContentProtection>(collectionId, taskId);
         }
 

@@ -100,7 +100,7 @@ function ConfirmMessage(title, message, onConfirm) {
     };
     DisplayMessage(title, message, buttons);
 }
-function GetMediaPlayer(userId, accountId) {
+function GetMediaPlayer(userId, accountName) {
     var options = {
         fluid: true,
         playbackSpeed: {
@@ -109,7 +109,7 @@ function GetMediaPlayer(userId, accountId) {
         plugins: {
             appInsights: {
                 userId: userId,
-                accountId: accountId
+                accountId: accountName
             },
             spriteTip: {
             },

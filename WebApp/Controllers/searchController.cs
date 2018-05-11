@@ -13,8 +13,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             JObject results = null;
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             MediaClient mediaClient = new MediaClient(authToken);
-            IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-            results = indexerClient.Search(searchCriteria);
+            VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+            results = videoAnalyzer.Search(searchCriteria);
             return Json(results);
         }
 

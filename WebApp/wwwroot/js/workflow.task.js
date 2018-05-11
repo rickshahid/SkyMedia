@@ -36,22 +36,27 @@ function GetJobTask(taskNumber) {
                 jobTask.ThumbnailGeneration = GetThumbnailGeneration(taskNumber, encoderConfig);
                 jobTask.ContentProtection = GetContentProtection(taskNumber);
                 break;
-            case "VideoIndexer":
-                jobTask.VideoIndexer = {
-                    LanguageId: $("#indexerLanguageId" + taskNumber).val(),
-                    SearchPartition: $("#indexerSearchPartition" + taskNumber).val(),
-                    VideoDescription: $("#indexerVideoDescription" + taskNumber).val(),
-                    VideoMetadata: $("#indexerVideoMetadata" + taskNumber).val(),
-                    VideoPublic: $("#indexerVideoPublic" + taskNumber).prop("checked"),
-                    AudioOnly: $("#indexerAudioOnly" + taskNumber).prop("checked")
+            case "AudioAnalyzer":
+                jobTask.ProcessorConfigString["AudioAnalyzerLanguageId"] = $("#audioAnalyzerLanguageId" + taskNumber).val();
+                jobTask.ProcessorConfigBoolean["AudioAnalyzerTimedTextFormatTtml"] = $("#audioAnalyzerTimedTextFormatTtml" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["AudioAnalyzerTimedTextFormatWebVtt"] = $("#audioAnalyzerTimedTextFormatWebVtt" + taskNumber).prop("checked");
+                break;
+            case "VideoAnalyzer":
+                jobTask.VideoAnalyzer = {
+                    LanguageId: $("#videoAnalyzerLanguageId" + taskNumber).val(),
+                    SearchPartition: $("#videoAnalyzerSearchPartition" + taskNumber).val(),
+                    VideoDescription: $("#videoAnalyzerVideoDescription" + taskNumber).val(),
+                    VideoMetadata: $("#videoAnalyzerVideoMetadata" + taskNumber).val(),
+                    VideoPublic: $("#videoAnalyzerVideoPublic" + taskNumber).prop("checked"),
+                    AudioOnly: $("#videoAnalyzerAudioOnly" + taskNumber).prop("checked")
                 };
                 break;
             case "VideoSummarization":
-                var durationMinutes = parseInt($("#summarizationDurationMinutes" + taskNumber).val());
-                var durationSeconds = parseInt($("#summarizationDurationSeconds" + taskNumber).val());
-                jobTask.ProcessorConfigInteger["SummarizationDurationSeconds"] = (durationMinutes * 60) + durationSeconds;
-                jobTask.ProcessorConfigBoolean["SummarizationFadeTransitions"] = $("#summarizationFadeTransitions" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigBoolean["SummarizationIncludeAudio"] = $("#summarizationIncludeAudio" + taskNumber).prop("checked");
+                var durationMinutes = parseInt($("#videoSummarizationDurationMinutes" + taskNumber).val());
+                var durationSeconds = parseInt($("#videoSummarizationDurationSeconds" + taskNumber).val());
+                jobTask.ProcessorConfigInteger["VideoSummarizationDurationSeconds"] = (durationMinutes * 60) + durationSeconds;
+                jobTask.ProcessorConfigBoolean["VideoSummarizationFadeTransitions"] = $("#videoSummarizationFadeTransitions" + taskNumber).prop("checked");
+                jobTask.ProcessorConfigBoolean["VideoSummarizationIncludeAudio"] = $("#videoSummarizationIncludeAudio" + taskNumber).prop("checked");
                 break;
             case "FaceDetection":
                 jobTask.ProcessorConfigString["FaceDetectionMode"] = $("#faceDetectionMode" + taskNumber + ":checked").val();
@@ -65,11 +70,6 @@ function GetJobTask(taskNumber) {
                         jobTask.ProcessorConfigInteger["FaceEmotionAggregateInterval"] = $("#faceEmotionAggregateInterval" + taskNumber).val();
                         break;
                 }
-                break;
-            case "SpeechAnalyzer":
-                jobTask.ProcessorConfigString["SpeechAnalyzerLanguageId"] = $("#speechAnalyzerLanguageId" + taskNumber).val();
-                jobTask.ProcessorConfigBoolean["SpeechAnalyzerTimedTextFormatTtml"] = $("#speechAnalyzerTimedTextFormatTtml" + taskNumber).prop("checked");
-                jobTask.ProcessorConfigBoolean["SpeechAnalyzerTimedTextFormatWebVtt"] = $("#speechAnalyzerTimedTextFormatWebVtt" + taskNumber).prop("checked");
                 break;
             case "MotionDetection":
                 jobTask.ProcessorConfigString["MotionDetectionSensitivityLevel"] = $("#motionDetectionSensitivityLevel" + taskNumber).val();
@@ -259,11 +259,11 @@ function SetJobTaskInputs(taskNumber) {
             ClearRangePercent(this, "encoderThumbnailGenerationRangeSecond");
         }
     });
-    $("#summarizationDurationMinutes" + taskNumber).spinnerEx({
+    $("#videoSummarizationDurationMinutes" + taskNumber).spinnerEx({
         min: 0,
         max: 99
     });
-    $("#summarizationDurationSeconds" + taskNumber).spinnerEx({
+    $("#videoSummarizationDurationSeconds" + taskNumber).spinnerEx({
         min: 0,
         max: 59
     });
@@ -300,8 +300,8 @@ function ClearJobTaskWidgets(taskNumber) {
     $("#encoderThumbnailGenerationRangeHour" + taskNumber).spinnerEx("destroy");
     $("#encoderThumbnailGenerationRangeMinute" + taskNumber).spinnerEx("destroy");
     $("#encoderThumbnailGenerationRangeSecond" + taskNumber).spinnerEx("destroy");
-    $("#summarizationDurationMinutes" + taskNumber).spinnerEx("destroy");
-    $("#summarizationDurationSeconds" + taskNumber).spinnerEx("destroy");
+    $("#videoSummarizationDurationMinutes" + taskNumber).spinnerEx("destroy");
+    $("#videoSummarizationDurationSeconds" + taskNumber).spinnerEx("destroy");
     $("#faceEmotionAggregateWindow" + taskNumber).spinner("destroy");
     $("#faceEmotionAggregateInterval" + taskNumber).spinner("destroy");
     $("#taskOptions" + taskNumber).multiselect("destroy");

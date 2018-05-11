@@ -19,9 +19,9 @@ namespace AzureSkyMedia.PlatformServices
         public MediaInsightSource[] Sources { get; set; }
     }
 
-    public class VideoIndexer
+    public class MediaInsightConfig
     {
-        public VideoIndexer()
+        public MediaInsightConfig()
         {
             LanguageId = string.Empty;
             LinguisticModelId = string.Empty;
@@ -31,7 +31,6 @@ namespace AzureSkyMedia.PlatformServices
             VideoPublic = false;
             AudioOnly = false;
         }
-
 
         public string LanguageId { get; set; }
 

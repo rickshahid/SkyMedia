@@ -42,7 +42,7 @@ namespace AzureSkyMedia.PlatformServices
             if (deliveryPolicy == null)
             {
                 AssetDeliveryProtocol policyProtocols = GetDeliveryProtocols(deliveryTypes);
-                deliveryPolicy = _media.AssetDeliveryPolicies.Create(policyName, policyType, policyProtocols, policyConfig);
+                deliveryPolicy = _media2.AssetDeliveryPolicies.Create(policyName, policyType, policyProtocols, policyConfig);
             }
             return deliveryPolicy;
         }

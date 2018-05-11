@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -7,25 +6,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private INotificationEndPoint GetNotificationEndpoint()
-        {
-            string settingKey = Constant.AppSettingKey.MediaPublishUrl;
-            string endpointAddress = AppSetting.GetValue(settingKey);
-            string endpointName = Constant.Media.Job.NotificationEndpointName;
-            INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName) as INotificationEndPoint;
-            if (notificationEndpoint != null && !string.Equals(notificationEndpoint.EndPointAddress, endpointAddress, StringComparison.OrdinalIgnoreCase))
-            {
-                notificationEndpoint.Delete();
-                notificationEndpoint = null;
-            }
-            if (notificationEndpoint == null)
-            {
-                NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
-                notificationEndpoint = _media.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
-            }
-            return notificationEndpoint;
-        }
-
         private void SetProcessorUnits(IJob job, ReservedUnitType nodeType, bool newJob)
         {
             int unitCount = job.Tasks.Count;
@@ -55,24 +35,32 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.EncoderPremium:
                         tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
                         break;
-                    case MediaProcessor.VideoIndexer:
-                        IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                        foreach (MediaJobInput jobInput in jobInputs)
+                    case MediaProcessor.AudioAnalyzer:
+                        tasks = GetAudioAnalyzerTasks(mediaClient, jobTask, jobInputs);
+                        break;
+                    case MediaProcessor.VideoAnalyzer:
+                        MediaJobTask encoderTask = GetEncoderTask(mediaJob);
+                        if (encoderTask == null)
                         {
-                            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                            string indexId = IndexerClient.GetIndexId(asset);
-                            if (!string.IsNullOrEmpty(indexId))
+                            VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+                            foreach (MediaJobInput jobInput in jobInputs)
                             {
-                                indexerClient.ResetIndex(mediaClient, indexId);
-                            }
-                            else
-                            {
-                                indexerClient.IndexVideo(mediaClient, asset, jobTask.VideoIndexer);
+                                IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
+                                string indexId = VideoAnalyzer.GetIndexId(asset);
+                                if (!string.IsNullOrEmpty(indexId))
+                                {
+                                    videoAnalyzer.RestartAnalysis(mediaClient, indexId);
+                                }
+                                else
+                                {
+                                    videoAnalyzer.StartAnalysis(mediaClient, asset, jobTask.InsightConfig);
+                                }
                             }
                         }
-                        break;
-                    case MediaProcessor.VideoAnnotation:
-                        tasks = GetVideoAnnotationTasks(mediaClient, jobTask, jobInputs);
+                        else
+                        {
+                            encoderTask.InsightConfig = jobTask.InsightConfig;
+                        }
                         break;
                     case MediaProcessor.VideoSummarization:
                         tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
@@ -80,17 +68,8 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaProcessor.FaceDetection:
                         tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);
                         break;
-                    case MediaProcessor.SpeechAnalyzer:
-                        tasks = GetSpeechAnalyzerTasks(mediaClient, jobTask, jobInputs);
-                        break;
                     case MediaProcessor.MotionDetection:
                         tasks = GetMotionDetectionTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.ContentModeration:
-                        tasks = GetContentModerationTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    case MediaProcessor.CharacterRecognition:
-                        tasks = GetCharacterRecognitionTasks(mediaClient, jobTask, jobInputs);
                         break;
                 }
                 if (tasks != null)
@@ -125,7 +104,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public IJob CreateJob(MediaJob mediaJob, MediaJobInput[] jobInputs)
         {
-            IJob job = _media.Jobs.Create(mediaJob.Name, mediaJob.Priority);
+            IJob job = _media2.Jobs.Create(mediaJob.Name, mediaJob.Priority);
             foreach (MediaJobTask jobTask in mediaJob.Tasks)
             {
                 string processorId = Processor.GetProcessorId(jobTask.MediaProcessor, jobTask.ProcessorConfig);

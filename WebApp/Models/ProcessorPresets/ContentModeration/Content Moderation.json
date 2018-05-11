@@ -1,9 +1,0 @@
-{
-  "PresetName": "Default",
-  "MediaProcessor": "ContentModeration",
-  "Version": 1.0,
-  "Options": {
-    "Mode": "Quality"
-  },
-  "id": "ContentModeration_Default"
-}

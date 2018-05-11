@@ -16,11 +16,11 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
         {
             JObject metadata;
-            string collectionId = Constant.Database.Collection.MediaInsight;
-            string procedureId = Constant.Database.Procedure.MetadataFragment;
+            string collectionId = Constant.Database.Collection.OutputInsight;
+            string procedureId = Constant.Database.Procedure.TimecodeFragment;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                if (mediaProcessor == MediaProcessor.VideoIndexer)
+                if (mediaProcessor == MediaProcessor.VideoAnalyzer)
                 {
                     metadata = databaseClient.GetDocument(collectionId, documentId);
                 }
@@ -41,8 +41,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                accounts = indexerClient.GetAccounts();
+                VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+                accounts = videoAnalyzer.GetAccounts();
             }
             return accounts;
         }
@@ -56,8 +56,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                index = indexerClient.GetIndex(indexId, languageId, processingState);
+                VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+                index = videoAnalyzer.GetIndex(indexId, languageId, processingState);
             }
             return index;
         }
@@ -70,11 +70,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient mediaClient = new MediaClient(authToken);
-                IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                indexerClient.DeleteVideo(indexId, deleteInsight);
+                VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+                videoAnalyzer.DeleteVideo(indexId, deleteInsight);
 
                 DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.MediaInsight;
+                string collectionId = Constant.Database.Collection.OutputInsight;
                 databaseClient.DeleteDocument(collectionId, indexId);
             }
         }

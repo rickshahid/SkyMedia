@@ -63,7 +63,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 };
                 spokenLanguages.Add(spokenLanguage);
             }
-            NameValueCollection languages = Language.GetLanguages(videoIndexer);
+            NameValueCollection languages = Media.GetLanguages(videoIndexer);
             foreach (string languageName in languages.Keys)
             {
                 SelectListItem spokenLanguage = new SelectListItem()
@@ -83,10 +83,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             //viewData["jobName"] = GetJobTemplates(authToken);
             viewData["mediaProcessor1"] = GetMediaProcessors(authToken, false);
             viewData["encoderConfig1"] = new List<SelectListItem>();
-            viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccount.Id, true);
-            viewData["encoderPremiumPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderPremium, authUser.MediaAccount.Id, false);
-            viewData["indexerLanguages"] = GetSpokenLanguages(true, false);
-            viewData["speechAnalyzerLanguages"] = GetSpokenLanguages(false, false);
+            viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccount.Name, true);
+            viewData["encoderPremiumPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderPremium, authUser.MediaAccount.Name, false);
+            viewData["audioAnalyzerLanguages"] = GetSpokenLanguages(false, false);
+            viewData["videoAnalyzerLanguages"] = GetSpokenLanguages(true, false);
         }
 
         public static string GetDirectoryId(HttpRequest request)
@@ -125,6 +125,14 @@ namespace AzureSkyMedia.WebApp.Controllers
                 authToken = request.Cookies[cookieKey];
             }
             return authToken;
+        }
+
+        public static void SetAccountContext(string authToken, ViewDataDictionary viewData)
+        {
+            User authUser = new User(authToken);
+            viewData["userId"] = authUser.Id;
+            viewData["accountName"] = authUser.MediaAccount.Name;
+            viewData["accountContext"] = string.Concat(viewData["userId"], " (", viewData["accountName"], ")");
         }
 
         public static string GetAppSetting(string settingKey)

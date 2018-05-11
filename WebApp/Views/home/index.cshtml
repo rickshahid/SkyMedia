@@ -5,7 +5,7 @@
     string userId = ViewData["userId"] as string;
     string authToken = ViewData["authToken"] as string;
 
-    string accountId = ViewData["accountId"] as string;
+    string accountName = ViewData["accountName"] as string;
     string accountMessage = ViewData["accountMessage"] as string;
 
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
@@ -20,7 +20,7 @@
     string languageCode = ViewData["languageCode"] as string;
     string storageCdnUrl = ViewData["storageCdnUrl"] as string;
 
-    string videoIndexer = insightController.GetProcessorName(MediaProcessor.VideoIndexer);
+    string videoAnalyzer = insightController.GetProcessorName(MediaProcessor.VideoAnalyzer);
 }
 
 @section head {
@@ -70,7 +70,7 @@
                     }
                 }
             });
-            _mediaPlayer = GetMediaPlayer("@userId", "@accountId");
+            _mediaPlayer = GetMediaPlayer("@userId", "@accountName");
             _mediaPlayer.ready(function () {
                 this.videobreakdown({
                     syncTranscript: true,
@@ -94,7 +94,7 @@
                         CreateTipTop("markerButton", "Insert Live<br><br>Marker");
                     }
                     if (mediaStream.contentInsight != null) {
-                        var indexerInsight = GetIndexerInsight(mediaStream.contentInsight, "@videoIndexer");
+                        var indexerInsight = GetIndexerInsight(mediaStream.contentInsight, "@videoAnalyzer");
                         if (indexerInsight != null) {
                             var insightImage = document.createElement("img");
                             insightImage.id = "insightImage";

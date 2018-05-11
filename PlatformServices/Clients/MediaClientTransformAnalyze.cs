@@ -1,3 +1,4 @@
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 
@@ -7,23 +8,104 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class IndexerClient
+    internal partial class MediaClient
+    {
+        private static MediaJobTask[] GetAudioAnalyzerTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        {
+            jobTask.MediaProcessor = MediaProcessor.AudioAnalyzer;
+            JObject processorConfig = GetProcessorConfig(jobTask);
+            JToken processorOptions = processorConfig["Features"][0]["Options"];
+            JArray timedTextFormats = new JArray();
+            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.AudioAnalyzerTimedTextFormatWebVtt.ToString()])
+            {
+                timedTextFormats.Add("WebVTT");
+            }
+            if (jobTask.ProcessorConfigBoolean[MediaProcessorConfig.AudioAnalyzerTimedTextFormatTtml.ToString()])
+            {
+                timedTextFormats.Add("TTML");
+            }
+            processorOptions["Formats"] = timedTextFormats;
+            processorOptions["Language"] = jobTask.ProcessorConfigString[MediaProcessorConfig.AudioAnalyzerLanguageId.ToString()];
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            return GetJobTasks(mediaClient, jobTask, jobInputs, false);
+        }
+
+        private static MediaJobTask[] GetVideoSummarizationTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        {
+            jobTask.MediaProcessor = MediaProcessor.VideoSummarization;
+            JObject processorConfig = GetProcessorConfig(jobTask);
+            JToken processorOptions = processorConfig["Options"];
+            processorOptions["MaxMotionThumbnailDurationInSecs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.VideoSummarizationDurationSeconds.ToString()];
+            processorOptions["FadeInFadeOut"] = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoSummarizationFadeTransitions.ToString()];
+            processorOptions["OutputAudio"] = jobTask.ProcessorConfigBoolean[MediaProcessorConfig.VideoSummarizationIncludeAudio.ToString()];
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            return GetJobTasks(mediaClient, jobTask, jobInputs, false);
+        }
+
+        private static MediaJobTask[] GetFaceDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        {
+            jobTask.MediaProcessor = MediaProcessor.FaceDetection;
+            string faceDetectionMode = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceDetectionMode.ToString()];
+            if (faceDetectionMode == "Redact")
+            {
+                faceDetectionMode = "Combined";
+                foreach (MediaJobInput jobInput in jobInputs)
+                {
+                    IAsset asset = (IAsset)mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId);
+                    foreach (IAssetFile assetFile in asset.AssetFiles)
+                    {
+                        if (assetFile.Name.EndsWith(Constant.Media.FileExtension.Annotations))
+                        {
+                            faceDetectionMode = "Redact";
+                        }
+                    }
+                }
+            }
+            JObject processorConfig = GetProcessorConfig(jobTask);
+            JToken processorOptions = processorConfig["Options"];
+            processorOptions["Mode"] = faceDetectionMode;
+            if (jobTask.ProcessorConfigString.ContainsKey(MediaProcessorConfig.FaceRedactionBlurMode.ToString()))
+            {
+                processorOptions["BlurType"] = jobTask.ProcessorConfigString[MediaProcessorConfig.FaceRedactionBlurMode.ToString()];
+            }
+            if (jobTask.ProcessorConfigInteger.ContainsKey(MediaProcessorConfig.FaceEmotionAggregateWindow.ToString()))
+            {
+                processorOptions["AggregateEmotionWindowMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceEmotionAggregateWindow.ToString()];
+            }
+            if (jobTask.ProcessorConfigInteger.ContainsKey(MediaProcessorConfig.FaceEmotionAggregateInterval.ToString()))
+            {
+                processorOptions["AggregateEmotionIntervalMs"] = jobTask.ProcessorConfigInteger[MediaProcessorConfig.FaceEmotionAggregateInterval.ToString()];
+            }
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            return GetJobTasks(mediaClient, jobTask, jobInputs, false);
+        }
+
+        private static MediaJobTask[] GetMotionDetectionTasks(MediaClient mediaClient, MediaJobTask jobTask, MediaJobInput[] jobInputs)
+        {
+            jobTask.MediaProcessor = MediaProcessor.MotionDetection;
+            JObject processorConfig = GetProcessorConfig(jobTask);
+            jobTask.ProcessorConfig = processorConfig.ToString();
+            return GetJobTasks(mediaClient, jobTask, jobInputs, false);
+        }
+    }
+
+    internal class VideoAnalyzer
     {
         private WebClient _indexer;
         private string _serviceUrl;
 
-        private IndexerClient()
+        private VideoAnalyzer()
         {
             string settingKey = Constant.AppSettingKey.MediaIndexerServiceUrl;
             _serviceUrl = AppSetting.GetValue(settingKey);
         }
 
-        public IndexerClient(MediaAccount mediaAccount) : this()
+        public VideoAnalyzer(MediaAccount mediaAccount) : this()
         {
-            if (!string.IsNullOrEmpty(mediaAccount.IndexerKey))
-            {
-                _indexer = new WebClient(mediaAccount.IndexerKey);
-            }
+            //if (!string.IsNullOrEmpty(mediaAccount.IndexerKey))
+            //{
+            //    _indexer = new WebClient(mediaAccount.IndexerKey);
+            //}
         }
 
         private string GetPrivacy(bool videoPublic)
@@ -38,6 +120,25 @@ namespace AzureSkyMedia.PlatformServices
             return WebUtility.UrlEncode(callbackUrl);
         }
 
+        private string GetFileName(IAsset asset)
+        {
+            string fileName = null;
+            if (asset.AssetFiles.Count() > 1)
+            {
+                long fileSize = 0;
+                IAssetFile[] assetFiles = MediaClient.GetAssetFiles(asset, Constant.Media.FileExtension.MP4);
+                foreach (IAssetFile assetFile in asset.AssetFiles)
+                {
+                    if (string.IsNullOrEmpty(fileName) || fileSize < assetFile.ContentFileSize)
+                    {
+                        fileName = assetFile.Name;
+                        fileSize = assetFile.ContentFileSize;
+                    }
+                }
+            }
+            return fileName;
+        }
+
         private void SetPublish(MediaAccount mediaAccount, string indexId)
         {
             MediaPublish mediaPublish = new MediaPublish
@@ -46,11 +147,11 @@ namespace AzureSkyMedia.PlatformServices
                 MediaAccount = mediaAccount
             };
             DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constant.Database.Collection.MediaPublish;
+            string collectionId = Constant.Database.Collection.OutputPublish;
             databaseClient.UpsertDocument(collectionId, mediaPublish);
         }
 
-        private string IndexVideo(IAsset asset, string locatorUrl, VideoIndexer videoIndexer)
+        private string StartAnalysis(IAsset asset, string locatorUrl, MediaInsightConfig insightConfig)
         {
             string indexId = string.Empty;
             string requestUrl = string.Concat(_serviceUrl, "/Breakdowns");
@@ -58,28 +159,28 @@ namespace AzureSkyMedia.PlatformServices
             requestUrl = string.Concat(requestUrl, "&externalId=", WebUtility.UrlEncode(asset.Id));
             requestUrl = string.Concat(requestUrl, "&videoUrl=", WebUtility.UrlEncode(locatorUrl));
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", GetCallbackUrl());
-            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(videoIndexer.VideoPublic));
-            if (!string.IsNullOrEmpty(videoIndexer.VideoDescription))
+            requestUrl = string.Concat(requestUrl, "&privacy=", GetPrivacy(insightConfig.VideoPublic));
+            if (!string.IsNullOrEmpty(insightConfig.VideoDescription))
             {
-                requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(videoIndexer.VideoDescription));
+                requestUrl = string.Concat(requestUrl, "&description=", WebUtility.UrlEncode(insightConfig.VideoDescription));
             }
-            if (!string.IsNullOrEmpty(videoIndexer.VideoMetadata))
+            if (!string.IsNullOrEmpty(insightConfig.VideoMetadata))
             {
-                requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(videoIndexer.VideoMetadata));
+                requestUrl = string.Concat(requestUrl, "&metadata=", WebUtility.UrlEncode(insightConfig.VideoMetadata));
             }
-            if (!string.IsNullOrEmpty(videoIndexer.LanguageId))
+            if (!string.IsNullOrEmpty(insightConfig.LanguageId))
             {
-                requestUrl = string.Concat(requestUrl, "&language=", videoIndexer.LanguageId);
+                requestUrl = string.Concat(requestUrl, "&language=", insightConfig.LanguageId);
             }
-            if (!string.IsNullOrEmpty(videoIndexer.LinguisticModelId))
+            if (!string.IsNullOrEmpty(insightConfig.LinguisticModelId))
             {
-                requestUrl = string.Concat(requestUrl, "&linguisticModelId=", videoIndexer.LinguisticModelId);
+                requestUrl = string.Concat(requestUrl, "&linguisticModelId=", insightConfig.LinguisticModelId);
             }
-            if (!string.IsNullOrEmpty(videoIndexer.SearchPartition))
+            if (!string.IsNullOrEmpty(insightConfig.SearchPartition))
             {
-                requestUrl = string.Concat(requestUrl, "&partition=", videoIndexer.SearchPartition);
+                requestUrl = string.Concat(requestUrl, "&partition=", insightConfig.SearchPartition);
             }
-            if (videoIndexer.AudioOnly)
+            if (insightConfig.AudioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
             }
@@ -111,13 +212,13 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(insightId))
             {
                 DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.MediaInsight;
+                string collectionId = Constant.Database.Collection.OutputInsight;
                 MediaInsight mediaInsight = databaseClient.GetDocument<MediaInsight>(collectionId, insightId);
                 if (mediaInsight != null)
                 {
                     foreach (MediaInsightSource insightSource in mediaInsight.Sources)
                     {
-                        if (insightSource.MediaProcessor == MediaProcessor.VideoIndexer)
+                        if (insightSource.MediaProcessor == MediaProcessor.VideoAnalyzer)
                         {
                             indexId = insightSource.OutputId;
                         }
@@ -136,7 +237,7 @@ namespace AzureSkyMedia.PlatformServices
                 if (language != null)
                 {
                     string languageId = language.ToString();
-                    languageLabel = Language.GetLanguageLabel(languageId, true);
+                    languageLabel = Media.GetLanguageLabel(languageId, true);
                 }
             }
             return languageLabel;
@@ -214,7 +315,7 @@ namespace AzureSkyMedia.PlatformServices
             return index;
         }
 
-        public void ResetIndex(MediaClient mediaClient, string indexId)
+        public void RestartAnalysis(MediaClient mediaClient, string indexId)
         {
             if (_indexer != null)
             {
@@ -228,14 +329,14 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string IndexVideo(MediaClient mediaClient, IAsset asset, VideoIndexer videoIndexer)
+        public string StartAnalysis(MediaClient mediaClient, IAsset asset, MediaInsightConfig insightConfig)
         {
             string indexId = string.Empty;
             if (_indexer != null)
             {
-                if (videoIndexer == null) videoIndexer = new VideoIndexer();
-                string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, null, false);
-                indexId = IndexVideo(asset, locatorUrl, videoIndexer);
+                string fileName = GetFileName(asset);
+                string locatorUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, fileName, false);
+                indexId = StartAnalysis(asset, locatorUrl, insightConfig);
                 SetPublish(mediaClient.MediaAccount, indexId);
             }
             return indexId;

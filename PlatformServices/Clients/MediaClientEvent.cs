@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -6,14 +7,33 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string GetNotificationMessage(string accountId, IJob job)
+        private INotificationEndPoint GetNotificationEndpoint()
+        {
+            string settingKey = Constant.AppSettingKey.MediaPublishUrl;
+            string endpointAddress = AppSetting.GetValue(settingKey);
+            string endpointName = Constant.Media.Job.NotificationEndpointName;
+            INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName) as INotificationEndPoint;
+            if (notificationEndpoint != null && !string.Equals(notificationEndpoint.EndPointAddress, endpointAddress, StringComparison.OrdinalIgnoreCase))
+            {
+                notificationEndpoint.Delete();
+                notificationEndpoint = null;
+            }
+            if (notificationEndpoint == null)
+            {
+                NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
+                notificationEndpoint = _media2.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
+            }
+            return notificationEndpoint;
+        }
+
+        private static string GetNotificationMessage(MediaAccount mediaAccount, IJob job)
         {
             StringBuilder message = new StringBuilder();
             message.Append("Azure Media Services Job ");
             message.Append(job.State.ToString());
             message.Append("\n\n");
-            message.Append("Media Account Id: ");
-            message.Append(accountId);
+            message.Append("Media Account Name: ");
+            message.Append(mediaAccount.Name);
             message.Append("\n\n");
             message.Append("Job Id: ");
             message.Append(job.Id);

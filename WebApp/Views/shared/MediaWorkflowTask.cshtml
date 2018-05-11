@@ -47,18 +47,22 @@
     string encoderContentProtectionAuthAddressRangeId = string.Concat(encoderContentProtectionIdPrefix, "AuthAddressRange" + taskNumber);
     string encoderVideoOverlayId = string.Concat("encoderVideoOverlay", taskNumber);
     string encoderVideoOverlayRowId = string.Concat("encoderVideoOverlayRow" + taskNumber);
-    string indexerRowId = string.Concat("indexerRow", taskNumber);
-    string indexerLanguageId = string.Concat("indexerLanguageId", taskNumber);
-    string indexerSearchPartitionId = string.Concat("indexerSearchPartition", taskNumber);
-    string indexerVideoDescriptionId = string.Concat("indexerVideoDescription", taskNumber);
-    string indexerVideoMetadataId = string.Concat("indexerVideoMetadata", taskNumber);
-    string indexerVideoPublicId = string.Concat("indexerVideoPublic", taskNumber);
-    string indexerAudioOnlyId = string.Concat("indexerAudioOnly", taskNumber);
-    string summarizationRowId = string.Concat("summarizationRow", taskNumber);
-    string summarizationDurationMinutesId = string.Concat("summarizationDurationMinutes", taskNumber);
-    string summarizationDurationSecondsId = string.Concat("summarizationDurationSeconds", taskNumber);
-    string summarizationFadeTransitionsId = string.Concat("summarizationFadeTransitions", taskNumber);
-    string summarizationIncludeAudioId = string.Concat("summarizationIncludeAudio", taskNumber);
+    string audioAnalyzerRowId = string.Concat("audioAnalyzerRow", taskNumber);
+    string audioAnalyzerLanguageId = string.Concat("audioAnalyzerLanguageId", taskNumber);
+    string audioAnalyzerTimedTextFormatTtmlId = string.Concat("audioAnalyzerTimedTextFormatTtml", taskNumber);
+    string audioAnalyzerTimedTextFormatWebVttId = string.Concat("audioAnalyzerTimedTextFormatWebVtt", taskNumber);
+    string videoAnalyzerRowId = string.Concat("videoAnalyzerRow", taskNumber);
+    string videoAnalyzerLanguageId = string.Concat("videoAnalyzerLanguageId", taskNumber);
+    string videoAnalyzerSearchPartitionId = string.Concat("videoAnalyzerSearchPartition", taskNumber);
+    string videoAnalyzerVideoDescriptionId = string.Concat("videoAnalyzerVideoDescription", taskNumber);
+    string videoAnalyzerVideoMetadataId = string.Concat("videoAnalyzerVideoMetadata", taskNumber);
+    string videoAnalyzerVideoPublicId = string.Concat("videoAnalyzerVideoPublic", taskNumber);
+    string videoAnalyzerAudioOnlyId = string.Concat("videoAnalyzerAudioOnly", taskNumber);
+    string videoSummarizationRowId = string.Concat("videoSummarizationRow", taskNumber);
+    string videoSummarizationDurationMinutesId = string.Concat("videoSummarizationDurationMinutes", taskNumber);
+    string videoSummarizationDurationSecondsId = string.Concat("videoSummarizationDurationSeconds", taskNumber);
+    string videoSummarizationFadeTransitionsId = string.Concat("videoSummarizationFadeTransitions", taskNumber);
+    string videoSummarizationIncludeAudioId = string.Concat("videoSummarizationIncludeAudio", taskNumber);
     string faceDetectionRowId = string.Concat("faceDetectionRow", taskNumber);
     string faceDetectionModeId = string.Concat("faceDetectionMode", taskNumber);
     string faceRedactionRowId = string.Concat("faceRedactionRow", taskNumber);
@@ -68,10 +72,6 @@
     string faceEmotionAggregateRowId = string.Concat("faceEmotionAggregateRow", taskNumber);
     string faceEmotionAggregateWindowId = string.Concat("faceEmotionAggregateWindow", taskNumber);
     string faceEmotionAggregateIntervalId = string.Concat("faceEmotionAggregateInterval", taskNumber);
-    string speechAnalyzerRowId = string.Concat("speechAnalyzerRow", taskNumber);
-    string speechAnalyzerLanguageId = string.Concat("speechAnalyzerLanguageId", taskNumber);
-    string speechAnalyzerTimedTextFormatTtmlId = string.Concat("speechAnalyzerTimedTextFormatTtml", taskNumber);
-    string speechAnalyzerTimedTextFormatWebVttId = string.Concat("speechAnalyzerTimedTextFormatWebVtt", taskNumber);
     string motionDetectionRowId = string.Concat("motionDetectionRow", taskNumber);
     string motionDetectionSensitivityLevelId = string.Concat("motionDetectionSensitivityLevel", taskNumber);
     string motionDetectionLightChangeId = string.Concat("motionDetectionLightChange", taskNumber);
@@ -163,39 +163,69 @@
                     </table>
                 </td>
             </tr>
-            <tr id="@indexerRowId" style="display:none">
+            <tr id="@audioAnalyzerRowId" style="display:none">
+                <td class="inputLabel">
+                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-process-content-with-indexer2')">
+                        Audio Analyzer
+                    </span>
+                </td>
+                <td>
+                    <table class="mediaProcessorConfigOptions">
+                        <tr>
+                            <td class="inputLabel">
+                                @Html.DropDownList(audioAnalyzerLanguageId, ViewData["audioAnalyzerLanguages"] as SelectListItem[], new { @class = "inputSelect audioAnalyzerLanguage" })
+                            </td>
+                            <td class="inputLabel">
+                                <span class="audioAnalyzerSpeech">
+                                    Speech
+                                </span>
+                            </td>
+                            <td class="inputLabel">
+                                @Html.CheckBox(audioAnalyzerTimedTextFormatWebVttId, true, new { @class = "inputCheckbox", disabled = "disabled" })
+                                WebVTT
+                            </td>
+                            <td class="inputLabel">
+                                @Html.CheckBox(audioAnalyzerTimedTextFormatTtmlId, false, new { @class = "inputCheckbox" })
+                                TTML
+                            </td>
+                            <td style="width:100%" />
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="@videoAnalyzerRowId" style="display:none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
-                        Video Indexer
+                        Video Analyzer
                     </span>
                 </td>
                 <td>
                     <table class="mediaProcessorConfigOptions">
                         <tr>
                             <td>
-                                @Html.DropDownList(indexerLanguageId, ViewData["indexerLanguages"] as SelectListItem[], new { @class = "indexerLanguage" })
+                                @Html.DropDownList(videoAnalyzerLanguageId, ViewData["videoAnalyzerLanguages"] as SelectListItem[], new { @class = "videoAnalyzerLanguage" })
                             </td>
                             <td>
-                                @Html.TextBox(indexerVideoDescriptionId, null, new { @class = "indexerVideoMetadata", placeholder = "[Video Description]" })
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                @Html.TextBox(indexerSearchPartitionId, null, new { @class = "indexerSearchPartition", placeholder = "[Search Partition]" })
-                            </td>
-                            <td>
-                                @Html.TextBox(indexerVideoMetadataId, null, new { @class = "indexerVideoMetadata", placeholder = "[Video Metadata]" })
+                                @Html.TextBox(videoAnalyzerVideoDescriptionId, null, new { @class = "videoAnalyzerVideoMetadata", placeholder = "[Video Description]" })
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                @Html.CheckBox(indexerAudioOnlyId, false, new { @class = "inputCheckbox" })
+                                @Html.TextBox(videoAnalyzerSearchPartitionId, null, new { @class = "videoAnalyzerSearchPartition", placeholder = "[Search Partition]" })
+                            </td>
+                            <td>
+                                @Html.TextBox(videoAnalyzerVideoMetadataId, null, new { @class = "videoAnalyzerVideoMetadata", placeholder = "[Video Metadata]" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.CheckBox(videoAnalyzerAudioOnlyId, false, new { @class = "inputCheckbox" })
                                 <span class="inputCheckboxLabel">
                                     Audio Only
                                 </span>
                             </td>
                             <td>
-                                @Html.CheckBox(indexerVideoPublicId, false, new { @class = "inputCheckbox" })
+                                @Html.CheckBox(videoAnalyzerVideoPublicId, false, new { @class = "inputCheckbox" })
                                 <span class="inputCheckboxLabel">
                                     Public Video
                                 </span>
@@ -204,7 +234,7 @@
                     </table>
                 </td>
             </tr>
-            <tr id="@summarizationRowId" style="display:none">
+            <tr id="@videoSummarizationRowId" style="display:none">
                 <td class="inputLabel">
                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-video-summarization')">
                         Summarization
@@ -217,23 +247,23 @@
                                 Output Duration
                             </td>
                             <td class="inputLabel">
-                                <input id="@summarizationDurationMinutesId" class="spinner d2" value="1" />
+                                <input id="@videoSummarizationDurationMinutesId" class="spinner d2" value="1" />
                             </td>
                             <td class="mediaProcessorConfigOptionColon">
                                 :
                             </td>
                             <td class="inputLabel mediaProcessorConfigOptionColon">
-                                <input id="@summarizationDurationSecondsId" class="spinner d2" value="0" />
+                                <input id="@videoSummarizationDurationSecondsId" class="spinner d2" value="0" />
                             </td>
                         </tr>
                         <tr>
                             <td colspan="4">
-                                @Html.CheckBox(summarizationFadeTransitionsId, true, new { @class = "inputCheckbox" })
+                                @Html.CheckBox(videoSummarizationFadeTransitionsId, true, new { @class = "inputCheckbox" })
                                 <span class="inputCheckboxLabel">
                                     Fade Transitions
                                 </span>
                                 &nbsp;&nbsp;
-                                @Html.CheckBox(summarizationIncludeAudioId, true, new { @class = "inputCheckbox" })
+                                @Html.CheckBox(videoSummarizationIncludeAudioId, true, new { @class = "inputCheckbox" })
                                 <span class="inputCheckboxLabel">
                                     Include Audio
                                 </span>
@@ -300,36 +330,6 @@
                                 Interval (ms)
                                 <input id="@faceEmotionAggregateIntervalId" class="spinner d4" value="500" />
                             </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr id="@speechAnalyzerRowId" style="display:none">
-                <td class="inputLabel">
-                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-process-content-with-indexer2')">
-                        Speech Analyzer
-                    </span>
-                </td>
-                <td>
-                    <table class="mediaProcessorConfigOptions">
-                        <tr>
-                            <td class="inputLabel">
-                                @Html.DropDownList(speechAnalyzerLanguageId, ViewData["speechAnalyzerLanguages"] as SelectListItem[], new { @class = "inputSelect speechAnalyzerLanguage" })
-                            </td>
-                            <td class="inputLabel">
-                                <span class="speechAnalyzerAudio">
-                                    Audio
-                                </span>
-                            </td>
-                            <td class="inputLabel">
-                                @Html.CheckBox(speechAnalyzerTimedTextFormatWebVttId, true, new { @class = "inputCheckbox speechAnalyzerAudioOption", disabled = "disabled" })
-                                WebVTT
-                            </td>
-                            <td class="inputLabel">
-                                @Html.CheckBox(speechAnalyzerTimedTextFormatTtmlId, false, new { @class = "inputCheckbox speechAnalyzerAudioOption" })
-                                TTML
-                            </td>
-                            <td style="width:100%" />
                         </tr>
                     </table>
                 </td>
@@ -623,9 +623,7 @@
                             <td>
                                 <table class="mediaProcessorConfigOptions encoderVideoOverlayOptions">
                                     <tr>
-                                        <td>
-
-                                        </td>
+                                        <td></td>
                                     </tr>
                                 </table>
                             </td>

@@ -21,7 +21,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string presetName = presetConfig["PresetName"].ToString();
             string mediaProcessor = presetConfig["MediaProcessor"].ToString();
             string appDirectory = Directory.GetCurrentDirectory();
-            string presetsDirectory = string.Concat(appDirectory, Constant.Media.ProcessorConfig.DirectoryPresets, mediaProcessor);
+            string presetsDirectory = string.Concat(appDirectory, Constant.Media.Models, Constant.Media.Presets, mediaProcessor);
             string[] presetFiles = Directory.GetFiles(presetsDirectory);
             foreach (string presetFile in presetFiles)
             {
@@ -35,7 +35,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 string authToken = homeController.GetAuthToken(this.Request, this.Response);
                 User authUser = new User(authToken);
-                presetConfig["id"] = string.Concat(authUser.MediaAccount.Id, Constant.TextDelimiter.Identifier, mediaProcessor, Constant.TextDelimiter.Identifier, presetName);
+                presetConfig["id"] = string.Concat(authUser.MediaAccount.Name, Constant.TextDelimiter.Identifier, mediaProcessor, Constant.TextDelimiter.Identifier, presetName);
             }
             return uniqueName;
         }
@@ -45,23 +45,23 @@ namespace AzureSkyMedia.WebApp.Controllers
             return string.Compare(leftItem.Text, rightItem.Text);
         }
 
-        internal static SelectListItem[] GetProcessorPresets(MediaProcessor mediaProcessor, string accountId, bool includeLadder)
+        internal static SelectListItem[] GetProcessorPresets(MediaProcessor mediaProcessor, string accountName, bool includeLadder)
         {
             List<SelectListItem> processorPresets = new List<SelectListItem>();
-            NameValueCollection presets = Processor.GetProcessorPresets(mediaProcessor, accountId);
+            NameValueCollection presets = Processor.GetProcessorPresets(mediaProcessor, accountName);
             if (includeLadder)
             {
                 SelectListItem processorPreset = new SelectListItem()
                 {
-                    Text = Constant.Media.ProcessorConfig.StreamingLadderPresetName,
-                    Value = Constant.Media.ProcessorConfig.StreamingLadderPresetValue,
+                    Text = Constant.Media.ProcessorPreset.StreamingLadderPresetName,
+                    Value = Constant.Media.ProcessorPreset.StreamingLadderPresetValue,
                     Selected = true
                 };
                 processorPresets.Add(processorPreset);
                 processorPreset = new SelectListItem()
                 {
-                    Text = Constant.Media.ProcessorConfig.DownloadLadderPresetName,
-                    Value = Constant.Media.ProcessorConfig.DownloadLadderPresetValue
+                    Text = Constant.Media.ProcessorPreset.DownloadLadderPresetName,
+                    Value = Constant.Media.ProcessorPreset.DownloadLadderPresetValue
                 };
                 processorPresets.Add(processorPreset);
             }
@@ -82,15 +82,15 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
             User authUser = new User(authToken);
-            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.MediaAccount.Id, false);
+            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.MediaAccount.Name, false);
             return Json(presets);
         }
 
         public JsonResult config(string presetId)
         {
             JObject preset;
-            string collectionId = Constant.Database.Collection.ProcessorConfig;
-            string procedureId = Constant.Database.Procedure.ProcessorConfig;
+            string collectionId = Constant.Database.Collection.ProcessorPreset;
+            string procedureId = Constant.Database.Procedure.ProcessorPreset;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
                 preset = databaseClient.GetDocument(collectionId, procedureId, "id", presetId);
@@ -103,7 +103,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             bool saved = false;
             if (HasUniqueName(processorPreset, out JObject presetConfig))
             {
-                string collectionId = Constant.Database.Collection.ProcessorConfig;
+                string collectionId = Constant.Database.Collection.ProcessorPreset;
                 using (DatabaseClient databaseClient = new DatabaseClient())
                 {
                     databaseClient.UpsertDocument(collectionId, presetConfig);
@@ -118,7 +118,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             bool deleted = false;
             if (HasUniqueName(processorPreset, out JObject presetConfig))
             {
-                string collectionId = Constant.Database.Collection.ProcessorConfig;
+                string collectionId = Constant.Database.Collection.ProcessorPreset;
                 string documentId = presetConfig["id"].ToString();
                 using (DatabaseClient databaseClient = new DatabaseClient())
                 {

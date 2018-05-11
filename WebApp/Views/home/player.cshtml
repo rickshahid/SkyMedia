@@ -3,7 +3,7 @@
     string ampSkin = ViewData["mediaPlayerSkin"] as string;
 
     string userId = ViewData["userId"] as string;
-    string accountId = ViewData["accountId"] as string;
+    string accountName = ViewData["accountName"] as string;
 }
 
 @section head {
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript">
         $(function () {
-            var mediaPlayer = GetMediaPlayer("@userId", "@accountId");
+            var mediaPlayer = GetMediaPlayer("@userId", "@accountName");
             mediaPlayer.ready(function () {
                 mediaPlayer.src(
                     [

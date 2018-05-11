@@ -570,17 +570,25 @@ body {
     padding-left: 0px !important;
 }
 
-.indexerLanguage {
+.audioAnalyzerLanguage {
+    width: 186px;
+}
+
+.audioAnalyzerSpeech {
+    margin-left: 5px;
+}
+
+.videoAnalyzerLanguage {
     font-weight: bold;
     width: 187px;
 }
 
-.indexerSearchPartition {
+.videoAnalyzerSearchPartition {
     font-weight: bold;
     width: 183px;
 }
 
-.indexerVideoMetadata {
+.videoAnalyzerVideoMetadata {
     font-weight: bold;
     width: 216px;
 }
@@ -592,18 +600,6 @@ body {
 .faceRedactionBlurMode {
     font-weight: bold;
     width: 107px;
-}
-
-.speechAnalyzerLanguage {
-    width: 186px;
-}
-
-.speechAnalyzerAudio {
-    margin-left: 5px;
-}
-
-.speechAnalyzerAudioOption {
-    margin-left: 3px;
 }
 
 .motionSensitivityLevel {

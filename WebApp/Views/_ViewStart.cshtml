@@ -12,10 +12,7 @@
 
     if (!string.IsNullOrEmpty(authToken))
     {
-        User authUser = new User(authToken);
-        ViewData["userId"] = authUser.Id;
-        ViewData["accountId"] = authUser.MediaAccount.Id;
-        ViewData["accountContext"] = string.Concat(authUser.Id, " (", authUser.MediaAccount.Id, ")");
+        homeController.SetAccountContext(authToken, ViewData);
     }
 
     string settingKey = Constant.AppSettingKey.AppRegionName;
@@ -45,7 +42,7 @@
     }
     ViewData["mediaClipperVersion"] = amcVersion;
 
-    settingKey = Constant.AppSettingKey.StorageCdnUrl;
+    settingKey = Constant.AppSettingKey.StorageContentDeliveryEndpointUrl;
     ViewData["storageCdnUrl"] = homeController.GetAppSetting(settingKey);
 
     string directoryId = homeController.GetDirectoryId(request);

@@ -49,18 +49,22 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthTypeAddress" + lastTaskNumber, "encoderContentProtectionAuthTypeAddress" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderContentProtectionAuthAddressRange" + lastTaskNumber, "encoderContentProtectionAuthAddressRange" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "encoderVideoOverlay" + lastTaskNumber, "encoderVideoOverlay" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerRow" + lastTaskNumber, "indexerRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerLanguageId" + lastTaskNumber, "indexerLanguageId" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerSearchPartition" + lastTaskNumber, "indexerSearchPartition" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoDescription" + lastTaskNumber, "indexerVideoDescription" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoMetadata" + lastTaskNumber, "indexerVideoMetadata" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerVideoPublic" + lastTaskNumber, "indexerVideoPublic" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "indexerAudioOnly" + lastTaskNumber, "indexerAudioOnly" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationRow" + lastTaskNumber, "summarizationRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationMinutes" + lastTaskNumber, "summarizationDurationMinutes" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationDurationSeconds" + lastTaskNumber, "summarizationDurationSeconds" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationFadeTransitions" + lastTaskNumber, "summarizationFadeTransitions" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "summarizationIncludeAudio" + lastTaskNumber, "summarizationIncludeAudio" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "audioAnalyzerRow" + lastTaskNumber, "audioAnalyzerRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "audioAnalyzerLanguageId" + lastTaskNumber, "audioAnalyzerLanguageId" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "audioAnalyzerTimedTextFormatTtml" + lastTaskNumber, "audioAnalyzerTimedTextFormatTtml" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "audioAnalyzerTimedTextFormatWebVtt" + lastTaskNumber, "audioAnalyzerTimedTextFormatWebVtt" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoAnalyzerRow" + lastTaskNumber, "videoAnalyzerRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoAnalyzerLanguageId" + lastTaskNumber, "videoAnalyzerLanguageId" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoAnalyzerSearchPartition" + lastTaskNumber, "videoAnalyzerSearchPartition" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoAnalyzerVideoDescription" + lastTaskNumber, "videoAnalyzerVideoDescription" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoAnalyzerVideoMetadata" + lastTaskNumber, "videoAnalyzerVideoMetadata" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoAnalyzerVideoPublic" + lastTaskNumber, "videoAnalyzerVideoPublic" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoAnalyzerAudioOnly" + lastTaskNumber, "videoAnalyzerAudioOnly" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoSummarizationRow" + lastTaskNumber, "videoSummarizationRow" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoSummarizationDurationMinutes" + lastTaskNumber, "videoSummarizationDurationMinutes" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoSummarizationDurationSeconds" + lastTaskNumber, "videoSummarizationDurationSeconds" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoSummarizationFadeTransitions" + lastTaskNumber, "videoSummarizationFadeTransitions" + newTaskNumber);
+    taskRowHtml = ReplaceAllText(taskRowHtml, "videoSummarizationIncludeAudio" + lastTaskNumber, "videoSummarizationIncludeAudio" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionRow" + lastTaskNumber, "faceDetectionRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceDetectionMode" + lastTaskNumber, "faceDetectionMode" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceRedactionRow" + lastTaskNumber, "faceRedactionRow" + newTaskNumber);
@@ -70,10 +74,6 @@ function GetNewTaskRowHtml(lastTaskRow, lastTaskNumber, newTaskNumber) {
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceEmotionAggregateRow" + lastTaskNumber, "faceEmotionAggregateRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceEmotionAggregateWindow" + lastTaskNumber, "faceEmotionAggregateWindow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "faceEmotionAggregateInterval" + lastTaskNumber, "faceEmotionAggregateInterval" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerRow" + lastTaskNumber, "speechAnalyzerRow" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerLanguageId" + lastTaskNumber, "speechAnalyzerLanguageId" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerTimedTextFormatTtml" + lastTaskNumber, "speechAnalyzerTimedTextFormatTtml" + newTaskNumber);
-    taskRowHtml = ReplaceAllText(taskRowHtml, "speechAnalyzerTimedTextFormatWebVtt" + lastTaskNumber, "speechAnalyzerTimedTextFormatWebVtt" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectionRow" + lastTaskNumber, "motionDetectionRow" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectionSensitivityLevel" + lastTaskNumber, "motionDetectionSensitivityLevel" + newTaskNumber);
     taskRowHtml = ReplaceAllText(taskRowHtml, "motionDetectionLightChange" + lastTaskNumber, "motionDetectionLightChange" + newTaskNumber);
@@ -117,17 +117,16 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
     var encoderOptionsRowId = mediaProcessor.id.replace("mediaProcessor", "encoderOptionsRow");
     var encoderThumbnailGenerationRowId = mediaProcessor.id.replace("mediaProcessor", "encoderThumbnailGenerationRow");
     var encoderContentProtectionRowId = mediaProcessor.id.replace("mediaProcessor", "encoderContentProtectionRow");
-    var indexerRowId = mediaProcessor.id.replace("mediaProcessor", "indexerRow");
-    var annotationRowId = mediaProcessor.id.replace("mediaProcessor", "annotationRow");
-    var summarizationRowId = mediaProcessor.id.replace("mediaProcessor", "summarizationRow");
+    var audioAnalyzerRowId = mediaProcessor.id.replace("mediaProcessor", "audioAnalyzerRow");
+    var videoAnalyzerRowId = mediaProcessor.id.replace("mediaProcessor", "videoAnalyzerRow");
+    var videoSummarizationRowId = mediaProcessor.id.replace("mediaProcessor", "videoSummarizationRow");
     var faceDetectionRowId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionRow");
     var faceDetectionModeId = mediaProcessor.id.replace("mediaProcessor", "faceDetectionMode");
-    var speechAnalyzerRowId = mediaProcessor.id.replace("mediaProcessor", "speechAnalyzerRow");
     var motionDetectionRowId = mediaProcessor.id.replace("mediaProcessor", "motionDetectionRow");
     var contentModerationRowId = mediaProcessor.id.replace("mediaProcessor", "contentModerationRow");
     var characterRecognitionRowId = mediaProcessor.id.replace("mediaProcessor", "characterRecognitionRow");
     var encoderConfigOptions = $("#" + encoderConfigId)[0].options;
-    var hideIds = [encoderConfigRowId, encoderConfigDocSchemaId, encoderConfigFileRowId, encoderOptionsRowId, encoderThumbnailGenerationRowId, encoderContentProtectionRowId, indexerRowId, annotationRowId, summarizationRowId, faceDetectionRowId, speechAnalyzerRowId, motionDetectionRowId, contentModerationRowId, characterRecognitionRowId];
+    var hideIds = [encoderConfigRowId, encoderConfigDocSchemaId, encoderConfigFileRowId, encoderOptionsRowId, encoderThumbnailGenerationRowId, encoderContentProtectionRowId, audioAnalyzerRowId, videoAnalyzerRowId, videoSummarizationRowId, faceDetectionRowId, motionDetectionRowId, contentModerationRowId, characterRecognitionRowId];
     var unbindIds = [encoderConfigDocId, encoderConfigDocSchemaId];
     ResetProcessorConfig(encoderConfigOptions, encoderConfigFileId, hideIds, unbindIds);
     switch (mediaProcessor.value) {
@@ -149,21 +148,18 @@ function SetProcessorConfig(mediaProcessor, taskNumber, encoderStandardPresets, 
             ResetEncoderOptions(mediaProcessor);
             $("#" + encoderOptionsRowId).show();
             break;
-        case "VideoIndexer":
-            $("#" + indexerRowId).show();
+        case "AudioAnalyzer":
+            $("#" + audioAnalyzerRowId).show();
             break;
-        case "VideoAnnotation":
-            $("#" + annotationRowId).show();
+        case "VideoAnalyzer":
+            $("#" + videoAnalyzerRowId).show();
             break;
         case "VideoSummarization":
-            $("#" + summarizationRowId).show();
+            $("#" + videoSummarizationRowId).show();
             break;
         case "FaceDetection":
             $("#" + faceDetectionRowId).show();
             $("#" + faceDetectionModeId).change();
-            break;
-        case "SpeechAnalyzer":
-            $("#" + speechAnalyzerRowId).show();
             break;
         case "MotionDetection":
             $("#" + motionDetectionRowId).show();

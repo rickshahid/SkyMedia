@@ -1,22 +1,43 @@
 ﻿body {
-    background-color: black;
     color: deepskyblue;
-    text-align: center;
+    background-color: black;
+}
+
+label {
+    padding-right: 5px;
+    font-style: italic;
+    font-weight: bold;
+    font-size: large;
 }
 
 button {
     background-color: deepskyblue;
     border-radius: 20px;
-    font-size: medium;
+    margin-left: 15px;
+    margin-right: 15px;
     font-weight: bold;
+    font-size: large;
     height: 40px;
+    width: 120px;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.verify button {
+    width: auto !important;
+}
+
+.policy {
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 10px;
 }
 
 .policyTitle {
-    font-size: x-large;
+    font-size: xx-large;
     font-weight: bold;
-    padding-top: 20px;
-    padding-bottom: 10px;
 }
 
 .policyIntro {
@@ -25,14 +46,12 @@ button {
     padding-top: 10px;
 }
 
-.accountButton {
-    margin-left: 15px;
-    margin-right: 15px;
-    width: 120px;
+.policyPrerequisite {
+    text-decoration: underline;
 }
 
-.accountButton:hover {
-    cursor: pointer;
+.apiSignIn {
+    text-align: center;
 }
 
 .social .options div {
@@ -52,71 +71,43 @@ button {
     width: 150px;
 }
 
-.password-label {
+.localAccount .password-label {
     display: inline;
 }
 
-.password-label #forgotPassword {
+.localAccount .password-label #forgotPassword {
     position: absolute;
     margin-left: 160px;
 }
 
 .localAccount #next {
     margin-top: 20px;
-    width: 100px;
-}
-
-.localAccount #next:hover {
-    cursor: pointer;
 }
 
 .localAccount .create {
     font-size: large;
 }
 
-.localAccount .create #createAccount {
+.localAccount .create a {
     margin-left: 5px;
-}
-
-/*ul {
-    list-style-type: none;
-}
-
-label {
-    font-style: italic;
-    font-weight: bold;
-    font-size: large;
-}
-
-.buttons {
-    text-align: center;
-}
-
-.buttons button {
-    width: 120px;
-}
-
-.verify button {
-    width: auto;
-}
-
-.verify {
-    text-align: left;
-}
-
-#email {
-    margin-bottom: 10px;
-}
-
-
-.textInput {
-    width: 400px !important;
 }
 
 .attrEntry {
     padding-bottom: 20px;
 }
 
+.attrEntry div {
+    display: inline;
+}
+
+.textInput {
+    width: 500px;
+}
+
 .helpLink {
     display: none;
-}*/
+}
+
+.buttons {
+    text-align: center;
+}

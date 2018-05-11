@@ -54,7 +54,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             _authToken = authToken;
             _mediaClient = new MediaClient(authToken);
-            string settingKey = Constant.AppSettingKey.StorageCdnUrl;
+            string settingKey = Constant.AppSettingKey.StorageContentDeliveryEndpointUrl;
             _storageCdnUrl = AppSetting.GetValue(settingKey);
         }
 

@@ -31,16 +31,16 @@ namespace AzureSkyMedia.PlatformServices
 
     internal enum MediaProcessorConfig
     {
-        SummarizationDurationSeconds,
-        SummarizationFadeTransitions,
-        SummarizationIncludeAudio,
+        AudioAnalyzerLanguageId,
+        AudioAnalyzerTimedTextFormatTtml,
+        AudioAnalyzerTimedTextFormatWebVtt,
+        VideoSummarizationDurationSeconds,
+        VideoSummarizationFadeTransitions,
+        VideoSummarizationIncludeAudio,
         FaceDetectionMode,
         FaceRedactionBlurMode,
         FaceEmotionAggregateWindow,
         FaceEmotionAggregateInterval,
-        SpeechAnalyzerLanguageId,
-        SpeechAnalyzerTimedTextFormatTtml,
-        SpeechAnalyzerTimedTextFormatWebVtt,
         MotionDetectionSensitivityLevel,
         MotionDetectionLightChange
     }
@@ -50,13 +50,13 @@ namespace AzureSkyMedia.PlatformServices
         EncoderStandard,
         EncoderPremium,
         VideoIndexer,
-        VideoAnnotation,
+
+        AudioAnalyzer,
+        VideoAnalyzer,
+
         VideoSummarization,
         FaceDetection,
-        SpeechAnalyzer,
-        MotionDetection,
-        ContentModeration,
-        CharacterRecognition
+        MotionDetection
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

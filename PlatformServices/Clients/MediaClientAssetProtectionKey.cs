@@ -29,7 +29,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Guid keyId = Guid.NewGuid();
                 byte[] encryptionKey = CreateEncryptionKey();
-                contentKey = _media.ContentKeys.Create(keyId, encryptionKey, keyName, keyType);
+                contentKey = _media2.ContentKeys.Create(keyId, encryptionKey, keyName, keyType);
                 SetContentKeyAuthPolicy(contentKey, contentProtection);
             }
             return contentKey;
@@ -134,7 +134,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private IContentKeyAuthorizationPolicy CreateContentKeyAuthPolicy(string policyName, IContentKey contentKey, ContentProtection contentProtection)
         {
-            IContentKeyAuthorizationPolicy authPolicy = _media.ContentKeyAuthorizationPolicies.CreateAsync(policyName).Result;
+            IContentKeyAuthorizationPolicy authPolicy = _media2.ContentKeyAuthorizationPolicies.CreateAsync(policyName).Result;
             List<ContentKeyAuthorizationPolicyRestriction> policyRestrictions = CreateContentKeyAuthPolicyRestrictions(policyName, contentProtection);
             switch (contentKey.ContentKeyType)
             {
@@ -145,7 +145,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         ContentKeyDeliveryType deliveryType = ContentKeyDeliveryType.BaselineHttp;
                         string deliveryConfig = string.Empty;
-                        policyOption = _media.ContentKeyAuthorizationPolicyOptions.Create(policyOptionName, deliveryType, policyRestrictions, deliveryConfig);
+                        policyOption = _media2.ContentKeyAuthorizationPolicyOptions.Create(policyOptionName, deliveryType, policyRestrictions, deliveryConfig);
                     }
                     authPolicy.Options.Add(policyOption);
                     break;
@@ -166,7 +166,7 @@ namespace AzureSkyMedia.PlatformServices
 
                             ContentKeyDeliveryType deliveryType = ContentKeyDeliveryType.PlayReadyLicense;
                             string deliveryConfig = MediaServicesLicenseTemplateSerializer.Serialize(responseTemplate);
-                            policyOption = _media.ContentKeyAuthorizationPolicyOptions.Create(policyOptionName, deliveryType, policyRestrictions, deliveryConfig);
+                            policyOption = _media2.ContentKeyAuthorizationPolicyOptions.Create(policyOptionName, deliveryType, policyRestrictions, deliveryConfig);
                         }
                         authPolicy.Options.Add(policyOption);
                     }
@@ -194,7 +194,7 @@ namespace AzureSkyMedia.PlatformServices
 
                             ContentKeyDeliveryType deliveryType = ContentKeyDeliveryType.Widevine;
                             string deliveryConfig = JsonConvert.SerializeObject(widevineMessage);
-                            policyOption = _media.ContentKeyAuthorizationPolicyOptions.Create(policyOptionName, deliveryType, policyRestrictions, deliveryConfig);
+                            policyOption = _media2.ContentKeyAuthorizationPolicyOptions.Create(policyOptionName, deliveryType, policyRestrictions, deliveryConfig);
                         }
                         authPolicy.Options.Add(policyOption);
                     }

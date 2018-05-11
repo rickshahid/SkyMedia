@@ -1,4 +1,4 @@
-function getProcessorConfig(propertyName, propertyValue) {
+function getProcessorPreset(propertyName, propertyValue) {
     var context = getContext();
     var collection = context.getCollection();
     var query = "SELECT * FROM document WHERE document." + propertyName + " = '" + propertyValue + "'";

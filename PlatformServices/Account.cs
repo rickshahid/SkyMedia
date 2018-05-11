@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
@@ -39,18 +37,18 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(insightId))
             {
                 DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.MediaInsight;
+                string collectionId = Constant.Database.Collection.OutputInsight;
                 MediaInsight mediaInsight = databaseClient.GetDocument<MediaInsight>(collectionId, insightId);
                 if (mediaInsight != null)
                 {
                     foreach (MediaInsightSource insightSource in mediaInsight.Sources)
                     {
                         string documentId = insightSource.OutputId;
-                        if (insightSource.MediaProcessor == MediaProcessor.VideoIndexer)
+                        if (insightSource.MediaProcessor == MediaProcessor.VideoAnalyzer)
                         {
-                            IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
-                            indexerClient.DeleteVideo(documentId, true);
-                            databaseClient.DeleteDocument(Constant.Database.Collection.MediaPublish, documentId);
+                            VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+                            videoAnalyzer.DeleteVideo(documentId, true);
+                            databaseClient.DeleteDocument(Constant.Database.Collection.OutputPublish, documentId);
                         }
                         databaseClient.DeleteDocument(collectionId, documentId);
                     }
@@ -97,7 +95,7 @@ namespace AzureSkyMedia.PlatformServices
         private static void DeleteJob(IJob job)
         {
             DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constant.Database.Collection.MediaPublish;
+            string collectionId = Constant.Database.Collection.OutputPublish;
             foreach (ITask jobTask in job.Tasks)
             {
                 databaseClient.DeleteDocument(collectionId, jobTask.Id);

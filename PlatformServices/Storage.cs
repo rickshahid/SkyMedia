@@ -16,15 +16,6 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class StorageEntity : TableEntity
-    {
-        public string UserId { get; set; }
-
-        public string MobileNumber { get; set; }
-
-        public DateTime? CreatedOn { get; set; }
-    }
-
     internal static class Storage
     {
         private static int OrderByLatest(CapacityEntity leftItem, CapacityEntity rightItem)
@@ -35,24 +26,22 @@ namespace AzureSkyMedia.PlatformServices
         private static string GetAccountType(string authToken, string accountName)
         {
             string accountType = string.Empty;
-            string settingKey = Constant.AppSettingKey.AppSubscriptionId;
-            string subscriptionId = AppSetting.GetValue(settingKey);
+            User authUser = new User(authToken);
+            string subscriptionId = authUser.MediaAccount.SubscriptionId;
             if (!string.IsNullOrEmpty(subscriptionId))
             {
-                User authUser = new User(authToken);
+                string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+                string authorityUrl = AppSetting.GetValue(settingKey);
+                authorityUrl = string.Format(authorityUrl, authUser.MediaAccount.DirectoryTenantId);
 
-                settingKey = Constant.AppSettingKey.StorageLoginUrl;
-                string storageLoginUrl = AppSetting.GetValue(settingKey);
+                AuthenticationContext authContext = new AuthenticationContext(authorityUrl);
 
-                string mediaAuthority = string.Concat(storageLoginUrl, authUser.MediaAccount.DomainName);
-                AuthenticationContext authContext = new AuthenticationContext(mediaAuthority);
+                settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
+                string audienceUrl = AppSetting.GetValue(settingKey);
 
-                settingKey = Constant.AppSettingKey.StorageManagementUrl;
-                string storageManagementUrl = AppSetting.GetValue(settingKey);
+                ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ClientApplicationId, authUser.MediaAccount.ClientApplicationKey);
 
-                ClientCredential mediaClientCredential = new ClientCredential(authUser.MediaAccount.ClientId, authUser.MediaAccount.ClientKey);
-
-                AuthenticationResult authResult = authContext.AcquireTokenAsync(storageManagementUrl, mediaClientCredential).Result;
+                AuthenticationResult authResult = authContext.AcquireTokenAsync(audienceUrl, clientCredential).Result;
                 TokenCredentials tokenCredential = new TokenCredentials(authResult.AccessToken);
 
                 StorageManagementClient storageClient = new StorageManagementClient(tokenCredential)
@@ -110,15 +99,15 @@ namespace AzureSkyMedia.PlatformServices
             return capacityUsed;
         }
 
-        private static string GetAccountInfo(string authToken, IStorageAccount storageAccount)
+        private static string GetAccountInfo(string authToken, string storageAccountName)
         {
-            string accountInfo = string.Concat("Account Name: ", storageAccount.Name);
-            string accountType = GetAccountType(authToken, storageAccount.Name);
+            string accountInfo = string.Concat("Account Name: ", storageAccountName);
+            string accountType = GetAccountType(authToken, storageAccountName);
             if (!string.IsNullOrEmpty(accountType))
             {
                 accountInfo = string.Concat(accountInfo, ", Account Type: ", accountType);
             }
-            string capacityUsed = GetCapacityUsed(authToken, storageAccount.Name);
+            string capacityUsed = GetCapacityUsed(authToken, storageAccountName);
             if (!string.IsNullOrEmpty(capacityUsed))
             {
                 accountInfo = string.Concat(accountInfo, ", Capacity Used: ", capacityUsed);
@@ -222,15 +211,16 @@ namespace AzureSkyMedia.PlatformServices
         {
             NameValueCollection storageAccounts = new NameValueCollection();
             MediaClient mediaClient = new MediaClient(authToken);
-            IStorageAccount defaultStorage = mediaClient.StorageAccount;
-            string accountInfo = GetAccountInfo(authToken, defaultStorage);
-            storageAccounts.Add(accountInfo, defaultStorage.Name);
+            string primaryStorageId = mediaClient.PrimaryStorage.Id;
+            string storageAccountName = Path.GetFileName(primaryStorageId);
+            string accountInfo = GetAccountInfo(authToken, storageAccountName);
+            storageAccounts.Add(accountInfo, storageAccountName);
             IStorageAccount[] accounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
             foreach (IStorageAccount account in accounts)
             {
                 if (!account.IsDefault)
                 {
-                    accountInfo = GetAccountInfo(authToken, account);
+                    accountInfo = GetAccountInfo(authToken, account.Name);
                     storageAccounts.Add(accountInfo, account.Name);
                 }
             }

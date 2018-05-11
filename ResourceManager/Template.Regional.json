@@ -56,12 +56,6 @@
         "description": "Azure Active Directory B2C client application secret (staging web app)."
       }
     },
-    "appSubscriptionId": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure subscription identifier to determine media storage account types with Reader role."
-      }
-    },
     "storageServiceName": {
       "type": "string",
       "minLength": 3,
@@ -148,7 +142,7 @@
     }
   },
   "variables": {
-    "storageApiVersion": "2017-10-01",
+    "storageApiVersion": "2018-02-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
@@ -189,10 +183,6 @@
             {
               "name": "App.RegionName",
               "value": "[parameters('appRegionName')]"
-            },
-            {
-              "name": "App.SubscriptionId",
-              "value": "[parameters('appSubscriptionId')]"
             },
             {
               "name": "Directory.B2B.ClientId",
@@ -236,6 +226,7 @@
           ],
           "properties": {
             "appSettingNames": [
+              "APPINSIGHTS_INSTRUMENTATIONKEY",
               "App.RegionName",
               "Directory.B2B.ClientId",
               "Directory.B2B.ClientSecret",
@@ -258,10 +249,6 @@
                 {
                   "name": "App.RegionName",
                   "value": "[concat(parameters('appRegionName'), ' - Staging')]"
-                },
-                {
-                  "name": "App.SubscriptionId",
-                  "value": "[parameters('appSubscriptionId')]"
                 },
                 {
                   "name": "Directory.B2B.ClientId",

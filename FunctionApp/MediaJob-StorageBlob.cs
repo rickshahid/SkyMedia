@@ -10,9 +10,9 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.FunctionApp
 {
-    public static class MediaProcessStorageBlob
+    public static class MediaJobStorageBlob
     {
-        [FunctionName("MediaProcess-StorageBlob")]
+        [FunctionName("MediaJob-StorageBlob")]
         public static void Run([BlobTrigger("ams/{name}")] Stream blob, string name, TraceWriter log)
         {
             bool createLog = true;
@@ -27,7 +27,7 @@ namespace AzureSkyMedia.FunctionApp
                 else
                 {
                     DatabaseClient databaseClient = new DatabaseClient();
-                    string collectionId = Constant.Database.Collection.MediaProcess;
+                    string collectionId = Constant.Database.Collection.InputWorkflow;
                     MediaProcess[] mediaProcesses = databaseClient.GetDocuments<MediaProcess>(collectionId);
                     foreach (MediaProcess mediaProcess in mediaProcesses)
                     {
@@ -93,7 +93,7 @@ namespace AzureSkyMedia.FunctionApp
                     MissingFiles = missingFiles
                 };
                 DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.MediaProcess;
+                string collectionId = Constant.Database.Collection.InputWorkflow;
                 databaseClient.UpsertDocument(collectionId, mediaProcess);
             }
             else
@@ -129,13 +129,14 @@ namespace AzureSkyMedia.FunctionApp
             StreamReader jobReader = new StreamReader(blob);
             MediaAccount mediaAccount = new MediaAccount()
             {
-                DomainName = jobReader.ReadLine(),
-                EndpointUrl = jobReader.ReadLine(),
-                ClientId = jobReader.ReadLine(),
-                ClientKey = jobReader.ReadLine(),
-                IndexerKey = jobReader.ReadLine()
+                Name = jobReader.ReadLine(),
+                SubscriptionId = jobReader.ReadLine(),
+                ResourceGroupName = jobReader.ReadLine(),
+                DirectoryTenantId = jobReader.ReadLine(),
+                ClientApplicationId = jobReader.ReadLine(),
+                ClientApplicationKey = jobReader.ReadLine()
             };
-            mediaClient = new MediaClient(mediaAccount);
+            mediaClient = new MediaClient(null, mediaAccount);
             taskConfig = new Dictionary<MediaProcessor, string>();
             while (!jobReader.EndOfStream)
             {

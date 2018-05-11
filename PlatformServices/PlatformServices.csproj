@@ -39,6 +39,9 @@
     <Reference Include="Microsoft.Azure.KeyVault.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.KeyVault.Core.2.0.4\lib\net45\Microsoft.Azure.KeyVault.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Azure.Management.Media, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Azure.Management.Media.1.0.0\lib\net452\Microsoft.Azure.Management.Media.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Azure.Management.Storage, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.Management.Storage.7.1.0-preview\lib\net452\Microsoft.Azure.Management.Storage.dll</HintPath>
     </Reference>
@@ -51,11 +54,11 @@
     <Reference Include="Microsoft.Data.Services.Client, Version=5.8.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Services.Client.5.8.3\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration, Version=2.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.0.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.0.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.0.2\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.0.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.0.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.0.2\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Primitives, Version=2.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.2.0.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
@@ -186,49 +189,41 @@
     <Compile Include="Account.cs" />
     <Compile Include="AppSetting.cs" />
     <Compile Include="AuthToken.cs" />
-    <Compile Include="Clients\BotClient.cs" />
     <Compile Include="Clients\CacheClient.cs" />
     <Compile Include="Clients\DatabaseClient.cs" />
     <Compile Include="Clients\MediaClient.cs" />
     <Compile Include="Clients\MediaClientAsset.cs" />
-    <Compile Include="Clients\MediaClientAssetClipper.cs" />
+    <Compile Include="Clients\MediaClientAssetEditor.cs" />
     <Compile Include="Clients\MediaClientAssetFilter.cs" />
-    <Compile Include="Clients\MediaClientAssetIndexer.cs" />
     <Compile Include="Clients\MediaClientAssetLocator.cs" />
     <Compile Include="Clients\MediaClientAssetProtection.cs" />
     <Compile Include="Clients\MediaClientAssetProtectionDelivery.cs" />
     <Compile Include="Clients\MediaClientAssetProtectionKey.cs" />
     <Compile Include="Clients\MediaClientEntity.cs" />
     <Compile Include="Clients\MediaClientJob.cs" />
-    <Compile Include="Clients\MediaClientJobTask.cs" />
-    <Compile Include="Clients\MediaClientJobTaskAnalyze.cs" />
-    <Compile Include="Clients\MediaClientJobTaskEncode.cs" />
+    <Compile Include="Clients\MediaClientTransformEncode.cs" />
+    <Compile Include="Clients\MediaClientTransform.cs" />
+    <Compile Include="Clients\MediaClientTransformAnalyze.cs" />
     <Compile Include="Clients\MediaClientLive.cs" />
-    <Compile Include="Clients\MediaClientNotify.cs" />
+    <Compile Include="Clients\MediaClientEvent.cs" />
     <Compile Include="Clients\MediaClientPublish.cs" />
-    <Compile Include="Clients\MediaClientTelemetry.cs" />
     <Compile Include="Clients\StorageClientBlob.cs" />
     <Compile Include="Clients\StorageClientQueue.cs" />
-    <Compile Include="Clients\StorageClientTable.cs" />
     <Compile Include="Clients\WebClient.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="Entities\Asset.cs" />
     <Compile Include="Entities\Job.cs" />
-    <Compile Include="Entities\JobInput.cs" />
-    <Compile Include="Entities\JobNotification.cs" />
-    <Compile Include="Entities\JobTask.cs" />
-    <Compile Include="Entities\MediaAccount.cs" />
-    <Compile Include="Entities\MediaInsight.cs" />
-    <Compile Include="Entities\MediaProcess.cs" />
-    <Compile Include="Entities\MediaProtection.cs" />
-    <Compile Include="Entities\MediaPublish.cs" />
-    <Compile Include="Entities\MediaSearch.cs" />
-    <Compile Include="Entities\MediaStream.cs" />
-    <Compile Include="Entities\MediaThumbnail.cs" />
-    <Compile Include="Entities\MediaTrack.cs" />
+    <Compile Include="Entities\Transform.cs" />
+    <Compile Include="Entities\Account.cs" />
+    <Compile Include="Entities\Insight.cs" />
+    <Compile Include="Entities\Protection.cs" />
+    <Compile Include="Entities\Publish.cs" />
+    <Compile Include="Entities\Search.cs" />
+    <Compile Include="Entities\Stream.cs" />
+    <Compile Include="Entities\Thumbnail.cs" />
+    <Compile Include="Entities\Track.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Enumeration.cs" />
-    <Compile Include="Language.cs" />
     <Compile Include="Media.cs" />
     <Compile Include="Processor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

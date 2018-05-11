@@ -21,7 +21,7 @@ namespace AzureSkyMedia.WebApp
             IWebHost webHost = webHostBuilder.Build();
             if (Debugger.IsAttached)
             {
-                string modelsDirectory = string.Concat(appDirectory, Constant.Media.ProcessorConfig.DirectoryModels);
+                string modelsDirectory = string.Concat(appDirectory, Constant.Media.Models);
                 using (DatabaseClient databaseClient = new DatabaseClient())
                 {
                     databaseClient.Initialize(modelsDirectory);

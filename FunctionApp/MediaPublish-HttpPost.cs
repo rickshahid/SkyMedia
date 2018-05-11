@@ -60,7 +60,7 @@ namespace AzureSkyMedia.FunctionApp
         private static MediaPublish EnqueuePublish(string documentId)
         {
             DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constant.Database.Collection.MediaPublish;
+            string collectionId = Constant.Database.Collection.OutputPublish;
             MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, documentId);
             if (mediaPublish != null)
             {

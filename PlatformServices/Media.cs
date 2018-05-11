@@ -1,6 +1,8 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 
 using Microsoft.WindowsAzure.MediaServices.Client;
 
@@ -104,15 +106,15 @@ namespace AzureSkyMedia.PlatformServices
             return textTracks.ToArray();
         }
 
-        private static MediaTrack[] GetTextTracks(MediaClient mediaClient, IndexerClient indexerClient, IAsset asset)
+        private static MediaTrack[] GetTextTracks(MediaClient mediaClient, VideoAnalyzer videoAnalyzer, IAsset asset)
         {
             List<MediaTrack> textTracks = new List<MediaTrack>();
-            string indexId = IndexerClient.GetIndexId(asset);
+            string indexId = VideoAnalyzer.GetIndexId(asset);
             if (!string.IsNullOrEmpty(indexId))
             {
-                string webVttUrl = indexerClient.GetWebVttUrl(indexId, null);
-                JObject index = indexerClient.GetIndex(indexId, null, false);
-                string languageLabel = IndexerClient.GetLanguageLabel(index);
+                string webVttUrl = videoAnalyzer.GetWebVttUrl(indexId, null);
+                JObject index = videoAnalyzer.GetIndex(indexId, null, false);
+                string languageLabel = VideoAnalyzer.GetLanguageLabel(index);
                 MediaTrack textTrack = new MediaTrack()
                 {
                     Type = Constant.Media.Stream.TextTrack.Captions,
@@ -125,7 +127,7 @@ namespace AzureSkyMedia.PlatformServices
             for (int i = 0; i < webVttUrls.Length; i++)
             {
                 string webVttUrl = webVttUrls[i];
-                string languageLabel = Language.GetLanguageLabel(webVttUrl);
+                string languageLabel = GetLanguageLabel(webVttUrl);
                 if (!string.IsNullOrEmpty(webVttUrl))
                 {
                     MediaTrack textTrack = new MediaTrack()
@@ -144,20 +146,20 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
 
-            IndexerClient indexerClient = new IndexerClient(mediaClient.MediaAccount);
+            VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
 
             MediaInsight contentInsight = null;
             List<MediaInsightSource> insightSources = new List<MediaInsightSource>();
             if (!clipperView)
             {
-                string indexId = IndexerClient.GetIndexId(asset);
+                string indexId = VideoAnalyzer.GetIndexId(asset);
                 if (!string.IsNullOrEmpty(indexId))
                 {
                     MediaInsightSource insightSource = new MediaInsightSource()
                     {
-                        MediaProcessor = MediaProcessor.VideoIndexer,
+                        MediaProcessor = MediaProcessor.VideoAnalyzer,
                         OutputId = indexId,
-                        OutputUrl = indexerClient.GetInsightUrl(indexId, true)
+                        OutputUrl = videoAnalyzer.GetInsightUrl(indexId, true)
                     };
                     insightSources.Add(insightSource);
                 }
@@ -173,7 +175,6 @@ namespace AzureSkyMedia.PlatformServices
                         {
                             MediaProcessor = processor,
                             OutputId = documentId,
-                            OutputUrl = string.Empty
                         };
                         insightSources.Add(insightSource);
                     }
@@ -200,7 +201,7 @@ namespace AzureSkyMedia.PlatformServices
                     ProtectionInfo = mediaClient.GetStreamProtections(authToken, asset)
                 },
                 ThumbnailUrls = GetThumbnailUrls(mediaClient, asset),
-                TextTracks = GetTextTracks(mediaClient, indexerClient, asset),
+                TextTracks = GetTextTracks(mediaClient, videoAnalyzer, asset),
                 ContentInsight = contentInsight
             };
             if (!filtersOnly)
@@ -327,6 +328,59 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return streamingEnabled;
+        }
+
+        public static NameValueCollection GetLanguages(bool videoIndexer)
+        {
+            NameValueCollection languages = new NameValueCollection();
+            if (videoIndexer)
+            {
+                languages.Add("English", "en-us");
+                languages.Add("Spanish", "es-es");
+            }
+            else
+            {
+                languages.Add("English (US)", "enUS");
+                languages.Add("English (British)", "enGB");
+                languages.Add("Spanish", "esES");
+                languages.Add("Spanish (Mexican)", "esMX");
+            }
+            languages.Add("Arabic (Egyptian)", videoIndexer ? "ar-eg" : "arEG");
+            languages.Add("Chinese (Simplified)", videoIndexer ? "zh-hans" : "zhCN");
+            languages.Add("French", videoIndexer ? "fr-fr" : "frFR");
+            languages.Add("German", videoIndexer ? "de-de" : "deDE");
+            languages.Add("Italian", videoIndexer ? "it-it" : "itIT");
+            languages.Add("Japanese", videoIndexer ? "ja-jp" : "jaJP");
+            languages.Add("Portuguese", videoIndexer ? "pt-br" : "ptBR");
+            languages.Add("Russian", videoIndexer ? "ru-ru" : "ruRU");
+            return languages;
+        }
+
+        public static string GetLanguageId(string taskConfig)
+        {
+            JObject processorConfig = JObject.Parse(taskConfig);
+            return processorConfig["Features"][0]["Options"]["Language"].ToString();
+        }
+
+        public static string GetLanguageLabel(string webVttUrl)
+        {
+            string languageId = Path.GetFileNameWithoutExtension(webVttUrl);
+            languageId = languageId.Substring(languageId.Length - 4);
+            return GetLanguageLabel(languageId, false);
+        }
+
+        public static string GetLanguageLabel(string languageId, bool videoIndexer)
+        {
+            string languageLabel = string.Empty;
+            NameValueCollection languages = GetLanguages(videoIndexer);
+            foreach (string language in languages.Keys)
+            {
+                if (string.Equals(languages[language], languageId, StringComparison.OrdinalIgnoreCase))
+                {
+                    languageLabel = language;
+                }
+            }
+            return languageLabel;
         }
     }
 }

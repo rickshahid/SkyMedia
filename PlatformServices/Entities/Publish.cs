@@ -11,6 +11,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] TaskIds { get; set; }
 
+        public MediaInsightConfig InsightConfig { get; set; }
+
         public MediaAccount MediaAccount { get; set; }
 
         public string MobileNumber { get; set; }
@@ -26,8 +28,6 @@ namespace AzureSkyMedia.PlatformServices
 
     public class MediaPublished
     {
-        public string AssetId { get; set; }
-
         public string IndexId { get; set; }
 
         public string MobileNumber { get; set; }

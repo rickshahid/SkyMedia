@@ -7,6 +7,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private CloudMediaContext _media2 = null;
+
         private void CreateProgram(string programName, IChannel channel, IAsset asset, int? archiveWindowMinutes)
         {
             if (!archiveWindowMinutes.HasValue)
@@ -30,13 +32,13 @@ namespace AzureSkyMedia.PlatformServices
             if (archiveEncryptionClear)
             {
                 string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramSuffixClear);
-                IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.None);
+                IAsset asset = _media2.Assets.Create(assetName, AssetCreationOptions.None);
                 CreateProgram(null, channel, asset, archiveWindowMinutes);
             }
             if (archiveEncryptionAes)
             {
                 string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramSuffixAes);
-                IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+                IAsset asset = _media2.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
                 ContentProtection contentProtection = new ContentProtection()
                 {
                     ContentAuthTypeToken = true,
@@ -48,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             if (archiveEncryptionDrm)
             {
                 string assetName = string.Concat(channel.Name, Constant.Media.Live.ProgramSuffixDrm);
-                IAsset asset = _media.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
+                IAsset asset = _media2.Assets.Create(assetName, AssetCreationOptions.StorageEncrypted);
                 ContentProtection contentProtection = new ContentProtection()
                 {
                     ContentAuthTypeToken = true,
@@ -121,7 +123,7 @@ namespace AzureSkyMedia.PlatformServices
                 };
             }
 
-            return _media.Channels.Create(channelOptions);
+            return _media2.Channels.Create(channelOptions);
         }
 
         public string CreateChannel(string channelName, MediaEncoding channelEncoding, MediaProtocol inputProtocol,

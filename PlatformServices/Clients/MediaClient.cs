@@ -1,54 +1,89 @@
 ﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading;
+using System.Threading.Tasks;
 
-using Microsoft.WindowsAzure.MediaServices.Client;
+using Microsoft.Rest;
+using Microsoft.Azure.Management.Media;
+using Microsoft.Azure.Management.Media.Models;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal partial class MediaClient
+    internal partial class MediaClient : IDisposable
     {
-        private MediaAccount _account;
-        private CloudMediaContext _media;
+        private AzureMediaServicesClient _media;
 
-        public MediaClient(string authToken)
+        public MediaClient(string authToken, MediaAccount mediaAccount = null)
         {
-            User authUser = new User(authToken);
-            _account = authUser.MediaAccount;
-            BindContext();
-        }
-
-        public MediaClient(MediaAccount mediaAccount)
-        {
-            _account = mediaAccount;
-            BindContext();
-        }
-
-        private void BindContext()
-        {
-            AzureAdTokenCredentials tokenCredentials;
-            AzureEnvironment azureEnvironment = AzureEnvironments.AzureCloudEnvironment;
-            if (string.IsNullOrEmpty(_account.ClientId))
+            if (!string.IsNullOrEmpty(authToken))
             {
-                tokenCredentials = new AzureAdTokenCredentials(_account.DomainName, azureEnvironment);
+                User authUser = new User(authToken);
+                mediaAccount = authUser.MediaAccount;
             }
-            else
+            this.MediaAccount = mediaAccount;
+            string settingKey = Constant.AppSettingKey.AzureResourceManagementValidateUrl;
+            string validateUrl = AppSetting.GetValue(settingKey);
+            MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
+            _media = new AzureMediaServicesClient(new Uri(validateUrl), clientCredentials)
             {
-                AzureAdClientSymmetricKey symmetricKey = new AzureAdClientSymmetricKey(_account.ClientId, _account.ClientKey);
-                tokenCredentials = new AzureAdTokenCredentials(_account.DomainName, symmetricKey, azureEnvironment);
+                SubscriptionId = mediaAccount.SubscriptionId
+            };
+            string primaryStorageId = this.PrimaryStorage.Id;
+        }
+
+        public MediaAccount MediaAccount { get; private set; }
+
+        public StorageAccount PrimaryStorage
+        {
+            get
+            {
+                MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                return mediaService.StorageAccounts.Where(s => s.Type == StorageAccountType.Primary).Single();
             }
-            Uri accountEndpoint = new Uri(_account.EndpointUrl);
-            AzureAdTokenProvider tokenProvider = new AzureAdTokenProvider(tokenCredentials);
-            _media = new CloudMediaContext(accountEndpoint, tokenProvider);
-            IStorageAccount storageAccount = this.StorageAccount;
         }
 
-        public MediaAccount MediaAccount
+        public void Dispose()
         {
-            get { return _account; }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        public IStorageAccount StorageAccount
+        protected virtual void Dispose(bool disposing)
         {
-            get { return _media.DefaultStorageAccount; }
+            if (disposing && _media != null)
+            {
+                _media.Dispose();
+                _media = null;
+            }
+        }
+    }
+
+    internal class MediaClientCredentials : ServiceClientCredentials
+    {
+        private AuthenticationContext _authContext;
+        private ClientCredential _clientCredential;
+
+        public MediaClientCredentials(MediaAccount mediaAccount)
+        {
+            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+            string authorityUrl = AppSetting.GetValue(settingKey);
+            authorityUrl = string.Format(authorityUrl, mediaAccount.DirectoryTenantId);
+
+            _authContext = new AuthenticationContext(authorityUrl);
+            _clientCredential = new ClientCredential(mediaAccount.ClientApplicationId, mediaAccount.ClientApplicationKey);
+        }
+
+        public async override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            string settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
+            string audienceUrl = AppSetting.GetValue(settingKey);
+
+            AuthenticationResult authResult = await _authContext.AcquireTokenAsync(audienceUrl, _clientCredential);
+            request.Headers.Authorization = new AuthenticationHeaderValue(authResult.AccessTokenType, authResult.AccessToken);
+            await base.ProcessHttpRequestAsync(request, cancellationToken);
         }
     }
 }

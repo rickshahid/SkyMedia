@@ -10,14 +10,6 @@
         "description": "Name must be between 3 and 23 characters (letters and numbers only)."
       }
     },
-    "batchServiceName": {
-      "type": "string",
-      "minLength": 3,
-      "maxLength": 24,
-      "metadata": {
-        "description": "Name must be between 3 and 24 characters (letters and numbers only)."
-      }
-    },
     "mediaServiceName": {
       "type": "string",
       "minLength": 3,
@@ -29,7 +21,7 @@
     "mediaRegionName": {
       "type": "string",
       "metadata": {
-        "description": "Azure region name for all media resources, including storage and batch services."
+        "description": "Azure region name for all media resources, including storage services."
       }
     },
     "contentDeliveryProfileName": {
@@ -45,9 +37,9 @@
       "type": "string",
       "defaultValue": "Standard_Akamai",
       "allowedValues": [
-        "Standard_Verizon",
-        "Premium_Verizon",
-        "Standard_Akamai"
+        "Standard_Akamai",
+        "Standard_Microsoft",
+        "Standard_Verizon"
       ],
       "metadata": {
         "description": "Resource tier for the Content Delivery Network service."
@@ -55,16 +47,14 @@
     }
   },
   "variables": {
-    "storageApiVersion": "2017-10-01",
+    "storageApiVersion": "2018-02-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "storageService1Name": "[concat(variables('storageServiceName'), '1')]",
     "storageService2Name": "[concat(variables('storageServiceName'), '2')]",
     "storageService3Name": "[concat(variables('storageServiceName'), '3')]",
-    "batchApiVersion": "2017-09-01",
-    "batchServiceName": "[toLower(parameters('batchServiceName'))]",
     "mediaApiVersion": "2015-10-01",
     "mediaServiceName": "[toLower(parameters('mediaServiceName'))]",
-    "contentDeliveryApiVersion": "2017-10-12"
+    "contentDeliveryApiVersion": "2018-04-02"
   },
   "resources": [
     {
@@ -72,7 +62,7 @@
       "apiVersion": "[variables('storageApiVersion')]",
       "location": "[parameters('mediaRegionName')]",
       "name": "[variables('storageService1Name')]",
-      "kind": "Storage",
+      "kind": "StorageV2",
       "sku": {
         "name": "Standard_LRS"
       }
@@ -101,20 +91,6 @@
       },
       "properties": {
         "accessTier": "Cool"
-      }
-    },
-    {
-      "type": "Microsoft.Batch/batchAccounts",
-      "apiVersion": "[variables('batchApiVersion')]",
-      "location": "[parameters('mediaRegionName')]",
-      "name": "[variables('batchServiceName')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name'))]"
-      ],
-      "properties": {
-        "autoStorage": {
-          "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name'))]"
-        }
       }
     },
     {
@@ -167,10 +143,6 @@
     "storage3Connection": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageService3Name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageService3Name')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    },
-    "batchEndpoint": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Batch/batchAccounts', variables('batchServiceName')), variables('batchApiVersion')).accountEndpoint]"
     },
     "mediaEndpoint": {
       "type": "string",
