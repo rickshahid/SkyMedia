@@ -160,6 +160,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
+        public IActionResult password()
+        {
+            ViewData["cssHost"] = string.Concat(this.Request.Scheme, "://", this.Request.Host.Value);
+            return View();
+        }
+
         public IActionResult profile()
         {
             ViewData["cssHost"] = string.Concat(this.Request.Scheme, "://", this.Request.Host.Value);
