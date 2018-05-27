@@ -69,15 +69,13 @@ The following Azure platform services were leveraged to create this sample media
 
   * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
   
-  * **Analytics** - http://azure.microsoft.com/services/media-services/media-analytics/
-
   * **Indexer** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
 
-    * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
-
-    * **Search** - http://azure.microsoft.com/services/search/
-
   * **Player** - http://azure.microsoft.com/services/media-services/media-player/
+
+* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
+
+* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
 * **App Insights** - http://azure.microsoft.com/services/application-insights/
 
@@ -87,11 +85,7 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Function App** - http://azure.microsoft.com/services/functions/
 
-* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
-
-* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
-
-* **App Center** - http://azure.microsoft.com/services/app-center/
+* **Search** - http://azure.microsoft.com/services/search/
 
 If you have any issues or suggestions, please let me know.
 
