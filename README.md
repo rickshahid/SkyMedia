@@ -12,7 +12,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 * Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
 
-* Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
+* Discover and extract actionable insights from your video content across a wide range of media analysis services
 
 The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
