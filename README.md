@@ -8,8 +8,6 @@ As a sample illustration, the screenshot below is an introductory <a href="http:
 
 Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
 
-* Scalable video (adaptive) streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
-
 * Multi-tenant, self-service user account registration and profile management across both storage and media accounts
 
 * Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
