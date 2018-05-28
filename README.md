@@ -8,7 +8,7 @@ As a sample illustration, the screenshot below is an introductory <a href="http:
 
 Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
 
-* Multi-tenant, self-service user account registration and profile management across both storage and media accounts
+* Multi-tenant, self-service user account registration and profile management including media and storage accounts
 
 * Secure content upload, storage and processing via encoding, indexing, dynamic encryption, dynamic packaging, etc
 
