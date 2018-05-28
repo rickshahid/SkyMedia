@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 * Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
 
-The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
+The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
 ![](http://skymedia.azureedge.net/Snip02.ApplicationArchitecture.png)
 
