@@ -10,9 +10,9 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 * Multi-tenant, self-service user account registration and profile management across both storage and media accounts
 
-* Secure content upload, storage and processing via transcoding, indexing, dynamic encryption, dynamic packaging, etc
+* Secure content upload, storage and processing via transcoding, indexing, dynamic encryption and dynamic packaging
 
-* Discover and extract actionable insights from your media content via integrated video / audio intelligence services
+* Discover and extract actionable insights from your media content via integrated video and audio intelligence services
 
 The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
