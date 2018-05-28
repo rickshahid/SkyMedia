@@ -6,7 +6,7 @@ As a sample illustration, the screenshot below is an introductory <a href="http:
 
 ![](http://skymedia.azureedge.net/Snip01.ApplicationWebSite.png)
 
-For sample screenshots of key application views and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
+For additional screenshots of key application views and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
 The following set of media functionality has been integrated and enabled within this Azure ASP.NET Core MVC web app:
 
@@ -15,8 +15,6 @@ The following set of media functionality has been integrated and enabled within 
 * Multi-tenant, self-service user account registration and profile management across both storage and media accounts
 
 * Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
-
-* Define workflows using multiple tasks (executed in parallel and/or sequence) that integrate various media processors
 
 * Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
 
