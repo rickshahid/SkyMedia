@@ -8,7 +8,7 @@ As a sample illustration, the screenshot below is an introductory <a href="http:
 
 For additional screenshots of key application views and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
 
-The following core set of media functionality has been integrated and enabled within an Azure ASP.NET Core MVC web app:
+The following core set of media functionality has been integrated and enabled within a sample Azure App Service web app:
 
 * Scalable video (adaptive) streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
 
