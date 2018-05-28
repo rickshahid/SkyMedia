@@ -10,7 +10,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 * Multi-tenant, self-service user account registration and profile management, including media and storage accounts
 
-* Secure content upload, storage and processing via encoding, indexing, dynamic encryption, dynamic packaging, etc
+* Secure content upload, storage and processing via encoding, indexing, dynamic encryption and dynamic packaging
 
 * Discover and extract actionable insights from your media content via integrated video / audio intelligence services
 
