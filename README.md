@@ -2,27 +2,21 @@
 
 Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.tv
 
-As an illustration, here is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. Azure Media Services content is adaptive, scaled and globally consumable across a wide range of devices and platforms.
+As a sample illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing within an Azure App Service web app via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. On-demand and live video content that is stored and managed in Azure Media Services is adaptively streamed, scaled and globally consumable across a wide range of devices and platforms.
 
-![](http://skymedia.azureedge.net/Shot01-ApplicationWebSite.png)
+![](http://skymedia.azureedge.net/Snip01.ApplicationWebSite.png)
 
-For sample screenshots of key application views and functionality, refer to http://github.com/RickShahid/SkyMedia/wiki
+Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
 
-The following set of media functionality has been integrated and enabled within this Azure ASP.NET Core MVC web app:
+* Multi-tenant, self-service account registration and profile management, including user, media and storage accounts
 
-* Scalable video (adaptive) streaming to a broad spectrum of devices and platforms (iOS / macOS, Android, Windows)
+* Secure content upload, storage and processing via encoding, indexing, dynamic encryption and dynamic packaging
 
-* Multi-tenant, self-service user account registration and profile management across both storage and media accounts
+* Discover and extract actionable insights from your media content via integrated video / audio intelligence services
 
-* Secure content upload, storage and processing (transcoding, indexing, dynamic encryption, dynamic packaging, etc)
+The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
-* Define workflows using multiple tasks (executed in parallel and/or sequence) that integrate various media processors
-
-* Discover and extract actionable insights from your video content across a wide range of analytic & cognitive services
-
-The following application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
-
-![](http://skymedia.azureedge.net/Shot02-ApplicationArchitecture.png)
+![](http://skymedia.azureedge.net/Snip02.ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -65,33 +59,27 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Media Services** - http://azure.microsoft.com/services/media-services/
 
-  * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
-
-  * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
-  
-  * **Analytics** - http://azure.microsoft.com/services/media-services/media-analytics/
-
-  * **Indexer** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
-
-    * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
-
-    * **Search** - http://azure.microsoft.com/services/search/
-
   * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
-* **App Insights** - http://azure.microsoft.com/services/application-insights/
+  * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
 
-* **App Service** - http://azure.microsoft.com/services/app-service/
+  * **Indexing** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
 
-* **Bot Service** - http://azure.microsoft.com/services/bot-service/
+  * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
 
-* **Function App** - http://azure.microsoft.com/services/functions/
+  * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
 
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
-* **App Center** - http://azure.microsoft.com/services/app-center/
+* **App Insights** - http://azure.microsoft.com/services/application-insights/
+
+* **App Service** - http://azure.microsoft.com/services/app-service/
+
+* **Function App** - http://azure.microsoft.com/services/functions/
+
+* **Search** - http://azure.microsoft.com/services/search/
 
 If you have any issues or suggestions, please let me know.
 
