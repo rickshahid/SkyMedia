@@ -65,21 +65,21 @@ namespace AzureSkyMedia.FunctionApp
         {
             string containerName = Constant.Storage.Blob.Container.MediaProcess;
             CloudBlockBlob blob = blobClient.GetBlockBlob(containerName, null, blobName);
-            return blob.Exists();
+            return blob.ExistsAsync().Result;
         }
 
         private static Stream GetReadStream(BlobClient blobClient, string blobName)
         {
             string containerName = Constant.Storage.Blob.Container.MediaProcess;
             CloudBlockBlob blob = blobClient.GetBlockBlob(containerName, null, blobName);
-            return blob.OpenRead();
+            return blob.OpenReadAsync().Result;
         }
 
         private static CloudBlobStream GetWriteStream(BlobClient blobClient, string blobName, bool createNew)
         {
             string containerName = Constant.Storage.Blob.Container.MediaProcess;
             CloudAppendBlob blob = blobClient.GetAppendBlob(containerName, null, blobName);
-            return blob.OpenWrite(createNew);
+            return blob.OpenWriteAsync(createNew).Result;
         }
 
         private static void ParseJobManifest(BlobClient blobClient, Stream blob, string blobName, TraceWriter log, bool createLog)
@@ -100,23 +100,23 @@ namespace AzureSkyMedia.FunctionApp
             {
                 if (assetFiles.Length > 0)
                 {
-                    string assetName = assetFiles[0];
-                    string assetId = mediaClient.CreateAsset(assetName, assetFiles);
-                    createLog = UpdateJobLog(blobClient, blobName, assetId, createLog);
-                    log.Info($"Asset Id: {assetId}");
-                    assetIds = new string[] { assetId };
+                    //string assetName = assetFiles[0];
+                    //string assetId = mediaClient.CreateAsset(assetName, assetFiles);
+                    //createLog = UpdateJobLog(blobClient, blobName, assetId, createLog);
+                    //log.Info($"Asset Id: {assetId}");
+                    //assetIds = new string[] { assetId };
                 }
                 string jobName = Path.GetFileNameWithoutExtension(blobName);
-                MediaJob mediaJob = GetMediaJob(jobName, taskConfig);
-                MediaJobInput[] jobInputs = GetJobInputs(mediaClient, assetIds);
-                string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
-                createLog = UpdateJobLog(blobClient, blobName, jobId, createLog);
-                log.Info($"Job Id: {jobId}");
-                foreach (KeyValuePair<MediaProcessor, string> processorConfig in taskConfig)
-                {
-                    createLog = UpdateJobLog(blobClient, blobName, processorConfig.Key.ToString(), createLog);
-                    log.Info($"Job Task: {processorConfig.Key}");
-                }
+                //MediaJob mediaJob = GetMediaJob(jobName, taskConfig);
+                //MediaJobInput[] jobInputs = GetJobInputs(mediaClient, assetIds);
+                //string jobId = Workflow.SubmitJob(mediaClient, mediaJob, jobInputs);
+                //createLog = UpdateJobLog(blobClient, blobName, jobId, createLog);
+                //log.Info($"Job Id: {jobId}");
+                //foreach (KeyValuePair<MediaProcessor, string> processorConfig in taskConfig)
+                //{
+                //    createLog = UpdateJobLog(blobClient, blobName, processorConfig.Key.ToString(), createLog);
+                //    log.Info($"Job Task: {processorConfig.Key}");
+                //}
             }
         }
 
@@ -200,15 +200,15 @@ namespace AzureSkyMedia.FunctionApp
             return mediaJob;
         }
 
-        private static MediaJobInput[] GetJobInputs(MediaClient mediaClient, string[] assetIds)
-        {
-            List<MediaJobInput> jobInputs = new List<MediaJobInput>();
-            foreach (string assetId in assetIds)
-            {
-                MediaJobInput jobInput = MediaClient.GetJobInput(mediaClient, assetId);
-                jobInputs.Add(jobInput);
-            }
-            return jobInputs.ToArray();
-        }
+        //private static MediaJobInput[] GetJobInputs(MediaClient mediaClient, string[] assetIds)
+        //{
+        //    List<MediaJobInput> jobInputs = new List<MediaJobInput>();
+        //    foreach (string assetId in assetIds)
+        //    {
+        //        MediaJobInput jobInput = MediaClient.GetJobInput(mediaClient, assetId);
+        //        jobInputs.Add(jobInput);
+        //    }
+        //    return jobInputs.ToArray();
+        //}
     }
 }

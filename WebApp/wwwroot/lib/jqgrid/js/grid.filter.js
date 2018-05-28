@@ -218,7 +218,7 @@ $.fn.jqFilter = function( arg ) {
 
 			if(this.p.ruleButtons === true) {
 			// dropdown for: choosing group operator type
-			var groupOpSelect = $("<select class='opsel " + classes.srSelect + "'></select>");
+			var groupOpSelect = $("<select size='1' class='opsel " + classes.srSelect + "'></select>");
 			th.append(groupOpSelect);
 			// populate dropdown with all posible group operators: or, and
 			var str= "", selected;
@@ -385,7 +385,7 @@ $.fn.jqFilter = function( arg ) {
 
 
 			// dropdown for: choosing field
-			var ruleFieldSelect = $("<select class='" + classes.srSelect + "'></select>"), ina, aoprs = [];
+			var ruleFieldSelect = $("<select size='1' class='" + classes.srSelect + "'></select>"), ina, aoprs = [];
 			ruleFieldTd.append(ruleFieldSelect);
 			ruleFieldSelect.on('change',function() {
 				if( that.p.ruleButtons && that.p.uniqueSearchFields ) {
@@ -508,7 +508,7 @@ $.fn.jqFilter = function( arg ) {
 				$(ruleDataInput).attr('disabled','true');
 			} //retain the state of disabled text fields in case of null ops
 			// dropdown for: choosing operator
-			var ruleOperatorSelect = $("<select class='selectopts " + classes.srSelect + "'></select>");
+			var ruleOperatorSelect = $("<select size='1' class='selectopts " + classes.srSelect + "'></select>");
 			ruleOperatorTd.append(ruleOperatorSelect);
 			ruleOperatorSelect.on('change',function() {
 				rule.op = $(ruleOperatorSelect).val();
@@ -1085,7 +1085,7 @@ $.jgrid.extend({
 				left=parseInt(left,10);
 				top=parseInt(top,10) + 18;
 
-				var fs =  $('.ui-jqgrid-view').css('font-size') || '11px';
+				var fs =  $('.ui-jqgrid').css('font-size') || '11px';
 				var str = '<ul id="sopt_menu" class="ui-search-menu modal-content" role="menu" tabindex="0" style="font-size:'+fs+';left:'+left+'px;top:'+top+'px;">',
 				selected = $(elem).attr("soper"), selclass,
 				aoprs = [], ina;
@@ -1540,7 +1540,7 @@ $.jgrid.extend({
 				if(p.tmplNames && p.tmplNames.length) {
 					found = true;
 					tmpl = "<tr><td class='ui-search-label'>"+ p.tmplLabel +"</td>";
-					tmpl += "<td><select class='ui-template " + classes.srSelect + "'>";
+					tmpl += "<td><select size='1' class='ui-template " + classes.srSelect + "'>";
 					tmpl += "<option value='default'>Default</option>";
 					$.each(p.tmplNames, function(i,n){
 						tmpl += "<option value='"+i+"'>"+n+"</option>";
@@ -1607,10 +1607,11 @@ $.jgrid.extend({
 					p.onInitializeSearch.call($t, $("#"+fid));
 				}
 				p.gbox = "#gbox_"+fid;
+				var fs =  $('.ui-jqgrid').css('font-size') || '11px';
 				if (p.layer) {
-					$.jgrid.createModal(IDs ,fil,p,"#gview_"+$.jgrid.jqID($t.p.id),$("#gbox_"+$.jgrid.jqID($t.p.id))[0], (typeof p.layer ==="string" ? "#"+$.jgrid.jqID(p.layer) : p.layer), (typeof p.layer ==="string" ?  {position: "relative"} :{} ) );
+					$.jgrid.createModal(IDs ,fil,p,"#gview_"+$.jgrid.jqID($t.p.id),$("#gbox_"+$.jgrid.jqID($t.p.id))[0], (typeof p.layer ==="string" ? "#"+$.jgrid.jqID(p.layer) : p.layer), (typeof p.layer ==="string" ?  {position: "relative", "font-size":fs} :{ "font-size":fs} ) );
 				} else {
-					$.jgrid.createModal(IDs ,fil,p,"#gview_"+$.jgrid.jqID($t.p.id),$("#gbox_"+$.jgrid.jqID($t.p.id))[0]);
+					$.jgrid.createModal(IDs ,fil,p,"#gview_"+$.jgrid.jqID($t.p.id),$("#gbox_"+$.jgrid.jqID($t.p.id))[0], null, { "font-size":fs});
 				}
 				if (p.searchOnEnter || p.closeOnEscape) {
 					$("#"+$.jgrid.jqID(IDs.themodal)).keydown(function (e) {

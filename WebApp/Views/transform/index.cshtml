@@ -1,0 +1,154 @@
+﻿@section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/json-editor/jsoneditor.css" />
+    <script type="text/javascript" src="~/lib/json-editor/jquery.jsoneditor.min.js"></script>
+    <script type="text/javascript">
+        var _processorPreset;
+        function ResetPresetEditor() {
+            $("#mediaProcessorPresetButtons").hide();
+            $("#mediaProcessorPresetEditor").empty();
+        }
+        function SetProcessorPresets(mediaProcessor) {
+            ResetPresetEditor();
+            if (mediaProcessor.value == "") {
+                $("#mediaProcessorPresetRow").hide();
+            } else {
+                SetCursor(true);
+                $.post("/preset/configs",
+                    {
+                        mediaProcessor: mediaProcessor.value
+                    },
+                    function (presetConfigs) {
+                        SetCursor(false);
+                        var presetOptions = $("#mediaProcessorPreset")[0].options;
+                        presetOptions.length = 0;
+                        presetOptions[presetOptions.length] = new Option("", "");
+                        for (var i = 0; i < presetConfigs.length; i++) {
+                            var presetConfig = presetConfigs[i];
+                            presetOptions[presetOptions.length] = new Option(presetConfig.text, presetConfig.value);
+                        }
+                        $("#mediaProcessorPresetRow").show();
+                        $("#mediaProcessorPreset").focus();
+                    }
+                );
+            }
+            if (mediaProcessor.value == "EncoderStandard") {
+                $("#presetLabel").click(function () {
+                    window.open("http://docs.microsoft.com/azure/media-services/media-services-mes-presets-overview");
+                });
+            } else {
+                $("#presetLabel").unbind("click");
+            }
+        }
+        function SetProcessorPreset(presetId) {
+            ResetPresetEditor();
+            if (presetId.value != "") {
+                SetCursor(true);
+                $.post("/preset/config",
+                    {
+                        presetId: presetId.value
+                    },
+                    function (processorPreset) {
+                        SetCursor(false);
+                        var editorOptions = {
+                            change: function (updatedPreset) {
+                                _processorPreset = updatedPreset;
+                            }
+                        };
+                        $("#mediaProcessorPresetButtons").show();
+                        $("#mediaProcessorPresetEditor").jsonEditor(processorPreset, editorOptions);
+                        _processorPreset = processorPreset;
+                    }
+                );
+            }
+        }
+        function SavePreset() {
+            var title = "Media Processor Preset Save";
+            var message = "Are you sure you want to save the current processor preset?"
+            var onConfirm = function () {
+                SetCursor(true);
+                $.post("/preset/save",
+                    {
+                        processorPreset: JSON.stringify(_processorPreset)
+                    },
+                    function (saved) {
+                        SetCursor(false);
+                        var message = saved ? "The current preset has been saved." : "To create a custom preset, the PresetName property must be unique.";
+                        DisplayMessage(title, message);
+                        if (saved) {
+                            var mediaProcessor = $("#mediaProcessor");
+                            SetProcessorPresets(mediaProcessor);
+                        }
+                    }
+                );
+                $(this).dialog("close");
+            }
+            ConfirmMessage(title, message, onConfirm);
+        }
+        function DeletePreset() {
+            var title = "Media Processor Preset Delete";
+            var message = "Are you sure you want to delete the current processor preset?"
+            var onConfirm = function () {
+                SetCursor(true);
+                $.post("/preset/delete",
+                    {
+                        processorPreset: JSON.stringify(_processorPreset)
+                    },
+                    function (deleted) {
+                        SetCursor(false);
+                        var message = deleted ? "The current preset has been deleted." : "System presets cannot be deleted.";
+                        DisplayMessage(title, message);
+                        if (deleted) {
+                            var mediaProcessor = $("#mediaProcessor");
+                            SetProcessorPresets(mediaProcessor);
+                        }
+                    }
+                );
+                $(this).dialog("close");
+            }
+            ConfirmMessage(title, message, onConfirm);
+        }
+        $(function () {
+            CreateTipTop("processorPresetSave", "Media Processor<br><br>Preset Save");
+            CreateTipTop("processorPresetDelete", "Media Processor<br><br>Preset Delete");
+            $("#mediaProcessor").focus();
+        })
+    </script>
+}
+
+@section title {
+    Media Processor Preset
+}
+
+<table class="mediaProcessorPresets">
+    <tr>
+        <td class="inputLabel large">
+            Media Processor:
+        </td>
+        <td>
+            @Html.DropDownList("mediaProcessor", null, new { onchange = "SetProcessorPresets(this)" })
+        </td>
+    </tr>
+    <tr id="mediaProcessorPresetRow" style="display:none">
+        <td class="inputLabel large">
+            <span id="presetLabel" class="siteLink">
+                Media Processor Preset:
+            </span>
+        </td>
+        <td>
+            @Html.DropDownList("mediaProcessorPreset", null, new { onchange = "SetProcessorPreset(this)" })
+        </td>
+    </tr>
+</table>
+
+<table id="mediaProcessorPresetButtons" class="mediaProcessorPresetButtons">
+    <tr>
+        <td>
+            @Html.Partial("SiteButton", new string[] { "processorPresetSave", "MediaProcessorPresetSave.png", "SavePreset()" })
+        </td>
+        <td>
+            @Html.Partial("SiteButton", new string[] { "processorPresetDelete", "MediaProcessorPresetDelete.png", "DeletePreset()" })
+        </td>
+    </tr>
+</table>
+
+<div id="mediaProcessorPresetEditor" class="json-editor"></div>

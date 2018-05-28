@@ -1,14 +1,15 @@
-﻿using Microsoft.WindowsAzure.MediaServices.Client;
+﻿using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class Asset
+    internal class AssetNode
     {
         private string _authToken;
         private MediaClient _mediaClient;
 
-        private IAsset _asset;
-        private IAssetFile _file;
+        private Asset _asset;
+        private CloudBlob _file;
 
         private bool _getFiles;
         private string _storageCdnUrl;
@@ -16,7 +17,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private string GetEntityId(bool clientId)
         {
-            string entityId = _file != null ? _file.Id : _asset.Id;
+            string entityId = _file != null ? _file.Uri.ToString() : _asset.Id;
             if (clientId)
             {
                 entityId = entityId.Replace(":", "").Replace("-", "");
@@ -29,7 +30,7 @@ namespace AzureSkyMedia.PlatformServices
             string tipText = string.Empty;
             if (_asset != null)
             {
-                if (_asset.Options == AssetCreationOptions.StorageEncrypted)
+                if (_asset.StorageEncryptionFormat == AssetStorageEncryptionFormat.MediaStorageClientEncryption)
                 {
                     tipText = "Encryption: Storage";
                 }
@@ -50,7 +51,49 @@ namespace AzureSkyMedia.PlatformServices
             return tipText;
         }
 
-        private Asset(string authToken)
+        private static long GetAssetBytes(Asset asset, out int fileCount)
+        {
+            fileCount = 0;
+            long assetBytes = 0;
+            //foreach (IAssetFile file in asset.AssetFiles)
+            //{
+            //    fileCount = fileCount + 1;
+            //    assetBytes = assetBytes + file.ContentFileSize;
+            //}
+            return assetBytes;
+        }
+
+        private static string MapByteCount(long byteCount)
+        {
+            string mappedCount;
+            if (byteCount >= 1099511627776)
+            {
+                mappedCount = (byteCount / 1099511627776.0).ToString(Constant.TextFormatter.Numeric) + " TB";
+            }
+            else if (byteCount >= 1073741824)
+            {
+                mappedCount = (byteCount / 1073741824.0).ToString(Constant.TextFormatter.Numeric) + " GB";
+            }
+            else if (byteCount >= 1048576)
+            {
+                mappedCount = (byteCount / 1048576.0).ToString(Constant.TextFormatter.Numeric) + " MB";
+            }
+            else if (byteCount >= 1024)
+            {
+                mappedCount = (byteCount / 1024.0).ToString(Constant.TextFormatter.Numeric) + " KB";
+            }
+            else if (byteCount == 1)
+            {
+                mappedCount = byteCount + " Byte";
+            }
+            else
+            {
+                mappedCount = byteCount + " Bytes";
+            }
+            return mappedCount;
+        }
+
+        private AssetNode(string authToken)
         {
             _authToken = authToken;
             _mediaClient = new MediaClient(authToken);
@@ -58,14 +101,14 @@ namespace AzureSkyMedia.PlatformServices
             _storageCdnUrl = AppSetting.GetValue(settingKey);
         }
 
-        public Asset(string authToken, IAsset asset, bool getFiles) : this(authToken)
+        public AssetNode(string authToken, Asset asset, bool getFiles) : this(authToken)
         {
             _asset = asset;
             _getFiles = getFiles;
             _contentProtectionTip = GetContentProtectionTip();
         }
 
-        public Asset(string authToken, IAssetFile file) : this(authToken)
+        public AssetNode(string authToken, CloudBlob file) : this(authToken)
         {
             _file = file;
         }
@@ -81,19 +124,14 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (_file != null)
                 {
-                    string fileSize = Storage.MapByteCount(_file.ContentFileSize);
-                    string fileInfo = string.Concat(_file.Name, " (", fileSize, ")");
-                    if (_file.IsPrimary)
-                    {
-                        fileInfo = string.Concat("Primary File: ", fileInfo);
-                    }
-                    return fileInfo;
+                    string fileSize = MapByteCount(_file.Properties.Length);
+                    return string.Concat(_file.Name, " (", fileSize, ")");
                 }
                 else
                 {
                     int fileCount;
-                    long assetBytes = Storage.GetAssetBytes(_asset, out fileCount);
-                    string assetSize = Storage.MapByteCount(assetBytes);
+                    long assetBytes = GetAssetBytes(_asset, out fileCount);
+                    string assetSize = MapByteCount(assetBytes);
                     string filesLabel = fileCount == 1 ? " File" : " Files";
                     string assetInfo = string.Concat(" (", fileCount, filesLabel, ", ", assetSize, ")");
                     if (!string.IsNullOrEmpty(_contentProtectionTip))
@@ -153,8 +191,7 @@ namespace AzureSkyMedia.PlatformServices
                 clientId = string.Concat(clientId, "-anchor");
                 if (_file != null)
                 {
-                    string cssClass = _file.IsPrimary ? "mediaFile primary" : "mediaFile";
-                    return new { id = clientId, @class = cssClass };
+                    return new { id = clientId, @class = "mediaFile" };
                 }
                 else
                 {

@@ -1,4 +1,6 @@
-﻿namespace AzureSkyMedia.PlatformServices
+﻿using System.Collections.Generic;
+
+namespace AzureSkyMedia.PlatformServices
 {
     internal class MediaAccount
     {
@@ -13,5 +15,7 @@
         public string ClientApplicationId { get; set; }
 
         public string ClientApplicationKey { get; set; }
+
+        public Dictionary<string, string> StorageAccounts { get; set; }
     }
 }

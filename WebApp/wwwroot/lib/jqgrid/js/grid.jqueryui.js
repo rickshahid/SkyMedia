@@ -342,6 +342,9 @@ $.jgrid.extend({
 
 		// fix height of elements of the multiselect widget
 		$dialogContent = $("#colchooser_" + $.jgrid.jqID(self[0].p.id));
+		// fix fontsize
+		var fs =  $('.ui-jqgrid').css('font-size') || '11px';
+		$dialogContent.parent().css("font-size",fs);
 
 		$dialogContent.css({ margin: "auto" });
 		$dialogContent.find(">div").css({ width: "100%", height: "100%", margin: "auto" });
@@ -496,17 +499,22 @@ $.jgrid.extend({
 						}
 						var accept = $(ui.draggable).attr("id"),
 							getdata = ui.draggable.parent().parent().jqGrid('getRowData',accept),
-							target = $(this).find('table.ui-jqgrid-btable:first')[0];
+							keysd = [],
+							target = $(this).find('table.ui-jqgrid-btable:first')[0];					
+							if($.isPlainObject( getdata)) {
+								keysd = Object.keys(getdata);
+							}
 						if(!opts.dropbyname) {
-							var j, tmpdata = {}, nm;
+							var j, tmpdata = {}, nm, ki=0;
 							var dropmodel = $("#"+$.jgrid.jqID(target.id)).jqGrid('getGridParam','colModel');
 							try {
 								for(j=0;j<dropmodel.length;j++) {
 									nm = dropmodel[j].name;
 									if( !(nm === 'cb' || nm === 'rn' || nm === 'subgrid' )) {
-										if (getdata.hasOwnProperty(nm)) {
-											tmpdata[nm] = getdata[nm];
+										if (keysd[ki] !== undefined) {
+											tmpdata[nm] = getdata[keysd[ki]];
 										}
+										ki++;
 									}
 								}
 								getdata = tmpdata;

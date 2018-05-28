@@ -5,73 +5,23 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal enum MediaEntity
     {
-        MonitoringConfiguration,
-        StorageAccount,
-        ContentKey,
-        ContentKeyAuthPolicy,
-        ContentKeyAuthPolicyOption,
-        Manifest,
-        ManifestAsset,
-        ManifestFile,
         Asset,
-        File,
-        Channel,
-        Program,
-        Processor,
-        ProcessorUnit,
-        Job,
-        JobTemplate,
-        NotificationEndpoint,
-        AccessPolicy,
-        DeliveryPolicy,
+        Transform,
+        TransformJob,
+        ContentKeyPolicy,
+        StreamingPolicy,
         StreamingEndpoint,
         StreamingLocator,
-        StreamingFilter
-    }
-
-    internal enum MediaProcessorConfig
-    {
-        AudioAnalyzerLanguageId,
-        AudioAnalyzerTimedTextFormatTtml,
-        AudioAnalyzerTimedTextFormatWebVtt,
-        VideoSummarizationDurationSeconds,
-        VideoSummarizationFadeTransitions,
-        VideoSummarizationIncludeAudio,
-        FaceDetectionMode,
-        FaceRedactionBlurMode,
-        FaceEmotionAggregateWindow,
-        FaceEmotionAggregateInterval,
-        MotionDetectionSensitivityLevel,
-        MotionDetectionLightChange
+        StreamingFilter,
+        LiveEvent,
+        LiveOutput
     }
 
     public enum MediaProcessor
     {
         EncoderStandard,
         EncoderPremium,
-        VideoIndexer,
-
-        AudioAnalyzer,
-        VideoAnalyzer,
-
-        VideoSummarization,
-        FaceDetection,
-        MotionDetection
-    }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaProtocol
-    {
-        FMP4,
-        RTMP
-    }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaEncoding
-    {
-        None,
-        Standard,
-        Premium
+        VideoIndexer
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -83,11 +33,11 @@ namespace AzureSkyMedia.PlatformServices
         FairPlay
     }
 
-    public enum MediaThumbnailFormat
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaImageFormat
     {
-        Png,
-        Jpg,
-        Bmp,
-        Sprite
+        PNG,
+        JPG,
+        BMP
     }
 }

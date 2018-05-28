@@ -4,31 +4,50 @@
     <script type="text/javascript" src="~/lib/plupload/js/plupload.min.js"></script>
     <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
     <script type="text/javascript" src="~/js/uploader.js"></script>
-    <script type="text/javascript" src="~/js/workflow.js"></script>
-    <script type="text/javascript" src="~/js/workflow.job.js"></script>
-    <script type="text/javascript" src="~/js/workflow.task.js"></script>
-    <script type="text/javascript" src="~/js/workflow.task.configuration.js"></script>
-    <script type="text/javascript" src="~/js/workflow.task.protection.js"></script>
-    <script type="text/javascript" src="~/js/workflow.task.thumbnail.js"></script>
-    <script type="text/javascript" src="~/js/workflow.task.overlay.js"></script>
     <script type="text/javascript">
         $(function () {
-            SetWorkflowInputs(true);
             CreateUploader();
         })
     </script>
 }
 
 @section title {
-    Media File Workflow
+    Media File Upload
 }
 
-@Html.Partial("MediaUpload")
+<table class="mediaUpload">
+    <tr>
+        <td class="inputLabel">
+            Azure Storage:
+        </td>
+        <td colspan="3">
+            @Html.DropDownList("storageAccount", null, new { @class = "mediaStorage" })
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Media Asset:
+        </td>
+        <td>
+            @Html.TextBox("uploadAssetName", null, new { @class = "uploadAssetName", placeholder = "[New Media Asset Name]" })
+        </td>
+        <td>
+            @Html.CheckBox("multipleFileAsset")
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-dotnet-upload-files#upload-multiple-files-with-media-services-net-sdk')">
+                Multiple File Asset
+            </span>
+        </td>
+        <td>
+            @Html.CheckBox("storageEncryption")
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-content-protection-overview#storage-encryption')">
+                Storage Encryption
+            </span>
+        </td>
+    </tr>
+</table>
 
 <div id="fileUploader"></div>
 
 <div id="mediaUploadMessage" class="mediaUploadMessage">
     <br>
 </div>
-
-@Html.Partial("MediaWorkflow", "true")

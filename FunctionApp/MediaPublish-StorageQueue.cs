@@ -1,7 +1,7 @@
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 
-using Twilio;
+//using Twilio;
 using Newtonsoft.Json;
 
 using AzureSkyMedia.PlatformServices;
@@ -11,10 +11,12 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaPublishStorageQueue
     {
         [FunctionName("MediaPublish-StorageQueue")]
-        [return: TwilioSms(AccountSidSetting = "Twilio.Account.Id", AuthTokenSetting = "Twilio.Account.Token", From = "%Twilio.Message.From%")]
-        public static SMSMessage Run([QueueTrigger("media-publish")] string message, TraceWriter log)
+        //[return: TwilioSms(AccountSidSetting = "Twilio.Account.Id", AuthTokenSetting = "Twilio.Account.Token", From = "%Twilio.Message.From%")]
+        //public static SMSMessage Run([QueueTrigger("media-publish")] string message, TraceWriter log)
+        public static void Run([QueueTrigger("media-publish")] string message, TraceWriter log)
+
         {
-            SMSMessage userMessage = null;
+            //SMSMessage userMessage = null;
             MediaPublish mediaPublish = JsonConvert.DeserializeObject<MediaPublish>(message);
             if (mediaPublish == null)
             {
@@ -36,14 +38,14 @@ namespace AzureSkyMedia.FunctionApp
                 if (!string.IsNullOrEmpty(mediaPublished.MobileNumber) &&
                     !string.IsNullOrEmpty(mediaPublished.StatusMessage))
                 {
-                    userMessage = new SMSMessage()
-                    {
-                        To = mediaPublished.MobileNumber,
-                        Body = mediaPublished.StatusMessage
-                    };
+                    //userMessage = new SMSMessage()
+                    //{
+                    //    To = mediaPublished.MobileNumber,
+                    //    Body = mediaPublished.StatusMessage
+                    //};
                 }
             }
-            return userMessage;
+            //return userMessage;
         }
     }
 }

@@ -2,244 +2,101 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 
 using Microsoft.Rest;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.WindowsAzure.Storage.Analytics;
-using Microsoft.WindowsAzure.MediaServices.Client;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using MediaStorageAccount = Microsoft.Azure.Management.Media.Models.StorageAccount;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Storage
     {
-        private static int OrderByLatest(CapacityEntity leftItem, CapacityEntity rightItem)
+        private static string GetAccountInfo(string authToken, string accountName)
         {
-            return DateTimeOffset.Compare(rightItem.Time, leftItem.Time);
-        }
-
-        private static string GetAccountType(string authToken, string accountName)
-        {
-            string accountType = string.Empty;
-            User authUser = new User(authToken);
-            string subscriptionId = authUser.MediaAccount.SubscriptionId;
-            if (!string.IsNullOrEmpty(subscriptionId))
+            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
+            StorageManagementClient storageClient = new StorageManagementClient(azureToken)
             {
-                string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                string authorityUrl = AppSetting.GetValue(settingKey);
-                authorityUrl = string.Format(authorityUrl, authUser.MediaAccount.DirectoryTenantId);
+                SubscriptionId = subscriptionId
+            };
 
-                AuthenticationContext authContext = new AuthenticationContext(authorityUrl);
+            IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
+            storageAccounts = storageAccounts.Where(s => s.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
+            StorageAccount storageAccount = storageAccounts.SingleOrDefault();
 
-                settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
-                string audienceUrl = AppSetting.GetValue(settingKey);
-
-                ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ClientApplicationId, authUser.MediaAccount.ClientApplicationKey);
-
-                AuthenticationResult authResult = authContext.AcquireTokenAsync(audienceUrl, clientCredential).Result;
-                TokenCredentials tokenCredential = new TokenCredentials(authResult.AccessToken);
-
-                StorageManagementClient storageClient = new StorageManagementClient(tokenCredential)
-                {
-                    SubscriptionId = subscriptionId
-                };
-
-                IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
-                StorageAccount storageAccount = storageAccounts.Where(sa => sa.Name == accountName).SingleOrDefault();
-
-                if (storageAccount != null)
-                {
-                    switch (storageAccount.Kind)
-                    {
-                        case Kind.Storage:
-                            accountType = "General";
-                            break;
-                        case Kind.BlobStorage:
-                            accountType = string.Concat("Blob ", storageAccount.AccessTier.ToString());
-                            break;
-                    }
-                }
-            }
-            return accountType;
-        }
-
-        private static string GetCapacityUsed(string authToken, string accountName)
-        {
-            string capacityUsed = string.Empty;
-            CloudStorageAccount storageAccount = GetUserAccount(authToken, accountName);
+            string accountType = "N/A";
+            string replicationType = "N/A";
             if (storageAccount != null)
             {
-                CloudAnalyticsClient storageAnalytics = storageAccount.CreateCloudAnalyticsClient();
-                TableQuery<CapacityEntity> capacityQuery = storageAnalytics.CreateCapacityQuery();
-                IQueryable<CapacityEntity> capacityData = capacityQuery.Where(x => x.RowKey == Constant.Storage.CapacityData);
-                try
+                switch (storageAccount.Kind)
                 {
-                    List<CapacityEntity> capacities = capacityData.ToList();
-                    if (capacities.Count == 0)
-                    {
-                        capacityUsed = Storage.MapByteCount(0);
-                    }
-                    else
-                    {
-                        capacities.Sort(OrderByLatest);
-                        long latestCapacity = capacities.First().Capacity;
-                        capacityUsed = Storage.MapByteCount(latestCapacity);
-                    }
+                    case Kind.Storage:
+                        accountType = "General v1";
+                        break;
+                    case Kind.StorageV2:
+                        accountType = "General v2";
+                        break;
+                    case Kind.BlobStorage:
+                        accountType = string.Concat("Blob ", storageAccount.AccessTier.ToString());
+                        break;
                 }
-                catch
-                {
-                    capacityUsed = Constant.Storage.NotAvailable;
-                }
+                replicationType = storageAccount.Sku.Name.ToString();
+                replicationType = Regex.Replace(replicationType, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
+                replicationType = string.Concat(replicationType, " (", storageAccount.PrimaryLocation, ")");
             }
-            return capacityUsed;
+
+            string accountInfo = string.Concat("Account: ", accountName);
+            accountInfo = string.Concat(accountInfo, ", Type: ", accountType);
+            return string.Concat(accountInfo, ", Replication: ", replicationType);
         }
 
-        private static string GetAccountInfo(string authToken, string storageAccountName)
+        public static Dictionary<string, string> GetAccounts(string authToken)
         {
-            string accountInfo = string.Concat("Account Name: ", storageAccountName);
-            string accountType = GetAccountType(authToken, storageAccountName);
-            if (!string.IsNullOrEmpty(accountType))
-            {
-                accountInfo = string.Concat(accountInfo, ", Account Type: ", accountType);
-            }
-            string capacityUsed = GetCapacityUsed(authToken, storageAccountName);
-            if (!string.IsNullOrEmpty(capacityUsed))
-            {
-                accountInfo = string.Concat(accountInfo, ", Capacity Used: ", capacityUsed);
-            }
-            return accountInfo;
-        }
-
-        private static int GetAccountIndex(string[] accountNames, string accountName)
-        {
-            int accountIndex = 0;
-            if (!string.IsNullOrEmpty(accountName))
-            {
-                for (int i = 0; i < accountNames.Length; i++)
-                {
-                    if (string.Equals(accountNames[i], accountName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        accountIndex = i;
-                    }
-                }
-            }
-            return accountIndex;
-        }
-
-        private static CloudStorageAccount GetAccount(string authToken, string accountName, out string accountKey)
-        {
-            accountKey = string.Empty;
-            User authUser = new User(authToken);
-            string[] accountNames = authUser.StorageAccountNames;
-            string[] accountKeys = authUser.StorageAccountKeys;
-            int accountIndex = GetAccountIndex(accountNames, accountName);
-            if (string.IsNullOrEmpty(accountName))
-            {
-                accountName = accountNames[accountIndex];
-            }
-            accountKey = accountKeys[accountIndex];
-            string storageAccount = string.Format(Constant.Storage.Account.Connection, accountName, accountKeys[accountIndex]);
-            return CloudStorageAccount.Parse(storageAccount);
-        }
-
-        public static CloudStorageAccount GetSystemAccount()
-        {
-            string settingKey = Constant.AppSettingKey.AzureStorage;
-            string storageAccount = AppSetting.GetValue(settingKey);
-            return CloudStorageAccount.Parse(storageAccount);
-        }
-
-        public static CloudStorageAccount GetUserAccount(string authToken, string accountName)
-        {
-            return GetAccount(authToken, accountName, out string accountKey);
-        }
-
-        public static string GetAccountKey(string authToken, string accountName)
-        {
-            Storage.GetAccount(authToken, accountName, out string accountKey);
-            return accountKey;
-        }
-
-        public static long GetAssetBytes(IAsset asset, out int fileCount)
-        {
-            fileCount = 0;
-            long assetBytes = 0;
-            foreach (IAssetFile file in asset.AssetFiles)
-            {
-                fileCount = fileCount + 1;
-                assetBytes = assetBytes + file.ContentFileSize;
-            }
-            return assetBytes;
-        }
-
-        public static string MapByteCount(long byteCount)
-        {
-            string mappedCount;
-            if (byteCount >= 1099511627776)
-            {
-                mappedCount = (byteCount / 1099511627776.0).ToString(Constant.TextFormatter.Numeric) + " TB";
-            }
-            else if (byteCount >= 1073741824)
-            {
-                mappedCount = (byteCount / 1073741824.0).ToString(Constant.TextFormatter.Numeric) + " GB";
-            }
-            else if (byteCount >= 1048576)
-            {
-                mappedCount = (byteCount / 1048576.0).ToString(Constant.TextFormatter.Numeric) + " MB";
-            }
-            else if (byteCount >= 1024)
-            {
-                mappedCount = (byteCount / 1024.0).ToString(Constant.TextFormatter.Numeric) + " KB";
-            }
-            else if (byteCount == 1)
-            {
-                mappedCount = byteCount + " Byte";
-            }
-            else
-            {
-                mappedCount = byteCount + " Bytes";
-            }
-            return mappedCount;
-        }
-
-        public static NameValueCollection GetAccounts(string authToken)
-        {
-            NameValueCollection storageAccounts = new NameValueCollection();
+            Dictionary<string, string> storageAccounts = new Dictionary<string, string>();
             MediaClient mediaClient = new MediaClient(authToken);
-            string primaryStorageId = mediaClient.PrimaryStorage.Id;
-            string storageAccountName = Path.GetFileName(primaryStorageId);
-            string accountInfo = GetAccountInfo(authToken, storageAccountName);
-            storageAccounts.Add(accountInfo, storageAccountName);
-            IStorageAccount[] accounts = mediaClient.GetEntities(MediaEntity.StorageAccount) as IStorageAccount[];
-            foreach (IStorageAccount account in accounts)
+            IList<MediaStorageAccount> mediaStorageAccounts = mediaClient.StorageAccounts;
+            foreach (MediaStorageAccount mediaStorageAccount in mediaStorageAccounts)
             {
-                if (!account.IsDefault)
-                {
-                    accountInfo = GetAccountInfo(authToken, account.Name);
-                    storageAccounts.Add(accountInfo, account.Name);
-                }
+                string accountName = Path.GetFileName(mediaStorageAccount.Id);
+                string accountInfo = GetAccountInfo(authToken, accountName);
+                storageAccounts.Add(accountName, accountInfo);
             }
             return storageAccounts;
         }
 
-        public static void UploadFile(string authToken, string storageAccount, string containerName,
-                                      Stream fileStream, string fileName, int chunkIndex, int chunksCount)
+        public static CloudStorageAccount GetAccount(MediaAccount mediaAccount, string accountName)
         {
-            BlobClient blobClient = new BlobClient(authToken, storageAccount);
-            if (chunksCount == 0)
+            CloudStorageAccount storageAccount;
+            if (mediaAccount == null)
             {
-                blobClient.UploadFile(fileStream, containerName, null, fileName);
+                string settingKey = Constant.AppSettingKey.AzureStorage;
+                string systemStorage = AppSetting.GetValue(settingKey);
+                storageAccount = CloudStorageAccount.Parse(systemStorage);
             }
             else
             {
-                bool lastBlock = (chunkIndex == chunksCount - 1);
-                blobClient.UploadBlock(fileStream, containerName, null, fileName, chunkIndex, lastBlock);
+                string accountKey = mediaAccount.StorageAccounts[accountName];
+                StorageCredentials storageCredentials = new StorageCredentials(accountName, accountKey);
+                storageAccount = new CloudStorageAccount(storageCredentials, true);
             }
+            return storageAccount;
+        }
+
+        public static CloudStorageAccount GetAccount()
+        {
+            return GetAccount(null, null);
+        }
+
+        public static void UploadBlock(string authToken, string storageAccount, string containerName, Stream blockStream,
+                                       string fileName, int chunkIndex, int chunksCount, string contentType)
+        {
+            User authUser = new User(authToken);
+            BlobClient blobClient = new BlobClient(authUser.MediaAccount, storageAccount);
+            blobClient.UploadBlock(blockStream, containerName, fileName, chunkIndex, chunksCount, contentType);
         }
     }
 }

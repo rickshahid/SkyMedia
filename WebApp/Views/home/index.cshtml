@@ -19,8 +19,6 @@
     string autoPlay = ViewData["autoPlay"] as string;
     string languageCode = ViewData["languageCode"] as string;
     string storageCdnUrl = ViewData["storageCdnUrl"] as string;
-
-    string videoAnalyzer = insightController.GetProcessorName(MediaProcessor.VideoAnalyzer);
 }
 
 @section head {
@@ -80,21 +78,21 @@
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
                     if (_mediaPlayer.isLive()) {
-                        var markerImage = document.createElement("img");
-                        markerImage.id = "markerImage";
-                        markerImage.src = "@storageCdnUrl" + "/MediaStreamMarker.png";
-                        var markerButton = document.createElement("button");
-                        markerButton.id = "markerButton";
-                        markerButton.className = controlButtonCss;
-                        markerButton.appendChild(markerImage);
-                        controlBarRight.appendChild(markerButton);
-                        $("#markerButton").click(function () {
-                            alert("Insert Live Stream Marker");
+                        var cueImage = document.createElement("img");
+                        cueImage.id = "cueImage";
+                        cueImage.src = "@storageCdnUrl" + "/MediaLiveCue.png";
+                        var cueButton = document.createElement("button");
+                        cueButton.id = "cueButton";
+                        cueButton.className = controlButtonCss;
+                        cueButton.appendChild(cueImage);
+                        controlBarRight.appendChild(cueButton);
+                        $("#cueButton").click(function () {
+                            alert("Insert Live Stream Cue");
                         });
-                        CreateTipTop("markerButton", "Insert Live<br><br>Marker");
+                        CreateTipTop("cueButton", "Insert Live<br><br>Cue");
                     }
                     if (mediaStream.contentInsight != null) {
-                        var indexerInsight = GetIndexerInsight(mediaStream.contentInsight, "@videoAnalyzer");
+                        var indexerInsight = GetIndexerInsight(mediaStream.contentInsight);
                         if (indexerInsight != null) {
                             var insightImage = document.createElement("img");
                             insightImage.id = "insightImage";

@@ -44,7 +44,8 @@ function CreateUploader() {
         },
         BeforeUpload: function (uploader, file) {
             uploader.settings.multipart_params = {
-                storageAccount: $("#storageAccount").val()
+                storageAccount: $("#storageAccount").val(),
+                contentType: file.type
             };
         },
         StateChanged: function (uploader) {
@@ -59,7 +60,7 @@ function CreateUploader() {
             if (uploader.total.failed == 0) {
                 var elapsedTime = GetElapsedTime();
                 $("#mediaUploadMessage").text("Upload Elapsed Time: " + elapsedTime);
-                CreateWorkflow();
+                CreateAssets();
             }
         },
         Error: function (uploader, error) {
@@ -72,7 +73,7 @@ function CreateUploader() {
         }
     };
     $("#fileUploader").plupload({
-        url: "/upload/file",
+        url: "/upload/block",
         runtimes: "html5",
         chunk_size: "10MB",
         max_retries: 3,

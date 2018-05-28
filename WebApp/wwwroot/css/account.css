@@ -1,6 +1,7 @@
 ﻿body {
-    color: deepskyblue;
     background-color: black;
+    color: deepskyblue;
+    text-align: left;
 }
 
 label {
@@ -11,13 +12,13 @@ label {
 
 button {
     background-color: deepskyblue;
-    border-radius: 20px;
+    border-radius: 20px !important;
     margin-left: 15px;
     margin-right: 15px;
     font-weight: bold;
-    font-size: large;
+    font-size: large !important;
     height: 40px;
-    width: 120px;
+    width: 120px !important;
 }
 
 button:hover {
@@ -100,7 +101,7 @@ button:hover {
 }
 
 .textInput {
-    width: 500px;
+    width: 400px !important;
 }
 
 .helpLink {

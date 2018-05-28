@@ -32,7 +32,7 @@
                 <td class="headerSide">
                     @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
                     @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
-                    @Html.Partial("SiteButton", new string[] { "mediaStreamLive", "MediaStreamLive.png", "window.open('http://docs.microsoft.com/azure/media-services/media-services-manage-channels-overview')" })
+                    @Html.Partial("SiteButton", new string[] { "mediaBlog", "MediaBlog.png", "window.open('http://azure.microsoft.com/blog/topics/media-services/')" })
                 </td>
                 <td>
                     <div class="viewTitle">
@@ -40,12 +40,8 @@
                     </div>
                 </td>
                 <td class="headerSide right">
-                    @{
-                        string displayMessage = "DisplayMessage('Azure Media Services Account Inventory', 'You must be signed in to display your media services account inventory.')";
-                        string onInventoryClick = ViewData.ContainsKey("accountContext") ? "window.location.href = '/account'" : displayMessage;
-                    }
-                    @Html.Partial("SiteButton", new string[] { "accountInventory", "AccountInventory.png", onInventoryClick, "flipHorizontal" })
-                    @if (ViewData.ContainsKey("accountContext"))
+                    @Html.Partial("SiteButton", new string[] { "botService", "BotService.png", "window.open('http://azure.microsoft.com/services/bot-service/')" })
+                    @if (ViewData.ContainsKey("accountName"))
                     {
                         @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '" + ViewData["accountProfileEdit"] + "'" })
                         @Html.Partial("SiteButton", new string[] { "userSignOut", "UserSignOut.png", "SignOut('" + ViewData["authTokenCookie"] + "')" })
@@ -59,12 +55,12 @@
             </tr>
         </table>
         <table class="layout">
-        @if (ViewData.ContainsKey("accountContext"))
+        @if (ViewData.ContainsKey("accountName"))
         {
             <tr>
                 <td colspan="3">
                     <div id="accountContext" class="accountContext">
-                        @ViewData["accountContext"]
+                        @ViewData["userId"] (<a id="mediaAccount" href="/account">@ViewData["accountName"]</a>)
                     </div>
                 </td>
             </tr>
@@ -87,10 +83,7 @@
                     @Html.Partial("SiteButton", new string[] { "mediaProtection", "MediaProtection.png", "window.open('http://azure.microsoft.com/services/media-services/content-protection/')", "layoutVertical" })
                 </div>
                 <div>
-                    @Html.Partial("SiteButton", new string[] { "mediaClipper", "MediaClipper.png", "window.open('http://azuremediaclipper.azurewebsites.net/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "mediaIndexer", "MediaIndexer.png", "window.open('http://azure.microsoft.com/services/cognitive-services/video-indexer/')", "layoutVertical" })
+                    @Html.Partial("SiteButton", new string[] { "mediaInsight", "MediaInsight.png", "window.open('http://azure.microsoft.com/services/cognitive-services/video-indexer/')", "layoutVertical" })
                 </div>
             </td>
             <td class="layoutPanel">
@@ -98,7 +91,13 @@
             </td>
             <td class="layoutPanel side">
                 <div>
-                    @Html.Partial("SiteButton", new string[] { "cognitiveServices", "CognitiveServices.png", "window.open('http://azure.microsoft.com/services/cognitive-services/')", "layoutVertical" })
+                    @Html.Partial("SiteButton", new string[] { "mediaStorage", "MediaStorage.png", "window.open('http://azure.microsoft.com/en-us/services/storage/blob/')", "layoutVertical" })
+                </div>
+                <div>
+                    @Html.Partial("SiteButton", new string[] { "cosmosDB", "CosmosDB.png", "window.open('http://azure.microsoft.com/services/cosmos-db/')", "layoutVertical" })
+                </div>
+                <div>
+                    @Html.Partial("SiteButton", new string[] { "contentDeliveryNetwork", "ContentDeliveryNetwork.png", "window.open('http://azure.microsoft.com/services/cdn/')", "layoutVertical" })
                 </div>
                 <div>
                     @Html.Partial("SiteButton", new string[] { "appServiceWeb", "AppServiceWeb.png", "window.open('http://azure.microsoft.com/services/app-service/web/')", "layoutVertical" })
@@ -107,16 +106,7 @@
                     @Html.Partial("SiteButton", new string[] { "appServiceFunctions", "AppServiceFunctions.png", "window.open('http://azure.microsoft.com/services/functions/')", "layoutVertical" })
                 </div>
                 <div>
-                    @Html.Partial("SiteButton", new string[] { "contentDeliveryNetwork", "ContentDeliveryNetwork.png", "window.open('http://azure.microsoft.com/services/cdn/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "botService", "BotService.png", "window.open('http://azure.microsoft.com/services/bot-service/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "batchRendering", "BatchRendering.png", "window.open('http://rendering.azure.com/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "cosmosDB", "CosmosDB.png", "window.open('http://azure.microsoft.com/services/cosmos-db/')", "layoutVertical" })
+                    @Html.Partial("SiteButton", new string[] { "eventGrid", "EventGrid.png", "window.open('http://azure.microsoft.com/services/event-grid/')", "layoutVertical" })
                 </div>
             </td>
         </tr>

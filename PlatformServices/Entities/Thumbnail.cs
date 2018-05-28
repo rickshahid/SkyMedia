@@ -2,7 +2,7 @@
 {
     public class ThumbnailGeneration
     {
-        public MediaThumbnailFormat Format { get; set; }
+        public MediaImageFormat Format { get; set; }
 
         public bool Best { get; set; }
 

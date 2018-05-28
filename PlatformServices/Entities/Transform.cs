@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.MediaServices.Client;
-
 namespace AzureSkyMedia.PlatformServices
 {
     public class MediaJobTask
@@ -36,9 +34,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public string OutputAssetName { get; set; }
 
-        public AssetFormatOption OutputAssetFormat { get; set; }
+        //public AssetFormatOption OutputAssetFormat { get; set; }
 
-        public AssetCreationOptions OutputAssetEncryption { get; set; }
+        //public AssetCreationOptions OutputAssetEncryption { get; set; }
 
         public Dictionary<string, string> ProcessorConfigString { get; set; }
 
@@ -52,6 +50,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaInsightConfig InsightConfig { get; set; }
 
-        public TaskOptions Options { get; set; }
+        //public TaskOptions Options { get; set; }
     }
 }

@@ -2,6 +2,9 @@
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 
+using Microsoft.Rest;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class AuthToken
@@ -65,6 +68,24 @@ namespace AzureSkyMedia.PlatformServices
                 authorizeUrl = authorizeUrl.Replace("/v2.0", string.Empty);
             }
             return authorizeUrl;
+        }
+
+        public static TokenCredentials AcquireToken(string authToken, out string subscriptionId)
+        {
+            User authUser = new User(authToken);
+            subscriptionId = authUser.MediaAccount.SubscriptionId;
+
+            string settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
+            string audienceUrl = AppSetting.GetValue(settingKey);
+
+            settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+            string authorityUrl = AppSetting.GetValue(settingKey);
+            authorityUrl = string.Format(authorityUrl, authUser.MediaAccount.DirectoryTenantId);
+
+            AuthenticationContext authContext = new AuthenticationContext(authorityUrl);
+            ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ClientApplicationId, authUser.MediaAccount.ClientApplicationKey);
+            AuthenticationResult tokenAuth = authContext.AcquireTokenAsync(audienceUrl, clientCredential).Result;
+            return new TokenCredentials(tokenAuth.AccessToken);
         }
     }
 }

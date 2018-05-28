@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,20 +12,19 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class homeController : Controller
     {
-        private static SelectListItem[] GetStorageAccounts(string authToken)
+        internal static SelectListItem[] GetListItems(Dictionary<string, string> dictionary)
         {
-            List<SelectListItem> storageAccounts = new List<SelectListItem>();
-            NameValueCollection accounts = Storage.GetAccounts(authToken);
-            foreach (string accountName in accounts.Keys)
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            foreach (KeyValuePair<string, string> item in dictionary)
             {
-                SelectListItem storageAccount = new SelectListItem()
+                SelectListItem listItem = new SelectListItem()
                 {
-                    Text = accountName,
-                    Value = accounts[accountName]
+                    Text = item.Value.ToString(),
+                    Value = item.Key.ToString()
                 };
-                storageAccounts.Add(storageAccount);
+                listItems.Add(listItem);
             }
-            return storageAccounts.ToArray();
+            return listItems.ToArray();
         }
 
         internal static SelectListItem[] GetMediaProcessors(string authToken, bool presetsView)
@@ -38,13 +36,13 @@ namespace AzureSkyMedia.WebApp.Controllers
                 Value = string.Empty
             };
             mediaProcessors.Add(mediaProcessor);
-            NameValueCollection processors = Processor.GetMediaProcessors(authToken, presetsView, false) as NameValueCollection;
-            foreach (string processor in processors)
+            Dictionary<string, string> processors = Processor.GetMediaProcessors(authToken, presetsView, false);
+            foreach (KeyValuePair<string, string> processor in processors)
             {
                 mediaProcessor = new SelectListItem()
                 {
-                    Text = processor,
-                    Value = processors[processor]
+                    Text = processor.Value.ToString(),
+                    Value = processor.Key.ToString()
                 };
                 mediaProcessors.Add(mediaProcessor);
             }
@@ -63,13 +61,13 @@ namespace AzureSkyMedia.WebApp.Controllers
                 };
                 spokenLanguages.Add(spokenLanguage);
             }
-            NameValueCollection languages = Media.GetLanguages(videoIndexer);
-            foreach (string languageName in languages.Keys)
+            Dictionary<string, string> languages = Media.GetLanguages(videoIndexer);
+            foreach (KeyValuePair<string, string> language in languages)
             {
                 SelectListItem spokenLanguage = new SelectListItem()
                 {
-                    Text = languageName,
-                    Value = languages[languageName]
+                    Text = language.Value,
+                    Value = language.Key
                 };
                 spokenLanguages.Add(spokenLanguage);
             }
@@ -78,15 +76,14 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         internal static void SetViewData(string authToken, ViewDataDictionary viewData)
         {
-            User authUser = new User(authToken);
-            viewData["storageAccount"] = GetStorageAccounts(authToken);
-            //viewData["jobName"] = GetJobTemplates(authToken);
-            viewData["mediaProcessor1"] = GetMediaProcessors(authToken, false);
-            viewData["encoderConfig1"] = new List<SelectListItem>();
-            viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccount.Name, true);
-            viewData["encoderPremiumPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderPremium, authUser.MediaAccount.Name, false);
-            viewData["audioAnalyzerLanguages"] = GetSpokenLanguages(false, false);
-            viewData["videoAnalyzerLanguages"] = GetSpokenLanguages(true, false);
+        //    User authUser = new User(authToken);
+        //    viewData["jobName"] = GetJobTemplates(authToken);
+        //    viewData["mediaProcessor1"] = GetMediaProcessors(authToken, false);
+        //    viewData["encoderConfig1"] = new List<SelectListItem>();
+        //    viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccount.Name, true);
+        //    viewData["encoderPremiumPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderPremium, authUser.MediaAccount.Name, false);
+        //    viewData["audioAnalyzerLanguages"] = GetSpokenLanguages(false, false);
+        //    viewData["videoAnalyzerLanguages"] = GetSpokenLanguages(true, false);
         }
 
         public static string GetDirectoryId(HttpRequest request)
@@ -132,7 +129,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             User authUser = new User(authToken);
             viewData["userId"] = authUser.Id;
             viewData["accountName"] = authUser.MediaAccount.Name;
-            viewData["accountContext"] = string.Concat(viewData["userId"], " (", viewData["accountName"], ")");
         }
 
         public static string GetAppSetting(string settingKey)

@@ -1,8 +1,8 @@
-﻿function GetIndexerInsight(contentInsight, videoIndexer) {
+﻿function GetIndexerInsight(contentInsight) {
     var insightSource = null;
     for (var i = 0; i < contentInsight.sources.length; i++) {
         var mediaProcessor = contentInsight.sources[i].mediaProcessor;
-        if (mediaProcessor == videoIndexer) {
+        if (mediaProcessor == "Video Indexer") {
             insightSource = contentInsight.sources[i];
         }
     }

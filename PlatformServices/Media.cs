@@ -1,10 +1,9 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
-using Microsoft.WindowsAzure.MediaServices.Client;
+using Microsoft.Rest.Azure;
+using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
 
@@ -12,20 +11,20 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
-        private static bool FilterByStreaming(ILocator locator)
-        {
-            return locator.Type == LocatorType.OnDemandOrigin;
-        }
+        //private static bool FilterByStreaming(ILocator locator)
+        //{
+        //    return locator.Type == LocatorType.OnDemandOrigin;
+        //}
 
-        private static int OrderByDate(ILocator leftItem, ILocator rightItem)
-        {
-            return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
-        }
+        //private static int OrderByDate(ILocator leftItem, ILocator rightItem)
+        //{
+        //    return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
+        //}
 
-        private static int OrderByProcessor(MediaInsightSource leftItem, MediaInsightSource rightItem)
-        {
-            return leftItem.MediaProcessor.CompareTo(rightItem.MediaProcessor);
-        }
+        //private static int OrderByProcessor(MediaInsightSource leftItem, MediaInsightSource rightItem)
+        //{
+        //    return leftItem.MediaProcessor.CompareTo(rightItem.MediaProcessor);
+        //}
 
         private static void AddMediaStream(List<MediaStream> mediaStreams, string settingStreamName, string settingSourceUrl, string settingTextTrack)
         {
@@ -45,45 +44,45 @@ namespace AzureSkyMedia.PlatformServices
             mediaStreams.Add(mediaStream);
         }
 
-        private static IEnumerable<ILocator> GetMediaLocators(MediaClient mediaClient, string assetName)
-        {
-            ILocator[] locators;
-            if (string.IsNullOrEmpty(assetName))
-            {
-                locators = mediaClient.GetEntities(MediaEntity.StreamingLocator) as ILocator[];
-            }
-            else
-            {
-                IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset, assetName) as IAsset[];
-                List<ILocator> assetLocators = new List<ILocator>();
-                foreach (IAsset asset in assets)
-                {
-                    assetLocators.AddRange(asset.Locators);
-                }
-                locators = assetLocators.ToArray();
-            }
-            locators = Array.FindAll(locators, FilterByStreaming);
-            Array.Sort<ILocator>(locators, OrderByDate);
-            return locators;
-        }
+        //private static IEnumerable<ILocator> GetMediaLocators(MediaClient mediaClient, string assetName)
+        //{
+        //    ILocator[] locators;
+        //    if (string.IsNullOrEmpty(assetName))
+        //    {
+        //        locators = mediaClient.GetEntities(MediaEntity.StreamingLocator) as ILocator[];
+        //    }
+        //    else
+        //    {
+        //        IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset, assetName) as IAsset[];
+        //        List<ILocator> assetLocators = new List<ILocator>();
+        //        foreach (IAsset asset in assets)
+        //        {
+        //            assetLocators.AddRange(asset.Locators);
+        //        }
+        //        locators = assetLocators.ToArray();
+        //    }
+        //    locators = Array.FindAll(locators, FilterByStreaming);
+        //    Array.Sort<ILocator>(locators, OrderByDate);
+        //    return locators;
+        //}
 
-        private static string[] GetThumbnailUrls(MediaClient mediaClient, IAsset asset)
-        {
-            List<string> thumbnailUrls = new List<string>();
-            foreach (IAssetFile assetFile in asset.AssetFiles)
-            {
-                string fileName = assetFile.Name.Replace(" ", "%20");
-                if (fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-                    fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                    fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
-                {
-                    string thumbnailUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, fileName, true);
-                    thumbnailUrls.Add(thumbnailUrl);
-                }
-            }
-            thumbnailUrls.Sort();
-            return thumbnailUrls.ToArray();
-        }
+        //private static string[] GetThumbnailUrls(MediaClient mediaClient, IAsset asset)
+        //{
+        //    List<string> thumbnailUrls = new List<string>();
+        //    foreach (IAssetFile assetFile in asset.AssetFiles)
+        //    {
+        //        string fileName = assetFile.Name.Replace(" ", "%20");
+        //        if (fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+        //            fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+        //            fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            string thumbnailUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, fileName, true);
+        //            thumbnailUrls.Add(thumbnailUrl);
+        //        }
+        //    }
+        //    thumbnailUrls.Sort();
+        //    return thumbnailUrls.ToArray();
+        //}
 
         private static MediaTrack[] GetTextTracks(string tracks)
         {
@@ -106,121 +105,121 @@ namespace AzureSkyMedia.PlatformServices
             return textTracks.ToArray();
         }
 
-        private static MediaTrack[] GetTextTracks(MediaClient mediaClient, VideoAnalyzer videoAnalyzer, IAsset asset)
-        {
-            List<MediaTrack> textTracks = new List<MediaTrack>();
-            string indexId = VideoAnalyzer.GetIndexId(asset);
-            if (!string.IsNullOrEmpty(indexId))
-            {
-                string webVttUrl = videoAnalyzer.GetWebVttUrl(indexId, null);
-                JObject index = videoAnalyzer.GetIndex(indexId, null, false);
-                string languageLabel = VideoAnalyzer.GetLanguageLabel(index);
-                MediaTrack textTrack = new MediaTrack()
-                {
-                    Type = Constant.Media.Stream.TextTrack.Captions,
-                    Label = languageLabel,
-                    SourceUrl = webVttUrl,
-                };
-                textTracks.Add(textTrack);
-            }
-            string[] webVttUrls = mediaClient.GetWebVttUrls(asset);
-            for (int i = 0; i < webVttUrls.Length; i++)
-            {
-                string webVttUrl = webVttUrls[i];
-                string languageLabel = GetLanguageLabel(webVttUrl);
-                if (!string.IsNullOrEmpty(webVttUrl))
-                {
-                    MediaTrack textTrack = new MediaTrack()
-                    {
-                        Type = Constant.Media.Stream.TextTrack.Captions,
-                        Label = languageLabel,
-                        SourceUrl = webVttUrl,
-                    };
-                    textTracks.Add(textTrack);
-                }
-            }
-            return textTracks.ToArray();
-        }
+        //private static MediaTrack[] GetTextTracks(MediaClient mediaClient, VideoAnalyzer videoAnalyzer, IAsset asset)
+        //{
+        //    List<MediaTrack> textTracks = new List<MediaTrack>();
+        //    string indexId = VideoAnalyzer.GetIndexId(asset);
+        //    if (!string.IsNullOrEmpty(indexId))
+        //    {
+        //        string webVttUrl = videoAnalyzer.GetWebVttUrl(indexId, null);
+        //        JObject index = videoAnalyzer.GetIndex(indexId, null, false);
+        //        string languageLabel = VideoAnalyzer.GetLanguageLabel(index);
+        //        MediaTrack textTrack = new MediaTrack()
+        //        {
+        //            Type = Constant.Media.Stream.TextTrack.Captions,
+        //            Label = languageLabel,
+        //            SourceUrl = webVttUrl,
+        //        };
+        //        textTracks.Add(textTrack);
+        //    }
+        //    string[] webVttUrls = mediaClient.GetWebVttUrls(asset);
+        //    for (int i = 0; i < webVttUrls.Length; i++)
+        //    {
+        //        string webVttUrl = webVttUrls[i];
+        //        string languageLabel = GetLanguageLabel(webVttUrl);
+        //        if (!string.IsNullOrEmpty(webVttUrl))
+        //        {
+        //            MediaTrack textTrack = new MediaTrack()
+        //            {
+        //                Type = Constant.Media.Stream.TextTrack.Captions,
+        //                Label = languageLabel,
+        //                SourceUrl = webVttUrl,
+        //            };
+        //            textTracks.Add(textTrack);
+        //        }
+        //    }
+        //    return textTracks.ToArray();
+        //}
 
-        private static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, IAsset asset, bool clipperView, bool filtersOnly)
-        {
-            List<MediaStream> mediaStreams = new List<MediaStream>();
+        //private static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, IAsset asset, bool clipperView, bool filtersOnly)
+        //{
+        //    List<MediaStream> mediaStreams = new List<MediaStream>();
 
-            VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+        //    VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
 
-            MediaInsight contentInsight = null;
-            List<MediaInsightSource> insightSources = new List<MediaInsightSource>();
-            if (!clipperView)
-            {
-                string indexId = VideoAnalyzer.GetIndexId(asset);
-                if (!string.IsNullOrEmpty(indexId))
-                {
-                    MediaInsightSource insightSource = new MediaInsightSource()
-                    {
-                        MediaProcessor = MediaProcessor.VideoAnalyzer,
-                        OutputId = indexId,
-                        OutputUrl = videoAnalyzer.GetInsightUrl(indexId, true)
-                    };
-                    insightSources.Add(insightSource);
-                }
+        //    MediaInsight contentInsight = null;
+        //    List<MediaInsightSource> insightSources = new List<MediaInsightSource>();
+        //    if (!clipperView)
+        //    {
+        //        string indexId = VideoAnalyzer.GetIndexId(asset);
+        //        if (!string.IsNullOrEmpty(indexId))
+        //        {
+        //            MediaInsightSource insightSource = new MediaInsightSource()
+        //            {
+        //                //MediaProcessor = MediaProcessor.VideoAnalyzer,
+        //                OutputId = indexId,
+        //                OutputUrl = videoAnalyzer.GetInsightUrl(indexId, true)
+        //            };
+        //            insightSources.Add(insightSource);
+        //        }
 
-                string[] fileNames = MediaClient.GetFileNames(asset, Constant.Media.FileExtension.Json);
-                foreach (string fileName in fileNames)
-                {
-                    string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
-                    if (Enum.TryParse(fileNameInfo[0], out MediaProcessor processor) && fileNameInfo.Length == 2)
-                    {
-                        string documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
-                        MediaInsightSource insightSource = new MediaInsightSource()
-                        {
-                            MediaProcessor = processor,
-                            OutputId = documentId,
-                        };
-                        insightSources.Add(insightSource);
-                    }
-                }
-            }
-            if (insightSources.Count > 0)
-            {
-                insightSources.Sort(OrderByProcessor);
-                contentInsight = new MediaInsight()
-                {
-                    Id = asset.AlternateId,
-                    Sources = insightSources.ToArray()
-                };
-            }
+        //        //string[] fileNames = blobClient.GetContainerFiles(asset.Container, Constant.Media.FileExtension.Json);
+        //        //foreach (string fileName in fileNames)
+        //        //{
+        //        //    string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
+        //        //    if (Enum.TryParse(fileNameInfo[0], out MediaProcessor processor) && fileNameInfo.Length == 2)
+        //        //    {
+        //        //        string documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
+        //        //        MediaInsightSource insightSource = new MediaInsightSource()
+        //        //        {
+        //        //            MediaProcessor = processor,
+        //        //            OutputId = documentId,
+        //        //        };
+        //        //        insightSources.Add(insightSource);
+        //        //    }
+        //        //}
+        //    }
+        //    if (insightSources.Count > 0)
+        //    {
+        //        insightSources.Sort(OrderByProcessor);
+        //        contentInsight = new MediaInsight()
+        //        {
+        //            Id = asset.AlternateId,
+        //            Sources = insightSources.ToArray()
+        //        };
+        //    }
 
-            MediaStream mediaStream = new MediaStream()
-            {
-                Id = asset.Id,
-                Name = asset.Name,
-                Type = "asset",
-                Source = new StreamSource()
-                {
-                    Url = mediaClient.GetLocatorUrl(asset),
-                    ProtectionInfo = mediaClient.GetStreamProtections(authToken, asset)
-                },
-                ThumbnailUrls = GetThumbnailUrls(mediaClient, asset),
-                TextTracks = GetTextTracks(mediaClient, videoAnalyzer, asset),
-                ContentInsight = contentInsight
-            };
-            if (!filtersOnly)
-            {
-                mediaStreams.Add(mediaStream);
-            }
+        //    MediaStream mediaStream = new MediaStream()
+        //    {
+        //        Id = asset.Id,
+        //        Name = asset.Name,
+        //        Type = "asset",
+        //        Source = new StreamSource()
+        //        {
+        //            Url = mediaClient.GetLocatorUrl(asset),
+        //            ProtectionInfo = mediaClient.GetStreamProtections(authToken, asset)
+        //        },
+        //        ThumbnailUrls = GetThumbnailUrls(mediaClient, asset),
+        //        TextTracks = GetTextTracks(mediaClient, videoAnalyzer, asset),
+        //        ContentInsight = contentInsight
+        //    };
+        //    if (!filtersOnly)
+        //    {
+        //        mediaStreams.Add(mediaStream);
+        //    }
 
-            foreach (IStreamingAssetFilter assetFilter in asset.AssetFilters)
-            {
-                MediaStream filteredStream = mediaStream.DeepCopy();
-                filteredStream.Id = assetFilter.Id;
-                filteredStream.Name = string.Concat(mediaStream.Name, "<br><br>+ ", assetFilter.Name);
-                filteredStream.Type = "filter";
-                filteredStream.Source.Url = string.Concat(filteredStream.Source.Url, "(filter=", assetFilter.Name, ")");
-                mediaStreams.Add(filteredStream);
-            }
+        //    foreach (IStreamingAssetFilter assetFilter in asset.AssetFilters)
+        //    {
+        //        MediaStream filteredStream = mediaStream.DeepCopy();
+        //        filteredStream.Id = assetFilter.Id;
+        //        filteredStream.Name = string.Concat(mediaStream.Name, "<br><br>+ ", assetFilter.Name);
+        //        filteredStream.Type = "filter";
+        //        filteredStream.Source.Url = string.Concat(filteredStream.Source.Url, "(filter=", assetFilter.Name, ")");
+        //        mediaStreams.Add(filteredStream);
+        //    }
 
-            return mediaStreams.ToArray();
-        }
+        //    return mediaStreams.ToArray();
+        //}
 
         public static MediaStream[] GetMediaStreams()
         {
@@ -257,72 +256,72 @@ namespace AzureSkyMedia.PlatformServices
             int tunerPageSize = int.Parse(AppSetting.GetValue(settingKey));
             streamOffset = ((streamNumber - 1) / tunerPageSize) * tunerPageSize;
             streamIndex = (streamNumber - 1) % tunerPageSize;
-            IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, null);
-            int locatorsCount = locators.Count();
-            if (locatorsCount > 0)
-            {
-                if (streamOffset == locatorsCount)
-                {
-                    streamOffset = streamOffset - tunerPageSize;
-                    streamIndex = tunerPageSize - 1;
-                    endOfStreams = true;
-                }
-                else if (streamIndex == locatorsCount)
-                {
-                    streamIndex = streamIndex - 1;
-                    endOfStreams = true;
-                }
-                locators = locators.Skip(streamOffset);
-                foreach (ILocator locator in locators)
-                {
-                    MediaStream[] assetStreams = GetMediaStreams(authToken, mediaClient, locator.Asset, false, false);
-                    foreach (MediaStream assetStream in assetStreams)
-                    {
-                        if (mediaStreams.Count < tunerPageSize)
-                        {
-                            mediaStreams.Add(assetStream);
-                        }
-                    }
-                }
-            }
+            //IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, null);
+            //int locatorsCount = locators.Count();
+            //if (locatorsCount > 0)
+            //{
+            //    if (streamOffset == locatorsCount)
+            //    {
+            //        streamOffset = streamOffset - tunerPageSize;
+            //        streamIndex = tunerPageSize - 1;
+            //        endOfStreams = true;
+            //    }
+            //    else if (streamIndex == locatorsCount)
+            //    {
+            //        streamIndex = streamIndex - 1;
+            //        endOfStreams = true;
+            //    }
+            //    locators = locators.Skip(streamOffset);
+            //    foreach (ILocator locator in locators)
+            //    {
+            //        MediaStream[] assetStreams = GetMediaStreams(authToken, mediaClient, locator.Asset, false, false);
+            //        foreach (MediaStream assetStream in assetStreams)
+            //        {
+            //            if (mediaStreams.Count < tunerPageSize)
+            //            {
+            //                mediaStreams.Add(assetStream);
+            //            }
+            //        }
+            //    }
+            //}
             return mediaStreams.ToArray();
         }
 
         public static MediaStream[] GetMediaStreams(string authToken, string searchCriteria, int skipCount, int takeCount, string streamType)
         {
             MediaClient mediaClient = new MediaClient(authToken);
-            IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, searchCriteria);
-            locators = locators.Skip(skipCount);
-            if (takeCount > 0)
-            {
-                locators = locators.Take(takeCount);
-            }
+            //IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, searchCriteria);
+            //locators = locators.Skip(skipCount);
+            //if (takeCount > 0)
+            //{
+            //    locators = locators.Take(takeCount);
+            //}
             List<MediaStream> mediaStreams = new List<MediaStream>();
-            bool filtersOnly = string.Equals(streamType, "filter", StringComparison.OrdinalIgnoreCase);
-            foreach (ILocator locator in locators)
-            {
-                MediaStream[] streams = GetMediaStreams(authToken, mediaClient, locator.Asset, true, filtersOnly);
-                foreach (MediaStream stream in streams)
-                {
-                    if (stream.Source.ProtectionInfo.Length == 0)
-                    {
-                        stream.Source.ProtectionInfo = null;
-                    }
-                }
-                mediaStreams.AddRange(streams);
-            }
+            //bool filtersOnly = string.Equals(streamType, "filter", StringComparison.OrdinalIgnoreCase);
+            //foreach (ILocator locator in locators)
+            //{
+            //    MediaStream[] streams = GetMediaStreams(authToken, mediaClient, locator.Asset, true, filtersOnly);
+            //    foreach (MediaStream stream in streams)
+            //    {
+            //        if (stream.Source.ProtectionInfo.Length == 0)
+            //        {
+            //            stream.Source.ProtectionInfo = null;
+            //        }
+            //    }
+            //    mediaStreams.AddRange(streams);
+            //}
             return mediaStreams.ToArray();
         }
 
         public static bool IsStreamingEnabled(MediaClient mediaClient)
         {
             bool streamingEnabled = false;
-            IStreamingEndpoint[] streamingEndpoints = mediaClient.GetEntities(MediaEntity.StreamingEndpoint) as IStreamingEndpoint[];
-            foreach (IStreamingEndpoint streamingEndpoint in streamingEndpoints)
+            IPage<StreamingEndpoint> streamingEndpoints = mediaClient.GetEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
+            foreach (StreamingEndpoint streamingEndpoint in streamingEndpoints)
             {
-                if (streamingEndpoint.State == StreamingEndpointState.Starting ||
-                    streamingEndpoint.State == StreamingEndpointState.Running ||
-                    streamingEndpoint.State == StreamingEndpointState.Scaling)
+                if (streamingEndpoint.ResourceState == StreamingEndpointResourceState.Starting ||
+                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Running ||
+                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Scaling)
                 {
                     streamingEnabled = true;
                 }
@@ -330,9 +329,9 @@ namespace AzureSkyMedia.PlatformServices
             return streamingEnabled;
         }
 
-        public static NameValueCollection GetLanguages(bool videoIndexer)
+        public static Dictionary<string, string> GetLanguages(bool videoIndexer)
         {
-            NameValueCollection languages = new NameValueCollection();
+            Dictionary<string, string> languages = new Dictionary<string, string>();
             if (videoIndexer)
             {
                 languages.Add("English", "en-us");
@@ -372,12 +371,12 @@ namespace AzureSkyMedia.PlatformServices
         public static string GetLanguageLabel(string languageId, bool videoIndexer)
         {
             string languageLabel = string.Empty;
-            NameValueCollection languages = GetLanguages(videoIndexer);
-            foreach (string language in languages.Keys)
+            Dictionary<string, string> languages = GetLanguages(videoIndexer);
+            foreach (KeyValuePair<string, string> language in languages)
             {
-                if (string.Equals(languages[language], languageId, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(language.Key, languageId, StringComparison.OrdinalIgnoreCase))
                 {
-                    languageLabel = language;
+                    languageLabel = language.Value;
                 }
             }
             return languageLabel;

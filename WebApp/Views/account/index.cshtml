@@ -1,21 +1,8 @@
 ﻿@using System.Diagnostics;
 
-@{
-    string authToken = ViewData["authToken"] as string;
-}
-
 @section head {
     <script type="text/javascript">
-        function ToggleToken() {
-            if ($("#authToken").is(":visible")) {
-                $("#authToken").text("");
-                $("#authToken").hide();
-            } else {
-                $("#authToken").text("@authToken");
-                $("#authToken").show();
-            }
-        }
-        function SetEntity(innerHtml, entityCount) {
+        function DisplayEntity(innerHtml, entityCount) {
             innerHtml = innerHtml + "<tr><td>";
             if (entityCount.length > 2) {
                 innerHtml = innerHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
@@ -24,17 +11,12 @@
             }
             return innerHtml + ":</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
         }
-        function SetInventory(entityCounts) {
+        function DisplayInventory(entityCounts) {
             var innerHtml = "";
             for (var i = 0; i < 11; i++) {
-                innerHtml = SetEntity(innerHtml, entityCounts[i]);
+                innerHtml = DisplayEntity(innerHtml, entityCounts[i]);
             }
-            $("#inventoryLeft").html(innerHtml);
-            innerHtml = "";
-            for (var i = 11; i < entityCounts.length; i++) {
-                innerHtml = SetEntity(innerHtml, entityCounts[i]);
-            }
-            $("#inventoryRight").html(innerHtml);
+            $("#accountInventory").html(innerHtml);
         }
         function DeleteEntities(allEntities, liveChannels) {
             SetCursor(true);
@@ -72,35 +54,31 @@
             DisplayMessage(title, message, buttons);
         }
         $(function () {
-            CreateTipTop("accountToken", "JSON Web Token (JWT)");
             CreateTipTop("accountClear", "Clear Media Account");
+            CreateTipBottom("authToken", "Azure Active Directory<br><br>JSON Web Token");
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
-            SetInventory(entityCounts);
+            DisplayInventory(entityCounts);
         })
     </script>
 }
 
 @section title {
-    Azure Media Services<br>Account Inventory
+    Media Account Inventory
 }
 
 <table class="accountInventory">
     <tr>
         <td>
-            <table id="inventoryLeft" class="entityCounts"></table>
-        </td>
-        <td>
-            <table id="inventoryRight" class="entityCounts"></table>
+            <table id="accountInventory" class="entityCounts"></table>
         </td>
     </tr>
 </table>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "accountToken", "AccountToken.png", "ToggleToken()" })
     @if (Debugger.IsAttached)
     {
         @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmDelete()" })
     }
 </div>
 
-<div id="authToken" class="accountToken"></div>
+<div id="authToken" class="authToken">@ViewData["authToken"]</div>

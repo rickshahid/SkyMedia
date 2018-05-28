@@ -600,8 +600,10 @@ $.jgrid.extend({
 			p.collen = albl.length;
 
 			if( $t.p.grouping ) {
-
+				var savlcgr = $t.p.groupingView._locgr ? true : false;
+				$t.p.groupingView._locgr = false;
 				str += groupToCsv(data1, p);
+				$t.p.groupingView._locgr  = savlcgr;
 
 			}  else {
 				while(j < dlen) {
@@ -1029,7 +1031,10 @@ $.jgrid.extend({
 				$('row:last c', rels).attr( 's', '2' ); // bold
 			}
 			if( $t.p.grouping ) {
+				var savlcgr = $t.p.groupingView._locgr ? true : false;
+				$t.p.groupingView._locgr = false;
 				groupToExcel(data.body);
+				$t.p.groupingView._locgr = savlcgr;
 			} else {
 				for ( var n=0, ie=data.body.length ; n<ie ; n++ ) {
 					addRow( data.body[n], false );
@@ -1318,7 +1323,10 @@ $.jgrid.extend({
 				rows.push( test );
 			}
 			if($t.p.grouping) {
+				var savlcgr = $t.p.groupingView._locgr ? true : false;
+				$t.p.groupingView._locgr = false;
 				groupToPdf(data);
+				$t.p.groupingView._locgr = savlcgr;
 			} else {
 				var row;
 				for ( i=0, ien=data.length ; i<ien ; i++ ) {
@@ -1455,7 +1463,7 @@ $.jgrid.extend({
 				if(cm[j].exportcol === undefined) {
 					cm[j].exportcol =  true;
 				}
-				if(cm[j].hidden || cm[j].name === 'cb' || cm[j].name === 'rn' || !cm[j].exportcol) {
+				if(cm[j].hidden || cm[j].name === 'cb' || cm[j].name === 'rn' ||  cm[j].name === 'subgrid' || !cm[j].exportcol) {
 					continue;
 				}
 				data.header[i] = cm[j].name;
@@ -1496,7 +1504,7 @@ $.jgrid.extend({
 				var str = '<tr>', stl;
 				for ( var i=0, ien=d.length ; i<ien ; i++ ) {
 					stl = (style === true ? " style=width:"+data.width[i]+"px;":"");
-					str += '<'+tag+stl+'>'+d[i]+'</'+tag+'>';
+					str += '<'+tag+stl+'>'+$t.p.colNames[data.map[i]]+'</'+tag+'>';
 				}
 
 				return str + '</tr>';
@@ -1679,7 +1687,10 @@ $.jgrid.extend({
 
 			html += '<tbody>';
 			if( $t.p.grouping ) {
+				var savlcgr = $t.p.groupingView._locgr ? true : false;
+				$t.p.groupingView._locgr = false;
 				html += groupToHtml(data.body);
+				$t.p.groupingView._locgr = savlcgr;
 			} else {
 				for ( var i=0, ien=data.body.length ; i<ien ; i++ ) {
 					html += addBodyRow( data.body[i], 'td', true, (i===0?true:false) );
@@ -1728,12 +1739,19 @@ $.jgrid.extend({
 					o.onBeforeExport( win );
 				}
 
-				setTimeout( function () {
+				if(Boolean(win.chrome)) {
 					if ( o.autoPrint ) {
 						win.print();
 						win.close();
-					}
-				}, 1000 );
+					}					
+				} else {
+					setTimeout( function () {
+						if ( o.autoPrint ) {
+							win.print();
+							win.close();
+						}
+					}, 1000 );
+				}
 			}
 		});
 		return ret;

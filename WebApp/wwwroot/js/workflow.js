@@ -97,7 +97,10 @@ function DisplayWorkflow(result) {
             title = title + "s";
         }
         for (var i = 0; i < result.length; i++) {
-            message = message + GetAssetInfo(result, i);
+            if (message != "") {
+                message = message + "<br><br>";
+            }
+            message = message + result[i].name;
         }
     }
     DisplayMessage(title, message, null, null, onClose);
@@ -109,28 +112,18 @@ function GetAssetIds() {
     }
     return assetIds;
 }
-function GetAssetInfo(result, i) {
-    var assetInfo = result[i].assetName + "<br>";
-    if (result.length == 1) {
-        assetInfo = assetInfo + "<br>";
-    }
-    if (i > 0) {
-        assetInfo = "<br><br>" + assetInfo;
-    }
-    return assetInfo + result[i].assetId;
-}
-function CreateWorkflow() {
-    var job = GetJob();
+function CreateAssets() {
+    //var job = GetJob();
     var fileNames = GetFileNames();
     SetCursor(true);
-    $.post("/workflow/create",
+    $.post("/asset/create",
         {
             storageAccount: $("#storageAccount").val(),
             storageEncryption: $("#storageEncryption").prop("checked"),
-            inputAssetName: $("#inputAssetName").val(),
+            uploadAssetName: $("#uploadAssetName").val(),
             multipleFileAsset: $("#multipleFileAsset").prop("checked"),
-            fileNames: fileNames,
-            mediaJob: job
+            fileNames: fileNames
+            //mediaJob: job
         },
         function (result) {
             SetCursor(false);

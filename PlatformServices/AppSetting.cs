@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Collections.Generic;
 
 using Microsoft.Extensions.Configuration;
@@ -8,7 +7,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class AppSetting
     {
-        public static IConfigurationRoot ConfigRoot;
+        public static IConfiguration Configuration;
 
         private static string[] ParseValue(string accountConnection)
         {
@@ -43,7 +42,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public static string[] GetValue(string settingKey, bool parseValue)
         {
-            string settingValue = ConfigRoot == null ? ConfigurationManager.AppSettings[settingKey] : ConfigRoot[settingKey];
+            string settingValue = Configuration[settingKey];
             if (settingValue == null)
             {
                 settingValue = string.Empty;

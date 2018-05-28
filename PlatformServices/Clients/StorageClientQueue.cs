@@ -11,14 +11,14 @@ namespace AzureSkyMedia.PlatformServices
 
         public QueueClient()
         {
-            CloudStorageAccount storageAccount = Storage.GetSystemAccount();
+            CloudStorageAccount storageAccount = Storage.GetAccount();
             _storage = storageAccount.CreateCloudQueueClient();
         }
 
         private CloudQueue GetQueue(string queueName)
         {
             CloudQueue queue = _storage.GetQueueReference(queueName);
-            queue.CreateIfNotExists();
+            queue.CreateIfNotExistsAsync().Wait();
             return queue;
         }
 
@@ -28,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             messageId = string.Empty;
             popReceipt = string.Empty;
             CloudQueue queue = GetQueue(queueName);
-            CloudQueueMessage queueMessage = queue.GetMessage();
+            CloudQueueMessage queueMessage = queue.GetMessageAsync().Result;
             if (queueMessage != null)
             {
                 messageId = queueMessage.Id;
@@ -43,14 +43,14 @@ namespace AzureSkyMedia.PlatformServices
             CloudQueue queue = GetQueue(queueName);
             string messageJson = JsonConvert.SerializeObject(messageData);
             CloudQueueMessage queueMessage = new CloudQueueMessage(messageJson);
-            queue.AddMessage(queueMessage);
+            queue.AddMessageAsync(queueMessage).Wait();
             return queueMessage.AsString;
         }
 
         public void DeleteMessage(string queueName, string messageId, string popReceipt)
         {
             CloudQueue queue = GetQueue(queueName);
-            queue.DeleteMessage(messageId, popReceipt);
+            queue.DeleteMessageAsync(messageId, popReceipt).Wait();
         }
     }
 }

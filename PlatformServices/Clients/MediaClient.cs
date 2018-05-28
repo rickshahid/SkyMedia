@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using Microsoft.Rest;
 using Microsoft.Azure.Management.Media;
@@ -24,10 +25,10 @@ namespace AzureSkyMedia.PlatformServices
                 mediaAccount = authUser.MediaAccount;
             }
             this.MediaAccount = mediaAccount;
-            string settingKey = Constant.AppSettingKey.AzureResourceManagementValidateUrl;
-            string validateUrl = AppSetting.GetValue(settingKey);
+            string settingKey = Constant.AppSettingKey.AzureResourceManagementEndpointUrl;
+            string endpointUrl = AppSetting.GetValue(settingKey);
             MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
-            _media = new AzureMediaServicesClient(new Uri(validateUrl), clientCredentials)
+            _media = new AzureMediaServicesClient(new Uri(endpointUrl), clientCredentials)
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };
@@ -42,6 +43,15 @@ namespace AzureSkyMedia.PlatformServices
             {
                 MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
                 return mediaService.StorageAccounts.Where(s => s.Type == StorageAccountType.Primary).Single();
+            }
+        }
+
+        public IList<StorageAccount> StorageAccounts
+        {
+            get
+            {
+                MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                return mediaService.StorageAccounts;
             }
         }
 
@@ -81,8 +91,8 @@ namespace AzureSkyMedia.PlatformServices
             string settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
             string audienceUrl = AppSetting.GetValue(settingKey);
 
-            AuthenticationResult authResult = await _authContext.AcquireTokenAsync(audienceUrl, _clientCredential);
-            request.Headers.Authorization = new AuthenticationHeaderValue(authResult.AccessTokenType, authResult.AccessToken);
+            AuthenticationResult azureToken = await _authContext.AcquireTokenAsync(audienceUrl, _clientCredential);
+            request.Headers.Authorization = new AuthenticationHeaderValue(azureToken.AccessTokenType, azureToken.AccessToken);
             await base.ProcessHttpRequestAsync(request, cancellationToken);
         }
     }

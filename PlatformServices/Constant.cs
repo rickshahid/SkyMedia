@@ -1,4 +1,7 @@
-﻿using Microsoft.WindowsAzure.MediaServices.Client.DynamicEncryption;
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("AzureSkyMedia.WebApp")]
+[assembly: InternalsVisibleTo("AzureSkyMedia.FunctionApp")]
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -25,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string Numeric = "N2";
             public const string ClockTime = "hh':'mm':'ss";
 
-            public const string SpacePattern = @"\B[A-Z]";
+            public const string SpacePattern = "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])";
             public const string SpaceReplacement = " $0";
         }
         
@@ -40,8 +43,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AppInsightsInstrumentationKey = "APPINSIGHTS_INSTRUMENTATIONKEY";
 
-            public const string AzureResourceManagementValidateUrl = "Azure.ResourceManagement.ValidateUrl";
-            public const string AzureResourceManagementAudienceUrl = "Azure.ResourceManagement.AudienceUrl";
+            public const string AzureResourceManagementEndpointUrl = "ARM.EndpointUrl";
+            public const string AzureResourceManagementAudienceUrl = "ARM.AudienceUrl";
 
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
             public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
@@ -154,18 +157,13 @@ namespace AzureSkyMedia.PlatformServices
             public const string NotAvailable = "N/A";
             public const string CapacityData = "data";
 
-            public struct Account
-            {
-                public const string Connection = "DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1}";
-            }
-
             public struct Blob
             {
                 public struct Container
                 {
-                    public const string FileUpload = "upload";
                     public const string MediaProcess = "ams";
-                    public const string ContentDelivery = "cdn";
+                    public const string FileUpload = "upload";
+                    //public const string ContentDelivery = "cdn";
                 }
             }
 
@@ -216,13 +214,13 @@ namespace AzureSkyMedia.PlatformServices
                 public const string EncoderPremium = "nb:mpid:UUID:77fea72a-107c-439e-b0bb-f88153b93461";
                 public const string VideoIndexer = "VideoIndexer";
 
-                public const string AudioAnalyzer = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
-                public const string VideoAnalyzer = "VideoAnalyzer";
+                //public const string AudioAnalyzer = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
+                //public const string VideoAnalyzer = "VideoAnalyzer";
                 //public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";
-                public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
-                public const string FaceDetection = "nb:mpid:UUID:6a9b8239-81ea-4762-8125-66b4f45737a2";
-                public const string FaceRedaction = "nb:mpid:UUID:3806d7a6-4985-4437-b098-50e3733310e8";
-                public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
+                //public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
+                //public const string FaceDetection = "nb:mpid:UUID:6a9b8239-81ea-4762-8125-66b4f45737a2";
+                //public const string FaceRedaction = "nb:mpid:UUID:3806d7a6-4985-4437-b098-50e3733310e8";
+                //public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
                 //public const string ContentModeration = "nb:mpid:UUID:bb312589-3bd4-4f2e-af26-2df8a984b395";
                 //public const string CharacterRecognition = "nb:mpid:UUID:074c3899-d9fb-448f-9ae1-4ebcbe633056";
             }
@@ -258,17 +256,17 @@ namespace AzureSkyMedia.PlatformServices
                 public const string AuthAddressRangeXml = "<Allowed addressType=\"IPv4\"><AddressRange start=\"{0}\" end=\"{1}\" /></Allowed>";
             }
 
-            public struct DeliveryProtocol
-            {
-                public const AssetDeliveryProtocol Aes = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
-                    AssetDeliveryProtocol.SmoothStreaming;
+            //public struct DeliveryProtocol
+            //{
+            //    public const AssetDeliveryProtocol Aes = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
+            //        AssetDeliveryProtocol.SmoothStreaming;
 
-                public const AssetDeliveryProtocol DrmPlayReady = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.SmoothStreaming;
+            //    public const AssetDeliveryProtocol DrmPlayReady = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.SmoothStreaming;
 
-                public const AssetDeliveryProtocol DrmWidevine = AssetDeliveryProtocol.Dash;
+            //    public const AssetDeliveryProtocol DrmWidevine = AssetDeliveryProtocol.Dash;
 
-                public const AssetDeliveryProtocol DrmFairPlay = AssetDeliveryProtocol.HLS;
-            }
+            //    public const AssetDeliveryProtocol DrmFairPlay = AssetDeliveryProtocol.HLS;
+            //}
 
             public struct DeliveryPolicy
             {

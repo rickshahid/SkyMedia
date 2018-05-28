@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 480px) {
-    #mediaStreamLive, #accountInventory, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
         display: none !important;
     }
 
@@ -81,12 +81,8 @@ body {
     cursor: pointer;
 }
 
-.siteButton.flipHorizontal {
-    transform: rotateY(180deg);
-}
-
 .siteButton.layoutVertical {
-    height: 60px;
+    height: 75px;
     width: 60px;
 }
 
@@ -107,7 +103,6 @@ body {
 
 .qtip-content {
     text-align: center;
-    font-style: italic;
     font-weight: bold;
     font-size: large;
 }
@@ -368,11 +363,11 @@ body {
 }
 
 .plupload_progress {
-    margin-right: 60px;
+    margin-right: 55px;
 }
 
 .plupload_upload_status {
-    padding-left: 20px !important;
+    padding-left: 18px !important;
 }
 
 .mediaUpload {
@@ -475,10 +470,6 @@ body {
     display: none !important;
 }
 
-.mediaFile.primary {
-    color: blueviolet !important;
-}
-
 .jstree-hovered {
   background: deepskyblue !important;
   box-shadow: none !important;
@@ -535,7 +526,7 @@ body {
     vertical-align: top;
 }
 
-.inputAssetName {
+.uploadAssetName {
     font-weight: bold;
     width: 250px;
 }
@@ -689,13 +680,7 @@ body {
 .accountInventory {
     border: 1px solid deepskyblue;
     border-radius: 20px;
-}
-
-.accountToken {
-    margin: 20px auto;
-    overflow: hidden;
-    display: none;
-    width: 550px;
+    margin-top: 30px;
 }
 
 .entityCounts {
@@ -712,6 +697,12 @@ body {
 
 .entityCount {
     color: azure;
+}
+
+.authToken {
+    margin: 20px auto;
+    overflow: hidden;
+    width: 200px;
 }
 
 .mediaPlayer {

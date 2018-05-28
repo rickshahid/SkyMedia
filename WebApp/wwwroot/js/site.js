@@ -9,8 +9,8 @@ function SetCursor(busy) {
 function SetLayout(b2b) {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
-    CreateTipBottom("mediaStreamLive", "Azure Media Services<br><br>Live Streaming");
-    CreateTipBottom("accountInventory", "Azure Media Services<br><br>Account Inventory");
+    CreateTipBottom("mediaBlog", "Azure Media Services<br><br>News Blog");
+    CreateTipBottom("botService", "Azure Bot Service");
     if (b2b) {
         CreateTipBottom("userDirectory", "Azure<br><br>Active Directory");
     } else {
@@ -24,22 +24,21 @@ function SetLayout(b2b) {
     CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
-    CreateTipRight("mediaClipper", "Azure Media Clipper");
-    CreateTipRight("mediaIndexer", "Azure Video Indexer");
-    CreateTipLeft("cognitiveServices", "Azure Cognitive Services");
-    CreateTipLeft("appServiceWeb", "Azure App Service<br><br>Web Apps");
-    CreateTipLeft("appServiceFunctions", "Azure App Service<br><br>Function Apps");
-    CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
-    CreateTipLeft("botService", "Azure Bot Service");
-    CreateTipLeft("batchRendering", "Azure Batch Rendering");
+    CreateTipRight("mediaInsight", "Azure Video Indexer<br><br>Content Insight");
+    CreateTipLeft("mediaStorage", "Azure Blob Storage");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
-    CreateTipTop("mediaProcessorPresets", "Media Processor<br><br>Presets");
-    CreateTipTop("mediaFileWorkflow", "Media File<br><br>Workflow");
-    CreateTipTop("mediaAssetWorkflow", "Media Asset<br><br>Workflow");
-    CreateTipTop("streamSlider", "Media Stream<br><br>Tuner", 0, -10);
-    CreateTipTop("mediaAssetFiles", "Media Asset<br><br>Files");
-    CreateTipTop("mediaAssetClipper", "Media Asset<br><br>Clipper");
-    CreateTipTop("mediaInsightSearch", "Media Insight<br><br>Search");
+    CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
+    CreateTipLeft("appServiceWeb", "Azure Web Apps");
+    CreateTipLeft("appServiceFunctions", "Azure Function Apps");
+    CreateTipLeft("eventGrid", "Azure Event Grid");
+    CreateTipTop("mediaAccount", "Azure Media Services<br><br>Account Name");
+    CreateTipTop("mediaUpload", "Media Upload");
+    CreateTipTop("mediaTransform", "Media Transform");
+    CreateTipTop("mediaJob", "Media Job");
+    CreateTipTop("streamSlider", "Media Stream Tuner", 0, -10);
+    CreateTipTop("mediaSearch", "Media Search");
+    CreateTipTop("mediaLive", "Media Live");
+    CreateTipTop("mediaEditor", "Media Edit");
     CreateTipBottom("mediaCertification", "Azure Media Services<br><br>Security Certification");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);

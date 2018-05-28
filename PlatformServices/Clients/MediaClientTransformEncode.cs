@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Microsoft.WindowsAzure.MediaServices.Client;
-
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -31,14 +29,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             if (jobTask.MediaProcessor == MediaProcessor.EncoderPremium)
             {
-                foreach (MediaJobInput jobInput in jobInputs)
-                {
-                    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                    if (asset != null)
-                    {
-                        jobInput.PrimaryFile = GetPrimaryFile(asset);
-                    }
-                }
+                //foreach (MediaJobInput jobInput in jobInputs)
+                //{
+                //    IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
+                //    if (asset != null)
+                //    {
+                //        jobInput.PrimaryFile = GetPrimaryFile(asset);
+                //    }
+                //}
                 Array.Sort(jobInputs, OrderByWorkflow);
             }
             if (string.IsNullOrEmpty(jobTask.ProcessorConfig))
@@ -50,13 +48,13 @@ namespace AzureSkyMedia.PlatformServices
             return GetJobTasks(mediaClient, jobTask, jobInputs, multipleInputTask);
         }
 
-        private static ITask[] GetEncoderTasks(IJob job)
-        {
-            string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
-            string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
-            string[] processorIds = new string[] { processorId1, processorId2 };
-            return GetJobTasks(job, processorIds);
-        }
+        //private static ITask[] GetEncoderTasks(IJob job)
+        //{
+        //    string processorId1 = Constant.Media.ProcessorId.EncoderStandard;
+        //    string processorId2 = Constant.Media.ProcessorId.EncoderPremium;
+        //    string[] processorIds = new string[] { processorId1, processorId2 };
+        //    return GetJobTasks(job, processorIds);
+        //}
 
         private static MediaJobTask GetEncoderTask(MediaJob mediaJob)
         {

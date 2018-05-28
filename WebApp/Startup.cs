@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +11,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -24,84 +25,72 @@ namespace AzureSkyMedia.WebApp
     {
         private static string _defaultDirectoryId;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
+            string appDirectory = Directory.GetCurrentDirectory();
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
-            configBuilder.SetBasePath(env.ContentRootPath);
+            configBuilder.SetBasePath(appDirectory);
             configBuilder.AddJsonFile(Constant.AppSettings, false, true);
             configBuilder.AddEnvironmentVariables();
-            if (env.IsDevelopment())
+            if (Debugger.IsAttached)
             {
                 configBuilder.AddUserSecrets<Startup>();
             }
-            AppSetting.ConfigRoot = configBuilder.Build();
+            AppSetting.Configuration = configBuilder.Build();
             string settingKey = Constant.AppSettingKey.AppInsightsInstrumentationKey;
             string appInsightsKey = AppSetting.GetValue(settingKey);
             if (!string.IsNullOrEmpty(appInsightsKey))
             {
                 configBuilder.AddApplicationInsightsSettings(instrumentationKey: appInsightsKey);
-                AppSetting.ConfigRoot = configBuilder.Build();
+                AppSetting.Configuration = configBuilder.Build();
             }
         }
 
-        private void SetSwaggerOptions(SwaggerGenOptions options)
+        public void ConfigureServices(IServiceCollection services)
         {
-            Info apiInfo = new Info();
-            string settingKey = Constant.AppSettingKey.AppApiTitle;
-            apiInfo.Title = AppSetting.GetValue(settingKey);
-            settingKey = Constant.AppSettingKey.AppApiDescription;
-            apiInfo.Description = AppSetting.GetValue(settingKey);
-            settingKey = Constant.AppSettingKey.AppApiVersion;
-            apiInfo.Version = AppSetting.GetValue(settingKey);
-            options.SwaggerDoc(apiInfo.Version, apiInfo);
-        }
-
-        private void SetSwaggerOptions(SwaggerUIOptions options)
-        {
-            string settingKey = Constant.AppSettingKey.AppApiEndpointUrl;
-            string endpointUrl = AppSetting.GetValue(settingKey);
-            settingKey = Constant.AppSettingKey.AppApiVersion;
-            string apiVersion = AppSetting.GetValue(settingKey);
-            options.SwaggerEndpoint(endpointUrl, apiVersion);
-        }
-
-        private static string GetPolicyId(RedirectContext context)
-        {
-            string policyId = string.Empty;
-            string settingKey = string.Empty;
-            string[] requestPath = context.Request.Path.Value.Split('/');
-            string requestAction = requestPath[requestPath.Length - 1];
-            switch (requestAction)
+            services.AddApplicationInsightsTelemetry(AppSetting.Configuration);
+            AuthenticationBuilder authBuilder = services.AddAuthentication(authOptions =>
             {
-                case "signUpIn":
-                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
-                    break;
-                case "profileEdit":
-                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdProfileEdit;
-                    break;
-                case "passwordReset":
-                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdPasswordReset;
-                    break;
-            }
-            if (!string.IsNullOrEmpty(settingKey))
+                authOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                authOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            });
+            authBuilder.AddOpenIdConnect(options =>
             {
-                policyId = AppSetting.GetValue(settingKey);
-            }
-            return policyId;
+                _defaultDirectoryId = homeController.GetDirectoryId(null);
+
+                string settingKey = Constant.AppSettingKey.DirectoryTenantId;
+                settingKey = string.Format(settingKey, _defaultDirectoryId);
+                string directoryTenantId = AppSetting.GetValue(settingKey);
+
+                SetOpenIdOptions(options, _defaultDirectoryId, directoryTenantId);
+
+                options.Events = new OpenIdConnectEvents
+                {
+                    OnRedirectToIdentityProvider = OnAuthenticationRedirect
+                };
+            });
+            services.AddMvc();
+            services.AddSwaggerGen(SetSwaggerOptions);
         }
 
-        private static void SetOpenIdOptions(OpenIdConnectOptions options, string directoryId, string directoryTenantId)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            options.Authority = AuthToken.GetIssuerUrl(directoryId, directoryTenantId);
-            options.MetadataAddress = AuthToken.GetDiscoveryUrl(directoryId, directoryTenantId);
+            app.UseStaticFiles();
+            app.UseAuthentication();
+            app.UseMvcWithDefaultRoute();
+            app.UseSwagger();
+            app.UseSwaggerUI(SetSwaggerOptions);
+        }
 
-            string settingKey = Constant.AppSettingKey.DirectoryClientId;
-            settingKey = string.Format(settingKey, directoryId);
-            options.ClientId = AppSetting.GetValue(settingKey);
-
-            settingKey = Constant.AppSettingKey.DirectoryClientSecret;
-            settingKey = string.Format(settingKey, directoryId);
-            options.ClientSecret = AppSetting.GetValue(settingKey);
+        internal static RedirectToActionResult OnSignIn(ControllerBase controller, string authToken)
+        {
+            RedirectToActionResult redirectAction = null;
+            string requestError = controller.Request.Form["error_description"];
+            if (!string.IsNullOrEmpty(requestError) && requestError.Contains(Constant.Message.UserPasswordForgotten))
+            {
+                redirectAction = controller.RedirectToAction("passwordReset", "account");
+            }
+            return redirectAction;
         }
 
         private static Task OnAuthenticationRedirect(RedirectContext context)
@@ -137,58 +126,64 @@ namespace AzureSkyMedia.WebApp
             return Task.FromResult(0);
         }
 
-        internal static RedirectToActionResult OnSignIn(ControllerBase controller, string authToken)
+        private static void SetOpenIdOptions(OpenIdConnectOptions options, string directoryId, string directoryTenantId)
         {
-            RedirectToActionResult redirectAction = null;
-            string requestError = controller.Request.Form["error_description"];
-            if (!string.IsNullOrEmpty(requestError) && requestError.Contains(Constant.Message.UserPasswordForgotten))
-            {
-                redirectAction = controller.RedirectToAction("passwordReset", "account");
-            }
-            return redirectAction;
+            options.Authority = AuthToken.GetIssuerUrl(directoryId, directoryTenantId);
+            options.MetadataAddress = AuthToken.GetDiscoveryUrl(directoryId, directoryTenantId);
+
+            string settingKey = Constant.AppSettingKey.DirectoryClientId;
+            settingKey = string.Format(settingKey, directoryId);
+            options.ClientId = AppSetting.GetValue(settingKey);
+
+            settingKey = Constant.AppSettingKey.DirectoryClientSecret;
+            settingKey = string.Format(settingKey, directoryId);
+            options.ClientSecret = AppSetting.GetValue(settingKey);
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        private static string GetPolicyId(RedirectContext context)
         {
-            services.AddApplicationInsightsTelemetry(AppSetting.ConfigRoot);
-            AuthenticationBuilder authBuilder = services.AddAuthentication(authOptions =>
+            string policyId = string.Empty;
+            string settingKey = string.Empty;
+            string[] requestPath = context.Request.Path.Value.Split('/');
+            string requestAction = requestPath[requestPath.Length - 1];
+            switch (requestAction)
             {
-                authOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                authOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            });
-            authBuilder.AddOpenIdConnect(options =>
+                case "signUpIn":
+                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
+                    break;
+                case "profileEdit":
+                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdProfileEdit;
+                    break;
+                case "passwordReset":
+                    settingKey = Constant.AppSettingKey.DirectoryPolicyIdPasswordReset;
+                    break;
+            }
+            if (!string.IsNullOrEmpty(settingKey))
             {
-                _defaultDirectoryId = homeController.GetDirectoryId(null);
-
-                string settingKey = Constant.AppSettingKey.DirectoryTenantId;
-                settingKey = string.Format(settingKey, _defaultDirectoryId);
-                string directoryTenantId = AppSetting.GetValue(settingKey);
-
-                SetOpenIdOptions(options, _defaultDirectoryId, directoryTenantId);
-
-                options.Events = new OpenIdConnectEvents
-                {
-                    OnRedirectToIdentityProvider = OnAuthenticationRedirect
-                };
-            });
-            services.AddMvc();
-            services.AddSwaggerGen(SetSwaggerOptions);
+                policyId = AppSetting.GetValue(settingKey);
+            }
+            return policyId;
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory log)
+        private void SetSwaggerOptions(SwaggerGenOptions options)
         {
-            IConfigurationSection loggingSection = AppSetting.ConfigRoot.GetSection("Logging");
-            log.AddConsole(loggingSection);
-            log.AddDebug();
-            if (!env.IsProduction())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            app.UseStaticFiles();
-            app.UseAuthentication();
-            app.UseMvcWithDefaultRoute();
-            app.UseSwagger();
-            app.UseSwaggerUI(SetSwaggerOptions);
+            Info apiInfo = new Info();
+            string settingKey = Constant.AppSettingKey.AppApiTitle;
+            apiInfo.Title = AppSetting.GetValue(settingKey);
+            settingKey = Constant.AppSettingKey.AppApiDescription;
+            apiInfo.Description = AppSetting.GetValue(settingKey);
+            settingKey = Constant.AppSettingKey.AppApiVersion;
+            apiInfo.Version = AppSetting.GetValue(settingKey);
+            options.SwaggerDoc(apiInfo.Version, apiInfo);
+        }
+
+        private void SetSwaggerOptions(SwaggerUIOptions options)
+        {
+            string settingKey = Constant.AppSettingKey.AppApiEndpointUrl;
+            string endpointUrl = AppSetting.GetValue(settingKey);
+            settingKey = Constant.AppSettingKey.AppApiVersion;
+            string apiVersion = AppSetting.GetValue(settingKey);
+            options.SwaggerEndpoint(endpointUrl, apiVersion);
         }
     }
 }

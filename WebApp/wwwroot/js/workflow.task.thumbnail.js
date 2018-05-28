@@ -76,7 +76,7 @@ function SetThumbnailFormat(input) {
     $("#" + encoderThumbnailGenerationSpriteId).prop("checked", false);
     $("#" + encoderThumbnailGenerationSpriteId).change();
     switch (input.value) {
-        case "Jpg":
+        case "JPG":
             $("#" + encoderThumbnailGenerationSpriteId).prop("disabled", true);
             break;
         case "Sprite":

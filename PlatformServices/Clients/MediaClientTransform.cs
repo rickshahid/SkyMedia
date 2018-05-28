@@ -3,26 +3,24 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.MediaServices.Client;
-
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static ITask[] GetJobTasks(IJob job, string[] processorIds)
-        {
-            List<ITask> jobTasks = new List<ITask>();
-            foreach (ITask jobTask in job.Tasks)
-            {
-                if (processorIds.Contains(jobTask.MediaProcessorId, StringComparer.OrdinalIgnoreCase))
-                {
-                    jobTasks.Add(jobTask);
-                }
-            }
-            return jobTasks.ToArray();
-        }
+        //private static ITask[] GetJobTasks(IJob job, string[] processorIds)
+        //{
+        //    List<ITask> jobTasks = new List<ITask>();
+        //    foreach (ITask jobTask in job.Tasks)
+        //    {
+        //        if (processorIds.Contains(jobTask.MediaProcessorId, StringComparer.OrdinalIgnoreCase))
+        //        {
+        //            jobTasks.Add(jobTask);
+        //        }
+        //    }
+        //    return jobTasks.ToArray();
+        //}
 
         private static string[] GetAssetIds(MediaJobInput[] jobInputs)
         {
@@ -69,11 +67,11 @@ namespace AzureSkyMedia.PlatformServices
                 string outputAssetName = Path.GetFileNameWithoutExtension(assetName);
                 newJobTask.OutputAssetName = string.Concat(outputAssetName, " (", newJobTask.Name, ")");
             }
-            newJobTask.OutputAssetEncryption = AssetCreationOptions.None;
-            if (newJobTask.ContentProtection != null)
-            {
-                newJobTask.OutputAssetEncryption = AssetCreationOptions.StorageEncrypted;
-            }
+            //newJobTask.OutputAssetEncryption = AssetCreationOptions.None;
+            //if (newJobTask.ContentProtection != null)
+            //{
+            //    newJobTask.OutputAssetEncryption = AssetCreationOptions.StorageEncrypted;
+            //}
             return newJobTask;
         }
 
@@ -107,7 +105,7 @@ namespace AzureSkyMedia.PlatformServices
             layer["Type"] = string.Concat(format, "Layer");
             layer["Width"] = thumbnailGeneration.Width;
             layer["Height"] = thumbnailGeneration.Height;
-            if (format == "Jpg")
+            if (thumbnailGeneration.Format == MediaImageFormat.JPG)
             {
                 layer["Quality"] = Constant.Media.ProcessorPreset.ThumbnailJpgQuality;
             }
@@ -117,9 +115,9 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void SetThumbnailSprite(ThumbnailGeneration thumbnailGeneration, JToken spriteCodec, JArray codecs, JArray outputs)
         {
-            string format = thumbnailGeneration.Format.ToString();
-            if (format != "Jpg")
+            if (thumbnailGeneration.Format != MediaImageFormat.JPG)
             {
+                string format = thumbnailGeneration.Format.ToString();
                 string layers = string.Concat(format, "Layers");
                 JToken jpgLayers = spriteCodec[layers].DeepClone();
                 JProperty oldLayers = (JProperty)spriteCodec[layers].Parent;
@@ -144,13 +142,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static void SetThumbnailGeneration(ThumbnailGeneration thumbnailGeneration, JObject processorConfig)
         {
-            bool spriteOnly = false;
             JToken spriteCodec = null;
-            if (thumbnailGeneration.Format == MediaThumbnailFormat.Sprite)
-            {
-                spriteOnly = true;
-                thumbnailGeneration.Format = MediaThumbnailFormat.Jpg;
-            }
             string format = thumbnailGeneration.Format.ToString();
             JArray codecs = (JArray)processorConfig["Codecs"];
             foreach (JToken codec in codecs)
@@ -169,15 +161,15 @@ namespace AzureSkyMedia.PlatformServices
                         codec["Range"] = thumbnailGeneration.Single ? "1" : thumbnailGeneration.Range;
                     }
                     SetThumbnailLayers(thumbnailGeneration, codec);
-                    spriteCodec = spriteOnly ? codec : codec.DeepClone();
+                    spriteCodec = thumbnailGeneration.Sprite ? codec : codec.DeepClone();
                 }
             }
-            if (spriteOnly)
+            if (thumbnailGeneration.Sprite)
             {
                 codecs = null;
             }
             JArray outputs = (JArray)processorConfig["Outputs"];
-            if (format != "Png")
+            if (thumbnailGeneration.Format != MediaImageFormat.PNG)
             {
                 foreach (JToken output in outputs)
                 {

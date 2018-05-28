@@ -16,7 +16,8 @@ namespace AzureSkyMedia.PlatformServices
                 ResourceGroupName = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountResourceGroupName),
                 DirectoryTenantId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDirectoryTenantId),
                 ClientApplicationId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationId),
-                ClientApplicationKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationKey)
+                ClientApplicationKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationKey),
+                StorageAccounts = GetStorageAccounts()
             };
         }
 
@@ -43,66 +44,35 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaAccount MediaAccount { get; private set; }
 
-        public string[] StorageAccountNames
+        private Dictionary<string, string> GetStorageAccounts()
         {
-            get
-            {
-                List<string> accountNames = new List<string>();
+            Dictionary<string, string> storageAccounts = new Dictionary<string, string>();
 
-                string claimType = Constant.UserAttribute.StorageAccount1Name;
-                string claimValue = AuthToken.GetClaimValue(_authToken, claimType);
-                if (!string.IsNullOrEmpty(claimValue))
-                {
-                    accountNames.Add(claimValue);
-                }
+            string claimType = Constant.UserAttribute.StorageAccount1Name;
+            string storageAccountName = AuthToken.GetClaimValue(_authToken, claimType);
 
-                claimType = Constant.UserAttribute.StorageAccount2Name;
-                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
-                if (!string.IsNullOrEmpty(claimValue))
-                {
-                    accountNames.Add(claimValue);
-                }
+            claimType = Constant.UserAttribute.StorageAccount1Key;
+            string storageAccountKey = AuthToken.GetClaimValue(_authToken, claimType);
 
-                claimType = Constant.UserAttribute.StorageAccount3Name;
-                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
-                if (!string.IsNullOrEmpty(claimValue))
-                {
-                    accountNames.Add(claimValue);
-                }
+            storageAccounts.Add(storageAccountName, storageAccountKey);
 
-                return accountNames.ToArray();
-            }
-        }
+            claimType = Constant.UserAttribute.StorageAccount2Name;
+            storageAccountName = AuthToken.GetClaimValue(_authToken, claimType);
 
-        public string[] StorageAccountKeys
-        {
-            get
-            {
-                List<string> accountKeys = new List<string>();
+            claimType = Constant.UserAttribute.StorageAccount2Key;
+            storageAccountKey = AuthToken.GetClaimValue(_authToken, claimType);
 
-                string claimType = Constant.UserAttribute.StorageAccount1Key;
-                string claimValue = AuthToken.GetClaimValue(_authToken, claimType);
-                if (!string.IsNullOrEmpty(claimValue))
-                {
-                    accountKeys.Add(claimValue);
-                }
+            storageAccounts.Add(storageAccountName, storageAccountKey);
 
-                claimType = Constant.UserAttribute.StorageAccount2Key;
-                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
-                if (!string.IsNullOrEmpty(claimValue))
-                {
-                    accountKeys.Add(claimValue);
-                }
+            claimType = Constant.UserAttribute.StorageAccount3Name;
+            storageAccountName = AuthToken.GetClaimValue(_authToken, claimType);
 
-                claimType = Constant.UserAttribute.StorageAccount3Key;
-                claimValue = AuthToken.GetClaimValue(_authToken, claimType);
-                if (!string.IsNullOrEmpty(claimValue))
-                {
-                    accountKeys.Add(claimValue);
-                }
+            claimType = Constant.UserAttribute.StorageAccount3Key;
+            storageAccountKey = AuthToken.GetClaimValue(_authToken, claimType);
 
-                return accountKeys.ToArray();
-            }
+            storageAccounts.Add(storageAccountName, storageAccountKey);
+
+            return storageAccounts;
         }
     }
 }

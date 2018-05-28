@@ -1,9 +1,6 @@
-using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -23,12 +20,9 @@ namespace AzureSkyMedia.FunctionApp
             string notificationMessage = await request.Content.ReadAsStringAsync();
             log.Info($"Notification Message: {notificationMessage}");
 
-            IEnumerable<KeyValuePair<string, string>> urlParameters = request.GetQueryNameValuePairs();
-            string indexId = urlParameters.SingleOrDefault(q => string.Equals(q.Key, "id", StringComparison.OrdinalIgnoreCase)).Value;
-            log.Info($"Index Id: {indexId}");
-
-            if (!string.IsNullOrEmpty(indexId))
+            if (request.Properties.ContainsKey("id"))
             {
+                string indexId = request.Properties["id"].ToString();
                 MediaPublish mediaPublish = EnqueuePublish(indexId);
                 log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
             }

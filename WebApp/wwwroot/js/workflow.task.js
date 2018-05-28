@@ -275,12 +275,12 @@ function SetJobTaskInputs(taskNumber) {
         min: 250,
         max: 1000
     });
-    $("#taskOptions" + taskNumber).multiselect({
-        noneSelectedText: "0 of 3 Job Task Options",
-        selectedText: "# of 3 Job Task Options",
-        classes: "multiSelectOptions jobTaskOptions",
-        header: false
-    });
+    //$("#taskOptions" + taskNumber).multiselect({
+    //    noneSelectedText: "0 of 3 Job Task Options",
+    //    selectedText: "# of 3 Job Task Options",
+    //    classes: "multiSelectOptions jobTaskOptions",
+    //    header: false
+    //});
 }
 function ClearJobTaskWidgets(taskNumber) {
     $("#encoderThumbnailGenerationSpriteColumns" + taskNumber).spinner("destroy");
