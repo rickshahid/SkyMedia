@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
+
+using Microsoft.Rest.Azure;
+using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
 
@@ -9,6 +12,16 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        public Transform CreateTransform(string transformName, EncoderNamedPreset encoderPreset)
+        {
+            BuiltInStandardEncoderPreset transformPreset = new BuiltInStandardEncoderPreset(encoderPreset);
+            TransformOutput transformOutput = new TransformOutput(transformPreset);
+            List<TransformOutput> transformOutputs = new List<TransformOutput>() { transformOutput };
+            Task<AzureOperationResponse<Transform>> createTask = _media.Transforms.CreateOrUpdateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputs);
+            AzureOperationResponse<Transform> createResponse = createTask.Result;
+            return createResponse.Body;
+        }
+
         //private static ITask[] GetJobTasks(IJob job, string[] processorIds)
         //{
         //    List<ITask> jobTasks = new List<ITask>();

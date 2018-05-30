@@ -201,6 +201,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string Models = @"\Models\";
             public const string Presets = @"ProcessorPreset\";
+            public const string PredefinedPrefix = "Predefined_";
 
             public struct IdPrefix
             {
@@ -283,8 +284,15 @@ namespace AzureSkyMedia.PlatformServices
                 public const string ReadWritePolicyName = "Default Read Write Policy";
             }
 
+            public struct Transform
+            {
+                public const string PresetAdaptiveStreaming = "Standard Encoder Adaptive Streaming";
+            }
+
             public struct Job
             {
+                public const string EncoderOutputAssetSuffix = " (MBR)";
+
                 public const string MultipleInputAssets = "Multiple Input Assets";
                 public const string NotificationEndpointName = "Job Notification Web Hook";
             }

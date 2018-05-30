@@ -14,7 +14,7 @@ namespace AzureSkyMedia.PlatformServices
         StreamingLocator,
         StreamingFilter,
         LiveEvent,
-        LiveOutput
+        LiveEventOutput
     }
 
     public enum MediaProcessor

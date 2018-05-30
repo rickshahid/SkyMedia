@@ -7,9 +7,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Workflow
     {
-        private static string GetAssetName(string uploadAssetName, string fileName)
+        private static string GetAssetName(string assetName, string fileName)
         {
-            string assetName = uploadAssetName;
             if (string.IsNullOrEmpty(assetName))
             {
                 assetName = Path.GetFileNameWithoutExtension(fileName);
@@ -17,23 +16,23 @@ namespace AzureSkyMedia.PlatformServices
             return assetName;
         }
 
-        public static Asset[] CreateAssets(string authToken, MediaClient mediaClient, string storageAccount, bool storageEncryption,
-                                           string uploadAssetName, bool multipleFileAsset, string[] fileNames)
+        public static Asset[] CreateAssets(string authToken, MediaClient mediaClient, string storageAccount, string assetName,
+                                           string description, string alternateId, bool multipleFileAsset, string[] fileNames)
         {
             List<Asset> assets = new List<Asset>();
-            string sourceContainer = Constant.Storage.Blob.Container.FileUpload;
+            string blobContainer = Constant.Storage.Blob.Container.FileUpload;
             if (multipleFileAsset)
             {
-                string assetName = GetAssetName(uploadAssetName, fileNames[0]);
-                Asset asset = mediaClient.CreateAsset(assetName, storageAccount, storageEncryption, sourceContainer, fileNames);
+                assetName = GetAssetName(assetName, fileNames[0]);
+                Asset asset = mediaClient.CreateAsset(storageAccount, assetName, description, alternateId, blobContainer, fileNames);
                 assets.Add(asset);
             }
             else
             {
                 foreach (string fileName in fileNames)
                 {
-                    string assetName = GetAssetName(uploadAssetName, fileName);
-                    Asset asset = mediaClient.CreateAsset(assetName, storageAccount, storageEncryption, sourceContainer, new string[] { fileName });
+                    assetName = GetAssetName(assetName, fileName);
+                    Asset asset = mediaClient.CreateAsset(storageAccount, assetName, description, alternateId, blobContainer, new string[] { fileName });
                     assets.Add(asset);
                 }
             }

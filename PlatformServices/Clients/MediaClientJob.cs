@@ -1,9 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+using Microsoft.Rest.Azure;
+using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        public Job CreateJob(string transformName, string jobName, JobInput jobInput, string outputAssetName)
+        {
+            if (string.IsNullOrEmpty(jobName))
+            {
+                jobName = Guid.NewGuid().ToString();
+            }
+            JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
+            Job job = new Job()
+            {
+                Input = jobInput,
+                Outputs = new List<JobOutput>() { outputAsset }
+            };
+            Task<AzureOperationResponse<Job>> createTask = _media.Jobs.CreateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName, job);
+            AzureOperationResponse<Job> createResponse = createTask.Result;
+            return createResponse.Body;
+        }
+
         //private void SetProcessorUnits(IJob job, ReservedUnitType nodeType, bool newJob)
         //{
         //    int unitCount = job.Tasks.Count;

@@ -28,30 +28,46 @@ namespace AzureSkyMedia.PlatformServices
             storageAccounts = storageAccounts.Where(s => s.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
             StorageAccount storageAccount = storageAccounts.SingleOrDefault();
 
-            string accountType = "N/A";
-            string replicationType = "N/A";
+            string accountInfo = accountName;
             if (storageAccount != null)
             {
-                switch (storageAccount.Kind)
+                string accountType = "N/A";
+                if (storageAccount.Kind.HasValue)
                 {
-                    case Kind.Storage:
-                        accountType = "General v1";
-                        break;
-                    case Kind.StorageV2:
-                        accountType = "General v2";
-                        break;
-                    case Kind.BlobStorage:
-                        accountType = string.Concat("Blob ", storageAccount.AccessTier.ToString());
-                        break;
+                    switch (storageAccount.Kind.Value)
+                    {
+                        case Kind.Storage:
+                            accountType = "General v1";
+                            break;
+                        case Kind.StorageV2:
+                            accountType = "General v2";
+                            break;
+                        case Kind.BlobStorage:
+                            accountType = "Blob";
+                            if (storageAccount.AccessTier.HasValue)
+                            {
+                                accountType = string.Concat(accountType, " ", storageAccount.AccessTier.Value.ToString());
+                            }
+                            break;
+                    }
                 }
-                replicationType = storageAccount.Sku.Name.ToString();
-                replicationType = Regex.Replace(replicationType, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
-                replicationType = string.Concat(replicationType, " (", storageAccount.PrimaryLocation, ")");
-            }
 
-            string accountInfo = string.Concat("Account: ", accountName);
-            accountInfo = string.Concat(accountInfo, ", Type: ", accountType);
-            return string.Concat(accountInfo, ", Replication: ", replicationType);
+                string accountEncryption = "Not Enabled";
+                if (storageAccount.Encryption.Services.Blob.Enabled.HasValue && storageAccount.Encryption.Services.Blob.Enabled.Value)
+                {
+                    accountEncryption = "Enabled";
+                }
+
+                string accountReplication = storageAccount.Sku.Name.ToString();
+                accountReplication = Regex.Replace(accountReplication, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
+
+                accountInfo = string.Concat(accountInfo, " (Type: ", accountType);
+                accountInfo = string.Concat(accountInfo, ", Encryption: ", accountEncryption);
+                accountInfo = string.Concat(accountInfo, ", Replication: ", accountReplication);
+                accountInfo = string.Concat(accountInfo, ", Primary: ", storageAccount.PrimaryLocation.ToUpperInvariant());
+                accountInfo = string.Concat(accountInfo, ", Secondary: ", string.IsNullOrEmpty(storageAccount.SecondaryLocation) ? "N/A" : storageAccount.SecondaryLocation.ToUpperInvariant(), ")");
+            }
+            return accountInfo;
         }
 
         public static Dictionary<string, string> GetAccounts(string authToken)

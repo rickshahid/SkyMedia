@@ -18,12 +18,11 @@
             }
             $("#accountInventory").html(innerHtml);
         }
-        function DeleteEntities(allEntities, liveChannels) {
+        function DeleteEntities(allEntities, liveOnly) {
             SetCursor(true);
             $.post("/account/deleteEntities",
                 {
-                    allEntities: allEntities,
-                    liveChannels: liveChannels
+                    liveOnly: liveOnly
                 },
                 function () {
                     SetCursor(false);
@@ -36,15 +35,11 @@
             var message = "Which set of entities do you want permanently deleted from your media account?";
             var buttons = {
                 "All Entities": function () {
-                    DeleteEntities(true, false);
+                    DeleteEntities(false);
                     $(this).dialog("close");
                 },
-                "Child Assets": function () {
-                    DeleteEntities(false, false);
-                    $(this).dialog("close");
-                },
-                "Live Channels": function () {
-                    DeleteEntities(false, true);
+                "Live Only": function () {
+                    DeleteEntities(true);
                     $(this).dialog("close");
                 },
                 Cancel: function () {

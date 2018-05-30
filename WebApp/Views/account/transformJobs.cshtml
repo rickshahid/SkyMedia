@@ -1,21 +1,19 @@
-﻿@{
-    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
-}
-
-@section head {
+﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["accessPolicies"]);
+            var rows = @Json.Serialize(ViewData["transformJobs"]);
             var columns = [
-                {
-                    name: "id",
-                    hidden: true
-                },
                 {
                     width: 500,
                     name: "name",
-                    label: "Access Policy Name",
+                    label: "Transform Job Name",
                     formatter: FormatColumn,
+                    align: "center"
+                },
+                {
+                    width: 150,
+                    name: "properties.state",
+                    label: "Job State",
                     align: "center"
                 },
                 {
@@ -25,13 +23,13 @@
                     align: "center"
                 }
             ];
-            LoadGrid("accessPolicies", columns, rows, "@storageCdnUrl", "access policy");
+            LoadGrid("transformJobs", columns, rows, "@ViewData["storageCdnUrl"]", "transform job");
         })
     </script>
 }
 
 @section title {
-    Access Policies
+    Transform Jobs
 }
 
-<table id="accessPolicies"></table>
+<table id="transformJobs"></table>

@@ -1,12 +1,12 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["streamingFilters"]);
+            var rows = @Json.Serialize(ViewData["streamingPolicies"]);
             var columns = [
                 {
                     width: 500,
                     name: "name",
-                    label: "Streaming Filter Name",
+                    label: "Streaming Policy Name",
                     formatter: FormatColumn,
                     align: "center"
                 },
@@ -17,13 +17,13 @@
                     align: "center"
                 }
             ];
-            LoadGrid("streamingFilters", columns, rows, "@ViewData["storageCdnUrl"]", "streaming filter");
+            LoadGrid("streamingPolicies", columns, rows, "@ViewData["storageCdnUrl"]", "streaming policy");
         })
     </script>
 }
 
 @section title {
-    Streaming Filters
+    Streaming Policies
 }
 
-<table id="streamingFilters"></table>
+<table id="streamingPolicies"></table>

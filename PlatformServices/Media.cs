@@ -11,21 +11,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
-        //private static bool FilterByStreaming(ILocator locator)
-        //{
-        //    return locator.Type == LocatorType.OnDemandOrigin;
-        //}
-
-        //private static int OrderByDate(ILocator leftItem, ILocator rightItem)
-        //{
-        //    return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
-        //}
-
-        //private static int OrderByProcessor(MediaInsightSource leftItem, MediaInsightSource rightItem)
-        //{
-        //    return leftItem.MediaProcessor.CompareTo(rightItem.MediaProcessor);
-        //}
-
         private static void AddMediaStream(List<MediaStream> mediaStreams, string settingStreamName, string settingSourceUrl, string settingTextTrack)
         {
             string streamName = AppSetting.GetValue(settingStreamName);
@@ -39,10 +24,39 @@ namespace AzureSkyMedia.PlatformServices
                     Url = sourceUrl,
                     ProtectionInfo = new StreamProtection[] { }
                 },
-                TextTracks = GetTextTracks(textTracks)
+                TextTracks = Track.GetTextTracks(textTracks)
             };
             mediaStreams.Add(mediaStream);
         }
+
+        public static MediaStream[] GetMediaStreams()
+        {
+            List<MediaStream> mediaStreams = new List<MediaStream>();
+
+            string settingKey1 = Constant.AppSettingKey.MediaStream1Name;
+            string settingKey2 = Constant.AppSettingKey.MediaStream1SourceUrl;
+            string settingKey3 = Constant.AppSettingKey.MediaStream1TextTracks;
+            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
+            settingKey1 = Constant.AppSettingKey.MediaStream2Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream2SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream2TextTracks;
+            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
+            settingKey1 = Constant.AppSettingKey.MediaStream3Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream3SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream3TextTracks;
+            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
+            settingKey1 = Constant.AppSettingKey.MediaStream4Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream4SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream4TextTracks;
+            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+
+            return mediaStreams.ToArray();
+        }
+
+
 
         //private static IEnumerable<ILocator> GetMediaLocators(MediaClient mediaClient, string assetName)
         //{
@@ -84,169 +98,21 @@ namespace AzureSkyMedia.PlatformServices
         //    return thumbnailUrls.ToArray();
         //}
 
-        private static MediaTrack[] GetTextTracks(string tracks)
-        {
-            List<MediaTrack> textTracks = new List<MediaTrack>();
-            if (!string.IsNullOrEmpty(tracks))
-            {
-                string[] tracksInfo = tracks.Split(Constant.TextDelimiter.Connection);
-                foreach (string trackInfo in tracksInfo)
-                {
-                    string[] track = trackInfo.Split(Constant.TextDelimiter.Application);
-                    MediaTrack textTrack = new MediaTrack()
-                    {
-                        Type = track[0],
-                        Label = track[1],
-                        SourceUrl = track[2]
-                    };
-                    textTracks.Add(textTrack);
-                }
-            }
-            return textTracks.ToArray();
-        }
-
-        //private static MediaTrack[] GetTextTracks(MediaClient mediaClient, VideoAnalyzer videoAnalyzer, IAsset asset)
+        //private static bool FilterByStreaming(ILocator locator)
         //{
-        //    List<MediaTrack> textTracks = new List<MediaTrack>();
-        //    string indexId = VideoAnalyzer.GetIndexId(asset);
-        //    if (!string.IsNullOrEmpty(indexId))
-        //    {
-        //        string webVttUrl = videoAnalyzer.GetWebVttUrl(indexId, null);
-        //        JObject index = videoAnalyzer.GetIndex(indexId, null, false);
-        //        string languageLabel = VideoAnalyzer.GetLanguageLabel(index);
-        //        MediaTrack textTrack = new MediaTrack()
-        //        {
-        //            Type = Constant.Media.Stream.TextTrack.Captions,
-        //            Label = languageLabel,
-        //            SourceUrl = webVttUrl,
-        //        };
-        //        textTracks.Add(textTrack);
-        //    }
-        //    string[] webVttUrls = mediaClient.GetWebVttUrls(asset);
-        //    for (int i = 0; i < webVttUrls.Length; i++)
-        //    {
-        //        string webVttUrl = webVttUrls[i];
-        //        string languageLabel = GetLanguageLabel(webVttUrl);
-        //        if (!string.IsNullOrEmpty(webVttUrl))
-        //        {
-        //            MediaTrack textTrack = new MediaTrack()
-        //            {
-        //                Type = Constant.Media.Stream.TextTrack.Captions,
-        //                Label = languageLabel,
-        //                SourceUrl = webVttUrl,
-        //            };
-        //            textTracks.Add(textTrack);
-        //        }
-        //    }
-        //    return textTracks.ToArray();
+        //    return locator.Type == LocatorType.OnDemandOrigin;
         //}
 
-        //private static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, IAsset asset, bool clipperView, bool filtersOnly)
+        //private static int OrderByDate(ILocator leftItem, ILocator rightItem)
         //{
-        //    List<MediaStream> mediaStreams = new List<MediaStream>();
-
-        //    VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
-
-        //    MediaInsight contentInsight = null;
-        //    List<MediaInsightSource> insightSources = new List<MediaInsightSource>();
-        //    if (!clipperView)
-        //    {
-        //        string indexId = VideoAnalyzer.GetIndexId(asset);
-        //        if (!string.IsNullOrEmpty(indexId))
-        //        {
-        //            MediaInsightSource insightSource = new MediaInsightSource()
-        //            {
-        //                //MediaProcessor = MediaProcessor.VideoAnalyzer,
-        //                OutputId = indexId,
-        //                OutputUrl = videoAnalyzer.GetInsightUrl(indexId, true)
-        //            };
-        //            insightSources.Add(insightSource);
-        //        }
-
-        //        //string[] fileNames = blobClient.GetContainerFiles(asset.Container, Constant.Media.FileExtension.Json);
-        //        //foreach (string fileName in fileNames)
-        //        //{
-        //        //    string[] fileNameInfo = fileName.Split(Constant.TextDelimiter.Identifier);
-        //        //    if (Enum.TryParse(fileNameInfo[0], out MediaProcessor processor) && fileNameInfo.Length == 2)
-        //        //    {
-        //        //        string documentId = fileNameInfo[1].Replace(Constant.Media.FileExtension.Json, string.Empty);
-        //        //        MediaInsightSource insightSource = new MediaInsightSource()
-        //        //        {
-        //        //            MediaProcessor = processor,
-        //        //            OutputId = documentId,
-        //        //        };
-        //        //        insightSources.Add(insightSource);
-        //        //    }
-        //        //}
-        //    }
-        //    if (insightSources.Count > 0)
-        //    {
-        //        insightSources.Sort(OrderByProcessor);
-        //        contentInsight = new MediaInsight()
-        //        {
-        //            Id = asset.AlternateId,
-        //            Sources = insightSources.ToArray()
-        //        };
-        //    }
-
-        //    MediaStream mediaStream = new MediaStream()
-        //    {
-        //        Id = asset.Id,
-        //        Name = asset.Name,
-        //        Type = "asset",
-        //        Source = new StreamSource()
-        //        {
-        //            Url = mediaClient.GetLocatorUrl(asset),
-        //            ProtectionInfo = mediaClient.GetStreamProtections(authToken, asset)
-        //        },
-        //        ThumbnailUrls = GetThumbnailUrls(mediaClient, asset),
-        //        TextTracks = GetTextTracks(mediaClient, videoAnalyzer, asset),
-        //        ContentInsight = contentInsight
-        //    };
-        //    if (!filtersOnly)
-        //    {
-        //        mediaStreams.Add(mediaStream);
-        //    }
-
-        //    foreach (IStreamingAssetFilter assetFilter in asset.AssetFilters)
-        //    {
-        //        MediaStream filteredStream = mediaStream.DeepCopy();
-        //        filteredStream.Id = assetFilter.Id;
-        //        filteredStream.Name = string.Concat(mediaStream.Name, "<br><br>+ ", assetFilter.Name);
-        //        filteredStream.Type = "filter";
-        //        filteredStream.Source.Url = string.Concat(filteredStream.Source.Url, "(filter=", assetFilter.Name, ")");
-        //        mediaStreams.Add(filteredStream);
-        //    }
-
-        //    return mediaStreams.ToArray();
+        //    return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
         //}
 
-        public static MediaStream[] GetMediaStreams()
-        {
-            List<MediaStream> mediaStreams = new List<MediaStream>();
+        //private static int OrderByProcessor(MediaInsightSource leftItem, MediaInsightSource rightItem)
+        //{
+        //    return leftItem.MediaProcessor.CompareTo(rightItem.MediaProcessor);
+        //}
 
-            string settingKey1 = Constant.AppSettingKey.MediaStream1Name;
-            string settingKey2 = Constant.AppSettingKey.MediaStream1SourceUrl;
-            string settingKey3 = Constant.AppSettingKey.MediaStream1TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
-            settingKey1 = Constant.AppSettingKey.MediaStream2Name;
-            settingKey2 = Constant.AppSettingKey.MediaStream2SourceUrl;
-            settingKey3 = Constant.AppSettingKey.MediaStream2TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
-            settingKey1 = Constant.AppSettingKey.MediaStream3Name;
-            settingKey2 = Constant.AppSettingKey.MediaStream3SourceUrl;
-            settingKey3 = Constant.AppSettingKey.MediaStream3TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
-            settingKey1 = Constant.AppSettingKey.MediaStream4Name;
-            settingKey2 = Constant.AppSettingKey.MediaStream4SourceUrl;
-            settingKey3 = Constant.AppSettingKey.MediaStream4TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
-
-            return mediaStreams.ToArray();
-        }
 
         public static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, int streamNumber, out int streamOffset, out int streamIndex, out bool endOfStreams)
         {
@@ -327,59 +193,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return streamingEnabled;
-        }
-
-        public static Dictionary<string, string> GetLanguages(bool videoIndexer)
-        {
-            Dictionary<string, string> languages = new Dictionary<string, string>();
-            if (videoIndexer)
-            {
-                languages.Add("English", "en-us");
-                languages.Add("Spanish", "es-es");
-            }
-            else
-            {
-                languages.Add("English (US)", "enUS");
-                languages.Add("English (British)", "enGB");
-                languages.Add("Spanish", "esES");
-                languages.Add("Spanish (Mexican)", "esMX");
-            }
-            languages.Add("Arabic (Egyptian)", videoIndexer ? "ar-eg" : "arEG");
-            languages.Add("Chinese (Simplified)", videoIndexer ? "zh-hans" : "zhCN");
-            languages.Add("French", videoIndexer ? "fr-fr" : "frFR");
-            languages.Add("German", videoIndexer ? "de-de" : "deDE");
-            languages.Add("Italian", videoIndexer ? "it-it" : "itIT");
-            languages.Add("Japanese", videoIndexer ? "ja-jp" : "jaJP");
-            languages.Add("Portuguese", videoIndexer ? "pt-br" : "ptBR");
-            languages.Add("Russian", videoIndexer ? "ru-ru" : "ruRU");
-            return languages;
-        }
-
-        public static string GetLanguageId(string taskConfig)
-        {
-            JObject processorConfig = JObject.Parse(taskConfig);
-            return processorConfig["Features"][0]["Options"]["Language"].ToString();
-        }
-
-        public static string GetLanguageLabel(string webVttUrl)
-        {
-            string languageId = Path.GetFileNameWithoutExtension(webVttUrl);
-            languageId = languageId.Substring(languageId.Length - 4);
-            return GetLanguageLabel(languageId, false);
-        }
-
-        public static string GetLanguageLabel(string languageId, bool videoIndexer)
-        {
-            string languageLabel = string.Empty;
-            Dictionary<string, string> languages = GetLanguages(videoIndexer);
-            foreach (KeyValuePair<string, string> language in languages)
-            {
-                if (string.Equals(language.Key, languageId, StringComparison.OrdinalIgnoreCase))
-                {
-                    languageLabel = language.Value;
-                }
-            }
-            return languageLabel;
         }
     }
 }

@@ -103,20 +103,30 @@ function FormatColumn(value, grid, row) {
     return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "')\">" + displayValue + "</span>";
 }
 function FormatDelete(value, grid, row) {
-    var itemName = row.name == null ? row.id : row.name;
-    var onClick = "DeleteEntity('" + grid.gid + "','" + row.id + "','" + encodeURIComponent(itemName) + "')";
+    var entityName = row.name;
+    var parentEntityName = GetParentEntityName(row.id);
+    var onClick = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(parentEntityName) + "')";
     var buttonHtml = "<button class='siteButton' onclick=" + onClick + ">";
     return buttonHtml + "<img src='" + _storageCdnUrl + "/MediaDelete.png'></button>";
 }
-function DeleteEntity(entityGrid, entityId, entityName) {
-    var title = "Confirm Permanent Delete";
-    var message = "Are you sure you want to permanently delete the '" + entityName + "' " + _accountEntityType + "?";
+function GetParentEntityName(childEntityId) {
+    var parentEntityName = "";
+    var idInfo = childEntityId.split("/");
+    if (idInfo.length > 12) {
+        parentEntityName = idInfo[10];
+    }
+    return parentEntityName;
+}
+function DeleteEntity(entityGrid, entityName, parentEntityName) {
+    var title = "Confirm Delete";
+    var message = "Are you sure you want to delete the '" + entityName + "' " + _accountEntityType + "?";
     var onConfirm = function () {
         SetCursor(true);
         $.post("/account/deleteEntity",
             {
-                "entityGrid": entityGrid,
-                "entityId": entityId
+                entityGrid: entityGrid,
+                entityName: entityName,
+                parentEntityName: parentEntityName
             },
             function () {
                 SetCursor(false);

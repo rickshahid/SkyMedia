@@ -66,7 +66,7 @@ function ValidWorkflowTasks(validInput) {
             }
             taskNumber = taskNumber + 1;
         }
-    } while (mediaProcessor != null);
+    } while (mediaProcessor != null)
     return validInput;
 }
 function ValidWorkflow(uploadView, saveWorkflow) {
@@ -111,25 +111,6 @@ function GetAssetIds() {
         assetIds = $("#mediaAssets").jstree(true).get_checked();
     }
     return assetIds;
-}
-function CreateAssets() {
-    //var job = GetJob();
-    var fileNames = GetFileNames();
-    SetCursor(true);
-    $.post("/asset/create",
-        {
-            storageAccount: $("#storageAccount").val(),
-            storageEncryption: $("#storageEncryption").prop("checked"),
-            uploadAssetName: $("#uploadAssetName").val(),
-            multipleFileAsset: $("#multipleFileAsset").prop("checked"),
-            fileNames: fileNames
-            //mediaJob: job
-        },
-        function (result) {
-            SetCursor(false);
-            DisplayWorkflow(result);
-        }
-    );
 }
 function StartWorkflow(saveWorkflow) {
     var job = GetJob();

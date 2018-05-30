@@ -1,31 +1,41 @@
-﻿@{
-    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
-}
-
-@section head {
+﻿@section head {
     <script type="text/javascript">
         $(function () {
             var rows = @Json.Serialize(ViewData["assets"]);
             var columns = [
                 {
-                    name: "id",
-                    hidden: true
-                },
-                {
-                    width: 500,
+                    width: 250,
                     name: "name",
                     label: "Asset Name",
                     formatter: FormatColumn,
                     align: "center"
                 },
                 {
+                    width: 350,
+                    name: "properties.description",
+                    label: "Description",
+                    align: "center"
+                },
+                {
+                    width: 250,
+                    name: "properties.created",
+                    label: "Created",
+                    align: "center"
+                },
+                {
+                    width: 250,
+                    name: "properties.lastModified",
+                    label: "Last Modified",
+                    align: "center"
+                },
+                {
                     width: 100,
-                    label: "Delete",
+                    label: "Actions",
                     formatter: FormatDelete,
                     align: "center"
                 }
             ];
-            LoadGrid("assets", columns, rows, "@storageCdnUrl", "asset");
+            LoadGrid("assets", columns, rows, "@ViewData["storageCdnUrl"]", "asset");
         })
     </script>
 }

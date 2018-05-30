@@ -97,7 +97,7 @@ body {
 
 .qtip {
     border-radius: 20px;
-    max-width: 800px;
+    max-width: 1080px;
     padding: 5px;
 }
 
@@ -363,11 +363,11 @@ body {
 }
 
 .plupload_progress {
-    margin-right: 55px;
+    margin-right: 70px;
 }
 
 .plupload_upload_status {
-    padding-left: 18px !important;
+    padding-left: 30px !important;
 }
 
 .mediaUpload {
@@ -378,25 +378,10 @@ body {
     padding: 5px;
 }
 
-.mediaUploadLeft {
-    margin-left: 0px;
-    margin-right: 0px;
-}
-
-.mediaUploadRight {
-    margin-left: 14px;
-    margin-right: 0px;
-}
-
 .mediaUploadMessage {
     position: relative;
     bottom: 32px;
     left: 300px;
-}
-
-.mediaStorage {
-    font-weight: bold;
-    width: 100%;
 }
 
 .mediaWorkflow {
@@ -526,9 +511,41 @@ body {
     vertical-align: top;
 }
 
-.uploadAssetName {
+.storageAccount {
     font-weight: bold;
-    width: 250px;
+    overflow: hidden;
+    width: 600px;
+}
+
+.assetName {
+    font-weight: bold;
+    width: 175px;
+}
+
+.assetDescription {
+    font-weight: bold;
+    width: 214px;
+}
+
+.assetAlternateId {
+    font-weight: bold;
+    width: 175px;
+}
+
+.mediaUploadOptions {
+    text-align: center;
+}
+
+.standardEncoderAsset {
+    margin-left: 60px;
+}
+
+.mediaEntitiesMessage {
+    text-align: center;
+    font-size: x-large;
+    font-style: italic;
+    font-weight: bold;
+    margin-top: 30px;
 }
 
 .outputAssetName {

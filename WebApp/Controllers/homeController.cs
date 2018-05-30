@@ -61,7 +61,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 };
                 spokenLanguages.Add(spokenLanguage);
             }
-            Dictionary<string, string> languages = Media.GetLanguages(videoIndexer);
+            Dictionary<string, string> languages = Language.GetLanguages(videoIndexer);
             foreach (KeyValuePair<string, string> language in languages)
             {
                 SelectListItem spokenLanguage = new SelectListItem()

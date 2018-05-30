@@ -1,20 +1,12 @@
-﻿@{
-    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
-}
-
-@section head {
+﻿@section head {
     <script type="text/javascript">
         $(function () {
             var rows = @Json.Serialize(ViewData["streamingLocators"]);
             var columns = [
                 {
-                    name: "id",
-                    hidden: true
-                },
-                {
                     width: 500,
                     name: "name",
-                    label: "Locator Name",
+                    label: "Streaming Locator Name",
                     formatter: FormatColumn,
                     align: "center"
                 },
@@ -25,7 +17,7 @@
                     align: "center"
                 }
             ];
-            LoadGrid("streamingLocators", columns, rows, "@storageCdnUrl", "locator");
+            LoadGrid("streamingLocators", columns, rows, "@ViewData["storageCdnUrl"]", "streaming locator");
         })
     </script>
 }

@@ -1,20 +1,12 @@
-﻿@{
-    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
-}
-
-@section head {
+﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["deliveryPolicies"]);
+            var rows = @Json.Serialize(ViewData["transforms"]);
             var columns = [
-                {
-                    name: "id",
-                    hidden: true
-                },
                 {
                     width: 500,
                     name: "name",
-                    label: "Delivery Policy Name",
+                    label: "Transform Name",
                     formatter: FormatColumn,
                     align: "center"
                 },
@@ -25,13 +17,13 @@
                     align: "center"
                 }
             ];
-            LoadGrid("deliveryPolicies", columns, rows, "@storageCdnUrl", "delivery policy");
+            LoadGrid("transforms", columns, rows, "@ViewData["storageCdnUrl"]", "transform");
         })
     </script>
 }
 
 @section title {
-    Delivery Policies
+    Transforms
 }
 
-<table id="deliveryPolicies"></table>
+<table id="transforms"></table>
