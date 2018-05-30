@@ -6,7 +6,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Account
     {
-        //    }
         private static void DeleteEntities<T>(MediaClient mediaClient, MediaEntity entityType) where T : Resource
         {
             T[] entities = mediaClient.GetAllEntities<T>(entityType);
