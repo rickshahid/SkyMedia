@@ -47,11 +47,17 @@ To deploy the parameterized solution sample within your Azure subscription, clic
 
 The following Azure platform services were leveraged to create this sample media application:
 
-* **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
-
 * **Active Directory** - http://azure.microsoft.com/services/active-directory/
 
 * **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
+
+* **App Insights** - http://azure.microsoft.com/services/application-insights/
+
+* **App Service** - http://azure.microsoft.com/services/app-service/
+
+* **Function App** - http://azure.microsoft.com/services/functions/
+
+* **Event Grid** - http://azure.microsoft.com/services/event-grid/
 
 * **Storage** - http://azure.microsoft.com/services/storage/
 
@@ -69,17 +75,13 @@ The following Azure platform services were leveraged to create this sample media
 
   * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
 
+* **Search** - http://azure.microsoft.com/services/search/
+
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
-* **App Insights** - http://azure.microsoft.com/services/application-insights/
-
-* **App Service** - http://azure.microsoft.com/services/app-service/
-
-* **Function App** - http://azure.microsoft.com/services/functions/
-
-* **Search** - http://azure.microsoft.com/services/search/
+* **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
 
 If you have any issues or suggestions, please let me know.
 
