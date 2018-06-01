@@ -47,7 +47,7 @@ To deploy the parameterized solution sample within your Azure subscription, clic
 
 The following Azure platform services were leveraged to create this sample media application:
 
-* **Active Directory B2C** - http://azure.microsoft.com/services/active-directory-b2c/
+* **Active Directory (B2C)** - http://azure.microsoft.com/services/active-directory-b2c/
 
 * **App Insights** - http://azure.microsoft.com/services/application-insights/
 
