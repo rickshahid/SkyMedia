@@ -53,7 +53,7 @@
                         }
                         message = message + "<br><br>" + entity["properties.created"];
                     }
-                    $("#mediaEntitiesMessage").html(message);
+                    $("#entitiesMessage").html(message);
                 }
             );
         }
@@ -69,17 +69,17 @@
                     };
                 },
                 StateChanged: function (uploader) {
-                    var busy = false;
+                    var isBusy = false;
                     if (uploader.state == plupload.STARTED) {
                         _uploadStartTime = new Date();
-                        busy = true;
+                        isBusy = true;
                     }
-                    SetCursor(busy);
+                    SetCursor(isBusy);
                 },
                 UploadComplete: function (uploader, files) {
                     if (uploader.total.failed == 0) {
                         var uploadTime = GetUploadTime();
-                        $("#mediaUploadMessage").text("Upload Elapsed Time: " + uploadTime);
+                        $("#uploadMessage").text("Upload Elapsed Time: " + uploadTime);
                         CreateAsset();
                     }
                 },
@@ -149,8 +149,7 @@
 </table>
 
 <div id="fileUploader"></div>
-
-<div id="mediaUploadMessage" class="mediaUploadMessage">
+<div id="uploadMessage" class="uploadMessage">
     <br>
 </div>
 
@@ -165,4 +164,4 @@
     </span>
 </div>
 
-<div id="mediaEntitiesMessage" class="mediaEntitiesMessage"></div>
+<div id="entitiesMessage" class="entitiesMessage"></div>

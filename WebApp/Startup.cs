@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -17,14 +16,11 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 using AzureSkyMedia.PlatformServices;
-using AzureSkyMedia.WebApp.Controllers;
 
 namespace AzureSkyMedia.WebApp
 {
     public class Startup
     {
-        private static string _defaultDirectoryId;
-
         public Startup(IConfiguration configuration)
         {
             string appDirectory = Directory.GetCurrentDirectory();
@@ -56,13 +52,24 @@ namespace AzureSkyMedia.WebApp
             });
             authBuilder.AddOpenIdConnect(options =>
             {
-                _defaultDirectoryId = homeController.GetDirectoryId(null);
-
                 string settingKey = Constant.AppSettingKey.DirectoryTenantId;
-                settingKey = string.Format(settingKey, _defaultDirectoryId);
-                string directoryTenantId = AppSetting.GetValue(settingKey);
+                string tenantId = AppSetting.GetValue(settingKey);
 
-                SetOpenIdOptions(options, _defaultDirectoryId, directoryTenantId);
+                settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+                string issuerUrl = AppSetting.GetValue(settingKey);
+                issuerUrl = string.Format(issuerUrl, tenantId);
+
+                settingKey = Constant.AppSettingKey.DirectoryDiscoveryPath;
+                string discoveryPath = AppSetting.GetValue(settingKey);
+
+                options.Authority = issuerUrl;
+                options.MetadataAddress = string.Concat(issuerUrl, discoveryPath);
+
+                settingKey = Constant.AppSettingKey.DirectoryClientId;
+                options.ClientId = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.DirectoryClientSecret;
+                options.ClientSecret = AppSetting.GetValue(settingKey);
 
                 options.Events = new OpenIdConnectEvents
                 {
@@ -95,26 +102,10 @@ namespace AzureSkyMedia.WebApp
 
         private static Task OnAuthenticationRedirect(RedirectContext context)
         {
-            string directoryId = homeController.GetDirectoryId(context.Request);
-            if (!string.Equals(directoryId, _defaultDirectoryId, StringComparison.OrdinalIgnoreCase))
+            string policyId = GetPolicyId(context);
+            if (!string.IsNullOrEmpty(policyId))
             {
-                string settingKey = Constant.AppSettingKey.DirectoryTenantId;
-                settingKey = string.Format(settingKey, directoryId);
-                string directoryTenantId = AppSetting.GetValue(settingKey);
-
-                SetOpenIdOptions(context.Options, directoryId, directoryTenantId);
-
-                context.ProtocolMessage.IssuerAddress = AuthToken.GetAuthorizeUrl(directoryId, directoryTenantId);
-                context.ProtocolMessage.ClientId = context.Options.ClientId;
-            }
-
-            if (string.Equals(directoryId, Constant.DirectoryService.B2C, StringComparison.OrdinalIgnoreCase))
-            {
-                string policyId = GetPolicyId(context);
-                if (!string.IsNullOrEmpty(policyId))
-                {
-                    context.ProtocolMessage.Parameters.Add("p", policyId);
-                }
+                context.ProtocolMessage.Parameters.Add("p", policyId);
             }
 
             context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("signin-oidc", string.Empty);
@@ -124,20 +115,6 @@ namespace AzureSkyMedia.WebApp
             }
 
             return Task.FromResult(0);
-        }
-
-        private static void SetOpenIdOptions(OpenIdConnectOptions options, string directoryId, string directoryTenantId)
-        {
-            options.Authority = AuthToken.GetIssuerUrl(directoryId, directoryTenantId);
-            options.MetadataAddress = AuthToken.GetDiscoveryUrl(directoryId, directoryTenantId);
-
-            string settingKey = Constant.AppSettingKey.DirectoryClientId;
-            settingKey = string.Format(settingKey, directoryId);
-            options.ClientId = AppSetting.GetValue(settingKey);
-
-            settingKey = Constant.AppSettingKey.DirectoryClientSecret;
-            settingKey = string.Format(settingKey, directoryId);
-            options.ClientSecret = AppSetting.GetValue(settingKey);
         }
 
         private static string GetPolicyId(RedirectContext context)

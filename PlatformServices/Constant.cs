@@ -9,12 +9,6 @@ namespace AzureSkyMedia.PlatformServices
     {
         public const string AppSettings = "appsettings.json";
 
-        public struct DirectoryService
-        {
-            public const string B2B = "B2B";
-            public const string B2C = "B2C";
-        }
-
         public struct TextDelimiter
         {
             public const char Connection = ';';
@@ -46,21 +40,16 @@ namespace AzureSkyMedia.PlatformServices
             public const string AzureResourceManagementEndpointUrl = "ARM.EndpointUrl";
             public const string AzureResourceManagementAudienceUrl = "ARM.AudienceUrl";
 
+            public const string DirectoryTenantId = "Directory.TenantId";
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
-            public const string DirectoryDiscoveryUrl = "Directory.DiscoveryUrl";
+            public const string DirectoryDiscoveryPath = "Directory.DiscoveryPath";
 
-            public const string DirectoryDefaultId = "Directory.DefaultId";
-            public const string DirectoryAuthorityUrl = "Directory.{0}.AuthorityUrl";
+            public const string DirectoryClientId = "Directory.ClientId";
+            public const string DirectoryClientSecret = "Directory.ClientSecret";
 
-            public const string DirectoryTenantId = "Directory.{0}.TenantId";
-            public const string DirectoryTenantDomain = "Directory.{0}.TenantDomain";
-
-            public const string DirectoryClientId = "Directory.{0}.ClientId";
-            public const string DirectoryClientSecret = "Directory.{0}.ClientSecret";
-
-            public const string DirectoryPolicyIdSignUpIn = "Directory.B2C.PolicyId.SignUpIn";
-            public const string DirectoryPolicyIdProfileEdit = "Directory.B2C.PolicyId.ProfileEdit";
-            public const string DirectoryPolicyIdPasswordReset = "Directory.B2C.PolicyId.PasswordReset";
+            public const string DirectoryPolicyIdSignUpIn = "Directory.PolicyId.SignUpIn";
+            public const string DirectoryPolicyIdProfileEdit = "Directory.PolicyId.ProfileEdit";
+            public const string DirectoryPolicyIdPasswordReset = "Directory.PolicyId.PasswordReset";
 
             public const string StorageContentDeliveryEndpointUrl = "Storage.CDN.EndpointUrl";
 
@@ -91,15 +80,12 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaLocatorTunerPageSize = "Media.Locator.TunerPageSize";
             public const string MediaLocatorAutoRenewal = "Media.Locator.AutoRenewal";
 
-            public const string MediaPublishUrl = "Media.Publish.Url";
             public const string MediaPublishQueue = "Media.Publish.Queue";
 
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
 
             public const string MediaClipperVersion = "Media.Clipper.Version";
-
-            public const string MediaIndexerServiceUrl = "Media.Indexer.ServiceUrl";
 
             public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
@@ -124,11 +110,6 @@ namespace AzureSkyMedia.PlatformServices
         public struct HttpCookie
         {
             public const string UserAuthToken = "UserAuthToken";
-        }
-
-        public struct HttpQueryString
-        {
-            public const string ActiveDirectory = "aad";
         }
 
         public struct UserAttribute

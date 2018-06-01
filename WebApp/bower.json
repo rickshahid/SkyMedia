@@ -5,7 +5,6 @@
     "jqgrid": "5.3.1",
     "jquery": "3.3.1",
     "jquery-cookie": "1.4.1",
-    "jquery.scrollto": "2.1.2",
     "jquery-ui": "1.12.1"
   }
 }

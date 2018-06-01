@@ -1,21 +1,17 @@
 ﻿var _authToken, _mediaStreams, _streamNumber, _streamIndex, _encoderConfig, _assetIds;
-function SetCursor(busy) {
-    if (busy) {
+function SetCursor(isBusy) {
+    if (isBusy) {
         $("body").css("cursor", "wait");
     } else {
         $("body").css("cursor", "auto");
     }
 }
-function SetLayout(b2b) {
+function SetLayout() {
     CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
     CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>News Blog");
     CreateTipBottom("botService", "Azure Bot Service");
-    if (b2b) {
-        CreateTipBottom("userDirectory", "Azure<br><br>Active Directory");
-    } else {
-        CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
-    }
+    CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
     CreateTipBottom("userProfileEdit", "Azure Sky Media<br><br>User Profile Edit");
     CreateTipBottom("userSignIn", "Azure Sky Media<br><br>User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br><br>User Sign Out");

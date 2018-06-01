@@ -8,49 +8,25 @@
         "description": "Name of the global services resource group."
       }
     },
-    "directoryB2bClientId": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2B client application identifier (production web app)."
-      }
-    },
-    "directoryB2bClientSecret": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2B client application secret (production web app)."
-      }
-    },
-    "directoryB2bClientIdStaging": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2B client application identifier (staging web app)."
-      }
-    },
-    "directoryB2bClientSecretStaging": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2B client application secret (staging web app)."
-      }
-    },
-    "directoryB2cClientId": {
+    "directoryClientId": {
       "type": "string",
       "metadata": {
         "description": "Azure Active Directory B2C client application identifier (production web app)."
       }
     },
-    "directoryB2cClientSecret": {
+    "directoryClientSecret": {
       "type": "string",
       "metadata": {
         "description": "Azure Active Directory B2C client application secret (production web app)."
       }
     },
-    "directoryB2cClientIdStaging": {
+    "directoryClientIdStaging": {
       "type": "string",
       "metadata": {
         "description": "Azure Active Directory B2C client application identifier (staging web app)."
       }
     },
-    "directoryB2cClientSecretStaging": {
+    "directoryClientSecretStaging": {
       "type": "string",
       "metadata": {
         "description": "Azure Active Directory B2C client application secret (staging web app)."
@@ -185,20 +161,12 @@
               "value": "[parameters('appRegionName')]"
             },
             {
-              "name": "Directory.B2B.ClientId",
-              "value": "[parameters('directoryB2bClientId')]"
+              "name": "Directory.ClientId",
+              "value": "[parameters('directoryClientId')]"
             },
             {
-              "name": "Directory.B2B.ClientSecret",
-              "value": "[parameters('directoryB2bClientSecret')]"
-            },
-            {
-              "name": "Directory.B2C.ClientId",
-              "value": "[parameters('directoryB2cClientId')]"
-            },
-            {
-              "name": "Directory.B2C.ClientSecret",
-              "value": "[parameters('directoryB2cClientSecret')]"
+              "name": "Directory.ClientSecret",
+              "value": "[parameters('directoryClientSecret')]"
             },
             {
               "name": "Storage",
@@ -228,10 +196,8 @@
             "appSettingNames": [
               "APPINSIGHTS_INSTRUMENTATIONKEY",
               "App.RegionName",
-              "Directory.B2B.ClientId",
-              "Directory.B2B.ClientSecret",
-              "Directory.B2C.ClientId",
-              "Directory.B2C.ClientSecret"
+              "Directory.ClientId",
+              "Directory.ClientSecret"
             ]
           }
         },
@@ -251,20 +217,12 @@
                   "value": "[concat(parameters('appRegionName'), ' - Staging')]"
                 },
                 {
-                  "name": "Directory.B2B.ClientId",
-                  "value": "[parameters('directoryB2bClientIdStaging')]"
+                  "name": "Directory.ClientId",
+                  "value": "[parameters('directoryClientIdStaging')]"
                 },
                 {
-                  "name": "Directory.B2B.ClientSecret",
-                  "value": "[parameters('directoryB2bClientSecretStaging')]"
-                },
-                {
-                  "name": "Directory.B2C.ClientId",
-                  "value": "[parameters('directoryB2cClientIdStaging')]"
-                },
-                {
-                  "name": "Directory.B2C.ClientSecret",
-                  "value": "[parameters('directoryB2cClientSecretStaging')]"
+                  "name": "Directory.ClientSecret",
+                  "value": "[parameters('directoryClientSecretStaging')]"
                 },
                 {
                   "name": "Storage",

@@ -34,42 +34,6 @@ namespace AzureSkyMedia.PlatformServices
             return claimValue;
         }
 
-        public static string GetIssuerUrl(string directoryId, string directoryTenant)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-            string issuerUrl = AppSetting.GetValue(settingKey);
-            issuerUrl = string.Format(issuerUrl, directoryTenant);
-            if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
-            {
-                issuerUrl = issuerUrl.Replace("/v2.0", string.Empty);
-            }
-            return issuerUrl;
-        }
-
-        public static string GetDiscoveryUrl(string directoryId, string directoryTenantId)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryDiscoveryUrl;
-            string discoveryUrl = AppSetting.GetValue(settingKey);
-            discoveryUrl = string.Format(discoveryUrl, directoryTenantId);
-            if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
-            {
-                discoveryUrl = discoveryUrl.Replace("/v2.0", string.Empty);
-            }
-            return discoveryUrl;
-        }
-
-        public static string GetAuthorizeUrl(string directoryId, string directoryTenantId)
-        {
-            string issuerUrl = GetIssuerUrl(directoryId, directoryTenantId);
-            issuerUrl = issuerUrl.Replace("/v2.0", string.Empty);
-            string authorizeUrl = string.Concat(issuerUrl, "oauth2/v2.0/authorize");
-            if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
-            {
-                authorizeUrl = authorizeUrl.Replace("/v2.0", string.Empty);
-            }
-            return authorizeUrl;
-        }
-
         public static TokenCredentials AcquireToken(string authToken, out string subscriptionId)
         {
             User authUser = new User(authToken);

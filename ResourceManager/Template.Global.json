@@ -2,36 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "directoryB2bTenantId": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2B tenant identifier."
-      }
-    },
-    "directoryB2bTenantDomain": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2B tenant domain (including .onmicrosoft.com)."
-      }
-    },
-    "directoryB2cTenantId": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2C tenant identifier."
-      }
-    },
-    "directoryB2cTenantDomain": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2C tenant domain (including .onmicrosoft.com)."
-      }
-    },
-    "directoryB2cPolicyIdSignUpIn": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure Active Directory B2C Sign Up & In policy identifier."
-      }
-    },
     "storageServiceName": {
       "type": "string",
       "minLength": 3,
@@ -101,12 +71,6 @@
       "maxLength": 60,
       "metadata": {
         "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
-      }
-    },
-    "functionPublishUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Callback url for publishing upon completion of media processing."
       }
     },
     "contentDeliveryProfileName": {
@@ -297,11 +261,11 @@
             },
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
-              "value": "~1"
+              "value": "beta"
             },
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
-              "value": "6.5.0"
+              "value": "8.11.1"
             },
             {
               "name": "WEBSITE_CONTENTSHARE",
@@ -320,48 +284,12 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "name": "Directory.DefaultId",
-              "value": "B2C"
-            },
-            {
-              "name": "Directory.IssuerUrl",
-              "value": "https://login.microsoftonline.com/{0}/v2.0/"
-            },
-            {
-              "name": "Directory.DiscoveryUrl",
-              "value": "https://login.microsoftonline.com/{0}/v2.0/.well-known/openid-configuration"
-            },
-            {
-              "name": "Directory.B2B.TenantId",
-              "value": "[parameters('directoryB2bTenantId')]"
-            },
-            {
-              "name": "Directory.B2B.TenantDomain",
-              "value": "[parameters('directoryB2bTenantDomain')]"
-            },
-            {
-              "name": "Directory.B2C.TenantId",
-              "value": "[parameters('directoryB2cTenantId')]"
-            },
-            {
-              "name": "Directory.B2C.TenantDomain",
-              "value": "[parameters('directoryB2cTenantDomain')]"
-            },
-            {
-              "name": "Directory.B2C.PolicyId.SignUpIn",
-              "value": "[parameters('directoryB2cPolicyIdSignUpIn')]"
-            },
-            {
               "name": "Storage",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
               "name": "Database",
               "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=Media')]"
-            },
-            {
-              "name": "Media.Indexer.ServiceUrl",
-              "value": "https://videobreakdown.azure-api.net/Breakdowns/Api/Partner"
             },
             {
               "name": "Media.Locator.WriteDurationMinutes",
@@ -374,10 +302,6 @@
             {
               "name": "Media.Locator.AutoRenewal",
               "value": true
-            },
-            {
-              "name": "Media.Publish.Url",
-              "value": "[parameters('functionPublishUrl')]"
             },
             {
               "name": "Media.Publish.Queue",

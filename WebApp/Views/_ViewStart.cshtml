@@ -45,18 +45,6 @@
     settingKey = Constant.AppSettingKey.StorageContentDeliveryEndpointUrl;
     ViewData["storageCdnUrl"] = homeController.GetAppSetting(settingKey);
 
-    string directoryId = homeController.GetDirectoryId(request);
-    if (string.Equals(directoryId, Constant.DirectoryService.B2B, StringComparison.OrdinalIgnoreCase))
-    {
-        ViewData["onLoad"] = "SetLayout(true)";
-        ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/services/active-directory/";
-    }
-    else
-    {
-        ViewData["onLoad"] = "SetLayout(false)";
-        ViewData["userDirectoryUrl"] = "http://azure.microsoft.com/services/active-directory-b2c/";
-    }
-
     string accountSignUpIn = "/account/signUpIn";
     if (request.QueryString.HasValue)
     {

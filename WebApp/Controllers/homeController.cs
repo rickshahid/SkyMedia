@@ -86,25 +86,6 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    viewData["videoAnalyzerLanguages"] = GetSpokenLanguages(true, false);
         }
 
-        public static string GetDirectoryId(HttpRequest request)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryDefaultId;
-            string directoryId = AppSetting.GetValue(settingKey);
-            if (request != null)
-            {
-                string activeDirectory = request.Query[Constant.HttpQueryString.ActiveDirectory];
-                if (!string.IsNullOrEmpty(activeDirectory))
-                {
-                    directoryId = activeDirectory;
-                }
-                else if (request.Host.Value.StartsWith("B2", StringComparison.OrdinalIgnoreCase))
-                {
-                    directoryId = request.Host.Value.Substring(0, 3).ToUpper();
-                }
-            }
-            return directoryId;
-        }
-
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = string.Empty;

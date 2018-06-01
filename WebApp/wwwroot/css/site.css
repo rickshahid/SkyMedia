@@ -378,12 +378,6 @@ body {
     padding: 5px;
 }
 
-.mediaUploadMessage {
-    position: relative;
-    bottom: 32px;
-    left: 300px;
-}
-
 .mediaWorkflow {
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -540,7 +534,13 @@ body {
     margin-left: 60px;
 }
 
-.mediaEntitiesMessage {
+.uploadMessage {
+    position: relative;
+    bottom: 32px;
+    left: 300px;
+}
+
+.entitiesMessage {
     text-align: center;
     font-size: x-large;
     font-style: italic;

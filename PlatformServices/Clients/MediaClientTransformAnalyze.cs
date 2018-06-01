@@ -90,12 +90,12 @@ namespace AzureSkyMedia.PlatformServices
     internal class VideoAnalyzer
     {
         private WebClient _indexer;
-        private string _serviceUrl;
+        //private string _serviceUrl;
 
         private VideoAnalyzer()
         {
-            string settingKey = Constant.AppSettingKey.MediaIndexerServiceUrl;
-            _serviceUrl = AppSetting.GetValue(settingKey);
+            //string settingKey = Constant.AppSettingKey.MediaIndexerServiceUrl;
+            //_serviceUrl = AppSetting.GetValue(settingKey);
         }
 
         public VideoAnalyzer(MediaAccount mediaAccount) : this()
@@ -111,12 +111,12 @@ namespace AzureSkyMedia.PlatformServices
             return videoPublic ? "public" : "private";
         }
 
-        private string GetCallbackUrl()
-        {
-            string settingKey = Constant.AppSettingKey.MediaPublishUrl;
-            string callbackUrl = AppSetting.GetValue(settingKey);
-            return WebUtility.UrlEncode(callbackUrl);
-        }
+        //private string GetCallbackUrl()
+        //{
+        //    string settingKey = Constant.AppSettingKey.MediaPublishUrl;
+        //    string callbackUrl = AppSetting.GetValue(settingKey);
+        //    return WebUtility.UrlEncode(callbackUrl);
+        //}
 
         //private string GetFileName(IAsset asset)
         //{
