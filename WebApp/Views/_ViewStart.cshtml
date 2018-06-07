@@ -42,7 +42,7 @@
     }
     ViewData["mediaClipperVersion"] = amcVersion;
 
-    settingKey = Constant.AppSettingKey.StorageContentDeliveryEndpointUrl;
+    settingKey = Constant.AppSettingKey.ContentDeliveryEndpointStorage;
     ViewData["storageCdnUrl"] = homeController.GetAppSetting(settingKey);
 
     string accountSignUpIn = "/account/signUpIn";

@@ -12,29 +12,31 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult create(string storageAccount, string assetName, string description, string alternateId,
                                  string[] fileNames, bool multipleFileAsset, bool standardEncoderAsset)
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            Asset[] assets = Workflow.CreateAssets(authToken, mediaClient, storageAccount, assetName, description, alternateId, multipleFileAsset, fileNames);
-
+            Asset[] assets;
             List<Job> jobs = new List<Job>();
-            if (standardEncoderAsset)
+            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                string transformName = Constant.Media.Transform.PresetAdaptiveStreaming;
-                EncoderNamedPreset encoderPreset = EncoderNamedPreset.AdaptiveStreaming;
-                Transform transform = mediaClient.CreateTransform(transformName, encoderPreset);
-
-                foreach (Asset asset in assets)
+                assets = Workflow.CreateAssets(authToken, mediaClient, storageAccount, assetName, description, alternateId, multipleFileAsset, fileNames);
+                if (standardEncoderAsset)
                 {
-                    JobInputAsset inputAsset = new JobInputAsset(asset.Name);
+                    string transformName = Constant.Media.Transform.PresetAdaptiveStreaming;
+                    EncoderNamedPreset encoderPreset = EncoderNamedPreset.AdaptiveStreaming;
+                    Transform transform = mediaClient.CreateTransform(transformName, encoderPreset);
 
-                    string outputAssetName = string.Concat(asset.Name, Constant.Media.Job.EncoderOutputAssetSuffix);
-                    Asset outputAsset = mediaClient.CreateAsset(storageAccount, outputAssetName, transform.Name, string.Empty);
+                    MediaPublish mediaPublish = new MediaPublish();
+                    foreach (Asset asset in assets)
+                    {
+                        JobInputAsset inputAsset = new JobInputAsset(asset.Name);
 
-                    Job job = mediaClient.CreateJob(transformName, null, inputAsset, outputAsset.Name);
-                    jobs.Add(job);
+                        string outputAssetName = string.Concat(asset.Name, Constant.Media.Job.EncoderOutputAssetSuffix);
+                        Asset outputAsset = mediaClient.CreateAsset(storageAccount, outputAssetName, transform.Name, string.Empty);
+
+                        Job job = jobController.CreateJob(authToken, transformName, null, inputAsset, outputAsset.Name, mediaPublish);
+                        jobs.Add(job);
+                    }
                 }
             }
-
             return jobs.Count > 0 ? Json(jobs.ToArray()) : Json(assets);
         }
 

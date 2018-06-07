@@ -9,9 +9,9 @@ namespace AzureSkyMedia.PlatformServices
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
-        public string[] TaskIds { get; set; }
+        public string TransformName { get; set; }
 
-        public MediaInsightConfig InsightConfig { get; set; }
+        public ContentProtection ContentProtection { get; set; }
 
         public MediaAccount MediaAccount { get; set; }
 
@@ -28,10 +28,10 @@ namespace AzureSkyMedia.PlatformServices
 
     public class MediaPublished
     {
-        public string IndexId { get; set; }
+        public string PublishUrl { get; set; }
 
         public string MobileNumber { get; set; }
 
-        public string StatusMessage { get; set; }
+        public string UserMessage { get; set; }
     }
 }

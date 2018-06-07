@@ -19,6 +19,7 @@ namespace AzureSkyMedia.PlatformServices
                 ClientApplicationKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationKey),
                 StorageAccounts = GetStorageAccounts()
             };
+            this.MediaAccount.ResourceId = string.Concat("/subscriptions/", this.MediaAccount.SubscriptionId, "/resourceGroups/", this.MediaAccount.ResourceGroupName, "/providers/Microsoft.Media/mediaservices/", this.MediaAccount.Name);
         }
 
         public string Id

@@ -26,20 +26,14 @@ namespace AzureSkyMedia.WebApp
             string appDirectory = Directory.GetCurrentDirectory();
             ConfigurationBuilder configBuilder = new ConfigurationBuilder();
             configBuilder.SetBasePath(appDirectory);
-            configBuilder.AddJsonFile(Constant.AppSettings, false, true);
             configBuilder.AddEnvironmentVariables();
+            configBuilder.AddApplicationInsightsSettings();
+            configBuilder.AddJsonFile(Constant.AppSettings, false, true);
             if (Debugger.IsAttached)
             {
                 configBuilder.AddUserSecrets<Startup>();
             }
             AppSetting.Configuration = configBuilder.Build();
-            string settingKey = Constant.AppSettingKey.AppInsightsInstrumentationKey;
-            string appInsightsKey = AppSetting.GetValue(settingKey);
-            if (!string.IsNullOrEmpty(appInsightsKey))
-            {
-                configBuilder.AddApplicationInsightsSettings(instrumentationKey: appInsightsKey);
-                AppSetting.Configuration = configBuilder.Build();
-            }
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -97,6 +91,9 @@ namespace AzureSkyMedia.WebApp
             {
                 redirectAction = controller.RedirectToAction("passwordReset", "account");
             }
+            string subscriptionName = "AMS-Job-State";
+            string[] eventTypes = new string[] { "Microsoft.Media.JobStateChange" };
+            MediaClient.SetEventSubscription(authToken, subscriptionName, eventTypes);
             return redirectAction;
         }
 
@@ -107,13 +104,11 @@ namespace AzureSkyMedia.WebApp
             {
                 context.ProtocolMessage.Parameters.Add("p", policyId);
             }
-
             context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("signin-oidc", string.Empty);
             if (!context.ProtocolMessage.RedirectUri.Contains("localhost"))
             {
                 context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http:", "https:");
             }
-
             return Task.FromResult(0);
         }
 

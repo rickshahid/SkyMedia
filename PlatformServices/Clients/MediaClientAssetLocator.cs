@@ -1,15 +1,24 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
+
+using Microsoft.Rest.Azure;
+using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private bool IsManifestFile(string fileName)
+        public StreamingLocator CreateLocator(string assetName, string policyName)
         {
-            return fileName.EndsWith(Constant.Media.FileExtension.StreamManifest, StringComparison.OrdinalIgnoreCase);
+            StreamingLocator locator = new StreamingLocator(assetName, policyName);
+            Task<AzureOperationResponse<StreamingLocator>> createTask = _media.StreamingLocators.CreateWithHttpMessagesAsync(this.MediaAccount.ResourceGroupName, this.MediaAccount.Name, assetName, locator);
+            AzureOperationResponse<StreamingLocator> createResponse = createTask.Result;
+            return createResponse.Body;
         }
+
+        //private bool IsManifestFile(string fileName)
+        //{
+        //    return fileName.EndsWith(Constant.Media.FileExtension.StreamManifest, StringComparison.OrdinalIgnoreCase);
+        //}
 
         //private bool IsPrimaryFile(IAssetFile assetFile)
         //{

@@ -1,13 +1,11 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["assets"]);
             var columns = [
                 {
                     width: 250,
                     name: "name",
                     label: "Asset Name",
-                    formatter: FormatColumn,
                     align: "center"
                 },
                 {
@@ -31,11 +29,12 @@
                 {
                     width: 100,
                     label: "Actions",
-                    formatter: FormatDelete,
+                    formatter: FormatActions,
                     align: "center"
                 }
             ];
-            LoadGrid("assets", columns, rows, "@ViewData["storageCdnUrl"]", "asset");
+            var rows = @Json.Serialize(ViewData["assets"]);
+            LoadGrid("assets", columns, rows, "@ViewData["storageCdnUrl"]");
         })
     </script>
 }

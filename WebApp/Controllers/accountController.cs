@@ -33,43 +33,47 @@ namespace AzureSkyMedia.WebApp.Controllers
         public void deleteEntities(bool liveOnly)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            Account.DeleteEntities(mediaClient, liveOnly);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                Account.DeleteEntities(mediaClient, liveOnly);
+            }
         }
 
-        public void deleteEntity(string entityGrid, string entityName, string parentEntityName)
+        public void deleteEntity(string gridId, string entityName, string parentEntityName)
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            switch (entityGrid)
+            using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                case "assets":
-                    mediaClient.DeleteEntity(MediaEntity.Asset, entityName);
-                    break;
-                case "tranforms":
-                    mediaClient.DeleteEntity(MediaEntity.Transform, entityName);
-                    break;
-                case "transformJobs":
-                    mediaClient.DeleteEntity(MediaEntity.TransformJob, entityName, parentEntityName);
-                    break;
-                case "contentKeyPolicies":
-                    mediaClient.DeleteEntity(MediaEntity.ContentKeyPolicy, entityName);
-                    break;
-                case "streamingPolicies":
-                    mediaClient.DeleteEntity(MediaEntity.StreamingPolicy, entityName);
-                    break;
-                case "streamingEndpoints":
-                    mediaClient.DeleteEntity(MediaEntity.StreamingEndpoint, entityName);
-                    break;
-                case "streamingLocators":
-                    mediaClient.DeleteEntity(MediaEntity.StreamingLocator, entityName);
-                    break;
-                case "liveEvents":
-                    mediaClient.DeleteEntity(MediaEntity.LiveEvent, entityName);
-                    break;
-                case "liveEventOutputs":
-                    mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentEntityName);
-                    break;
+                switch (gridId)
+                {
+                    case "assets":
+                        mediaClient.DeleteEntity(MediaEntity.Asset, entityName);
+                        break;
+                    case "tranforms":
+                        mediaClient.DeleteEntity(MediaEntity.Transform, entityName);
+                        break;
+                    case "transformJobs":
+                        mediaClient.DeleteEntity(MediaEntity.TransformJob, entityName, parentEntityName);
+                        break;
+                    case "contentKeyPolicies":
+                        mediaClient.DeleteEntity(MediaEntity.ContentKeyPolicy, entityName);
+                        break;
+                    case "streamingPolicies":
+                        mediaClient.DeleteEntity(MediaEntity.StreamingPolicy, entityName);
+                        break;
+                    case "streamingEndpoints":
+                        mediaClient.DeleteEntity(MediaEntity.StreamingEndpoint, entityName);
+                        break;
+                    case "streamingLocators":
+                        mediaClient.DeleteEntity(MediaEntity.StreamingLocator, entityName);
+                        break;
+                    case "liveEvents":
+                        mediaClient.DeleteEntity(MediaEntity.LiveEvent, entityName);
+                        break;
+                    case "liveEventOutputs":
+                        mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentEntityName);
+                        break;
+                }
             }
         }
 
@@ -100,80 +104,100 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult assets()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["assets"] = mediaClient.GetAllEntities<Asset>(MediaEntity.Asset);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["assets"] = mediaClient.GetAllEntities<Asset>(MediaEntity.Asset);
+            }
             return View();
         }
 
         public IActionResult transforms()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
+            }
             return View();
         }
 
         public IActionResult transformJobs()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
+            }
             return View();
         }
 
         public IActionResult contentKeyPolicies()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["contentKeyPolicies"] = mediaClient.GetAllEntities<ContentKeyPolicy>(MediaEntity.ContentKeyPolicy);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["contentKeyPolicies"] = mediaClient.GetAllEntities<ContentKeyPolicy>(MediaEntity.ContentKeyPolicy);
+            }
             return View();
         }
 
         public IActionResult streamingPolicies()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["streamingPolicies"] = mediaClient.GetAllEntities<StreamingPolicy>(MediaEntity.StreamingPolicy);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["streamingPolicies"] = mediaClient.GetAllEntities<StreamingPolicy>(MediaEntity.StreamingPolicy);
+            }
             return View();
         }
 
         public IActionResult streamingEndpoints()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["streamingEndpoints"] = mediaClient.GetAllEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["streamingEndpoints"] = mediaClient.GetAllEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
+            }
             return View();
         }
 
         public IActionResult streamingLocators()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["streamingLocators"] = mediaClient.GetAllEntities<StreamingLocator>(MediaEntity.StreamingLocator);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["streamingLocators"] = mediaClient.GetAllEntities<StreamingLocator>(MediaEntity.StreamingLocator);
+            }
             return View();
         }
 
         public IActionResult liveEvents()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["liveEvents"] = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["liveEvents"] = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
+            }
             return View();
         }
 
         public IActionResult liveEventOutputs()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
+            }
             return View();
         }
 
         public IActionResult index()
         {
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            MediaClient mediaClient = new MediaClient(authToken);
-            ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);
+            }
             return View();
         }
     }

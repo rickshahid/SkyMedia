@@ -132,10 +132,17 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             if (this.Request.HasFormContentType)
             {
-                RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
-                if (redirectAction != null)
+                try
                 {
-                    return redirectAction;
+                    RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
+                    if (redirectAction != null)
+                    {
+                        return redirectAction;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    accountMessage = ex.ToString();
                 }
             }
 

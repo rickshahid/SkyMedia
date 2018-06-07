@@ -1,4 +1,58 @@
-﻿var _storageCdnUrl, _accountEntityType;
+﻿function GetColumns(gridId) {
+    var columns;
+    switch (gridId) {
+        case "transforms":
+            columns = [
+                {
+                    width: 500,
+                    name: "name",
+                    label: "Transform Name",
+                    align: "center"
+                },
+                {
+                    width: 100,
+                    label: "Actions",
+                    formatter: FormatActions,
+                    align: "center"
+                }
+            ];
+            break;
+        case "transformJobs":
+            columns = [
+                {
+                    width: 500,
+                    name: "name",
+                    label: "Transform Job Name",
+                    align: "center"
+                },
+                {
+                    width: 150,
+                    name: "properties.state",
+                    label: "Job State",
+                    align: "center"
+                },
+                {
+                    width: 100,
+                    label: "Actions",
+                    formatter: FormatActions,
+                    align: "center"
+                }
+            ];
+            break;
+    }
+    return columns;
+}
+function LoadGrid(gridId, columns, rows, storageCdnUrl) {
+    _storageCdnUrl = storageCdnUrl;
+    $("#" + gridId).jqGrid({
+        colModel: columns,
+        datatype: "local",
+        data: rows,
+        loadComplete: ClearTitles,
+        viewsortcols: [false, "horizontal", true],
+        sortname: "name"
+    });
+}
 function ClearTitles(grid) {
     for (var i = 0; i < grid.rows.length; i++) {
         var rowId = grid.rows[i].id;
@@ -8,106 +62,16 @@ function ClearTitles(grid) {
         }
     }
 }
-function LoadGrid(gridId, columns, rows, storageCdnUrl, accountEntityType) {
-    _storageCdnUrl = storageCdnUrl;
-    _accountEntityType = accountEntityType;
-    $("#" + gridId).jqGrid({
-        colModel: columns,
-        datatype: "local",
-        data: rows,
-        loadComplete: ClearTitles,
-        viewsortcols: [false, "horizontal", true],
-        sortname: "name",
-        height: 500
-    });
-}
-function FormatColumn(value, grid, row) {
-    var displayValue = "";
-    switch (grid.colModel.name) {
-        case "name":
-            if (value == null) {
-                value = row.id;
-            }
-            break;
-        case "contentKeyType":
-            switch (value) {
-                case 0:
-                    displayValue = "Common Encryption";
-                    break;
-                case 1:
-                    displayValue = "Storage Encryption";
-                    break;
-                case 2:
-                    displayValue = "Configuration Encryption";
-                    break;
-                case 3:
-                    displayValue = "Url Encryption";
-                    break;
-                case 4:
-                    displayValue = "Envelope Encryption";
-                    break;
-                case 6:
-                    displayValue = "Common Encryption CBCS";
-                    break;
-                case 7:
-                    displayValue = "FairPlay Application Secret Key";
-                    break;
-                case 8:
-                    displayValue = "FairPlay PFX Password";
-                    break;
-            }
-            break;
-        case "keyDeliveryType":
-            switch (value) {
-                case 0:
-                    displayValue = "None";
-                    break;
-                case 1:
-                    displayValue = "PlayReady DRM";
-                    break;
-                case 2:
-                    displayValue = "AES / Baseline HTTP";
-                    break;
-                case 3:
-                    displayValue = "Widevine DRM";
-                    break;
-                case 4:
-                    displayValue = "FairPlay DRM";
-                    break;
-            }
-            break;
-        case "endPointType":
-            switch (value) {
-                case 0:
-                    displayValue = "None";
-                    break;
-                case 1:
-                    displayValue = "Azure Queue";
-                    break;
-                case 2:
-                    displayValue = "Azure Table";
-                    break;
-                case 3:
-                    displayValue = "Web Hook";
-                    break;
-            }
-            break;
-    }
-    var title = grid.colModel.label;
-    var message = value;
-    if (row.description != null && row.description != row.name) {
-        message = message + "<br><br>" + row.description;
-    }
-    message = message + "<br><br>" + row.id;
-    displayValue = displayValue != "" ? displayValue + " (" + value + ")" : value;
-    return "<span onclick=\"DisplayMessage('" + title + "', '" + message + "')\">" + displayValue + "</span>";
-}
-function FormatDelete(value, grid, row) {
+function FormatActions(value, grid, row) {
+    var deleteHtml = "";
     var entityName = row.name;
-    var parentEntityName = GetParentEntityName(row.id);
-    var onClick = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(parentEntityName) + "')";
-    var buttonHtml = "<button class='siteButton' onclick=" + onClick + ">";
-    return buttonHtml + "<img src='" + _storageCdnUrl + "/MediaDelete.png'></button>";
+    if (entityName.indexOf("Predefined_") == -1) {
+        var parentEntityName = GetParentEntityName(row.id);
+        var onClick = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(parentEntityName) + "')";
+        deleteHtml = "<button class='siteButton' onclick=" + onClick + ">";
+        deleteHtml = deleteHtml + "<img src='" + _storageCdnUrl + "/MediaEntityDelete.png'></button>";
+    }
+    return deleteHtml;
 }
 function GetParentEntityName(childEntityId) {
     var parentEntityName = "";
@@ -117,14 +81,14 @@ function GetParentEntityName(childEntityId) {
     }
     return parentEntityName;
 }
-function DeleteEntity(entityGrid, entityName, parentEntityName) {
+function DeleteEntity(gridId, entityName, parentEntityName) {
     var title = "Confirm Delete";
-    var message = "Are you sure you want to delete the '" + entityName + "' " + _accountEntityType + "?";
+    var message = "Are you sure you want to delete the '" + entityName + "' entity?";
     var onConfirm = function () {
         SetCursor(true);
         $.post("/account/deleteEntity",
             {
-                entityGrid: entityGrid,
+                gridId: gridId,
                 entityName: entityName,
                 parentEntityName: parentEntityName
             },

@@ -1,23 +1,22 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var rows = @Json.Serialize(ViewData["contentKeyPolicies"]);
             var columns = [
                 {
                     width: 500,
                     name: "name",
                     label: "Content Key Policy Name",
-                    formatter: FormatColumn,
                     align: "center"
                 },
                 {
                     width: 100,
-                    label: "Delete",
-                    formatter: FormatDelete,
+                    label: "Actions",
+                    formatter: FormatActions,
                     align: "center"
                 }
             ];
-            LoadGrid("contentKeyPolicies", columns, rows, "@ViewData["storageCdnUrl"]", "content key policy");
+            var rows = @Json.Serialize(ViewData["contentKeyPolicies"]);
+            LoadGrid("contentKeyPolicies", columns, rows, "@ViewData["storageCdnUrl"]");
         })
     </script>
 }

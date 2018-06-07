@@ -118,10 +118,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             endOfStreams = false;
             List<MediaStream> mediaStreams = new List<MediaStream>();
-            string settingKey = Constant.AppSettingKey.MediaLocatorTunerPageSize;
-            int tunerPageSize = int.Parse(AppSetting.GetValue(settingKey));
-            streamOffset = ((streamNumber - 1) / tunerPageSize) * tunerPageSize;
-            streamIndex = (streamNumber - 1) % tunerPageSize;
+            string settingKey = Constant.AppSettingKey.MediaStreamPageSize;
+            int pageSize = int.Parse(AppSetting.GetValue(settingKey));
+            streamOffset = ((streamNumber - 1) / pageSize) * pageSize;
+            streamIndex = (streamNumber - 1) % pageSize;
             //IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, null);
             //int locatorsCount = locators.Count();
             //if (locatorsCount > 0)
@@ -155,7 +155,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public static MediaStream[] GetMediaStreams(string authToken, string searchCriteria, int skipCount, int takeCount, string streamType)
         {
-            MediaClient mediaClient = new MediaClient(authToken);
+            //MediaClient mediaClient = new MediaClient(authToken);
             //IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, searchCriteria);
             //locators = locators.Skip(skipCount);
             //if (takeCount > 0)

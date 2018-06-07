@@ -1,72 +1,74 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
+using System.Collections.Generic;
+
+using Microsoft.Rest;
+using Microsoft.Azure.Management.EventGrid;
+using Microsoft.Azure.Management.EventGrid.Models;
+using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        //private INotificationEndPoint GetNotificationEndpoint()
-        //{
-        //    string settingKey = Constant.AppSettingKey.MediaPublishUrl;
-        //    string endpointAddress = AppSetting.GetValue(settingKey);
-        //    string endpointName = Constant.Media.Job.NotificationEndpointName;
-        //    INotificationEndPoint notificationEndpoint = GetEntityByName(MediaEntity.NotificationEndpoint, endpointName) as INotificationEndPoint;
-        //    if (notificationEndpoint != null && !string.Equals(notificationEndpoint.EndPointAddress, endpointAddress, StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        notificationEndpoint.Delete();
-        //        notificationEndpoint = null;
-        //    }
-        //    if (notificationEndpoint == null)
-        //    {
-        //        NotificationEndPointType endpointType = NotificationEndPointType.WebHook;
-        //        notificationEndpoint = _media2.NotificationEndPoints.Create(endpointName, endpointType, endpointAddress);
-        //    }
-        //    return notificationEndpoint;
-        //}
+        private static string GetNotificationMessage(MediaAccount mediaAccount, Job job)
+        {
+            StringBuilder message = new StringBuilder();
+            message.Append("AMS Transform Job Notification");
+            message.Append("\n\nMedia Account Name: ");
+            message.Append(mediaAccount.Name);
+            message.Append("\n\nJob Name: ");
+            message.Append(job.Name);
+            message.Append("\n\nJob State: ");
+            message.Append(job.State.ToString());
+            foreach (JobOutput jobOutput in job.Outputs)
+            {
+                message.Append("\n\nJob Output State: ");
+                message.Append(jobOutput.State.ToString());
+                message.Append("\n\nJob Output Progress: ");
+                message.Append(jobOutput.Progress);
+                if (jobOutput.Error != null)
+                {
+                    message.Append("\n\nError Category: ");
+                    message.Append(jobOutput.Error.Category.ToString());
+                    message.Append("\n\nError Code: ");
+                    message.Append(jobOutput.Error.Code.ToString());
+                    message.Append("\n\nError Message: ");
+                    message.Append(jobOutput.Error.Message);
+                    foreach (JobErrorDetail errorDetail in jobOutput.Error.Details)
+                    {
+                        message.Append("\n\nError Detail Code: ");
+                        message.Append(errorDetail.Code.ToString());
+                        message.Append("\n\nError Detail Message: ");
+                        message.Append(errorDetail.Message);
+                    }
+                }
+            }
+            return message.ToString();
+        }
 
-        //private static string GetNotificationMessage(MediaAccount mediaAccount, IJob job)
-        //{
-        //    StringBuilder message = new StringBuilder();
-        //    message.Append("Azure Media Services Job ");
-        //    message.Append(job.State.ToString());
-        //    message.Append("\n\n");
-        //    message.Append("Media Account Name: ");
-        //    message.Append(mediaAccount.Name);
-        //    message.Append("\n\n");
-        //    message.Append("Job Id: ");
-        //    message.Append(job.Id);
-        //    message.Append("\n\n");
-        //    message.Append("Job Name: ");
-        //    message.Append(job.Name);
-        //    message.Append("\n\n");
-        //    message.Append("Job Duration: ");
-        //    message.Append(job.RunningDuration.ToString(Constant.TextFormatter.ClockTime));
-        //    message.Append("\n\n");
-        //    foreach (ITask jobTask in job.Tasks)
-        //    {
-        //        message.Append("Job Task Name: ");
-        //        message.Append(jobTask.Name);
-        //        message.Append("\n\n");
-        //        message.Append("Job Task Duration: ");
-        //        message.Append(jobTask.RunningDuration.ToString(Constant.TextFormatter.ClockTime));
-        //        message.Append("\n\n");
-        //        message.Append("Job Task Performance: ");
-        //        message.Append(jobTask.PerfMessage.Trim());
-        //        message.Append("\n\n");
-        //        if (jobTask.ErrorDetails != null)
-        //        {
-        //            foreach (ErrorDetail taskError in jobTask.ErrorDetails)
-        //            {
-        //                message.Append("Job Task Error Code: ");
-        //                message.Append(taskError.Code);
-        //                message.Append("\n\n");
-        //                message.Append("Job Task Error Message: ");
-        //                message.Append(taskError.Message);
-        //                message.Append("\n\n");
-        //            }
-        //        }
-        //    }
-        //    return message.ToString();
-        //}
+        public static void SetEventSubscription(string authToken, string subscriptionName, IList<string> eventTypes)
+        {
+            EventSubscription eventSubscription = new EventSubscription(name: subscriptionName)
+            {
+                Destination = new WebHookEventSubscriptionDestination()
+                {
+                    EndpointUrl = AppSetting.GetValue(Constant.AppSettingKey.MediaPublishUrl)
+                },
+                Filter = new EventSubscriptionFilter()
+                {
+                    IncludedEventTypes = eventTypes
+                }
+            };
+
+            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
+            EventGridManagementClient eventGridClient = new EventGridManagementClient(azureToken)
+            {
+                SubscriptionId = subscriptionId
+            };
+
+            User authUser = new User(authToken);
+            string eventScope = authUser.MediaAccount.ResourceId;
+            eventSubscription = eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
+        }
     }
 }

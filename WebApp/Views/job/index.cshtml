@@ -1,0 +1,23 @@
+﻿@section head {
+    <script type="text/javascript">
+        function CreateEntity() {
+            alert("Create!");
+        }
+        $(function () {
+            var columns = GetColumns("transformJobs");
+            var rows = @Json.Serialize(ViewData["transformJobs"]);
+            LoadGrid("transformJobs", columns, rows, "@ViewData["storageCdnUrl"]");
+            CreateTipTop("mediaEntityCreate", "Create New Transform Job");
+        })
+    </script>
+}
+
+@section title {
+    Media Transform Jobs
+}
+
+<table id="transformJobs"></table>
+
+<div class="viewButtons">
+    @Html.Partial("SiteButton", new string[] { "mediaEntityCreate", "MediaEntityCreate.png", "CreateEntity()" })
+</div>

@@ -29,7 +29,11 @@ namespace AzureSkyMedia.PlatformServices
             StorageAccount storageAccount = storageAccounts.SingleOrDefault();
 
             string accountInfo = accountName;
-            if (storageAccount != null)
+            if (storageAccount == null)
+            {
+                accountInfo = string.Concat(accountInfo, Constant.Message.StorageAccountReadPermission);
+            }
+            else
             {
                 string accountType = "N/A";
                 if (storageAccount.Kind.HasValue)
@@ -73,13 +77,15 @@ namespace AzureSkyMedia.PlatformServices
         public static Dictionary<string, string> GetAccounts(string authToken)
         {
             Dictionary<string, string> storageAccounts = new Dictionary<string, string>();
-            MediaClient mediaClient = new MediaClient(authToken);
-            IList<MediaStorageAccount> mediaStorageAccounts = mediaClient.StorageAccounts;
-            foreach (MediaStorageAccount mediaStorageAccount in mediaStorageAccounts)
+            using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                string accountName = Path.GetFileName(mediaStorageAccount.Id);
-                string accountInfo = GetAccountInfo(authToken, accountName);
-                storageAccounts.Add(accountName, accountInfo);
+                IList<MediaStorageAccount> mediaStorageAccounts = mediaClient.StorageAccounts;
+                foreach (MediaStorageAccount mediaStorageAccount in mediaStorageAccounts)
+                {
+                    string accountName = Path.GetFileName(mediaStorageAccount.Id);
+                    string accountInfo = GetAccountInfo(authToken, accountName);
+                    storageAccounts.Add(accountName, accountInfo);
+                }
             }
             return storageAccounts;
         }

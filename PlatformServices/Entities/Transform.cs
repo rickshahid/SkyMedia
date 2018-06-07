@@ -48,7 +48,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public ContentProtection ContentProtection { get; set; }
 
-        public MediaInsightConfig InsightConfig { get; set; }
+        //public MediaInsightConfig InsightConfig { get; set; }
 
         //public TaskOptions Options { get; set; }
     }

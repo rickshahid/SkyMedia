@@ -144,7 +144,7 @@ namespace AzureSkyMedia.PlatformServices
         //        Id = indexId,
         //        MediaAccount = mediaAccount
         //    };
-        //    DatabaseClient databaseClient = new DatabaseClient();
+        //    using - DatabaseClient databaseClient = new DatabaseClient();
         //    string collectionId = Constant.Database.Collection.OutputPublish;
         //    databaseClient.UpsertDocument(collectionId, mediaPublish);
         //}
@@ -209,7 +209,7 @@ namespace AzureSkyMedia.PlatformServices
         //    string insightId = asset.AlternateId;
         //    if (!string.IsNullOrEmpty(insightId))
         //    {
-        //        DatabaseClient databaseClient = new DatabaseClient();
+        //        Using - DatabaseClient databaseClient = new DatabaseClient();
         //        string collectionId = Constant.Database.Collection.OutputInsight;
         //        MediaInsight mediaInsight = databaseClient.GetDocument<MediaInsight>(collectionId, insightId);
         //        if (mediaInsight != null)

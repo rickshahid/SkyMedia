@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
 
@@ -140,11 +141,15 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult index()
         {
-            //string authToken = homeController.GetAuthToken(this.Request, this.Response);
             //homeController.SetViewData(authToken, this.ViewData);
+            //string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            //ViewData["mediaProcessor"] = homeController.GetMediaProcessors(authToken, true);
+            //ViewData["mediaProcessorPreset"] = new SelectListItem[] { };
             string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            ViewData["mediaProcessor"] = homeController.GetMediaProcessors(authToken, true);
-            ViewData["mediaProcessorPreset"] = new SelectListItem[] { };
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
+            }
             return View();
         }
     }

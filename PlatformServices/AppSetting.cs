@@ -42,7 +42,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public static string[] GetValue(string settingKey, bool parseValue)
         {
-            string settingValue = Configuration[settingKey];
+            string settingValue;
+            if (Configuration == null)
+            {
+                settingValue = Environment.GetEnvironmentVariable(settingKey);
+            }
+            else
+            {
+                settingValue = Configuration[settingKey];
+            }
             if (settingValue == null)
             {
                 settingValue = string.Empty;

@@ -164,21 +164,23 @@ namespace AzureSkyMedia.PlatformServices
         public static Dictionary<string, string> GetProcessorPresets(MediaProcessor mediaProcessor, string accountName)
         {
             Dictionary<string, string> processorPresets = new Dictionary<string, string>();
-            DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constant.Database.Collection.ProcessorPreset;
-            string accountPresetId = string.Concat(accountName, Constant.TextDelimiter.Identifier, mediaProcessor.ToString());
-            JObject[] presets = databaseClient.GetDocuments(collectionId);
-            foreach (JObject preset in presets)
+            using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                string presetId = preset["id"].ToString();
-                string presetProcessor = preset["MediaProcessor"].ToString();
-                string[] presetIdInfo = presetId.Split(Constant.TextDelimiter.Identifier);
-                bool customPreset = presetIdInfo.Length == 3 ? true : false;
-                if ((!customPreset && presetProcessor.StartsWith(mediaProcessor.ToString(), StringComparison.OrdinalIgnoreCase)) ||
-                    (customPreset && presetId.StartsWith(accountPresetId, StringComparison.Ordinal)))
+                string collectionId = Constant.Database.Collection.ProcessorPreset;
+                string accountPresetId = string.Concat(accountName, Constant.TextDelimiter.Identifier, mediaProcessor.ToString());
+                JObject[] presets = databaseClient.GetDocuments(collectionId);
+                foreach (JObject preset in presets)
                 {
-                    string presetName = preset["PresetName"].ToString();
-                    processorPresets.Add(presetName, presetId);
+                    string presetId = preset["id"].ToString();
+                    string presetProcessor = preset["MediaProcessor"].ToString();
+                    string[] presetIdInfo = presetId.Split(Constant.TextDelimiter.Identifier);
+                    bool customPreset = presetIdInfo.Length == 3 ? true : false;
+                    if ((!customPreset && presetProcessor.StartsWith(mediaProcessor.ToString(), StringComparison.OrdinalIgnoreCase)) ||
+                        (customPreset && presetId.StartsWith(accountPresetId, StringComparison.Ordinal)))
+                    {
+                        string presetName = preset["PresetName"].ToString();
+                        processorPresets.Add(presetName, presetId);
+                    }
                 }
             }
             return processorPresets;

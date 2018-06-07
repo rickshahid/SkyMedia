@@ -1,29 +1,9 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
+            var columns = GetColumns("transformJobs");
             var rows = @Json.Serialize(ViewData["transformJobs"]);
-            var columns = [
-                {
-                    width: 500,
-                    name: "name",
-                    label: "Transform Job Name",
-                    formatter: FormatColumn,
-                    align: "center"
-                },
-                {
-                    width: 150,
-                    name: "properties.state",
-                    label: "Job State",
-                    align: "center"
-                },
-                {
-                    width: 100,
-                    label: "Delete",
-                    formatter: FormatDelete,
-                    align: "center"
-                }
-            ];
-            LoadGrid("transformJobs", columns, rows, "@ViewData["storageCdnUrl"]", "transform job");
+            LoadGrid("transformJobs", columns, rows, "@ViewData["storageCdnUrl"]");
         })
     </script>
 }

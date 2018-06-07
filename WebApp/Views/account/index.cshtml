@@ -2,23 +2,24 @@
 
 @section head {
     <script type="text/javascript">
-        function DisplayEntity(innerHtml, entityCount) {
-            innerHtml = innerHtml + "<tr><td>";
+        function DisplayEntity(inventoryHtml, entityCount) {
+            inventoryHtml = inventoryHtml + "<tr><td>";
             if (entityCount.length > 2) {
-                innerHtml = innerHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
+                inventoryHtml = inventoryHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
             } else {
-                innerHtml = innerHtml + entityCount[0]
+                inventoryHtml = inventoryHtml + entityCount[0]
             }
-            return innerHtml + ":</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
+            return inventoryHtml + ":</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
         }
-        function DisplayInventory(entityCounts) {
-            var innerHtml = "";
+        function DisplayInventory() {
+            var inventoryHtml = "";
+            var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
             for (var i = 0; i < 11; i++) {
-                innerHtml = DisplayEntity(innerHtml, entityCounts[i]);
+                inventoryHtml = DisplayEntity(inventoryHtml, entityCounts[i]);
             }
-            $("#accountInventory").html(innerHtml);
+            $("#accountInventory").html(inventoryHtml);
         }
-        function DeleteEntities(allEntities, liveOnly) {
+        function DeleteEntities(liveOnly) {
             SetCursor(true);
             $.post("/account/deleteEntities",
                 {
@@ -31,8 +32,8 @@
             );
         }
         function ConfirmDelete() {
-            var title = "Confirm Media Account Content Deletion (Permanent)";
-            var message = "Which set of entities do you want permanently deleted from your media account?";
+            var title = "Confirm Media Account Entity Deletion";
+            var message = "Which set of entities do you want to delete from your media account?";
             var buttons = {
                 "All Entities": function () {
                     DeleteEntities(false);
@@ -49,10 +50,12 @@
             DisplayMessage(title, message, buttons);
         }
         $(function () {
+            DisplayInventory();
             CreateTipTop("accountClear", "Clear Media Account");
             CreateTipBottom("authToken", "Azure Active Directory<br><br>JSON Web Token");
-            var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
-            DisplayInventory(entityCounts);
+            if (window.location.href.indexOf("showToken") > -1) {
+                $("#authToken").show();
+            }
         })
     </script>
 }
@@ -61,13 +64,7 @@
     Media Account Inventory
 }
 
-<table class="accountInventory">
-    <tr>
-        <td>
-            <table id="accountInventory" class="entityCounts"></table>
-        </td>
-    </tr>
-</table>
+<table id="accountInventory" class="accountInventory"></table>
 
 <div class="viewButtons">
     @if (Debugger.IsAttached)

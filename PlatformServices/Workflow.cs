@@ -107,14 +107,16 @@ namespace AzureSkyMedia.PlatformServices
         //        MobileNumber = mobileNumber
         //    };
 
-        //    DatabaseClient databaseClient = new DatabaseClient();
-        //    string collectionId = Constant.Database.Collection.OutputPublish;
-        //    databaseClient.UpsertDocument(collectionId, contentPublish);
-
-        //    ContentProtection[] jobProtection = MediaClient.GetJobProtection(directoryId, job, jobTasks);
-        //    foreach (ContentProtection contentProtection in jobProtection)
+        //    using (DatabaseClient databaseClient = new DatabaseClient())
         //    {
-        //        databaseClient.UpsertDocument(collectionId, contentProtection);
+        //        string collectionId = Constant.Database.Collection.OutputPublish;
+        //        databaseClient.UpsertDocument(collectionId, contentPublish);
+
+        //        ContentProtection[] jobProtection = MediaClient.GetJobProtection(directoryId, job, jobTasks);
+        //        foreach (ContentProtection contentProtection in jobProtection)
+        //        {
+        //            databaseClient.UpsertDocument(collectionId, contentProtection);
+        //        }
         //    }
         //}
     }

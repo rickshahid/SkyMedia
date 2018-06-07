@@ -1,4 +1,4 @@
-﻿var _authToken, _mediaStreams, _streamNumber, _streamIndex, _encoderConfig, _assetIds;
+﻿var _authToken, _mediaStreams, _streamNumber, _streamIndex, _encoderConfig, _assetIds, _storageCdnUrl;
 function SetCursor(isBusy) {
     if (isBusy) {
         $("body").css("cursor", "wait");

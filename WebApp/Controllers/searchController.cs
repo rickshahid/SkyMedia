@@ -68,9 +68,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                 //VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
                 //videoAnalyzer.DeleteVideo(indexId, deleteInsight);
 
-                DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.OutputInsight;
-                databaseClient.DeleteDocument(collectionId, indexId);
+                using (DatabaseClient databaseClient = new DatabaseClient())
+                {
+                    string collectionId = Constant.Database.Collection.OutputInsight;
+                    databaseClient.DeleteDocument(collectionId, indexId);
+                }
             }
         }
 

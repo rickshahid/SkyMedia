@@ -26,29 +26,31 @@ namespace AzureSkyMedia.FunctionApp
                 }
                 else
                 {
-                    DatabaseClient databaseClient = new DatabaseClient();
-                    string collectionId = Constant.Database.Collection.InputWorkflow;
-                    MediaProcess[] mediaProcesses = databaseClient.GetDocuments<MediaProcess>(collectionId);
-                    foreach (MediaProcess mediaProcess in mediaProcesses)
+                    using (DatabaseClient databaseClient = new DatabaseClient())
                     {
-                        List<string> missingFiles = new List<string>();
-                        foreach (string missingFile in mediaProcess.MissingFiles)
+                        string collectionId = Constant.Database.Collection.InputWorkflow;
+                        MediaProcess[] mediaProcesses = databaseClient.GetDocuments<MediaProcess>(collectionId);
+                        foreach (MediaProcess mediaProcess in mediaProcesses)
                         {
-                            if (!string.Equals(missingFile, name, StringComparison.OrdinalIgnoreCase))
+                            List<string> missingFiles = new List<string>();
+                            foreach (string missingFile in mediaProcess.MissingFiles)
                             {
-                                missingFiles.Add(name);
+                                if (!string.Equals(missingFile, name, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    missingFiles.Add(name);
+                                }
                             }
-                        }
-                        if (missingFiles.Count == 0)
-                        {
-                            databaseClient.DeleteDocument(collectionId, mediaProcess.Id);
-                            blob = GetReadStream(blobClient, mediaProcess.Id);
-                            ParseJobManifest(blobClient, blob, mediaProcess.Id, log, createLog);
-                        }
-                        else if (missingFiles.Count != mediaProcess.MissingFiles.Length)
-                        {
-                            mediaProcess.MissingFiles = missingFiles.ToArray();
-                            databaseClient.UpsertDocument(collectionId, mediaProcess);
+                            if (missingFiles.Count == 0)
+                            {
+                                databaseClient.DeleteDocument(collectionId, mediaProcess.Id);
+                                blob = GetReadStream(blobClient, mediaProcess.Id);
+                                ParseJobManifest(blobClient, blob, mediaProcess.Id, log, createLog);
+                            }
+                            else if (missingFiles.Count != mediaProcess.MissingFiles.Length)
+                            {
+                                mediaProcess.MissingFiles = missingFiles.ToArray();
+                                databaseClient.UpsertDocument(collectionId, mediaProcess);
+                            }
                         }
                     }
                 }
@@ -92,9 +94,11 @@ namespace AzureSkyMedia.FunctionApp
                     Id = blobName,
                     MissingFiles = missingFiles
                 };
-                DatabaseClient databaseClient = new DatabaseClient();
-                string collectionId = Constant.Database.Collection.InputWorkflow;
-                databaseClient.UpsertDocument(collectionId, mediaProcess);
+                using (DatabaseClient databaseClient = new DatabaseClient())
+                {
+                    string collectionId = Constant.Database.Collection.InputWorkflow;
+                    databaseClient.UpsertDocument(collectionId, mediaProcess);
+                }
             }
             else
             {

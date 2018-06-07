@@ -39,15 +39,16 @@ namespace AzureSkyMedia.PlatformServices
             User authUser = new User(authToken);
             subscriptionId = authUser.MediaAccount.SubscriptionId;
 
-            string settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
+            ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ClientApplicationId, authUser.MediaAccount.ClientApplicationKey);
+
+            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
+            string issuerUrl = AppSetting.GetValue(settingKey);
+            issuerUrl = string.Format(issuerUrl, authUser.MediaAccount.DirectoryTenantId);
+
+            settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
             string audienceUrl = AppSetting.GetValue(settingKey);
 
-            settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-            string authorityUrl = AppSetting.GetValue(settingKey);
-            authorityUrl = string.Format(authorityUrl, authUser.MediaAccount.DirectoryTenantId);
-
-            AuthenticationContext authContext = new AuthenticationContext(authorityUrl);
-            ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ClientApplicationId, authUser.MediaAccount.ClientApplicationKey);
+            AuthenticationContext authContext = new AuthenticationContext(issuerUrl);
             AuthenticationResult tokenAuth = authContext.AcquireTokenAsync(audienceUrl, clientCredential).Result;
             return new TokenCredentials(tokenAuth.AccessToken);
         }

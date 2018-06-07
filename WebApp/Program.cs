@@ -16,7 +16,6 @@ namespace AzureSkyMedia.WebApp
             webHostBuilder.UseStartup<Startup>();
             webHostBuilder.UseApplicationInsights();
             IWebHost webHost = webHostBuilder.Build();
-            webHost.Run();
             if (Debugger.IsAttached)
             {
                 string appDirectory = Directory.GetCurrentDirectory();
@@ -26,6 +25,7 @@ namespace AzureSkyMedia.WebApp
                     databaseClient.Initialize(modelsDirectory);
                 }
             }
+            webHost.Run();
         }
     }
 }

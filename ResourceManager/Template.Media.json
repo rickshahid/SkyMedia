@@ -23,27 +23,6 @@
       "metadata": {
         "description": "Azure region name for all media resources, including storage services."
       }
-    },
-    "contentDeliveryProfileName": {
-      "type": "string",
-      "defaultValue": "--",
-      "minLength": 2,
-      "maxLength": 64,
-      "metadata": {
-        "description": "Name must be between 2 and 64 characters (letters, numbers and hyphens only)."
-      }
-    },
-    "contentDeliveryProfileTier": {
-      "type": "string",
-      "defaultValue": "Standard_Akamai",
-      "allowedValues": [
-        "Standard_Akamai",
-        "Standard_Microsoft",
-        "Standard_Verizon"
-      ],
-      "metadata": {
-        "description": "Resource tier for the Content Delivery Network service."
-      }
     }
   },
   "variables": {
@@ -53,8 +32,7 @@
     "storageService2Name": "[concat(variables('storageServiceName'), '2')]",
     "storageService3Name": "[concat(variables('storageServiceName'), '3')]",
     "mediaApiVersion": "2015-10-01",
-    "mediaServiceName": "[toLower(parameters('mediaServiceName'))]",
-    "contentDeliveryApiVersion": "2018-04-02"
+    "mediaServiceName": "[toLower(parameters('mediaServiceName'))]"
   },
   "resources": [
     {
@@ -118,16 +96,6 @@
             "isPrimary": false
           }
         ]
-      }
-    },
-    {
-      "condition": "[not(equals(parameters('contentDeliveryProfileName'), '--'))]",
-      "type": "Microsoft.Cdn/profiles",
-      "apiVersion": "[variables('contentDeliveryApiVersion')]",
-      "location": "[parameters('mediaRegionName')]",
-      "name": "[parameters('contentDeliveryProfileName')]",
-      "sku": {
-        "name": "[parameters('contentDeliveryProfileTier')]"
       }
     }
   ],

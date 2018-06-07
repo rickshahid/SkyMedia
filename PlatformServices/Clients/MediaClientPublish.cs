@@ -3,6 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
+using Microsoft.Azure.Management.Media;
+using Microsoft.Azure.Management.Media.Models;
+
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -23,38 +26,40 @@ namespace AzureSkyMedia.PlatformServices
         //    return encoderOutput;
         //}
 
-        private static void UpsertInsight(JObject index)
-        {
-            DatabaseClient databaseClient = new DatabaseClient();
-            string collectionId = Constant.Database.Collection.OutputInsight;
-            try
-            {
-                databaseClient.UpsertDocument(collectionId, index);
-            }
-            catch (Exception ex)
-            {
-                MediaPublishError publishError = new MediaPublishError()
-                {
-                    Id = index["id"].ToString(),
-                    Exception = ex
-                };
-                databaseClient.UpsertDocument(collectionId, publishError);
-            }
-        }
+        //private static void UpsertInsight(JObject index)
+        //{
+        //    using (DatabaseClient databaseClient = new DatabaseClient())
+        //    {
+        //        string collectionId = Constant.Database.Collection.OutputInsight;
+        //        try
+        //        {
+        //            databaseClient.UpsertDocument(collectionId, index);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MediaPublishError publishError = new MediaPublishError()
+        //            {
+        //                Id = index["id"].ToString(),
+        //                Exception = ex
+        //            };
+        //            databaseClient.UpsertDocument(collectionId, publishError);
+        //        }
+        //    }
+        //}
 
-        private static MediaAccount GetMediaAccount(JObject document)
-        {
-            MediaAccount mediaAccount = new MediaAccount()
-            {
-                Name = document["MediaAccount"]["Name"].ToString(),
-                SubscriptionId = document["MediaAccount"]["SubscriptionId"].ToString(),
-                ResourceGroupName = document["MediaAccount"]["ResourceGroupName"].ToString(),
-                DirectoryTenantId = document["MediaAccount"]["DirectoryTenantId"].ToString(),
-                ClientApplicationId = document["MediaAccount"]["ClientApplicationId"].ToString(),
-                ClientApplicationKey = document["MediaAccount"]["ClientApplicationKey"].ToString()
-            };
-            return mediaAccount;
-        }
+        //private static MediaAccount GetMediaAccount(JObject document)
+        //{
+        //    MediaAccount mediaAccount = new MediaAccount()
+        //    {
+        //        Name = document["MediaAccount"]["Name"].ToString(),
+        //        SubscriptionId = document["MediaAccount"]["SubscriptionId"].ToString(),
+        //        ResourceGroupName = document["MediaAccount"]["ResourceGroupName"].ToString(),
+        //        DirectoryTenantId = document["MediaAccount"]["DirectoryTenantId"].ToString(),
+        //        ClientApplicationId = document["MediaAccount"]["ClientApplicationId"].ToString(),
+        //        ClientApplicationKey = document["MediaAccount"]["ClientApplicationKey"].ToString()
+        //    };
+        //    return mediaAccount;
+        //}
 
         //private static void PublishAsset(MediaClient mediaClient, IAsset asset, ContentProtection contentProtection, LocatorType locatorType)
         //{
@@ -196,13 +201,27 @@ namespace AzureSkyMedia.PlatformServices
         //    }
         //}
 
-        public static MediaPublished PublishContent(MediaPublish mediaPublish)
+        public static MediaPublished PublishMedia(MediaPublish mediaPublish)
         {
             MediaPublished mediaPublished = null;
-            //MediaClient mediaClient = new MediaClient(null, mediaPublish.MediaAccount);
-            //IJob job = mediaClient.GetEntityById(MediaEntity.Job, mediaPublish.Id) as IJob;
-            //if (job != null)
-            //{
+            using (MediaClient mediaClient = new MediaClient(null, mediaPublish.MediaAccount))
+            {
+                string jobName = mediaPublish.Id;
+                string transformName = mediaPublish.TransformName;
+                Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
+                if (job != null)
+                {
+                    foreach (JobOutputAsset jobOutput in job.Outputs)
+                    {
+                        mediaClient.CreateLocator(jobOutput.AssetName, PredefinedStreamingPolicy.ClearStreamingOnly);
+                    }
+                    mediaPublished = new MediaPublished()
+                    {
+                        MobileNumber = mediaPublish.MobileNumber,
+                        UserMessage = GetNotificationMessage(mediaPublish.MediaAccount, job)
+                    };
+                }
+            }
             //    string indexId = null;
             //    mediaClient.SetProcessorUnits(job, ReservedUnitType.Basic, false);
             //    PublishJob(mediaClient, job);
@@ -212,66 +231,60 @@ namespace AzureSkyMedia.PlatformServices
             //        VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaPublish.MediaAccount);
             //        indexId = videoAnalyzer.StartAnalysis(mediaClient, encoderOutput, mediaPublish.InsightConfig);
             //    }
-            //    mediaPublished = new MediaPublished()
-            //    {
-            //        IndexId = indexId,
-            //        MobileNumber = mediaPublish.MobileNumber,
-            //        StatusMessage = GetNotificationMessage(mediaPublish.MediaAccount, job)
-            //    };
-            //}
             return mediaPublished;
         }
 
-        public static MediaPublished PublishInsight(MediaPublish mediaPublish)
-        {
-            string indexId = mediaPublish.Id;
-            //VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaPublish.MediaAccount);
-            //JObject index = videoAnalyzer.GetIndex(indexId, null, false);
-            //UpsertInsight(index);
+        //public static MediaPublished PublishInsight(MediaPublish mediaPublish)
+        //{
+        //    string indexId = mediaPublish.Id;
+        //    VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaPublish.MediaAccount);
+        //    JObject index = videoAnalyzer.GetIndex(indexId, null, false);
+        //    UpsertInsight(index);
 
-            MediaPublished mediaPublished = new MediaPublished
-            {
-                IndexId = indexId,
-                MobileNumber = mediaPublish.MobileNumber,
-                StatusMessage = string.Empty
-            };
-            return mediaPublished;
-        }
+        //    MediaPublished mediaPublished = new MediaPublished
+        //    {
+        //        IndexId = indexId,
+        //        MobileNumber = mediaPublish.MobileNumber,
+        //        StatusMessage = string.Empty
+        //    };
+        //    return mediaPublished;
+        //}
 
         public static void PurgePublish()
         {
-            DatabaseClient databaseClient = new DatabaseClient();
-
-            string collectionId = Constant.Database.Collection.OutputInsight;
-            JObject[] documents = databaseClient.GetDocuments(collectionId);
-            foreach (JObject document in documents)
-            {
-                MediaAccount mediaAccount = GetMediaAccount(document);
-                MediaClient mediaClient = new MediaClient(null, mediaAccount);
-                string assetId = document["id"].ToString();
-                //IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-                //if (asset == null)
-                //{
-                //    databaseClient.DeleteDocument(collectionId, assetId);
-                //}
-            }
-
-            //collectionId = Constant.Database.Collection.OutputPublish;
-            //documents = databaseClient.GetDocuments(collectionId);
-            //foreach (JObject document in documents)
+            //using (DatabaseClient databaseClient = new DatabaseClient())
             //{
-            //    MediaAccount mediaAccount = GetMediaAccount(document);
-            //    MediaClient mediaClient = new MediaClient(null, mediaAccount);
-            //    string jobId = document["id"].ToString();
-            //    IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
-            //    if (job == null)
+            //    string collectionId = Constant.Database.Collection.OutputInsight;
+            //    JObject[] documents = databaseClient.GetDocuments(collectionId);
+            //    foreach (JObject document in documents)
             //    {
-            //        JToken taskIds = document["TaskIds"];
-            //        foreach (JToken taskId in taskIds)
+            //        MediaAccount mediaAccount = GetMediaAccount(document);
+            //        using MediaClient mediaClient = new MediaClient(null, mediaAccount);
+            //        string assetId = document["id"].ToString();
+            //        IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
+            //        if (asset == null)
             //        {
-            //            databaseClient.DeleteDocument(collectionId, taskId.ToString());
+            //            databaseClient.DeleteDocument(collectionId, assetId);
             //        }
-            //        databaseClient.DeleteDocument(collectionId, jobId);
+            //    }
+
+            //    collectionId = Constant.Database.Collection.OutputPublish;
+            //    documents = databaseClient.GetDocuments(collectionId);
+            //    foreach (JObject document in documents)
+            //    {
+            //        MediaAccount mediaAccount = GetMediaAccount(document);
+            //        using MediaClient mediaClient = new MediaClient(null, mediaAccount);
+            //        string jobId = document["id"].ToString();
+            //        IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
+            //        if (job == null)
+            //        {
+            //            JToken taskIds = document["TaskIds"];
+            //            foreach (JToken taskId in taskIds)
+            //            {
+            //                databaseClient.DeleteDocument(collectionId, taskId.ToString());
+            //            }
+            //            databaseClient.DeleteDocument(collectionId, jobId);
+            //        }
             //    }
             //}
         }
