@@ -1,13 +1,46 @@
 ﻿@section head {
+    <script type="text/javascript" src="~/js/transform.js"></script>
     <script type="text/javascript">
-        function CreateEntity() {
-            alert("Create!");
+        function GetTransformOutputs() {
+            var transformOutputs = new Array();
+            for (var i = 0; i < 3; i++) {
+                var transformOutput = {
+                    PresetEnabled: $("#presetEnabled" + i).prop("checked"),
+                    PresetName: $("#presetName" + i).val(),
+                    RelativePriority: $("#relativePriority" + i).val(),
+                    OnErrorMode: $("#onErrorMode" + i).val()
+                }
+                transformOutputs.push(transformOutput);
+            }
+            return transformOutputs
+        }
+        function CreateTransform() {
+            var title = "Confirm Transform Create / Update";
+            var message = "Are you sure you want to create / update the current transform?";
+            var onConfirm = function () {
+                SetCursor(true);
+                $.post("/transform/create",
+                    {
+                        name: $("#name").val(),
+                        description: $("#description").val(),
+                        outputs: GetTransformOutputs()
+                    },
+                    function (entity) {
+                        SetCursor(false);
+                        window.location = window.location.href;
+                    }
+                );
+                $(this).dialog("close");
+            }
+            ConfirmMessage(title, message, onConfirm);
         }
         $(function () {
-            var columns = GetColumns("transforms");
+            var columns = GetColumns("transforms", "Transform Name");
             var rows = @Json.Serialize(ViewData["transforms"]);
-            LoadGrid("transforms", columns, rows, "@ViewData["storageCdnUrl"]");
-            CreateTipTop("mediaEntityCreate", "Create New Transform");
+            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            LoadGrid("transforms", columns, rows, "transformOutputs", "properties.outputs", spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+            CreateTipBottom("mediaEntitySave", "Save Transform");
         })
     </script>
 }
@@ -17,7 +50,98 @@
 }
 
 <table id="transforms"></table>
+<div id="gridPager"></div>
+
+<table class="entity top">
+    <tr>
+        <td class="inputLabel">
+            Name
+        </td>
+        <td>
+            @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Transform Name]" })
+        </td>
+    </tr>
+    <tr>
+        <td class="inputLabel">
+            Description
+        </td>
+        <td>
+            @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Transform Description]" })
+        </td>
+    </tr>
+</table>
+
+<table class="entity">
+    <tr>
+        <td class="inputLabel">
+            <div class="outputPresets">
+                Output Presets
+            </div>
+        </td>
+        <td>
+            <table>
+                <tr>
+                    <td class="inputLabel centered">
+                        Preset Name
+                    </td>
+                    <td class="inputLabel centered">
+                        Priority<br>(Relative)
+                    </td>
+                    <td class="inputLabel centered">
+                        On Error<br>Mode
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.CheckBox("presetEnabled0", true)
+                        <select id="presetName0" class="inputSelect">
+                            <option value="AdaptiveStreaming" selected>Adaptive Streaming</option>
+                            <option value="H264MultipleBitrate1080p">H264 Multiple Bitrate 1080p</option>
+                            <option value="H264MultipleBitrate720p">H264 Multiple Bitrate 720p</option>
+                            <option value="H264MultipleBitrateSD">H264 Multiple Bitrate SD</option>
+                            <option value="AACGoodQualityAudio">AAC Good Quality Audio</option>
+                        </select>
+                    </td>
+                    <td>
+                        @Html.Partial("Priority", "relativePriority0")
+                    </td>
+                    <td>
+                        @Html.Partial("OnError", "onErrorMode0")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.CheckBox("presetEnabled1", false, new { onchange = "SetAudioAnalyzer(this)" })
+                        <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
+                            Video Analyzer
+                        </span>
+                    </td>
+                    <td>
+                        @Html.Partial("Priority", "relativePriority1")
+                    </td>
+                    <td>
+                        @Html.Partial("OnError", "onErrorMode1")
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.CheckBox("presetEnabled2", false)
+                        <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
+                            Audio Analyzer
+                        </span>
+                    </td>
+                    <td>
+                        @Html.Partial("Priority", "relativePriority2")
+                    </td>
+                    <td>
+                        @Html.Partial("OnError", "onErrorMode2")
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "mediaEntityCreate", "MediaEntityCreate.png", "CreateEntity()" })
+    @Html.Partial("SiteButton", new string[] { "mediaEntitySave", "MediaEntitySave.png", "CreateTransform()" })
 </div>

@@ -53,7 +53,7 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Streaming Policies", streamingPolicyCount.ToString(), "/account/streamingPolicies" });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpointCount.ToString(), "/account/streamingEndpoints" });
             entityCounts.Add(new string[] { "Streaming Locators", streamingLocatorCount.ToString(), "/account/streamingLocators" });
-            entityCounts.Add(new string[] { "Streaming Filters", streamingFiltersCount.ToString(), "/account/streamingFilters" });
+            //entityCounts.Add(new string[] { "Streaming Filters", streamingFiltersCount.ToString(), "/account/streamingFilters" });
             entityCounts.Add(new string[] { "Live Events", liveEventCount.ToString(), "/account/liveEvents" });
             entityCounts.Add(new string[] { "Live Event Outputs", liveEventOutputCount.ToString(), "/account/liveEventOutputs" });
 

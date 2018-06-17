@@ -1,31 +1,33 @@
 ﻿<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-        <title>Azure Sky Media (@ViewData["appRegionName"])</title>
-        <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
-        <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-multiselect/jquery.multiselect.css" />
-        <link type="text/css" rel="stylesheet" href="~/lib/jquery-editable-select/dist/jquery-editable-select.min.css" />
-        <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
-        <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
-        <link type="text/css" rel="stylesheet" href="~/lib/qtip/jquery.qtip.min.css" />
-        <link type="text/css" rel="stylesheet" href="~/css/site.css" />
-        @Html.Raw(javaScriptSnippet.FullScript)
-        <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="~/lib/jquery-ui-multiselect/src/jquery.multiselect.min.js"></script>
-        <script type="text/javascript" src="~/lib/jquery-editable-select/dist/jquery-editable-select.min.js"></script>
-        <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
-        <script type="text/javascript" src="~/lib/jquery.scrollTo/jquery.scrollTo.min.js"></script>
-        <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
-        <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
-        <script type="text/javascript" src="~/lib/qtip/jquery.qtip.min.js"></script>
-        <script type="text/javascript" src="~/js/grid.js"></script>
-        <script type="text/javascript" src="~/js/qtip.js"></script>
-        <script type="text/javascript" src="~/js/site.js"></script>
-        @RenderSection("head", false)
-    </head>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Azure Sky Media (@ViewData["appRegionName"])</title>
+    <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-multiselect/jquery.multiselect.css" />
+    <link type="text/css" rel="stylesheet" href="~/lib/jquery-editable-select/dist/jquery-editable-select.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
+    <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
+    <link type="text/css" rel="stylesheet" href="~/lib/qtip/jquery.qtip.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/grid.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/site.css" />
+    @Html.Raw(javaScriptSnippet.FullScript)
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-ui-multiselect/src/jquery.multiselect.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-editable-select/dist/jquery-editable-select.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
+    <script type="text/javascript" src="~/lib/jquery.scrollTo/jquery.scrollTo.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
+    <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
+    <script type="text/javascript" src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
+    <script type="text/javascript" src="~/lib/qtip/jquery.qtip.min.js"></script>
+    <script type="text/javascript" src="~/js/grid.js"></script>
+    <script type="text/javascript" src="~/js/qtip.js"></script>
+    <script type="text/javascript" src="~/js/site.js"></script>
+    @RenderSection("head", false)
+</head>
     <body onload="SetLayout()">
         <table class="header">
             <tr>
@@ -60,7 +62,8 @@
             <tr>
                 <td colspan="3">
                     <div id="accountContext" class="accountContext">
-                        @ViewData["userId"] (<a id="mediaAccount" href="/account">@ViewData["accountName"]</a>)
+                        @ViewData["userId"]
+                        <a id="mediaAccount" class="siteLink" href="/account">(@ViewData["accountName"])</a>
                     </div>
                 </td>
             </tr>
@@ -86,7 +89,7 @@
                     @Html.Partial("SiteButton", new string[] { "mediaInsight", "MediaInsight.png", "window.open('http://azure.microsoft.com/services/cognitive-services/video-indexer/')", "layoutVertical" })
                 </div>
             </td>
-            <td class="layoutPanel">
+            <td class="layoutPanel body">
                 @RenderBody()
             </td>
             <td class="layoutPanel side">

@@ -10,7 +10,7 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class homeController : Controller
+    public class HomeController : Controller
     {
         internal static SelectListItem[] GetListItems(Dictionary<string, string> dictionary)
         {
@@ -25,28 +25,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 listItems.Add(listItem);
             }
             return listItems.ToArray();
-        }
-
-        internal static SelectListItem[] GetMediaProcessors(string authToken, bool presetsView)
-        {
-            List<SelectListItem> mediaProcessors = new List<SelectListItem>();
-            SelectListItem mediaProcessor = new SelectListItem()
-            {
-                Text = string.Empty,
-                Value = string.Empty
-            };
-            mediaProcessors.Add(mediaProcessor);
-            Dictionary<string, string> processors = Processor.GetMediaProcessors(authToken, presetsView, false);
-            foreach (KeyValuePair<string, string> processor in processors)
-            {
-                mediaProcessor = new SelectListItem()
-                {
-                    Text = processor.Value.ToString(),
-                    Value = processor.Key.ToString()
-                };
-                mediaProcessors.Add(mediaProcessor);
-            }
-            return mediaProcessors.ToArray();
         }
 
         internal static SelectListItem[] GetSpokenLanguages(bool videoIndexer, bool includeEmpty)
@@ -117,12 +95,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             return AppSetting.GetValue(settingKey);
         }
 
-        public IActionResult player()
+        public IActionResult Player()
         {
             return View();
         }
 
-        public IActionResult index()
+        public IActionResult Index()
         {
             string accountMessage = string.Empty;
             MediaStream[] mediaStreams = new MediaStream[] { };

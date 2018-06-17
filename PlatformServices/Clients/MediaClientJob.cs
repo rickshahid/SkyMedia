@@ -9,17 +9,22 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public Job CreateJob(string transformName, string jobName, JobInput jobInput, string outputAssetName)
+        public Job CreateJob(string transformName, string jobName, JobInput jobInput, string[] outputAssetNames)
         {
             if (string.IsNullOrEmpty(jobName))
             {
                 jobName = Guid.NewGuid().ToString();
             }
-            JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
+            List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
+            foreach (string outputAssetName in outputAssetNames)
+            {
+                JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
+                outputAssets.Add(outputAsset);
+            }
             Job job = new Job()
             {
                 Input = jobInput,
-                Outputs = new List<JobOutput>() { outputAsset }
+                Outputs = outputAssets.ToArray()
             };
             Task<AzureOperationResponse<Job>> createTask = _media.Jobs.CreateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName, job);
             AzureOperationResponse<Job> createResponse = createTask.Result;
@@ -43,67 +48,67 @@ namespace AzureSkyMedia.PlatformServices
         //    processorUnit.Update();
         //}
 
-        public static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
-        {
-            List<MediaJobTask> jobTasks = new List<MediaJobTask>();
-            foreach (MediaJobTask jobTask in mediaJob.Tasks)
-            {
-                MediaJobTask[] tasks = null;
-                switch (jobTask.MediaProcessor)
-                {
-                    case MediaProcessor.EncoderStandard:
-                    case MediaProcessor.EncoderPremium:
-                        tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
-                        break;
-                    //case MediaProcessor.AudioAnalyzer:
-                    //    tasks = GetAudioAnalyzerTasks(mediaClient, jobTask, jobInputs);
-                    //    break;
-                    //case MediaProcessor.VideoAnalyzer:
-                    //    MediaJobTask encoderTask = GetEncoderTask(mediaJob);
-                    //    if (encoderTask == null)
-                    //    {
-                    //        VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
-                    //        foreach (MediaJobInput jobInput in jobInputs)
-                    //        {
-                    //            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
-                    //            string indexId = VideoAnalyzer.GetIndexId(asset);
-                    //            if (!string.IsNullOrEmpty(indexId))
-                    //            {
-                    //                videoAnalyzer.RestartAnalysis(mediaClient, indexId);
-                    //            }
-                    //            else
-                    //            {
-                    //                videoAnalyzer.StartAnalysis(mediaClient, asset, jobTask.InsightConfig);
-                    //            }
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        encoderTask.InsightConfig = jobTask.InsightConfig;
-                    //    }
-                    //    break;
-                    //case MediaProcessor.VideoSummarization:
-                    //    tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
-                    //    break;
-                    //case MediaProcessor.FaceDetection:
-                    //    tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);
-                    //    break;
-                    //case MediaProcessor.MotionDetection:
-                    //    tasks = GetMotionDetectionTasks(mediaClient, jobTask, jobInputs);
-                    //    break;
-                }
-                if (tasks != null)
-                {
-                    jobTasks.AddRange(tasks);
-                }
-            }
-            mediaJob.Tasks = jobTasks.ToArray();
-            if (string.IsNullOrEmpty(mediaJob.Name))
-            {
-                mediaJob.Name = jobInputs.Length > 1 ? Constant.Media.Job.MultipleInputAssets : jobInputs[0].AssetName;
-            }
-            return mediaJob;
-        }
+        //public static MediaJob GetJob(string authToken, MediaClient mediaClient, MediaJob mediaJob, MediaJobInput[] jobInputs)
+        //{
+        //    List<MediaJobTask> jobTasks = new List<MediaJobTask>();
+        //    foreach (MediaJobTask jobTask in mediaJob.Tasks)
+        //    {
+        //        MediaJobTask[] tasks = null;
+        //        switch (jobTask.MediaProcessor)
+        //        {
+        //            case MediaProcessor.EncoderStandard:
+        //            case MediaProcessor.EncoderPremium:
+        //                //tasks = GetEncoderTasks(mediaClient, jobTask, jobInputs);
+        //                break;
+        //            //case MediaProcessor.AudioAnalyzer:
+        //            //    tasks = GetAudioAnalyzerTasks(mediaClient, jobTask, jobInputs);
+        //            //    break;
+        //            //case MediaProcessor.VideoAnalyzer:
+        //            //    MediaJobTask encoderTask = GetEncoderTask(mediaJob);
+        //            //    if (encoderTask == null)
+        //            //    {
+        //            //        VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+        //            //        foreach (MediaJobInput jobInput in jobInputs)
+        //            //        {
+        //            //            IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, jobInput.AssetId) as IAsset;
+        //            //            string indexId = VideoAnalyzer.GetIndexId(asset);
+        //            //            if (!string.IsNullOrEmpty(indexId))
+        //            //            {
+        //            //                videoAnalyzer.RestartAnalysis(mediaClient, indexId);
+        //            //            }
+        //            //            else
+        //            //            {
+        //            //                videoAnalyzer.StartAnalysis(mediaClient, asset, jobTask.InsightConfig);
+        //            //            }
+        //            //        }
+        //            //    }
+        //            //    else
+        //            //    {
+        //            //        encoderTask.InsightConfig = jobTask.InsightConfig;
+        //            //    }
+        //            //    break;
+        //            //case MediaProcessor.VideoSummarization:
+        //            //    tasks = GetVideoSummarizationTasks(mediaClient, jobTask, jobInputs);
+        //            //    break;
+        //            //case MediaProcessor.FaceDetection:
+        //            //    tasks = GetFaceDetectionTasks(mediaClient, jobTask, jobInputs);
+        //            //    break;
+        //            //case MediaProcessor.MotionDetection:
+        //            //    tasks = GetMotionDetectionTasks(mediaClient, jobTask, jobInputs);
+        //            //    break;
+        //        }
+        //        if (tasks != null)
+        //        {
+        //            jobTasks.AddRange(tasks);
+        //        }
+        //    }
+        //    mediaJob.Tasks = jobTasks.ToArray();
+        //    if (string.IsNullOrEmpty(mediaJob.Name))
+        //    {
+        //        mediaJob.Name = jobInputs.Length > 1 ? Constant.Media.Job.MultipleInputAssets : jobInputs[0].AssetName;
+        //    }
+        //    return mediaJob;
+        //}
 
         //public static MediaJobInput GetJobInput(MediaClient mediaClient, string assetId)
         //{

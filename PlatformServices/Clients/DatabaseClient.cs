@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -108,39 +107,6 @@ namespace AzureSkyMedia.PlatformServices
                 Body = File.ReadAllText(scriptFile)
             };
             _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
-
-            collectionId = Constant.Database.Collection.ProcessorPreset;
-            collectionUri = CreateCollection(databaseUri, collectionId);
-
-            collectionDirectory = string.Concat(modelsDirectory, collectionId);
-
-            scriptFile = string.Concat(collectionDirectory, @"\getProcessorPreset.js");
-            procedure = new StoredProcedure()
-            {
-                Id = "getProcessorPreset",
-                Body = File.ReadAllText(scriptFile)
-            };
-            _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
-
-            string presetsDirectory = string.Concat(modelsDirectory, Constant.Media.Presets);
-
-            string[] mediaProcessors = Directory.GetDirectories(presetsDirectory);
-            foreach (string mediaProcessor in mediaProcessors)
-            {
-                string[] processorPresets = Directory.GetFiles(mediaProcessor);
-                foreach (string processorPreset in processorPresets)
-                {
-                    if (processorPreset.EndsWith(Constant.Media.FileExtension.Json, StringComparison.OrdinalIgnoreCase))
-                    {
-                        StreamReader fileReader = new StreamReader(processorPreset);
-                        using (JsonTextReader presetReader = new JsonTextReader(fileReader))
-                        {
-                            JObject presetConfig = JObject.Load(presetReader);
-                            UpsertDocument(collectionId, presetConfig);
-                        }
-                    }
-                }
-            }
         }
 
         public T[] GetDocuments<T>(string collectionId)

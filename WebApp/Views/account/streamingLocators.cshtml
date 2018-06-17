@@ -1,28 +1,18 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = [
-                {
-                    width: 500,
-                    name: "name",
-                    label: "Streaming Locator Name",
-                    align: "center"
-                },
-                {
-                    width: 100,
-                    label: "Actions",
-                    formatter: FormatActions,
-                    align: "center"
-                }
-            ];
+            var columns = GetColumns("streamingLocators", "Locator (Asset) Name");
             var rows = @Json.Serialize(ViewData["streamingLocators"]);
-            LoadGrid("streamingLocators", columns, rows, "@ViewData["storageCdnUrl"]");
+            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            LoadGrid("streamingLocators", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
         })
     </script>
 }
 
 @section title {
-    Locators
+    Streaming Locators
 }
 
 <table id="streamingLocators"></table>
+<div id="gridPager"></div>

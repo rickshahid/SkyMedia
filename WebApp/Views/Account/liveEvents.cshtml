@@ -1,18 +1,18 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = GetColumns("assets", "Asset Name");
-            var rows = @Json.Serialize(ViewData["assets"]);
+            var columns = GetColumns("liveEvents", "Event Name");
+            var rows = @Json.Serialize(ViewData["liveEvents"]);
             var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
             var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
-            LoadGrid("assets", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+            LoadGrid("liveEvents", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
         })
     </script>
 }
 
 @section title {
-    Assets
+    Live Events
 }
 
-<table id="assets"></table>
+<table id="liveEvents"></table>
 <div id="gridPager"></div>

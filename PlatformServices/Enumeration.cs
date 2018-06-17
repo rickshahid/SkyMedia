@@ -17,13 +17,6 @@ namespace AzureSkyMedia.PlatformServices
         LiveEventOutput
     }
 
-    public enum MediaProcessor
-    {
-        EncoderStandard,
-        EncoderPremium,
-        VideoIndexer
-    }
-
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaProtection
     {

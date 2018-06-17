@@ -1,0 +1,18 @@
+﻿@section head {
+    <script type="text/javascript">
+        $(function () {
+            var columns = GetColumns("contentKeyPolicies", "Policy Name");
+            var rows = @Json.Serialize(ViewData["contentKeyPolicies"]);
+            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            LoadGrid("contentKeyPolicies", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+        })
+    </script>
+}
+
+@section title {
+    Content Key Policies
+}
+
+<table id="contentKeyPolicies"></table>
+<div id="gridPager"></div>

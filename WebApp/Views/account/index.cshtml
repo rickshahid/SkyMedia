@@ -14,7 +14,7 @@
         function DisplayInventory() {
             var inventoryHtml = "";
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
-            for (var i = 0; i < 11; i++) {
+            for (var i = 0; i < entityCounts.length; i++) {
                 inventoryHtml = DisplayEntity(inventoryHtml, entityCounts[i]);
             }
             $("#accountInventory").html(inventoryHtml);
@@ -51,9 +51,9 @@
         }
         $(function () {
             DisplayInventory();
-            CreateTipTop("accountClear", "Clear Media Account");
+            CreateTipBottom("accountClear", "Clear Media Account");
             CreateTipBottom("authToken", "Azure Active Directory<br><br>JSON Web Token");
-            if (window.location.href.indexOf("showToken") > -1) {
+            if (window.location.href.indexOf("authToken") > -1) {
                 $("#authToken").show();
             }
         })

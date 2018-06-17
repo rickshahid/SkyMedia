@@ -19,7 +19,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public int Priority { get; set; }
 
-        public MediaJobTask[] Tasks { get; set; }
+        //public MediaJobTask[] Tasks { get; set; }
     }
 
     internal class MediaProcess

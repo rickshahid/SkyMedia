@@ -284,24 +284,24 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
+              "name": "ARM.EndpointUrl",
+              "value": "https://management.azure.com/"
+            },
+            {
+              "name": "ARM.AudienceUrl",
+              "value": "https://management.core.windows.net/"
+            },
+            {
+              "name": "Directory.IssuerUrl",
+              "value": "https://login.microsoftonline.com/{0}/v2.0/"
+            },
+            {
               "name": "Storage",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
               "name": "Database",
               "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=Media')]"
-            },
-            {
-              "name": "Media.Locator.WriteDurationMinutes",
-              "value": 60
-            },
-            {
-              "name": "Media.Locator.ReadDurationDays",
-              "value": 30
-            },
-            {
-              "name": "Media.Locator.AutoRenewal",
-              "value": true
             },
             {
               "name": "Media.Publish.Queue",

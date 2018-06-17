@@ -1,0 +1,111 @@
+﻿.storageAccount {
+    font-weight: bold;
+    width: 600px;
+}
+
+.assetName {
+    font-weight: bold;
+    width: 175px;
+}
+
+.assetDescription {
+    font-weight: bold;
+    width: 214px;
+}
+
+.assetAlternateId {
+    font-weight: bold;
+    width: 175px;
+}
+
+.plupload_container {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    margin-top: 10px;
+}
+
+.plupload_header {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.plupload_filelist_footer {
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.plupload_file_status {
+    width: 80px !important;
+    text-align: center !important;
+}
+
+.plupload_file_percent {
+    margin-left: 6px;
+}
+
+.plupload_file_size {
+    white-space: nowrap;
+    width: 40px !important;
+    right: 40px !important;
+}
+
+.plupload_total_file_size {
+    display: inline-block;
+    padding-right: 10px;
+    width: 55px;
+}
+
+.plupload_progress_container {
+    height: 10px;
+    width: 100px;
+}
+
+.plupload_progress {
+    margin-right: 55px;
+}
+
+.plupload_upload_status {
+    padding-left: 32px;
+}
+
+.multipleFileAsset {
+    position: relative;
+    bottom: 262px;
+    left: 80px;
+}
+
+.mediaUpload {
+    margin: 0px auto;
+}
+
+.mediaUpload td {
+    padding: 5px;
+}
+
+.mediaUploadOptions {
+    margin: -20px auto;
+}
+
+.mediaUploadOptions td {
+    padding-bottom: 10px;
+}
+
+.mediaUploadAnalyzerPreset {
+    padding-left: 50px;
+}
+
+.mediaUploadMessage {
+    position: relative;
+    display: block;
+    height: 20px;
+    bottom: 32px;
+    left: 300px;
+}
+
+.mediaUploadEntities {
+    text-align: center;
+    font-size: x-large;
+    font-style: italic;
+    font-weight: bold;
+    margin-top: 30px
+}

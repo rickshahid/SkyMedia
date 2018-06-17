@@ -4,7 +4,7 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class liveController : Controller
+    public class LiveController : Controller
     {
         //[HttpPost]
         //[Route("/live/createEvent")]

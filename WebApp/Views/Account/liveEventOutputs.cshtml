@@ -1,0 +1,18 @@
+﻿@section head {
+    <script type="text/javascript">
+        $(function () {
+            var columns = GetColumns("liveEventOutputs", "Output Name");
+            var rows = @Json.Serialize(ViewData["liveEventOutputs"]);
+            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            LoadGrid("liveEventOutputs", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+        })
+    </script>
+}
+
+@section title {
+    Live Event Outputs
+}
+
+<table id="liveEventOutputs"></table>
+<div id="gridPager"></div>

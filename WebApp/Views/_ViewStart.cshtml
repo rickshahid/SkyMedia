@@ -6,44 +6,48 @@
 @{
     HttpRequest request = this.Context.Request;
     HttpResponse response = this.Context.Response;
-    string authToken = homeController.GetAuthToken(request, response);
+
+    string authToken = HomeController.GetAuthToken(request, response);
     ViewData["authToken"] = authToken;
     ViewData["authTokenCookie"] = Constant.HttpCookie.UserAuthToken;
 
+    ViewData["spacingPatterns"] = Constant.TextFormatter.SpacingPatterns;
+    ViewData["spacingInserts"] = Constant.TextFormatter.SpacingInserts;
+
     if (!string.IsNullOrEmpty(authToken))
     {
-        homeController.SetAccountContext(authToken, ViewData);
+        HomeController.SetAccountContext(authToken, ViewData);
     }
 
     string settingKey = Constant.AppSettingKey.AppRegionName;
-    ViewData["appRegionName"] = homeController.GetAppSetting(settingKey);
+    ViewData["appRegionName"] = HomeController.GetAppSetting(settingKey);
 
-    string ampVersion = this.Context.Request.Query["amp.version"];
+    string ampVersion = request.Query["amp.version"];
     if (string.IsNullOrEmpty(ampVersion))
     {
         settingKey = Constant.AppSettingKey.MediaPlayerVersion;
-        ampVersion = homeController.GetAppSetting(settingKey);
+        ampVersion = HomeController.GetAppSetting(settingKey);
     }
     ViewData["mediaPlayerVersion"] = ampVersion;
 
-    string ampSkin = this.Context.Request.Query["amp.skin"];
+    string ampSkin = request.Query["amp.skin"];
     if (string.IsNullOrEmpty(ampSkin))
     {
         settingKey = Constant.AppSettingKey.MediaPlayerSkin;
-        ampSkin = homeController.GetAppSetting(settingKey);
+        ampSkin = HomeController.GetAppSetting(settingKey);
     }
     ViewData["mediaPlayerSkin"] = ampSkin;
 
-    string amcVersion = this.Context.Request.Query["amc.version"];
+    string amcVersion = request.Query["amc.version"];
     if (string.IsNullOrEmpty(amcVersion))
     {
         settingKey = Constant.AppSettingKey.MediaClipperVersion;
-        amcVersion = homeController.GetAppSetting(settingKey);
+        amcVersion = HomeController.GetAppSetting(settingKey);
     }
     ViewData["mediaClipperVersion"] = amcVersion;
 
     settingKey = Constant.AppSettingKey.ContentDeliveryEndpointStorage;
-    ViewData["storageCdnUrl"] = homeController.GetAppSetting(settingKey);
+    ViewData["storageCdnUrl"] = HomeController.GetAppSetting(settingKey);
 
     string accountSignUpIn = "/account/signUpIn";
     if (request.QueryString.HasValue)

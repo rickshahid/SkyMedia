@@ -25,8 +25,8 @@ function ValidWorkflowInput(uploadView, saveWorkflow) {
     var validInput = true;
     if (uploadView) {
         if (_fileUploader.files.length == 0) {
-            CreateTipTop("fileUploader_browse", "Select Source Media");
-            SetTipVisible("fileUploader_browse", true);
+            CreateTipTop("mediaFileUploader_browse", "Select Source Media");
+            SetTipVisible("mediaFileUploader_browse", true);
             validInput = false;
         }
     } else {

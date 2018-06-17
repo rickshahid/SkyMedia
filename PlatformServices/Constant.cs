@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("AzureSkyMedia.WebApp")]
 [assembly: InternalsVisibleTo("AzureSkyMedia.FunctionApp")]
@@ -22,10 +23,19 @@ namespace AzureSkyMedia.PlatformServices
             //public const string Numeric = "N2";
             //public const string ClockTime = "hh':'mm':'ss";
 
-            public const string SpacePattern = "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])";
-            public const string SpaceReplacement = " $0";
+            public static readonly string[] SpacingPatterns = new string[] { "([a-z])([A-Z17])", "([A-Z])([a-z])" };
+            public static readonly string[] SpacingInserts = new string[] { "$1 $2", " $1$2" };
+
+            public static string GetValue(string value)
+            {
+                for (int i = 0; i < SpacingPatterns.Length; i++)
+                {
+                    value = Regex.Replace(value, SpacingPatterns[i], SpacingInserts[i]);
+                }
+                return value;
+            }
         }
-        
+
         public struct AppSettingKey
         {
             public const string AppRegionName = "App.RegionName";
@@ -158,12 +168,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string InputWorkflow = "InputWorkflow";
                 public const string OutputInsight = "OutputInsight";
                 public const string OutputPublish = "OutputPublish";
-                public const string ProcessorPreset = "ProcessorPreset";
             }
 
             public struct Procedure
             {
-                public const string ProcessorPreset = "getProcessorPreset";
                 public const string TimecodeFragment = "getTimecodeFragment";
             }
 
@@ -177,7 +185,6 @@ namespace AzureSkyMedia.PlatformServices
         public struct Media
         {
             public const string Models = @"\Models\";
-            public const string Presets = @"ProcessorPreset\";
             public const string PredefinedPrefix = "Predefined_";
 
             public struct IdPrefix
@@ -201,17 +208,6 @@ namespace AzureSkyMedia.PlatformServices
                 //public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
                 //public const string ContentModeration = "nb:mpid:UUID:bb312589-3bd4-4f2e-af26-2df8a984b395";
                 //public const string CharacterRecognition = "nb:mpid:UUID:074c3899-d9fb-448f-9ae1-4ebcbe633056";
-            }
-
-            public struct ProcessorPreset
-            {
-                public const int ThumbnailJpgQuality = 90;
-
-                public const string StreamingLadderPresetName = "H.264 Ladder Adaptive Streaming (Uninterleaved)";
-                public const string StreamingLadderPresetValue = "Adaptive Streaming";
-
-                public const string DownloadLadderPresetName = "H.264 Ladder Streaming & Download (Interleaved)";
-                public const string DownloadLadderPresetValue = "Content Adaptive Multiple Bitrate MP4";
             }
 
             public struct ContentProtection
@@ -263,12 +259,16 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Transform
             {
-                public const string PresetAdaptiveStreaming = "Standard Encoder Adaptive Streaming";
+                public const string PresetNameAnalyzerVideo = "Video Analyzer";
+                public const string PresetNameAnalyzerAudio = "Audio Analyzer";
+                public const string PresetNameDelimiter = " - ";
             }
 
             public struct Job
             {
-                public const string EncoderOutputAssetSuffix = " (MBR)";
+                public const string OutputAssetSuffixEncoderStandard = " (ABR)";
+                public const string OutputAssetSuffixAnalyzerVideo = " (VAI)";
+                public const string OutputAssetSuffixAnalyzerAudio = " (AAI)";
 
                 public const string MultipleInputAssets = "Multiple Input Assets";
                 public const string NotificationEndpointName = "Job Notification Web Hook";
@@ -295,8 +295,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Live
             {
-                public const string ChannelEncodingPreset = "Default720p";
-
                 public const string ProgramSuffixClear = " Clear";
                 public const string ProgramSuffixAes = " AES";
                 public const string ProgramSuffixDrm = " DRM";

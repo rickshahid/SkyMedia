@@ -1,22 +1,11 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = [
-                {
-                    width: 500,
-                    name: "name",
-                    label: "Streaming Filter Name",
-                    align: "center"
-                },
-                {
-                    width: 100,
-                    label: "Actions",
-                    formatter: FormatActions,
-                    align: "center"
-                }
-            ];
+            var columns = GetColumns("streamingFilters", "Filter Name");
             var rows = @Json.Serialize(ViewData["streamingFilters"]);
-            LoadGrid("streamingFilters", columns, rows, "@ViewData["storageCdnUrl"]");
+            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            LoadGrid("streamingFilters", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
         })
     </script>
 }
@@ -26,3 +15,4 @@
 }
 
 <table id="streamingFilters"></table>
+<div id="gridPager"></div>

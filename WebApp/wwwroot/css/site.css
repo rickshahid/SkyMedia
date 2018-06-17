@@ -35,8 +35,8 @@
 }
 
 body {
-    background-color: black;
     color: deepskyblue;
+    background-color: black;
 }
 
 .layout {
@@ -47,9 +47,13 @@ body {
     vertical-align: top;
 }
 
-.layoutPanel.side {
-    display: normal;
+.layoutPanel.body {
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
+
+/**/
 
 .header {
     margin: 0px auto;
@@ -322,62 +326,6 @@ body {
     float: none;
 }
 
-.plupload_container {
-    border: 1px solid deepskyblue;
-    border-radius: 20px;
-    margin-top: 10px;
-}
-
-.plupload_header {
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-}
-
-.plupload_filelist_footer {
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-}
-
-.plupload_file_status {
-    text-align: left !important;
-}
-
-.plupload_total_status {
-    padding-left: 13px;
-}
-
-.plupload_file_size {
-    white-space: nowrap;
-    padding-left: 15px;
-}
-
-.plupload_total_file_size {
-    display: inline-block;
-    padding-right: 10px;
-    width: 55px;
-}
-
-.plupload_progress_container {
-    height: 10px;
-    width: 95px;
-}
-
-.plupload_progress {
-    margin-right: 70px;
-}
-
-.plupload_upload_status {
-    padding-left: 30px !important;
-}
-
-.mediaUpload {
-    margin: 0px auto;
-}
-
-.mediaUpload td {
-    padding: 5px;
-}
-
 .mediaWorkflow {
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -484,6 +432,10 @@ body {
     text-align: right;
 }
 
+.inputLabel.centered {
+    text-align: center !important;
+}
+
 .inputLabel.large {
     font-size: large;
 }
@@ -505,47 +457,8 @@ body {
     vertical-align: top;
 }
 
-.storageAccount {
-    font-weight: bold;
-    overflow: hidden;
-    width: 600px;
-}
-
-.assetName {
-    font-weight: bold;
-    width: 175px;
-}
-
-.assetDescription {
-    font-weight: bold;
-    width: 214px;
-}
-
-.assetAlternateId {
-    font-weight: bold;
-    width: 175px;
-}
-
-.mediaUploadOptions {
-    text-align: center;
-}
-
-.standardEncoderAsset {
-    margin-left: 60px;
-}
-
-.uploadMessage {
-    position: relative;
-    bottom: 32px;
-    left: 300px;
-}
-
-.entitiesMessage {
-    text-align: center;
-    font-size: x-large;
-    font-style: italic;
-    font-weight: bold;
-    margin-top: 30px;
+.outputPresets {
+    margin-top: 45px;
 }
 
 .outputAssetName {
@@ -658,42 +571,6 @@ body {
     width: 132px;
 }
 
-.ui-jqgrid {
-    border: none !important;
-    background: background;
-}
-
-.ui-jqgrid-hbox {
-    background: background;
-}
-
-.ui-jqgrid-hdiv {
-    border: none !important;
-}
-
-.ui-jqgrid-htable th {
-    border-radius: 20px;
-}
-
-.ui-jqgrid-htable div {
-    height: 20px !important;
-}
-
-.ui-jqgrid-view {
-    font-size: medium !important;
-}
-
-.jqgrow td {
-    font-weight: bold !important;
-    height: 30px !important;
-    border: none !important;
-    background: background;
-}
-
-.jqgrow:hover td {
-    cursor: pointer;
-}
-
 .accountInventory {
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -701,7 +578,6 @@ body {
     font-weight: bold;
     font-size: large;
     padding: 10px;
-    margin: 20px;
 }
 
 .accountInventory td {
@@ -711,6 +587,22 @@ body {
 
 .entityCount {
     color: azure;
+}
+
+.entity {
+    margin: 0px auto;
+}
+
+.entity td {
+    padding: 5px;
+}
+
+.entityName {
+    width: 325px;
+}
+
+.entity.top {
+    margin-top: 20px;
 }
 
 .authToken {

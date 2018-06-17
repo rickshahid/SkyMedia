@@ -175,6 +175,7 @@ namespace AzureSkyMedia.PlatformServices
                     _media.Transforms.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
                     break;
                 case MediaEntity.TransformJob:
+                    _media.Jobs.CancelJob(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     break;
                 case MediaEntity.ContentKeyPolicy:

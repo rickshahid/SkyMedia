@@ -1,151 +1,135 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Azure.Management.Media.Models;
-
-using Newtonsoft.Json.Linq;
 
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class transformController : Controller
+    public class TransformController : Controller
     {
-        private bool HasUniqueName(string processorPreset, out JObject presetConfig)
+        private static Preset GetAnalyzerPreset(bool audioAnalyzer)
         {
-            bool uniqueName = true;
-            presetConfig = JObject.Parse(processorPreset);
-            string presetName = presetConfig["PresetName"].ToString();
-            string mediaProcessor = presetConfig["MediaProcessor"].ToString();
-            string appDirectory = Directory.GetCurrentDirectory();
-            string presetsDirectory = string.Concat(appDirectory, Constant.Media.Models, Constant.Media.Presets, mediaProcessor);
-            string[] presetFiles = Directory.GetFiles(presetsDirectory);
-            foreach (string presetFile in presetFiles)
+            Preset analyzerPreset;
+            if (audioAnalyzer)
             {
-                string fileName = Path.GetFileNameWithoutExtension(presetFile);
-                if (string.Equals(fileName, presetName, StringComparison.OrdinalIgnoreCase))
+                analyzerPreset = new AudioAnalyzerPreset();
+            }
+            else
+            {
+                analyzerPreset = new VideoAnalyzerPreset()
                 {
-                    uniqueName = false;
+                    AudioInsightsOnly = false
+                };
+            }
+            return analyzerPreset;
+        }
+
+        private static TransformOutput GetTransformOutput(Preset transformPreset, MediaTransformOutput transformOutput)
+        {
+            return new TransformOutput(transformPreset)
+            {
+                RelativePriority = string.IsNullOrEmpty(transformOutput.RelativePriority) ? Priority.Normal : (Priority)transformOutput.RelativePriority,
+                OnError = string.IsNullOrEmpty(transformOutput.OnErrorMode) ? OnErrorType.StopProcessingJob : (OnErrorType)transformOutput.OnErrorMode
+            };
+        }
+
+        internal static Transform CreateTransform(MediaClient mediaClient, bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
+        {
+            MediaTransformOutput standardEncoderOutput = new MediaTransformOutput()
+            {
+                PresetEnabled = standardEncoderPreset,
+                PresetName = EncoderNamedPreset.AdaptiveStreaming
+            };
+            MediaTransformOutput videoAnalyzerOutput = new MediaTransformOutput()
+            {
+                PresetEnabled = videoAnalyzerPreset
+            };
+            MediaTransformOutput audioAnalyzerOutput = new MediaTransformOutput()
+            {
+                PresetEnabled = audioAnalyzerPreset
+            };
+            MediaTransformOutput[] transformOutputs = new MediaTransformOutput[] { standardEncoderOutput, videoAnalyzerOutput, audioAnalyzerOutput };
+            return CreateTransform(mediaClient, null, null, transformOutputs);
+        }
+
+        internal static Transform CreateTransform(MediaClient mediaClient, string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
+        {
+            Transform transform = null;
+            bool defaultName = string.IsNullOrEmpty(transformName);
+            List<TransformOutput> transformOutputList = new List<TransformOutput>();
+            if (transformOutputs[0].PresetEnabled)
+            {
+                if (defaultName)
+                {
+                    transformName = transformOutputs[0].PresetName;
+                }
+                BuiltInStandardEncoderPreset encoderPreset = new BuiltInStandardEncoderPreset(transformOutputs[0].PresetName);
+                TransformOutput transformOutput = GetTransformOutput(encoderPreset, transformOutputs[0]);
+                transformOutputList.Add(transformOutput);
+                if (transformOutputs[1].PresetEnabled)
+                {
+                    if (defaultName)
+                    {
+                        transformName = string.Concat(transformName, Constant.Media.Transform.PresetNameDelimiter, Constant.Media.Transform.PresetNameAnalyzerVideo);
+                    }
+                    VideoAnalyzerPreset analyzerPreset = (VideoAnalyzerPreset)GetAnalyzerPreset(false);
+                    transformOutput = GetTransformOutput(analyzerPreset, transformOutputs[1]);
+                    transformOutputList.Add(transformOutput);
+                }
+                else if (transformOutputs[2].PresetEnabled)
+                {
+                    if (defaultName)
+                    {
+                        transformName = string.Concat(transformName, Constant.Media.Transform.PresetNameDelimiter, Constant.Media.Transform.PresetNameAnalyzerAudio);
+                    }
+                    AudioAnalyzerPreset analyzerPreset = (AudioAnalyzerPreset)GetAnalyzerPreset(true);
+                    transformOutput = GetTransformOutput(analyzerPreset, transformOutputs[2]);
+                    transformOutputList.Add(transformOutput);
                 }
             }
-            if (uniqueName)
+            else if (transformOutputs[1].PresetEnabled)
             {
-                string authToken = homeController.GetAuthToken(this.Request, this.Response);
-                User authUser = new User(authToken);
-                presetConfig["id"] = string.Concat(authUser.MediaAccount.Name, Constant.TextDelimiter.Identifier, mediaProcessor, Constant.TextDelimiter.Identifier, presetName);
-            }
-            return uniqueName;
-        }
-
-        private static int OrderByName(SelectListItem leftItem, SelectListItem rightItem)
-        {
-            return string.Compare(leftItem.Text, rightItem.Text);
-        }
-
-        internal static SelectListItem[] GetProcessorPresets(MediaProcessor mediaProcessor, string accountName, bool includeLadder)
-        {
-            List<SelectListItem> processorPresets = new List<SelectListItem>();
-            Dictionary<string, string> presets = Processor.GetProcessorPresets(mediaProcessor, accountName);
-            if (includeLadder)
-            {
-                SelectListItem processorPreset = new SelectListItem()
+                if (defaultName)
                 {
-                    Text = Constant.Media.ProcessorPreset.StreamingLadderPresetName,
-                    Value = Constant.Media.ProcessorPreset.StreamingLadderPresetValue,
-                    Selected = true
-                };
-                processorPresets.Add(processorPreset);
-                processorPreset = new SelectListItem()
-                {
-                    Text = Constant.Media.ProcessorPreset.DownloadLadderPresetName,
-                    Value = Constant.Media.ProcessorPreset.DownloadLadderPresetValue
-                };
-                processorPresets.Add(processorPreset);
-            }
-            foreach (KeyValuePair<string, string> preset in presets)
-            {
-                SelectListItem processorPreset = new SelectListItem()
-                {
-                    Text = preset.Value,
-                    Value = preset.Key
-                };
-                processorPresets.Add(processorPreset);
-            }
-            processorPresets.Sort(OrderByName);
-            return processorPresets.ToArray();
-        }
-
-        public JsonResult configs(MediaProcessor mediaProcessor)
-        {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            User authUser = new User(authToken);
-            SelectListItem[] presets = GetProcessorPresets(mediaProcessor, authUser.MediaAccount.Name, false);
-            return Json(presets);
-        }
-
-        public JsonResult config(string presetId)
-        {
-            JObject preset;
-            string collectionId = Constant.Database.Collection.ProcessorPreset;
-            string procedureId = Constant.Database.Procedure.ProcessorPreset;
-            using (DatabaseClient databaseClient = new DatabaseClient())
-            {
-                preset = databaseClient.GetDocument(collectionId, procedureId, "id", presetId);
-            }
-            return Json(preset);
-        }
-
-        public JsonResult save(string processorPreset)
-        {
-            bool saved = false;
-            if (HasUniqueName(processorPreset, out JObject presetConfig))
-            {
-                string collectionId = Constant.Database.Collection.ProcessorPreset;
-                using (DatabaseClient databaseClient = new DatabaseClient())
-                {
-                    databaseClient.UpsertDocument(collectionId, presetConfig);
-                    saved = true;
+                    transformName = Constant.Media.Transform.PresetNameAnalyzerVideo;
                 }
+                VideoAnalyzerPreset analyzerPreset = (VideoAnalyzerPreset)GetAnalyzerPreset(false);
+                TransformOutput transformOutput = GetTransformOutput(analyzerPreset, transformOutputs[1]);
+                transformOutputList.Add(transformOutput);
             }
-            return Json(saved);
-        }
-
-        public JsonResult delete(string processorPreset)
-        {
-            bool deleted = false;
-            if (HasUniqueName(processorPreset, out JObject presetConfig))
+            else if (transformOutputs[2].PresetEnabled)
             {
-                string collectionId = Constant.Database.Collection.ProcessorPreset;
-                string documentId = presetConfig["id"].ToString();
-                using (DatabaseClient databaseClient = new DatabaseClient())
+                if (defaultName)
                 {
-                    databaseClient.DeleteDocument(collectionId, documentId);
-                    deleted = true;
+                    transformName = Constant.Media.Transform.PresetNameAnalyzerAudio;
                 }
+                AudioAnalyzerPreset analyzerPreset = (AudioAnalyzerPreset)GetAnalyzerPreset(true);
+                TransformOutput transformOutput = GetTransformOutput(analyzerPreset, transformOutputs[2]);
+                transformOutputList.Add(transformOutput);
             }
-            return Json(deleted);
+            if (transformOutputList.Count > 0)
+            {
+                transform = mediaClient.CreateTransform(transformName, transformDescription, transformOutputList.ToArray());
+            }
+            return transform;
         }
 
-        //public JsonResult start(string[] assetIds, MediaJob mediaJob)
-        //{
-        //    string directoryId = homeController.GetDirectoryId(this.Request);
-        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
-        //    MediaClient mediaClient = new MediaClient(authToken);
-        //    MediaJobInput[] jobInputs = Workflow.GetJobInputs(mediaClient, assetIds);
-        //    object jobOutput = Workflow.SubmitJob(directoryId, authToken, mediaClient, mediaJob, jobInputs);
-        //    return Json(jobOutput);
-        //}
-
-        public IActionResult index()
+        public JsonResult Create(string name, string description, MediaTransformOutput[] outputs)
         {
-            //homeController.SetViewData(authToken, this.ViewData);
-            //string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            //ViewData["mediaProcessor"] = homeController.GetMediaProcessors(authToken, true);
-            //ViewData["mediaProcessorPreset"] = new SelectListItem[] { };
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            Transform transform;
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                transform = CreateTransform(mediaClient, name, description, outputs);
+            }
+            return Json(transform);
+        }
+
+        public IActionResult Index()
+        {
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);

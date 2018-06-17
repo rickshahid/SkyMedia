@@ -5,14 +5,14 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class jobController : Controller
+    public class JobController : Controller
     {
-        internal static Job CreateJob(string authToken, string transformName, string jobName, JobInput jobInput, string outputAssetName, MediaPublish mediaPublish)
+        internal static Job Create(string authToken, string transformName, string jobName, JobInput jobInput, string[] outputAssetNames, MediaPublish mediaPublish)
         {
             Job job;
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                job = mediaClient.CreateJob(transformName, jobName, jobInput, outputAssetName);
+                job = mediaClient.CreateJob(transformName, jobName, jobInput, outputAssetNames);
                 mediaPublish.Id = job.Name;
                 mediaPublish.TransformName = transformName;
                 mediaPublish.MediaAccount = mediaClient.MediaAccount;
@@ -25,9 +25,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return job;
         }
 
-        public IActionResult index()
+        public IActionResult Index()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);

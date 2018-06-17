@@ -1,0 +1,61 @@
+﻿.ui-jqgrid {
+    border: none !important;
+}
+
+.ui-jqgrid td {
+    background: background;
+    border: none !important;
+    padding-bottom: 15px !important;
+}
+
+.ui-jqgrid-view {
+    font-size: medium;
+}
+
+.ui-jqgrid-hbox {
+    background: background;
+}
+
+.ui-jqgrid-hdiv {
+    border: none !important;
+}
+
+.ui-jqgrid-htable th {
+    border-radius: 20px;
+}
+
+.ui-jqgrid-htable div {
+    height: 20px !important;
+}
+
+.ui-jqgrid-bdiv {
+    background: background;
+    height: auto !important;
+}
+
+.ui-sgcollapsed {
+    padding-left: 5px !important;
+}
+
+.ui-icon-carat-1-sw {
+    margin-left: 5px;
+}
+
+.ui-icon-desc {
+    margin-left: 0px !important;
+}
+
+.ui-pager-control {
+    font-size: medium;
+    background: background;
+}
+
+.ui-pg-table td {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+.ui-pg-input {
+    text-align: center;
+    width: 30px !important;
+}

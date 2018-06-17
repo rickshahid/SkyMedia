@@ -1,9 +1,11 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = GetColumns("transforms");
+            var columns = GetColumns("transforms", "Transform Name");
             var rows = @Json.Serialize(ViewData["transforms"]);
-            LoadGrid("transforms", columns, rows, "@ViewData["storageCdnUrl"]");
+            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            LoadGrid("transforms", columns, rows, "transformOutputs", "properties.outputs", spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
         })
     </script>
 }
@@ -13,3 +15,4 @@
 }
 
 <table id="transforms"></table>
+<div id="gridPager"></div>

@@ -1,117 +1,12 @@
 ﻿@section head {
     <link type="text/css" rel="stylesheet" href="~/lib/plupload/js/jquery.ui.plupload/css/jquery.ui.plupload.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/upload.css" />
     <script type="text/javascript" src="~/lib/plupload/js/moxie.min.js"></script>
     <script type="text/javascript" src="~/lib/plupload/js/plupload.min.js"></script>
     <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
+    <script type="text/javascript" src="~/js/upload.js"></script>
+    <script type="text/javascript" src="~/js/transform.js"></script>
     <script type="text/javascript">
-        var _fileUploader, _uploadStartTime;
-        function GetUploadTime() {
-            var uploadTime = new Date() - _uploadStartTime;
-            var elapsedSeconds = Math.floor(uploadTime / 1000);
-            if (elapsedSeconds == 1) {
-                uploadTime = elapsedSeconds + " Second";
-            } else if (elapsedSeconds < 60) {
-                uploadTime = elapsedSeconds + " Seconds";
-            } else {
-                var elapsedMinutes = elapsedSeconds / 60;
-                uploadTime = elapsedMinutes.toFixed(2) + " Minutes";
-            }
-            return uploadTime;
-        }
-        function GetFileNames() {
-            var fileNames = new Array();
-            for (var i = 0; i < _fileUploader.files.length; i++) {
-                var fileName = _fileUploader.files[i].name;
-                fileNames.push(fileName);
-            }
-            return fileNames;
-        }
-        function CreateAsset() {
-            SetCursor(true);
-            $.post("/asset/create",
-                {
-                    storageAccount: $("#storageAccount").val(),
-                    assetName: $("#assetName").val(),
-                    description: $("#assetDescription").val(),
-                    alternateId: $("#assetAlternateId").val(),
-                    fileNames: GetFileNames(),
-                    multipleFileAsset: $("#multipleFileAsset").prop("checked"),
-                    standardEncoderAsset: $("#standardEncoderAsset").prop("checked")
-                },
-                function (entities) {
-                    SetCursor(false);
-                    var message = "";
-                    for (var i = 0; i < entities.length; i++) {
-                        var entity = entities[i];
-                        if (message != "") {
-                            message = message + "<br><br>";
-                        }
-                        if ($("#standardEncoderAsset").prop("checked")) {
-                            message = message + "Job Created: " + entity.name;
-                        } else {
-                            message = message + "Asset Created: " + entity.name;
-                        }
-                        message = message + "<br><br>" + entity["properties.created"];
-                    }
-                    $("#entitiesMessage").html(message);
-                }
-            );
-        }
-        function CreateUploader() {
-            var eventHandlers = {
-                PostInit: function (uploader) {
-                    _fileUploader = uploader;
-                },
-                BeforeUpload: function (uploader, file) {
-                    uploader.settings.multipart_params = {
-                        storageAccount: $("#storageAccount").val(),
-                        contentType: file.type
-                    };
-                },
-                StateChanged: function (uploader) {
-                    var isBusy = false;
-                    if (uploader.state == plupload.STARTED) {
-                        _uploadStartTime = new Date();
-                        isBusy = true;
-                    }
-                    SetCursor(isBusy);
-                },
-                UploadComplete: function (uploader, files) {
-                    if (uploader.total.failed == 0) {
-                        var uploadTime = GetUploadTime();
-                        $("#uploadMessage").text("Upload Elapsed Time: " + uploadTime);
-                        CreateAsset();
-                    }
-                },
-                Error: function (uploader, error) {
-                    var title = "Error Message";
-                    var message = error.message;
-                    if (error.response != null && error.response != "") {
-                        message = error.response;
-                    }
-                    DisplayMessage(title, message);
-                }
-            };
-            $("#fileUploader").plupload({
-                url: "/upload/block",
-                runtimes: "html5",
-                chunk_size: "10MB",
-                max_retries: 3,
-                multipart: true,
-                dragdrop: false,
-                sortable: true,
-                rename: true,
-                filters: {
-                    prevent_duplicates: true,
-                    max_file_size: "4GB"
-                },
-                init: eventHandlers
-            });
-        }
-        function SetStorageTip() {
-            var tipText = $("#storageAccount option:selected").text();
-            CreateTipTop("storageAccount", tipText);
-        }
         $(function () {
             SetStorageTip();
             CreateUploader();
@@ -148,20 +43,53 @@
     </tr>
 </table>
 
-<div id="fileUploader"></div>
-<div id="uploadMessage" class="uploadMessage">
-    <br>
-</div>
+<div id="mediaFileUploader"></div>
+<div id="mediaUploadMessage" class="mediaUploadMessage"></div>
 
-<div class="mediaUploadOptions">
-    @Html.CheckBox("multipleFileAsset", false)
-    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/assets-concept')">
-        Create Multiple File Input Asset
-    </span>
-    @Html.CheckBox("standardEncoderAsset", true, new { @class = "standardEncoderAsset" })
-    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
-        Create Adaptive Streaming Output Asset
-    </span>
-</div>
+<table class="multipleFileAsset">
+    <tr>
+        <td>
+            @Html.CheckBox("multipleFileAsset", false)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/assets-concept')">
+                Create Multiple File Input Asset
+            </span>
+        </td>
+    </tr>
+</table>
 
-<div id="entitiesMessage" class="entitiesMessage"></div>
+<table class="mediaUploadOptions">
+    <tr>
+        <td>
+            @Html.CheckBox("standardEncoderPreset", true)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
+                Create Adaptive Streaming Output Asset
+            </span>
+        </td>
+        <td class="mediaUploadAnalyzerPreset">
+            @Html.CheckBox("videoAnalyzerPreset", false, new { onchange = "SetAudioAnalyzer(this)" })
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
+                Create Video Analyzer Output Asset
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td />
+        <td />
+        <td class="mediaUploadAnalyzerPreset">
+            @Html.CheckBox("audioAnalyzerPreset", false)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
+                Create Audio Analyzer Output Asset
+            </span>
+        </td>
+    </tr>
+</table>
+
+<div id="mediaUploadEntities" class="mediaUploadEntities"></div>

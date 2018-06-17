@@ -8,40 +8,40 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class accountController : Controller
+    public class AccountController : Controller
     {
         private void SetStyleHost()
         {
             ViewData["cssHost"] = string.Concat(this.Request.Scheme, "://", this.Request.Host.Value);
         }
 
-        public void signUpIn()
+        public void SignUpIn()
         {
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public void profileEdit()
+        public void ProfileEdit()
         {
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public void passwordReset()
+        public void PasswordReset()
         {
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public void deleteEntities(bool liveOnly)
+        public void DeleteEntities(bool liveOnly)
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 Account.DeleteEntities(mediaClient, liveOnly);
             }
         }
 
-        public void deleteEntity(string gridId, string entityName, string parentEntityName)
+        public void DeleteEntity(string gridId, string entityName, string parentEntityName)
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 switch (gridId)
@@ -49,7 +49,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     case "assets":
                         mediaClient.DeleteEntity(MediaEntity.Asset, entityName);
                         break;
-                    case "tranforms":
+                    case "transforms":
                         mediaClient.DeleteEntity(MediaEntity.Transform, entityName);
                         break;
                     case "transformJobs":
@@ -77,33 +77,33 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public IActionResult signOut()
+        public IActionResult SignOut()
         {
             this.SignOut(OpenIdConnectDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("index", "home");
         }
 
-        public IActionResult signIn()
+        public IActionResult SignIn()
         {
             SetStyleHost();
             return View();
         }
 
-        public IActionResult password()
+        public IActionResult Password()
         {
             SetStyleHost();
             return View();
         }
 
-        public IActionResult profile()
+        public IActionResult Profile()
         {
             SetStyleHost();
             return View();
         }
 
-        public IActionResult assets()
+        public IActionResult Assets()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["assets"] = mediaClient.GetAllEntities<Asset>(MediaEntity.Asset);
@@ -111,9 +111,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult transforms()
+        public IActionResult Transforms()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
@@ -121,9 +121,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult transformJobs()
+        public IActionResult TransformJobs()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
@@ -131,9 +131,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult contentKeyPolicies()
+        public IActionResult ContentKeyPolicies()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["contentKeyPolicies"] = mediaClient.GetAllEntities<ContentKeyPolicy>(MediaEntity.ContentKeyPolicy);
@@ -141,9 +141,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult streamingPolicies()
+        public IActionResult StreamingPolicies()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["streamingPolicies"] = mediaClient.GetAllEntities<StreamingPolicy>(MediaEntity.StreamingPolicy);
@@ -151,9 +151,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult streamingEndpoints()
+        public IActionResult StreamingEndpoints()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["streamingEndpoints"] = mediaClient.GetAllEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
@@ -161,9 +161,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult streamingLocators()
+        public IActionResult StreamingLocators()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["streamingLocators"] = mediaClient.GetAllEntities<StreamingLocator>(MediaEntity.StreamingLocator);
@@ -171,9 +171,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult liveEvents()
+        public IActionResult LiveEvents()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["liveEvents"] = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
@@ -181,9 +181,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult liveEventOutputs()
+        public IActionResult LiveEventOutputs()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
@@ -191,9 +191,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult index()
+        public IActionResult Index()
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);

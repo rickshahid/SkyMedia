@@ -2,22 +2,22 @@
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class MediaInsightSource
-    {
-        public MediaProcessor MediaProcessor { get; set; }
+    //public class MediaInsightSource
+    //{
+    //    public MediaProcessor MediaProcessor { get; set; }
 
-        public string OutputId { get; set; }
+    //    public string OutputId { get; set; }
 
-        public string OutputUrl { get; set; }
-    }
+    //    public string OutputUrl { get; set; }
+    //}
 
-    public class MediaInsight
-    {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+    //public class MediaInsight
+    //{
+    //    [JsonProperty(PropertyName = "id")]
+    //    public string Id { get; set; }
 
-        public MediaInsightSource[] Sources { get; set; }
-    }
+    //    public MediaInsightSource[] Sources { get; set; }
+    //}
 
 //    public class MediaInsightConfig
 //    {

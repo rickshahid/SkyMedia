@@ -6,37 +6,37 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class searchController : Controller
+    public class SearchController : Controller
     {
-        public JsonResult metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
-        {
-            JObject metadata;
-            string collectionId = Constant.Database.Collection.OutputInsight;
-            string procedureId = Constant.Database.Procedure.TimecodeFragment;
-            using (DatabaseClient databaseClient = new DatabaseClient())
-            {
-                //if (mediaProcessor == MediaProcessor.VideoAnalyzer)
-                //{
-                //    metadata = databaseClient.GetDocument(collectionId, documentId);
-                //}
-                //else
-                //{
-                metadata = databaseClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
-                //}
-            }
-            return Json(metadata);
-        }
+        //public JsonResult Metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
+        //{
+        //    JObject metadata;
+        //    string collectionId = Constant.Database.Collection.OutputInsight;
+        //    string procedureId = Constant.Database.Procedure.TimecodeFragment;
+        //    using (DatabaseClient databaseClient = new DatabaseClient())
+        //    {
+        //        if (mediaProcessor == MediaProcessor.VideoAnalyzer)
+        //        {
+        //            metadata = databaseClient.GetDocument(collectionId, documentId);
+        //        }
+        //        else
+        //        {
+        //            metadata = databaseClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
+        //        }
+        //    }
+        //    return Json(metadata);
+        //}
 
         [HttpGet]
         [Route("/insight/accounts")]
         public JArray GetAccounts()
         {
             JArray accounts = null;
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
-                MediaClient mediaClient = new MediaClient(authToken);
-                VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+                //MediaClient mediaClient = new MediaClient(authToken);
+                //VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
                 //accounts = videoAnalyzer.GetAccounts();
             }
             return accounts;
@@ -47,11 +47,11 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JObject GetInsight(string indexId, string languageId, bool processingState)
         {
             JObject index = null;
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
-                MediaClient mediaClient = new MediaClient(authToken);
-                VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+                //MediaClient mediaClient = new MediaClient(authToken);
+                //VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
                 //index = videoAnalyzer.GetIndex(indexId, languageId, processingState);
             }
             return index;
@@ -61,7 +61,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/insight/delete")]
         public void DeleteVideo(string indexId, bool deleteInsight)
         {
-            string authToken = homeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
             if (!string.IsNullOrEmpty(authToken))
             {
                 //MediaClient mediaClient = new MediaClient(authToken);
@@ -86,9 +86,9 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    return Json(results);
         //}
 
-        public IActionResult index()
+        public IActionResult Index()
         {
-            ViewData["indexerLanguages"] = homeController.GetSpokenLanguages(true, true);
+            ViewData["indexerLanguages"] = HomeController.GetSpokenLanguages(true, true);
             return View();
         }
     }

@@ -4,19 +4,22 @@
             alert("Create!");
         }
         $(function () {
-            var columns = GetColumns("transformJobs");
+            var columns = GetColumns("transformJobs", "Job Name");
             var rows = @Json.Serialize(ViewData["transformJobs"]);
-            LoadGrid("transformJobs", columns, rows, "@ViewData["storageCdnUrl"]");
-            CreateTipTop("mediaEntityCreate", "Create New Transform Job");
+            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            LoadGrid("transformJobs", columns, rows, "transformJobOutputs", "properties.outputs", spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+            CreateTipBottom("mediaEntityCreate", "Create New Job");
         })
     </script>
 }
 
 @section title {
-    Media Transform Jobs
+    Media Jobs
 }
 
 <table id="transformJobs"></table>
+<div id="gridPager"></div>
 
 <div class="viewButtons">
     @Html.Partial("SiteButton", new string[] { "mediaEntityCreate", "MediaEntityCreate.png", "CreateEntity()" })

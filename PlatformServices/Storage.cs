@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 using Microsoft.Rest;
 using Microsoft.WindowsAzure.Storage;
@@ -63,7 +62,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
 
                 string accountReplication = storageAccount.Sku.Name.ToString();
-                accountReplication = Regex.Replace(accountReplication, Constant.TextFormatter.SpacePattern, Constant.TextFormatter.SpaceReplacement);
+                accountReplication = Constant.TextFormatter.GetValue(accountReplication);
 
                 accountInfo = string.Concat(accountInfo, " (Type: ", accountType);
                 accountInfo = string.Concat(accountInfo, ", Encryption: ", accountEncryption);
