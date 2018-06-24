@@ -63,8 +63,6 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Media Services** - http://azure.microsoft.com/services/media-services/
 
-  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
-
   * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
 
   * **Indexing** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
@@ -72,6 +70,8 @@ The following Azure platform services were leveraged to create this sample media
   * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
 
   * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
+  
+  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
 * **Search** - http://azure.microsoft.com/services/search/
 
