@@ -1,4 +1,4 @@
-# Azure Sky Media
+# Azure Sky Media v3
 
 Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.tv
 
