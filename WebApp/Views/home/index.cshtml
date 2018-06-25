@@ -1,5 +1,5 @@
 ﻿@using AzureSkyMedia.PlatformServices;
-@using AzureSkyMedia.WebApp.Controllers;
+@using AzureSkyMedia.WebApp.Models;
 
 @{
     string userId = ViewData["userId"] as string;
@@ -37,32 +37,32 @@
             _streamIndex = @streamIndex;
             var accountMessage = "@accountMessage";
             var mediaStream = _mediaStreams.length == 0 ? null : _mediaStreams[_streamIndex];
-            var sliderWidth = $("#streamSlider").width();
-            var sliderStep = _mediaStreams.length == 1 ? sliderWidth : Math.floor(sliderWidth / (_mediaStreams.length - 1));
-            var sliderValue = _streamIndex * sliderStep;
-            $("#streamSlider").slider({
+            var tunerWidth = $("#streamTuner").width();
+            var tunerStep = _mediaStreams.length == 1 ? tunerWidth : Math.floor(tunerWidth / (_mediaStreams.length - 1));
+            var tunerValue = _streamIndex * tunerStep;
+            $("#streamTuner").slider({
                 min: 0,
-                max: sliderWidth,
-                step: sliderStep,
-                value: sliderValue,
+                max: tunerWidth,
+                step: tunerStep,
+                value: tunerValue,
                 classes: {
-                    "ui-slider-handle": "streamSliderHandle"
+                    "ui-slider-handle": "streamTunerHandle"
                 },
                 slide: function (event, ui) {
                     if (_mediaStreams.length > 0) {
-                        var streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / sliderStep) + 1;
+                        var streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / tunerStep) + 1;
                         var streamIndex = streamNumber - 1;
                         var mediaStream = _mediaStreams[streamIndex];
                         var streamName = GetStreamName(mediaStream, true);
                         streamNumber = streamNumber + @streamOffset;
-                        CreateTipTopLeft("streamSlider", streamName, ui.value + 2, -15);
-                        SetTipVisible("streamSlider", true);
+                        CreateTipTopLeft("streamTuner", streamName, ui.value + 2, -15);
+                        SetTipVisible("streamTuner", true);
                         SetStreamNumber(streamNumber, streamIndex);
                     }
                 },
                 stop: function (event, ui) {
                     if (_mediaStreams.length > 0) {
-                        _streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / sliderStep) + 1;
+                        _streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / tunerStep) + 1;
                         _streamNumber = _streamNumber + @streamOffset;
                         window.location.href = "/?stream=" + _streamNumber;
                     }
@@ -74,9 +74,33 @@
                     syncTranscript: true,
                     syncLanguage: true
                 });
+
+                var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
+                var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
+
                 if (_authToken != "" && _mediaStreams.length > 0) {
                     var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
+
+                    @*var image = document.createElement("img");
+                    image.id = "userAuthImage";
+                    image.src = "@storageCdnUrl" + "/UserAuthEnabled.png";
+                    var button = document.createElement("button");
+                    button.id = "userAuthButton";
+                    button.className = controlButtonCss;
+                    button.appendChild(image);
+                    controlBarRight.appendChild(button);
+                    $("#" + button.id).click(function () {
+                        if (image.src.indexOf("Enabled") > -1) {
+                            image.src = image.src.replace("Enabled", "Disabled");
+                            CreateTipTop(button.id, "User Auth<br><br>Disabled");
+                        } else {
+                            image.src = image.src.replace("Disabled", "Enabled");
+                            CreateTipTop(button.id, "User Auth<br><br>Enabled");
+                        }
+                    });
+                    CreateTipTop(button.id, "User Auth<br><br>Enabled");*@
+
                     if (_mediaPlayer.isLive()) {
                         var cueImage = document.createElement("img");
                         cueImage.id = "cueImage";
@@ -153,13 +177,13 @@
     Azure Sky Media
 }
 
-@Html.Partial("MediaPlayer")
+<partial name="MediaPlayer" />
 
-<div id="indexerInsight" class="indexerInsight">
+@*<div id="indexerInsight" class="indexerInsight">
     <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
-</div>
+</div>*@
 
-<div id="analyticsInsight" class="analyticsInsight">
+@*<div id="analyticsInsight" class="analyticsInsight">
     <div class="analyticsProcessors">
         <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-analytics-overview')">
             Azure Media Analytics
@@ -167,15 +191,15 @@
         <select id="analyticsProcessors" onchange="SetAnalyticsMetadata(_mediaPlayer)"></select>
     </div>
     <div id="analyticsMetadata" class="analyticsMetadata"></div>
-</div>
+</div>*@
 
-@Html.Partial("MediaControls", new int[] { streamOffset, mediaStreams.Length })
+<partial name="MediaWorkflow" model='new StreamTuner { StreamOffset = streamOffset, StreamCount = mediaStreams.Length }' />
 
 <div class="streamInfo">
     <div id="streamName" class="streamInfoName"></div>
     <div id="streamUrl" class="streamInfoUrl"></div>
 </div>
 
-<div class="mediaCertification">
-    @Html.Partial("SiteButton", new string[] { "mediaCertification", "MediaCertification.png", "window.open('http://www.microsoft.com/en-us/trustcenter/compliance/cdsa')" })
+<div class="mediaServicesCompliance">
+    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "http://www.microsoft.com/en-us/trustcenter/compliance/cdsa" }' />
 </div>

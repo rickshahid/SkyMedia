@@ -24,15 +24,15 @@ namespace AzureSkyMedia.PlatformServices
     {
         public MediaStream DeepCopy()
         {
-            MediaStream mediaStream = (MediaStream)this.MemberwiseClone();
+            MediaStream mediaStream = (MediaStream)MemberwiseClone();
             mediaStream.Source = new StreamSource()
             {
-                Url = this.Source.Url,
-                ProtectionInfo = this.Source.ProtectionInfo == null ? null : (StreamProtection[])this.Source.ProtectionInfo.Clone(),
+                Url = Source.Url,
+                ProtectionInfo = Source.ProtectionInfo == null ? null : (StreamProtection[])Source.ProtectionInfo.Clone(),
             };
-            mediaStream.ThumbnailUrls = this.ThumbnailUrls == null ? null : (string[])this.ThumbnailUrls.Clone();
-            mediaStream.TextTracks = this.TextTracks == null ? null : (MediaTrack[])this.TextTracks.Clone();
-            //mediaStream.ContentInsight = this.ContentInsight;
+            mediaStream.ThumbnailUrls = ThumbnailUrls == null ? null : (string[])ThumbnailUrls.Clone();
+            mediaStream.TextTracks = TextTracks == null ? null : (MediaTrack[])TextTracks.Clone();
+            //mediaStream.ContentInsight = ContentInsight;
             return mediaStream;
         }
 

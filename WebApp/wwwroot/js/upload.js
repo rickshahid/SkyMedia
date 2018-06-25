@@ -33,7 +33,6 @@ function CreateAsset() {
             description: $("#assetDescription").val(),
             alternateId: $("#assetAlternateId").val(),
             fileNames: GetFileNames(),
-            multipleFileAsset: $("#multipleFileAsset").prop("checked"),
             standardEncoderPreset: $("#standardEncoderPreset").prop("checked"),
             videoAnalyzerPreset: $("#videoAnalyzerPreset").prop("checked"),
             audioAnalyzerPreset: $("#audioAnalyzerPreset").prop("checked")
@@ -46,12 +45,17 @@ function CreateAsset() {
                 if (message != "") {
                     message = message + "<br><br>";
                 }
-                if ($("#standardEncoderPreset").prop("checked") || $("#videoAnalyzerPreset").prop("checked") || $("#audioAnalyzerPreset").prop("checked")) {
-                    message = message + "Media Job Created: " + entity.name;
+                var entityType;
+                if ($("#standardEncoderPreset").prop("checked") ||
+                    $("#videoAnalyzerPreset").prop("checked") ||
+                    $("#audioAnalyzerPreset").prop("checked")) {
+                    entityType = "Job";
                 } else {
-                    message = message + "Media Asset Created: " + entity.name;
+                    entityType = "Asset";
                 }
-                message = message + "<br>" + FormatDateTime(entity["properties.created"]);
+                var created = FormatDateTime(entity["properties.created"]);
+                message = message + "Media " + entityType + " Created<br>" + entity.name;
+                message = message + "<br>(" + created.replace("<br>", " ") + ")";
             }
             $("#mediaUploadEntities").html(message);
         }

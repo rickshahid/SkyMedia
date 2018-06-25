@@ -1,23 +1,26 @@
 ﻿body {
-    background-color: black;
-    color: deepskyblue;
     text-align: left;
+    color: deepskyblue;
+    background-color: black;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 label {
-    padding-right: 5px;
-    font-weight: bold;
     font-size: large;
+    font-weight: bold;
+    font-style: italic;
+    margin-right: 5px;
 }
 
 button {
     background-color: deepskyblue;
-    border-radius: 20px !important;
-    margin-left: 15px;
-    margin-right: 15px;
-    font-weight: bold;
     font-size: large !important;
-    height: 40px;
+    font-weight: bold !important;
+    margin-left: 15px !important;
+    margin-right: 15px !important;
+    border-radius: 20px !important;
+    height: 40px !important;
     width: 120px !important;
 }
 
@@ -25,32 +28,39 @@ button:hover {
     cursor: pointer;
 }
 
+.buttons {
+    text-align: center;
+}
+
 .verify button {
     width: auto !important;
 }
 
 .policy {
-    text-align: center;
     padding-top: 20px;
-    padding-bottom: 10px;
 }
 
 .policyTitle {
-    font-size: xx-large;
     font-weight: bold;
+    font-size: xx-large;
+    text-align: center;
 }
 
 .policyIntro {
     font-size: x-large;
     font-style: italic;
-    padding-top: 10px;
+    margin-top: 20px;
 }
 
-.policyPrerequisite {
-    text-decoration: underline;
+.policyIntro ol {
+    margin-top: 10px;
 }
 
-.apiSignIn {
+.policyIntro li + li {
+    margin-top: 20px;
+}
+
+.signIn {
     text-align: center;
 }
 
@@ -60,7 +70,6 @@ button:hover {
 
 .localAccount .entry {
     display: inline-table;
-    font-size: large;
 }
 
 .localAccount .entry .entry-item {
@@ -93,21 +102,18 @@ button:hover {
 }
 
 .attrEntry {
-    padding-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .attrEntry div {
     display: inline;
 }
 
-.textInput {
-    width: 400px !important;
+.attrEntry input {
+    margin-top: 10px;
+    width: 300px !important;
 }
 
 .helpLink {
     display: none;
-}
-
-.buttons {
-    text-align: center;
 }

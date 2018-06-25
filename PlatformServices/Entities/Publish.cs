@@ -18,20 +18,20 @@ namespace AzureSkyMedia.PlatformServices
         public string MobileNumber { get; set; }
     }
 
-    internal class MediaPublishError
-    {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+    //internal class MediaPublishError
+    //{
+    //    [JsonProperty(PropertyName = "id")]
+    //    public string Id { get; set; }
 
-        public Exception Exception { get; set; }
-    }
+    //    public Exception Exception { get; set; }
+    //}
 
-    public class MediaPublished
-    {
-        public string PublishUrl { get; set; }
+    //public class MediaPublished
+    //{
+    //    public string PublishUrl { get; set; }
 
-        public string MobileNumber { get; set; }
+    //    public string MobileNumber { get; set; }
 
-        public string UserMessage { get; set; }
-    }
+    //    public string UserMessage { get; set; }
+    //}
 }

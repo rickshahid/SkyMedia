@@ -40,15 +40,18 @@ namespace AzureSkyMedia.WebApp.Controllers
             MediaTransformOutput standardEncoderOutput = new MediaTransformOutput()
             {
                 PresetEnabled = standardEncoderPreset,
-                PresetName = EncoderNamedPreset.AdaptiveStreaming
+                PresetName = EncoderNamedPreset.AdaptiveStreaming,
+                OnErrorMode = OnErrorType.ContinueJob
             };
             MediaTransformOutput videoAnalyzerOutput = new MediaTransformOutput()
             {
-                PresetEnabled = videoAnalyzerPreset
+                PresetEnabled = videoAnalyzerPreset,
+                OnErrorMode = OnErrorType.ContinueJob
             };
             MediaTransformOutput audioAnalyzerOutput = new MediaTransformOutput()
             {
-                PresetEnabled = audioAnalyzerPreset
+                PresetEnabled = audioAnalyzerPreset,
+                OnErrorMode = OnErrorType.ContinueJob
             };
             MediaTransformOutput[] transformOutputs = new MediaTransformOutput[] { standardEncoderOutput, videoAnalyzerOutput, audioAnalyzerOutput };
             return CreateTransform(mediaClient, null, null, transformOutputs);
@@ -119,7 +122,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult Create(string name, string description, MediaTransformOutput[] outputs)
         {
             Transform transform;
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 transform = CreateTransform(mediaClient, name, description, outputs);
@@ -129,7 +132,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Index()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);

@@ -95,20 +95,15 @@ namespace AzureSkyMedia.WebApp.Controllers
             return AppSetting.GetValue(settingKey);
         }
 
-        public IActionResult Player()
-        {
-            return View();
-        }
-
         public IActionResult Index()
         {
             string accountMessage = string.Empty;
             MediaStream[] mediaStreams = new MediaStream[] { };
 
-            string authToken = GetAuthToken(this.Request, this.Response);
-            string queryString = this.Request.QueryString.Value.ToLower();
+            string authToken = GetAuthToken(Request, Response);
+            string queryString = Request.QueryString.Value.ToLower();
 
-            if (this.Request.HasFormContentType)
+            if (Request.HasFormContentType)
             {
                 try
                 {
@@ -128,7 +123,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string autoPlay = "false";
             if (queryString.Contains("stream"))
             {
-                streamNumber = int.Parse(this.Request.Query["stream"]);
+                streamNumber = int.Parse(Request.Query["stream"]);
                 autoPlay = "true";
             }
 
@@ -138,7 +133,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 if (string.IsNullOrEmpty(authToken))
                 {
-                    mediaStreams = Media.GetMediaStreams();
+                    mediaStreams = Media.GetSampleStreams();
                 }
                 else
                 {
@@ -149,7 +144,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     else
                     {
-                        mediaStreams = Media.GetMediaStreams(authToken, mediaClient, streamNumber, out streamOffset, out streamIndex, out bool endOfStreams);
+                        mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, out streamOffset, out streamIndex, out bool endOfStreams);
                         if (endOfStreams)
                         {
                             streamNumber = streamNumber - 1;
@@ -169,7 +164,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["streamOffset"] = streamOffset;
             ViewData["streamIndex"] = streamIndex;
 
-            ViewData["languageCode"] = this.Request.Query["language"];
+            ViewData["languageCode"] = Request.Query["language"];
             ViewData["autoPlay"] = autoPlay;
 
             return View();

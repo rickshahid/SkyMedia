@@ -22,9 +22,9 @@ namespace AzureSkyMedia.PlatformServices
                 Description = description,
                 AlternateId = alternateId
             };
-            Task<AzureOperationResponse<Asset>> createTask = _media.Assets.CreateOrUpdateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
-            AzureOperationResponse<Asset> createResponse = createTask.Result;
-            return createResponse.Body;
+            Task<AzureOperationResponse<Asset>> task = _media.Assets.CreateOrUpdateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
+            AzureOperationResponse<Asset> response = task.Result;
+            return response.Body;
         }
 
         public Asset CreateAsset(string storageAccount, string name, string description, string alternateId, string blobContainer, string[] fileNames)

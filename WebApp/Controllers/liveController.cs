@@ -15,7 +15,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         //                          bool archiveEncryptionAes, bool archiveEncryptionDrm)
         //{
         //    string channelId = string.Empty;
-        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
+        //    string authToken = homeController.GetAuthToken(Request, Response);
         //    if (!string.IsNullOrEmpty(authToken))
         //    {
         //        MediaClient mediaClient = new MediaClient(authToken);
@@ -28,10 +28,15 @@ namespace AzureSkyMedia.WebApp.Controllers
         //[Route("/live/insertCue")]
         //public JsonResult InsertCue(string channelName, int durationSeconds, int cueId, bool showSlate)
         //{
-        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
+        //    string authToken = homeController.GetAuthToken(Request, Response);
         //    MediaClient mediaClient = new MediaClient(authToken);
         //    bool inserted = mediaClient.InsertMarker(channelName, durationSeconds, cueId, showSlate);
         //    return Json(inserted);
         //}
+
+        public IActionResult Index()
+        {
+            return View();
+        }
     }
 }

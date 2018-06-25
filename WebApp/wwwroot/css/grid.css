@@ -1,4 +1,11 @@
-﻿.ui-jqgrid {
+﻿.grid {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.ui-jqgrid {
     border: none !important;
 }
 

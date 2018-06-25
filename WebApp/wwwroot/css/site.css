@@ -1,36 +1,46 @@
-﻿@media all and (max-width: 480px) {
-    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+﻿@media all and (max-width: 599px) {
+    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaEdit, #mediaLive {
         display: none !important;
+    }
+
+    .layoutPanel.body {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
     }
 
     .header, .mediaPlayer {
         width: 400px !important;
     }
 
-    .viewTitle, .streamInfo, .accountContext {
+    .viewTitle, .accountContext, .streamInfoUrl {
         font-size: medium !important;
     }
 
-    .viewTitle {
-        width: 75px;
+    .streamInfoName {
+        font-size: large !important;
     }
 }
 
-@media all and (min-width: 481px) and (max-width: 768px) {
-    .layoutPanel.side, #userButtonLeft1, #userButtonLeft2, #userButtonLeft3, #userButtonRight1, #userButtonRight2, #userButtonRight3 {
+@media all and (min-width: 600px) and (max-width: 799px) {
+    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaEdit, #mediaLive {
         display: none !important;
     }
 
-    .header, .mediaPlayer {
-        width: 480px !important;
+    .layoutPanel.body {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
     }
 
-    .viewTitle, .streamInfo, .accountContext {
+    .header, .mediaPlayer {
+        width: 600px !important;
+    }
+
+    .viewTitle, .accountContext, .streamInfoUrl {
         font-size: large !important;
     }
 
-    .viewTitle {
-        width: 100px;
+    .streamInfoName {
+        font-size: x-large !important;
     }
 }
 
@@ -48,16 +58,17 @@ body {
 }
 
 .layoutPanel.body {
-    padding-top: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
-
-/**/
 
 .header {
     margin: 0px auto;
-    width: 720px;
+    width: 800px;
+}
+
+.headerCenter {
+    width: 100%;
 }
 
 .headerSide {
@@ -69,16 +80,71 @@ body {
 }
 
 .accountContext {
-    margin-bottom: 10px;
+    font-size: large;
+    font-weight: bold;
+    font-style: italic;
     text-align: center;
+    margin-bottom: 10px;
+}
+
+.accountInventory {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
     font-style: italic;
     font-weight: bold;
     font-size: large;
+    margin-top: 20px;
+    padding: 10px;
+}
+
+.accountInventory td {
+    text-align: right;
+    padding: 5px;
+}
+
+.entityCount {
+    color: azure;
+}
+
+.entity {
+    border: 1px solid deepskyblue;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.entity div {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.entity table {
+    margin: 0px auto;
+}
+
+.entity table td {
+    padding: 5px;
+}
+
+.entityName {
+    width: 325px;
+}
+
+.authToken {
+    margin: 20px auto;
+    overflow: hidden;
+    display: none;
+    width: 200px;
+}
+
+.viewTitle {
+    font-weight: bold;
+    font-size: xx-large;
+    text-align: center;
 }
 
 .siteButton {
-    background: none;
     border: none;
+    background: none;
 }
 
 .siteButton:hover {
@@ -86,17 +152,27 @@ body {
 }
 
 .siteButton.layoutVertical {
-    height: 75px;
     width: 60px;
+    height: 78px;
 }
 
 .siteLink {
-    text-decoration: none;
     font-weight: bold;
+    text-decoration: none;
 }
 
 .siteLink:hover {
     cursor: pointer;
+}
+
+.viewButtons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.viewButtons button {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .qtip {
@@ -106,34 +182,43 @@ body {
 }
 
 .qtip-content {
-    text-align: center;
-    font-weight: bold;
     font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mediaPlayer {
+    width: 800px;
+}
+
+.mediaWorkflow {
+    margin: 20px auto;
+}
+
+.ui-slider {
+    background: deepskyblue;
+    height: 5px;
+}
+
+.ui-slider-handle {
+    background: deepskyblue !important;
+    border-radius: 20px;
 }
 
 .streamTuner {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.streamTuner table {
-    margin: 0px auto;
-}
-
-.streamSlider {
     width: 150px;
 }
 
-.streamSliderHandle {
-    color: azure !important;
-    top: -12px !important;
+.streamTunerHandle {
     text-align: center;
+    top: -12px !important;
+    color: azure !important;
 }
 
 .streamNumber {
-    font-size: x-large;
-    font-weight: bold;
     color: azure;
+    font-weight: bold;
+    font-size: x-large;
 }
 
 .streamNumber.sideLeft {
@@ -145,152 +230,31 @@ body {
 }
 
 .streamInfo {
-    font-size: x-large;
     text-align: center;
 }
 
 .streamInfoName {
     font-weight: bold;
+    font-size: xx-large;
 }
 
 .streamInfoUrl {
     font-style: italic;
+    font-size: x-large;
     margin-top: 10px;
 }
 
-.viewTitle {
+#mediaStreamLeft {
+    padding-left: 20px;
+}
+
+#mediaStreamRight {
+    padding-right: 20px;
+}
+
+.mediaServicesCompliance {
     text-align: center;
-    font-size: x-large;
-    font-weight: bold;
-}
-
-.viewButtons {
-    text-align: center;
-    margin-top: 20px;
-}
-
-.viewButtons table {
-    margin: 0px auto;
-}
-
-.json-editor {
-    padding-top: 10px !important;
-    min-width: 775px;
-}
-
-.mediaProcessorPresets {
-    margin: 0px auto;
-}
-
-.mediaProcessorPresets select {
-    font-weight: bold;
-    width: 100%;
-}
-
-.mediaProcessorPresetButtons {
-    padding-right: 15px;
-    margin-top: -30px;
-    display: none;
-    float: right;
-}
-
-.mediaProcessor {
-    font-weight: bold;
-    width: 195px;
-}
-
-.mediaProcessorConfig {
-    font-weight: bold;
-    width: 419px;
-}
-
-.mediaProcessorConfigOptions {
-    border: 2px dotted deepskyblue;
-    white-space: nowrap;
-    width: 436px;
-}
-
-.mediaProcessorConfigOptionOr {
-    font-style: italic;
-    font-size: large;
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-.mediaProcessorConfigOptionColon {
-    padding: 0px !important;
-}
-
-.encoderThumbnailGenerationOptions {
-    width: 484px;
-}
-
-.encoderThumbnailGenerationOptionsTable {
-    padding-top: 0px !important;
-}
-
-.encoderContentProtectionOptions {
-    width: 490px;
-}
-
-.encoderVideoOverlayOptions {
-    width: 506px;
-}
-
-.mediaCertification {
-    text-align: center;
-    padding-top: 20px;
-}
-
-.ui-spinner-input {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-
-.spinner {
-    font-size: medium !important;
-    font-weight: bold;
-}
-
-.spinner.d2 {
-    width: 28px;
-}
-
-.spinner.d3 {
-    width: 36px;
-}
-
-.spinner.d4 {
-    width: 45px;
-}
-
-.ui-slider {
-    background: deepskyblue;
-    height: 5px;
-}
-
-.ui-slider-handle {
-    background: deepskyblue !important;
-    border-radius: 10px;
-}
-
-.sliderHandle {
-    height: 15px !important;
-}
-
-.sliderLabel {
-    font-weight: bold;
-    margin-left: 5px;
-    color: azure;
-}
-
-.slider {
-    display: inline-block;
-    margin-left: 15px;
-}
-
-.slider.jobPriority {
-    width: 112px;
+    margin-top: 30px;
 }
 
 .ui-dialog-title {
@@ -322,373 +286,29 @@ body {
     width: 200px;
 }
 
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset { 
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
     float: none;
 }
 
-.mediaWorkflow {
-    border: 1px solid deepskyblue;
-    border-radius: 20px;
-    padding-left: 10px;
-    padding-top: 5px;
-    width: 720px;
-}
-
-.mediaWorkflow td {
-    padding: 5px;
-}
-
-.mediaWorkflowJob td {
-    padding-bottom: 10px;
-}
-
-.mediaWorkflowTaskRow td {
-    padding: 0px;
-}
-
-.mediaWorkflowTaskLink td {
-    padding: 0px;
-}
-
-.mediaWorkflowTaskLink hr {
-    border: 1px dashed deepskyblue;
-    height: 15px;
-    margin: 0px;
-    width: 0px;
-}
-
-.mediaWorkflowTaskButtons {
-    text-align: center;
-    width: 100%;
-}
-
-.mediaWorkflowControls td {
-    padding: 3px 0px 0px 0px !important;
-    white-space: nowrap;
-}
-
-.mediaWorkflowStart {
-    text-align: right;
-    width: 100%;
-}
-
-.mediaAssets {
-    background-color: deepskyblue;
-    border-radius: 20px;
-    color: darkblue;
-    overflow: auto;
-}
-
-.mediaAssets.filesView {
-    height: 450px;
-    width: 800px;
-}
-
-.mediaAssets.workflowView {
-    height: 300px;
-    width: 685px;
-}
-
-.mediaLock {
-    vertical-align: text-bottom;
-}
-
-.mediaFile > .jstree-checkbox {
-    display: none !important;
-}
-
-.jstree-hovered {
-  background: deepskyblue !important;
-  box-shadow: none !important;
-  color: yellow !important;
-}
-
-.jstree-clicked {
-  background: deepskyblue !important;
-  box-shadow: none !important;
-}
-
-.jstree-checkbox {
-    width: 28px !important;
-}
-
-.jstree-anchor {
-    padding: 0px !important;
-}
-
-.jstree-node {
-    font-weight: bold;
-    font-size: large;
-}
-
-.treeNodeClipped {
-    font-style: italic;
-}
-
 .inputLabel {
-    padding-right: 0px !important;
-    white-space: nowrap;
-    font-weight: bold;
     text-align: right;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
 .inputLabel.centered {
     text-align: center !important;
 }
 
-.inputLabel.large {
-    font-size: large;
-}
-
-.inputLabelMultiLine {
-    display: inline-block;
+.inputLabel.outputPresets {
     text-align: center;
+    padding-top: 50px;
 }
 
 .inputSelect {
     font-weight: bold;
 }
 
-.inputCheckbox {
-    margin-left: 0px;
-}
-
-.inputCheckboxLabel {
-    vertical-align: top;
-}
-
-.outputPresets {
-    margin-top: 45px;
-}
-
-.outputAssetName {
-    font-weight: bold;
-    width: 191px;
-}
-
-.encoderOptions {
-    padding: 0px !important;
-}
-
-.encoderOptions td {
-    padding: 2px !important;
-}
-
-.encoderThumbnailGenerationFormatLabel {
-    margin-left: 1px;
-}
-
-.encoderThumbnailGenerationFormat {
-    margin-left: 4px;
-    width: 76px;
-}
-
-.encoderThumbnailGenerationSprite {
-    padding-right: 0px !important;
-}
-
-.encoderThumbnailGenerationSpriteColumns {
-    padding-left: 0px !important;
-}
-
-.audioAnalyzerLanguage {
-    width: 186px;
-}
-
-.audioAnalyzerSpeech {
-    margin-left: 5px;
-}
-
-.videoAnalyzerLanguage {
-    font-weight: bold;
-    width: 187px;
-}
-
-.videoAnalyzerSearchPartition {
-    font-weight: bold;
-    width: 183px;
-}
-
-.videoAnalyzerVideoMetadata {
-    font-weight: bold;
-    width: 216px;
-}
-
-.faceDetectionMode {
-    padding-left: 2px !important;
-}
-
-.faceRedactionBlurMode {
-    font-weight: bold;
-    width: 107px;
-}
-
-.motionSensitivityLevel {
-    width: 111px;
-}
-
-.jobName {
-    font-weight: bold;
-    width: 348px;
-}
-
-.jobTask {
-    border: 1px dashed deepskyblue;
-    font-weight: bold;
-    padding-left: 5px;
-    margin-left: 5px;
-    width: 610px;
-}
-
-.jobTask td {
-    padding: 5px;
-}
-
-.jobTaskParent {
-    font-weight: bold;
-    width: 35px;
-}
-
-.jobTaskOptions {
-    width: 230px !important;
-    max-height: 85px;
-}
-
-.multiSelectOptions {
-    font-size: small;
-}
-
-.contentProtectionOptionsEncryptionDrm {
-    border: 1px dotted deepskyblue;
-    padding: 3px 6px 3px 5px;
-}
-
-.contentProtectionOptionsEncryptionDrmOption {
-    margin-left: 5px;
-}
-
-.contentAuthAddressRange {
-    width: 132px;
-}
-
-.accountInventory {
-    border: 1px solid deepskyblue;
-    border-radius: 20px;
-    font-style: italic;
-    font-weight: bold;
-    font-size: large;
-    padding: 10px;
-}
-
-.accountInventory td {
-    text-align: right;
-    padding: 5px;
-}
-
-.entityCount {
-    color: azure;
-}
-
-.entity {
-    margin: 0px auto;
-}
-
-.entity td {
-    padding: 5px;
-}
-
-.entityName {
-    width: 325px;
-}
-
-.entity.top {
-    margin-top: 20px;
-}
-
-.authToken {
-    margin: 20px auto;
-    overflow: hidden;
-    display: none;
-    width: 200px;
-}
-
-.mediaPlayer {
-    width: 800px;
-}
-
-.mediaPlayerButton {
-    padding-top: 4px !important;
-    background: none;
-    border: none;
-}
-
-.mediaPlayerButton.mediaMetadata {
-    padding-top: 8px !important;
-}
-
-.mediaControls {
-    margin: 10px auto;
-}
-
-.videoClipper {
-    width: 1080px;
-}
-
-.clipLoader {
-    text-align: center;
-    font-size: large;
-    margin-top: 20px;
-}
-
-.indexerInsight {
-    display: none;
-    height: 500px;
-    width: 800px;
-}
-
-.analyticsInsight {
-    margin-top: 10px;
-    font-size: large;
-    display: none;
-}
-
-.analyticsProcessors {
-    text-align: center;
-}
-
-.analyticsProcessors select {
-    font-weight: bold;
-    margin-left: 5px;
-    width: 180px;
-}
-
-.analyticsMetadata {
-    background-color: deepskyblue;
-    margin-top: 10px;
-    color: darkblue;
-    overflow: auto;
-    height: 400px;
-    width: 800px;
-}
-
-.insightSearchCriteria {
-    border: 1px solid deepskyblue;
-    border-radius: 20px;
-    padding: 5px;
-}
-
-.insightSearchCriteria td {
-    padding: 5px;
-}
-
-.searchLanguage {
-    width: 100%;
-}
-
-a.json-placeholder {
-    color: azure;
-}
-
-.json-string {
-    color: azure;
+#underConstruction {
+    margin-top: 150px;
 }

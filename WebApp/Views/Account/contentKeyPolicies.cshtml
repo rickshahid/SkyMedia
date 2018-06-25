@@ -1,7 +1,7 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = GetColumns("contentKeyPolicies", "Policy Name");
+            var columns = GetColumns("contentKeyPolicies", "Content Key Policy Name");
             var rows = @Json.Serialize(ViewData["contentKeyPolicies"]);
             var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
             var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
@@ -14,5 +14,7 @@
     Content Key Policies
 }
 
-<table id="contentKeyPolicies"></table>
-<div id="gridPager"></div>
+<div class="grid">
+    <table id="contentKeyPolicies"></table>
+    <div id="gridPager"></div>
+</div>

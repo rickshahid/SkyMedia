@@ -1,7 +1,7 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = GetColumns("transformJobs", "Job Name");
+            var columns = GetColumns("transformJobs", "Transform Job Name");
             var rows = @Json.Serialize(ViewData["transformJobs"]);
             var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
             var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
@@ -14,5 +14,7 @@
     Transform Jobs
 }
 
-<table id="transformJobs"></table>
-<div id="gridPager"></div>
+<div class="grid">
+    <table id="transformJobs"></table>
+    <div id="gridPager"></div>
+</div>

@@ -1,0 +1,22 @@
+﻿@using AzureSkyMedia.WebApp.Models;
+
+@{
+    string ampVersion = ViewData["mediaPlayerVersion"] as string;
+    string ampSkin = ViewData["mediaPlayerSkin"] as string;
+}
+
+@section head {
+    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
+    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+        })
+    </script>
+}
+
+@section title {
+    Azure Sky Media Live
+}
+
+@*<partial name="MediaPlayer" />*@
+<partial name="SiteButton" model='new SiteButton { ClientId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />

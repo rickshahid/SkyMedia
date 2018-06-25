@@ -1,13 +1,122 @@
-﻿using Microsoft.Azure.Management.Media;
+﻿using System;
+using System.Text;
+
+using Microsoft.Rest;
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
+using Microsoft.Azure.Management.EventGrid;
+using Microsoft.Azure.Management.EventGrid.Models;
+
+using Twilio;
+using Twilio.Types;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public static MediaPublished PublishOutput(MediaPublish mediaPublish)
+        private static string GetNotificationMessage(MediaAccount mediaAccount, Job job)
         {
-            MediaPublished mediaPublished = null;
+            StringBuilder message = new StringBuilder();
+            message.Append("AMS Transform Job Notification");
+            message.Append("\n\nMedia Account Name: ");
+            message.Append(mediaAccount.Name);
+            message.Append("\n\nJob Name: ");
+            message.Append(job.Name);
+            message.Append("\n\nJob State: ");
+            message.Append(job.State.ToString());
+            foreach (JobOutput jobOutput in job.Outputs)
+            {
+                message.Append("\n\nJob Output State: ");
+                message.Append(jobOutput.State.ToString());
+                message.Append("\n\nJob Output Progress: ");
+                message.Append(jobOutput.Progress);
+                if (jobOutput.Error != null)
+                {
+                    message.Append("\n\nError Category: ");
+                    message.Append(jobOutput.Error.Category.ToString());
+                    message.Append("\n\nError Code: ");
+                    message.Append(jobOutput.Error.Code.ToString());
+                    message.Append("\n\nError Message: ");
+                    message.Append(jobOutput.Error.Message);
+                    foreach (JobErrorDetail errorDetail in jobOutput.Error.Details)
+                    {
+                        message.Append("\n\nError Detail Code: ");
+                        message.Append(errorDetail.Code.ToString());
+                        message.Append("\n\nError Detail Message: ");
+                        message.Append(errorDetail.Message);
+                    }
+                }
+            }
+            return message.ToString();
+        }
+
+        public static string SendNotificationMessage(MediaAccount mediaAccount, Job job, string mobileNumber)
+        {
+            string message = Constant.Message.MobileNumberNotAvailable;
+            if (!string.IsNullOrEmpty(mobileNumber))
+            {
+                message = GetNotificationMessage(mediaAccount, job);
+
+                string settingKey = Constant.AppSettingKey.TwilioAccountId;
+                string accountId = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.TwilioAccountToken;
+                string accountToken = AppSetting.GetValue(settingKey);
+
+                settingKey = Constant.AppSettingKey.TwilioMessageFrom;
+                string messageFrom = AppSetting.GetValue(settingKey);
+
+                PhoneNumber fromPhoneNumber = new PhoneNumber(messageFrom);
+                PhoneNumber toPhoneNumber = new PhoneNumber(mobileNumber);
+
+                CreateMessageOptions messageOptions = new CreateMessageOptions(toPhoneNumber)
+                {
+                    From = fromPhoneNumber,
+                    Body = message
+                };
+
+                TwilioClient.Init(accountId, accountToken);
+                MessageResource.CreateAsync(messageOptions);
+            }
+            return message;
+        }
+
+        public static void SetPublishEvent(string authToken)
+        {
+            try
+            {
+                EventSubscription eventSubscription = new EventSubscription(name: Constant.Media.Publish.EventTriggerName)
+                {
+                    Destination = new WebHookEventSubscriptionDestination()
+                    {
+                        EndpointUrl = AppSetting.GetValue(Constant.AppSettingKey.MediaPublishUrl)
+                    },
+                    Filter = new EventSubscriptionFilter()
+                    {
+                        IncludedEventTypes = Constant.Media.Publish.EventTriggerTypes
+                    }
+                };
+
+                TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
+                EventGridManagementClient eventGridClient = new EventGridManagementClient(azureToken)
+                {
+                    SubscriptionId = subscriptionId
+                };
+
+                User authUser = new User(authToken);
+                string eventScope = authUser.MediaAccount.ResourceId;
+                eventSubscription = eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
+            }
+            catch (Exception ex)
+            {
+                // Log exception in Application Insights
+            }
+        }
+
+        public static string PublishOutput(MediaPublish mediaPublish)
+        {
+            string publishMessage = string.Empty;
             using (MediaClient mediaClient = new MediaClient(null, mediaPublish.MediaAccount))
             {
                 string jobName = mediaPublish.Id;
@@ -15,27 +124,19 @@ namespace AzureSkyMedia.PlatformServices
                 Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
                 if (job != null)
                 {
+                    string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
                     foreach (JobOutputAsset jobOutput in job.Outputs)
                     {
-                        mediaClient.CreateLocator(jobOutput.AssetName, PredefinedStreamingPolicy.ClearStreamingOnly);
+                        StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
+                        if (locator == null)
+                        {
+                            locator = mediaClient.CreateLocator(jobOutput.AssetName, streamingPolicyName);
+                        }
                     }
-                    mediaPublished = new MediaPublished()
-                    {
-                        MobileNumber = mediaPublish.MobileNumber,
-                        UserMessage = GetNotificationMessage(mediaPublish.MediaAccount, job)
-                    };
+                    publishMessage = SendNotificationMessage(mediaPublish.MediaAccount, job, mediaPublish.MobileNumber);
                 }
             }
-            //    string indexId = null;
-            //    mediaClient.SetProcessorUnits(job, ReservedUnitType.Basic, false);
-            //    PublishJob(mediaClient, job);
-            //    if (mediaPublish.InsightConfig != null)
-            //    {
-            //        IAsset encoderOutput = GetEncoderOutput(job);
-            //        VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaPublish.MediaAccount);
-            //        indexId = videoAnalyzer.StartAnalysis(mediaClient, encoderOutput, mediaPublish.InsightConfig);
-            //    }
-            return mediaPublished;
+            return publishMessage;
         }
 
         public static void PurgePublish()

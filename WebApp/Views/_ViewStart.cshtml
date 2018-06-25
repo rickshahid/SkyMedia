@@ -4,12 +4,11 @@
 @using AzureSkyMedia.WebApp.Controllers;
 
 @{
-    HttpRequest request = this.Context.Request;
-    HttpResponse response = this.Context.Response;
+    HttpRequest request = Context.Request;
+    HttpResponse response = Context.Response;
 
     string authToken = HomeController.GetAuthToken(request, response);
     ViewData["authToken"] = authToken;
-    ViewData["authTokenCookie"] = Constant.HttpCookie.UserAuthToken;
 
     ViewData["spacingPatterns"] = Constant.TextFormatter.SpacingPatterns;
     ViewData["spacingInserts"] = Constant.TextFormatter.SpacingInserts;
@@ -55,6 +54,7 @@
         accountSignUpIn = string.Concat(accountSignUpIn, request.QueryString.Value);
     }
     ViewData["accountSignUpIn"] = accountSignUpIn;
+    ViewData["accountSignOut"] = string.Concat("SignOut('", Constant.HttpCookie.UserAuthToken, "')");
     ViewData["accountProfileEdit"] = "/account/profileEdit";
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);

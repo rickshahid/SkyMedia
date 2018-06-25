@@ -11,16 +11,16 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         public JsonResult Block(string name, int chunk, int chunks, string storageAccount, string contentType)
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             string containerName = Constant.Storage.Blob.Container.FileUpload;
-            Stream blockStream = this.Request.Form.Files[0].OpenReadStream();
+            Stream blockStream = Request.Form.Files[0].OpenReadStream();
             Storage.UploadBlock(authToken, storageAccount, containerName, blockStream, name, chunk, chunks, contentType);
             return Json(chunk);
         }
 
         public IActionResult Index()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             Dictionary<string, string> storageAccounts = Storage.GetAccounts(authToken);
             ViewData["storageAccount"] = HomeController.GetListItems(storageAccounts);
             return View();

@@ -70,7 +70,7 @@ namespace AzureSkyMedia.WebApp
                     OnRedirectToIdentityProvider = OnAuthenticationRedirect
                 };
             });
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(SetSwaggerOptions);
         }
 
@@ -91,9 +91,7 @@ namespace AzureSkyMedia.WebApp
             {
                 redirectAction = controller.RedirectToAction("passwordReset", "account");
             }
-            string subscriptionName = "AMS-Job-State";
-            string[] eventTypes = new string[] { "Microsoft.Media.JobStateChange" };
-            MediaClient.SetEventSubscription(authToken, subscriptionName, eventTypes);
+            MediaClient.SetPublishEvent(authToken);
             return redirectAction;
         }
 

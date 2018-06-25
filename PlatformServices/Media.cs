@@ -1,22 +1,32 @@
 using System;
-using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
 using Microsoft.Azure.Management.Media.Models;
 
-using Newtonsoft.Json.Linq;
-
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
-        private static void AddMediaStream(List<MediaStream> mediaStreams, string settingStreamName, string settingSourceUrl, string settingTextTrack)
+        private static int OrderByDate(StreamingLocator leftItem, StreamingLocator rightItem)
+        {
+            return DateTime.Compare(leftItem.Created, rightItem.Created);
+        }
+
+        private static IEnumerable<StreamingLocator> GetStreamingLocators(MediaClient mediaClient)
+        {
+            StreamingLocator[] locators = mediaClient.GetAllEntities<StreamingLocator>(MediaEntity.StreamingLocator);
+            Array.Sort<StreamingLocator>(locators, OrderByDate);
+            return locators;
+        }
+
+        private static void AddSampleStream(List<MediaStream> sampleStreams, string settingStreamName, string settingSourceUrl, string settingTextTrack)
         {
             string streamName = AppSetting.GetValue(settingStreamName);
             string sourceUrl = AppSetting.GetValue(settingSourceUrl);
             string textTracks = AppSetting.GetValue(settingTextTrack);
-            MediaStream mediaStream = new MediaStream()
+            MediaStream sampleStream = new MediaStream()
             {
                 Name = streamName,
                 Source = new StreamSource()
@@ -24,136 +34,87 @@ namespace AzureSkyMedia.PlatformServices
                     Url = sourceUrl,
                     ProtectionInfo = new StreamProtection[] { }
                 },
-                TextTracks = Track.GetTextTracks(textTracks)
+                TextTracks = Track.GetMediaTracks(textTracks)
             };
-            mediaStreams.Add(mediaStream);
+            sampleStreams.Add(sampleStream);
         }
 
-        public static MediaStream[] GetMediaStreams()
+        public static MediaStream[] GetSampleStreams()
         {
-            List<MediaStream> mediaStreams = new List<MediaStream>();
+            List<MediaStream> sampleStreams = new List<MediaStream>();
 
             string settingKey1 = Constant.AppSettingKey.MediaStream1Name;
             string settingKey2 = Constant.AppSettingKey.MediaStream1SourceUrl;
             string settingKey3 = Constant.AppSettingKey.MediaStream1TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+            AddSampleStream(sampleStreams, settingKey1, settingKey2, settingKey3);
 
             settingKey1 = Constant.AppSettingKey.MediaStream2Name;
             settingKey2 = Constant.AppSettingKey.MediaStream2SourceUrl;
             settingKey3 = Constant.AppSettingKey.MediaStream2TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+            AddSampleStream(sampleStreams, settingKey1, settingKey2, settingKey3);
 
             settingKey1 = Constant.AppSettingKey.MediaStream3Name;
             settingKey2 = Constant.AppSettingKey.MediaStream3SourceUrl;
             settingKey3 = Constant.AppSettingKey.MediaStream3TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+            AddSampleStream(sampleStreams, settingKey1, settingKey2, settingKey3);
 
             settingKey1 = Constant.AppSettingKey.MediaStream4Name;
             settingKey2 = Constant.AppSettingKey.MediaStream4SourceUrl;
             settingKey3 = Constant.AppSettingKey.MediaStream4TextTracks;
-            AddMediaStream(mediaStreams, settingKey1, settingKey2, settingKey3);
+            AddSampleStream(sampleStreams, settingKey1, settingKey2, settingKey3);
 
-            return mediaStreams.ToArray();
+            return sampleStreams.ToArray();
         }
-
-
-
-        //private static IEnumerable<ILocator> GetMediaLocators(MediaClient mediaClient, string assetName)
-        //{
-        //    ILocator[] locators;
-        //    if (string.IsNullOrEmpty(assetName))
-        //    {
-        //        locators = mediaClient.GetEntities(MediaEntity.StreamingLocator) as ILocator[];
-        //    }
-        //    else
-        //    {
-        //        IAsset[] assets = mediaClient.GetEntities(MediaEntity.Asset, assetName) as IAsset[];
-        //        List<ILocator> assetLocators = new List<ILocator>();
-        //        foreach (IAsset asset in assets)
-        //        {
-        //            assetLocators.AddRange(asset.Locators);
-        //        }
-        //        locators = assetLocators.ToArray();
-        //    }
-        //    locators = Array.FindAll(locators, FilterByStreaming);
-        //    Array.Sort<ILocator>(locators, OrderByDate);
-        //    return locators;
-        //}
-
-        //private static string[] GetThumbnailUrls(MediaClient mediaClient, IAsset asset)
-        //{
-        //    List<string> thumbnailUrls = new List<string>();
-        //    foreach (IAssetFile assetFile in asset.AssetFiles)
-        //    {
-        //        string fileName = assetFile.Name.Replace(" ", "%20");
-        //        if (fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
-        //            fileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-        //            fileName.EndsWith(".bmp", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            string thumbnailUrl = mediaClient.GetLocatorUrl(LocatorType.Sas, asset, fileName, true);
-        //            thumbnailUrls.Add(thumbnailUrl);
-        //        }
-        //    }
-        //    thumbnailUrls.Sort();
-        //    return thumbnailUrls.ToArray();
-        //}
-
-        //private static bool FilterByStreaming(ILocator locator)
-        //{
-        //    return locator.Type == LocatorType.OnDemandOrigin;
-        //}
-
-        //private static int OrderByDate(ILocator leftItem, ILocator rightItem)
-        //{
-        //    return DateTime.Compare(leftItem.Asset.Created, rightItem.Asset.Created);
-        //}
-
-        //private static int OrderByProcessor(MediaInsightSource leftItem, MediaInsightSource rightItem)
-        //{
-        //    return leftItem.MediaProcessor.CompareTo(rightItem.MediaProcessor);
-        //}
-
-
-        public static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, int streamNumber, out int streamOffset, out int streamIndex, out bool endOfStreams)
+ 
+        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, out int streamOffset, out int streamIndex, out bool endOfStreams)
         {
             endOfStreams = false;
-            List<MediaStream> mediaStreams = new List<MediaStream>();
-            string settingKey = Constant.AppSettingKey.MediaStreamPageSize;
-            int pageSize = int.Parse(AppSetting.GetValue(settingKey));
+            List<MediaStream> accountStreams = new List<MediaStream>();
+            int pageSize = Constant.Media.Stream.TunerPageSize;
             streamOffset = ((streamNumber - 1) / pageSize) * pageSize;
             streamIndex = (streamNumber - 1) % pageSize;
-            //IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, null);
-            //int locatorsCount = locators.Count();
-            //if (locatorsCount > 0)
-            //{
-            //    if (streamOffset == locatorsCount)
-            //    {
-            //        streamOffset = streamOffset - tunerPageSize;
-            //        streamIndex = tunerPageSize - 1;
-            //        endOfStreams = true;
-            //    }
-            //    else if (streamIndex == locatorsCount)
-            //    {
-            //        streamIndex = streamIndex - 1;
-            //        endOfStreams = true;
-            //    }
-            //    locators = locators.Skip(streamOffset);
-            //    foreach (ILocator locator in locators)
-            //    {
-            //        MediaStream[] assetStreams = GetMediaStreams(authToken, mediaClient, locator.Asset, false, false);
-            //        foreach (MediaStream assetStream in assetStreams)
-            //        {
-            //            if (mediaStreams.Count < tunerPageSize)
-            //            {
-            //                mediaStreams.Add(assetStream);
-            //            }
-            //        }
-            //    }
-            //}
-            return mediaStreams.ToArray();
+            IEnumerable<StreamingLocator> locators = GetStreamingLocators(mediaClient);
+            int locatorsCount = locators.Count();
+            if (locatorsCount > 0)
+            {
+                if (streamOffset == locatorsCount)
+                {
+                    streamOffset = streamOffset - pageSize;
+                    streamIndex = pageSize - 1;
+                    endOfStreams = true;
+                }
+                else if (streamIndex == locatorsCount)
+                {
+                    streamIndex = streamIndex - 1;
+                    endOfStreams = true;
+                }
+                locators = locators.Skip(streamOffset);
+                foreach (StreamingLocator locator in locators)
+                {
+                    if (accountStreams.Count < pageSize)
+                    {
+                        string streamingUrl = mediaClient.GetStreamingUrl(locator);
+                        if (!string.IsNullOrEmpty(streamingUrl))
+                        {
+                            MediaStream accountStream = new MediaStream()
+                            {
+                                Name = locator.AssetName,
+                                Source = new StreamSource()
+                                {
+                                    Url = streamingUrl,
+                                    ProtectionInfo = new StreamProtection[] { }
+                                },
+                                //TextTracks = Track.GetMediaTracks(textTracks)
+                            };
+                            accountStreams.Add(accountStream);
+                        }
+                    }
+                }
+            }
+            return accountStreams.ToArray();
         }
 
-        public static MediaStream[] GetMediaStreams(string authToken, string searchCriteria, int skipCount, int takeCount, string streamType)
+        public static MediaStream[] GetClipperStreams(string authToken, string searchCriteria, int skipCount, int takeCount, string streamType)
         {
             //MediaClient mediaClient = new MediaClient(authToken);
             //IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, searchCriteria);

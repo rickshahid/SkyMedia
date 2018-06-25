@@ -7,11 +7,11 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public Transform CreateTransform(string name, string description, TransformOutput[] outputs)
+        public Transform CreateTransform(string transformName, string transformDescription, TransformOutput[] transformOutputs)
         {
-            Task<AzureOperationResponse<Transform>> createTask = _media.Transforms.CreateOrUpdateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, name, outputs, description);
-            AzureOperationResponse<Transform> createResponse = createTask.Result;
-            return createResponse.Body;
+            Task<AzureOperationResponse<Transform>> task = _media.Transforms.CreateOrUpdateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputs, transformDescription);
+            AzureOperationResponse<Transform> response = task.Result;
+            return response.Body;
         }
     }
 }

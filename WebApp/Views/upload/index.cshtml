@@ -21,7 +21,7 @@
 <table class="mediaUpload">
     <tr>
         <td class="inputLabel">
-            Storage Account:
+            Storage Account
         </td>
         <td colspan="3">
             @Html.DropDownList("storageAccount", null, new { @class = "storageAccount", onchange = "SetStorageTip()" })
@@ -29,7 +29,7 @@
     </tr>
     <tr>
         <td class="inputLabel">
-            Media Asset:
+            Media Asset
         </td>
         <td>
             @Html.TextBox("assetName", null, new { @class = "assetName", placeholder = "[Asset Name]" })
@@ -46,27 +46,14 @@
 <div id="mediaFileUploader"></div>
 <div id="mediaUploadMessage" class="mediaUploadMessage"></div>
 
-<table class="multipleFileAsset">
-    <tr>
-        <td>
-            @Html.CheckBox("multipleFileAsset", false)
-        </td>
-        <td>
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/assets-concept')">
-                Create Multiple File Input Asset
-            </span>
-        </td>
-    </tr>
-</table>
-
 <table class="mediaUploadOptions">
     <tr>
-        <td>
+        <td rowspan="2" class="mediaUploadEncoderPreset">
             @Html.CheckBox("standardEncoderPreset", true)
         </td>
-        <td>
+        <td rowspan="2" class="mediaUploadEncoderPreset">
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
-                Create Adaptive Streaming Output Asset
+                Create Adaptive Streaming Asset<br>(Auto Bitrate Ladder)
             </span>
         </td>
         <td class="mediaUploadAnalyzerPreset">
@@ -74,19 +61,17 @@
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
-                Create Video Analyzer Output Asset
+                Create Video Analyzer Asset
             </span>
         </td>
     </tr>
     <tr>
-        <td />
-        <td />
         <td class="mediaUploadAnalyzerPreset">
             @Html.CheckBox("audioAnalyzerPreset", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
-                Create Audio Analyzer Output Asset
+                Create Audio Analyzer Asset
             </span>
         </td>
     </tr>

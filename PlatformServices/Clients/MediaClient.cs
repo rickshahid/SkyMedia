@@ -11,11 +11,14 @@ using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient : IDisposable
     {
         private AzureMediaServicesClient _media;
+        private string _indexerToken;
 
         public MediaClient(string authToken, MediaAccount mediaAccount = null)
         {
@@ -24,7 +27,7 @@ namespace AzureSkyMedia.PlatformServices
                 User authUser = new User(authToken);
                 mediaAccount = authUser.MediaAccount;
             }
-            this.MediaAccount = mediaAccount;
+            MediaAccount = mediaAccount;
             string settingKey = Constant.AppSettingKey.AzureResourceManagementEndpointUrl;
             string endpointUrl = AppSetting.GetValue(settingKey);
             MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
@@ -32,7 +35,21 @@ namespace AzureSkyMedia.PlatformServices
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };
-            string primaryStorageId = this.PrimaryStorage.Id;
+            string primaryStorageId = PrimaryStorage.Id;
+            if (!string.IsNullOrEmpty(MediaAccount.VideoIndexerKey))
+            {
+                settingKey = Constant.AppSettingKey.MediaIndexerAuthUrl;
+                string authUrl = AppSetting.GetValue(settingKey);
+                WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey);
+                using (HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, authUrl))
+                {
+                    JArray indexerAccounts = webClient.GetResponse<JArray>(webRequest);
+                    if (indexerAccounts != null)
+                    {
+                        _indexerToken = indexerAccounts[0]["accessToken"].ToString();
+                    }
+                }
+            }
         }
 
         public MediaAccount MediaAccount { get; private set; }
@@ -83,7 +100,7 @@ namespace AzureSkyMedia.PlatformServices
             authorityUrl = string.Format(authorityUrl, mediaAccount.DirectoryTenantId);
 
             _authContext = new AuthenticationContext(authorityUrl);
-            _clientCredential = new ClientCredential(mediaAccount.ClientApplicationId, mediaAccount.ClientApplicationKey);
+            _clientCredential = new ClientCredential(mediaAccount.ServicePrincipalId, mediaAccount.ServicePrincipalKey);
         }
 
         public async override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)

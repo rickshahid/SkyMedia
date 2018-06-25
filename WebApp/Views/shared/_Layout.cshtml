@@ -1,57 +1,54 @@
-﻿<!DOCTYPE html>
+﻿@using AzureSkyMedia.WebApp.Models;
+
+<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Azure Sky Media (@ViewData["appRegionName"])</title>
-    <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-multiselect/jquery.multiselect.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/jquery-editable-select/dist/jquery-editable-select.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/qtip/jquery.qtip.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/css/grid.css" />
-    <link type="text/css" rel="stylesheet" href="~/css/site.css" />
-    @Html.Raw(javaScriptSnippet.FullScript)
-    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="~/lib/jquery-ui-multiselect/src/jquery.multiselect.min.js"></script>
-    <script type="text/javascript" src="~/lib/jquery-editable-select/dist/jquery-editable-select.min.js"></script>
-    <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
-    <script type="text/javascript" src="~/lib/jquery.scrollTo/jquery.scrollTo.min.js"></script>
-    <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
-    <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
-    <script type="text/javascript" src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
-    <script type="text/javascript" src="~/lib/qtip/jquery.qtip.min.js"></script>
-    <script type="text/javascript" src="~/js/grid.js"></script>
-    <script type="text/javascript" src="~/js/qtip.js"></script>
-    <script type="text/javascript" src="~/js/site.js"></script>
-    @RenderSection("head", false)
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>Azure Sky Media (@ViewData["appRegionName"])</title>
+        <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/qtip/jquery.qtip.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/css/grid.css" />
+        <link type="text/css" rel="stylesheet" href="~/css/site.css" />
+        @Html.Raw(javaScriptSnippet.FullScript)
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-cookie/jquery.cookie.js"></script>
+        <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
+        <script type="text/javascript" src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
+        <script type="text/javascript" src="~/lib/qtip/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="~/js/qtip.js"></script>
+        <script type="text/javascript" src="~/js/grid.js"></script>
+        <script type="text/javascript" src="~/js/site.js"></script>
+        @RenderSection("head", false)
+    </head>
     <body onload="SetLayout()">
         <table class="header">
             <tr>
                 <td class="headerSide">
-                    @Html.Partial("SiteButton", new string[] { "siteHome", "SiteHome.png", "window.location.href = '/'" })
-                    @Html.Partial("SiteButton", new string[] { "siteCode", "SiteCode.png", "window.open('http://github.com/RickShahid/SkyMedia/')" })
-                    @Html.Partial("SiteButton", new string[] { "mediaBlog", "MediaBlog.png", "window.open('http://azure.microsoft.com/blog/topics/media-services/')" })
+                    <partial name="SiteButton" model='new SiteButton { ClientId = "siteHome", ImageFile = "SiteHome.png", RelativeUrl = "/" }' />
+                    <partial name="SiteButton" model='new SiteButton { ClientId = "siteCode", ImageFile = "SiteCode.png", AbsoluteUrl = "http://github.com/RickShahid/SkyMedia/" }' />
+                    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaBlog", ImageFile = "MediaBlog.png", AbsoluteUrl = "http://azure.microsoft.com/blog/topics/media-services/" }' />
                 </td>
-                <td>
+                <td class="headerCenter">
                     <div class="viewTitle">
                         @RenderSection("title", true)
                     </div>
                 </td>
                 <td class="headerSide right">
-                    @Html.Partial("SiteButton", new string[] { "botService", "BotService.png", "window.open('http://azure.microsoft.com/services/bot-service/')" })
+                    <partial name="SiteButton" model='new SiteButton { ClientId = "botService", ImageFile = "BotService.png", AbsoluteUrl = "http://azure.microsoft.com/services/bot-service/" }' />
                     @if (ViewData.ContainsKey("accountName"))
                     {
-                        @Html.Partial("SiteButton", new string[] { "userProfileEdit", "UserProfileEdit.png", "window.location.href = '" + ViewData["accountProfileEdit"] + "'" })
-                        @Html.Partial("SiteButton", new string[] { "userSignOut", "UserSignOut.png", "SignOut('" + ViewData["authTokenCookie"] + "')" })
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "userProfileEdit", ImageFile = "UserProfileEdit.png", RelativeUrl = ViewData["accountProfileEdit"].ToString() }' />
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "userSignOut", ImageFile = "UserSignOut.png", OnClick = ViewData["accountSignOut"].ToString() }' />
                     }
                     else
                     {
-                        @Html.Partial("SiteButton", new string[] { "userDirectory", "UserDirectory.png", "window.open('http://azure.microsoft.com/services/active-directory-b2c/')" })
-                        @Html.Partial("SiteButton", new string[] { "userSignIn", "UserSignIn.png", "window.location.href = '" + ViewData["accountSignUpIn"] + "'" })
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "userDirectory", ImageFile = "UserDirectory.png", AbsoluteUrl = "http://azure.microsoft.com/services/active-directory-b2c/" }' />
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "userSignIn", ImageFile = "UserSignIn.png", RelativeUrl = ViewData["accountSignUpIn"].ToString() }' />
                     }
                 </td>
             </tr>
@@ -68,51 +65,51 @@
                 </td>
             </tr>
         }
-        <tr>
-            <td class="layoutPanel side">
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "amsPlatform", "MediaServices.png", "window.open('http://azure.microsoft.com/services/media-services/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "amsPlayer", "MediaPlayer.png", "window.open('http://azure.microsoft.com/services/media-services/media-player/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "mediaStreaming", "MediaStreaming.png", "window.open('http://azure.microsoft.com/services/media-services/live-on-demand/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "mediaEncoding", "MediaEncoding.png", "window.open('http://azure.microsoft.com/services/media-services/encoding/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "mediaProtection", "MediaProtection.png", "window.open('http://azure.microsoft.com/services/media-services/content-protection/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "mediaInsight", "MediaInsight.png", "window.open('http://azure.microsoft.com/services/cognitive-services/video-indexer/')", "layoutVertical" })
-                </div>
-            </td>
-            <td class="layoutPanel body">
-                @RenderBody()
-            </td>
-            <td class="layoutPanel side">
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "mediaStorage", "MediaStorage.png", "window.open('http://azure.microsoft.com/en-us/services/storage/blob/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "cosmosDB", "CosmosDB.png", "window.open('http://azure.microsoft.com/services/cosmos-db/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "contentDeliveryNetwork", "ContentDeliveryNetwork.png", "window.open('http://azure.microsoft.com/services/cdn/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "appServiceWeb", "AppServiceWeb.png", "window.open('http://azure.microsoft.com/services/app-service/web/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "appServiceFunctions", "AppServiceFunctions.png", "window.open('http://azure.microsoft.com/services/functions/')", "layoutVertical" })
-                </div>
-                <div>
-                    @Html.Partial("SiteButton", new string[] { "eventGrid", "EventGrid.png", "window.open('http://azure.microsoft.com/services/event-grid/')", "layoutVertical" })
-                </div>
-            </td>
-        </tr>
+            <tr>
+                <td class="layoutPanel side">
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "amsPlatform", ImageFile = "MediaServices.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "amsPlayer", ImageFile = "MediaPlayer.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-player/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "mediaStreaming", ImageFile = "MediaStreaming.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/live-on-demand/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEncoding", ImageFile = "MediaEncoding.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/encoding/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "mediaProtection", ImageFile = "MediaProtection.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/content-protection/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "mediaIndexer", ImageFile = "MediaIndexer.png", AbsoluteUrl = "http://azure.microsoft.com/services/cognitive-services/video-indexer/", StyleClass = "layoutVertical" }' />
+                    </div>
+                </td>
+                <td class="layoutPanel body">
+                    @RenderBody()
+                </td>
+                <td class="layoutPanel side">
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "mediaStorage", ImageFile = "MediaStorage.png", AbsoluteUrl = "http://azure.microsoft.com/en-us/services/storage/blob/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "cosmosDB", ImageFile = "CosmosDB.png", AbsoluteUrl = "http://azure.microsoft.com/services/cosmos-db/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "contentDeliveryNetwork", ImageFile = "ContentDeliveryNetwork.png", AbsoluteUrl = "http://azure.microsoft.com/services/cdn/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "appServiceWeb", ImageFile = "AppServiceWeb.png", AbsoluteUrl = "http://azure.microsoft.com/services/app-service/web/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "appServiceFunctions", ImageFile = "AppServiceFunctions.png", AbsoluteUrl = "http://azure.microsoft.com/services/functions/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ClientId = "eventGrid", ImageFile = "EventGrid.png", AbsoluteUrl = "http://azure.microsoft.com/services/event-grid/", StyleClass = "layoutVertical" }' />
+                    </div>
+                </td>
+            </tr>
         </table>
         <div id="messageDialog"></div>
     </body>

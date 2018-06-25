@@ -12,7 +12,7 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         private void SetStyleHost()
         {
-            ViewData["cssHost"] = string.Concat(this.Request.Scheme, "://", this.Request.Host.Value);
+            ViewData["cssHost"] = string.Concat(Request.Scheme, "://", Request.Host.Value);
         }
 
         public void SignUpIn()
@@ -32,7 +32,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public void DeleteEntities(bool liveOnly)
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 Account.DeleteEntities(mediaClient, liveOnly);
@@ -41,7 +41,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public void DeleteEntity(string gridId, string entityName, string parentEntityName)
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 switch (gridId)
@@ -79,7 +79,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult SignOut()
         {
-            this.SignOut(OpenIdConnectDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
+            SignOut(OpenIdConnectDefaults.AuthenticationScheme, CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("index", "home");
         }
 
@@ -103,7 +103,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Assets()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["assets"] = mediaClient.GetAllEntities<Asset>(MediaEntity.Asset);
@@ -113,7 +113,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Transforms()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
@@ -123,7 +123,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult TransformJobs()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
@@ -133,7 +133,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult ContentKeyPolicies()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["contentKeyPolicies"] = mediaClient.GetAllEntities<ContentKeyPolicy>(MediaEntity.ContentKeyPolicy);
@@ -143,7 +143,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult StreamingPolicies()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["streamingPolicies"] = mediaClient.GetAllEntities<StreamingPolicy>(MediaEntity.StreamingPolicy);
@@ -153,7 +153,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult StreamingEndpoints()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["streamingEndpoints"] = mediaClient.GetAllEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
@@ -163,7 +163,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult StreamingLocators()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["streamingLocators"] = mediaClient.GetAllEntities<StreamingLocator>(MediaEntity.StreamingLocator);
@@ -173,7 +173,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult LiveEvents()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["liveEvents"] = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
@@ -183,7 +183,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult LiveEventOutputs()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
@@ -193,7 +193,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Index()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);

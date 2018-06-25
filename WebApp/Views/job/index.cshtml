@@ -1,6 +1,8 @@
-﻿@section head {
+﻿@using AzureSkyMedia.WebApp.Models;
+
+@section head {
     <script type="text/javascript">
-        function CreateEntity() {
+        function CreateJob() {
             alert("Create!");
         }
         $(function () {
@@ -18,9 +20,11 @@
     Media Jobs
 }
 
-<table id="transformJobs"></table>
-<div id="gridPager"></div>
+<div class="grid">
+    <table id="transformJobs"></table>
+    <div id="gridPager"></div>
+</div>
 
 <div class="viewButtons">
-    @Html.Partial("SiteButton", new string[] { "mediaEntityCreate", "MediaEntityCreate.png", "CreateEntity()" })
+    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
 </div>

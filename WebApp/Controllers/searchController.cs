@@ -32,7 +32,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JArray GetAccounts()
         {
             JArray accounts = null;
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             if (!string.IsNullOrEmpty(authToken))
             {
                 //MediaClient mediaClient = new MediaClient(authToken);
@@ -47,7 +47,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JObject GetInsight(string indexId, string languageId, bool processingState)
         {
             JObject index = null;
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             if (!string.IsNullOrEmpty(authToken))
             {
                 //MediaClient mediaClient = new MediaClient(authToken);
@@ -61,7 +61,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/insight/delete")]
         public void DeleteVideo(string indexId, bool deleteInsight)
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             if (!string.IsNullOrEmpty(authToken))
             {
                 //MediaClient mediaClient = new MediaClient(authToken);
@@ -79,7 +79,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         //public JsonResult insight(MediaSearchCriteria searchCriteria)
         //{
         //    JObject results = null;
-        //    string authToken = homeController.GetAuthToken(this.Request, this.Response);
+        //    string authToken = homeController.GetAuthToken(Request, Response);
         //    MediaClient mediaClient = new MediaClient(authToken);
         //    VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
         //    results = videoAnalyzer.Search(searchCriteria);

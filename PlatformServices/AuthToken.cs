@@ -39,7 +39,7 @@ namespace AzureSkyMedia.PlatformServices
             User authUser = new User(authToken);
             subscriptionId = authUser.MediaAccount.SubscriptionId;
 
-            ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ClientApplicationId, authUser.MediaAccount.ClientApplicationKey);
+            ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ServicePrincipalId, authUser.MediaAccount.ServicePrincipalKey);
 
             string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
             string issuerUrl = AppSetting.GetValue(settingKey);

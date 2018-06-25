@@ -1,4 +1,4 @@
-﻿var _childGridId, _childPropertyName, _spacingPatterns, _spacingInserts, _idDelimiter = "--";
+﻿var _childGridId, _childPropertyName, _spacingPatterns, _spacingInserts;
 function GetColumns(gridId, nameLabel) {
     var columns;
     switch (gridId) {
@@ -165,9 +165,10 @@ function SetRowIds(rows) {
         var id = rows[i].id.split("/");
         rows[i].id = id[id.length - 1];
         if (id.length > 12) {
-            rows[i].id = id[id.length - 3] + _idDelimiter + rows[i].id;
+            rows[i].parentEntityName = id[id.length - 3];
         }
         rows[i].id = rows[i].id.replace(/ /g, "_");
+        rows[i].id = rows[i].id.replace(/,/g, "");
     }
 }
 function SetRowEdit(gridId, rowData) {
@@ -251,12 +252,7 @@ function FormatActions(value, grid, row) {
             editHtml = "<button class='siteButton' onclick=SetRowEdit('" + grid.gid + "','" + encodeURIComponent(JSON.stringify(row)) + "')>";
             editHtml = editHtml + "<img src='" + _storageCdnUrl + "/MediaEntityEdit.png'></button>";
         }
-        var parentEntityName = "";
-        if (row.id.indexOf(_idDelimiter) > -1) {
-            parentEntityName = row.id.split(_idDelimiter)[0];
-            parentEntityName = parentEntityName.replace(/_/g, " ");
-        }
-        var onDelete = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(parentEntityName) + "')";
+        var onDelete = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
         var deleteHtml = "<button class='siteButton' onclick=" + onDelete + ">";
         deleteHtml = deleteHtml + "<img src='" + _storageCdnUrl + "/MediaEntityDelete.png'></button>";
         actionsHtml = editHtml + deleteHtml;
@@ -265,7 +261,7 @@ function FormatActions(value, grid, row) {
 }
 function DeleteEntity(gridId, entityName, parentEntityName) {
     var title = "Confirm Delete";
-    var message = "Are you sure you want to delete the '" + entityName + "' entity?";
+    var message = "Are you sure you want to delete the '" + FormatValue(entityName) + "' entity?";
     var onConfirm = function () {
         SetCursor(true);
         $.post("/account/deleteEntity",

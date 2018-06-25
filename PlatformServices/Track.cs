@@ -7,25 +7,25 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Track
     {
-        public static MediaTrack[] GetTextTracks(string tracks)
+        public static MediaTrack[] GetMediaTracks(string textTracks)
         {
-            List<MediaTrack> textTracks = new List<MediaTrack>();
-            if (!string.IsNullOrEmpty(tracks))
+            List<MediaTrack> mediaTracks = new List<MediaTrack>();
+            if (!string.IsNullOrEmpty(textTracks))
             {
-                string[] tracksInfo = tracks.Split(Constant.TextDelimiter.Connection);
+                string[] tracksInfo = textTracks.Split(Constant.TextDelimiter.Connection);
                 foreach (string trackInfo in tracksInfo)
                 {
                     string[] track = trackInfo.Split(Constant.TextDelimiter.Application);
-                    MediaTrack textTrack = new MediaTrack()
+                    MediaTrack mediaTrack = new MediaTrack()
                     {
                         Type = track[0],
                         Label = track[1],
                         SourceUrl = track[2]
                     };
-                    textTracks.Add(textTrack);
+                    mediaTracks.Add(mediaTrack);
                 }
             }
-            return textTracks.ToArray();
+            return mediaTracks.ToArray();
         }
 
         //private static MediaTrack[] GetTextTracks(MediaClient mediaClient, VideoAnalyzer videoAnalyzer, IAsset asset)

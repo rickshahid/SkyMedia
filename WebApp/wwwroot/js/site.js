@@ -20,7 +20,7 @@ function SetLayout() {
     CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
-    CreateTipRight("mediaInsight", "Azure Video Indexer<br><br>Content Insight");
+    CreateTipRight("mediaIndexer", "Azure Video Indexer");
     CreateTipLeft("mediaStorage", "Azure Blob Storage");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
@@ -28,14 +28,14 @@ function SetLayout() {
     CreateTipLeft("appServiceFunctions", "Azure Function Apps");
     CreateTipLeft("eventGrid", "Azure Event Grid");
     CreateTipTop("mediaAccount", "Azure Media Services<br><br>Account Name");
-    CreateTipTop("mediaUpload", "Media Upload");
-    CreateTipTop("mediaTransform", "Media Transform");
-    CreateTipTop("mediaJob", "Media Job");
-    CreateTipTop("streamSlider", "Media Stream Tuner", 0, -10);
-    CreateTipTop("mediaSearch", "Media Search");
-    CreateTipTop("mediaLive", "Media Live");
-    CreateTipTop("mediaEditor", "Media Edit");
-    CreateTipBottom("mediaCertification", "Azure Media Services<br><br>Security Certification");
+    CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
+    CreateTipTop("mediaUpload", "Upload");
+    CreateTipTop("mediaTransform", "Transform");
+    CreateTipTop("mediaJob", "Job");
+    CreateTipTop("mediaInsight", "Insight");
+    CreateTipTop("mediaSearch", "Search");
+    CreateTipTop("mediaEdit", "Edit");
+    CreateTipBottom("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);
         if (error != "") {

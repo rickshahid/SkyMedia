@@ -27,7 +27,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Index()
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);

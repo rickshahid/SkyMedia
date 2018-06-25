@@ -9,17 +9,18 @@ namespace AzureSkyMedia.PlatformServices
         public User(string authToken)
         {
             _authToken = authToken;
-            this.MediaAccount = new MediaAccount()
+            MediaAccount = new MediaAccount()
             {
                 Name = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountName),
                 SubscriptionId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountSubscriptionId),
                 ResourceGroupName = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountResourceGroupName),
                 DirectoryTenantId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDirectoryTenantId),
-                ClientApplicationId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationId),
-                ClientApplicationKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountClientApplicationKey),
+                ServicePrincipalId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalId),
+                ServicePrincipalKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalKey),
+                VideoIndexerKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey),
                 StorageAccounts = GetStorageAccounts()
             };
-            this.MediaAccount.ResourceId = string.Concat("/subscriptions/", this.MediaAccount.SubscriptionId, "/resourceGroups/", this.MediaAccount.ResourceGroupName, "/providers/Microsoft.Media/mediaservices/", this.MediaAccount.Name);
+            MediaAccount.ResourceId = string.Concat("/subscriptions/", MediaAccount.SubscriptionId, "/resourceGroups/", MediaAccount.ResourceGroupName, "/providers/Microsoft.Media/mediaservices/", MediaAccount.Name);
         }
 
         public string Id

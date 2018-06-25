@@ -1,7 +1,7 @@
 ﻿@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = GetColumns("streamingFilters", "Filter Name");
+            var columns = GetColumns("streamingFilters", "Streaming Filter Name");
             var rows = @Json.Serialize(ViewData["streamingFilters"]);
             var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
             var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
@@ -14,5 +14,7 @@
     Streaming Filters
 }
 
-<table id="streamingFilters"></table>
-<div id="gridPager"></div>
+<div class="grid">
+    <table id="streamingFilters"></table>
+    <div id="gridPager"></div>
+</div>

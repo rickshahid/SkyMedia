@@ -1,4 +1,5 @@
 ﻿@using System.Diagnostics;
+@using AzureSkyMedia.WebApp.Models;
 
 @section head {
     <script type="text/javascript">
@@ -69,7 +70,7 @@
 <div class="viewButtons">
     @if (Debugger.IsAttached)
     {
-        @Html.Partial("SiteButton", new string[] { "accountClear", "AccountClear.png", "ConfirmDelete()" })
+        <partial name="SiteButton" model='new SiteButton { ClientId = "accountClear", ImageFile = "AccountClear.png", OnClick = "ConfirmDelete()" }' />
     }
 </div>
 

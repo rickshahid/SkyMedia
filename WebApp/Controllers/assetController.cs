@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Management.Media.Models;
@@ -9,6 +10,38 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class AssetController : Controller
     {
+        private static string GetAssetName(string assetName, string fileName)
+        {
+            if (string.IsNullOrEmpty(assetName))
+            {
+                assetName = Path.GetFileNameWithoutExtension(fileName);
+            }
+            return assetName;
+        }
+
+        private static Asset[] CreateInputAssets(string authToken, MediaClient mediaClient, string storageAccount, string assetName,
+                                                 string description, string alternateId, string[] fileNames)
+        {
+            List<Asset> assets = new List<Asset>();
+            string blobContainer = Constant.Storage.Blob.Container.FileUpload;
+            //if (multipleFileAsset)
+            //{
+            //    assetName = GetAssetName(assetName, fileNames[0]);
+            //    Asset asset = mediaClient.CreateAsset(storageAccount, assetName, description, alternateId, blobContainer, fileNames);
+            //    assets.Add(asset);
+            //}
+            //else
+            //{
+            foreach (string fileName in fileNames)
+            {
+                assetName = GetAssetName(assetName, fileName);
+                Asset asset = mediaClient.CreateAsset(storageAccount, assetName, description, alternateId, blobContainer, new string[] { fileName });
+                assets.Add(asset);
+            }
+            //}
+            return assets.ToArray();
+        }
+
         private string[] CreateOutputAssets(MediaClient mediaClient, string storageAccount, string assetName, bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
         {
             List<string> outputAssetNames = new List<string>();
@@ -34,14 +67,14 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Create(string storageAccount, string assetName, string description, string alternateId, string[] fileNames,
-                                 bool multipleFileAsset, bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
+                                 bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
         {
             Asset[] assets;
             List<Job> jobs = new List<Job>();
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
+            string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                assets = Workflow.CreateAssets(authToken, mediaClient, storageAccount, assetName, description, alternateId, multipleFileAsset, fileNames);
+                assets = CreateInputAssets(authToken, mediaClient, storageAccount, assetName, description, alternateId, fileNames);
                 Transform transform = TransformController.CreateTransform(mediaClient, standardEncoderPreset, videoAnalyzerPreset, audioAnalyzerPreset);
                 if (transform != null)
                 {
@@ -55,20 +88,16 @@ namespace AzureSkyMedia.WebApp.Controllers
                         jobs.Add(job);
                     }
                 }
+                mediaClient.IndexerUpload();
             }
             return jobs.Count > 0 ? Json(jobs.ToArray()) : Json(assets);
         }
 
         public JsonResult Streams(string searchCriteria, int skipCount, int takeCount, string streamType)
         {
-            string authToken = HomeController.GetAuthToken(this.Request, this.Response);
-            MediaStream[] streams = Media.GetMediaStreams(authToken, searchCriteria, skipCount, takeCount, streamType);
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            MediaStream[] streams = Media.GetClipperStreams(authToken, searchCriteria, skipCount, takeCount, streamType);
             return Json(streams);
-        }
-
-        public IActionResult Edit()
-        {
-            return View();
         }
 
         public IActionResult Sprite()

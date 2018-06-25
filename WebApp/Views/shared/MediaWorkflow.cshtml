@@ -1,45 +1,52 @@
-﻿@{
-    string uploadView = Model;
+﻿@using AzureSkyMedia.WebApp.Models;
+
+@model StreamTuner
+
+@{
+    int tunerPageStart = Model.StreamCount == 0 ? 0 : Model.StreamOffset + 1;
+    int tunerPageEnd = Model.StreamOffset + Model.StreamCount;
 }
 
-<table id="mediaWorkflow" class="mediaWorkflow">
-    <tr id="mediaAssetsRow" style="display:none">
-        <td colspan="2">
-            <div id="mediaAssets" class="mediaAssets workflowView"></div>
-        </td>
-    </tr>
-    <tr class="mediaWorkflowJob">
-        <td class="inputLabel">
-            Job Name
+<table class="mediaWorkflow">
+    <tr>
+        @if (ViewData.ContainsKey("accountName"))
+        {
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaUpload", ImageFile = "MediaUpload.png", RelativeUrl = "/upload" }' />
+            </td>
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaTransform", ImageFile = "MediaTransform.png", RelativeUrl = "/transform" }' />
+            </td>
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaJob", ImageFile = "MediaJob.png", RelativeUrl = "/job" }' />
+            </td>
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetStreamTuner(false)" }' />
+            </td>
+        }
+        <td class="streamNumber sideLeft">
+            @tunerPageStart
         </td>
         <td>
-            @Html.TextBox("jobName", null, new { @class = "jobName" })
-            &nbsp;
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/rest/api/media/operations/job')">
-                Job Priority
-            </span>
-            <span id="jobPriorityLabel" class="sliderLabel">0</span>
-            <div id="jobPriority" class="slider jobPriority"></div>
+            <div id="streamTuner" class="streamTuner"></div>
         </td>
-    </tr>
-    @Html.Partial("MediaWorkflowTask")
-    <tr class="mediaWorkflowControls">
-        <td />
-        <td>
-            <table>
-                <tr>
-                    <td>
-                        @*@Html.Partial("SiteButton", new string[] { "mediaWorkflowSave", "MediaWorkflowSave.png", "ValidWorkflow(" + uploadView + ", true)" })*@
-                    </td>
-                    <td class="mediaWorkflowTaskButtons">
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskAdd", "MediaWorkflowTaskAdd.png", "AddJobTask(this)" })
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowTaskRemove", "MediaWorkflowTaskRemove.png", "RemoveJobTask(this)" })
-                    </td>
-                    <td class="mediaWorkflowStart">
-                        @Html.Partial("SiteButton", new string[] { "mediaWorkflowStart", "MediaWorkflowStart.png", "ValidWorkflow(" + uploadView + ", false)" })
-                    </td>
-                </tr>
-            </table>
+        <td class="streamNumber sideRight">
+            @tunerPageEnd
         </td>
+        @if (ViewData.ContainsKey("accountName"))
+        {
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaStreamRight", ImageFile = "MediaStreamRight.png", OnClick = "SetStreamTuner(true)" }' />
+            </td>
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaInsight", ImageFile = "MediaInsight.png", RelativeUrl = "/insight" }' />
+            </td>
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaSearch", ImageFile = "MediaSearch.png", RelativeUrl = "/search" }' />
+            </td>
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEdit", ImageFile = "MediaEdit.png", RelativeUrl = "/edit" }' />
+            </td>
+        }
     </tr>
 </table>
