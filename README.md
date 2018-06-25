@@ -1,10 +1,10 @@
-# Azure Sky Media
+# Azure Sky Media v3
 
 Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.tv
 
 As a sample illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing within an Azure App Service web app via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. On-demand and live video content that is stored and managed in Azure Media Services is adaptively streamed, scaled and globally consumable across a wide range of devices and platforms.
 
-![](http://skymedia.azureedge.net/01.ApplicationWebSite.png)
+![](http://skymedia.azureedge.net/docs/(S01)ApplicationOverview.png)
 
 Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
 
@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
-![](http://skymedia.azureedge.net/02.ApplicationArchitecture.png)
+![](http://skymedia.azureedge.net/docs/(S02)ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -63,8 +63,6 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Media Services** - http://azure.microsoft.com/services/media-services/
 
-  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
-
   * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
 
   * **Indexing** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
@@ -72,6 +70,8 @@ The following Azure platform services were leveraged to create this sample media
   * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
 
   * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
+  
+  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
 * **Search** - http://azure.microsoft.com/services/search/
 
