@@ -137,8 +137,8 @@ namespace AzureSkyMedia.FunctionApp
         //        SubscriptionId = jobReader.ReadLine(),
         //        ResourceGroupName = jobReader.ReadLine(),
         //        DirectoryTenantId = jobReader.ReadLine(),
-        //        ClientApplicationId = jobReader.ReadLine(),
-        //        ClientApplicationKey = jobReader.ReadLine()
+        //        ServicePrincipalId = jobReader.ReadLine(),
+        //        ServicePrincipalKey = jobReader.ReadLine()
         //    };
         //    mediaClient = new MediaClient(null, mediaAccount);
         //    taskConfig = new Dictionary<MediaProcessor, string>();

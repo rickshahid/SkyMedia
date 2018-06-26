@@ -2,6 +2,17 @@
 function GetColumns(gridId, nameLabel) {
     var columns;
     switch (gridId) {
+        case "assetFiles":
+            columns = [
+                {
+                    label: "File Name",
+                    name: "name",
+                    formatter: FormatName,
+                    align: "center",
+                    width: 330
+                }
+            ];
+            break;
         case "transformOutputs":
             columns = [
                 {

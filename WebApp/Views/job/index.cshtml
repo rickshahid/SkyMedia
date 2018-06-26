@@ -3,7 +3,23 @@
 @section head {
     <script type="text/javascript">
         function CreateJob() {
-            alert("Create!");
+            var title = "Confirm Job Create";
+            var message = "Are you sure you want to create a new job?";
+            var onConfirm = function () {
+                SetCursor(true);
+                $.post("/job/create",
+                    {
+                        name: $("#name").val(),
+                        description: $("#description").val()
+                    },
+                    function (entity) {
+                        SetCursor(false);
+                        window.location = window.location.href;
+                    }
+                );
+                $(this).dialog("close");
+            }
+            ConfirmMessage(title, message, onConfirm);
         }
         $(function () {
             var columns = GetColumns("transformJobs", "Job Name");
@@ -25,6 +41,21 @@
     <div id="gridPager"></div>
 </div>
 
-<div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
+<div class="entity">
+    <div>
+        @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Job Name]" })
+        <br><br>
+        @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Job Description]" })
+    </div>
+    <table>
+        <tr>
+            <td>
+                <partial name="SiteButton" model='new SiteButton { ClientId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />
+            </td>
+        </tr>
+    </table>
 </div>
+
+@*<div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
+</div>*@
