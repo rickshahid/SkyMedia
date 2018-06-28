@@ -1,32 +1,22 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
+@{
+    string gridId = "transformJobs";
+}
+
 @section head {
+    <script type="text/javascript" src="~/js/transformJob.js"></script>
     <script type="text/javascript">
-        function CreateJob() {
-            var title = "Confirm Job Create";
-            var message = "Are you sure you want to create a new job?";
-            var onConfirm = function () {
-                SetCursor(true);
-                $.post("/job/create",
-                    {
-                        name: $("#name").val(),
-                        description: $("#description").val()
-                    },
-                    function (entity) {
-                        SetCursor(false);
-                        window.location = window.location.href;
-                    }
-                );
-                $(this).dialog("close");
-            }
-            ConfirmMessage(title, message, onConfirm);
-        }
         $(function () {
-            var columns = GetColumns("transformJobs", "Job Name");
-            var rows = @Json.Serialize(ViewData["transformJobs"]);
-            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
-            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
-            LoadGrid("transformJobs", columns, rows, "transformJobOutputs", "properties.outputs", spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+            _childGridId = "transformJobOutputs";
+            _childPropertyName = "properties.outputs";
+            _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            _storageCdnUrl = "@ViewData["storageCdnUrl"]";
+            var gridId = "@gridId";
+            var rows = @Json.Serialize(ViewData[gridId]);
+            var columns = GetColumns(gridId, "Transform Job Name");
+            LoadGrid(gridId, rows, columns);
             CreateTipBottom("mediaEntityCreate", "Create New Job");
         })
     </script>
@@ -57,5 +47,5 @@
 </div>
 
 @*<div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
-</div>*@
+        <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
+    </div>*@

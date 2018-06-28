@@ -5,7 +5,6 @@
     <script type="text/javascript" src="~/lib/plupload/js/plupload.min.js"></script>
     <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
     <script type="text/javascript" src="~/js/upload.js"></script>
-    <script type="text/javascript" src="~/js/transform.js"></script>
     <script type="text/javascript">
         $(function () {
             SetStorageTip();
@@ -49,7 +48,7 @@
 <table class="mediaUploadOptions">
     <tr>
         <td rowspan="2" class="mediaUploadEncoderPreset">
-            @Html.CheckBox("standardEncoderPreset", true)
+            @Html.CheckBox("standardEncoderPreset", false, new { onchange = "SetUploadOption(this)" })
         </td>
         <td rowspan="2" class="mediaUploadEncoderPreset">
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
@@ -57,7 +56,7 @@
             </span>
         </td>
         <td class="mediaUploadAnalyzerPreset">
-            @Html.CheckBox("videoAnalyzerPreset", false, new { onchange = "SetAudioAnalyzer(this)" })
+            @Html.CheckBox("videoAnalyzerPreset", false, new { onchange = "SetUploadOption(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
@@ -67,7 +66,7 @@
     </tr>
     <tr>
         <td class="mediaUploadAnalyzerPreset">
-            @Html.CheckBox("audioAnalyzerPreset", false)
+            @Html.CheckBox("audioAnalyzerPreset", false, new { onchange = "SetUploadOption(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">

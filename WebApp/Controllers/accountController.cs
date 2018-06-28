@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Azure.Management.Media.Models;
+
+using AzureSkyMedia.WebApp.Models;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -101,13 +105,30 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult Assets()
+        public IActionResult StorageAccounts()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["assets"] = mediaClient.GetAllEntities<Asset>(MediaEntity.Asset);
+                ViewData["storageAccounts"] = mediaClient.StorageAccounts;
             }
+            return View();
+        }
+
+        public IActionResult Assets()
+        {
+            List<MediaAsset> mediaAssets = new List<MediaAsset>();
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                Asset[] assets = mediaClient.GetAllEntities<Asset>(MediaEntity.Asset);
+                foreach (Asset asset in assets)
+                {
+                    MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+                    mediaAssets.Add(mediaAsset);
+                }
+            }
+            ViewData["assets"] = mediaAssets;
             return View();
         }
 

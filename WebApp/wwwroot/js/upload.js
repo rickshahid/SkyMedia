@@ -3,6 +3,37 @@ function SetStorageTip() {
     var tipText = $("#storageAccount option:selected").text();
     CreateTipTop("storageAccount", tipText);
 }
+function SetUploadOption(checkbox) {
+    var reservedUnits = "";
+    var encoderReservedUnits = "1 S3 reserved unit";
+    var analyzerReservedUnits = "10 S3 reserved units";
+    switch (checkbox.id) {
+        case "standardEncoderPreset":
+            if (checkbox.checked) {
+                if ($("#videoAnalyzerPreset").prop("checked") ||
+                    $("#audioAnalyzerPreset").prop("checked")) {
+                    reservedUnits = analyzerReservedUnits;
+                } else {
+                    reservedUnits = encoderReservedUnits;
+                }
+            }
+            break;
+        case "videoAnalyzerPreset":
+        case "audioAnalyzerPreset":
+            if (checkbox.id == "videoAnalyzerPreset") {
+                $("#audioAnalyzerPreset").prop("checked", false);
+                $("#audioAnalyzerPreset").prop("disabled", checkbox.checked);
+            }
+            if (checkbox.checked) {
+                reservedUnits = analyzerReservedUnits;
+            }
+            break;
+    }
+    if (reservedUnits != "") {
+        var message = "For enhanced media processing performance,<br>make sure you have at least " + reservedUnits + "<br>allocated in your media account before proceeding."
+        DisplayMessage("Media Job Reserved Units", message);
+    }
+}
 function GetUploadTime() {
     var uploadTime = new Date() - _uploadStartTime;
     var elapsedSeconds = Math.floor(uploadTime / 1000);

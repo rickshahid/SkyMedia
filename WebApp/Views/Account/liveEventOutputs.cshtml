@@ -1,11 +1,19 @@
-﻿@section head {
+﻿@{
+    string gridId = "liveEventOutputs";
+}
+
+@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = GetColumns("liveEventOutputs", "Live Event Output Name");
-            var rows = @Json.Serialize(ViewData["liveEventOutputs"]);
-            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
-            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
-            LoadGrid("liveEventOutputs", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+            _childGridId = null;
+            _childPropertyName = null;
+            _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            _storageCdnUrl = "@ViewData["storageCdnUrl"]";
+            var gridId = "@gridId";
+            var rows = @Json.Serialize(ViewData[gridId]);
+            var columns = GetColumns(gridId, "Live Event Output Name");
+            LoadGrid(gridId, rows, columns);
         })
     </script>
 }
@@ -15,6 +23,6 @@
 }
 
 <div class="grid">
-    <table id="liveEventOutputs"></table>
+    <table id="@gridId"></table>
     <div id="gridPager"></div>
 </div>

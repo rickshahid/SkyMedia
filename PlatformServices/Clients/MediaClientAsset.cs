@@ -8,8 +8,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        // TODO: Remove this workaround when fixed in v3 REST API
-        private void SetContainer(Asset asset)
+        // Remove this workaround when fixed in v3 API
+        public static void SetContainer(Asset asset)
         {
             asset.Container = string.Concat("asset-", asset.AssetId);
         }

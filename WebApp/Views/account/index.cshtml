@@ -10,7 +10,7 @@
             } else {
                 inventoryHtml = inventoryHtml + entityCount[0]
             }
-            return inventoryHtml + ":</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
+            return inventoryHtml + "</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
         }
         function DisplayInventory() {
             var inventoryHtml = "";
@@ -62,7 +62,7 @@
 }
 
 @section title {
-    Media Account Inventory
+    Account Inventory
 }
 
 <table id="accountInventory" class="accountInventory"></table>

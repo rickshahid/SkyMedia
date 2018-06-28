@@ -25,6 +25,17 @@ namespace AzureSkyMedia.WebApp.Controllers
             return job;
         }
 
+        public JsonResult Cancel(string jobName, string transformName)
+        {
+            string requestId = string.Empty;
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                requestId = mediaClient.CancelJob(transformName, jobName);
+            }
+            return Json(requestId);
+        }
+
         public IActionResult Index()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);

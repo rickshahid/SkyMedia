@@ -23,7 +23,7 @@ namespace AzureSkyMedia.PlatformServices
             _storage = storageAccount.CreateCloudBlobClient();
         }
 
-        private CloudBlobContainer GetBlobContainer(string containerName)
+        public CloudBlobContainer GetBlobContainer(string containerName)
         {
             CloudBlobContainer container = _storage.GetContainerReference(containerName);
             container.CreateIfNotExistsAsync().Wait();

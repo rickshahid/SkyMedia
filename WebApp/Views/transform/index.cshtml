@@ -1,47 +1,22 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
+@{
+    string gridId = "transforms";
+}
+
 @section head {
     <script type="text/javascript" src="~/js/transform.js"></script>
     <script type="text/javascript">
-        function GetTransformOutputs() {
-            var transformOutputs = new Array();
-            for (var i = 0; i < 3; i++) {
-                var transformOutput = {
-                    PresetEnabled: $("#presetEnabled" + i).prop("checked"),
-                    PresetName: $("#presetName" + i).val(),
-                    RelativePriority: $("#relativePriority" + i).val(),
-                    OnErrorMode: $("#onErrorMode" + i).val()
-                }
-                transformOutputs.push(transformOutput);
-            }
-            return transformOutputs
-        }
-        function CreateTransform() {
-            var title = "Confirm Transform Create / Update";
-            var message = "Are you sure you want to create / update the current transform?";
-            var onConfirm = function () {
-                SetCursor(true);
-                $.post("/transform/create",
-                    {
-                        name: $("#name").val(),
-                        description: $("#description").val(),
-                        outputs: GetTransformOutputs()
-                    },
-                    function (entity) {
-                        SetCursor(false);
-                        window.location = window.location.href;
-                    }
-                );
-                $(this).dialog("close");
-            }
-            ConfirmMessage(title, message, onConfirm);
-        }
         $(function () {
-            var columns = GetColumns("transforms", "Transform Name");
-            var rows = @Json.Serialize(ViewData["transforms"]);
-            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
-            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
-            LoadGrid("transforms", columns, rows, "transformOutputs", "properties.outputs", spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+            _childGridId = "transformOutputs";
+            _childPropertyName = "properties.outputs";
+            _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            _storageCdnUrl = "@ViewData["storageCdnUrl"]";
+            var gridId = "@gridId";
+            var rows = @Json.Serialize(ViewData[gridId]);
+            var columns = GetColumns(gridId, "Transform Name");
+            LoadGrid(gridId, rows, columns);
             CreateTipBottom("mediaEntitySave", "Save Transform");
         })
     </script>

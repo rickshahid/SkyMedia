@@ -45,7 +45,7 @@ namespace AzureSkyMedia.PlatformServices
             int liveEventOutputCount = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
 
             List<string[]> entityCounts = new List<string[]>();
-            entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString() });
+            entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(), "/account/storageAccounts" });
             entityCounts.Add(new string[] { "Assets", assetCount.ToString(), "/account/assets" });
             entityCounts.Add(new string[] { "Transforms", transformCount.ToString(), "/account/transforms" });
             entityCounts.Add(new string[] { "Transform Jobs", transformJobCount.ToString(), "/account/transformJobs" });

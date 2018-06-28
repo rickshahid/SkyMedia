@@ -1,25 +1,25 @@
 ﻿@{
-    string gridId = "transformJobs";
+    string gridId = "storageAccounts";
 }
 
 @section head {
     <script type="text/javascript">
         $(function () {
-            _childGridId = "transformJobOutputs";
-            _childPropertyName = "properties.outputs";
+            _childGridId = null;
+            _childPropertyName = null;
             _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
             _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetColumns(gridId, "Transform Job Name");
+            var columns = GetColumns(gridId, "Storage Account Name");
             LoadGrid(gridId, rows, columns);
         })
     </script>
 }
 
 @section title {
-    Transform Jobs
+    Storage Accounts
 }
 
 <div class="grid">

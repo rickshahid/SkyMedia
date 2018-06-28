@@ -25,9 +25,14 @@ namespace AzureSkyMedia.PlatformServices
 
         public string GetStreamingUrl(StreamingLocator locator)
         {
+            string streamingUrl = string.Empty;
             StreamingEndpoint defaultEndpoint = GetEntity<StreamingEndpoint>(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpoint);
             string streamingPath = GetStreamingPath(locator, StreamingPolicyStreamingProtocol.SmoothStreaming);
-            return string.Concat("//", defaultEndpoint.HostName, streamingPath);
+            if (!string.IsNullOrEmpty(streamingPath))
+            {
+                streamingUrl = string.Concat("//", defaultEndpoint.HostName, streamingPath);
+            }
+            return streamingUrl;
         }
 
         public StreamingLocator CreateLocator(string assetName, string streamingPolicyName)

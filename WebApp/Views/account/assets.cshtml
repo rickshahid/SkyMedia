@@ -1,11 +1,19 @@
-﻿@section head {
+﻿@{
+    string gridId = "assets";
+}
+
+@section head {
     <script type="text/javascript">
         $(function () {
-            var columns = GetColumns("assets", "Asset Name");
-            var rows = @Json.Serialize(ViewData["assets"]);
-            var spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
-            var spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
-            LoadGrid("assets", columns, rows, null, null, spacingPatterns, spacingInserts, "@ViewData["storageCdnUrl"]");
+            _childGridId = "assetFiles";
+            _childPropertyName = "files";
+            _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            _storageCdnUrl = "@ViewData["storageCdnUrl"]";
+            var gridId = "@gridId";
+            var rows = @Json.Serialize(ViewData[gridId]);
+            var columns = GetColumns(gridId, "Asset Name");
+            LoadGrid(gridId, rows, columns);
         })
     </script>
 }
@@ -15,6 +23,6 @@
 }
 
 <div class="grid">
-    <table id="assets"></table>
+    <table id="@gridId"></table>
     <div id="gridPager"></div>
 </div>
