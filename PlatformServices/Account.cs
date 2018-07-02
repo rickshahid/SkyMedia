@@ -40,7 +40,6 @@ namespace AzureSkyMedia.PlatformServices
             int streamingPolicyCount = mediaClient.GetEntityCount<StreamingPolicy>(MediaEntity.StreamingPolicy);
             int streamingEndpointCount = mediaClient.GetEntityCount<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
             int streamingLocatorCount = mediaClient.GetEntityCount<StreamingLocator>(MediaEntity.StreamingLocator);
-            int streamingFiltersCount = 0;
             int liveEventCount = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputCount = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
 
@@ -53,7 +52,6 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Streaming Policies", streamingPolicyCount.ToString(), "/account/streamingPolicies" });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpointCount.ToString(), "/account/streamingEndpoints" });
             entityCounts.Add(new string[] { "Streaming Locators", streamingLocatorCount.ToString(), "/account/streamingLocators" });
-            //entityCounts.Add(new string[] { "Streaming Filters", streamingFiltersCount.ToString(), "/account/streamingFilters" });
             entityCounts.Add(new string[] { "Live Events", liveEventCount.ToString(), "/account/liveEvents" });
             entityCounts.Add(new string[] { "Live Event Outputs", liveEventOutputCount.ToString(), "/account/liveEventOutputs" });
 

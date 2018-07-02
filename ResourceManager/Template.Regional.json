@@ -151,7 +151,19 @@
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
         "siteConfig": {
+          "cors": {
+            "allowedOrigins": [
+              "*"
+            ]
+          },
+          "apiDefinition": {
+            "url": "/swagger/v1/swagger.json"
+          },
           "appSettings": [
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "6.9.1"
+            },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
               "value": "[reference(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.Insights/components', parameters('appInsightsName')), variables('appInsightsApiVersion')).instrumentationKey]"
@@ -211,7 +223,19 @@
           ],
           "properties": {
             "siteConfig": {
+              "cors": {
+                "allowedOrigins": [
+                  "*"
+                ]
+              },
+              "apiDefinition": {
+                "url": "/swagger/v1/swagger.json"
+              },
               "appSettings": [
+                {
+                  "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                  "value": "6.9.1"
+                },
                 {
                   "name": "App.RegionName",
                   "value": "[concat(parameters('appRegionName'), ' - Staging')]"

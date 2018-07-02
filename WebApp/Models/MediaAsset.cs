@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
@@ -16,16 +15,9 @@ namespace AzureSkyMedia.WebApp.Models
             List<CloudBlockBlob> blockBlobs = new List<CloudBlockBlob>();
             BlobClient blobClient = new BlobClient(mediaAccount, asset.StorageAccountName);
             CloudBlobContainer assetContainer = blobClient.GetBlobContainer(asset.Container);
-            IEnumerable<IListBlobItem> blobItems = assetContainer.ListBlobsSegmentedAsync(null).Result.Results;
-            foreach (IListBlobItem blobItem in blobItems)
-            {
-                string blobName = Path.GetFileName(blobItem.Uri.ToString());
-                CloudBlockBlob blockBlob = blobClient.GetBlockBlob(asset.Container, null, blobName);
-                blockBlobs.Add(blockBlob);
-            }
-            Files = blockBlobs;
+            Files = assetContainer.ListBlobsSegmentedAsync(null).Result.Results;
         }
 
-        public IList<CloudBlockBlob> Files { get; internal set; }
+        public IEnumerable<IListBlobItem> Files { get; internal set; }
     }
 }

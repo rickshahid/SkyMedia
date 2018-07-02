@@ -12,7 +12,6 @@ namespace AzureSkyMedia.PlatformServices
         StreamingPolicy,
         StreamingEndpoint,
         StreamingLocator,
-        StreamingFilter,
         LiveEvent,
         LiveEventOutput
     }
@@ -29,8 +28,8 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaImageFormat
     {
-        PNG,
         JPG,
+        PNG,
         BMP
     }
 }
