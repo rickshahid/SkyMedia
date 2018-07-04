@@ -81,6 +81,8 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
 
+* **DevOps Projects** - http://azure.microsoft.com/features/devops-projects/
+
 If you have any issues or suggestions, please let me know.
 
 Thanks.
