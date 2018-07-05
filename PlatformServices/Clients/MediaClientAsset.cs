@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-
-using Microsoft.Rest.Azure;
-using Microsoft.WindowsAzure.Storage.Blob;
+﻿using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
@@ -22,9 +20,7 @@ namespace AzureSkyMedia.PlatformServices
                 Description = description,
                 AlternateId = alternateId
             };
-            Task<AzureOperationResponse<Asset>> task = _media.Assets.CreateOrUpdateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
-            AzureOperationResponse<Asset> response = task.Result;
-            return response.Body;
+            return _media.Assets.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
         }
 
         public Asset CreateAsset(string storageAccount, string name, string description, string alternateId, string blobContainer, string[] fileNames)

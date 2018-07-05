@@ -16,6 +16,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 mediaPublish.Id = job.Name;
                 mediaPublish.TransformName = transformName;
                 mediaPublish.MediaAccount = mediaClient.MediaAccount;
+                mediaPublish.UserAccount = mediaClient.UserAccount;
                 using (DatabaseClient databaseClient = new DatabaseClient())
                 {
                     string collectionId = Constant.Database.Collection.OutputPublish;
@@ -25,15 +26,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             return job;
         }
 
-        public JsonResult Cancel(string jobName, string transformName)
+        public void Cancel(string jobName, string transformName)
         {
-            string requestId = string.Empty;
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                requestId = mediaClient.CancelJob(transformName, jobName);
+                mediaClient.CancelJob(transformName, jobName);
             }
-            return Json(requestId);
         }
 
         public IActionResult Index()

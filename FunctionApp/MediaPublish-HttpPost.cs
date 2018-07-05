@@ -23,28 +23,39 @@ namespace AzureSkyMedia.FunctionApp
             object eventResponse = null;
             try
             {
-                string eventMessage = new StreamReader(request.Body).ReadToEnd();
-                log.Info($"Event Message: {eventMessage}");
-                JToken eventInfo = JArray.Parse(eventMessage)[0];
-                if (eventMessage.Contains("validationCode"))
+                if (request.Query.ContainsKey("id"))
                 {
-                    string validationCode = eventInfo["data"]["validationCode"].ToString();
-                    log.Info($"Validation Code: {validationCode}");
-                    eventResponse = new SubscriptionValidationResponse(validationCode);
+                    log.Info($"Request Query: {request.QueryString}");
+                    string indexId = request.Query["id"].ToString();
+                    string indexState = request.Query["state"].ToString();
+                    ProcessPublish(indexId, indexState, log);
                 }
                 else
                 {
-                    switch (eventInfo["eventType"].ToString())
+                    string requestBody = new StreamReader(request.Body).ReadToEnd();
+                    log.Info($"Request Body: {requestBody}");
+                    JToken eventInfo = JArray.Parse(requestBody)[0];
+                    if (requestBody.Contains("validationCode"))
                     {
-                        case "Microsoft.Media.JobStateChange":
-                            switch (eventInfo["data"]["state"].ToString())
-                            {
-                                case "Finished":
-                                    MediaPublish mediaPublish = EnqueuePublish(eventInfo, log);
-                                    log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
-                                    break;
-                            }
-                            break;
+                        string validationCode = eventInfo["data"]["validationCode"].ToString();
+                        log.Info($"Validation Code: {validationCode}");
+                        eventResponse = new SubscriptionValidationResponse(validationCode);
+                    }
+                    else
+                    {
+                        switch (eventInfo["eventType"].ToString())
+                        {
+                            case "Microsoft.Media.JobStateChange":
+                                string eventSubject = eventInfo["subject"].ToString();
+                                string eventState = eventInfo["data"]["state"].ToString();
+                                if (string.Equals(eventState, "Finished", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string jobName = Path.GetFileName(eventSubject);
+                                    log.Info($"Job Name: {jobName}");
+                                    ProcessPublish(jobName, null, log);
+                                }
+                                break;
+                        }
                     }
                 }
             }
@@ -55,25 +66,28 @@ namespace AzureSkyMedia.FunctionApp
             return new OkObjectResult(eventResponse);
         }
 
-        private static MediaPublish EnqueuePublish(JToken eventInfo, TraceWriter log)
+        private static void ProcessPublish(string documentId, string processState, TraceWriter log)
         {
-            MediaPublish mediaPublish;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                string eventSubject = eventInfo["subject"].ToString();
                 string collectionId = Constant.Database.Collection.OutputPublish;
-                string jobName = Path.GetFileName(eventSubject);
-                log.Info($"Job Name: {jobName}");
-                mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
+                MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, documentId);
                 if (mediaPublish != null)
                 {
-                    string settingKey = Constant.AppSettingKey.MediaPublishQueue;
-                    string queueName = AppSetting.GetValue(settingKey);
-                    QueueClient queueClient = new QueueClient();
-                    queueClient.AddMessage(queueName, mediaPublish);
+                    log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
+                    if (!string.IsNullOrEmpty(processState))
+                    {
+                        MediaClient.SendNotificationMessage(mediaPublish, null, documentId, processState);
+                    }
+                    else
+                    {
+                        string settingKey = Constant.AppSettingKey.MediaPublishQueue;
+                        string queueName = AppSetting.GetValue(settingKey);
+                        QueueClient queueClient = new QueueClient();
+                        queueClient.AddMessage(queueName, mediaPublish);
+                    }
                 }
             }
-            return mediaPublish;
         }
     }
 }

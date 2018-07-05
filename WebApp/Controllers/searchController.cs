@@ -27,63 +27,53 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    return Json(metadata);
         //}
 
-        [HttpGet]
-        [Route("/insight/accounts")]
-        public JArray GetAccounts()
-        {
-            JArray accounts = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                //MediaClient mediaClient = new MediaClient(authToken);
-                //VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
-                //accounts = videoAnalyzer.GetAccounts();
-            }
-            return accounts;
-        }
-
-        [HttpGet]
-        [Route("/insight/get")]
-        public JObject GetInsight(string indexId, string languageId, bool processingState)
-        {
-            JObject index = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                //MediaClient mediaClient = new MediaClient(authToken);
-                //VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
-                //index = videoAnalyzer.GetIndex(indexId, languageId, processingState);
-            }
-            return index;
-        }
-
-        [HttpDelete]
-        [Route("/insight/delete")]
-        public void DeleteVideo(string indexId, bool deleteInsight)
-        {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                //MediaClient mediaClient = new MediaClient(authToken);
-                //VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
-                //videoAnalyzer.DeleteVideo(indexId, deleteInsight);
-
-                using (DatabaseClient databaseClient = new DatabaseClient())
-                {
-                    string collectionId = Constant.Database.Collection.OutputInsight;
-                    databaseClient.DeleteDocument(collectionId, indexId);
-                }
-            }
-        }
-
-        //public JsonResult insight(MediaSearchCriteria searchCriteria)
+        //[HttpGet]
+        //[Route("/insight/accounts")]
+        //public JArray GetAccounts()
         //{
-        //    JObject results = null;
-        //    string authToken = homeController.GetAuthToken(Request, Response);
-        //    MediaClient mediaClient = new MediaClient(authToken);
-        //    VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
-        //    results = videoAnalyzer.Search(searchCriteria);
-        //    return Json(results);
+        //    JArray accounts = null;
+        //    string authToken = HomeController.GetAuthToken(Request, Response);
+        //    if (!string.IsNullOrEmpty(authToken))
+        //    {
+        //        using MediaClient mediaClient = new MediaClient(authToken);
+        //        VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+        //        accounts = videoAnalyzer.GetAccounts();
+        //    }
+        //    return accounts;
+        //}
+
+        //[HttpGet]
+        //[Route("/insight/get")]
+        //public JObject GetInsight(string indexId, string languageId, bool processingState)
+        //{
+        //    JObject index = null;
+        //    string authToken = HomeController.GetAuthToken(Request, Response);
+        //    if (!string.IsNullOrEmpty(authToken))
+        //    {
+        //        using MediaClient mediaClient = new MediaClient(authToken);
+        //        VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+        //        index = videoAnalyzer.GetIndex(indexId, languageId, processingState);
+        //    }
+        //    return index;
+        //}
+
+        //[HttpDelete]
+        //[Route("/insight/delete")]
+        //public void DeleteVideo(string indexId, bool deleteInsight)
+        //{
+        //    string authToken = HomeController.GetAuthToken(Request, Response);
+        //    if (!string.IsNullOrEmpty(authToken))
+        //    {
+        //        using MediaClient mediaClient = new MediaClient(authToken);
+        //        VideoAnalyzer videoAnalyzer = new VideoAnalyzer(mediaClient.MediaAccount);
+        //        videoAnalyzer.DeleteVideo(indexId, deleteInsight);
+
+        //        using (DatabaseClient databaseClient = new DatabaseClient())
+        //        {
+        //            string collectionId = Constant.Database.Collection.OutputInsight;
+        //            databaseClient.DeleteDocument(collectionId, indexId);
+        //        }
+        //    }
         //}
 
         public IActionResult Index()

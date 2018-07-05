@@ -22,4 +22,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public Dictionary<string, string> StorageAccounts { get; set; }
     }
+
+    internal class UserAccount
+    {
+        public string MobileNumber { get; set; }
+    }
 }

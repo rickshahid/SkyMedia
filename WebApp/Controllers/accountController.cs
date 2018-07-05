@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Azure.Management.Media.Models;
 
-using AzureSkyMedia.WebApp.Models;
-
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -77,6 +75,9 @@ namespace AzureSkyMedia.WebApp.Controllers
                     case "liveEventOutputs":
                         mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentEntityName);
                         break;
+                    case "videoIndexerInsights":
+                        mediaClient.IndexerDeleteVideo(entityName, true);
+                        break;
                 }
             }
         }
@@ -107,10 +108,16 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult StorageAccounts()
         {
+            List<MediaStorage> storageAccounts = new List<MediaStorage>();
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["storageAccounts"] = mediaClient.StorageAccounts;
+                foreach (StorageAccount storageAccount in mediaClient.StorageAccounts)
+                {
+                    MediaStorage mediaStorage = new MediaStorage(storageAccount);
+                    storageAccounts.Add(mediaStorage);
+                }
+                ViewData["storageAccounts"] = storageAccounts.ToArray();
             }
             return View();
         }
@@ -128,7 +135,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     mediaAssets.Add(mediaAsset);
                 }
             }
-            ViewData["assets"] = mediaAssets;
+            ViewData["assets"] = mediaAssets.ToArray();
             return View();
         }
 
@@ -208,6 +215,16 @@ namespace AzureSkyMedia.WebApp.Controllers
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
+            }
+            return View();
+        }
+
+        public IActionResult VideoIndexerInsights()
+        {
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["videoIndexerInsights"] = mediaClient.IndexerGetInsights();
             }
             return View();
         }

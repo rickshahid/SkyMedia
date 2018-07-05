@@ -76,10 +76,9 @@ function CancelJob(jobName, transformName) {
                 jobName: decodeURIComponent(jobName),
                 transformName: decodeURIComponent(transformName)
             },
-            function (requestId) {
+            function () {
                 SetCursor(false);
-                DisplayMessage("Job Cancel Request Identifier", requestId);
-                //window.location = window.location.href;
+                window.location = window.location.href;
             }
         );
         $(this).dialog("close");

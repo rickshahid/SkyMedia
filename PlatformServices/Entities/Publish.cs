@@ -15,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaAccount MediaAccount { get; set; }
 
-        public string MobileNumber { get; set; }
+        public UserAccount UserAccount { get; set; }
     }
 
     //internal class MediaPublishError

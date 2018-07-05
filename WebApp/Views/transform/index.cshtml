@@ -15,7 +15,7 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetColumns(gridId, "Transform Name");
+            var columns = GetParentColumns(gridId, "Transform Name");
             LoadGrid(gridId, rows, columns);
             CreateTipBottom("mediaEntitySave", "Save Transform");
         })
@@ -52,7 +52,7 @@
                             Priority<br>(Relative)
                         </td>
                         <td class="inputLabel centered">
-                            On Error<br>Mode
+                            On Error
                         </td>
                     </tr>
                     <tr>
@@ -70,7 +70,7 @@
                             <partial name="Priority" model='new ClientControl { ClientId = "relativePriority0" }' />
                         </td>
                         <td>
-                            <partial name="OnError" model='new ClientControl { ClientId = "onErrorMode0" }' />
+                            <partial name="OnError" model='new ClientControl { ClientId = "onError0" }' />
                         </td>
                     </tr>
                     <tr>
@@ -84,7 +84,7 @@
                             <partial name="Priority" model='new ClientControl { ClientId = "relativePriority1" }' />
                         </td>
                         <td>
-                            <partial name="OnError" model='new ClientControl { ClientId = "onErrorMode1" }' />
+                            <partial name="OnError" model='new ClientControl { ClientId = "onError1" }' />
                         </td>
                     </tr>
                     <tr>
@@ -98,7 +98,7 @@
                             <partial name="Priority" model='new ClientControl { ClientId = "relativePriority2" }' />
                         </td>
                         <td>
-                            <partial name="OnError" model='new ClientControl { ClientId = "onErrorMode2" }' />
+                            <partial name="OnError" model='new ClientControl { ClientId = "onError2" }' />
                         </td>
                     </tr>
                 </table>

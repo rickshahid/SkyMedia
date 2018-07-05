@@ -2,7 +2,7 @@
 function LoadSubGrid(parentRowId, parentRowKey) {
     var parentRow = $(this).jqGrid("getLocalRow", parentRowKey);
     var childRows = parentRow[_childPropertyName];
-    var columns = GetColumns(_childGridId, "Name");
+    var columns = GetChildColumns(_childGridId);
     $("#" + parentRowId).html("<table id='" + _childGridId + "'></table>");
     $("#" + _childGridId).jqGrid({
         colModel: columns,

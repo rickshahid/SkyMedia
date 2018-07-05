@@ -171,8 +171,8 @@ namespace AzureSkyMedia.PlatformServices
             public struct Collection
             {
                 public const string InputWorkflow = "InputWorkflow";
-                public const string OutputInsight = "OutputInsight";
                 public const string OutputPublish = "OutputPublish";
+                public const string OutputInsight = "OutputInsight";
             }
 
             public struct Procedure

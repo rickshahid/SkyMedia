@@ -81,6 +81,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                     MediaPublish mediaPublish = new MediaPublish();
                     foreach (Asset asset in assets)
                     {
+                        if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
+                        {
+                            bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
+                            mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, asset, string.Empty, audioOnly);
+                        }
                         JobInputAsset inputAsset = new JobInputAsset(asset.Name);
                         string[] outputAssetNames = CreateOutputAssets(mediaClient, storageAccount, asset.Name, standardEncoderPreset, videoAnalyzerPreset, audioAnalyzerPreset);
 
@@ -88,7 +93,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                         jobs.Add(job);
                     }
                 }
-                mediaClient.IndexerUpload();
             }
             return jobs.Count > 0 ? Json(jobs.ToArray()) : Json(assets);
         }

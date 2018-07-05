@@ -18,7 +18,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    string authToken = homeController.GetAuthToken(Request, Response);
         //    if (!string.IsNullOrEmpty(authToken))
         //    {
-        //        MediaClient mediaClient = new MediaClient(authToken);
+        //        using MediaClient mediaClient = new MediaClient(authToken);
         //        channelId = mediaClient.CreateChannel(channelName, channelEncoding, inputProtocol, inputAddressAuthorized, inputSubnetPrefixLength, previewAddressAuthorized, previewSubnetPrefixLength, archiveWindowMinutes, archiveEncryptionClear, archiveEncryptionAes, archiveEncryptionDrm);
         //    }
         //    return channelId;
@@ -29,7 +29,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         //public JsonResult InsertCue(string channelName, int durationSeconds, int cueId, bool showSlate)
         //{
         //    string authToken = homeController.GetAuthToken(Request, Response);
-        //    MediaClient mediaClient = new MediaClient(authToken);
+        //    using MediaClient mediaClient = new MediaClient(authToken);
         //    bool inserted = mediaClient.InsertMarker(channelName, durationSeconds, cueId, showSlate);
         //    return Json(inserted);
         //}

@@ -12,7 +12,7 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetColumns(gridId, "Transform Job Name");
+            var columns = GetParentColumns(gridId, "Transform Job Name");
             LoadGrid(gridId, rows, columns);
         })
     </script>

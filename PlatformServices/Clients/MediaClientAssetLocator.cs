@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using Microsoft.Rest.Azure;
+﻿using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
@@ -10,9 +8,7 @@ namespace AzureSkyMedia.PlatformServices
         private string GetStreamingPath(StreamingLocator locator, StreamingPolicyStreamingProtocol protocol)
         {
             string streamingPath = string.Empty;
-            Task<AzureOperationResponse<ListPathsResponse>> task = _media.StreamingLocators.ListPathsWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, locator.Name);
-            AzureOperationResponse<ListPathsResponse> response = task.Result;
-            ListPathsResponse paths = response.Body;
+            ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, locator.Name);
             foreach (StreamingPath path in paths.StreamingPaths)
             {
                 if (path.StreamingProtocol == protocol && path.Paths.Count > 0)
@@ -38,9 +34,7 @@ namespace AzureSkyMedia.PlatformServices
         public StreamingLocator CreateLocator(string assetName, string streamingPolicyName)
         {
             StreamingLocator locator = new StreamingLocator(assetName, streamingPolicyName);
-            Task<AzureOperationResponse<StreamingLocator>> task = _media.StreamingLocators.CreateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, locator);
-            AzureOperationResponse<StreamingLocator> response = task.Result;
-            return response.Body;
+            return _media.StreamingLocators.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, locator);
         }
     }
 }

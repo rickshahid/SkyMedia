@@ -116,14 +116,17 @@ namespace AzureSkyMedia.PlatformServices
 
         public static MediaStream[] GetClipperStreams(string authToken, string searchCriteria, int skipCount, int takeCount, string streamType)
         {
-            //MediaClient mediaClient = new MediaClient(authToken);
+            List<MediaStream> mediaStreams = new List<MediaStream>();
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+
+            }
             //IEnumerable<ILocator> locators = GetMediaLocators(mediaClient, searchCriteria);
             //locators = locators.Skip(skipCount);
             //if (takeCount > 0)
             //{
             //    locators = locators.Take(takeCount);
             //}
-            List<MediaStream> mediaStreams = new List<MediaStream>();
             //bool filtersOnly = string.Equals(streamType, "filter", StringComparison.OrdinalIgnoreCase);
             //foreach (ILocator locator in locators)
             //{

@@ -31,27 +31,32 @@ namespace AzureSkyMedia.WebApp.Controllers
             return new TransformOutput(transformPreset)
             {
                 RelativePriority = string.IsNullOrEmpty(transformOutput.RelativePriority) ? Priority.Normal : (Priority)transformOutput.RelativePriority,
-                OnError = string.IsNullOrEmpty(transformOutput.OnErrorMode) ? OnErrorType.StopProcessingJob : (OnErrorType)transformOutput.OnErrorMode
+                OnError = string.IsNullOrEmpty(transformOutput.OnError) ? OnErrorType.StopProcessingJob : (OnErrorType)transformOutput.OnError
             };
         }
 
         internal static Transform CreateTransform(MediaClient mediaClient, bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
         {
+            if (mediaClient.IndexerIsEnabled())
+            {
+                videoAnalyzerPreset = false;
+                audioAnalyzerPreset = false;
+            }
             MediaTransformOutput standardEncoderOutput = new MediaTransformOutput()
             {
                 PresetEnabled = standardEncoderPreset,
                 PresetName = EncoderNamedPreset.AdaptiveStreaming,
-                OnErrorMode = OnErrorType.ContinueJob
+                OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput videoAnalyzerOutput = new MediaTransformOutput()
             {
                 PresetEnabled = videoAnalyzerPreset,
-                OnErrorMode = OnErrorType.ContinueJob
+                OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput audioAnalyzerOutput = new MediaTransformOutput()
             {
                 PresetEnabled = audioAnalyzerPreset,
-                OnErrorMode = OnErrorType.ContinueJob
+                OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput[] transformOutputs = new MediaTransformOutput[] { standardEncoderOutput, videoAnalyzerOutput, audioAnalyzerOutput };
             return CreateTransform(mediaClient, null, null, transformOutputs);

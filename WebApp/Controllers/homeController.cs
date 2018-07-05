@@ -137,17 +137,19 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 else
                 {
-                    MediaClient mediaClient = new MediaClient(authToken);
-                    if (!Media.IsStreamingEnabled(mediaClient))
+                    using (MediaClient mediaClient = new MediaClient(authToken))
                     {
-                        accountMessage = Constant.Message.StreamingEndpointNotStarted;
-                    }
-                    else
-                    {
-                        mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, out streamOffset, out streamIndex, out bool endOfStreams);
-                        if (endOfStreams)
+                        if (!Media.IsStreamingEnabled(mediaClient))
                         {
-                            streamNumber = streamNumber - 1;
+                            accountMessage = Constant.Message.StreamingEndpointNotStarted;
+                        }
+                        else
+                        {
+                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, out streamOffset, out streamIndex, out bool endOfStreams);
+                            if (endOfStreams)
+                            {
+                                streamNumber = streamNumber - 1;
+                            }
                         }
                     }
                 }

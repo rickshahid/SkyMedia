@@ -1,6 +1,4 @@
-﻿using Microsoft.Azure.Management.Media.Models;
-
-namespace AzureSkyMedia.PlatformServices
+﻿namespace AzureSkyMedia.PlatformServices
 {
     public class MediaTransformOutput
     {
@@ -10,6 +8,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public string RelativePriority { get; set; }
 
-        public string OnErrorMode { get; set; }
+        public string OnError { get; set; }
     }
 }

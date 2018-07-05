@@ -19,31 +19,31 @@ namespace AzureSkyMedia.PlatformServices
         {
             StringBuilder message = new StringBuilder();
             message.Append("AMS Transform Job Notification");
-            message.Append("\n\nMedia Account Name: ");
+            message.Append("\n\nMedia Account\n");
             message.Append(mediaAccount.Name);
-            message.Append("\n\nJob Name: ");
+            message.Append("\n\nJob Name\n");
             message.Append(job.Name);
-            message.Append("\n\nJob State: ");
+            message.Append("\n\nJob State\n");
             message.Append(job.State.ToString());
             foreach (JobOutput jobOutput in job.Outputs)
             {
-                message.Append("\n\nJob Output State: ");
+                message.Append("\n\nJob Output State\n");
                 message.Append(jobOutput.State.ToString());
-                message.Append("\n\nJob Output Progress: ");
+                message.Append("\n\nJob Output Progress\n");
                 message.Append(jobOutput.Progress);
                 if (jobOutput.Error != null)
                 {
-                    message.Append("\n\nError Category: ");
+                    message.Append("\n\nError Category\n");
                     message.Append(jobOutput.Error.Category.ToString());
                     message.Append("\n\nError Code: ");
                     message.Append(jobOutput.Error.Code.ToString());
-                    message.Append("\n\nError Message: ");
+                    message.Append("\n\nError Message\n");
                     message.Append(jobOutput.Error.Message);
                     foreach (JobErrorDetail errorDetail in jobOutput.Error.Details)
                     {
-                        message.Append("\n\nError Detail Code: ");
+                        message.Append("\n\nError Detail Code\n");
                         message.Append(errorDetail.Code.ToString());
-                        message.Append("\n\nError Detail Message: ");
+                        message.Append("\n\nError Detail Message\n");
                         message.Append(errorDetail.Message);
                     }
                 }
@@ -51,12 +51,33 @@ namespace AzureSkyMedia.PlatformServices
             return message.ToString();
         }
 
-        public static string SendNotificationMessage(MediaAccount mediaAccount, Job job, string mobileNumber)
+        private static string GetNotificationMessage(MediaAccount mediaAccount, string indexId, string indexState)
+        {
+            StringBuilder message = new StringBuilder();
+            message.Append("VI Upload Index Notification");
+            message.Append("\n\nVideo Indexer Account\n");
+            message.Append(mediaAccount.VideoIndexerKey);
+            message.Append("\n\nIndex Id\n");
+            message.Append(indexId);
+            message.Append("\n\nIndex State\n");
+            message.Append(indexState);
+            return message.ToString();
+        }
+
+        public static string SendNotificationMessage(MediaPublish mediaPublish, Job job, string indexId, string indexState)
         {
             string message = Constant.Message.MobileNumberNotAvailable;
-            if (!string.IsNullOrEmpty(mobileNumber))
+            if (!string.IsNullOrEmpty(mediaPublish.UserAccount.MobileNumber))
             {
-                message = GetNotificationMessage(mediaAccount, job);
+                if (job == null)
+                {
+                    message = GetNotificationMessage(mediaPublish.MediaAccount, indexId, indexState);
+                }
+                else
+                {
+                    message = GetNotificationMessage(mediaPublish.MediaAccount, job);
+                }
+
 
                 string settingKey = Constant.AppSettingKey.TwilioAccountId;
                 string accountId = AppSetting.GetValue(settingKey);
@@ -68,7 +89,7 @@ namespace AzureSkyMedia.PlatformServices
                 string messageFrom = AppSetting.GetValue(settingKey);
 
                 PhoneNumber fromPhoneNumber = new PhoneNumber(messageFrom);
-                PhoneNumber toPhoneNumber = new PhoneNumber(mobileNumber);
+                PhoneNumber toPhoneNumber = new PhoneNumber(mediaPublish.UserAccount.MobileNumber);
 
                 CreateMessageOptions messageOptions = new CreateMessageOptions(toPhoneNumber)
                 {
@@ -133,7 +154,7 @@ namespace AzureSkyMedia.PlatformServices
                             locator = mediaClient.CreateLocator(jobOutput.AssetName, streamingPolicyName);
                         }
                     }
-                    publishMessage = SendNotificationMessage(mediaPublish.MediaAccount, job, mediaPublish.MobileNumber);
+                    publishMessage = SendNotificationMessage(mediaPublish, job, null, null);
                 }
             }
             return publishMessage;

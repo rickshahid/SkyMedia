@@ -18,7 +18,8 @@ namespace AzureSkyMedia.PlatformServices
     internal partial class MediaClient : IDisposable
     {
         private AzureMediaServicesClient _media;
-        private string _indexerToken;
+        private string _indexerAccountToken;
+        private string _indexerAccountId;
 
         public MediaClient(string authToken, MediaAccount mediaAccount = null)
         {
@@ -26,6 +27,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 User authUser = new User(authToken);
                 mediaAccount = authUser.MediaAccount;
+                UserAccount = new UserAccount()
+                {
+                    MobileNumber = authUser.MobileNumber
+                };
             }
             MediaAccount = mediaAccount;
             string settingKey = Constant.AppSettingKey.AzureResourceManagementEndpointUrl;
@@ -46,13 +51,16 @@ namespace AzureSkyMedia.PlatformServices
                     JArray indexerAccounts = webClient.GetResponse<JArray>(webRequest);
                     if (indexerAccounts != null)
                     {
-                        _indexerToken = indexerAccounts[0]["accessToken"].ToString();
+                        _indexerAccountId = indexerAccounts[0]["id"].ToString();
+                        _indexerAccountToken = indexerAccounts[0]["accessToken"].ToString();
                     }
                 }
             }
         }
 
         public MediaAccount MediaAccount { get; private set; }
+
+        public UserAccount UserAccount { get; private set; }
 
         public StorageAccount PrimaryStorage
         {

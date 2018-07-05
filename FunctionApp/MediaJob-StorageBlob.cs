@@ -140,7 +140,7 @@ namespace AzureSkyMedia.FunctionApp
         //        ServicePrincipalId = jobReader.ReadLine(),
         //        ServicePrincipalKey = jobReader.ReadLine()
         //    };
-        //    mediaClient = new MediaClient(null, mediaAccount);
+        //    using mediaClient = new MediaClient(null, mediaAccount);
         //    taskConfig = new Dictionary<MediaProcessor, string>();
         //    while (!jobReader.EndOfStream)
         //    {

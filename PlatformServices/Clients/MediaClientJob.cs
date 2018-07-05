@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using Microsoft.Rest.Azure;
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
@@ -26,16 +25,12 @@ namespace AzureSkyMedia.PlatformServices
                 Input = jobInput,
                 Outputs = outputAssets.ToArray()
             };
-            Task<AzureOperationResponse<Job>> task = _media.Jobs.CreateWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName, job);
-            AzureOperationResponse<Job> response = task.Result;
-            return response.Body;
+            return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName, job);
         }
 
-        public string CancelJob(string transformName, string jobName)
+        public void CancelJob(string transformName, string jobName)
         {
-            Task<AzureOperationResponse> task = _media.Jobs.CancelJobWithHttpMessagesAsync(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName);
-            AzureOperationResponse response = task.Result;
-            return response.RequestId;
+            _media.Jobs.CancelJob(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName);
         }
     }
 }

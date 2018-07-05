@@ -1,5 +1,5 @@
 ﻿@{
-    string gridId = "liveEvents";
+    string gridId = "videoIndexerInsights";
 }
 
 @section head {
@@ -12,14 +12,14 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Live Event Name");
+            var columns = GetParentColumns(gridId, "Video Name");
             LoadGrid(gridId, rows, columns);
         })
     </script>
 }
 
 @section title {
-    Live Events
+    Video Indexer Insights
 }
 
 <div class="grid">

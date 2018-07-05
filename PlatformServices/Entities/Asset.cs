@@ -3,9 +3,7 @@
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
 
-using AzureSkyMedia.PlatformServices;
-
-namespace AzureSkyMedia.WebApp.Models
+namespace AzureSkyMedia.PlatformServices
 {
     public class MediaAsset : Asset
     {

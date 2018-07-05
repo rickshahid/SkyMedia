@@ -2,6 +2,8 @@ using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Account
@@ -27,6 +29,12 @@ namespace AzureSkyMedia.PlatformServices
                 DeleteEntities<ContentKeyPolicy>(mediaClient, MediaEntity.ContentKeyPolicy);
                 DeleteEntities<StreamingPolicy>(mediaClient, MediaEntity.StreamingPolicy);
                 DeleteEntities<StreamingLocator>(mediaClient, MediaEntity.StreamingLocator);
+                JArray insights = mediaClient.IndexerGetInsights();
+                foreach (JToken insight in insights)
+                {
+                    string indexId = insight["id"].ToString();
+                    mediaClient.IndexerDeleteVideo(indexId, true);
+                }
             }
             DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
         }
@@ -42,6 +50,7 @@ namespace AzureSkyMedia.PlatformServices
             int streamingLocatorCount = mediaClient.GetEntityCount<StreamingLocator>(MediaEntity.StreamingLocator);
             int liveEventCount = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputCount = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
+            int videoIndexerInsights = mediaClient.IndexerGetInsights().Count;
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(), "/account/storageAccounts" });
@@ -54,6 +63,7 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Streaming Locators", streamingLocatorCount.ToString(), "/account/streamingLocators" });
             entityCounts.Add(new string[] { "Live Events", liveEventCount.ToString(), "/account/liveEvents" });
             entityCounts.Add(new string[] { "Live Event Outputs", liveEventOutputCount.ToString(), "/account/liveEventOutputs" });
+            entityCounts.Add(new string[] { "Video Indexer Insights", videoIndexerInsights.ToString(), "/account/videoIndexerInsights" });
 
             return entityCounts.ToArray();
         }

@@ -1,11 +1,15 @@
-﻿function GetTransformOutputs() {
+﻿function SetAudioAnalyzer(videoAnalyzer) {
+    $("#audioAnalyzerPreset").prop("checked", false);
+    $("#audioAnalyzerPreset").prop("disabled", videoAnalyzer.checked);
+}
+function GetTransformOutputs() {
     var transformOutputs = new Array();
     for (var i = 0; i < 3; i++) {
         var transformOutput = {
             PresetEnabled: $("#presetEnabled" + i).prop("checked"),
             PresetName: $("#presetName" + i).val(),
             RelativePriority: $("#relativePriority" + i).val(),
-            OnErrorMode: $("#onErrorMode" + i).val()
+            OnError: $("#onError" + i).val()
         }
         transformOutputs.push(transformOutput);
     }
