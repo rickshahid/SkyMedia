@@ -49,17 +49,15 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Active Directory (B2C)** - http://azure.microsoft.com/services/active-directory-b2c/
 
-* **App Insights** - http://azure.microsoft.com/services/application-insights/
+* **Storage** - http://azure.microsoft.com/services/storage/
+
+* **Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
 * **App Service** - http://azure.microsoft.com/services/app-service/
 
 * **Function App** - http://azure.microsoft.com/services/functions/
 
 * **Event Grid** - http://azure.microsoft.com/services/event-grid/
-
-* **Storage** - http://azure.microsoft.com/services/storage/
-
-* **Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
 * **Media Services** - http://azure.microsoft.com/services/media-services/
 
@@ -80,6 +78,10 @@ The following Azure platform services were leveraged to create this sample media
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
 * **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
+
+* **App Insights** - http://azure.microsoft.com/services/application-insights/
+
+* **DevOps Projects** - http://azure.microsoft.com/features/devops-projects/
 
 If you have any issues or suggestions, please let me know.
 
