@@ -63,15 +63,17 @@ The following Azure platform services were leveraged to create this sample media
 
   * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
 
-  * **Indexing** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
-
   * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
 
   * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
   
   * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
-* **Search** - http://azure.microsoft.com/services/search/
+* **Video Indexer** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
+
+  * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
+
+  * **Search** - http://azure.microsoft.com/services/search/
 
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
