@@ -214,7 +214,8 @@
         "customScriptFilename": "FDT-setup-linux-server.sh",
         "customScriptCommandPrefix": "bash ",
         "remoteAccessPort": "22",
-        "resultPropertyName": "statuses"
+        "resultPropertyName": "statuses",
+        "tempImageVersion": "latest"
       },
       "Windows": {
         "extensionPublisher": "Microsoft.Compute",
@@ -224,7 +225,8 @@
         "customScriptFilename": "FDT-setup-windows-server.ps1",
         "customScriptCommandPrefix": "powershell.exe -ExecutionPolicy Unrestricted -File .\\",
         "remoteAccessPort": "3389",
-        "resultPropertyName": "substatuses"
+        "resultPropertyName": "substatuses",
+        "tempImageVersion": "2016.127.20180315"
       }
     },
     "osProps": "[variables('osPropertiesDictionary')[variables('osVersion').osType]]",
@@ -421,7 +423,7 @@
             "publisher": "[variables('osVersion').imagePublisher]",
             "offer": "[variables('osVersion').imageOffer]",
             "sku": "[variables('osVersion').imageSku]",
-            "version": "latest"
+            "version": "[variables('osProps').tempImageVersion]"
           },
           "osDisk": {
             "createOption": "FromImage",

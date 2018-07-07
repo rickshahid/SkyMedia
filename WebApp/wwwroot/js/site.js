@@ -32,9 +32,11 @@ function SetLayout() {
     CreateTipTop("mediaUpload", "Upload");
     CreateTipTop("mediaTransform", "Transform");
     CreateTipTop("mediaJob", "Job");
-    CreateTipTop("mediaInsight", "Insight");
     CreateTipTop("mediaSearch", "Search");
-    CreateTipTop("mediaEdit", "Edit");
+    CreateTipTop("mediaCompose", "Compose");
+    CreateTipTop("mediaTrain", "Train");
+    CreateTipTop("mediaMonitor", "Monitor");
+    CreateTipTop("mediaBrowse", "Browse");
     CreateTipBottom("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);

@@ -122,8 +122,8 @@
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
-    "webServerApiVersion": "2017-08-01",
-    "webSiteApiVersion": "2016-08-01",
+    "webServerApiVersion": "2018-02-01",
+    "webSiteApiVersion": "2018-02-01",
     "webAppSubdomainName": "[toLower(parameters('appSubdomainName'))]",
     "webAppSubdomainNameStaging": "[concat(variables('webAppSubdomainName'), '-staging')]",
     "appInsightsApiVersion": "2015-05-01"

@@ -2,7 +2,7 @@
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class InsightController : Controller
+    public class TrainController : Controller
     {
         public IActionResult Index()
         {
