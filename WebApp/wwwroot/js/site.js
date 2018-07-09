@@ -12,7 +12,7 @@ function SetLayout() {
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>News Blog");
     CreateTipBottom("botService", "Azure Bot Service");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
-    CreateTipBottom("userProfileEdit", "Azure Sky Media<br><br>User Profile Edit");
+    CreateTipBottom("userProfileEdit", "Azure Sky Media<br><br>Account Profile Edit");
     CreateTipBottom("userSignIn", "Azure Sky Media<br><br>User Sign In");
     CreateTipBottom("userSignOut", "Azure Sky Media<br><br>User Sign Out");
     CreateTipRight("amsPlatform", "Azure Media Services");
@@ -33,8 +33,8 @@ function SetLayout() {
     CreateTipTop("mediaTransform", "Transform");
     CreateTipTop("mediaJob", "Job");
     CreateTipTop("mediaSearch", "Search");
-    CreateTipTop("mediaCompose", "Compose");
     CreateTipTop("mediaTrain", "Train");
+    CreateTipTop("mediaCompose", "Compose");
     CreateTipTop("mediaMonitor", "Monitor");
     CreateTipTop("mediaBrowse", "Browse");
     CreateTipBottom("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
@@ -61,7 +61,9 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
         };
     }
     if (html != null) {
-        html = unescape(html);
+        var txtArea = document.createElement("textarea");
+        txtArea.innerHTML = html;
+        html = txtArea.value;
         $("#" + dialogId).html(html);
     }
     if (height == null) {
@@ -84,9 +86,9 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
     }
     $(".ui-button:last").focus();
 }
-function DisplayMessage(title, message, buttons, width, onClose) {
+function DisplayMessage(title, message, buttons, onClose) {
     var dialogId = "messageDialog";
-    DisplayDialog(dialogId, title, message, buttons, null, width, null, onClose);
+    DisplayDialog(dialogId, title, message, buttons, null, null, null, onClose);
 }
 function ConfirmMessage(title, message, onConfirm) {
     var buttons = {

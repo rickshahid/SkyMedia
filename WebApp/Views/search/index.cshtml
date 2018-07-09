@@ -1,5 +1,19 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
+@{
+    string accountMessage = ViewData["accountMessage"] as string;
+    string accountUrl = ViewData["accountUrl"] as string;
+}
+
+@section head {
+    <script type="text/javascript" src="~/js/insight.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            ValidateAccount("@accountMessage", "@accountUrl");
+        })
+    </script>
+}
+
 @section title {
     Media Search
 }

@@ -196,6 +196,9 @@ function FormatName(value, grid, row) {
     return value;
 }
 function FormatValue(value, grid, row) {
+    if (value == "StopProcessingJob") {
+        value = "StopJob";
+    }
     for (var i = 0; i < _spacingPatterns.length; i++) {
         var expression = new RegExp(_spacingPatterns[i], "g");
         value = value.replace(expression, _spacingInserts[i]);

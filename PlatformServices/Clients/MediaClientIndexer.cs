@@ -163,6 +163,14 @@ namespace AzureSkyMedia.PlatformServices
             {
                 HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
             }
+            if (deleteIndex)
+            {
+                using (DatabaseClient databaseClient = new DatabaseClient())
+                {
+                    string collectionId = Constant.Database.Collection.OutputInsight;
+                    databaseClient.DeleteDocument(collectionId, indexId);
+                }
+            }
         }
     }
 }

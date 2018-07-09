@@ -18,8 +18,15 @@
         HomeController.SetAccountContext(authToken, ViewData);
     }
 
-    string settingKey = Constant.AppSettingKey.AppRegionName;
-    ViewData["appRegionName"] = HomeController.GetAppSetting(settingKey);
+    string settingKey = Constant.AppSettingKey.AppTitle;
+    string appTitle = HomeController.GetAppSetting(settingKey);
+    settingKey = Constant.AppSettingKey.AppRegionName;
+    string appRegionName = HomeController.GetAppSetting(settingKey);
+    if (!string.IsNullOrEmpty(appRegionName))
+    {
+        appTitle = string.Concat(appTitle, " (", appRegionName, ")");
+    }
+    ViewData["appTitle"] = appTitle;
 
     string ampVersion = request.Query["amp.version"];
     if (string.IsNullOrEmpty(ampVersion))

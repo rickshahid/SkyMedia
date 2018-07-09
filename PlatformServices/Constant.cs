@@ -38,9 +38,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct AppSettingKey
         {
+            public const string AppTitle = "App.Title";
             public const string AppRegionName = "App.RegionName";
 
-            public const string AppApiTitle = "App.API.Title";
             public const string AppApiVersion = "App.API.Version";
             public const string AppApiEndpointUrl = "App.API.EndpointUrl";
             public const string AppApiDescription = "App.API.Description";
@@ -321,6 +321,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MobileNumberNotAvailable = "No message sent. Mobile number not available.";
             public const string StreamingEndpointNotStarted = "Your media account streaming endpoint has not been started.";
             public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
+            public const string VideoIndexerKeyMissing = "Your account currently does not have a Video Indexer key associated with it,<br>which is required for the functionality in the {0} module.<br><br>Use the Account Profile Edit page to associate a Video Indexer key with your account.";
         }
     }
 }

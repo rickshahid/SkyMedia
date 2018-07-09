@@ -20,6 +20,9 @@ function LoadGrid(gridId, rows, columns) {
         data: rows,
         loadComplete: ClearTitles,
         subGrid: _childGridId != null,
+        subGridOptions: {
+            "openicon": "ui-icon-arrowreturnthick-1-e"
+        },
         subGridRowExpanded: LoadSubGrid,
         pager: "gridPager",
         sortname: "name",

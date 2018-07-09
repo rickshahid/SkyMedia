@@ -12,6 +12,25 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        //public JsonResult Metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
+        //{
+        //    JObject metadata;
+        //    string collectionId = Constant.Database.Collection.OutputInsight;
+        //    string procedureId = Constant.Database.Procedure.TimecodeFragment;
+        //    using (DatabaseClient databaseClient = new DatabaseClient())
+        //    {
+        //        if (mediaProcessor == MediaProcessor.VideoAnalyzer)
+        //        {
+        //            metadata = databaseClient.GetDocument(collectionId, documentId);
+        //        }
+        //        else
+        //        {
+        //            metadata = databaseClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
+        //        }
+        //    }
+        //    return Json(metadata);
+        //}
+
         internal static SelectListItem[] GetListItems(Dictionary<string, string> dictionary)
         {
             List<SelectListItem> listItems = new List<SelectListItem>();

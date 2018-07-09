@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 599px) {
-    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaTrain, #mediaMonitor, #mediaBrowse {
+    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaTrain, #mediaCompose, #mediaMonitor, #mediaBrowse {
         display: none !important;
     }
 
@@ -22,7 +22,7 @@
 }
 
 @media all and (min-width: 600px) and (max-width: 799px) {
-    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaTrain, #mediaMonitor, #mediaBrowse {
+    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaTrain, #mediaCompose, #mediaMonitor, #mediaBrowse {
         display: none !important;
     }
 
@@ -188,6 +188,7 @@ body {
 }
 
 .mediaPlayer {
+    margin: 0px auto;
     width: 800px;
 }
 
@@ -245,11 +246,11 @@ body {
 }
 
 #mediaStreamLeft {
-    padding-left: 20px;
+    padding-left: 25px;
 }
 
 #mediaStreamRight {
-    padding-right: 20px;
+    padding-right: 25px;
 }
 
 .mediaServicesCompliance {
@@ -297,6 +298,7 @@ body {
 }
 
 .inputLabel.centered {
+    vertical-align: bottom;
     text-align: center !important;
 }
 

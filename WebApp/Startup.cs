@@ -138,8 +138,8 @@ namespace AzureSkyMedia.WebApp
         private void SetSwaggerOptions(SwaggerGenOptions options)
         {
             Info apiInfo = new Info();
-            string settingKey = Constant.AppSettingKey.AppApiTitle;
-            apiInfo.Title = AppSetting.GetValue(settingKey);
+            string settingKey = Constant.AppSettingKey.AppTitle;
+            apiInfo.Title = string.Concat(AppSetting.GetValue(settingKey), " API");
             settingKey = Constant.AppSettingKey.AppApiDescription;
             apiInfo.Description = AppSetting.GetValue(settingKey);
             settingKey = Constant.AppSettingKey.AppApiVersion;

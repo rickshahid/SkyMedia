@@ -1,4 +1,4 @@
-namespace AzureSkyMedia.PlatformServices
+﻿namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
