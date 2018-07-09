@@ -1,88 +1,70 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Collections.Generic;
 
-using Microsoft.Rest;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.Azure.Management.Storage;
-using Microsoft.Azure.Management.Storage.Models;
-
-using MediaStorageAccount = Microsoft.Azure.Management.Media.Models.StorageAccount;
+using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Storage
     {
-        private static string GetAccountInfo(string authToken, string accountName)
-        {
-            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
-            StorageManagementClient storageClient = new StorageManagementClient(azureToken)
-            {
-                SubscriptionId = subscriptionId
-            };
+        //    if (storageAccount == null)
+        //    {
+        //        accountInfo = string.Concat(accountInfo, Constant.Message.StorageAccountReadPermission);
+        //    }
+        //    else
+        //    {
+        //        string accountType = "N/A";
+        //        if (storageAccount.Kind.HasValue)
+        //        {
+        //            switch (storageAccount.Kind.Value)
+        //            {
+        //                case Kind.Storage:
+        //                    accountType = "General v1";
+        //                    break;
+        //                case Kind.StorageV2:
+        //                    accountType = "General v2";
+        //                    break;
+        //                case Kind.BlobStorage:
+        //                    accountType = "Blob";
+        //                    if (storageAccount.AccessTier.HasValue)
+        //                    {
+        //                        accountType = string.Concat(accountType, " ", storageAccount.AccessTier.Value.ToString());
+        //                    }
+        //                    break;
+        //            }
+        //        }
 
-            IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
-            storageAccounts = storageAccounts.Where(s => s.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
-            StorageAccount storageAccount = storageAccounts.SingleOrDefault();
+        //        string accountEncryption = "Not Enabled";
+        //        if (storageAccount.Encryption.Services.Blob.Enabled.HasValue && storageAccount.Encryption.Services.Blob.Enabled.Value)
+        //        {
+        //            accountEncryption = "Enabled";
+        //        }
 
-            string accountInfo = accountName;
-            if (storageAccount == null)
-            {
-                accountInfo = string.Concat(accountInfo, Constant.Message.StorageAccountReadPermission);
-            }
-            else
-            {
-                string accountType = "N/A";
-                if (storageAccount.Kind.HasValue)
-                {
-                    switch (storageAccount.Kind.Value)
-                    {
-                        case Kind.Storage:
-                            accountType = "General v1";
-                            break;
-                        case Kind.StorageV2:
-                            accountType = "General v2";
-                            break;
-                        case Kind.BlobStorage:
-                            accountType = "Blob";
-                            if (storageAccount.AccessTier.HasValue)
-                            {
-                                accountType = string.Concat(accountType, " ", storageAccount.AccessTier.Value.ToString());
-                            }
-                            break;
-                    }
-                }
+        //        string accountReplication = storageAccount.Sku.Name.ToString();
+        //        accountReplication = Constant.TextFormatter.GetValue(accountReplication);
 
-                string accountEncryption = "Not Enabled";
-                if (storageAccount.Encryption.Services.Blob.Enabled.HasValue && storageAccount.Encryption.Services.Blob.Enabled.Value)
-                {
-                    accountEncryption = "Enabled";
-                }
-
-                string accountReplication = storageAccount.Sku.Name.ToString();
-                accountReplication = Constant.TextFormatter.GetValue(accountReplication);
-
-                accountInfo = string.Concat(accountInfo, " (Type: ", accountType);
-                accountInfo = string.Concat(accountInfo, ", Encryption: ", accountEncryption);
-                accountInfo = string.Concat(accountInfo, ", Replication: ", accountReplication);
-                accountInfo = string.Concat(accountInfo, ", Primary: ", storageAccount.PrimaryLocation.ToUpperInvariant());
-                accountInfo = string.Concat(accountInfo, ", Secondary: ", string.IsNullOrEmpty(storageAccount.SecondaryLocation) ? "N/A" : storageAccount.SecondaryLocation.ToUpperInvariant(), ")");
-            }
-            return accountInfo;
-        }
+        //        accountInfo = string.Concat(accountInfo, " (Type: ", accountType);
+        //        accountInfo = string.Concat(accountInfo, ", Encryption: ", accountEncryption);
+        //        accountInfo = string.Concat(accountInfo, ", Replication: ", accountReplication);
+        //        accountInfo = string.Concat(accountInfo, ", Primary: ", storageAccount.PrimaryLocation.ToUpperInvariant());
+        //        accountInfo = string.Concat(accountInfo, ", Secondary: ", string.IsNullOrEmpty(storageAccount.SecondaryLocation) ? "N/A" : storageAccount.SecondaryLocation.ToUpperInvariant(), ")");
+        //    }
+        //    return accountInfo;
+        //}
 
         public static Dictionary<string, string> GetAccounts(string authToken)
         {
             Dictionary<string, string> storageAccounts = new Dictionary<string, string>();
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                IList<MediaStorageAccount> mediaStorageAccounts = mediaClient.StorageAccounts;
-                foreach (MediaStorageAccount mediaStorageAccount in mediaStorageAccounts)
+                IList<StorageAccount> mediaStorageAccounts = mediaClient.StorageAccounts;
+                foreach (StorageAccount mediaStorageAccount in mediaStorageAccounts)
                 {
+                    MediaStorage mediaStorage = new MediaStorage(authToken, mediaStorageAccount);
                     string accountName = Path.GetFileName(mediaStorageAccount.Id);
-                    string accountInfo = GetAccountInfo(authToken, accountName);
+                    string accountInfo = string.Concat(accountName, mediaStorage.ToString());
                     storageAccounts.Add(accountName, accountInfo);
                 }
             }

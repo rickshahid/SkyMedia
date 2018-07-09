@@ -1,11 +1,140 @@
-﻿using Microsoft.Azure.Management.Media.Models;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+
+using Microsoft.Rest;
+using Microsoft.Azure.Management.Storage;
+using Microsoft.Azure.Management.Storage.Models;
+
+using StorageAccount = Microsoft.Azure.Management.Storage.Models.StorageAccount;
+using MediaStorageAccount = Microsoft.Azure.Management.Media.Models.StorageAccount;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class MediaStorage : StorageAccount
+    public class MediaStorage : MediaStorageAccount
     {
-        internal MediaStorage(StorageAccount storageAccount)
+        private StorageAccount _storageAccount;
+
+        internal MediaStorage(string authToken, MediaStorageAccount storageAccount) : base(storageAccount.Type, storageAccount.Id)
         {
+            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
+            StorageManagementClient storageClient = new StorageManagementClient(azureToken)
+            {
+                SubscriptionId = subscriptionId
+            };
+            string accountName = Path.GetFileName(storageAccount.Id);
+            IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
+            storageAccounts = storageAccounts.Where(s => s.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
+            _storageAccount = storageAccounts.SingleOrDefault();
+        }
+
+        public string AccountType
+        {
+            get
+            {
+                string accountType = "N/A";
+                if (_storageAccount != null && _storageAccount.Kind.HasValue)
+                {
+                    switch (_storageAccount.Kind.Value)
+                    {
+                        case Kind.Storage:
+                            accountType = "General v1";
+                            break;
+                        case Kind.StorageV2:
+                            accountType = "General v2";
+                            break;
+                        case Kind.BlobStorage:
+                            accountType = "Blob";
+                            if (_storageAccount.AccessTier.HasValue)
+                            {
+                                accountType = string.Concat(accountType, " ", _storageAccount.AccessTier.Value.ToString());
+                            }
+                            break;
+                    }
+                }
+                return accountType;
+            }
+        }
+
+        public string Encryption
+        {
+            get
+            {
+                string encryption = "N/A";
+                if (_storageAccount != null)
+                {
+                    if (_storageAccount.Encryption.Services.Blob.Enabled.HasValue &&
+                        _storageAccount.Encryption.Services.Blob.Enabled.Value)
+                    {
+                        encryption = "Enabled";
+                    }
+                    else
+                    {
+                        encryption = "Not Enabled";
+                    }
+                }
+                return encryption;
+            }
+        }
+
+        public string Replication
+        {
+            get
+            {
+                string replication = "N/A";
+                if (_storageAccount != null)
+                {
+                    replication = _storageAccount.Sku.Name.ToString();
+                    replication = Constant.TextFormatter.GetValue(replication);
+                }
+                return replication;
+            }
+        }
+
+        public string PrimaryRegion
+        {
+            get
+            {
+                string primaryRegion = "N/A";
+                if (_storageAccount != null)
+                {
+                    primaryRegion = _storageAccount.PrimaryLocation.ToUpperInvariant();
+                }
+                return primaryRegion;
+            }
+        }
+
+        public string SecondaryRegion
+        {
+            get
+            {
+                string secondaryRegion = "N/A";
+                if (_storageAccount != null && !string.IsNullOrEmpty(_storageAccount.SecondaryLocation))
+                {
+                    secondaryRegion = _storageAccount.SecondaryLocation.ToUpperInvariant();
+                }
+                return secondaryRegion;
+
+            }
+        }
+
+        public override string ToString()
+        {
+            string mediaStorage;
+            if (_storageAccount == null)
+            {
+                mediaStorage = Constant.Message.StorageAccountReadPermission;
+            }
+            else
+            {
+                mediaStorage = string.Concat(" (Type: ", this.AccountType);
+                mediaStorage = string.Concat(mediaStorage, ", Encryption: ", this.Encryption);
+                mediaStorage = string.Concat(mediaStorage, ", Replication: ", this.Replication);
+                mediaStorage = string.Concat(mediaStorage, ", Primary: ", this.PrimaryRegion);
+                mediaStorage = string.Concat(mediaStorage, ", Secondary: ", this.SecondaryRegion, ")");
+            }
+            return mediaStorage;
         }
     }
 }

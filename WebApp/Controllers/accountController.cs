@@ -114,7 +114,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 foreach (StorageAccount storageAccount in mediaClient.StorageAccounts)
                 {
-                    MediaStorage mediaStorage = new MediaStorage(storageAccount);
+                    MediaStorage mediaStorage = new MediaStorage(authToken, storageAccount);
                     storageAccounts.Add(mediaStorage);
                 }
                 ViewData["storageAccounts"] = storageAccounts.ToArray();

@@ -1,4 +1,4 @@
-﻿var defaultWidth = 100, nameWidth = 300, dateTimeWidth = 120;
+﻿var defaultWidth = 100, nameWidth = 300, typeWidth = 150, dateTimeWidth = 120;
 function GetParentColumns(gridId, nameLabel) {
     var columns;
     switch (gridId) {
@@ -12,10 +12,35 @@ function GetParentColumns(gridId, nameLabel) {
                     width: nameWidth
                 },
                 {
-                    label: "Type",
+                    label: "Account Type",
+                    name: "accountType",
+                    align: "center",
+                    width: typeWidth
+                },
+                {
+                    label: "Media Type",
                     name: "type",
                     align: "center",
-                    width: defaultWidth
+                    width: typeWidth
+                },
+                {
+                    label: "Encryption",
+                    name: "encryption",
+                    align: "center",
+                    width: typeWidth
+                },
+                {
+                    label: "Replication",
+                    name: "replication",
+                    align: "center",
+                    width: typeWidth
+                },
+                {
+                    label: "Azure Regions",
+                    name: "primaryRegion",
+                    formatter: FormatRegions,
+                    align: "center",
+                    width: 200
                 }
             ];
             break;
@@ -215,6 +240,9 @@ function FormatDateTime(value, grid, row) {
         value = value.slice(11, 19) + "<br>" + value.slice(0, 10);
     }
     return value;
+}
+function FormatRegions(value, grid, row) {
+    return "Primary: " + value + "<br>Secondary: " + row.secondaryRegion;
 }
 function FormatActions(value, grid, row) {
     var actionsHtml = "";
