@@ -4,7 +4,7 @@ Welcome! This repository contains the multi-tenant Azure media solution sample t
 
 As a sample illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing within an Azure App Service web app via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. On-demand and live video content that is stored and managed in Azure Media Services is adaptively streamed, scaled and globally consumable across a wide range of devices and platforms.
 
-![](http://skymedia.azureedge.net/docs/X01.ApplicationOverview.png)
+![](http://skymedia.azureedge.net/docs/S01.ApplicationOverview.png)
 
 Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
 
@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
-![](http://skymedia.azureedge.net/docs/X02.ApplicationArchitecture.png)
+![](http://skymedia.azureedge.net/docs/S02.ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -74,6 +74,8 @@ The following Azure platform services were leveraged to create this sample media
   * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
 
   * **Search** - http://azure.microsoft.com/services/search/
+
+* **Cognitive Search** - http://azure.microsoft.com/blog/announcing-cognitive-search-azure-search-cognitive-capabilities/
 
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
