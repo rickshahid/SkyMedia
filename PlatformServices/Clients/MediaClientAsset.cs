@@ -12,9 +12,9 @@ namespace AzureSkyMedia.PlatformServices
             asset.Container = string.Concat("asset-", asset.AssetId);
         }
 
-        public Asset CreateAsset(string storageAccount, string name, string description, string alternateId)
+        public Asset CreateAsset(string storageAccount, string assetName, string description, string alternateId)
         {
-            Asset asset = new Asset(name: name)
+            Asset asset = new Asset(name: assetName)
             {
                 StorageAccountName = storageAccount,
                 Description = description,
@@ -23,18 +23,28 @@ namespace AzureSkyMedia.PlatformServices
             return _media.Assets.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
         }
 
-        public Asset CreateAsset(string storageAccount, string name, string description, string alternateId, string blobContainer, string[] fileNames)
+        public Asset CreateAsset(string storageAccount, string assetName)
         {
-            Asset asset = CreateAsset(storageAccount, name, description, alternateId);
+            return CreateAsset(storageAccount, assetName, string.Empty, string.Empty);
+        }
+
+        public Asset CreateAsset(string storageAccount, string assetName, string description, string alternateId, string blobContainer, string[] fileNames)
+        {
+            Asset asset = CreateAsset(storageAccount, assetName, description, alternateId);
             SetContainer(asset);
             BlobClient blobClient = new BlobClient(MediaAccount, storageAccount);
             foreach (string fileName in fileNames)
             {
-                CloudBlockBlob sourceBlob = blobClient.GetBlockBlob(blobContainer, null, fileName);
-                CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
+                CloudBlockBlob sourceBlob = blobClient.GetBlockBlob(blobContainer, fileName);
+                CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, fileName);
                 assetBlob.StartCopyAsync(sourceBlob);
             }
             return asset;
+        }
+
+        public Asset CreateAsset(string storageAccount, string assetName, string description, string alternateId, string blobContainer, string fileName)
+        {
+            return CreateAsset(storageAccount, assetName, description, alternateId, blobContainer, new string[] { fileName });
         }
     }
 }

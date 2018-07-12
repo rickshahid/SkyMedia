@@ -3,9 +3,8 @@ using System.Web;
 using System.Linq;
 using System.Net.Http;
 
-using Microsoft.Azure.Management.Media;
-using Microsoft.Azure.Management.Media.Models;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
 
@@ -13,15 +12,13 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private string GetDownloadUrl(MediaAccount mediaAccount, Asset asset)
+        private string GetDownloadUrl(MediaAccount mediaAccount, string storageAccount, Asset asset)
         {
             MediaAsset mediaAsset = new MediaAsset(mediaAccount, asset);
-            AssetContainerSas assetSas = _media.Assets.ListContainerSas(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name);
-            string assetSasUrl = assetSas.AssetContainerSasUrls.First();
             IListBlobItem assetFileItem = mediaAsset.Files.First();
             string fileName = Path.GetFileName(assetFileItem.Uri.ToString());
-            string assetFile = string.Concat(asset.Container, "/", fileName);
-            return assetSasUrl.Replace(asset.Container, assetFile);
+            BlobClient blobClient = new BlobClient(mediaAccount, storageAccount);
+            return blobClient.GetDownloadUrl(asset.Container, fileName, false);
         }
 
         private string GetRequestUrl(string relativePath, bool accessToken)
@@ -86,12 +83,12 @@ namespace AzureSkyMedia.PlatformServices
             return insightUrl;
         }
 
-        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset asset, string assetMetadata, bool audioOnly)
+        public string IndexerUploadVideo(MediaAccount mediaAccount, string storageAccount, Asset asset, string assetMetadata, bool audioOnly)
         {
-            string indexId;
+            string indexId = string.Empty;
             string relativePath = "/videos";
             string requestUrl = GetRequestUrl(relativePath, true);
-            string videoUrl = GetDownloadUrl(mediaAccount, asset);
+            string videoUrl = GetDownloadUrl(mediaAccount, storageAccount, asset);
             string settingKey = Constant.AppSettingKey.MediaPublishUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             requestUrl = string.Concat(requestUrl, "&externalId=", HttpUtility.UrlEncode(asset.Id));
@@ -116,7 +113,10 @@ namespace AzureSkyMedia.PlatformServices
             using (HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Post, requestUrl))
             {
                 JObject index = webClient.GetResponse<JObject>(webRequest);
-                indexId = index["id"].ToString();
+                if (index != null)
+                {
+                    indexId = index["id"].ToString();
+                }
             }
             return indexId;
         }

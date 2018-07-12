@@ -73,20 +73,16 @@ function CreateAsset() {
             var message = "";
             for (var i = 0; i < entities.length; i++) {
                 var entity = entities[i];
+                var entityType = entity["properties.state"] != null ? "Job" : "Asset";
+                var entityCreated = FormatDateTime(entity["properties.created"]);
                 if (message != "") {
                     message = message + "<br><br>";
                 }
-                var entityType;
-                if ($("#standardEncoderPreset").prop("checked") ||
-                    $("#videoAnalyzerPreset").prop("checked") ||
-                    $("#audioAnalyzerPreset").prop("checked")) {
-                    entityType = "Job";
-                } else {
-                    entityType = "Asset";
-                }
-                var created = FormatDateTime(entity["properties.created"]);
                 message = message + "Media " + entityType + " Created<br>" + entity.name;
-                message = message + "<br>(" + created.replace("<br>", " ") + ")";
+                message = message + "<br>(" + entityCreated.replace("<br>", " ") + ")";
+                if (entity["properties.alternateId"] != null) {
+                    message = message + "<br><br>Video Indexer Id<br>" + entity["properties.alternateId"];
+                }
             }
             $("#mediaUploadEntities").html(message);
         }

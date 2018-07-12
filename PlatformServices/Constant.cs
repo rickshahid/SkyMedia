@@ -62,6 +62,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string DatabaseRegionsRead = "Database.Regions.Read";
             public const string DatabaseCollectionThroughputUnits = "Database.Collection.ThroughputUnits";
 
+            public const string StorageCdnEndpointUrl = "Storage.CdnEndpointUrl";
+            public const string StorageSharedAccessMinutes = "Storage.SharedAccessMinutes";
+
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
             public const string MediaStream1TextTracks = "Media.Stream1.TextTracks";
@@ -90,8 +93,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaClipperVersion = "Media.Clipper.Version";
 
             public const string MediaIndexerAuthUrl = "Media.Indexer.AuthUrl";
-
-            public const string ContentDeliveryEndpointStorage = "CDN.Endpoint.Storage";
 
             public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
@@ -191,6 +192,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string Models = @"\Models\";
             public const string PredefinedPrefix = "Predefined_";
+            public const string AccountResourceId = "/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.media/mediaServices/{2}";
 
             public struct IdPrefix
             {
@@ -265,7 +267,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Job
             {
-                public const string OutputAssetSuffixEncoderStandard = " (ABR)";
+                public const string OutputAssetSuffixEncoderStandard = " (MBR)";
                 public const string OutputAssetSuffixAnalyzerVideo = " (VAI)";
                 public const string OutputAssetSuffixAnalyzerAudio = " (AAI)";
             }

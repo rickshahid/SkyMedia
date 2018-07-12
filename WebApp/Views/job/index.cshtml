@@ -39,13 +39,24 @@
     </div>
     <table>
         <tr>
+            <td class="inputLabel">
+                Priority
+            </td>
             <td>
-                <partial name="SiteButton" model='new SiteButton { ClientId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />
+                <partial name="Priority" model='new ClientControl { ClientId = "jobPriority" }' />
+            </td>
+        </tr>
+        <tr>
+            <td class="inputLabel">
+                Transform
+            </td>
+            <td>
+                @Html.DropDownList("transforms")
             </td>
         </tr>
     </table>
 </div>
 
 @*<div class="viewButtons">
-        <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
-    </div>*@
+    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
+</div>*@

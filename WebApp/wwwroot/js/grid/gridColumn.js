@@ -47,7 +47,7 @@ function GetParentColumns(gridId, nameLabel) {
         case "videoIndexerInsights":
             columns = [
                 {
-                    label: "Insight Id",
+                    label: "Index Id",
                     name: "id",
                     align: "center",
                     width: 200
@@ -246,7 +246,7 @@ function FormatRegions(value, grid, row) {
 }
 function FormatActions(value, grid, row) {
     var actionsHtml = "";
-    var entityName = row.name;
+    var entityName = grid.gid == "videoIndexerInsights" ? row.id : row.name;
     var entityType = GetEntityType();
     if (entityName.indexOf("Predefined_") > -1) {
         actionsHtml = "N/A";

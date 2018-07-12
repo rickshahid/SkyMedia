@@ -28,6 +28,9 @@
         case "liveEventOutputs":
             entityType = "Live Event Output";
             break;
+        case "videoIndexerInsights":
+            entityType = "Video Indexer Insight";
+            break;
     }
     return entityType;
 }

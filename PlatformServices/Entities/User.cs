@@ -20,7 +20,7 @@ namespace AzureSkyMedia.PlatformServices
                 VideoIndexerKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey),
                 StorageAccounts = GetStorageAccounts()
             };
-            MediaAccount.ResourceId = string.Concat("/subscriptions/", MediaAccount.SubscriptionId, "/resourceGroups/", MediaAccount.ResourceGroupName, "/providers/Microsoft.Media/mediaservices/", MediaAccount.Name);
+            MediaAccount.ResourceId = string.Format(Constant.Media.AccountResourceId, MediaAccount.SubscriptionId, MediaAccount.ResourceGroupName, MediaAccount.Name);
         }
 
         public string Id

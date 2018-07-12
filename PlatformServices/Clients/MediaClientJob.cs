@@ -8,22 +8,27 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public Job CreateJob(string transformName, string jobName, JobInput jobInput, string[] outputAssetNames)
+        public Job CreateJob(string transformName, MediaJob mediaJob)
         {
+            string jobName = mediaJob.Name;
             if (string.IsNullOrEmpty(jobName))
             {
                 jobName = Guid.NewGuid().ToString();
             }
+            JobInputAsset inputAsset = new JobInputAsset(mediaJob.InputAssetName);
             List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
-            foreach (string outputAssetName in outputAssetNames)
+            foreach (string outputAssetName in mediaJob.OutputAssetNames)
             {
                 JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
                 outputAssets.Add(outputAsset);
             }
             Job job = new Job()
             {
-                Input = jobInput,
-                Outputs = outputAssets.ToArray()
+                Description = mediaJob.Description,
+                Priority = mediaJob.Priority,
+                Input = inputAsset,
+                Outputs = outputAssets.ToArray(),
+                CorrelationData = mediaJob.CorrelationData
             };
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName, job);
         }

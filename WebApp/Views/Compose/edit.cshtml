@@ -38,7 +38,7 @@
                         submitSubclipCallback: onSubmitClip
                     });
                     SetCursor(true);
-                    $.get("/asset/streams",
+                    $.get("/compose/streams",
                         function (streams) {
                             SetCursor(false);
                             clipper.load(streams);
@@ -48,7 +48,7 @@
                 case "dynamic":
                     var onLoadPanel = function (searchCriteria, skipCount, takeCount, streamType) {
                         var promise = new Promise(function (resolve, reject) {
-                            $.get("/asset/streams", {
+                            $.get("/compose/streams", {
                                 searchCriteria: searchCriteria,
                                 skipCount: skipCount,
                                 takeCount: takeCount,
