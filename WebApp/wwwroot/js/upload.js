@@ -1,37 +1,30 @@
 ﻿var _fileUploader, _uploadStartTime;
+function SetIndexerOptions(videoIndexerKey) {
+    if (videoIndexerKey == "") {
+        var tipText = "To enable this media processing option,<br><br>add a Video Indexer Key to your User Account Profile";
+        if ($("#videoIndexerInsight").prop("disabled") && $("#audioIndexerInsight").prop("disabled")) {
+            CreateTipTop("videoIndexerInsightOption", tipText, 25);
+            CreateTipTop("audioIndexerInsightOption", tipText, 25);
+        }
+    } else {
+        $("#videoIndexerInsight").prop("disabled", false);
+        $("#audioIndexerInsight").prop("disabled", false);
+    }
+}
 function SetStorageTip() {
     var tipText = $("#storageAccount option:selected").text();
     CreateTipTop("storageAccount", tipText);
 }
 function SetUploadOption(checkbox) {
-    var reservedUnits = "";
-    var encoderReservedUnits = "1 S3 reserved unit";
-    var analyzerReservedUnits = "10 S3 reserved units";
     switch (checkbox.id) {
-        case "standardEncoderPreset":
-            if (checkbox.checked) {
-                if ($("#videoAnalyzerPreset").prop("checked") ||
-                    $("#audioAnalyzerPreset").prop("checked")) {
-                    reservedUnits = analyzerReservedUnits;
-                } else {
-                    reservedUnits = encoderReservedUnits;
-                }
-            }
-            break;
         case "videoAnalyzerPreset":
-        case "audioAnalyzerPreset":
-            if (checkbox.id == "videoAnalyzerPreset") {
-                $("#audioAnalyzerPreset").prop("checked", false);
-                $("#audioAnalyzerPreset").prop("disabled", checkbox.checked);
-            }
-            if (checkbox.checked) {
-                reservedUnits = analyzerReservedUnits;
-            }
+            $("#audioAnalyzerPreset").prop("checked", false);
+            $("#audioAnalyzerPreset").prop("disabled", checkbox.checked);
             break;
-    }
-    if (reservedUnits != "") {
-        var message = "For enhanced media processing performance,<br>make sure you have at least " + reservedUnits + "<br>allocated in your media account before proceeding."
-        DisplayMessage("Media Job Reserved Units", message);
+        case "videoIndexerInsight":
+            $("#audioIndexerInsight").prop("checked", false);
+            $("#audioIndexerInsight").prop("disabled", checkbox.checked);
+            break;
     }
 }
 function GetUploadTime() {
@@ -66,7 +59,9 @@ function CreateAsset() {
             fileNames: GetFileNames(),
             standardEncoderPreset: $("#standardEncoderPreset").prop("checked"),
             videoAnalyzerPreset: $("#videoAnalyzerPreset").prop("checked"),
-            audioAnalyzerPreset: $("#audioAnalyzerPreset").prop("checked")
+            audioAnalyzerPreset: $("#audioAnalyzerPreset").prop("checked"),
+            videoIndexerInsight: $("#videoIndexerInsight").prop("checked"),
+            audioIndexerInsight: $("#audioIndexerInsight").prop("checked")
         },
         function (entities) {
             SetCursor(false);
@@ -74,14 +69,15 @@ function CreateAsset() {
             for (var i = 0; i < entities.length; i++) {
                 var entity = entities[i];
                 var entityType = entity["properties.state"] != null ? "Job" : "Asset";
-                var entityCreated = FormatDateTime(entity["properties.created"]);
+                var indexId = entityType == "Job" ? entity["properties.correlationData"]["indexId"] : entity["properties.alternateId"];
                 if (message != "") {
                     message = message + "<br><br>";
                 }
-                message = message + "Media " + entityType + " Created<br>" + entity.name;
-                message = message + "<br>(" + entityCreated.replace("<br>", " ") + ")";
-                if (entity["properties.alternateId"] != null) {
-                    message = message + "<br><br>Video Indexer Id<br>" + entity["properties.alternateId"];
+                message = message + "Media " + entityType + " Created<br>(" + entity.name + ")";
+                if (indexId != null) {
+                    var insightType = $("#audioIndexerInsight").prop("checked") ? "Audio" : "Video";
+                    message = message + "<br><br>" + insightType + " Indexer Insight";
+                    message = message + "<br>(" + indexId + ")";
                 }
             }
             $("#mediaUploadEntities").html(message);

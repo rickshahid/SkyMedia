@@ -8,18 +8,18 @@ namespace AzureSkyMedia.PlatformServices
 {
     public struct Constant
     {
+        public const string WebModels = "Models";
         public const string AppSettings = "appsettings.json";
 
         public struct TextDelimiter
         {
             public const char Connection = ';';
-            public const char Identifier = '_';
             public const char Application = ',';
-            public const char File = '-';
         }
 
         public struct TextFormatter
         {
+            public const string NumericLong = "N0";
             //public const string Numeric = "N2";
             //public const string ClockTime = "hh':'mm':'ss";
 
@@ -190,52 +190,37 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Media
         {
-            public const string Models = @"\Models\";
             public const string PredefinedPrefix = "Predefined_";
             public const string AccountResourceId = "/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.media/mediaServices/{2}";
 
-            public struct IdPrefix
+            public struct Asset
             {
-                public const string Asset = "nb:cid:";
-                public const string Processor = "nb:mpid:";
+                public const string ModelDirectory = "Asset";
+                public const string SingleBitrate = "SBR";
+
+                public const string NameDefault = " Asset ";
+                public const string NameDelimiter = " - ";
             }
 
-            //public struct ProcessorId
+            //public struct ContentProtection
             //{
-            //    public const string EncoderStandard = "nb:mpid:UUID:ff4df607-d419-42f0-bc17-a481b1331e56";
-            //    public const string EncoderPremium = "nb:mpid:UUID:77fea72a-107c-439e-b0bb-f88153b93461";
-            //    public const string VideoIndexer = "VideoIndexer";
+            //    public const int EncryptionKeyByteCount = 16;
 
-            //    public const string AudioAnalyzer = "nb:mpid:UUID:1927f26d-0aa5-4ca1-95a3-1a3f95b0f706";
-            //    public const string VideoAnalyzer = "VideoAnalyzer";
-            //    public const string VideoAnnotation = "nb:mpid:UUID:4b8b1e57-3bf3-4a07-b21a-12c3cdcc0894";
-            //    public const string VideoSummarization = "nb:mpid:UUID:d4d94427-b8e7-44b5-addb-5f3a26124385";
-            //    public const string FaceDetection = "nb:mpid:UUID:6a9b8239-81ea-4762-8125-66b4f45737a2";
-            //    public const string FaceRedaction = "nb:mpid:UUID:3806d7a6-4985-4437-b098-50e3733310e8";
-            //    public const string MotionDetection = "nb:mpid:UUID:464c4ede-daad-4edd-9c3c-3b5f667eef08";
-            //    public const string ContentModeration = "nb:mpid:UUID:bb312589-3bd4-4f2e-af26-2df8a984b395";
-            //    public const string CharacterRecognition = "nb:mpid:UUID:074c3899-d9fb-448f-9ae1-4ebcbe633056";
+            //    public const string ContentKeyNameAes = "AES Key";
+            //    public const string ContentKeyNameDrmPlayReady = "DRM (PlayReady) Key";
+            //    public const string ContentKeyNameDrmWidevine = "DRM (Widevine) Key";
+            //    public const string ContentKeyNameDrmPlayReadyWidevine = "DRM (PlayReady & Widevine) Key";
+
+            //    public const string AuthPolicyName = " Auth Policy";
+            //    public const string AuthPolicyOpenRestrictionName = " Open Restriction";
+            //    public const string AuthPolicyTokenRestrictionName = " Web Token Restriction";
+            //    public const string AuthPolicyAddressRestrictionName = " IP Address Restriction";
+            //    public const string AuthPolicyOptionNameAes = " Option";
+            //    public const string AuthPolicyOptionNameDrmPlayReady = " Option PlayReady";
+            //    public const string AuthPolicyOptionNameDrmWidevine = " Option Widevine";
+
+            //    public const string AuthAddressRangeXml = "<Allowed addressType=\"IPv4\"><AddressRange start=\"{0}\" end=\"{1}\" /></Allowed>";
             //}
-
-            public struct ContentProtection
-            {
-                public const int EncryptionKeyByteCount = 16;
-
-                public const string ContentKeyNameAes = "AES Key";
-                public const string ContentKeyNameDrmPlayReady = "DRM (PlayReady) Key";
-                public const string ContentKeyNameDrmWidevine = "DRM (Widevine) Key";
-                public const string ContentKeyNameDrmPlayReadyWidevine = "DRM (PlayReady & Widevine) Key";
-
-                public const string AuthPolicyName = " Auth Policy";
-                public const string AuthPolicyOpenRestrictionName = " Open Restriction";
-                public const string AuthPolicyTokenRestrictionName = " Web Token Restriction";
-                public const string AuthPolicyAddressRestrictionName = " IP Address Restriction";
-                public const string AuthPolicyOptionNameAes = " Option";
-                public const string AuthPolicyOptionNameDrmPlayReady = " Option PlayReady";
-                public const string AuthPolicyOptionNameDrmWidevine = " Option Widevine";
-
-                public const string AuthAddressRangeXml = "<Allowed addressType=\"IPv4\"><AddressRange start=\"{0}\" end=\"{1}\" /></Allowed>";
-            }
 
             //public struct DeliveryProtocol
             //{

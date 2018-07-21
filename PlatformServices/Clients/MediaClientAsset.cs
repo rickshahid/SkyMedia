@@ -20,7 +20,9 @@ namespace AzureSkyMedia.PlatformServices
                 Description = description,
                 AlternateId = alternateId
             };
-            return _media.Assets.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
+            asset = _media.Assets.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
+            SetContainer(asset);
+            return asset;
         }
 
         public Asset CreateAsset(string storageAccount, string assetName)
@@ -31,7 +33,6 @@ namespace AzureSkyMedia.PlatformServices
         public Asset CreateAsset(string storageAccount, string assetName, string description, string alternateId, string blobContainer, string[] fileNames)
         {
             Asset asset = CreateAsset(storageAccount, assetName, description, alternateId);
-            SetContainer(asset);
             BlobClient blobClient = new BlobClient(MediaAccount, storageAccount);
             foreach (string fileName in fileNames)
             {

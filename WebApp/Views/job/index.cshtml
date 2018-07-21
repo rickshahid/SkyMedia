@@ -17,7 +17,7 @@
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId, "Transform Job Name");
             LoadGrid(gridId, rows, columns);
-            CreateTipBottom("mediaEntityCreate", "Create New Job");
+            CreateTipBottom("jobCreate", "Create Job");
         })
     </script>
 }
@@ -40,7 +40,7 @@
     <table>
         <tr>
             <td class="inputLabel">
-                Priority
+                Job Priority
             </td>
             <td>
                 <partial name="Priority" model='new ClientControl { ClientId = "jobPriority" }' />
@@ -48,15 +48,31 @@
         </tr>
         <tr>
             <td class="inputLabel">
-                Transform
+                Media Transform
             </td>
             <td>
-                @Html.DropDownList("transforms")
+                @Html.DropDownList("transforms", null, new { @class = "inputSelect extended" })
+            </td>
+        </tr>
+        <tr>
+            <td class="inputLabel">
+                Streaming Policy
+            </td>
+            <td>
+                @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect extended" })
+            </td>
+        </tr>
+        <tr>
+            <td class="inputLabel">
+                Input Asset Name
+            </td>
+            <td>
+                @Html.TextBox("inputAssetName", null, new { @class = "entityName", onfocusout = "FindAsset()" })
             </td>
         </tr>
     </table>
 </div>
 
-@*<div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
-</div>*@
+<div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ClientId = "jobCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
+</div>

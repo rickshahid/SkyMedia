@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 
+using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -30,6 +35,43 @@ namespace AzureSkyMedia.WebApp.Controllers
         public void PasswordReset()
         {
             HttpContext.ChallengeAsync().Wait();
+        }
+
+        public JsonResult CreateAssets(int assetCount, string assetType, bool assetPublish)
+        {
+            string exception = string.Empty;
+            try
+            {
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    string storageAccount = Path.GetFileName(mediaClient.PrimaryStorage.Id);
+                    BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
+                    string assetPath = Path.Combine(Directory.GetCurrentDirectory(), Constant.WebModels, Constant.Media.Asset.ModelDirectory, assetType);
+                    string[] assetFilePaths = Directory.GetFiles(assetPath);
+                    string streamingPolicyName = assetType == Constant.Media.Asset.SingleBitrate ? PredefinedStreamingPolicy.DownloadOnly : PredefinedStreamingPolicy.ClearStreamingOnly;
+                    for (int i = 1; i <= assetCount; i++)
+                    {
+                        string assetId = string.Concat(assetType, Constant.Media.Asset.NameDefault, i.ToString());
+                        Asset asset = mediaClient.CreateAsset(storageAccount, assetId, assetId, assetId);
+                        foreach (string assetFilePath in assetFilePaths)
+                        {
+                            string fileName = Path.GetFileName(assetFilePath);
+                            CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, fileName);
+                            assetBlob.UploadFromFileAsync(assetFilePath).Wait();
+                        }
+                        if (assetPublish)
+                        {
+                            mediaClient.CreateLocator(asset.Name, streamingPolicyName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                exception = ex.ToString();
+            }
+            return Json(exception);
         }
 
         public void DeleteEntities(bool liveOnly)
@@ -128,7 +170,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                Asset[] assets = mediaClient.GetAllEntities<Asset>(MediaEntity.Asset);
+                IPage<Asset> assets = mediaClient.GetEntities<Asset>(MediaEntity.Asset);
                 foreach (Asset asset in assets)
                 {
                     MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
@@ -214,7 +256,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
+                ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput>(MediaEntity.LiveEventOutput);
             }
             return View();
         }

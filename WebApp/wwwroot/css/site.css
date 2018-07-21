@@ -102,6 +102,10 @@ body {
     padding: 5px;
 }
 
+.assetCount {
+    width: 60px;
+}
+
 .entityCount {
     color: azure;
 }
@@ -117,8 +121,8 @@ body {
     margin-top: 20px;
 }
 
-.entity table {
-    margin: 0px auto;
+.entity > table {
+    margin: 10px auto;
 }
 
 .entity table td {
@@ -126,7 +130,18 @@ body {
 }
 
 .entityName {
+    font-weight: bold;
     width: 300px;
+}
+
+.entityFound {
+    background-color: none;
+    border: none;
+}
+
+.entityNotFound {
+    background-color: red;
+    border: 1px red solid;
 }
 
 .authToken {
@@ -309,6 +324,10 @@ body {
 
 .inputSelect {
     font-weight: bold;
+}
+
+.inputSelect.extended {
+    width: 100%;
 }
 
 #underConstruction {

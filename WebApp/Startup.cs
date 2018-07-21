@@ -16,6 +16,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 using AzureSkyMedia.PlatformServices;
+using AzureSkyMedia.WebApp.Controllers;
 
 namespace AzureSkyMedia.WebApp
 {
@@ -92,6 +93,10 @@ namespace AzureSkyMedia.WebApp
                 redirectAction = controller.RedirectToAction("passwordReset", "account");
             }
             MediaClient.SetPublishEvent(authToken);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                TransformController.CreateTransform(mediaClient, true, false, false);
+            }
             return redirectAction;
         }
 

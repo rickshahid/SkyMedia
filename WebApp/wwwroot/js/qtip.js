@@ -29,3 +29,6 @@ function CreateTipRight(targetId, tipText, adjustX, adjustY, hideEvent) {
 function SetTipVisible(targetId, tipVisible) {
     $("#" + targetId).qtip("toggle", tipVisible);
 }
+function SetTipDisable(targetId, tipDisable) {
+    $("#" + targetId).qtip("disable", tipDisable);
+}

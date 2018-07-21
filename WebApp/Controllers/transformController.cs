@@ -9,10 +9,10 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class TransformController : Controller
     {
-        private static Preset GetAnalyzerPreset(bool audioAnalyzer)
+        private static Preset GetAnalyzerPreset(bool audioOnly)
         {
             Preset analyzerPreset;
-            if (audioAnalyzer)
+            if (audioOnly)
             {
                 analyzerPreset = new AudioAnalyzerPreset();
             }
@@ -30,32 +30,30 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             return new TransformOutput(transformPreset)
             {
-                RelativePriority = string.IsNullOrEmpty(transformOutput.RelativePriority) ? Priority.Normal : (Priority)transformOutput.RelativePriority,
-                OnError = string.IsNullOrEmpty(transformOutput.OnError) ? OnErrorType.StopProcessingJob : (OnErrorType)transformOutput.OnError
+                RelativePriority = (Priority)transformOutput.RelativePriority,
+                OnError = (OnErrorType)transformOutput.OnError
             };
         }
 
         internal static Transform CreateTransform(MediaClient mediaClient, bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
         {
-            if (mediaClient.IndexerIsEnabled())
-            {
-                videoAnalyzerPreset = false;
-                audioAnalyzerPreset = false;
-            }
             MediaTransformOutput standardEncoderOutput = new MediaTransformOutput()
             {
                 PresetEnabled = standardEncoderPreset,
                 PresetName = EncoderNamedPreset.AdaptiveStreaming,
+                RelativePriority = Priority.Normal,
                 OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput videoAnalyzerOutput = new MediaTransformOutput()
             {
                 PresetEnabled = videoAnalyzerPreset,
+                RelativePriority = Priority.Normal,
                 OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput audioAnalyzerOutput = new MediaTransformOutput()
             {
                 PresetEnabled = audioAnalyzerPreset,
+                RelativePriority = Priority.Normal,
                 OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput[] transformOutputs = new MediaTransformOutput[] { standardEncoderOutput, videoAnalyzerOutput, audioAnalyzerOutput };
@@ -124,13 +122,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             return transform;
         }
 
-        public JsonResult Create(string name, string description, MediaTransformOutput[] outputs)
+        public JsonResult Create(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
         {
             Transform transform;
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                transform = CreateTransform(mediaClient, name, description, outputs);
+                transform = CreateTransform(mediaClient, transformName, transformDescription, transformOutputs);
             }
             return Json(transform);
         }

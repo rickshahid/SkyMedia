@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<smil xmlns="http://www.w3.org/2001/SMIL20/Language">
+  <head>
+    <meta name="clientManifestRelativePath" content="AMSPlatform.ismc" />
+    <meta name="formats" content="mp4-v2" />
+  </head>
+  <body>
+    <switch>
+      <audio src="AMSPlatform_320x180_AACAudio_100.mp4" systemBitrate="127000" systemLanguage="und">
+        <param name="systemBitrate" value="127000" valuetype="data" />
+        <param name="trackID" value="2" valuetype="data" />
+        <param name="trackName" value="aac_und_2_127_2_1" valuetype="data" />
+        <param name="systemLanguage" value="und" valuetype="data" />
+      </audio>
+      <video src="AMSPlatform_1280x720_AACAudio_910.mp4" systemBitrate="821000">
+        <param name="systemBitrate" value="821000" valuetype="data" />
+        <param name="trackID" value="1" valuetype="data" />
+        <param name="trackName" value="video" valuetype="data" />
+      </video>
+      <video src="AMSPlatform_960x540_AACAudio_570.mp4" systemBitrate="532000">
+        <param name="systemBitrate" value="532000" valuetype="data" />
+        <param name="trackID" value="1" valuetype="data" />
+        <param name="trackName" value="video" valuetype="data" />
+      </video>
+      <video src="AMSPlatform_640x360_AACAudio_300.mp4" systemBitrate="283000">
+        <param name="systemBitrate" value="283000" valuetype="data" />
+        <param name="trackID" value="1" valuetype="data" />
+        <param name="trackName" value="video" valuetype="data" />
+      </video>
+      <video src="AMSPlatform_480x270_AACAudio_190.mp4" systemBitrate="182000">
+        <param name="systemBitrate" value="182000" valuetype="data" />
+        <param name="trackID" value="1" valuetype="data" />
+        <param name="trackName" value="video" valuetype="data" />
+      </video>
+      <video src="AMSPlatform_320x180_AACAudio_100.mp4" systemBitrate="96000">
+        <param name="systemBitrate" value="96000" valuetype="data" />
+        <param name="trackID" value="1" valuetype="data" />
+        <param name="trackName" value="video" valuetype="data" />
+      </video>
+    </switch>
+  </body>
+</smil>

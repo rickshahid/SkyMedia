@@ -1,4 +1,5 @@
 ﻿@using System.Diagnostics;
+
 @using AzureSkyMedia.WebApp.Models;
 
 @section head {
@@ -32,8 +33,44 @@
                 }
             );
         }
+        function ConfirmCreate() {
+            var title = "Confirm Media Account Create Assets";
+            var message = "Are you sure that you want to create assets in your media account?";
+            message = message + "<br><br><input id='assetType' name='assetType' type='radio' value='SBR' checked>Single Bitrate</input>&nbsp;&nbsp;<input id='assetType' name='assetType' type='radio' value='MBR'>Multiple Bitrates</input>"; 
+            message = message + "&nbsp;&nbsp;&nbsp;<input id='assetPublish' type='checkbox' checked />&nbsp;Publish Assets";
+            message = message + "<br><br>Asset Count&nbsp;&nbsp;<input id='assetCount' class='assetCount' value='1000' />";
+            var buttons = {
+                OK: function () {
+                    SetCursor(true);
+                    $.post("/account/createAssets",
+                        {
+                            assetCount: $("#assetCount").val(),
+                            assetType: $("#assetType:checked").val(),
+                            assetPublish: $("#assetPublish").prop("checked")
+                        },
+                        function (exception) {
+                            SetCursor(false);
+                            if (exception != "") {
+                                DisplayMessage("Exception", exception);
+                            } else {
+                                window.location = window.location.href;
+                            }
+                        }
+                    );
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            };
+            DisplayMessage(title, message, buttons);
+            $("#assetCount").spinner({
+                min: 1,
+                max: 99999
+            });
+        }
         function ConfirmDelete() {
-            var title = "Confirm Media Account Entity Deletion";
+            var title = "Confirm Media Account Delete Entities";
             var message = "Which set of entities do you want to delete from your media account?";
             var buttons = {
                 "All Entities": function () {
@@ -52,7 +89,8 @@
         }
         $(function () {
             DisplayInventory();
-            CreateTipBottom("accountClear", "Clear Media Account");
+            CreateTipBottom("accountCreateAssets", "Media Account<br><br>Create Assets");
+            CreateTipBottom("accountDeleteEntities", "Media Account<br><br>Delete Entities");
             CreateTipBottom("authToken", "Azure Active Directory<br><br>JSON Web Token");
             if (window.location.href.indexOf("authToken") > -1) {
                 $("#authToken").show();
@@ -68,9 +106,10 @@
 <table id="accountInventory" class="accountInventory"></table>
 
 <div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ClientId = "accountCreateAssets", ImageFile = "AccountCreateAssets.png", OnClick = "ConfirmCreate()" }' />
     @if (Debugger.IsAttached)
     {
-        <partial name="SiteButton" model='new SiteButton { ClientId = "accountClear", ImageFile = "AccountClear.png", OnClick = "ConfirmDelete()" }' />
+        <partial name="SiteButton" model='new SiteButton { ClientId = "accountDeleteEntities", ImageFile = "AccountDeleteEntities.png", OnClick = "ConfirmDelete()" }' />
     }
 </div>
 

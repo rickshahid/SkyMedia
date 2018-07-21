@@ -5,35 +5,33 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private string GetStreamingPath(StreamingLocator locator, StreamingPolicyStreamingProtocol protocol)
+        public string GetPlayerUrl(StreamingLocator locator)
         {
-            string streamingPath = string.Empty;
+            string playerUrl = string.Empty;
             ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, locator.Name);
-            foreach (StreamingPath path in paths.StreamingPaths)
+            foreach (StreamingPath streamingPath in paths.StreamingPaths)
             {
-                if (path.StreamingProtocol == protocol && path.Paths.Count > 0)
+                if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count > 0)
                 {
-                    streamingPath = path.Paths[0];
+                    playerUrl = streamingPath.Paths[0];
                 }
             }
-            return streamingPath;
-        }
-
-        public string GetStreamingUrl(StreamingLocator locator)
-        {
-            string streamingUrl = string.Empty;
-            StreamingEndpoint defaultEndpoint = GetEntity<StreamingEndpoint>(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpoint);
-            string streamingPath = GetStreamingPath(locator, StreamingPolicyStreamingProtocol.SmoothStreaming);
-            if (!string.IsNullOrEmpty(streamingPath))
+            if (string.IsNullOrEmpty(playerUrl) && paths.DownloadPaths.Count > 0)
             {
-                streamingUrl = string.Concat("//", defaultEndpoint.HostName, streamingPath);
+                playerUrl = paths.DownloadPaths[0];
             }
-            return streamingUrl;
+            if (!string.IsNullOrEmpty(playerUrl))
+            {
+                StreamingEndpoint defaultEndpoint = GetEntity<StreamingEndpoint>(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpoint);
+                playerUrl = string.Concat("//", defaultEndpoint.HostName, playerUrl);
+            }
+            return playerUrl;
         }
 
         public StreamingLocator CreateLocator(string assetName, string streamingPolicyName)
         {
             StreamingLocator locator = new StreamingLocator(assetName, streamingPolicyName);
+            _media.StreamingLocators.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);
             return _media.StreamingLocators.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, locator);
         }
     }

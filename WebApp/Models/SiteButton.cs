@@ -1,4 +1,6 @@
-﻿using AzureSkyMedia.PlatformServices;
+﻿using System.IO;
+
+using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Models
 {
@@ -16,7 +18,7 @@ namespace AzureSkyMedia.WebApp.Models
             {
                 string settingKey = Constant.AppSettingKey.StorageCdnEndpointUrl;
                 string storageCdnUrl = AppSetting.GetValue(settingKey);
-                return string.Concat(storageCdnUrl, "/", _imageFile);
+                return Path.Combine(storageCdnUrl, _imageFile);
             }
 
             set { _imageFile = value; }

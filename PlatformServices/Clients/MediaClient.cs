@@ -40,7 +40,6 @@ namespace AzureSkyMedia.PlatformServices
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };
-            string primaryStorageId = PrimaryStorage.Id;
             if (!string.IsNullOrEmpty(authToken) && !string.IsNullOrEmpty(MediaAccount.VideoIndexerKey))
             {
                 settingKey = Constant.AppSettingKey.MediaIndexerAuthUrl;

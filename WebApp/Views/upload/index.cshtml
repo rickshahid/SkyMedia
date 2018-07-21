@@ -9,6 +9,7 @@
         $(function () {
             SetStorageTip();
             CreateUploader();
+            SetIndexerOptions("@ViewData["videoIndexerKey"]");
         })
     </script>
 }
@@ -52,25 +53,41 @@
         </td>
         <td rowspan="2" class="mediaUploadEncoderPreset">
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
-                Create Adaptive Streaming Asset<br>(Auto Bitrate Ladder)
+                Adaptive Streaming Asset<br>(Auto Bitrate Ladder)
             </span>
         </td>
-        <td class="mediaUploadAnalyzerPreset">
+        <td class="mediaUploadOption">
             @Html.CheckBox("videoAnalyzerPreset", false, new { onchange = "SetUploadOption(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
-                Create Video Analyzer Asset
+                Video Analyzer Preset
+            </span>
+        </td>
+        <td id="videoIndexerInsightOption" class="mediaUploadOption">
+            @Html.CheckBox("videoIndexerInsight", false, new { onchange = "SetUploadOption(this)", disabled = "disabled" })
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                Video Indexer Insight
             </span>
         </td>
     </tr>
     <tr>
-        <td class="mediaUploadAnalyzerPreset">
+        <td class="mediaUploadOption">
             @Html.CheckBox("audioAnalyzerPreset", false, new { onchange = "SetUploadOption(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
-                Create Audio Analyzer Asset
+                Audio Analyzer Preset
+            </span>
+        </td>
+        <td id="audioIndexerInsightOption" class="mediaUploadOption">
+            @Html.CheckBox("audioIndexerInsight", false, new { onchange = "SetUploadOption(this)", disabled = "disabled" })
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                Audio Indexer Insight
             </span>
         </td>
     </tr>

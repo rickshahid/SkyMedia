@@ -24,4 +24,40 @@
     <ProjectReference Include="..\PlatformServices\PlatformServices.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Models\Asset\MBR\984b71ae-b1ca-4866-a640-3c4fc7afb19d_metadata.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform.ism">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform.ismc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform_1280x720_AACAudio_910.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform_320x180_AACAudio_100.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform_480x270_AACAudio_190.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform_640x360_AACAudio_300.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform_960x540_AACAudio_570.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\AMSPlatform_manifest.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\MBR\Thumbnail000001.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Models\Asset\SBR\AMSPlatform.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

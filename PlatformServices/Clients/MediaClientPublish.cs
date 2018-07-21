@@ -7,6 +7,8 @@ using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Azure.Management.EventGrid;
 using Microsoft.Azure.Management.EventGrid.Models;
 
+using Newtonsoft.Json.Linq;
+
 using Twilio;
 using Twilio.Types;
 using Twilio.Rest.Api.V2010.Account;
@@ -146,6 +148,15 @@ namespace AzureSkyMedia.PlatformServices
                 if (job != null)
                 {
                     string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                    using (DatabaseClient databaseClient = new DatabaseClient())
+                    {
+                        string collectionId = Constant.Database.Collection.OutputPublish;
+                        JObject jobPublish = databaseClient.GetDocument(collectionId, job.Name);
+                        if (jobPublish["StreamingPolicyName"] != null)
+                        {
+                            streamingPolicyName = jobPublish["StreamingPolicyName"].ToString();
+                        }
+                    }
                     foreach (JobOutputAsset jobOutput in job.Outputs)
                     {
                         StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -11,27 +9,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public string TransformName { get; set; }
 
+        public string StreamingPolicyName { get; set; }
+
         public ContentProtection ContentProtection { get; set; }
 
         public MediaAccount MediaAccount { get; set; }
 
         public UserAccount UserAccount { get; set; }
     }
-
-    //internal class MediaPublishError
-    //{
-    //    [JsonProperty(PropertyName = "id")]
-    //    public string Id { get; set; }
-
-    //    public Exception Exception { get; set; }
-    //}
-
-    //public class MediaPublished
-    //{
-    //    public string PublishUrl { get; set; }
-
-    //    public string MobileNumber { get; set; }
-
-    //    public string UserMessage { get; set; }
-    //}
 }

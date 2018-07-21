@@ -90,9 +90,9 @@ namespace AzureSkyMedia.PlatformServices
             collectionId = Constant.Database.Collection.OutputInsight;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
-            string collectionDirectory = string.Concat(modelsDirectory, collectionId);
+            string collectionDirectory = Path.Combine(modelsDirectory, collectionId);
 
-            string scriptFile = string.Concat(collectionDirectory, @"\isTimecodeFragment.js");
+            string scriptFile = Path.Combine(collectionDirectory, "isTimecodeFragment.js");
             UserDefinedFunction function = new UserDefinedFunction()
             {
                 Id = "isTimecodeFragment",
@@ -100,7 +100,7 @@ namespace AzureSkyMedia.PlatformServices
             };
             _cosmos.CreateUserDefinedFunctionAsync(collectionUri, function);
 
-            scriptFile = string.Concat(collectionDirectory, @"\getTimecodeFragment.js");
+            scriptFile = Path.Combine(collectionDirectory, "getTimecodeFragment.js");
             StoredProcedure procedure = new StoredProcedure()
             {
                 Id = "getTimecodeFragment",

@@ -16,7 +16,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private static IEnumerable<StreamingLocator> GetStreamingLocators(MediaClient mediaClient)
         {
-            StreamingLocator[] locators = mediaClient.GetAllEntities<StreamingLocator>(MediaEntity.StreamingLocator);
+            StreamingLocator[] locators = mediaClient.GetEntities<StreamingLocator>(MediaEntity.StreamingLocator).ToArray();
             Array.Sort<StreamingLocator>(locators, OrderByDate);
             return locators;
         }
@@ -93,15 +93,15 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     if (accountStreams.Count < pageSize)
                     {
-                        string streamingUrl = mediaClient.GetStreamingUrl(locator);
-                        if (!string.IsNullOrEmpty(streamingUrl))
+                        string playerUrl = mediaClient.GetPlayerUrl(locator);
+                        if (!string.IsNullOrEmpty(playerUrl))
                         {
                             MediaStream accountStream = new MediaStream()
                             {
                                 Name = locator.AssetName,
                                 Source = new StreamSource()
                                 {
-                                    Url = streamingUrl,
+                                    Url = playerUrl,
                                     ProtectionInfo = new StreamProtection[] { }
                                 },
                                 //TextTracks = Track.GetMediaTracks(textTracks)

@@ -17,7 +17,7 @@
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId, "Transform Name");
             LoadGrid(gridId, rows, columns);
-            CreateTipBottom("mediaEntitySave", "Save Transform");
+            CreateTipBottom("transformSave", "Save Transform");
         })
     </script>
 }
@@ -108,5 +108,5 @@
 </div>
 
 <div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaEntitySave", ImageFile = "MediaEntitySave.png", OnClick = "CreateTransform()" }' />
+    <partial name="SiteButton" model='new SiteButton { ClientId = "transformSave", ImageFile = "MediaEntitySave.png", OnClick = "CreateTransform()" }' />
 </div>

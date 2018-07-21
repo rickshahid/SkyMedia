@@ -21,8 +21,10 @@ namespace AzureSkyMedia.WebApp.Controllers
         public IActionResult Index()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
+            User authUser = new User(authToken);
             Dictionary<string, string> storageAccounts = Storage.GetAccounts(authToken);
             ViewData["storageAccount"] = HomeController.GetListItems(storageAccounts);
+            ViewData["videoIndexerKey"] = authUser.MediaAccount.VideoIndexerKey;
             return View();
         }
     }

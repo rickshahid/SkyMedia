@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Newtonsoft.Json;
-
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
@@ -20,26 +18,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public IDictionary<string, string> CorrelationData { get; set; }
     }
-
-    //public class MediaJobInput
-    //{
-    //    public string AssetId { get; set; }
-
-    //    public string AssetName { get; set; }
-
-    //    public string AssetType { get; set; }
-
-    //    public string PrimaryFile { get; set; }
-    //}
-
-    //public class MediaJob
-    //{
-    //    public string Name { get; set; }
-
-    //    public int Priority { get; set; }
-
-    //    //public MediaJobTask[] Tasks { get; set; }
-    //}
 
     //internal class MediaProcess
     //{

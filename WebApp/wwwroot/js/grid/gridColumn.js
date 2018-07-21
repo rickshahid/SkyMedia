@@ -44,6 +44,30 @@ function GetParentColumns(gridId, nameLabel) {
                 }
             ];
             break;
+        case "assets":
+            columns = [
+                {
+                    label: nameLabel,
+                    name: "name",
+                    formatter: FormatName,
+                    align: "center",
+                    width: nameWidth  + 225
+                },
+                {
+                    label: "Alternate Id",
+                    name: "properties.alternateId",
+                    align: "center",
+                    width: dateTimeWidth
+                },
+                {
+                    label: "Created",
+                    name: "properties.created",
+                    formatter: FormatDateTime,
+                    align: "center",
+                    width: dateTimeWidth
+                }
+            ];
+            break;
         case "videoIndexerInsights":
             columns = [
                 {
@@ -76,7 +100,7 @@ function GetParentColumns(gridId, nameLabel) {
                     formatter: FormatDateTime,
                     align: "center",
                     width: dateTimeWidth
-                },
+                }
             ];
     }
     if (gridId != "storageAccounts" &&
@@ -154,7 +178,7 @@ function GetChildColumns(gridId) {
                     name: "name",
                     formatter: FormatName,
                     align: "center",
-                    width: nameWidth + (dateTimeWidth * 2) + 30
+                    width: nameWidth + 375
                 }
             ];
             break;
@@ -189,20 +213,20 @@ function GetChildColumns(gridId) {
                     name: "assetName",
                     formatter: FormatName,
                     align: "center",
-                    width: nameWidth + 10
+                    width: nameWidth + 225
                 },
                 {
                     label: "State",
                     name: "state",
                     align: "center",
-                    width: defaultWidth + 5
+                    width: dateTimeWidth + 5
                 },
                 {
                     label: "Progress",
                     name: "progress",
                     formatter: FormatProgress,
                     align: "center",
-                    width: defaultWidth + 5
+                    width: dateTimeWidth + 5
                 }
             ];
             break;

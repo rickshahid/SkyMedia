@@ -22,9 +22,9 @@ function CreateTransform() {
         SetCursor(true);
         $.post("/transform/create",
             {
-                name: $("#name").val(),
-                description: $("#description").val(),
-                outputs: GetTransformOutputs()
+                transformName: $("#name").val(),
+                transformDescription: $("#description").val(),
+                transformOutputs: GetTransformOutputs()
             },
             function (entity) {
                 SetCursor(false);

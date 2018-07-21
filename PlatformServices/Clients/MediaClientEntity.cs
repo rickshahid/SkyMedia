@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
+using Microsoft.Rest.Azure.OData;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -8,16 +9,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private void AddEntities<T>(List<T> allEntities, MediaEntity entityType, string parentEntityName = null) where T : Resource
-        {
-            IPage<T> entities = GetEntities<T>(entityType, parentEntityName);
-            while (entities != null)
-            {
-                allEntities.AddRange(entities);
-                entities = NextEntities(entityType, entities);
-            }
-        }
-
         public int GetEntityCount<T>(MediaEntity entityType) where T : Resource
         {
             T[] entities = GetAllEntities<T>(entityType);
@@ -30,49 +21,79 @@ namespace AzureSkyMedia.PlatformServices
             return entities.Length;
         }
 
-        public T[] GetAllEntities<T>(MediaEntity entityType, string parentEntityName = null) where T : Resource
-        {
-            List<T> allEntities = new List<T>();
-            AddEntities<T>(allEntities, entityType, parentEntityName);
-            return allEntities.ToArray();
-        }
-
         public T1[] GetAllEntities<T1, T2>(MediaEntity entityType, MediaEntity parentEntityType) where T1 : Resource where T2 : Resource
         {
             List<T1> allEntities = new List<T1>();
             IPage<T2> parentEntities = GetEntities<T2>(parentEntityType);
             foreach (T2 parentEntity in parentEntities)
             {
-                AddEntities<T1>(allEntities, entityType, parentEntity.Name);
+                T1[] entities = GetAllEntities<T1>(entityType, parentEntity.Name);
+                allEntities.AddRange(entities);
             }
             return allEntities.ToArray();
         }
 
-        public IPage<T> GetEntities<T>(MediaEntity entityType, string parentEntityName = null) where T : Resource
+        public T[] GetAllEntities<T>(MediaEntity entityType, string parentEntityName = null) where T : Resource
+        {
+            List<T> allEntities = new List<T>();
+            IPage<T> entities = GetEntities<T>(entityType, null, parentEntityName);
+            while (entities != null)
+            {
+                allEntities.AddRange(entities);
+                entities = NextEntities(entityType, entities);
+            }
+            return allEntities.ToArray();
+        }
+
+        public IPage<T> GetEntities<T>(MediaEntity entityType, string entityFilter, string parentEntityName = null) where T : Resource
         {
             IPage<T> entities = null;
             switch (entityType)
             {
                 case MediaEntity.Asset:
-                    entities = (IPage<T>)_media.Assets.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                    ODataQuery<Asset> assetQuery = new ODataQuery<Asset>()
+                    {
+                        Filter = entityFilter
+                    };
+                    entities = (IPage<T>)_media.Assets.List(MediaAccount.ResourceGroupName, MediaAccount.Name, assetQuery);
                     break;
                 case MediaEntity.Transform:
-                    entities = (IPage<T>)_media.Transforms.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                    ODataQuery<Transform> transformQuery = new ODataQuery<Transform>()
+                    {
+                        Filter = entityFilter
+                    };
+                    entities = (IPage<T>)_media.Transforms.List(MediaAccount.ResourceGroupName, MediaAccount.Name, transformQuery);
                     break;
                 case MediaEntity.TransformJob:
-                    entities = (IPage<T>)_media.Jobs.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName);
+                    ODataQuery<Job> transformJobQuery = new ODataQuery<Job>()
+                    {
+                        Filter = entityFilter
+                    };
+                    entities = (IPage<T>)_media.Jobs.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, transformJobQuery);
                     break;
                 case MediaEntity.ContentKeyPolicy:
-                    entities = (IPage<T>)_media.ContentKeyPolicies.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                    ODataQuery<ContentKeyPolicy> contentKeyPolicyQuery = new ODataQuery<ContentKeyPolicy>()
+                    {
+                        Filter = entityFilter
+                    };
+                    entities = (IPage<T>)_media.ContentKeyPolicies.List(MediaAccount.ResourceGroupName, MediaAccount.Name, contentKeyPolicyQuery);
                     break;
                 case MediaEntity.StreamingPolicy:
-                    entities = (IPage<T>)_media.StreamingPolicies.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                    ODataQuery<StreamingPolicy> streamingPolicyQuery = new ODataQuery<StreamingPolicy>()
+                    {
+                        Filter = entityFilter
+                    };
+                    entities = (IPage<T>)_media.StreamingPolicies.List(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingPolicyQuery);
                     break;
                 case MediaEntity.StreamingEndpoint:
                     entities = (IPage<T>)_media.StreamingEndpoints.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
                     break;
                 case MediaEntity.StreamingLocator:
-                    entities = (IPage<T>)_media.StreamingLocators.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                    ODataQuery<StreamingLocator> streamingLocatorQuery = new ODataQuery<StreamingLocator>()
+                    {
+                        Filter = entityFilter
+                    };
+                    entities = (IPage<T>)_media.StreamingLocators.List(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocatorQuery);
                     break;
                 case MediaEntity.LiveEvent:
                     entities = (IPage<T>)_media.LiveEvents.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
@@ -82,6 +103,11 @@ namespace AzureSkyMedia.PlatformServices
                     break;
             }
             return entities;
+        }
+
+        public IPage<T> GetEntities<T>(MediaEntity entityType) where T : Resource
+        {
+            return GetEntities<T>(entityType, null);
         }
 
         public IPage<T> NextEntities<T>(MediaEntity entityType, IPage<T> currentPage)
@@ -167,16 +193,15 @@ namespace AzureSkyMedia.PlatformServices
                     _media.Assets.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
                     break;
                 case MediaEntity.Transform:
-                    Job[] jobs = GetAllEntities<Job>(MediaEntity.TransformJob, entityName);
-                    foreach (Job job in jobs)
-                    {
-                        _media.Jobs.CancelJob(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName, job.Name);
-                    }
                     _media.Transforms.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
                     break;
                 case MediaEntity.TransformJob:
-                    _media.Jobs.CancelJob(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
+                    using (DatabaseClient databaseClient = new DatabaseClient())
+                    {
+                        string collectionId = Constant.Database.Collection.OutputPublish;
+                        databaseClient.DeleteDocument(collectionId, entityName);
+                    }
                     break;
                 case MediaEntity.ContentKeyPolicy:
                     _media.ContentKeyPolicies.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
