@@ -2,6 +2,39 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "directoryClientId": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory B2C client application identifier."
+      }
+    },
+    "directoryTenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory B2C tenant identifier."
+      }
+    },
+    "directoryIssuerUrl": {
+      "type": "string",
+      "defaultValue": "https://login.microsoftonline.com/{0}/v2.0/",
+      "metadata": {
+        "description": "Azure Active Directory B2C tenant issuer url."
+      }
+    },
+    "directoryDiscoveryPath": {
+      "type": "string",
+      "defaultValue": ".well-known/openid-configuration",
+      "metadata": {
+        "description": "Azure Active Directory B2C Open ID Connect Discovery path."
+      }
+    },
+    "directoryPolicyIdSignUpIn": {
+      "type": "string",
+      "defaultValue": "B2C_1_SignUpIn",
+      "metadata": {
+        "description": "Azure Active Directory B2C sign up/in policy identifier."
+      }
+    },
     "storageServiceName": {
       "type": "string",
       "minLength": 3,
@@ -276,16 +309,32 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "name": "ARM.EndpointUrl",
+              "name": "Arm.EndpointUrl",
               "value": "https://management.azure.com/"
             },
             {
-              "name": "ARM.AudienceUrl",
+              "name": "Arm.AudienceUrl",
               "value": "https://management.core.windows.net/"
             },
             {
+              "name": "Directory.ClientId",
+              "value": "[parameters('directoryClientId')]"
+            },
+            {
+              "name": "Directory.TenantId",
+              "value": "[parameters('directoryTenantId')]"
+            },
+            {
               "name": "Directory.IssuerUrl",
-              "value": "https://login.microsoftonline.com/{0}/v2.0/"
+              "value": "[parameters('directoryIssuerUrl')]"
+            },
+            {
+              "name": "Directory.DiscoveryPath",
+              "value": "[parameters('directoryDiscoveryPath')]"
+            },
+            {
+              "name": "Directory.PolicyId.SignUpIn",
+              "value": "[parameters('directoryPolicyIdSignUpIn')]"
             },
             {
               "name": "Storage",

@@ -134,8 +134,9 @@ body {
     width: 300px;
 }
 
-.entityName.extended {
-    width: 305px !important;
+.entityNameTransformJob {
+    font-weight: bold;
+    width: 305px;
 }
 
 .entityFound {
@@ -330,7 +331,7 @@ body {
     font-weight: bold;
 }
 
-.inputSelect.extended {
+.inputSelect.transformJob {
     width: 100%;
 }
 

@@ -102,7 +102,7 @@ namespace AzureSkyMedia.PlatformServices
                                 Source = new StreamSource()
                                 {
                                     Url = playerUrl,
-                                    ProtectionInfo = new StreamProtection[] { }
+                                    ProtectionInfo = mediaClient.GetProtectionInfo(authToken, locator)
                                 },
                                 //TextTracks = Track.GetMediaTracks(textTracks)
                             };

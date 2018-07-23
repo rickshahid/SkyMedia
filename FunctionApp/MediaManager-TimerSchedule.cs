@@ -12,8 +12,15 @@ namespace AzureSkyMedia.FunctionApp
         [FunctionName("MediaManager-TimerSchedule")]
         public static void Run([TimerTrigger("0 0 0 * * *")] TimerInfo timer, TraceWriter log)
         {
-            log.Info($"Media Manager @ {DateTime.Now}");
-            MediaClient.PurgePublish();
+            try
+            {
+                log.Info($"Media Manager @ {DateTime.Now}");
+                MediaClient.PurgePublish();
+            }
+            catch (Exception ex)
+            {
+                log.Info($"Exception: {ex.ToString()}");
+            }
         }
     }
 }

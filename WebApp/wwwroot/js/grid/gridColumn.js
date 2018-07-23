@@ -279,8 +279,8 @@ function FormatActions(value, grid, row) {
         var publishHtml = "";
         if (grid.gid == "transformJobs") {
             switch (row["properties.state"]) {
-                case "Queued":
                 case "Scheduled":
+                case "Queued":
                 case "Processing":
                     var onCancel = "CancelJob('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
                     cancelHtml = "<button id='" + row.id + "_cancel' class='siteButton' onclick=" + onCancel + ">";

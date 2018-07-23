@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Web.Http;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -58,6 +59,10 @@ namespace AzureSkyMedia.FunctionApp
                         }
                     }
                 }
+            }
+            catch (HttpResponseException ex)
+            {
+                log.Info($"HTTP Exception: {ex.ToString()}");
             }
             catch (Exception ex)
             {

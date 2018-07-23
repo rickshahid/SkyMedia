@@ -51,7 +51,7 @@
                 Media Transform
             </td>
             <td>
-                @Html.DropDownList("transforms", null, new { @class = "inputSelect extended" })
+                @Html.DropDownList("transforms", null, new { @class = "inputSelect transformJob" })
             </td>
         </tr>
         <tr>
@@ -59,7 +59,7 @@
                 Streaming Policy
             </td>
             <td>
-                @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect extended" })
+                @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect transformJob" })
             </td>
         </tr>
         <tr>
@@ -67,7 +67,7 @@
                 Input Asset Name
             </td>
             <td>
-                @Html.TextBox("inputAssetName", null, new { @class = "entityName extended", onfocusout = "FindAsset()" })
+                @Html.TextBox("inputAssetName", null, new { @class = "entityNameTransformJob", onfocusout = "FindAsset()" })
             </td>
         </tr>
         <tr>
@@ -75,7 +75,7 @@
                 Input File Url
             </td>
             <td>
-                @Html.TextBox("inputFileUrl", null, new { @class = "entityName extended" })
+                @Html.TextBox("inputFileUrl", null, new { @class = "entityNameTransformJob" })
             </td>
         </tr>
     </table>

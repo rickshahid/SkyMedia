@@ -1,4 +1,5 @@
 using System;
+using System.Web.Http;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -23,6 +24,10 @@ namespace AzureSkyMedia.FunctionApp
                     string publishMessage = MediaClient.PublishOutput(mediaPublish);
                     log.Info($"Publish Message: {publishMessage}");
                 }
+            }
+            catch (HttpResponseException ex)
+            {
+                log.Info($"HTTP Exception: {ex.ToString()}");
             }
             catch (Exception ex)
             {
