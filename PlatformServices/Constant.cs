@@ -41,12 +41,12 @@ namespace AzureSkyMedia.PlatformServices
             public const string AppTitle = "App.Title";
             public const string AppRegionName = "App.RegionName";
 
-            public const string AppApiVersion = "App.API.Version";
-            public const string AppApiEndpointUrl = "App.API.EndpointUrl";
-            public const string AppApiDescription = "App.API.Description";
+            public const string AppApiVersion = "App.Api.Version";
+            public const string AppApiEndpointUrl = "App.Api.EndpointUrl";
+            public const string AppApiDescription = "App.Api.Description";
 
-            public const string AzureResourceManagementEndpointUrl = "ARM.EndpointUrl";
-            public const string AzureResourceManagementAudienceUrl = "ARM.AudienceUrl";
+            public const string AzureResourceManagementEndpointUrl = "Arm.EndpointUrl";
+            public const string AzureResourceManagementAudienceUrl = "Arm.AudienceUrl";
 
             public const string DirectoryTenantId = "Directory.TenantId";
             public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
@@ -192,6 +192,18 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string PredefinedPrefix = "Predefined_";
             public const string AccountResourceId = "/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.media/mediaServices/{2}";
+
+            public struct ContentKey
+            {
+                public const string PolicyAES = "Content Key Policy AES";
+                public const string PolicyDRM = "Content Key Policy DRM";
+            }
+
+            public struct ContentStreaming
+            {
+                public const string PolicyAES = "Streaming Policy AES";
+                public const string PolicyDRM = "Streaming Policy DRM";
+            }
 
             public struct Asset
             {

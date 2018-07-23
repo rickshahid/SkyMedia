@@ -276,10 +276,22 @@ function FormatActions(value, grid, row) {
         actionsHtml = "N/A";
     } else {
         var cancelHtml = "";
+        var publishHtml = "";
         if (grid.gid == "transformJobs") {
-            var onCancel = "CancelJob('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
-            var cancelHtml = "<button id='" + row.id + "_cancel' class='siteButton' onclick=" + onCancel + ">";
-            cancelHtml = cancelHtml + "<img src='" + _storageCdnUrl + "/MediaEntityCancel.png'></button>";
+            switch (row["properties.state"]) {
+                case "Queued":
+                case "Scheduled":
+                case "Processing":
+                    var onCancel = "CancelJob('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
+                    cancelHtml = "<button id='" + row.id + "_cancel' class='siteButton' onclick=" + onCancel + ">";
+                    cancelHtml = cancelHtml + "<img src='" + _storageCdnUrl + "/MediaEntityCancel.png'></button>";
+                    break;
+                case "Finished":
+                    var onPublish = "PublishJob('" + encodeURIComponent(entityName) + "')";
+                    publishHtml = "<button id='" + row.id + "_publish' class='siteButton' onclick=" + onPublish + ">";
+                    publishHtml = publishHtml + "<img src='" + _storageCdnUrl + "/MediaEntityPublish.png'></button>";
+                    break;
+            }
         }
         var editHtml = "";
         if (window.location.href.indexOf("/account") == -1) {
@@ -291,7 +303,7 @@ function FormatActions(value, grid, row) {
         var onDelete = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
         var deleteHtml = "<button id='" + row.id + "_delete' class='siteButton' onclick=" + onDelete + ">";
         deleteHtml = deleteHtml + "<img src='" + _storageCdnUrl + "/MediaEntityDelete.png'></button>";
-        actionsHtml = cancelHtml + editHtml + deleteHtml;
+        actionsHtml = cancelHtml + publishHtml + editHtml + deleteHtml;
     }
     return actionsHtml
 }

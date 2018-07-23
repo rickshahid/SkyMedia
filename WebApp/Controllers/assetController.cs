@@ -61,7 +61,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (transform != null)
                     {
                         string[] outputAssetNames = GetOutputAssetNames(inputAsset.Name, standardEncoderPreset, videoAnalyzerPreset, audioAnalyzerPreset);
-                        job = JobController.Create(mediaClient, transform.Name, null, null, Priority.Normal, inputAsset.Name, outputAssetNames, streamingPolicyName);
+                        job = JobController.Create(mediaClient, transform.Name, null, null, Priority.Normal, inputAsset.Name, null, outputAssetNames, streamingPolicyName);
                         jobs.Add(job);
                     }
                     if (videoIndexerInsight || audioIndexerInsight)

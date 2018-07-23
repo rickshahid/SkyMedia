@@ -134,6 +134,10 @@ body {
     width: 300px;
 }
 
+.entityName.extended {
+    width: 305px !important;
+}
+
 .entityFound {
     background-color: none;
     border: none;

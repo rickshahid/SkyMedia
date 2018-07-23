@@ -14,6 +14,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public string InputAssetName { get; set; }
 
+        public string InputFileUrl { get; set; }
+
         public string[] OutputAssetNames { get; set; }
 
         public IDictionary<string, string> CorrelationData { get; set; }

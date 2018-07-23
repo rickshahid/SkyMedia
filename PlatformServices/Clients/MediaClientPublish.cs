@@ -17,16 +17,20 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string GetNotificationMessage(MediaAccount mediaAccount, Job job)
+        private static string GetNotificationMessage(MediaPublish mediaPublish, Job job)
         {
             StringBuilder message = new StringBuilder();
             message.Append("AMS Transform Job Notification");
             message.Append("\n\nMedia Account\n");
-            message.Append(mediaAccount.Name);
+            message.Append(mediaPublish.MediaAccount.Name);
             message.Append("\n\nJob Name\n");
             message.Append(job.Name);
             message.Append("\n\nJob State\n");
             message.Append(job.State.ToString());
+            message.Append("\n\nTransform Name\n");
+            message.Append(mediaPublish.TransformName);
+            message.Append("\n\nStreaming Policy Name\n");
+            message.Append(mediaPublish.StreamingPolicyName);
             foreach (JobOutput jobOutput in job.Outputs)
             {
                 message.Append("\n\nJob Output State\n");
@@ -53,12 +57,12 @@ namespace AzureSkyMedia.PlatformServices
             return message.ToString();
         }
 
-        private static string GetNotificationMessage(MediaAccount mediaAccount, string indexId, string indexState)
+        private static string GetNotificationMessage(MediaPublish mediaPublish, string indexId, string indexState)
         {
             StringBuilder message = new StringBuilder();
             message.Append("VI Upload Index Notification");
             message.Append("\n\nVideo Indexer Account\n");
-            message.Append(mediaAccount.VideoIndexerKey);
+            message.Append(mediaPublish.MediaAccount.VideoIndexerKey);
             message.Append("\n\nIndex Id\n");
             message.Append(indexId);
             message.Append("\n\nIndex State\n");
@@ -73,11 +77,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (job == null)
                 {
-                    message = GetNotificationMessage(mediaPublish.MediaAccount, indexId, indexState);
+                    message = GetNotificationMessage(mediaPublish, indexId, indexState);
                 }
                 else
                 {
-                    message = GetNotificationMessage(mediaPublish.MediaAccount, job);
+                    message = GetNotificationMessage(mediaPublish, job);
                 }
 
 
@@ -147,15 +151,10 @@ namespace AzureSkyMedia.PlatformServices
                 Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
                 if (job != null)
                 {
-                    string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
-                    using (DatabaseClient databaseClient = new DatabaseClient())
+                    string streamingPolicyName = mediaPublish.StreamingPolicyName;
+                    if (string.IsNullOrEmpty(streamingPolicyName))
                     {
-                        string collectionId = Constant.Database.Collection.OutputPublish;
-                        JObject jobPublish = databaseClient.GetDocument(collectionId, job.Name);
-                        if (jobPublish["StreamingPolicyName"] != null)
-                        {
-                            streamingPolicyName = jobPublish["StreamingPolicyName"].ToString();
-                        }
+                        streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
                     }
                     foreach (JobOutputAsset jobOutput in job.Outputs)
                     {

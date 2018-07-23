@@ -21,7 +21,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 SelectListItem transform = new SelectListItem()
                 {
-                    Text = mediaTransform.Name,
+                    Text = Constant.TextFormatter.GetValue(mediaTransform.Name),
                     Value = mediaTransform.Name
                 };
                 transforms.Add(transform);
@@ -40,7 +40,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 SelectListItem policy = new SelectListItem()
                 {
-                    Text = streamingPolicy.Name,
+                    Text = Constant.TextFormatter.GetValue(streamingPolicy.Name),
                     Value = streamingPolicy.Name
                 };
                 policies.Add(policy);
@@ -48,7 +48,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        internal static Job Create(MediaClient mediaClient, string transformName, string jobName, string jobDescription, Priority jobPriority, string inputAssetName, string[] outputAssetNames, string streamingPolicyName)
+        internal static Job Create(MediaClient mediaClient, string transformName, string jobName, string jobDescription, Priority jobPriority, string inputAssetName, string inputFileUrl, string[] outputAssetNames, string streamingPolicyName)
         {
             MediaJob mediaJob = new MediaJob()
             {
@@ -56,6 +56,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 Description = jobDescription,
                 Priority = jobPriority,
                 InputAssetName = inputAssetName,
+                InputFileUrl = inputFileUrl,
                 OutputAssetNames = outputAssetNames
             };
             Job job = mediaClient.CreateJob(mediaClient, transformName, mediaJob);
@@ -75,13 +76,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             return job;
         }
 
-        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string inputAssetName, string streamingPolicyName)
+        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string inputAssetName, string inputFileUrl, string streamingPolicyName)
         {
             Job job;
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                job = Create(mediaClient, transformName, jobName, jobDescription, jobPriority, inputAssetName, null, streamingPolicyName);
+                job = Create(mediaClient, transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, null, streamingPolicyName);
             }
             return Json(job);
         }
@@ -93,6 +94,21 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 mediaClient.CancelJob(transformName, jobName);
             }
+        }
+
+        public JsonResult Publish(string jobName)
+        {
+            string publishMessage = string.Empty;
+            using (DatabaseClient databaseClient = new DatabaseClient())
+            {
+                string collectionId = Constant.Database.Collection.OutputPublish;
+                MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
+                if (mediaPublish != null)
+                {
+                    publishMessage = MediaClient.PublishOutput(mediaPublish);
+                }
+            }
+            return Json(publishMessage);
         }
 
         public IActionResult Index()

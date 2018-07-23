@@ -8,11 +8,10 @@
             SetCursor(false);
             if (entityFound) {
                 $("#inputAssetName").removeClass("entityNotFound").addClass("entityFound");
-                SetTipDisable("inputAssetName", true);
+                SetTipVisible("inputAssetName", false);
             } else {
                 $("#inputAssetName").removeClass("entityFound").addClass("entityNotFound");
-                SetTipDisable("inputAssetName", false);
-                CreateTipRight("inputAssetName", "Media Asset Not Found");
+                CreateTipRight("inputAssetName", "Asset Not Found");
                 SetTipVisible("inputAssetName", true);
             }
         }
@@ -21,18 +20,27 @@
 function CreateJob() {
     var transformName = $("#transforms").val();
     var inputAssetName = $("#inputAssetName").val();
-    if (transformName == "" || inputAssetName == "") {
+    var inputFileUrl = $("#inputFileUrl").val();
+    if (transformName == "" || (inputAssetName == "" && inputFileUrl == "")) {
         var tipText = "Required Field";
         if (transformName == "") {
             CreateTipRight("transforms", tipText);
             SetTipVisible("transforms", true);
+        } else {
+            SetTipVisible("transforms", false);
         }
-        if (inputAssetName == "") {
+        if (inputAssetName == "" && inputFileUrl == "") {
             CreateTipRight("inputAssetName", tipText);
+            CreateTipRight("inputFileUrl", tipText);
+            SetTipVisible("inputAssetName", true);
+            SetTipVisible("inputFileUrl", true);
+        } else {
+            SetTipVisible("inputAssetName", false);
+            SetTipVisible("inputFileUrl", false);
+        }
+        if (inputFileUrl == "" && $("#inputAssetName").hasClass("entityNotFound")) {
             SetTipVisible("inputAssetName", true);
         }
-    } else if ($("#inputAssetName").hasClass("entityNotFound")) {
-        SetTipVisible("inputAssetName", true);
     } else {
         var title = "Confirm Create Job";
         var message = "Are you sure you want to create a new job?";
@@ -45,6 +53,7 @@ function CreateJob() {
                     jobDescription: $("#description").val(),
                     jobPriority: $("#jobPriority").val(),
                     inputAssetName: inputAssetName,
+                    inputFileUrl: inputFileUrl,
                     streamingPolicyName: $("#streamingPolicies").val()
                 },
                 function (entity) {

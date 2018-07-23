@@ -30,7 +30,21 @@ namespace AzureSkyMedia.PlatformServices
 
         public StreamingLocator CreateLocator(string assetName, string streamingPolicyName)
         {
-            StreamingLocator locator = new StreamingLocator(assetName, streamingPolicyName);
+            string contentKeyPolicyName = null;
+            if (streamingPolicyName == PredefinedStreamingPolicy.ClearKey)
+            {
+                CreateContentKeyPolicyAES();
+                contentKeyPolicyName = Constant.Media.ContentKey.PolicyAES;
+            }
+            else if (streamingPolicyName == PredefinedStreamingPolicy.SecureStreaming)
+            {
+                CreateContentKeyPolicyDRM();
+                contentKeyPolicyName = Constant.Media.ContentKey.PolicyDRM;
+            }
+            StreamingLocator locator = new StreamingLocator(assetName, streamingPolicyName)
+            {
+                DefaultContentKeyPolicyName = contentKeyPolicyName
+            };
             _media.StreamingLocators.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);
             return _media.StreamingLocators.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, locator);
         }

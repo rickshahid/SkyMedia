@@ -16,7 +16,18 @@ namespace AzureSkyMedia.PlatformServices
             {
                 jobName = Guid.NewGuid().ToString();
             }
-            JobInputAsset inputAsset = new JobInputAsset(mediaJob.InputAssetName);
+            JobInput jobInput;
+            if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
+            {
+                jobInput = new JobInputHttp()
+                {
+                    Files = new string[] { mediaJob.InputFileUrl }
+                };
+            }
+            else
+            {
+                jobInput = new JobInputAsset(mediaJob.InputAssetName);
+            }
             string[] outputAssetNames = mediaJob.OutputAssetNames;
             if (outputAssetNames == null)
             {
@@ -41,7 +52,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Description = mediaJob.Description,
                 Priority = mediaJob.Priority,
-                Input = inputAsset,
+                Input = jobInput,
                 Outputs = outputAssets.ToArray(),
                 CorrelationData = mediaJob.CorrelationData
             };

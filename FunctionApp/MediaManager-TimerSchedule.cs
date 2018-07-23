@@ -7,12 +7,12 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.FunctionApp
 {
-    public static class MediaPurgeTimerSchedule
+    public static class MediaManagerTimerSchedule
     {
-        [FunctionName("MediaPurge-TimerSchedule")]
+        [FunctionName("MediaManager-TimerSchedule")]
         public static void Run([TimerTrigger("0 0 0 * * *")] TimerInfo timer, TraceWriter log)
         {
-            log.Info($"Media Purge @ {DateTime.Now}");
+            log.Info($"Media Manager @ {DateTime.Now}");
             MediaClient.PurgePublish();
         }
     }

@@ -96,6 +96,9 @@ namespace AzureSkyMedia.WebApp
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 TransformController.CreateTransform(mediaClient, true, false, false);
+                TransformController.CreateTransform(mediaClient, true, true, false);
+                TransformController.CreateTransform(mediaClient, true, false, true);
+                TransformController.CreateTransform(mediaClient, false, false, true);
             }
             return redirectAction;
         }

@@ -70,7 +70,7 @@ function SetRowEdit(gridId, rowData) {
     }
 }
 function CancelJob(jobName, transformName) {
-    var title = "Confirm Cancel Job Request";
+    var title = "Confirm Job Cancel Request";
     var message = "Are you sure you want to cancel the '" + FormatValue(jobName) + "' job?";
     var onConfirm = function () {
         SetCursor(true);
@@ -82,6 +82,24 @@ function CancelJob(jobName, transformName) {
             function () {
                 SetCursor(false);
                 window.location = window.location.href;
+            }
+        );
+        $(this).dialog("close");
+    }
+    ConfirmMessage(title, message, onConfirm);
+}
+function PublishJob(jobName) {
+    var title = "Confirm Job Publish";
+    var message = "Are you sure you want to publish the '" + FormatValue(jobName) + "' job?";
+    var onConfirm = function () {
+        SetCursor(true);
+        $.post("/job/publish",
+            {
+                jobName: decodeURIComponent(jobName)
+            },
+            function (message) {
+                SetCursor(false);
+                DisplayMessage("Job Publish Message", message);
             }
         );
         $(this).dialog("close");
