@@ -39,15 +39,18 @@ function LoadGrid(gridId, rows, columns) {
 }
 function SetRowIds(rows) {
     for (var i = 0; i < rows.length; i++) {
-        var id = rows[i].id.split("/");
-        rows[i].id = id[id.length - 1];
-        if (id.length > 12) {
-            rows[i].parentEntityName = id[id.length - 3];
+        var row = rows[i];
+        if (row.id != null) {
+            var id = row.id.split("/");
+            row.id = id[id.length - 1];
+            if (id.length > 12) {
+                row.parentEntityName = id[id.length - 3];
+            }
+            row.id = row.id.replace(/ /g, "_");
+            row.id = row.id.replace(/,/g, "");
+            row.id = row.id.replace(/\(/g, "");
+            row.id = row.id.replace(/\)/g, "");
         }
-        rows[i].id = rows[i].id.replace(/ /g, "_");
-        rows[i].id = rows[i].id.replace(/,/g, "");
-        rows[i].id = rows[i].id.replace(/\(/g, "");
-        rows[i].id = rows[i].id.replace(/\)/g, "");
     }
 }
 function ClearTitles(grid) {

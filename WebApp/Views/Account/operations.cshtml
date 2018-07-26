@@ -1,25 +1,25 @@
 ﻿@{
-    string gridId = "contentKeyPolicies";
+    string gridId = "operations";
 }
 
 @section head {
     <script type="text/javascript">
         $(function () {
-            _childGridId = "contentKeyPolicyOptions";
-            _childPropertyName = "properties.options";
+            _childGridId = null;
+            _childPropertyName = null;
             _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
             _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Content Key Policy Name");
+            var columns = GetParentColumns(gridId, "Operation Name");
             LoadGrid(gridId, rows, columns);
         })
     </script>
 }
 
 @section title {
-    Content Key Policies
+    Operations
 }
 
 <div class="grid">

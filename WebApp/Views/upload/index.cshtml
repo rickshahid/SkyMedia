@@ -9,7 +9,6 @@
         $(function () {
             SetStorageTip();
             CreateUploader();
-            SetIndexerOptions("@ViewData["videoIndexerKey"]");
         })
     </script>
 }
@@ -53,7 +52,7 @@
         </td>
         <td rowspan="2" class="mediaUploadEncoderPreset">
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
-                Adaptive Streaming Asset<br>(Auto Bitrate Ladder)
+                Adaptive Streaming<br>(Auto Bitrate Ladder)
             </span>
         </td>
         <td class="mediaUploadOption">
@@ -61,15 +60,7 @@
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
-                Video Analyzer Preset
-            </span>
-        </td>
-        <td id="videoIndexerInsightOption" class="mediaUploadOption">
-            @Html.CheckBox("videoIndexerInsight", false, new { onchange = "SetUploadOption(this)", disabled = "disabled" })
-        </td>
-        <td>
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
-                Video Indexer Insight
+                Video Analyzer
             </span>
         </td>
     </tr>
@@ -79,15 +70,7 @@
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
-                Audio Analyzer Preset
-            </span>
-        </td>
-        <td id="audioIndexerInsightOption" class="mediaUploadOption">
-            @Html.CheckBox("audioIndexerInsight", false, new { onchange = "SetUploadOption(this)", disabled = "disabled" })
-        </td>
-        <td>
-            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
-                Audio Indexer Insight
+                Audio Analyzer
             </span>
         </td>
     </tr>

@@ -1,17 +1,40 @@
 ﻿using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public void CreateContentKeyPolicyDRM()
+        public void CreateContentKeyPolicyDRM(ContentProtection contentProtection)
         {
-            ContentKeyPolicyPlayReadyLicense playReadyLicence = new ContentKeyPolicyPlayReadyLicense();
+            ContentKeyPolicyPlayReadyLicenseType licenseType = ContentKeyPolicyPlayReadyLicenseType.NonPersistent;
+            if (contentProtection != null && contentProtection.PersistentLicense)
+            {
+                licenseType = ContentKeyPolicyPlayReadyLicenseType.Persistent;
+            }
+            ContentKeyPolicyPlayReadyLicense playReadyLicense = new ContentKeyPolicyPlayReadyLicense()
+            {
+                LicenseType = licenseType,
+                ContentType = ContentKeyPolicyPlayReadyContentType.Unspecified,
+                ContentKeyLocation = new ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader()
+            };
             ContentKeyPolicyPlayReadyConfiguration playReadyConfiguration = new ContentKeyPolicyPlayReadyConfiguration()
             {
-                Licenses = new ContentKeyPolicyPlayReadyLicense[] { playReadyLicence }
+                Licenses = new ContentKeyPolicyPlayReadyLicense[] { playReadyLicense }
             };
-            ContentKeyPolicyWidevineConfiguration widevineConfiguration = new ContentKeyPolicyWidevineConfiguration();
+            WidevineTemplate widevineTemplate = new WidevineTemplate();
+            if (contentProtection != null && contentProtection.PersistentLicense)
+            {
+                widevineTemplate.PolicyOverrides = new PolicyOverrides()
+                {
+                    CanPersist = true
+                };
+            }
+            ContentKeyPolicyWidevineConfiguration widevineConfiguration = new ContentKeyPolicyWidevineConfiguration()
+            {
+                WidevineTemplate = JsonConvert.SerializeObject(widevineTemplate) 
+            };
             string policyName = Constant.Media.ContentKey.PolicyDRM;
             ContentKeyPolicyConfiguration[] policyConfigurations = new ContentKeyPolicyConfiguration[]
             {

@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 599px) {
-    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaTrain, #mediaCompose, #mediaMonitor, #mediaBrowse {
+    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaBrowse {
         display: none !important;
     }
 
@@ -22,7 +22,7 @@
 }
 
 @media all and (min-width: 600px) and (max-width: 799px) {
-    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaTrain, #mediaCompose, #mediaMonitor, #mediaBrowse {
+    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaBrowse {
         display: none !important;
     }
 
@@ -134,9 +134,8 @@ body {
     width: 300px;
 }
 
-.entityNameTransformJob {
-    font-weight: bold;
-    width: 305px;
+.entityName.transformJob {
+    width: 305px !important;
 }
 
 .entityFound {
@@ -227,7 +226,7 @@ body {
 }
 
 .streamTuner {
-    width: 100px;
+    width: 150px;
 }
 
 .streamTunerHandle {
@@ -266,11 +265,11 @@ body {
 }
 
 #mediaStreamLeft {
-    padding-left: 25px;
+    padding-left: 30px;
 }
 
 #mediaStreamRight {
-    padding-right: 25px;
+    padding-right: 30px;
 }
 
 .mediaServicesCompliance {

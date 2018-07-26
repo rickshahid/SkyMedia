@@ -1,30 +1,12 @@
 ﻿var _fileUploader, _uploadStartTime;
-function SetIndexerOptions(videoIndexerKey) {
-    if (videoIndexerKey == "") {
-        var tipText = "To enable this media processing option,<br><br>add a Video Indexer Key to your User Account Profile";
-        if ($("#videoIndexerInsight").prop("disabled") && $("#audioIndexerInsight").prop("disabled")) {
-            CreateTipTop("videoIndexerInsightOption", tipText, 25);
-            CreateTipTop("audioIndexerInsightOption", tipText, 25);
-        }
-    } else {
-        $("#videoIndexerInsight").prop("disabled", false);
-        $("#audioIndexerInsight").prop("disabled", false);
-    }
-}
 function SetStorageTip() {
     var tipText = $("#storageAccount option:selected").text();
     CreateTipTop("storageAccount", tipText);
 }
 function SetUploadOption(checkbox) {
-    switch (checkbox.id) {
-        case "videoAnalyzerPreset":
-            $("#audioAnalyzerPreset").prop("checked", false);
-            $("#audioAnalyzerPreset").prop("disabled", checkbox.checked);
-            break;
-        case "videoIndexerInsight":
-            $("#audioIndexerInsight").prop("checked", false);
-            $("#audioIndexerInsight").prop("disabled", checkbox.checked);
-            break;
+    if (checkbox.id == "videoAnalyzerPreset") {
+        $("#audioAnalyzerPreset").prop("checked", false);
+        $("#audioAnalyzerPreset").prop("disabled", checkbox.checked);
     }
 }
 function GetUploadTime() {
@@ -59,9 +41,7 @@ function CreateAsset() {
             fileNames: GetFileNames(),
             standardEncoderPreset: $("#standardEncoderPreset").prop("checked"),
             videoAnalyzerPreset: $("#videoAnalyzerPreset").prop("checked"),
-            audioAnalyzerPreset: $("#audioAnalyzerPreset").prop("checked"),
-            videoIndexerInsight: $("#videoIndexerInsight").prop("checked"),
-            audioIndexerInsight: $("#audioIndexerInsight").prop("checked")
+            audioAnalyzerPreset: $("#audioAnalyzerPreset").prop("checked")
         },
         function (entities) {
             SetCursor(false);
@@ -75,7 +55,7 @@ function CreateAsset() {
                 }
                 message = message + "Media " + entityType + " Created<br>(" + entity.name + ")";
                 if (indexId != null) {
-                    var insightType = $("#audioIndexerInsight").prop("checked") ? "Audio" : "Video";
+                    var insightType = $("#audioAnalyzerPreset").prop("checked") ? "Audio" : "Video";
                     message = message + "<br><br>" + insightType + " Indexer Insight";
                     message = message + "<br>(" + indexId + ")";
                 }

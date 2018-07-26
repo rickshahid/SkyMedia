@@ -48,7 +48,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        internal static Job Create(MediaClient mediaClient, string transformName, string jobName, string jobDescription, Priority jobPriority, string inputAssetName, string inputFileUrl, string[] outputAssetNames, string streamingPolicyName)
+        internal static Job Create(MediaClient mediaClient, string transformName, string jobName, string jobDescription, Priority jobPriority, string inputAssetName, string inputFileUrl, string streamingPolicyName)
         {
             MediaJob mediaJob = new MediaJob()
             {
@@ -56,8 +56,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 Description = jobDescription,
                 Priority = jobPriority,
                 InputAssetName = inputAssetName,
-                InputFileUrl = inputFileUrl,
-                OutputAssetNames = outputAssetNames
+                InputFileUrl = inputFileUrl
             };
             Job job = mediaClient.CreateJob(mediaClient, transformName, mediaJob);
             MediaPublish mediaPublish = new MediaPublish()
@@ -82,7 +81,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                job = Create(mediaClient, transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, null, streamingPolicyName);
+                job = Create(mediaClient, transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, streamingPolicyName);
             }
             return Json(job);
         }
@@ -105,7 +104,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
                 if (mediaPublish != null)
                 {
-                    publishMessage = MediaClient.PublishOutput(mediaPublish);
+                    publishMessage = MediaClient.PublishJobOutput(mediaPublish);
                 }
             }
             return Json(publishMessage);

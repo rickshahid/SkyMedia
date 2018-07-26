@@ -13,13 +13,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public BlobClient()
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount();
+            CloudStorageAccount storageAccount = Account.GetStorageAccount();
             _storage = storageAccount.CreateCloudBlobClient();
         }
 
         public BlobClient(MediaAccount mediaAccount, string accountName)
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount(mediaAccount, accountName);
+            CloudStorageAccount storageAccount = Account.GetStorageAccount(mediaAccount, accountName);
             _storage = storageAccount.CreateCloudBlobClient();
         }
 

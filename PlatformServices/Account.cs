@@ -1,5 +1,8 @@
+using System.IO;
 using System.Collections.Generic;
 
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
@@ -50,7 +53,8 @@ namespace AzureSkyMedia.PlatformServices
             int streamingLocatorCount = mediaClient.GetEntityCount<StreamingLocator>(MediaEntity.StreamingLocator);
             int liveEventCount = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputCount = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
-            int videoIndexerInsights = mediaClient.IndexerGetInsights().Count;
+            int indexerInsights = mediaClient.IndexerGetInsights().Count;
+            int operationCount = mediaClient.GetOperations().Length;
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(Constant.TextFormatter.NumericLong), "/account/storageAccounts" });
@@ -63,9 +67,50 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Streaming Locators", streamingLocatorCount.ToString(Constant.TextFormatter.NumericLong), "/account/streamingLocators" });
             entityCounts.Add(new string[] { "Live Events", liveEventCount.ToString(Constant.TextFormatter.NumericLong), "/account/liveEvents" });
             entityCounts.Add(new string[] { "Live Event Outputs", liveEventOutputCount.ToString(Constant.TextFormatter.NumericLong), "/account/liveEventOutputs" });
-            entityCounts.Add(new string[] { "Video Indexer Insights", videoIndexerInsights.ToString(Constant.TextFormatter.NumericLong), "/account/videoIndexerInsights" });
+            entityCounts.Add(new string[] { "Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/account/indexerInsights" });
+            entityCounts.Add(new string[] { "Operations", operationCount.ToString(Constant.TextFormatter.NumericLong), "/account/operations" });
 
             return entityCounts.ToArray();
+        }
+
+        public static Dictionary<string, string> GetStorageAccounts(string authToken)
+        {
+            Dictionary<string, string> storageAccounts = new Dictionary<string, string>();
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                IList<StorageAccount> mediaStorageAccounts = mediaClient.StorageAccounts;
+                foreach (StorageAccount mediaStorageAccount in mediaStorageAccounts)
+                {
+                    MediaStorage mediaStorage = new MediaStorage(authToken, mediaStorageAccount);
+                    string accountName = Path.GetFileName(mediaStorageAccount.Id);
+                    string accountInfo = string.Concat(accountName, mediaStorage.ToString());
+                    storageAccounts.Add(accountName, accountInfo);
+                }
+            }
+            return storageAccounts;
+        }
+
+        public static CloudStorageAccount GetStorageAccount(MediaAccount mediaAccount, string accountName)
+        {
+            CloudStorageAccount storageAccount;
+            if (mediaAccount == null)
+            {
+                string settingKey = Constant.AppSettingKey.AzureStorage;
+                string systemStorage = AppSetting.GetValue(settingKey);
+                storageAccount = CloudStorageAccount.Parse(systemStorage);
+            }
+            else
+            {
+                string accountKey = mediaAccount.StorageAccounts[accountName];
+                StorageCredentials storageCredentials = new StorageCredentials(accountName, accountKey);
+                storageAccount = new CloudStorageAccount(storageCredentials, true);
+            }
+            return storageAccount;
+        }
+
+        public static CloudStorageAccount GetStorageAccount()
+        {
+            return GetStorageAccount(null, null);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace AzureSkyMedia.PlatformServices
                     Url = sourceUrl,
                     ProtectionInfo = new StreamProtection[] { }
                 },
-                TextTracks = Track.GetMediaTracks(textTracks)
+                TextTracks = Track.GetTextTracks(textTracks)
             };
             sampleStreams.Add(sampleStream);
         }
@@ -65,7 +65,32 @@ namespace AzureSkyMedia.PlatformServices
 
             return sampleStreams.ToArray();
         }
- 
+
+        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient)
+        {
+            List<MediaStream> accountStreams = new List<MediaStream>();
+            IEnumerable<StreamingLocator> locators = GetStreamingLocators(mediaClient);
+            foreach (StreamingLocator locator in locators)
+            {
+                string playerUrl = mediaClient.GetPlayerUrl(locator);
+                if (!string.IsNullOrEmpty(playerUrl))
+                {
+                    MediaStream accountStream = new MediaStream()
+                    {
+                        Name = locator.AssetName,
+                        Source = new StreamSource()
+                        {
+                            Url = playerUrl,
+                            ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
+                        },
+                        TextTracks = Track.GetTextTracks(mediaClient, locator)
+                    };
+                    accountStreams.Add(accountStream);
+                }
+            }
+            return accountStreams.ToArray();
+        }
+
         public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, out int streamOffset, out int streamIndex, out bool endOfStreams)
         {
             endOfStreams = false;
@@ -102,9 +127,9 @@ namespace AzureSkyMedia.PlatformServices
                                 Source = new StreamSource()
                                 {
                                     Url = playerUrl,
-                                    ProtectionInfo = mediaClient.GetProtectionInfo(authToken, locator)
+                                    ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
                                 },
-                                //TextTracks = Track.GetMediaTracks(textTracks)
+                                TextTracks = Track.GetTextTracks(mediaClient, locator)
                             };
                             accountStreams.Add(accountStream);
                         }

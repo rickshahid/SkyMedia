@@ -62,7 +62,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                         if (assetPublish)
                         {
-                            mediaClient.CreateLocator(asset.Name, streamingPolicyName);
+                            mediaClient.CreateLocator(asset.Name, streamingPolicyName, null);
                         }
                     }
                 }
@@ -117,7 +117,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     case "liveEventOutputs":
                         mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentEntityName);
                         break;
-                    case "videoIndexerInsights":
+                    case "indexerInsights":
                         mediaClient.IndexerDeleteVideo(entityName, true);
                         break;
                 }
@@ -261,12 +261,22 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult VideoIndexerInsights()
+        public IActionResult IndexerInsights()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["videoIndexerInsights"] = mediaClient.IndexerGetInsights();
+                ViewData["indexerInsights"] = mediaClient.IndexerGetInsights();
+            }
+            return View();
+        }
+
+        public IActionResult Operations()
+        {
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["operations"] = mediaClient.GetOperations();
             }
             return View();
         }

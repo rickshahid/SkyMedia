@@ -5,6 +5,12 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private string GetDefaultUrl(string relativeUrl)
+        {
+            StreamingEndpoint defaultEndpoint = GetEntity<StreamingEndpoint>(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpoint);
+            return string.Concat("//", defaultEndpoint.HostName, relativeUrl);
+        }
+
         public string GetPlayerUrl(StreamingLocator locator)
         {
             string playerUrl = string.Empty;
@@ -22,13 +28,12 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (!string.IsNullOrEmpty(playerUrl))
             {
-                StreamingEndpoint defaultEndpoint = GetEntity<StreamingEndpoint>(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpoint);
-                playerUrl = string.Concat("//", defaultEndpoint.HostName, playerUrl);
+                playerUrl = GetDefaultUrl(playerUrl);
             }
             return playerUrl;
         }
 
-        public StreamingLocator CreateLocator(string assetName, string streamingPolicyName)
+        public StreamingLocator CreateLocator(string assetName, string streamingPolicyName, ContentProtection contentProtection)
         {
             string contentKeyPolicyName = null;
             if (streamingPolicyName == PredefinedStreamingPolicy.ClearKey)
@@ -38,7 +43,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             else if (streamingPolicyName == PredefinedStreamingPolicy.SecureStreaming)
             {
-                CreateContentKeyPolicyDRM();
+                CreateContentKeyPolicyDRM(contentProtection);
                 contentKeyPolicyName = Constant.Media.ContentKey.PolicyDRM;
             }
             StreamingLocator locator = new StreamingLocator(assetName, streamingPolicyName)

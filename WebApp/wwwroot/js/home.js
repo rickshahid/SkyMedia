@@ -21,16 +21,13 @@ function SetStreamNumber(streamNumber, streamIndex) {
 }
 function GetStreamName(mediaStream, streamTuner) {
     var streamName = mediaStream.name;
-    if (!streamTuner) {
-        streamName = streamName.replace("<br><br>", " ");
-    }
+    var lineBreak = streamTuner ? "<br><br>" : "<br>";
+    streamName = streamName.replace(" - ", lineBreak);
     if (mediaStream.source.protectionInfo.length > 0) {
-        if (streamTuner) {
-            streamName = streamName + "<br><br>";
-        }
+        streamName = streamName + lineBreak;
         for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
-            if (!streamTuner || i > 0) {
-                streamName = streamName + " + ";
+            if (i > 0) {
+                streamName = streamName + ", ";
             }
             streamName = streamName + mediaStream.source.protectionInfo[i].type;
         }

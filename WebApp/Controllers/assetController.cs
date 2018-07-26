@@ -24,29 +24,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             return inputAssets.ToArray();
         }
 
-        private string[] GetOutputAssetNames(string assetName, bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
-        {
-            List<string> outputAssetNames = new List<string>();
-            if (standardEncoderPreset)
-            {
-                string outputAssetName = string.Concat(assetName, Constant.Media.Job.OutputAssetSuffixEncoderStandard);
-                outputAssetNames.Add(outputAssetName);
-            }
-            if (videoAnalyzerPreset)
-            {
-                string outputAssetName = string.Concat(assetName, Constant.Media.Job.OutputAssetSuffixAnalyzerVideo);
-                outputAssetNames.Add(outputAssetName);
-            }
-            if (audioAnalyzerPreset)
-            {
-                string outputAssetName = string.Concat(assetName, Constant.Media.Job.OutputAssetSuffixAnalyzerAudio);
-                outputAssetNames.Add(outputAssetName);
-            }
-            return outputAssetNames.ToArray();
-        }
-
-        public JsonResult Create(string storageAccount, string assetName, string description, string alternateId, string[] fileNames, bool standardEncoderPreset,
-                                 bool videoAnalyzerPreset, bool audioAnalyzerPreset, bool videoIndexerInsight, bool audioIndexerInsight, string streamingPolicyName)
+        public JsonResult Create(string storageAccount, string assetName, string description, string alternateId, string[] fileNames,
+                                 bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset, string streamingPolicyName)
         {
             Asset[] inputAssets;
             List<Job> jobs = new List<Job>();
@@ -60,11 +39,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                     Job job = null;
                     if (transform != null)
                     {
-                        string[] outputAssetNames = GetOutputAssetNames(inputAsset.Name, standardEncoderPreset, videoAnalyzerPreset, audioAnalyzerPreset);
-                        job = JobController.Create(mediaClient, transform.Name, null, null, Priority.Normal, inputAsset.Name, null, outputAssetNames, streamingPolicyName);
+                        job = JobController.Create(mediaClient, transform.Name, null, null, Priority.Normal, inputAsset.Name, null, streamingPolicyName);
                         jobs.Add(job);
                     }
-                    if (videoIndexerInsight || audioIndexerInsight)
+                    if ((videoAnalyzerPreset || videoAnalyzerPreset) && mediaClient.IndexerIsEnabled())
                     {
                         bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
                         string indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, storageAccount, inputAsset, string.Empty, audioOnly);
@@ -95,11 +73,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
             }
             return Json(entityFound);
-        }
-
-        public IActionResult SpriteDev()
-        {
-            return View();
         }
 
         public IActionResult Sprite()

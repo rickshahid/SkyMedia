@@ -1,67 +1,56 @@
+using System.IO;
 using System.Collections.Generic;
 
-using Microsoft.Rest.Azure;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Track
     {
-        public static MediaTrack[] GetMediaTracks(string textTracks)
+        public static MediaTrack[] GetTextTracks(string tracks)
         {
-            List<MediaTrack> mediaTracks = new List<MediaTrack>();
-            if (!string.IsNullOrEmpty(textTracks))
+            List<MediaTrack> textTracks = new List<MediaTrack>();
+            if (!string.IsNullOrEmpty(tracks))
             {
-                string[] tracksInfo = textTracks.Split(Constant.TextDelimiter.Connection);
+                string[] tracksInfo = tracks.Split(Constant.TextDelimiter.Connection);
                 foreach (string trackInfo in tracksInfo)
                 {
                     string[] track = trackInfo.Split(Constant.TextDelimiter.Application);
-                    MediaTrack mediaTrack = new MediaTrack()
+                    MediaTrack textTrack = new MediaTrack()
                     {
                         Type = track[0],
                         Label = track[1],
                         SourceUrl = track[2]
                     };
-                    mediaTracks.Add(mediaTrack);
+                    textTracks.Add(textTrack);
                 }
             }
-            return mediaTracks.ToArray();
+            return textTracks.ToArray();
         }
 
-        //private static MediaTrack[] GetTextTracks(MediaClient mediaClient, VideoAnalyzer videoAnalyzer, IAsset asset)
-        //{
-        //    List<MediaTrack> textTracks = new List<MediaTrack>();
-        //    string indexId = VideoAnalyzer.GetIndexId(asset);
-        //    if (!string.IsNullOrEmpty(indexId))
-        //    {
-        //        string webVttUrl = videoAnalyzer.GetWebVttUrl(indexId, null);
-        //        JObject index = videoAnalyzer.GetIndex(indexId, null, false);
-        //        string languageLabel = VideoAnalyzer.GetLanguageLabel(index);
-        //        MediaTrack textTrack = new MediaTrack()
-        //        {
-        //            Type = Constant.Media.Stream.TextTrack.Captions,
-        //            Label = languageLabel,
-        //            SourceUrl = webVttUrl,
-        //        };
-        //        textTracks.Add(textTrack);
-        //    }
-        //    string[] webVttUrls = mediaClient.GetWebVttUrls(asset);
-        //    for (int i = 0; i < webVttUrls.Length; i++)
-        //    {
-        //        string webVttUrl = webVttUrls[i];
-        //        string languageLabel = GetLanguageLabel(webVttUrl);
-        //        if (!string.IsNullOrEmpty(webVttUrl))
-        //        {
-        //            MediaTrack textTrack = new MediaTrack()
-        //            {
-        //                Type = Constant.Media.Stream.TextTrack.Captions,
-        //                Label = languageLabel,
-        //                SourceUrl = webVttUrl,
-        //            };
-        //            textTracks.Add(textTrack);
-        //        }
-        //    }
-        //    return textTracks.ToArray();
-        //}
+        public static MediaTrack[] GetTextTracks(MediaClient mediaClient, StreamingLocator locator)
+        {
+            List<MediaTrack> textTracks = new List<MediaTrack>();
+            Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
+            BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
+            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+            foreach (IListBlobItem file in mediaAsset.Files)
+            {
+                string fileName = Path.GetFileName(file.Uri.ToString());
+                if (fileName == Constant.Media.Analyzer.TranscriptFile)
+                {
+                    string transcriptUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
+                    MediaTrack textTrack = new MediaTrack()
+                    {
+                        SourceUrl = transcriptUrl,
+                        Type = Constant.Media.Track.Captions,
+                        Label = Constant.Media.Track.CaptionsLabel
+                    };
+                    textTracks.Add(textTrack);
+                }
+            }
+            return textTracks.ToArray();
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public StreamProtection[] GetProtectionInfo(string authToken, StreamingLocator locator)
+        public StreamProtection[] GetProtectionInfo(string authToken, MediaClient mediaClient, StreamingLocator locator)
         {
             authToken = string.Concat("Bearer=", authToken);
             List<StreamProtection> protectionInfo = new List<StreamProtection>();
@@ -62,29 +62,26 @@ namespace AzureSkyMedia.PlatformServices
             }
             else if (locator.StreamingPolicyName == PredefinedStreamingPolicy.SecureStreaming)
             {
-                using (MediaClient mediaClient = new MediaClient(authToken))
+                ContentKeyPolicy contentKeyPolicy = mediaClient.GetEntity<ContentKeyPolicy>(MediaEntity.ContentKeyPolicy, locator.DefaultContentKeyPolicyName);
+                foreach (ContentKeyPolicyOption contentKeyPolicyOption in contentKeyPolicy.Options)
                 {
-                    ContentKeyPolicy contentKeyPolicy = mediaClient.GetEntity<ContentKeyPolicy>(MediaEntity.ContentKeyPolicy, locator.DefaultContentKeyPolicyName);
-                    foreach (ContentKeyPolicyOption contentKeyPolicyOption in contentKeyPolicy.Options)
+                    if (contentKeyPolicyOption.Configuration is ContentKeyPolicyPlayReadyConfiguration)
                     {
-                        if (contentKeyPolicyOption.Configuration is ContentKeyPolicyPlayReadyConfiguration)
+                        StreamProtection streamProtection = new StreamProtection()
                         {
-                            StreamProtection streamProtection = new StreamProtection()
-                            {
-                                Type = MediaProtection.PlayReady,
-                                AuthenticationToken = authToken
-                            };
-                            protectionInfo.Add(streamProtection);
-                        }
-                        else if (contentKeyPolicyOption.Configuration is ContentKeyPolicyWidevineConfiguration)
+                            Type = MediaProtection.PlayReady,
+                            AuthenticationToken = authToken
+                        };
+                        protectionInfo.Add(streamProtection);
+                    }
+                    else if (contentKeyPolicyOption.Configuration is ContentKeyPolicyWidevineConfiguration)
+                    {
+                        StreamProtection streamProtection = new StreamProtection()
                         {
-                            StreamProtection streamProtection = new StreamProtection()
-                            {
-                                Type = MediaProtection.Widevine,
-                                AuthenticationToken = authToken
-                            };
-                            protectionInfo.Add(streamProtection);
-                        }
+                            Type = MediaProtection.Widevine,
+                            AuthenticationToken = authToken
+                        };
+                        protectionInfo.Add(streamProtection);
                     }
                 }
             }

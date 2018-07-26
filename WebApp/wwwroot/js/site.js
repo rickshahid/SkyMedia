@@ -28,14 +28,12 @@ function SetLayout() {
     CreateTipLeft("appServiceFunctions", "Azure Function Apps");
     CreateTipLeft("eventGrid", "Azure Event Grid");
     CreateTipTop("mediaAccount", "Azure Media Services<br><br>Account Name");
-    CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
     CreateTipTop("mediaUpload", "Upload");
     CreateTipTop("mediaTransform", "Transform");
     CreateTipTop("mediaJob", "Job");
+    CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
     CreateTipTop("mediaSearch", "Search");
-    CreateTipTop("mediaTrain", "Train");
     CreateTipTop("mediaCompose", "Compose");
-    CreateTipTop("mediaMonitor", "Monitor");
     CreateTipTop("mediaBrowse", "Browse");
     CreateTipBottom("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {

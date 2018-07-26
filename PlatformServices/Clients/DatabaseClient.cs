@@ -184,7 +184,7 @@ namespace AzureSkyMedia.PlatformServices
             if (document != null)
             {
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                _cosmos.DeleteDocumentAsync(documentUri);
+                ResourceResponse<Document> response = _cosmos.DeleteDocumentAsync(documentUri).Result;
             }
         }
 

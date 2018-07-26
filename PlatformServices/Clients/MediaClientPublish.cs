@@ -7,8 +7,6 @@ using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Azure.Management.EventGrid;
 using Microsoft.Azure.Management.EventGrid.Models;
 
-using Newtonsoft.Json.Linq;
-
 using Twilio;
 using Twilio.Types;
 using Twilio.Rest.Api.V2010.Account;
@@ -141,7 +139,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static string PublishOutput(MediaPublish mediaPublish)
+        public static string PublishJobOutput(MediaPublish mediaPublish)
         {
             string publishMessage = string.Empty;
             using (MediaClient mediaClient = new MediaClient(null, mediaPublish.MediaAccount))
@@ -161,52 +159,13 @@ namespace AzureSkyMedia.PlatformServices
                         StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
                         if (locator == null)
                         {
-                            locator = mediaClient.CreateLocator(jobOutput.AssetName, streamingPolicyName);
+                            locator = mediaClient.CreateLocator(jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
                         }
                     }
                     publishMessage = SendNotificationMessage(mediaPublish, job, null, null);
                 }
             }
             return publishMessage;
-        }
-
-        public static void PurgePublish()
-        {
-            //using (DatabaseClient databaseClient = new DatabaseClient())
-            //{
-            //    string collectionId = Constant.Database.Collection.OutputInsight;
-            //    JObject[] documents = databaseClient.GetDocuments(collectionId);
-            //    foreach (JObject document in documents)
-            //    {
-            //        MediaAccount mediaAccount = GetMediaAccount(document);
-            //        using MediaClient mediaClient = new MediaClient(null, mediaAccount);
-            //        string assetId = document["id"].ToString();
-            //        IAsset asset = mediaClient.GetEntityById(MediaEntity.Asset, assetId) as IAsset;
-            //        if (asset == null)
-            //        {
-            //            databaseClient.DeleteDocument(collectionId, assetId);
-            //        }
-            //    }
-
-            //    collectionId = Constant.Database.Collection.OutputPublish;
-            //    documents = databaseClient.GetDocuments(collectionId);
-            //    foreach (JObject document in documents)
-            //    {
-            //        MediaAccount mediaAccount = GetMediaAccount(document);
-            //        using MediaClient mediaClient = new MediaClient(null, mediaAccount);
-            //        string jobId = document["id"].ToString();
-            //        IJob job = mediaClient.GetEntityById(MediaEntity.Job, jobId) as IJob;
-            //        if (job == null)
-            //        {
-            //            JToken taskIds = document["TaskIds"];
-            //            foreach (JToken taskId in taskIds)
-            //            {
-            //                databaseClient.DeleteDocument(collectionId, taskId.ToString());
-            //            }
-            //            databaseClient.DeleteDocument(collectionId, jobId);
-            //        }
-            //    }
-            //}
         }
     }
 }

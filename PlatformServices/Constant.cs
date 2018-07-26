@@ -214,47 +214,6 @@ namespace AzureSkyMedia.PlatformServices
                 public const string NameDelimiter = " - ";
             }
 
-            //public struct ContentProtection
-            //{
-            //    public const int EncryptionKeyByteCount = 16;
-
-            //    public const string ContentKeyNameAes = "AES Key";
-            //    public const string ContentKeyNameDrmPlayReady = "DRM (PlayReady) Key";
-            //    public const string ContentKeyNameDrmWidevine = "DRM (Widevine) Key";
-            //    public const string ContentKeyNameDrmPlayReadyWidevine = "DRM (PlayReady & Widevine) Key";
-
-            //    public const string AuthPolicyName = " Auth Policy";
-            //    public const string AuthPolicyOpenRestrictionName = " Open Restriction";
-            //    public const string AuthPolicyTokenRestrictionName = " Web Token Restriction";
-            //    public const string AuthPolicyAddressRestrictionName = " IP Address Restriction";
-            //    public const string AuthPolicyOptionNameAes = " Option";
-            //    public const string AuthPolicyOptionNameDrmPlayReady = " Option PlayReady";
-            //    public const string AuthPolicyOptionNameDrmWidevine = " Option Widevine";
-
-            //    public const string AuthAddressRangeXml = "<Allowed addressType=\"IPv4\"><AddressRange start=\"{0}\" end=\"{1}\" /></Allowed>";
-            //}
-
-            //public struct DeliveryProtocol
-            //{
-            //    public const AssetDeliveryProtocol Aes = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.HLS |
-            //        AssetDeliveryProtocol.SmoothStreaming;
-
-            //    public const AssetDeliveryProtocol DrmPlayReady = AssetDeliveryProtocol.Dash | AssetDeliveryProtocol.SmoothStreaming;
-
-            //    public const AssetDeliveryProtocol DrmWidevine = AssetDeliveryProtocol.Dash;
-
-            //    public const AssetDeliveryProtocol DrmFairPlay = AssetDeliveryProtocol.HLS;
-            //}
-
-            //public struct DeliveryPolicy
-            //{
-            //    public const string DecryptionStorage = "Dynamic Storage Decryption";
-            //    public const string EncryptionAes = "Dynamic AES Encryption";
-            //    public const string EncryptionDrmPlayReady = "Dynamic DRM (PlayReady) Encryption";
-            //    public const string EncryptionDrmWidevine = "Dynamic DRM (Widevine) Encryption";
-            //    public const string EncryptionDrmPlayReadyWidevine = "Dynamic DRM (PlayReady & Widevine) Encryption";
-            //}
-
             public struct Transform
             {
                 public const string PresetNameDelimiter = ", ";
@@ -269,6 +228,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string OutputAssetSuffixAnalyzerAudio = " (AAI)";
             }
 
+            public struct Analyzer
+            {
+                public const string TranscriptFile = "transcript.vtt";
+            }
 
             //public struct FileExtension
             //{
@@ -303,14 +266,16 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string DefaultEndpoint = "default";
                 public const int TunerPageSize = 10;
+            }
 
-                //public struct TextTrack
-                //{
-                //    public const string Captions = "captions";
+            public struct Track
+            {
+                public const string Captions = "captions";
+                public const string CaptionsLabel = "Captions On";
+
                 //    public const string Subtitles = "subtitles";
                 //    public const string Thumbnails = "thumbnails";
                 //    public const string ThumbnailsData = "#xywh=";
-                //}
             }
         }
 

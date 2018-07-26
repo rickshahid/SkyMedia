@@ -12,19 +12,19 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult Block(string name, int chunk, int chunks, string storageAccount, string contentType)
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
-            string containerName = Constant.Storage.Blob.Container.FileUpload;
+            User authUser = new User(authToken);
+            BlobClient blobClient = new BlobClient(authUser.MediaAccount, storageAccount);
             Stream blockStream = Request.Form.Files[0].OpenReadStream();
-            Storage.UploadBlock(authToken, storageAccount, containerName, blockStream, name, chunk, chunks, contentType);
+            string containerName = Constant.Storage.Blob.Container.FileUpload;
+            blobClient.UploadBlock(blockStream, containerName, name, chunk, chunks, contentType);
             return Json(chunk);
         }
 
         public IActionResult Index()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
-            User authUser = new User(authToken);
-            Dictionary<string, string> storageAccounts = Storage.GetAccounts(authToken);
+            Dictionary<string, string> storageAccounts = Account.GetStorageAccounts(authToken);
             ViewData["storageAccount"] = HomeController.GetListItems(storageAccounts);
-            ViewData["videoIndexerKey"] = authUser.MediaAccount.VideoIndexerKey;
             return View();
         }
     }

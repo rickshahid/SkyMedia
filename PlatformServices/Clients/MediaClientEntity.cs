@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
 using Microsoft.Rest.Azure.OData;
@@ -222,6 +223,12 @@ namespace AzureSkyMedia.PlatformServices
                     _media.LiveOutputs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     break;
             }
+        }
+
+        public Operation[] GetOperations()
+        {
+            IPage<Operation> operations = _media.Operations.List();
+            return operations.ToArray();
         }
     }
 }

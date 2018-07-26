@@ -11,7 +11,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public QueueClient()
         {
-            CloudStorageAccount storageAccount = Storage.GetAccount();
+            CloudStorageAccount storageAccount = Account.GetStorageAccount();
             _storage = storageAccount.CreateCloudQueueClient();
         }
 

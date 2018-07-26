@@ -58,17 +58,21 @@ function GetParentColumns(gridId, nameLabel) {
                     name: "properties.alternateId",
                     align: "center",
                     width: dateTimeWidth
-                },
-                {
-                    label: "Created",
-                    name: "properties.created",
-                    formatter: FormatDateTime,
-                    align: "center",
-                    width: dateTimeWidth
                 }
             ];
             break;
-        case "videoIndexerInsights":
+        case "streamingPolicies":
+            columns = [
+                {
+                    label: nameLabel,
+                    name: "name",
+                    formatter: FormatName,
+                    align: "center",
+                    width: 400
+                }
+            ];
+            break;
+        case "indexerInsights":
             columns = [
                 {
                     label: "Index Id",
@@ -85,6 +89,28 @@ function GetParentColumns(gridId, nameLabel) {
                 }
             ];
             break;
+        case "operations":
+            columns = [
+                {
+                    label: "Operation",
+                    name: "display.operation",
+                    align: "center",
+                    width: 400
+                },
+                {
+                    label: "Resource",
+                    name: "display.resource",
+                    align: "center",
+                    width: 250
+                },
+                {
+                    label: "Description",
+                    name: "display.description",
+                    align: "center",
+                    width: 600
+                }
+            ];
+            break;
         default:
             columns = [
                 {
@@ -93,20 +119,22 @@ function GetParentColumns(gridId, nameLabel) {
                     formatter: FormatName,
                     align: "center",
                     width: nameWidth
-                },
-                {
-                    label: "Created",
-                    name: "properties.created",
-                    formatter: FormatDateTime,
-                    align: "center",
-                    width: dateTimeWidth
                 }
             ];
     }
+    var created = {
+        label: "Created",
+        name: "properties.created",
+        formatter: FormatDateTime,
+        align: "center",
+        width: dateTimeWidth
+    };
+    columns.splice(columns.length, 0, created);
     if (gridId != "storageAccounts" &&
         gridId != "streamingPolicies" &&
         gridId != "streamingLocators" &&
-        gridId != "videoIndexerInsights") {
+        gridId != "indexerInsights" &&
+        gridId != "operations") {
         var modified = {
             label: "Modified",
             name: "properties.lastModified",
@@ -156,7 +184,7 @@ function GetParentColumns(gridId, nameLabel) {
             columns.splice(1, 0, streamingPolicyName, startTime, endTime);
             break;
     }
-    if (gridId != "storageAccounts") {
+    if (gridId != "storageAccounts" && gridId != "operations") {
         var actions = {
             label: "Actions",
             formatter: FormatActions,
@@ -242,6 +270,8 @@ function FormatName(value, grid, row) {
     if (description != null) {
         value = "<span onclick=DisplayMessage('Description','" + description + "')>" + value + "</span>";
     }
+    value = value.replace("Microsoft.Media/mediaservices", "");
+    value = value.replace("Microsoft.Media", "");
     return value;
 }
 function FormatValue(value, grid, row) {
@@ -270,7 +300,7 @@ function FormatRegions(value, grid, row) {
 }
 function FormatActions(value, grid, row) {
     var actionsHtml = "";
-    var entityName = grid.gid == "videoIndexerInsights" ? row.id : row.name;
+    var entityName = grid.gid == "indexerInsights" ? row.id : row.name;
     var entityType = GetEntityType();
     if (entityName.indexOf("Predefined_") > -1) {
         actionsHtml = "N/A";
@@ -279,8 +309,8 @@ function FormatActions(value, grid, row) {
         var publishHtml = "";
         if (grid.gid == "transformJobs") {
             switch (row["properties.state"]) {
-                case "Scheduled":
                 case "Queued":
+                case "Scheduled":
                 case "Processing":
                     var onCancel = "CancelJob('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
                     cancelHtml = "<button id='" + row.id + "_cancel' class='siteButton' onclick=" + onCancel + ">";

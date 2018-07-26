@@ -20,9 +20,6 @@
         <td>
             <partial name="SiteButton" model='new SiteButton { ClientId = "mediaJob", ImageFile = "MediaJob.png", RelativeUrl = "/job" }' />
         </td>
-        <td>
-            <partial name="SiteButton" model='new SiteButton { ClientId = "mediaSearch", ImageFile = "MediaSearch.png", RelativeUrl = "/search" }' />
-        </td>
     }
         <td>
             <partial name="SiteButton" model='new SiteButton { ClientId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetStreamTuner(false)" }' />
@@ -42,13 +39,10 @@
     @if (ViewData.ContainsKey("accountName"))
     {
         <td>
-            <partial name="SiteButton" model='new SiteButton { ClientId = "mediaTrain", ImageFile = "MediaTrain.png", RelativeUrl = "/train" }' />
+            <partial name="SiteButton" model='new SiteButton { ClientId = "mediaSearch", ImageFile = "MediaSearch.png", RelativeUrl = "/search" }' />
         </td>
         <td>
             <partial name="SiteButton" model='new SiteButton { ClientId = "mediaCompose", ImageFile = "MediaCompose.png", RelativeUrl = "/compose" }' />
-        </td>
-        <td>
-            <partial name="SiteButton" model='new SiteButton { ClientId = "mediaMonitor", ImageFile = "MediaMonitor.png", RelativeUrl = "/monitor" }' />
         </td>
         <td>
             <partial name="SiteButton" model='new SiteButton { ClientId = "mediaBrowse", ImageFile = "MediaBrowse.png", RelativeUrl = "/browse" }' />

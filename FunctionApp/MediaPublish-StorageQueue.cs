@@ -21,7 +21,7 @@ namespace AzureSkyMedia.FunctionApp
                 MediaPublish mediaPublish = JsonConvert.DeserializeObject<MediaPublish>(message);
                 if (mediaPublish != null)
                 {
-                    string publishMessage = MediaClient.PublishOutput(mediaPublish);
+                    string publishMessage = MediaClient.PublishJobOutput(mediaPublish);
                     log.Info($"Publish Message: {publishMessage}");
                 }
             }
