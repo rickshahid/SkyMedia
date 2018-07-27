@@ -17,12 +17,12 @@ namespace AzureSkyMedia.PlatformServices
             ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, locator.Name);
             foreach (StreamingPath streamingPath in paths.StreamingPaths)
             {
-                if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count > 0)
+                if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count == 1)
                 {
                     playerUrl = streamingPath.Paths[0];
                 }
             }
-            if (string.IsNullOrEmpty(playerUrl) && paths.DownloadPaths.Count > 0)
+            if (string.IsNullOrEmpty(playerUrl) && paths.DownloadPaths.Count == 1)
             {
                 playerUrl = paths.DownloadPaths[0];
             }

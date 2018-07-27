@@ -334,6 +334,16 @@ body {
     width: 100%;
 }
 
+.videoClipper {
+    width: 1080px;
+}
+
+.clipLoader {
+    text-align: center;
+    font-size: large;
+    margin-top: 20px;
+}
+
 #underConstruction {
     margin-top: 10px;
 }
