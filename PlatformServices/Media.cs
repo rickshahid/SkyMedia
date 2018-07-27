@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -8,18 +7,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
-        private static int OrderByCreated(StreamingLocator leftItem, StreamingLocator rightItem)
-        {
-            return DateTime.Compare(leftItem.Created, rightItem.Created);
-        }
-
-        private static IEnumerable<StreamingLocator> GetStreamingLocators(MediaClient mediaClient)
-        {
-            StreamingLocator[] locators = mediaClient.GetEntities<StreamingLocator>(MediaEntity.StreamingLocator).ToArray();
-            Array.Sort<StreamingLocator>(locators, OrderByCreated);
-            return locators;
-        }
-
         private static MediaStream GetMediaStream(string authToken, MediaClient mediaClient, StreamingLocator locator)
         {
             MediaStream mediaStream = null;
@@ -88,7 +75,7 @@ namespace AzureSkyMedia.PlatformServices
         public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient)
         {
             List<MediaStream> accountStreams = new List<MediaStream>();
-            IEnumerable<StreamingLocator> locators = GetStreamingLocators(mediaClient);
+            IEnumerable<StreamingLocator> locators = MediaClient.GetLocators(mediaClient);
             foreach (StreamingLocator locator in locators)
             {
                 string playerUrl = mediaClient.GetPlayerUrl(locator);
@@ -117,7 +104,7 @@ namespace AzureSkyMedia.PlatformServices
             int pageSize = Constant.Media.Stream.TunerPageSize;
             streamOffset = ((streamNumber - 1) / pageSize) * pageSize;
             streamIndex = (streamNumber - 1) % pageSize;
-            IEnumerable<StreamingLocator> locators = GetStreamingLocators(mediaClient);
+            IEnumerable<StreamingLocator> locators = MediaClient.GetLocators(mediaClient);
             int locatorsCount = locators.Count();
             if (locatorsCount > 0)
             {
@@ -160,7 +147,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 else
                 {
-                    locators = GetStreamingLocators(mediaClient);
+                    locators = MediaClient.GetLocators(mediaClient);
                 }
                 locators = locators.Skip(skipCount);
                 if (takeCount > 0)
