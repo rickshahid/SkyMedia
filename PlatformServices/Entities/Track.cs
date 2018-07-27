@@ -2,7 +2,7 @@
     
 namespace AzureSkyMedia.PlatformServices
 {
-    public class MediaTrack
+    public class TextTrack
     {
         [JsonProperty(PropertyName = "kind")]
         public string Type { get; set; }

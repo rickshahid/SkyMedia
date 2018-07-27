@@ -62,7 +62,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                         if (assetPublish)
                         {
-                            mediaClient.CreateLocator(asset.Name, streamingPolicyName, null);
+                            mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
                         }
                     }
                 }

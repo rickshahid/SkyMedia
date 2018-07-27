@@ -230,6 +230,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Analyzer
             {
+                public const string Transcript = "Transcript";
                 public const string TranscriptFile = "transcript.vtt";
             }
 
@@ -270,12 +271,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Track
             {
-                public const string Captions = "captions";
+                public const string CaptionsType = "captions";
                 public const string CaptionsLabel = "Captions On";
-
-                //    public const string Subtitles = "subtitles";
-                //    public const string Thumbnails = "thumbnails";
-                //    public const string ThumbnailsData = "#xywh=";
             }
         }
 

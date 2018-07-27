@@ -1,23 +1,22 @@
-using System.IO;
 using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Track
     {
-        public static MediaTrack[] GetTextTracks(string tracks)
+        public static TextTrack[] GetTextTracks(string tracks)
         {
-            List<MediaTrack> textTracks = new List<MediaTrack>();
+            List<TextTrack> textTracks = new List<TextTrack>();
             if (!string.IsNullOrEmpty(tracks))
             {
                 string[] tracksInfo = tracks.Split(Constant.TextDelimiter.Connection);
                 foreach (string trackInfo in tracksInfo)
                 {
                     string[] track = trackInfo.Split(Constant.TextDelimiter.Application);
-                    MediaTrack textTrack = new MediaTrack()
+                    TextTrack textTrack = new TextTrack()
                     {
                         Type = track[0],
                         Label = track[1],
@@ -29,23 +28,22 @@ namespace AzureSkyMedia.PlatformServices
             return textTracks.ToArray();
         }
 
-        public static MediaTrack[] GetTextTracks(MediaClient mediaClient, StreamingLocator locator)
+        public static TextTrack[] GetTextTracks(MediaClient mediaClient, string assetName)
         {
-            List<MediaTrack> textTracks = new List<MediaTrack>();
-            Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
-            BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
+            List<TextTrack> textTracks = new List<TextTrack>();
+            Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
             MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
-            foreach (IListBlobItem file in mediaAsset.Files)
+            foreach (string fileName in mediaAsset.FileNames)
             {
-                string fileName = Path.GetFileName(file.Uri.ToString());
                 if (fileName == Constant.Media.Analyzer.TranscriptFile)
                 {
-                    string transcriptUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
-                    MediaTrack textTrack = new MediaTrack()
+                    string locatorName = string.Concat(assetName, Constant.Media.Asset.NameDelimiter, Constant.Media.Analyzer.Transcript);
+                    StreamingLocator locator = mediaClient.CreateLocator(locatorName, assetName, PredefinedStreamingPolicy.DownloadOnly, null);
+                    TextTrack textTrack = new TextTrack()
                     {
-                        SourceUrl = transcriptUrl,
-                        Type = Constant.Media.Track.Captions,
-                        Label = Constant.Media.Track.CaptionsLabel
+                        Type = Constant.Media.Track.CaptionsType,
+                        Label = Constant.Media.Track.CaptionsLabel,
+                        SourceUrl = mediaClient.GetDownloadUrl(locator, fileName)
                     };
                     textTracks.Add(textTrack);
                 }

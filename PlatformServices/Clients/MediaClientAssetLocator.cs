@@ -33,25 +33,35 @@ namespace AzureSkyMedia.PlatformServices
             return playerUrl;
         }
 
-        public StreamingLocator CreateLocator(string assetName, string streamingPolicyName, ContentProtection contentProtection)
+        public string GetDownloadUrl(StreamingLocator locator, string fileName)
         {
-            string contentKeyPolicyName = null;
-            if (streamingPolicyName == PredefinedStreamingPolicy.ClearKey)
+            string assetUrl = string.Concat("/", locator.StreamingLocatorId.ToString(), "/", fileName);
+            return GetDefaultUrl(assetUrl);
+        }
+
+        public StreamingLocator CreateLocator(string locatorName, string assetName, string streamingPolicyName, ContentProtection contentProtection)
+        {
+            StreamingLocator locator = _media.StreamingLocators.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, locatorName);
+            if (locator == null)
             {
-                CreateContentKeyPolicyAES();
-                contentKeyPolicyName = Constant.Media.ContentKey.PolicyAES;
+                string contentKeyPolicyName = null;
+                if (streamingPolicyName == PredefinedStreamingPolicy.ClearKey)
+                {
+                    CreateContentKeyPolicyAES();
+                    contentKeyPolicyName = Constant.Media.ContentKey.PolicyAES;
+                }
+                else if (streamingPolicyName == PredefinedStreamingPolicy.SecureStreaming)
+                {
+                    CreateContentKeyPolicyDRM(contentProtection);
+                    contentKeyPolicyName = Constant.Media.ContentKey.PolicyDRM;
+                }
+                locator = new StreamingLocator(assetName, streamingPolicyName)
+                {
+                    DefaultContentKeyPolicyName = contentKeyPolicyName
+                };
+                locator = _media.StreamingLocators.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, locatorName, locator);
             }
-            else if (streamingPolicyName == PredefinedStreamingPolicy.SecureStreaming)
-            {
-                CreateContentKeyPolicyDRM(contentProtection);
-                contentKeyPolicyName = Constant.Media.ContentKey.PolicyDRM;
-            }
-            StreamingLocator locator = new StreamingLocator(assetName, streamingPolicyName)
-            {
-                DefaultContentKeyPolicyName = contentKeyPolicyName
-            };
-            _media.StreamingLocators.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);
-            return _media.StreamingLocators.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, locator);
+            return locator;
         }
     }
 }

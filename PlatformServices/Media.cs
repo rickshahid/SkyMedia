@@ -83,7 +83,7 @@ namespace AzureSkyMedia.PlatformServices
                             Url = playerUrl,
                             ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
                         },
-                        TextTracks = Track.GetTextTracks(mediaClient, locator)
+                        TextTracks = Track.GetTextTracks(mediaClient, locator.AssetName)
                     };
                     accountStreams.Add(accountStream);
                 }
@@ -129,7 +129,7 @@ namespace AzureSkyMedia.PlatformServices
                                     Url = playerUrl,
                                     ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
                                 },
-                                TextTracks = Track.GetTextTracks(mediaClient, locator)
+                                TextTracks = Track.GetTextTracks(mediaClient, locator.AssetName)
                             };
                             accountStreams.Add(accountStream);
                         }

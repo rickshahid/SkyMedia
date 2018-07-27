@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 using Microsoft.Rest;
 using Microsoft.Azure.Management.Media;
@@ -109,34 +108,27 @@ namespace AzureSkyMedia.PlatformServices
 
         public static void SetPublishEvent(string authToken)
         {
-            try
+            EventSubscription eventSubscription = new EventSubscription(name: Constant.Media.Publish.EventTriggerName)
             {
-                EventSubscription eventSubscription = new EventSubscription(name: Constant.Media.Publish.EventTriggerName)
+                Destination = new WebHookEventSubscriptionDestination()
                 {
-                    Destination = new WebHookEventSubscriptionDestination()
-                    {
-                        EndpointUrl = AppSetting.GetValue(Constant.AppSettingKey.MediaPublishUrl)
-                    },
-                    Filter = new EventSubscriptionFilter()
-                    {
-                        IncludedEventTypes = Constant.Media.Publish.EventTriggerTypes
-                    }
-                };
-
-                TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
-                EventGridManagementClient eventGridClient = new EventGridManagementClient(azureToken)
+                    EndpointUrl = AppSetting.GetValue(Constant.AppSettingKey.MediaPublishUrl)
+                },
+                Filter = new EventSubscriptionFilter()
                 {
-                    SubscriptionId = subscriptionId
-                };
+                    IncludedEventTypes = Constant.Media.Publish.EventTriggerTypes
+                }
+            };
 
-                User authUser = new User(authToken);
-                string eventScope = authUser.MediaAccount.ResourceId;
-                eventSubscription = eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
-            }
-            catch (Exception ex)
+            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
+            EventGridManagementClient eventGridClient = new EventGridManagementClient(azureToken)
             {
-                // Log exception in Application Insights
-            }
+                SubscriptionId = subscriptionId
+            };
+
+            User authUser = new User(authToken);
+            string eventScope = authUser.MediaAccount.ResourceId;
+            eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
         public static string PublishJobOutput(MediaPublish mediaPublish)
@@ -159,7 +151,7 @@ namespace AzureSkyMedia.PlatformServices
                         StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
                         if (locator == null)
                         {
-                            locator = mediaClient.CreateLocator(jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
+                            mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
                         }
                     }
                     publishMessage = SendNotificationMessage(mediaPublish, job, null, null);

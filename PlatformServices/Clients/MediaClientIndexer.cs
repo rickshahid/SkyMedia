@@ -1,9 +1,6 @@
-using System.IO;
 using System.Web;
-using System.Linq;
 using System.Net.Http;
 
-using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
@@ -15,10 +12,8 @@ namespace AzureSkyMedia.PlatformServices
         private string GetDownloadUrl(MediaAccount mediaAccount, string storageAccount, Asset asset)
         {
             MediaAsset mediaAsset = new MediaAsset(mediaAccount, asset);
-            IListBlobItem assetFileItem = mediaAsset.Files.First();
-            string fileName = Path.GetFileName(assetFileItem.Uri.ToString());
             BlobClient blobClient = new BlobClient(mediaAccount, storageAccount);
-            return blobClient.GetDownloadUrl(asset.Container, fileName, false);
+            return blobClient.GetDownloadUrl(asset.Container, mediaAsset.FileNames[0], false);
         }
 
         private string GetRequestUrl(string relativePath, bool accessToken)
