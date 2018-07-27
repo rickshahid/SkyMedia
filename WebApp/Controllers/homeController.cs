@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Azure.Management.Media.Models;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -12,6 +14,22 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private static bool IsStreamingEnabled(MediaClient mediaClient)
+        {
+            bool streamingEnabled = false;
+            IPage<StreamingEndpoint> streamingEndpoints = mediaClient.GetEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
+            foreach (StreamingEndpoint streamingEndpoint in streamingEndpoints)
+            {
+                if (streamingEndpoint.ResourceState == StreamingEndpointResourceState.Starting ||
+                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Running ||
+                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Scaling)
+                {
+                    streamingEnabled = true;
+                }
+            }
+            return streamingEnabled;
+        }
+
         //public JsonResult Metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
         //{
         //    JObject metadata;
@@ -46,31 +64,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return listItems.ToArray();
         }
 
-        internal static SelectListItem[] GetSpokenLanguages(bool videoIndexer, bool includeEmpty)
-        {
-            List<SelectListItem> spokenLanguages = new List<SelectListItem>();
-            if (includeEmpty)
-            {
-                SelectListItem spokenLanguage = new SelectListItem()
-                {
-                    Text = string.Empty,
-                    Value = string.Empty
-                };
-                spokenLanguages.Add(spokenLanguage);
-            }
-            Dictionary<string, string> languages = Language.GetLanguages(videoIndexer);
-            foreach (KeyValuePair<string, string> language in languages)
-            {
-                SelectListItem spokenLanguage = new SelectListItem()
-                {
-                    Text = language.Value,
-                    Value = language.Key
-                };
-                spokenLanguages.Add(spokenLanguage);
-            }
-            return spokenLanguages.ToArray();
-        }
-
         internal static void SetViewData(string authToken, ViewDataDictionary viewData)
         {
         //    User authUser = new User(authToken);
@@ -79,8 +72,6 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    viewData["encoderConfig1"] = new List<SelectListItem>();
         //    viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccount.Name, true);
         //    viewData["encoderPremiumPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderPremium, authUser.MediaAccount.Name, false);
-        //    viewData["audioAnalyzerLanguages"] = GetSpokenLanguages(false, false);
-        //    viewData["videoAnalyzerLanguages"] = GetSpokenLanguages(true, false);
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
@@ -158,7 +149,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     using (MediaClient mediaClient = new MediaClient(authToken))
                     {
-                        if (!Media.IsStreamingEnabled(mediaClient))
+                        if (!IsStreamingEnabled(mediaClient))
                         {
                             accountMessage = Constant.Message.StreamingEndpointNotStarted;
                         }

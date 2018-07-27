@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using Microsoft.Rest.Azure;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
@@ -178,22 +177,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return clipperStreams.ToArray();
-        }
-
-        public static bool IsStreamingEnabled(MediaClient mediaClient)
-        {
-            bool streamingEnabled = false;
-            IPage<StreamingEndpoint> streamingEndpoints = mediaClient.GetEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
-            foreach (StreamingEndpoint streamingEndpoint in streamingEndpoints)
-            {
-                if (streamingEndpoint.ResourceState == StreamingEndpointResourceState.Starting ||
-                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Running ||
-                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Scaling)
-                {
-                    streamingEnabled = true;
-                }
-            }
-            return streamingEnabled;
         }
     }
 }
