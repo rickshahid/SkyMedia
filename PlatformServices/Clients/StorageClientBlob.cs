@@ -30,6 +30,12 @@ namespace AzureSkyMedia.PlatformServices
             return container;
         }
 
+        public CloudBlobDirectory GetBlobDirectory(string containerName, string directoryPath)
+        {
+            CloudBlobContainer container = GetBlobContainer(containerName);
+            return container.GetDirectoryReference(directoryPath);
+        }
+
         public CloudBlockBlob GetBlockBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
         {
             CloudBlockBlob blob;

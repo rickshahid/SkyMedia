@@ -1,4 +1,4 @@
-﻿var _authToken, _mediaStreams, _streamNumber, _streamIndex, _encoderConfig, _assetIds, _storageCdnUrl;
+﻿var _authToken, _mediaStreams, _streamNumber, _encoderConfig, _assetIds, _storageCdnUrl;
 function SetCursor(isBusy) {
     if (isBusy) {
         $("body").css("cursor", "wait");
@@ -123,8 +123,10 @@ function SetPlayerSpinner(visible) {
         $(".vjs-loading-spinner").hide();
     }
 }
-function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
-    mediaPlayer.autoplay(autoPlay);
+function SetPlayerContent(mediaPlayer, mediaStream) {
+    $("#mediaStreamLeft").prop("disabled", true);
+    $("#mediaStreamRight").prop("disabled", true);
+    $("#streamTuner").slider("option", "disabled", true);
     if (mediaStream.source.protectionInfo.length > 0 && window.location.href.indexOf("auth=off") == -1) {
         mediaPlayer.src(
             [{
@@ -140,12 +142,5 @@ function SetPlayerContent(mediaPlayer, mediaStream, languageCode, autoPlay) {
             }],
             mediaStream.textTracks
         );
-    }
-    if (languageCode != "") {
-        for (var i = 0; i < mediaPlayer.textTracks_.length; i++) {
-            if (mediaPlayer.textTracks_.tracks_[i].language == languageCode) {
-                mediaPlayer.textTracks_.tracks_[i].mode = "showing";
-            }
-        }
     }
 }

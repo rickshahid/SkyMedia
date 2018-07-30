@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
@@ -17,6 +19,31 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class AccountController : Controller
     {
+        private string GetAssetName(CloudBlobDirectory assetDirectory)
+        {
+            string assetName = string.Empty;
+            IListBlobItem[] assetFiles = assetDirectory.ListBlobsSegmentedAsync(null).Result.Results.ToArray();
+            if (assetFiles.Length == 1)
+            {
+                assetName = assetFiles[0].Uri.ToString();
+            }
+            else
+            {
+                foreach (IListBlobItem assetFile in assetFiles)
+                {
+                    if (assetFile.Uri.ToString().EndsWith(Constant.Media.FileExtension.StreamManifest))
+                    {
+                        assetName = assetFile.Uri.ToString();
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(assetName))
+            {
+                assetName = Path.GetFileNameWithoutExtension(assetName);
+            }
+            return assetName;
+        }
+
         private void SetStyleHost()
         {
             ViewData["cssHost"] = string.Concat(Request.Scheme, "://", Request.Host.Value);
@@ -45,23 +72,32 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
+                    BlobClient sourceBlobClient = new BlobClient();
                     string storageAccount = Path.GetFileName(mediaClient.PrimaryStorage.Id);
-                    BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
-                    string assetPath = Path.Combine(Directory.GetCurrentDirectory(), Constant.WebModels, Constant.Media.Asset.ModelDirectory, assetType);
-                    string[] assetFilePaths = Directory.GetFiles(assetPath);
-                    string streamingPolicyName = assetType == Constant.Media.Asset.SingleBitrate ? PredefinedStreamingPolicy.DownloadOnly : PredefinedStreamingPolicy.ClearStreamingOnly;
+                    BlobClient mediaBlobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
                     for (int i = 1; i <= assetCount; i++)
                     {
-                        string assetId = string.Concat(assetType, Constant.Media.Asset.NameDefault, i.ToString());
-                        Asset asset = mediaClient.CreateAsset(storageAccount, assetId, assetId, assetId);
-                        foreach (string assetFilePath in assetFilePaths)
+                        int assetIndex = i % 2 == 0 ? 2 : i % 2;
+                        string containerName = Constant.Storage.Blob.Container.MediaServices;
+                        string directoryPath = string.Concat(assetType, "/", assetIndex.ToString());
+                        CloudBlobDirectory sourceDirectory = sourceBlobClient.GetBlobDirectory(containerName, directoryPath);
+                        string assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, GetAssetName(sourceDirectory));
+                        Asset asset = mediaClient.CreateAsset(storageAccount, assetName);
+                        IListBlobItem[] sourceFiles = sourceDirectory.ListBlobsSegmentedAsync(null).Result.Results.ToArray();
+                        List<Task> uploadTasks = new List<Task>();
+                        foreach (IListBlobItem sourceFile in sourceFiles)
                         {
-                            string fileName = Path.GetFileName(assetFilePath);
-                            CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, fileName);
-                            assetBlob.UploadFromFileAsync(assetFilePath).Wait();
+                            string fileName = Path.GetFileName(sourceFile.Uri.ToString());
+                            CloudBlockBlob sourceBlob = sourceDirectory.GetBlockBlobReference(fileName);
+                            Stream sourceStream = sourceBlob.OpenReadAsync().Result;
+                            CloudBlockBlob assetBlob = mediaBlobClient.GetBlockBlob(asset.Container, fileName);
+                            Task uploadTask = assetBlob.UploadFromStreamAsync(sourceStream);
+                            uploadTasks.Add(uploadTask);
                         }
                         if (assetPublish)
                         {
+                            Task.WaitAll(uploadTasks.ToArray());
+                            string streamingPolicyName = assetType == Constant.Media.Asset.SingleBitrate ? PredefinedStreamingPolicy.DownloadOnly : PredefinedStreamingPolicy.ClearStreamingOnly;
                             mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
                         }
                     }

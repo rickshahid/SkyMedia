@@ -28,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
                 jobInput = new JobInputAsset(mediaJob.InputAssetName);
             }
             Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
-            string outputAssetName = string.Concat(mediaJob.InputAssetName, Constant.Media.Asset.NameDelimiter, transformName);
+            string outputAssetName = string.Concat(mediaJob.InputAssetName, Constant.Media.Asset.NameDelimiter, Constant.TextFormatter.GetValue(transformName));
             mediaClient.CreateAsset(inputAsset.StorageAccountName, outputAssetName);
             List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
             Transform transform = mediaClient.GetEntity<Transform>(MediaEntity.Transform, transformName);

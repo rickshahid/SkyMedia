@@ -2,8 +2,8 @@
 {
     public class StreamTuner
     {
-        public int StreamOffset { get; set; }
-
         public int StreamCount { get; set; }
+
+        public int StreamSkipCount { get; set; }
     }
 }

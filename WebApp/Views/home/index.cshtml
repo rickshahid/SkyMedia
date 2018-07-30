@@ -9,15 +9,15 @@
     string accountMessage = ViewData["accountMessage"] as string;
 
     MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
-    int streamNumber = int.Parse(ViewData["streamNumber"].ToString());
-    int streamOffset = int.Parse(ViewData["streamOffset"].ToString());
-    int streamIndex = int.Parse(ViewData["streamIndex"].ToString());
+    int streamNumber = (int)ViewData["streamNumber"];
+
+    int tunerPageSize = (int)ViewData["tunerPageSize"];
+    int streamSkipCount = (int)ViewData["streamSkipCount"];
+    bool streamLastPage = (bool)ViewData["streamLastPage"];
 
     string ampVersion = ViewData["mediaPlayerVersion"] as string;
     string ampSkin = ViewData["mediaPlayerSkin"] as string;
 
-    string autoPlay = ViewData["autoPlay"] as string;
-    string languageCode = ViewData["languageCode"] as string;
     string storageCdnUrl = ViewData["storageCdnUrl"] as string;
 }
 
@@ -29,123 +29,23 @@
     <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
-        var _mediaPlayer;
+        var _mediaPlayer, _tunerPageSize = @tunerPageSize, _streamLastPage = @streamLastPage.ToString().ToLower();
         $(function () {
+            var accountMessage = "@accountMessage";
             _authToken = "@authToken";
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
-            _streamIndex = @streamIndex;
-            var accountMessage = "@accountMessage";
-            var mediaStream = _mediaStreams.length == 0 ? null : _mediaStreams[_streamIndex];
-            var tunerWidth = $("#streamTuner").width();
-            var tunerStep = _mediaStreams.length == 1 ? tunerWidth : Math.floor(tunerWidth / (_mediaStreams.length - 1));
-            var tunerValue = _streamIndex * tunerStep;
-            $("#streamTuner").slider({
-                min: 0,
-                max: tunerWidth,
-                step: tunerStep,
-                value: tunerValue,
-                classes: {
-                    "ui-slider-handle": "streamTunerHandle"
-                },
-                slide: function (event, ui) {
-                    if (_mediaStreams.length > 0) {
-                        var streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / tunerStep) + 1;
-                        var streamIndex = streamNumber - 1;
-                        var mediaStream = _mediaStreams[streamIndex];
-                        var streamName = GetStreamName(mediaStream, true);
-                        streamNumber = streamNumber + @streamOffset;
-                        CreateTipTopLeft("streamTuner", streamName, ui.value + 2, -15);
-                        SetTipVisible("streamTuner", true);
-                        SetStreamNumber(streamNumber, streamIndex);
-                    }
-                },
-                stop: function (event, ui) {
-                    if (_mediaStreams.length > 0) {
-                        _streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / tunerStep) + 1;
-                        _streamNumber = _streamNumber + @streamOffset;
-                        window.location.href = "/?stream=" + _streamNumber;
-                    }
-                }
-            });
             _mediaPlayer = GetMediaPlayer("@userId", "@accountName");
             _mediaPlayer.ready(function () {
                 this.videobreakdown({
                     syncTranscript: true,
                     syncLanguage: true
                 });
-
-                var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
-                var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
-
-                if (_authToken != "" && _mediaStreams.length > 0) {
-                    var controlBarRight = document.getElementsByClassName("amp-controlbaricons-right")[0];
-                    var controlButtonCss = "vjs-control vjs-button mediaPlayerButton";
-
-                    @*var image = document.createElement("img");
-                    image.id = "userAuthImage";
-                    image.src = "@storageCdnUrl" + "/UserAuthEnabled.png";
-                    var button = document.createElement("button");
-                    button.id = "userAuthButton";
-                    button.className = controlButtonCss;
-                    button.appendChild(image);
-                    controlBarRight.appendChild(button);
-                    $("#" + button.id).click(function () {
-                        if (image.src.indexOf("Enabled") > -1) {
-                            image.src = image.src.replace("Enabled", "Disabled");
-                            CreateTipTop(button.id, "User Auth<br><br>Disabled");
-                        } else {
-                            image.src = image.src.replace("Disabled", "Enabled");
-                            CreateTipTop(button.id, "User Auth<br><br>Enabled");
-                        }
-                    });
-                    CreateTipTop(button.id, "User Auth<br><br>Enabled");*@
-
-                    if (_mediaPlayer.isLive()) {
-                        var cueImage = document.createElement("img");
-                        cueImage.id = "cueImage";
-                        cueImage.src = "@storageCdnUrl" + "/MediaLiveCue.png";
-                        var cueButton = document.createElement("button");
-                        cueButton.id = "cueButton";
-                        cueButton.className = controlButtonCss;
-                        cueButton.appendChild(cueImage);
-                        controlBarRight.appendChild(cueButton);
-                        $("#cueButton").click(function () {
-                            alert("Insert Live Stream Cue");
-                        });
-                        CreateTipTop("cueButton", "Insert Live<br><br>Cue");
-                    }
-                    if (mediaStream.contentInsight != null) {
-                        var indexerInsight = GetIndexerInsight(mediaStream.contentInsight);
-                        if (indexerInsight != null) {
-                            var insightImage = document.createElement("img");
-                            insightImage.id = "insightImage";
-                            insightImage.src = "@storageCdnUrl" + "/MediaInsightOpen.png";
-                            var insightButton = document.createElement("button");
-                            insightButton.id = "insightButton";
-                            insightButton.className = controlButtonCss;
-                            insightButton.appendChild(insightImage);
-                            controlBarRight.appendChild(insightButton);
-                            $("#insightButton").click(function () {
-                                ToggleIndexerInsight(indexerInsight);
-                            });
-                            CreateTipTop("insightButton", "Video Indexer<br><br>Insight");
-                        }
-                        var analyticsImage = document.createElement("img");
-                        analyticsImage.id = "analyticsImage";
-                        analyticsImage.src = "@storageCdnUrl" + "/MediaAnalyticsOpen.png";
-                        var analyticsButton = document.createElement("button");
-                        analyticsButton.id = "analyticsButton";
-                        analyticsButton.className = controlButtonCss;
-                        analyticsButton.appendChild(analyticsImage);
-                        controlBarRight.appendChild(analyticsButton);
-                        $("#analyticsButton").click(function () {
-                            SetAnalyticsProcessors(mediaStream);
-                            ToggleAnalyticsInsight(mediaStream);
-                        });
-                        CreateTipTop("analyticsButton", "Media Analytics<br><br>Insight");
-                    }
-                }
+            });
+            _mediaPlayer.addEventListener(amp.eventName.loadeddata, function () {
+                $("#mediaStreamLeft").prop("disabled", false);
+                $("#mediaStreamRight").prop("disabled", false);
+                $("#streamTuner").slider("option", "disabled", false);
             });
             _mediaPlayer.addEventListener(amp.eventName.play, function () {
                 var streamUrl = _mediaPlayer.currentSrc();
@@ -158,13 +58,10 @@
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
             });
-            if (mediaStream == null) {
+            if (_mediaStreams.length == 0) {
                 SetPlayerSpinner(false);
             } else {
-                SetPlayerContent(_mediaPlayer, mediaStream, "@languageCode", @autoPlay);
-                SetStreamNumber(_streamNumber, _streamIndex);
-                var streamName = GetStreamName(mediaStream, false);
-                $("#streamName").html(streamName);
+                SetMediaStream(false, false);
             }
             if (accountMessage != "") {
                 DisplayMessage("Account Message", accountMessage);
@@ -183,17 +80,7 @@
     <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
 </div>*@
 
-@*<div id="analyticsInsight" class="analyticsInsight">
-    <div class="analyticsProcessors">
-        <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/media-services-analytics-overview')">
-            Azure Media Analytics
-        </span>
-        <select id="analyticsProcessors" onchange="SetAnalyticsMetadata(_mediaPlayer)"></select>
-    </div>
-    <div id="analyticsMetadata" class="analyticsMetadata"></div>
-</div>*@
-
-<partial name="MediaWorkflow" model='new StreamTuner { StreamOffset = streamOffset, StreamCount = mediaStreams.Length }' />
+<partial name="MediaWorkflow" model='new StreamTuner { StreamCount = mediaStreams.Length, StreamSkipCount = streamSkipCount }' />
 
 <div class="streamInfo">
     <div id="streamName" class="streamInfoName"></div>

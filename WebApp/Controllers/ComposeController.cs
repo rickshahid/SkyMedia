@@ -6,6 +6,22 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class ComposeController : Controller
     {
+        //private MediaJobInput[] GetJobInputs(JObject clip)
+        //{
+        //    List<MediaJobInput> jobInputs = new List<MediaJobInput>();
+        //    JToken[] inputIds = clip["inputsIds"].ToArray();
+        //    foreach (JToken inputId in inputIds)
+        //    {
+        //        MediaJobInput jobInput = new MediaJobInput()
+        //        {
+        //            AssetId = inputId["id"].ToString(),
+        //            AssetType = inputId["type"].ToString()
+        //        };
+        //        jobInputs.Add(jobInput);
+        //    }
+        //    return jobInputs.ToArray();
+        //}
+
         public JsonResult Streams(string searchCriteria, int skipCount, int takeCount, string streamType)
         {
             string authToken = HomeController.GetAuthToken(Request, Response);

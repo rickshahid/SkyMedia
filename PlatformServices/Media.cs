@@ -15,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 mediaStream = new MediaStream()
                 {
-                    Name = locator.AssetName,
+                    Name = locator.Name,
                     Source = new StreamSource()
                     {
                         Url = playerUrl,
@@ -78,51 +78,35 @@ namespace AzureSkyMedia.PlatformServices
             IEnumerable<StreamingLocator> locators = MediaClient.GetLocators(mediaClient);
             foreach (StreamingLocator locator in locators)
             {
-                string playerUrl = mediaClient.GetPlayerUrl(locator);
-                if (!string.IsNullOrEmpty(playerUrl))
+                MediaStream accountStream = GetMediaStream(authToken, mediaClient, locator);
+                if (accountStream != null)
                 {
-                    MediaStream accountStream = new MediaStream()
-                    {
-                        Name = locator.AssetName,
-                        Source = new StreamSource()
-                        {
-                            Url = playerUrl,
-                            ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
-                        },
-                        TextTracks = Track.GetTextTracks(mediaClient, locator.AssetName)
-                    };
                     accountStreams.Add(accountStream);
                 }
             }
             return accountStreams.ToArray();
         }
 
-        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, out int streamOffset, out int streamIndex, out bool endOfStreams)
+        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, int tunerPageSize, out int streamSkipCount, out bool streamLastPage)
         {
-            endOfStreams = false;
+            streamSkipCount = 0;
+            streamLastPage = false;
             List<MediaStream> accountStreams = new List<MediaStream>();
-            int pageSize = Constant.Media.Stream.TunerPageSize;
-            streamOffset = ((streamNumber - 1) / pageSize) * pageSize;
-            streamIndex = (streamNumber - 1) % pageSize;
             IEnumerable<StreamingLocator> locators = MediaClient.GetLocators(mediaClient);
             int locatorsCount = locators.Count();
             if (locatorsCount > 0)
             {
-                if (streamOffset == locatorsCount)
+                if (streamNumber > tunerPageSize)
                 {
-                    streamOffset = streamOffset - pageSize;
-                    streamIndex = pageSize - 1;
-                    endOfStreams = true;
+                    streamSkipCount = ((streamNumber - 1) / tunerPageSize) * tunerPageSize;
                 }
-                else if (streamIndex == locatorsCount)
+                if (streamSkipCount > 0)
                 {
-                    streamIndex = streamIndex - 1;
-                    endOfStreams = true;
+                    locators = locators.Skip(streamSkipCount);
                 }
-                locators = locators.Skip(streamOffset);
                 foreach (StreamingLocator locator in locators)
                 {
-                    if (accountStreams.Count < pageSize)
+                    if (accountStreams.Count < tunerPageSize)
                     {
                         MediaStream accountStream = GetMediaStream(authToken, mediaClient, locator);
                         if (accountStream != null)
@@ -130,6 +114,10 @@ namespace AzureSkyMedia.PlatformServices
                             accountStreams.Add(accountStream);
                         }
                     }
+                }
+                if (locatorsCount - streamSkipCount <= tunerPageSize)
+                {
+                    streamLastPage = true;
                 }
             }
             return accountStreams.ToArray();

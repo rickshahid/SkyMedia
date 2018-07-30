@@ -130,20 +130,23 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
 
             int streamNumber = 1;
-            string autoPlay = "false";
             if (queryString.Contains("stream"))
             {
                 streamNumber = int.Parse(Request.Query["stream"]);
-                autoPlay = "true";
             }
 
-            int streamOffset = 0;
-            int streamIndex = streamNumber - 1;
+            string settingKey = Constant.AppSettingKey.MediaStreamTunerPageSize;
+            string pageSize = AppSetting.GetValue(settingKey);
+            int tunerPageSize = int.Parse(pageSize);
+
+            int streamSkipCount = 0;
+            bool streamLastPage = false;
             try
             {
                 if (string.IsNullOrEmpty(authToken))
                 {
                     mediaStreams = Media.GetSampleStreams();
+                    streamLastPage = true;
                 }
                 else
                 {
@@ -155,11 +158,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                         else
                         {
-                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, out streamOffset, out streamIndex, out bool endOfStreams);
-                            if (endOfStreams)
-                            {
-                                streamNumber = streamNumber - 1;
-                            }
+                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, tunerPageSize, out streamSkipCount, out streamLastPage);
                         }
                     }
                 }
@@ -173,11 +172,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["mediaStreams"] = mediaStreams;
             ViewData["streamNumber"] = streamNumber;
 
-            ViewData["streamOffset"] = streamOffset;
-            ViewData["streamIndex"] = streamIndex;
-
-            ViewData["languageCode"] = Request.Query["language"];
-            ViewData["autoPlay"] = autoPlay;
+            ViewData["tunerPageSize"] = tunerPageSize;
+            ViewData["streamSkipCount"] = streamSkipCount;
+            ViewData["streamLastPage"] = streamLastPage;
 
             return View();
         }

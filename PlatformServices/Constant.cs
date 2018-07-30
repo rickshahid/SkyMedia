@@ -20,8 +20,6 @@ namespace AzureSkyMedia.PlatformServices
         public struct TextFormatter
         {
             public const string NumericLong = "N0";
-            //public const string Numeric = "N2";
-            //public const string ClockTime = "hh':'mm':'ss";
 
             public static readonly string[] SpacingPatterns = new string[] { "([a-z])([A-Z])", "(H264)([A-Z])", "([a-z])(720p|1080p)" };
             public static readonly string[] SpacingInserts = new string[] { "$1 $2", "$1 $2", "$1 $2" };
@@ -65,6 +63,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string StorageCdnEndpointUrl = "Storage.CdnEndpointUrl";
             public const string StorageSharedAccessMinutes = "Storage.SharedAccessMinutes";
 
+            public const string MediaStreamTunerPageSize = "Media.Stream.TunerPageSize";
+
             public const string MediaStream1Name = "Media.Stream1.Name";
             public const string MediaStream1SourceUrl = "Media.Stream1.SourceUrl";
             public const string MediaStream1TextTracks = "Media.Stream1.TextTracks";
@@ -80,9 +80,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream4Name = "Media.Stream4.Name";
             public const string MediaStream4SourceUrl = "Media.Stream4.SourceUrl";
             public const string MediaStream4TextTracks = "Media.Stream4.TextTracks";
-
-            public const string MediaChannelProgramArchiveMinutes = "Media.Channel.ProgramArchiveMinutes";
-            public const string MediaChannelAdDurationSeconds = "Media.Channel.AdDurationSeconds";
 
             public const string MediaPublishUrl = "Media.Publish.Url";
             public const string MediaPublishQueue = "Media.Publish.Queue";
@@ -101,7 +98,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AzureStorage = "Storage";
             public const string AzureDatabase = "Database";
-            public const string AzureCache = "Cache";
 
             public const string TwilioAccountId = "Twilio.Account.Id";
             public const string TwilioAccountToken = "Twilio.Account.Token";
@@ -147,28 +143,18 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Storage
         {
-            public const string NotAvailable = "N/A";
-            public const string CapacityData = "data";
-
             public struct Blob
             {
                 public struct Container
                 {
-                    public const string MediaProcess = "ams";
+                    public const string MediaServices = "ams";
                     public const string FileUpload = "upload";
-                    //public const string ContentDelivery = "cdn";
                 }
-            }
-
-            public struct Queue
-            {
-                public const string PoisonSuffix = "-poison";
             }
         }
 
         public struct Database
         {
-
             public struct Collection
             {
                 public const string InputWorkflow = "InputWorkflow";
@@ -176,9 +162,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string OutputInsight = "OutputInsight";
             }
 
-            public struct Procedure
+            public struct Script
             {
-                public const string TimecodeFragment = "getTimecodeFragment";
+                public const string IsTimecodeFragment = "isTimecodeFragment.js";
+                public const string GetTimecodeFragment = "getTimecodeFragment.js";
             }
 
             public struct Document
@@ -199,19 +186,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string PolicyDRM = "Content Key Policy DRM";
             }
 
-            public struct ContentStreaming
-            {
-                public const string PolicyAES = "Streaming Policy AES";
-                public const string PolicyDRM = "Streaming Policy DRM";
-            }
-
             public struct Asset
             {
-                public const string ModelDirectory = "Asset";
-                public const string SingleBitrate = "SBR";
-
-                public const string NameDefault = " Asset ";
                 public const string NameDelimiter = " - ";
+                public const string SingleBitrate = "SBR";
             }
 
             public struct Transform
@@ -221,41 +199,20 @@ namespace AzureSkyMedia.PlatformServices
                 public const string PresetNameAnalyzerAudio = "AudioAnalyzer";
             }
 
-            public struct Job
-            {
-                public const string OutputAssetSuffixEncoderStandard = " (MBR)";
-                public const string OutputAssetSuffixAnalyzerVideo = " (VAI)";
-                public const string OutputAssetSuffixAnalyzerAudio = " (AAI)";
-            }
-
             public struct Analyzer
             {
                 public const string Transcript = "Transcript";
                 public const string TranscriptFile = "transcript.vtt";
             }
 
-            //public struct FileExtension
-            //{
-            //    public const string MP4 = ".mp4";
-            //    public const string JobLog = ".log";
-            //    public const string JobManifest = ".txt";
-            //    public const string StreamManifest = ".ism";
-            //    public const string PremiumWorkflow = ".workflow";
-
-            //    public const string Json = ".json";
-            //    public const string WebVtt = ".vtt";
-            //    public const string Annotations = "_annotations.json";
-            //}
-
-            //public struct Live
-            //{
-            //    public const string ProgramSuffixClear = " Clear";
-            //    public const string ProgramSuffixAes = " AES";
-            //    public const string ProgramSuffixDrm = " DRM";
-
-            //    public const string AllowAnyAddress = "Allow Any Address";
-            //    public const string AllowAuthorizedAddress = "Authorized Address Only";
-            //}
+            public struct FileExtension
+            {
+                //public const string MP4 = ".mp4";
+                //public const string Json = ".json";
+                //public const string JobLog = ".log";
+                //public const string JobManifest = ".txt";
+                public const string StreamManifest = ".ism";
+            }
 
             public struct Publish
             {
@@ -266,7 +223,6 @@ namespace AzureSkyMedia.PlatformServices
             public struct Stream
             {
                 public const string DefaultEndpoint = "default";
-                public const int TunerPageSize = 10;
             }
 
             public struct Track
