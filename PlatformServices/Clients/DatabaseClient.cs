@@ -15,13 +15,8 @@ namespace AzureSkyMedia.PlatformServices
     {
         private DocumentClient _cosmos;
         private string _databaseId;
-        private string _authToken;
 
-        public DatabaseClient() : this(string.Empty)
-        {
-        }
-
-        public DatabaseClient(string authToken)
+        public DatabaseClient()
         {
             string settingKey = Constant.AppSettingKey.AzureDatabase;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
@@ -37,7 +32,6 @@ namespace AzureSkyMedia.PlatformServices
                 connectionPolicy.PreferredLocations.Add(dataRegionRead);
             }
 
-            _authToken = authToken;
             _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey, connectionPolicy);
         }
 
@@ -57,12 +51,8 @@ namespace AzureSkyMedia.PlatformServices
 
         private IQueryable<Document> GetDocumentQuery(string collectionId)
         {
-            string collectionLink = string.Concat("dbs/", _databaseId, "/colls/", collectionId);
-            FeedOptions feedOptions = new FeedOptions()
-            {
-                SessionToken = _authToken
-            };
-            return _cosmos.CreateDocumentQuery(collectionLink, feedOptions);
+            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
+            return _cosmos.CreateDocumentQuery(collectionUri);
         }
 
         private Uri CreateCollection(Uri databaseUri, string collectionId)
@@ -81,13 +71,13 @@ namespace AzureSkyMedia.PlatformServices
             _cosmos.CreateDatabaseIfNotExistsAsync(database).Wait();
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            string collectionId = Constant.Database.Collection.InputWorkflow;
+            string collectionId = Constant.Database.Collection.IngestManifest;
             Uri collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionId = Constant.Database.Collection.OutputPublish;
+            collectionId = Constant.Database.Collection.ContentPublish;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionId = Constant.Database.Collection.OutputInsight;
+            collectionId = Constant.Database.Collection.ContentInsight;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
             string collectionDirectory = Path.Combine(modelsDirectory, collectionId);
@@ -146,7 +136,7 @@ namespace AzureSkyMedia.PlatformServices
             IQueryable<Document> query = GetDocumentQuery(collectionId);
             query = query.Where(d => d.Id == documentId);
             IEnumerable<Document> docs = query.AsEnumerable<Document>();
-            Document doc = docs.FirstOrDefault();
+            Document doc = docs.SingleOrDefault();
             if (doc != null)
             {
                 document = GetDocument(doc.ToString());
@@ -154,7 +144,7 @@ namespace AzureSkyMedia.PlatformServices
             return document;
         }
 
-        public JObject GetDocument(string collectionId, string procedureId, params dynamic[] procedureParameters)
+        public JObject ExecuteProcedure(string collectionId, string procedureId, params dynamic[] procedureParameters)
         {
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
@@ -184,7 +174,7 @@ namespace AzureSkyMedia.PlatformServices
             if (document != null)
             {
                 Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, collectionId, documentId);
-                ResourceResponse<Document> response = _cosmos.DeleteDocumentAsync(documentUri).Result;
+                _cosmos.DeleteDocumentAsync(documentUri);
             }
         }
 

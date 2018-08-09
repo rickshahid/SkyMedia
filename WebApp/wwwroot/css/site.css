@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 599px) {
-    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaBrowse {
+    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaGallery {
         display: none !important;
     }
 
@@ -22,7 +22,7 @@
 }
 
 @media all and (min-width: 600px) and (max-width: 799px) {
-    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaBrowse {
+    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaGallery {
         display: none !important;
     }
 
@@ -51,6 +51,7 @@ body {
 
 .layout {
     margin: 0px auto;
+    text-align: center;
 }
 
 .layoutPanel {
@@ -83,7 +84,6 @@ body {
     font-size: large;
     font-weight: bold;
     font-style: italic;
-    text-align: center;
     margin-bottom: 10px;
 }
 
@@ -117,7 +117,6 @@ body {
 }
 
 .entity div {
-    text-align: center;
     margin-top: 20px;
 }
 
@@ -185,7 +184,6 @@ body {
 }
 
 .viewButtons {
-    text-align: center;
     margin-top: 20px;
 }
 
@@ -212,7 +210,8 @@ body {
 }
 
 .mediaWorkflow {
-    margin: 20px auto;
+    margin: 10px auto;
+    margin-top: 20px;
 }
 
 .ui-slider {
@@ -230,7 +229,6 @@ body {
 }
 
 .streamTunerHandle {
-    text-align: center;
     top: -12px !important;
     color: azure !important;
 }
@@ -249,16 +247,22 @@ body {
     padding-left: 15px;
 }
 
-.streamInfo {
-    text-align: center;
-}
-
-.streamInfoName {
+.streamName {
     font-weight: bold;
     font-size: xx-large;
 }
 
-.streamInfoUrl {
+.streamName.galleryView {
+    margin-top: 130px;
+}
+
+.streamDescription {
+    font-size: x-large;
+    font-style: italic;
+    margin-top: 20px;
+}
+
+.streamUrl {
     font-style: italic;
     font-size: x-large;
     margin-top: 10px;
@@ -273,7 +277,6 @@ body {
 }
 
 .mediaServicesCompliance {
-    text-align: center;
     margin-top: 30px;
 }
 
@@ -310,6 +313,10 @@ body {
     float: none;
 }
 
+.inputLeft {
+    text-align: left;
+}
+
 .inputLabel {
     text-align: right;
     font-weight: bold;
@@ -334,14 +341,41 @@ body {
     width: 100%;
 }
 
+.inputFileUrl {
+    display: inline-block;
+    text-align: center;
+}
+
 .videoClipper {
     width: 1080px;
 }
 
 .clipLoader {
-    text-align: center;
     font-size: large;
     margin-top: 20px;
+}
+
+.carouselContainer {
+    perspective: 2000px;
+    margin: 0 auto;
+    height: 225px;
+    width: 400px;
+}
+
+.carousel {
+    transform-style: preserve-3d;
+    transition: transform 1s;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 50px;
+}
+
+.carouselItem {
+    border: 1px solid deepskyblue;
+    position: absolute;
+    height: 100%;
+    width: 100%;
 }
 
 #underConstruction {

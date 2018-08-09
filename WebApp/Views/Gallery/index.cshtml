@@ -1,0 +1,98 @@
+﻿@using AzureSkyMedia.WebApp.Models;
+@using AzureSkyMedia.PlatformServices;
+
+@{
+    MediaStream[] mediaStreams = (MediaStream[])ViewData["mediaStreams"];
+
+    string ampVersion = ViewData["mediaPlayerVersion"].ToString();
+    string ampSkin = ViewData["mediaPlayerSkin"].ToString();
+
+    string ampHeight = "400";
+    string ampWidth = "400";
+
+    string userId = ViewData["userId"] as string;
+    string accountName = ViewData["accountName"] as string;
+}
+
+@section head {
+    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
+    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
+    <script type="text/javascript">
+        var _maxStreams = @Constant.Media.Channel9.IngestVideoCount, _degreesDelta = 360 / _maxStreams, _currentsDegrees = 0, _currentIndex = 0;
+        function SetStreamInfo() {
+            var streamName = "";
+            var streamDescription = "";
+            if (_currentIndex < _mediaStreams.length) {
+                streamName = _mediaStreams[_currentIndex].name;
+                streamDescription = _mediaStreams[_currentIndex].description;
+            }
+            $("#streamName").html(streamName);
+            $("#streamDescription").html(streamDescription);
+       }
+        function RotateCarousel(forward) {
+            if (forward) {
+                _currentsDegrees = _currentsDegrees - _degreesDelta;
+                _currentIndex = _currentIndex + 1;
+                if (_currentIndex > _maxStreams - 1) {
+                    _currentIndex = 0;
+                }
+            } else {
+                _currentsDegrees = _currentsDegrees + _degreesDelta;
+                _currentIndex = _currentIndex - 1;
+                if (_currentIndex < 0) {
+                    _currentIndex = _maxStreams - 1;
+                }
+            }
+            $(".carousel").css({
+                "-webkit-transform": "rotateY(" + _currentsDegrees + "deg)",
+                "-moz-transform": "rotateY(" + _currentsDegrees + "deg)",
+                "-o-transform": "rotateY(" + _currentsDegrees + "deg)",
+                "transform": "rotateY(" + _currentsDegrees + "deg)"
+            });
+            SetStreamInfo();
+        }
+        $(function () {
+            $(".layoutPanel.side").hide();
+            _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
+            for (var i = 0; i < _maxStreams; i++) {
+                var mediaStream = _mediaStreams[i];
+                var streamId = "stream" + (i + 1);
+                var playerId = "videoPlayer" + (i + 1);
+                $("#" + streamId).css("transform", "rotateY(" + (i * _degreesDelta) + "deg) translateZ(500px)");
+                if (mediaStream == null) {
+                    $("#" + playerId).remove();
+                } else {
+                    var mediaPlayer = GetMediaPlayer(playerId, "@userId", "@accountName");
+                    SetPlayerContent(mediaPlayer, mediaStream);
+                }
+            }
+            SetStreamInfo();
+        })
+    </script>
+}
+
+@section title {
+    Media Gallery
+}
+
+<div class="carouselContainer">
+    <div class="carousel">
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream1", StyleClass = "carouselItem", ControlId = "videoPlayer1", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream2", StyleClass = "carouselItem", ControlId = "videoPlayer2", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream3", StyleClass = "carouselItem", ControlId = "videoPlayer3", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream4", StyleClass = "carouselItem", ControlId = "videoPlayer4", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream5", StyleClass = "carouselItem", ControlId = "videoPlayer5", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream6", StyleClass = "carouselItem", ControlId = "videoPlayer6", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream7", StyleClass = "carouselItem", ControlId = "videoPlayer7", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream8", StyleClass = "carouselItem", ControlId = "videoPlayer8", Height = ampHeight, Width = ampWidth }' />
+    </div>
+</div>
+
+<div id="streamName" class="streamName galleryView"></div>
+<div id="streamDescription" class="streamDescription"></div>
+
+
+<div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaGalleryLeft", ImageFile = "MediaGalleryLeft.png", OnClick="RotateCarousel(false)" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaGalleryRight", ImageFile = "MediaGalleryRight.png", OnClick="RotateCarousel(true)" }' />
+</div>

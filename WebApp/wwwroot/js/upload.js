@@ -36,8 +36,8 @@ function CreateAsset() {
         {
             storageAccount: $("#storageAccount").val(),
             assetName: $("#assetName").val(),
-            description: $("#assetDescription").val(),
-            alternateId: $("#assetAlternateId").val(),
+            assetDescription: $("#assetDescription").val(),
+            assetAlternateId: $("#assetAlternateId").val(),
             fileNames: GetFileNames(),
             standardEncoderPreset: $("#standardEncoderPreset").prop("checked"),
             videoAnalyzerPreset: $("#videoAnalyzerPreset").prop("checked"),
@@ -53,11 +53,10 @@ function CreateAsset() {
                 if (message != "") {
                     message = message + "<br><br>";
                 }
-                message = message + "Media " + entityType + " Created<br>(" + entity.name + ")";
+                message = message + "Media " + entityType + " Created - " + entity.name;
                 if (indexId != null) {
                     var insightType = $("#audioAnalyzerPreset").prop("checked") ? "Audio" : "Video";
-                    message = message + "<br><br>" + insightType + " Indexer Insight";
-                    message = message + "<br>(" + indexId + ")";
+                    message = message + "<br><br>" + insightType + " Indexer Insight - " + IndexId;
                 }
             }
             $("#mediaUploadEntities").html(message);

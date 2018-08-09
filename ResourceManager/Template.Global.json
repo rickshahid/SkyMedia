@@ -113,7 +113,8 @@
       "allowedValues": [
         "Standard_Akamai",
         "Standard_Microsoft",
-        "Standard_Verizon"
+        "Standard_Verizon",
+        "Premium_Verizon"
       ],
       "metadata": {
         "description": "Resource tier for the Content Delivery Network service."
@@ -156,7 +157,7 @@
     },
     "trafficManagerRoutingTimeToLive": {
       "type": "int",
-      "defaultValue": 30,
+      "defaultValue": 300,
       "metadata": {
         "description": "Routing record time-to-live (in seconds) for the Traffic Manager resource."
       }
@@ -200,7 +201,7 @@
     "twilioMessageFrom": {
       "type": "string",
       "metadata": {
-        "description": "Twilio message from number."
+        "description": "Twilio message from phone number."
       }
     }
   },
@@ -341,8 +342,16 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
+              "name": "Storage.SharedAccessMinutes",
+              "value": "10"
+            },
+            {
               "name": "Database",
               "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=Media')]"
+            },
+            {
+              "name": "Media.Indexer.AuthUrl",
+              "value": "https://api.videoindexer.ai/auth/trial/accounts?generateAccessTokens=true&allowEdit=true"
             },
             {
               "name": "Media.Publish.Queue",

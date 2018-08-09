@@ -31,7 +31,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 foreach (IListBlobItem assetFile in assetFiles)
                 {
-                    if (assetFile.Uri.ToString().EndsWith(Constant.Media.FileExtension.StreamManifest))
+                    if (assetFile.Uri.ToString().EndsWith(Constant.Media.Stream.ManifestExtension))
                     {
                         assetName = assetFile.Uri.ToString();
                     }
@@ -73,12 +73,12 @@ namespace AzureSkyMedia.WebApp.Controllers
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     BlobClient sourceBlobClient = new BlobClient();
-                    string storageAccount = Path.GetFileName(mediaClient.PrimaryStorage.Id);
+                    string storageAccount = mediaClient.PrimaryStorageAccount;
                     BlobClient mediaBlobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
                     for (int i = 1; i <= assetCount; i++)
                     {
                         int assetIndex = i % 2 == 0 ? 2 : i % 2;
-                        string containerName = Constant.Storage.Blob.Container.MediaServices;
+                        string containerName = Constant.Storage.BlobContainer.MediaServices;
                         string directoryPath = string.Concat(assetType, "/", assetIndex.ToString());
                         CloudBlobDirectory sourceDirectory = sourceBlobClient.GetBlobDirectory(containerName, directoryPath);
                         string assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, GetAssetName(sourceDirectory));
@@ -303,16 +303,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 ViewData["indexerInsights"] = mediaClient.IndexerGetInsights();
-            }
-            return View();
-        }
-
-        public IActionResult Operations()
-        {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                ViewData["operations"] = mediaClient.GetOperations();
             }
             return View();
         }

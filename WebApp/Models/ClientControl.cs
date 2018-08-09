@@ -2,6 +2,8 @@
 {
     public class ClientControl
     {
-        public string ClientId { get; set; }
+        public string ContainerId { get; set; }
+
+        public string ControlId { get; set; }
     }
 }

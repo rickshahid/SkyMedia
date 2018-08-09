@@ -19,7 +19,7 @@ namespace AzureSkyMedia.WebApp
             if (Debugger.IsAttached)
             {
                 string appDirectory = Directory.GetCurrentDirectory();
-                string modelsDirectory = Path.Combine(appDirectory, Constant.WebModels);
+                string modelsDirectory = Path.Combine(appDirectory, Constant.ModelsDirectory);
                 using (DatabaseClient databaseClient = new DatabaseClient())
                 {
                     databaseClient.Initialize(modelsDirectory);

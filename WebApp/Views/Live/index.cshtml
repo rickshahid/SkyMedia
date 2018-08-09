@@ -1,8 +1,8 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
 @{
-    string ampVersion = ViewData["mediaPlayerVersion"] as string;
-    string ampSkin = ViewData["mediaPlayerSkin"] as string;
+    string ampVersion = ViewData["mediaPlayerVersion"].ToString();
+    string ampSkin = ViewData["mediaPlayerSkin"].ToString();
 }
 
 @section head {
@@ -19,4 +19,4 @@
 }
 
 @*<partial name="MediaPlayer" />*@
-<partial name="SiteButton" model='new SiteButton { ClientId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />
+<partial name="SiteButton" model='new SiteButton { ControlId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />

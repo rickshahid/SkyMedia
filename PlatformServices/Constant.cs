@@ -8,13 +8,14 @@ namespace AzureSkyMedia.PlatformServices
 {
     public struct Constant
     {
-        public const string WebModels = "Models";
         public const string AppSettings = "appsettings.json";
+        public const string ModelsDirectory = "Models";
 
         public struct TextDelimiter
         {
             public const char Connection = ';';
             public const char Application = ',';
+            public const string File = ".";
         }
 
         public struct TextFormatter
@@ -143,13 +144,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Storage
         {
-            public struct Blob
+            public struct BlobContainer
             {
-                public struct Container
-                {
-                    public const string MediaServices = "ams";
-                    public const string FileUpload = "upload";
-                }
+                public const string MediaServices = "ams";
+                public const string FileUpload = "upload";
             }
         }
 
@@ -157,9 +155,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
-                public const string InputWorkflow = "InputWorkflow";
-                public const string OutputPublish = "OutputPublish";
-                public const string OutputInsight = "OutputInsight";
+                public const string ContentPublish = "ContentPublish";
+                public const string ContentInsight = "ContentInsight";
+                public const string IngestManifest = "IngestManifest";
             }
 
             public struct Script
@@ -171,7 +169,6 @@ namespace AzureSkyMedia.PlatformServices
             public struct Document
             {
                 public const string SystemPropertyPrefix = "_";
-                public const string DefaultIdSuffix = "_Default";
             }
         }
 
@@ -179,6 +176,32 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string PredefinedPrefix = "Predefined_";
             public const string AccountResourceId = "/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.media/mediaServices/{2}";
+
+            public struct Channel9
+            {
+                public const int IngestVideoCount = 8;
+                public const string NamespacePrefix = "media";
+                public const string NamespaceUrl = "http://search.yahoo.com/mrss/";
+                public const string XPathQuery = "media:group/media:content[@type='video/mp4']";
+                public const string UrlHttp = "http://video.ch9.ms/";
+                public const string UrlHttps = "https://sec.ch9.ms/";
+                public const string Http = "http://";
+                public const string Https = "https://";
+            }
+
+            public struct IngestManifest
+            {
+                public const string FileExtension = ".json";
+                public const string FileExtensionLog = ".log";
+                public const string GalleryPrefix = "Gallery.";
+                public const string TriggerPrefix = "MediaIngestManifest";
+            }
+
+            public struct ContentType
+            {
+                public const string IngestContent = "video/mp4";
+                public const string IngestManifest = "application/json";
+            }
 
             public struct ContentKey
             {
@@ -205,15 +228,6 @@ namespace AzureSkyMedia.PlatformServices
                 public const string TranscriptFile = "transcript.vtt";
             }
 
-            public struct FileExtension
-            {
-                //public const string MP4 = ".mp4";
-                //public const string Json = ".json";
-                //public const string JobLog = ".log";
-                //public const string JobManifest = ".txt";
-                public const string StreamManifest = ".ism";
-            }
-
             public struct Publish
             {
                 public const string EventTriggerName = "AMS-Job-State";
@@ -223,12 +237,18 @@ namespace AzureSkyMedia.PlatformServices
             public struct Stream
             {
                 public const string DefaultEndpoint = "default";
+                public const string ManifestExtension = ".ism";
             }
 
             public struct Track
             {
                 public const string CaptionsType = "captions";
                 public const string CaptionsLabel = "Captions On";
+            }
+
+            public struct Thumbnail
+            {
+                public const string Best = "Thumbnail000001.jpg";
             }
         }
 
@@ -238,7 +258,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MobileNumberNotAvailable = "No message sent. Mobile number not available.";
             public const string StreamingEndpointNotStarted = "Your media account streaming endpoint has not been started.";
             public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
-            public const string VideoIndexerKeyMissing = "Your account currently does not have a Video Indexer key associated with it,<br>which is required for the functionality in the {0} module.<br><br>Use the Account Profile Edit page to associate a Video Indexer key with your account.";
         }
     }
 }

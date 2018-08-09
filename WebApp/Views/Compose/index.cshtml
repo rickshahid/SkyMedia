@@ -1,8 +1,8 @@
 ﻿@{
-    string ampVersion = ViewData["mediaPlayerVersion"] as string;
-    string ampSkin = ViewData["mediaPlayerSkin"] as string;
+    string ampVersion = ViewData["mediaPlayerVersion"].ToString();
+    string ampSkin = ViewData["mediaPlayerSkin"].ToString();
 
-    string amcVersion = ViewData["mediaClipperVersion"] as string;
+    string amcVersion = ViewData["mediaClipperVersion"].ToString();
 }
 
 @section head {

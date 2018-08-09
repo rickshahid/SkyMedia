@@ -1,15 +1,15 @@
-﻿function SetMediaStream(tunerLeft, tunerRight) {
+﻿function SetMediaStream(streamTunerLeft, streamTunerRight) {
     var streamPageRefresh = false;
     var streamNumber = _streamNumber;
     if (_mediaStreams.length > 0) {
-        var currentIndex = (streamNumber - 1) % _tunerPageSize;
-        if (tunerLeft && streamNumber > 1) {
+        var currentIndex = (streamNumber - 1) % _streamTunerPageSize;
+        if (streamTunerLeft && streamNumber > 1) {
             streamNumber = streamNumber - 1;
             if (currentIndex == 0) {
                 streamPageRefresh = true;
                 window.location.href = "/?stream=" + streamNumber;
             }
-        } else if (tunerRight) {
+        } else if (streamTunerRight) {
             if (_streamLastPage) {
                 if (currentIndex < _mediaStreams.length - 1) {
                     streamNumber = streamNumber + 1;
@@ -24,22 +24,22 @@
         }
     }
     if (!streamPageRefresh) {
-        var streamIndex = (streamNumber - 1) % _tunerPageSize;
-        var mediaStream = _mediaStreams[streamIndex];
-        var tunerWidth = $("#streamTuner").width();
-        var tunerStep = _mediaStreams.length == 1 ? tunerWidth : Math.floor(tunerWidth / (_mediaStreams.length - 1));
-        var tunerValue = streamIndex * tunerStep;
+        var streamIndex = (streamNumber - 1) % _streamTunerPageSize;
+        var mediaStream = _mediaStreams.length == 0 ? null : _mediaStreams[streamIndex];
+        var streamTunerWidth = $("#streamTuner").width();
+        var streamTunerStep = _mediaStreams.length == 1 ? streamTunerWidth : Math.floor(streamTunerWidth / (_mediaStreams.length - 1));
+        var streamTunerValue = streamIndex * streamTunerStep;
         $("#streamTuner").slider({
             min: 0,
-            max: tunerWidth,
-            step: tunerStep,
-            value: tunerValue,
+            max: streamTunerWidth,
+            step: streamTunerStep,
+            value: streamTunerValue,
             classes: {
                 "ui-slider-handle": "streamTunerHandle"
             },
             slide: function (event, ui) {
                 if (_mediaStreams.length > 0) {
-                    var streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / tunerStep) + 1;
+                    var streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / streamTunerStep) + 1;
                     var streamIndex = streamNumber - 1;
                     var mediaStream = _mediaStreams[streamIndex];
                     var streamName = GetStreamName(mediaStream, true);
@@ -50,39 +50,41 @@
             },
             stop: function (event, ui) {
                 if (_mediaStreams.length > 0) {
-                    _streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / tunerStep) + 1;
+                    _streamNumber = _mediaStreams.length == 1 ? 1 : (ui.value / streamTunerStep) + 1;
                     SetMediaStream(false, false);
                 }
             }
         });
-        SetPlayerContent(_mediaPlayer, mediaStream);
-        SetStreamNumber(streamNumber, streamIndex);
-        var streamName = GetStreamName(mediaStream, false);
-        $("#streamName").html(streamName);
-        $("#streamUrl").html("");
-        _streamNumber = streamNumber;
+        if (mediaStream != null) {
+            SetPlayerContent(_mediaPlayer, mediaStream);
+            SetStreamNumber(streamNumber, streamIndex);
+            var streamName = GetStreamName(mediaStream, false);
+            $("#streamName").html(streamName);
+            $("#streamUrl").html("");
+            _streamNumber = streamNumber;
+        }
     }
 }
 function SetStreamNumber(streamNumber, streamIndex) {
-    var tunerHandle = document.getElementsByClassName("ui-slider-handle")[0];
+    var streamTunerHandle = document.getElementsByClassName("ui-slider-handle")[0];
     if (streamIndex == 0 || streamIndex == _mediaStreams.length - 1) {
-        tunerHandle.innerText = "";
+        streamTunerHandle.innerText = "";
     } else {
-        tunerHandle.innerText = streamNumber;
+        streamTunerHandle.innerText = streamNumber;
     }
 }
 function GetStreamName(mediaStream, streamTuner) {
     var streamName = mediaStream.name;
     var lineBreak = streamTuner ? "<br><br>" : "<br>";
-    streamName = streamName.replace(" - ", lineBreak);
     if (mediaStream.source.protectionInfo.length > 0) {
-        streamName = streamName + lineBreak;
+        streamName = streamName + lineBreak + "(";
         for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
             if (i > 0) {
                 streamName = streamName + ", ";
             }
             streamName = streamName + mediaStream.source.protectionInfo[i].type;
         }
+        streamName = streamName + ")";
     }
     return streamName;
 }

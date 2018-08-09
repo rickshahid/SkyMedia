@@ -28,9 +28,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Type { get; set; }
 
+        public string Description { get; set; }
+
         public StreamSource Source { get; set; }
 
         public TextTrack[] TextTracks { get; set; }
+
+        public string[] ThumbnailUrls { get; set; }
 
         //public MediaInsight ContentInsight { get; set; }
     }

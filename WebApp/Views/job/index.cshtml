@@ -15,10 +15,11 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Transform Job Name");
+            var columns = GetParentColumns(gridId, "Media Job Name");
             LoadGrid(gridId, rows, columns);
             CreateTipBottom("jobCreate", "Create Job");
-        })
+            setInterval(function () { ReloadGrid(gridId, "/job/get", columns); }, _refreshInterval);
+       })
     </script>
 }
 
@@ -33,17 +34,17 @@
 
 <div class="entity">
     <div>
-        @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Job Name]" })
+        @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Media Job Name]" })
         <br><br>
-        @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Job Description]" })
+        @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Media Job Description]" })
     </div>
     <table>
         <tr>
             <td class="inputLabel">
-                Job Priority
+                Media Job Priority
             </td>
-            <td>
-                <partial name="Priority" model='new ClientControl { ClientId = "jobPriority" }' />
+            <td class="inputLeft">
+                <partial name="Priority" model='new ClientControl { ControlId = "jobPriority" }' />
             </td>
         </tr>
         <tr>
@@ -72,7 +73,11 @@
         </tr>
         <tr>
             <td class="inputLabel">
-                Input File Url
+                <span class="inputFileUrl">
+                    Input File Url
+                    <br>
+                    (HTTPS)
+                </span>
             </td>
             <td>
                 @Html.TextBox("inputFileUrl", null, new { @class = "entityName transformJob" })
@@ -82,5 +87,5 @@
 </div>
 
 <div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "jobCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "jobCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
 </div>

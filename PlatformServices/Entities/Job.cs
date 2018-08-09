@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Microsoft.Azure.Management.Media.Models;
+﻿using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -16,14 +14,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public string InputFileUrl { get; set; }
 
-        public IDictionary<string, string> CorrelationData { get; set; }
+        public string OutputAssetDescription { get; set; }
+
+        public string OutputAssetAlternateId { get; set; }
     }
-
-    //internal class MediaProcess
-    //{
-    //    [JsonProperty(PropertyName = "id")]
-    //    public string Id { get; set; }
-
-    //    public string[] MissingFiles { get; set; }
-    //}
 }

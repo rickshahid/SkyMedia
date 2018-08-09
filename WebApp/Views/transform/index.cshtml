@@ -15,7 +15,7 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Transform Name");
+            var columns = GetParentColumns(gridId, "Media Transform Name");
             LoadGrid(gridId, rows, columns);
             CreateTipBottom("transformSave", "Save Transform");
         })
@@ -33,20 +33,20 @@
 
 <div class="entity">
     <div>
-        @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Transform Name]" })
+        @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Media Transform Name]" })
         <br><br>
-        @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Transform Description]" })
+        @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Media Transform Description]" })
     </div>
     <table>
         <tr>
             <td class="inputLabel outputPresets">
-                Transform<br>Output Presets
+                Media Transform<br>Output Presets
             </td>
             <td>
                 <table>
                     <tr>
                         <td class="inputLabel centered">
-                            Preset Name
+                            Transform Preset Name
                         </td>
                         <td class="inputLabel centered">
                             Relative<br>Priority
@@ -67,38 +67,38 @@
                             </select>
                         </td>
                         <td>
-                            <partial name="Priority" model='new ClientControl { ClientId = "relativePriority0" }' />
+                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority0" }' />
                         </td>
                         <td>
-                            <partial name="OnError" model='new ClientControl { ClientId = "onError0" }' />
+                            <partial name="OnError" model='new ClientControl { ControlId = "onError0" }' />
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="inputLeft">
                             @Html.CheckBox("presetEnabled1", false, new { onchange = "SetAudioAnalyzer(this)" })
                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
                                 Video Analyzer
                             </span>
                         </td>
                         <td>
-                            <partial name="Priority" model='new ClientControl { ClientId = "relativePriority1" }' />
+                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority1" }' />
                         </td>
                         <td>
-                            <partial name="OnError" model='new ClientControl { ClientId = "onError1" }' />
+                            <partial name="OnError" model='new ClientControl { ControlId = "onError1" }' />
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="inputLeft">
                             @Html.CheckBox("presetEnabled2", false)
                             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
                                 Audio Analyzer
                             </span>
                         </td>
                         <td>
-                            <partial name="Priority" model='new ClientControl { ClientId = "relativePriority2" }' />
+                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority2" }' />
                         </td>
                         <td>
-                            <partial name="OnError" model='new ClientControl { ClientId = "onError2" }' />
+                            <partial name="OnError" model='new ClientControl { ControlId = "onError2" }' />
                         </td>
                     </tr>
                 </table>
@@ -108,5 +108,5 @@
 </div>
 
 <div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "transformSave", ImageFile = "MediaEntitySave.png", OnClick = "CreateTransform()" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "transformSave", ImageFile = "MediaEntitySave.png", OnClick = "CreateTransform()" }' />
 </div>

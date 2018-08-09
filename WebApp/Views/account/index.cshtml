@@ -100,16 +100,16 @@
 }
 
 @section title {
-    Account Inventory
+    Media Account Inventory
 }
 
 <table id="accountInventory" class="accountInventory"></table>
 
 <div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "accountCreateAssets", ImageFile = "AccountCreateAssets.png", OnClick = "ConfirmCreate()" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "accountCreateAssets", ImageFile = "AccountCreateAssets.png", OnClick = "ConfirmCreate()" }' />
     @if (Debugger.IsAttached)
     {
-        <partial name="SiteButton" model='new SiteButton { ClientId = "accountDeleteEntities", ImageFile = "AccountDeleteEntities.png", OnClick = "ConfirmDelete()" }' />
+        <partial name="SiteButton" model='new SiteButton { ControlId = "accountDeleteEntities", ImageFile = "AccountDeleteEntities.png", OnClick = "ConfirmDelete()" }' />
     }
 </div>
 

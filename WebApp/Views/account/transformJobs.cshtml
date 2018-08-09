@@ -12,14 +12,15 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Transform Job Name");
+            var columns = GetParentColumns(gridId, "Tranform Job Name");
             LoadGrid(gridId, rows, columns);
+            setInterval(function () { ReloadGrid(gridId, "/job/get", columns); }, _refreshInterval);
         })
     </script>
 }
 
 @section title {
-    Transform Jobs
+    Media Transform Jobs
 }
 
 <div class="grid">

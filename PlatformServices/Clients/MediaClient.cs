@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -11,8 +12,6 @@ using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
-using Newtonsoft.Json.Linq;
-
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient : IDisposable
@@ -21,18 +20,19 @@ namespace AzureSkyMedia.PlatformServices
         private string _indexerAccountToken;
         private string _indexerAccountId;
 
-        public MediaClient(string authToken, MediaAccount mediaAccount = null)
+        public MediaClient(string authToken, MediaAccount mediaAccount = null, UserAccount userAccount = null)
         {
             if (!string.IsNullOrEmpty(authToken))
             {
                 User authUser = new User(authToken);
                 mediaAccount = authUser.MediaAccount;
-                UserAccount = new UserAccount()
+                userAccount = new UserAccount()
                 {
                     MobileNumber = authUser.MobileNumber
                 };
             }
             MediaAccount = mediaAccount;
+            UserAccount = userAccount;
             string settingKey = Constant.AppSettingKey.AzureResourceManagementEndpointUrl;
             string endpointUrl = AppSetting.GetValue(settingKey);
             MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
@@ -40,33 +40,20 @@ namespace AzureSkyMedia.PlatformServices
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };
-            if (!string.IsNullOrEmpty(authToken) && !string.IsNullOrEmpty(MediaAccount.VideoIndexerKey))
-            {
-                settingKey = Constant.AppSettingKey.MediaIndexerAuthUrl;
-                string authUrl = AppSetting.GetValue(settingKey);
-                WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey);
-                using (HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, authUrl))
-                {
-                    JArray indexerAccounts = webClient.GetResponse<JArray>(webRequest);
-                    if (indexerAccounts != null)
-                    {
-                        _indexerAccountId = indexerAccounts[0]["id"].ToString();
-                        _indexerAccountToken = indexerAccounts[0]["accessToken"].ToString();
-                    }
-                }
-            }
+            IndexerSetAccountContext();
         }
 
         public MediaAccount MediaAccount { get; private set; }
 
         public UserAccount UserAccount { get; private set; }
 
-        public StorageAccount PrimaryStorage
+        public string PrimaryStorageAccount
         {
             get
             {
                 MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
-                return mediaService.StorageAccounts.Where(s => s.Type == StorageAccountType.Primary).Single();
+                StorageAccount primaryStorage = mediaService.StorageAccounts.Where(s => s.Type == StorageAccountType.Primary).Single();
+                return Path.GetFileName(primaryStorage.Id);
             }
         }
 

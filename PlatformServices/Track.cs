@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -33,8 +34,9 @@ namespace AzureSkyMedia.PlatformServices
             List<TextTrack> textTracks = new List<TextTrack>();
             Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
             MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
-            foreach (string fileName in mediaAsset.FileNames)
+            foreach (CloudBlockBlob file in mediaAsset.Files)
             {
+                string fileName = file.Name;
                 if (fileName == Constant.Media.Analyzer.TranscriptFile)
                 {
                     string locatorName = string.Concat(assetName, Constant.Media.Asset.NameDelimiter, Constant.Media.Analyzer.Transcript);

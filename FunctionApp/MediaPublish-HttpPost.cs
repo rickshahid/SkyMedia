@@ -75,7 +75,7 @@ namespace AzureSkyMedia.FunctionApp
         {
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                string collectionId = Constant.Database.Collection.OutputPublish;
+                string collectionId = Constant.Database.Collection.ContentPublish;
                 MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, documentId);
                 if (mediaPublish != null)
                 {

@@ -21,6 +21,7 @@
 .plupload_container {
     border: 1px solid deepskyblue;
     border-radius: 20px;
+    text-align: left;
     margin-top: 10px;
 }
 
@@ -99,6 +100,7 @@
 
 .mediaUploadMessage {
     position: relative;
+    text-align: left;
     display: block;
     height: 20px;
     bottom: 32px;

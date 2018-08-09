@@ -51,7 +51,7 @@ function GetParentColumns(gridId, nameLabel) {
                     name: "name",
                     formatter: FormatName,
                     align: "center",
-                    width: nameWidth  + 225
+                    width: nameWidth + 225
                 },
                 {
                     label: "Alternate Id",
@@ -89,28 +89,6 @@ function GetParentColumns(gridId, nameLabel) {
                 }
             ];
             break;
-        case "operations":
-            columns = [
-                {
-                    label: "Operation",
-                    name: "display.operation",
-                    align: "center",
-                    width: 400
-                },
-                {
-                    label: "Resource",
-                    name: "display.resource",
-                    align: "center",
-                    width: 250
-                },
-                {
-                    label: "Description",
-                    name: "display.description",
-                    align: "center",
-                    width: 600
-                }
-            ];
-            break;
         default:
             columns = [
                 {
@@ -122,19 +100,20 @@ function GetParentColumns(gridId, nameLabel) {
                 }
             ];
     }
-    var created = {
-        label: "Created",
-        name: "properties.created",
-        formatter: FormatDateTime,
-        align: "center",
-        width: dateTimeWidth
-    };
-    columns.splice(columns.length, 0, created);
+    if (gridId != "storageAccounts") {
+        var created = {
+                label: "Created",
+                name: "properties.created",
+                formatter: FormatDateTime,
+                align: "center",
+                width: dateTimeWidth
+            };
+        columns.splice(columns.length, 0, created);
+    }
     if (gridId != "storageAccounts" &&
         gridId != "streamingPolicies" &&
         gridId != "streamingLocators" &&
-        gridId != "indexerInsights" &&
-        gridId != "operations") {
+        gridId != "indexerInsights") {
         var modified = {
             label: "Modified",
             name: "properties.lastModified",
@@ -184,7 +163,7 @@ function GetParentColumns(gridId, nameLabel) {
             columns.splice(1, 0, streamingPolicyName, startTime, endTime);
             break;
     }
-    if (gridId != "storageAccounts" && gridId != "operations") {
+    if (gridId != "storageAccounts") {
         var actions = {
             label: "Actions",
             formatter: FormatActions,
@@ -246,6 +225,7 @@ function GetChildColumns(gridId) {
                 {
                     label: "State",
                     name: "state",
+                    formatter: FormatJobOutputState,
                     align: "center",
                     width: dateTimeWidth + 5
                 },
@@ -268,7 +248,7 @@ function FormatName(value, grid, row) {
     value = FormatValue(value, grid, row);
     var description = row["properties.description"];
     if (description != null) {
-        value = "<span onclick=DisplayMessage('Description','" + description + "')>" + value + "</span>";
+        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Description\",\"" + encodeURIComponent(description) + "\")>" + value + "</span>";
     }
     value = value.replace("Microsoft.Media/mediaservices", "");
     value = value.replace("Microsoft.Media", "");
@@ -281,6 +261,18 @@ function FormatValue(value, grid, row) {
     for (var i = 0; i < _spacingPatterns.length; i++) {
         var expression = new RegExp(_spacingPatterns[i], "g");
         value = value.replace(expression, _spacingInserts[i]);
+    }
+    return value;
+}
+function FormatJobOutputState(value, grid, row) {
+    if (value == "Error") {
+        var title = row.error.category + " Error";
+        var message = FormatValue(row.error.code);
+        if (row.error.details.length > 0) {
+            title = FormatValue(row.error.details[0].code + " (" + row.error.retry + ")");
+            message = row.error.details[0].message;
+        }
+        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"" + encodeURIComponent(title) + "\",\"" + encodeURIComponent(message) + "\")>" + value + "</span>";
     }
     return value;
 }

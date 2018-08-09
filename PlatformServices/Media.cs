@@ -1,27 +1,58 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
+        private static string[] GetThumbnailUrls(MediaClient mediaClient, StreamingLocator locator)
+        {
+            List<string> thumbnailUrls = new List<string>();
+            Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
+            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+            BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
+            StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
+            foreach (CloudBlockBlob file in mediaAsset.Files)
+            {
+                string fileName = file.Name;
+                if (fileName.Equals(Constant.Media.Thumbnail.Best, stringComparison))
+                {
+                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
+                    thumbnailUrls.Insert(0, thumbnailUrl);
+                }
+                else if (fileName.EndsWith(MediaImageFormat.JPG.ToString(), stringComparison) ||
+                         fileName.EndsWith(MediaImageFormat.PNG.ToString(), stringComparison) ||
+                         fileName.EndsWith(MediaImageFormat.BMP.ToString(), stringComparison))
+                {
+                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
+                    thumbnailUrls.Add(thumbnailUrl);
+                }
+            }
+            return thumbnailUrls.ToArray();
+        }
+
         private static MediaStream GetMediaStream(string authToken, MediaClient mediaClient, StreamingLocator locator)
         {
             MediaStream mediaStream = null;
             string playerUrl = mediaClient.GetPlayerUrl(locator);
             if (!string.IsNullOrEmpty(playerUrl))
             {
+                Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
                 mediaStream = new MediaStream()
                 {
                     Name = locator.Name,
+                    Description = asset.Description,
                     Source = new StreamSource()
                     {
                         Url = playerUrl,
                         ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
                     },
-                    TextTracks = Track.GetTextTracks(mediaClient, locator.AssetName)
+                    TextTracks = Track.GetTextTracks(mediaClient, locator.AssetName),
+                    ThumbnailUrls = GetThumbnailUrls(mediaClient, locator)
                 };
             }
             return mediaStream;
@@ -87,7 +118,7 @@ namespace AzureSkyMedia.PlatformServices
             return accountStreams.ToArray();
         }
 
-        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, int tunerPageSize, out int streamSkipCount, out bool streamLastPage)
+        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, int streamTunerPageSize, out int streamSkipCount, out bool streamLastPage)
         {
             streamSkipCount = 0;
             streamLastPage = false;
@@ -96,9 +127,9 @@ namespace AzureSkyMedia.PlatformServices
             int locatorsCount = locators.Count();
             if (locatorsCount > 0)
             {
-                if (streamNumber > tunerPageSize)
+                if (streamNumber > streamTunerPageSize)
                 {
-                    streamSkipCount = ((streamNumber - 1) / tunerPageSize) * tunerPageSize;
+                    streamSkipCount = ((streamNumber - 1) / streamTunerPageSize) * streamTunerPageSize;
                 }
                 if (streamSkipCount > 0)
                 {
@@ -106,7 +137,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 foreach (StreamingLocator locator in locators)
                 {
-                    if (accountStreams.Count < tunerPageSize)
+                    if (accountStreams.Count < streamTunerPageSize)
                     {
                         MediaStream accountStream = GetMediaStream(authToken, mediaClient, locator);
                         if (accountStream != null)
@@ -115,7 +146,7 @@ namespace AzureSkyMedia.PlatformServices
                         }
                     }
                 }
-                if (locatorsCount - streamSkipCount <= tunerPageSize)
+                if (locatorsCount - streamSkipCount <= streamTunerPageSize)
                 {
                     streamLastPage = true;
                 }

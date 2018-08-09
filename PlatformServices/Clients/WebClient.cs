@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Xml;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -9,37 +10,44 @@ using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class WebClient
+    internal class WebClient : IDisposable
     {
-        private string _apimKey;
+        private HttpClient _httpClient;
 
         public WebClient(string apimKey)
         {
-            _apimKey = apimKey;
+            _httpClient = new HttpClient();
+            if (!string.IsNullOrEmpty(apimKey))
+            {
+                _httpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, apimKey);
+            }
         }
 
         public static string GetData(string requestUrl)
         {
-            WebClient webClient = new WebClient(null);
-            HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, requestUrl);
-            return webClient.GetResponse<string>(requestMessage, out HttpStatusCode statusCode);
+            HttpClient httpClient = new HttpClient();
+            return httpClient.GetStringAsync(requestUrl).Result;
         }
 
         public static Stream GetStream(string requestUrl)
         {
-            WebClient webClient = new WebClient(null);
-            HttpRequestMessage requestMessage = webClient.GetRequest(HttpMethod.Get, requestUrl);
-            return webClient.GetResponse(requestMessage, out HttpStatusCode statusCode);
+            Stream responseData = null;
+            HttpClient httpClient = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            HttpResponseMessage responseMessage = httpClient.SendAsync(requestMessage).Result;
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                HttpContent responseContent = responseMessage.Content;
+                responseData = responseContent.ReadAsStreamAsync().Result;
+            }
+            return responseData;
         }
 
-        private HttpClient GetClient()
+        public static void SendAsync(string requestUrl)
         {
             HttpClient httpClient = new HttpClient();
-            if (!string.IsNullOrEmpty(_apimKey))
-            {
-                httpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, _apimKey);
-            }
-            return httpClient;
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            httpClient.SendAsync(requestMessage);
         }
 
         private T GetResponseData<T>(HttpContent responseContent)
@@ -50,6 +58,12 @@ namespace AzureSkyMedia.PlatformServices
             {
                 responseText = responseText.Trim('\"');
                 responseData = (T)Convert.ChangeType(responseText, typeof(T));
+            }
+            else if (typeof(T) == typeof(XmlDocument))
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(responseText);
+                responseData = (T)Convert.ChangeType(xmlDocument, typeof(T));
             }
             else if (typeof(T) == typeof(JObject))
             {
@@ -76,7 +90,7 @@ namespace AzureSkyMedia.PlatformServices
             if (requestData != null)
             {
                 string requestJson = JsonConvert.SerializeObject(requestData);
-                byte[] requestBytes = UTF8Encoding.UTF8.GetBytes(requestJson);
+                byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
                 requestMessage.Content = new ByteArrayContent(requestBytes);
             }
             return requestMessage;
@@ -87,40 +101,40 @@ namespace AzureSkyMedia.PlatformServices
             return GetRequest(requestMethod, requestUrl, null);
         }
 
-        public T GetResponse<T>(HttpRequestMessage requestMessage, out HttpStatusCode statusCode)
+        public T GetResponse<T>(HttpRequestMessage webRequest, out HttpStatusCode statusCode)
         {
             T responseData = default(T);
-            HttpClient httpClient = GetClient();
-            using (HttpResponseMessage responseMessage = httpClient.SendAsync(requestMessage).Result)
+            using (HttpResponseMessage webResponse = _httpClient.SendAsync(webRequest).Result)
             {
-                statusCode = responseMessage.StatusCode;
-                if (responseMessage.IsSuccessStatusCode)
+                statusCode = webResponse.StatusCode;
+                if (webResponse.IsSuccessStatusCode)
                 {
-                    HttpContent responseContent = responseMessage.Content;
+                    HttpContent responseContent = webResponse.Content;
                     responseData = GetResponseData<T>(responseContent);
                 }
             }
-            httpClient.Dispose();
+            _httpClient.Dispose();
             return responseData;
         }
 
-        public T GetResponse<T>(HttpRequestMessage requestMessage)
+        public T GetResponse<T>(HttpRequestMessage webRequest)
         {
-            return GetResponse<T>(requestMessage, out HttpStatusCode statusCode);
+            return GetResponse<T>(webRequest, out HttpStatusCode statusCode);
         }
 
-        private Stream GetResponse(HttpRequestMessage requestMessage, out HttpStatusCode statusCode)
+        public void Dispose()
         {
-            Stream responseData = null;
-            HttpClient httpClient = GetClient();
-            HttpResponseMessage responseMessage = httpClient.SendAsync(requestMessage).Result;
-            statusCode = responseMessage.StatusCode;
-            if (responseMessage.IsSuccessStatusCode)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && _httpClient != null)
             {
-                HttpContent responseContent = responseMessage.Content;
-                responseData = responseContent.ReadAsStreamAsync().Result;
+                _httpClient.Dispose();
+                _httpClient = null;
             }
-            return responseData;
         }
     }
 }

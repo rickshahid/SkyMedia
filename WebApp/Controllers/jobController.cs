@@ -48,40 +48,74 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        internal static Job Create(MediaClient mediaClient, string transformName, string jobName, string jobDescription, Priority jobPriority, string inputAssetName, string inputFileUrl, string streamingPolicyName)
-        {
-            MediaJob mediaJob = new MediaJob()
-            {
-                Name = jobName,
-                Description = jobDescription,
-                Priority = jobPriority,
-                InputAssetName = inputAssetName,
-                InputFileUrl = inputFileUrl
-            };
-            Job job = mediaClient.CreateJob(mediaClient, transformName, mediaJob);
-            MediaPublish mediaPublish = new MediaPublish()
-            {
-                Id = job.Name,
-                TransformName = transformName,
-                StreamingPolicyName = streamingPolicyName, 
-                MediaAccount = mediaClient.MediaAccount,
-                UserAccount = mediaClient.UserAccount
-            };
-            using (DatabaseClient databaseClient = new DatabaseClient())
-            {
-                string collectionId = Constant.Database.Collection.OutputPublish;
-                databaseClient.UpsertDocument(collectionId, mediaPublish);
-            }
-            return job;
-        }
-
         public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string inputAssetName, string inputFileUrl, string streamingPolicyName)
         {
-            Job job;
+            Job job = null;
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                job = Create(mediaClient, transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, streamingPolicyName);
+                bool standardEncoderPreset = false;
+                bool videoAnalyzerPreset = false;
+                bool audioAnalyzerPreset = false;
+                if (mediaClient.IndexerIsEnabled())
+                {
+                    Transform transform = mediaClient.GetEntity<Transform>(MediaEntity.Transform, transformName);
+                    foreach (TransformOutput transformOutput in transform.Outputs)
+                    {
+                        if (transformOutput.Preset is StandardEncoderPreset)
+                        {
+                            standardEncoderPreset = true;
+                        }
+                        else if (transformOutput.Preset is VideoAnalyzerPreset)
+                        {
+                            videoAnalyzerPreset = true;
+                        }
+                        else if (transformOutput.Preset is AudioAnalyzerPreset)
+                        {
+                            audioAnalyzerPreset = true;
+                        }
+                    }
+                    if (!standardEncoderPreset)
+                    {
+                        transformName = null;
+                    }
+                    else
+                    {
+                        transform = TransformController.Create(mediaClient, true, false, false);
+                        transformName = transform.Name;
+                    }
+                }
+
+                string indexId = null;
+                if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
+                {
+                    bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
+                    string videoUrl = inputFileUrl;
+                    string videoName = null;
+                    string videoDescription = null;
+                    if (string.IsNullOrEmpty(videoUrl))
+                    {
+                        Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
+                        BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
+                        string fileName = mediaAsset.Files[0].Name;
+                        videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
+                        videoName = inputAsset.Name;
+                        videoDescription = inputAsset.Description;
+                    }
+                    indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, videoName, videoDescription, string.Empty, audioOnly);
+                }
+                string[] inputFileUrls = string.IsNullOrEmpty(inputFileUrl) ? null : new string[] { inputFileUrl };
+                string outputAssetDescription = string.Empty;
+                if (!string.IsNullOrEmpty(inputAssetName))
+                {
+                    Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
+                    outputAssetDescription = asset.Description;
+                }
+                if (!string.IsNullOrEmpty(transformName))
+                {
+                    job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, outputAssetDescription, indexId, streamingPolicyName);
+                }
             }
             return Json(job);
         }
@@ -100,7 +134,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string publishMessage = string.Empty;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                string collectionId = Constant.Database.Collection.OutputPublish;
+                string collectionId = Constant.Database.Collection.ContentPublish;
                 MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
                 if (mediaPublish != null)
                 {
@@ -108,6 +142,17 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
             }
             return Json(publishMessage);
+        }
+
+        public JsonResult Get()
+        {
+            Job[] jobs;
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                jobs = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
+            }
+            return Json(jobs);
         }
 
         public IActionResult Index()

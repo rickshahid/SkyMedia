@@ -1,4 +1,9 @@
-﻿using Microsoft.WindowsAzure.Storage.Blob;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -7,18 +12,18 @@ namespace AzureSkyMedia.PlatformServices
     internal partial class MediaClient
     {
         // Remove this workaround when fixed in v3 API
-        public static void SetContainer(Asset asset)
+        private static void SetContainer(Asset asset)
         {
             asset.Container = string.Concat("asset-", asset.AssetId);
         }
 
-        public Asset CreateAsset(string storageAccount, string assetName, string description, string alternateId)
+        private Asset CreateAsset(string storageAccount, string assetName, string assetDescription, string assetAlternateId)
         {
             Asset asset = new Asset(name: assetName)
             {
                 StorageAccountName = storageAccount,
-                Description = description,
-                AlternateId = alternateId
+                Description = assetDescription,
+                AlternateId = assetAlternateId
             };
             asset = _media.Assets.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
             SetContainer(asset);
@@ -30,22 +35,28 @@ namespace AzureSkyMedia.PlatformServices
             return CreateAsset(storageAccount, assetName, string.Empty, string.Empty);
         }
 
-        public Asset CreateAsset(string storageAccount, string assetName, string description, string alternateId, string blobContainer, string[] fileNames)
+        public Asset CreateAsset(BlobClient sourceBlobClient, BlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string[] fileNames)
         {
-            Asset asset = CreateAsset(storageAccount, assetName, description, alternateId);
-            BlobClient blobClient = new BlobClient(MediaAccount, storageAccount);
+            List<Task> copyTasks = new List<Task>();
+            if (string.IsNullOrEmpty(assetName))
+            {
+                assetName = Path.GetFileNameWithoutExtension(fileNames[0]);
+            }
+            Asset asset = CreateAsset(storageAccount, assetName, assetDescription, assetAlternateId);
             foreach (string fileName in fileNames)
             {
-                CloudBlockBlob sourceBlob = blobClient.GetBlockBlob(blobContainer, fileName);
-                CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, fileName);
-                assetBlob.StartCopyAsync(sourceBlob);
+                string sourceUrl = sourceBlobClient.GetDownloadUrl(sourceContainer, fileName, false);
+                CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, fileName);
+                Task copyTask = assetBlob.StartCopyAsync(new Uri(sourceUrl));
+                copyTasks.Add(copyTask);
             }
+            Task.WaitAll(copyTasks.ToArray());
             return asset;
         }
 
-        public Asset CreateAsset(string storageAccount, string assetName, string description, string alternateId, string blobContainer, string fileName)
+        public Asset CreateAsset(BlobClient sourceBlobClient, BlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string fileName)
         {
-            return CreateAsset(storageAccount, assetName, description, alternateId, blobContainer, new string[] { fileName });
+            return CreateAsset(sourceBlobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, new string[] { fileName });
         }
     }
 }

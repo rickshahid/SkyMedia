@@ -1,15 +1,8 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
-@{
-    string accountMessage = ViewData["accountMessage"] as string;
-    string accountUrl = ViewData["accountUrl"] as string;
-}
-
 @section head {
-    <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript">
         $(function () {
-            ValidateAccount("@accountMessage", "@accountUrl");
         })
     </script>
 }
@@ -18,4 +11,4 @@
     Media Search
 }
 
-<partial name="SiteButton" model='new SiteButton { ClientId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />
+<partial name="SiteButton" model='new SiteButton { ControlId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />

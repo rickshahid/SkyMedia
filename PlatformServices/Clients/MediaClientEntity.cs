@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
 using Microsoft.Rest.Azure.OData;
@@ -200,7 +199,7 @@ namespace AzureSkyMedia.PlatformServices
                     _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     using (DatabaseClient databaseClient = new DatabaseClient())
                     {
-                        string collectionId = Constant.Database.Collection.OutputPublish;
+                        string collectionId = Constant.Database.Collection.ContentPublish;
                         databaseClient.DeleteDocument(collectionId, entityName);
                     }
                     break;
@@ -223,12 +222,6 @@ namespace AzureSkyMedia.PlatformServices
                     _media.LiveOutputs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     break;
             }
-        }
-
-        public Operation[] GetOperations()
-        {
-            IPage<Operation> operations = _media.Operations.List();
-            return operations.ToArray();
         }
     }
 }

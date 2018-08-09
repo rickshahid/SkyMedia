@@ -54,21 +54,19 @@ namespace AzureSkyMedia.PlatformServices
             int liveEventCount = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputCount = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
             int indexerInsights = mediaClient.IndexerGetInsights().Count;
-            int operationCount = mediaClient.GetOperations().Length;
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(Constant.TextFormatter.NumericLong), "/account/storageAccounts" });
-            entityCounts.Add(new string[] { "Assets", assetCount.ToString(Constant.TextFormatter.NumericLong), "/account/assets" });
-            entityCounts.Add(new string[] { "Transforms", transformCount.ToString(Constant.TextFormatter.NumericLong), "/account/transforms" });
-            entityCounts.Add(new string[] { "Transform Jobs", transformJobCount.ToString(Constant.TextFormatter.NumericLong), "/account/transformJobs" });
+            entityCounts.Add(new string[] { "Media Assets", assetCount.ToString(Constant.TextFormatter.NumericLong), "/account/assets" });
+            entityCounts.Add(new string[] { "Media Transforms", transformCount.ToString(Constant.TextFormatter.NumericLong), "/account/transforms" });
+            entityCounts.Add(new string[] { "Media Transform Jobs", transformJobCount.ToString(Constant.TextFormatter.NumericLong), "/account/transformJobs" });
             entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicyCount.ToString(Constant.TextFormatter.NumericLong), "/account/contentKeyPolicies" });
             entityCounts.Add(new string[] { "Streaming Policies", streamingPolicyCount.ToString(Constant.TextFormatter.NumericLong), "/account/streamingPolicies" });
             entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpointCount.ToString(Constant.TextFormatter.NumericLong), "/account/streamingEndpoints" });
             entityCounts.Add(new string[] { "Streaming Locators", streamingLocatorCount.ToString(Constant.TextFormatter.NumericLong), "/account/streamingLocators" });
             entityCounts.Add(new string[] { "Live Events", liveEventCount.ToString(Constant.TextFormatter.NumericLong), "/account/liveEvents" });
             entityCounts.Add(new string[] { "Live Event Outputs", liveEventOutputCount.ToString(Constant.TextFormatter.NumericLong), "/account/liveEventOutputs" });
-            entityCounts.Add(new string[] { "Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/account/indexerInsights" });
-            entityCounts.Add(new string[] { "Operations", operationCount.ToString(Constant.TextFormatter.NumericLong), "/account/operations" });
+            entityCounts.Add(new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/account/indexerInsights" });
 
             return entityCounts.ToArray();
         }

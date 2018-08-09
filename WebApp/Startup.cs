@@ -16,7 +16,6 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 using AzureSkyMedia.PlatformServices;
-using AzureSkyMedia.WebApp.Controllers;
 
 namespace AzureSkyMedia.WebApp
 {
@@ -95,10 +94,10 @@ namespace AzureSkyMedia.WebApp
             MediaClient.SetPublishEvent(authToken);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                TransformController.CreateTransform(mediaClient, true, false, false);
-                TransformController.CreateTransform(mediaClient, true, true, false);
-                TransformController.CreateTransform(mediaClient, true, false, true);
-                TransformController.CreateTransform(mediaClient, false, false, true);
+                mediaClient.CreateTransform(true, false, false);
+                mediaClient.CreateTransform(true, true, false);
+                mediaClient.CreateTransform(true, false, true);
+                mediaClient.CreateTransform(false, false, true);
             }
             return redirectAction;
         }

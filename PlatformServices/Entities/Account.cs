@@ -6,11 +6,11 @@ namespace AzureSkyMedia.PlatformServices
     {
         public string Name { get; set; }
 
-        public string SubscriptionId { get; set; }
+        public string ResourceGroupName { get; set; }
 
         public string ResourceId { get; set; }
 
-        public string ResourceGroupName { get; set; }
+        public string SubscriptionId { get; set; }
 
         public string DirectoryTenantId { get; set; }
 

@@ -34,7 +34,7 @@ function SetLayout() {
     CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
     CreateTipTop("mediaSearch", "Search");
     CreateTipTop("mediaCompose", "Compose");
-    CreateTipTop("mediaBrowse", "Browse");
+    CreateTipTop("mediaGallery", "Gallery");
     CreateTipBottom("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);
@@ -51,6 +51,7 @@ function SignOut(cookieName) {
     window.location.href = "/account/signOut";
 }
 function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose) {
+    title = decodeURIComponent(title);
     if (buttons == null) {
         buttons = {
             OK: function () {
@@ -62,6 +63,7 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, on
         var txtArea = document.createElement("textarea");
         txtArea.innerHTML = html;
         html = txtArea.value;
+        html = decodeURIComponent(html);
         $("#" + dialogId).html(html);
     }
     if (height == null) {
@@ -97,7 +99,7 @@ function ConfirmMessage(title, message, onConfirm) {
     };
     DisplayMessage(title, message, buttons);
 }
-function GetMediaPlayer(userId, accountName) {
+function GetMediaPlayer(playerId, userId, accountName) {
     var options = {
         fluid: true,
         playbackSpeed: {
@@ -114,7 +116,7 @@ function GetMediaPlayer(userId, accountName) {
             }
         }
     };
-    return amp("videoPlayer", options);
+    return amp(playerId, options);
 }
 function SetPlayerSpinner(visible) {
     if (visible) {

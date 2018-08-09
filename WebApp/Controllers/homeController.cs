@@ -30,25 +30,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return streamingEnabled;
         }
 
-        //public JsonResult Metadata(MediaProcessor mediaProcessor, string documentId, double timeSeconds)
-        //{
-        //    JObject metadata;
-        //    string collectionId = Constant.Database.Collection.OutputInsight;
-        //    string procedureId = Constant.Database.Procedure.TimecodeFragment;
-        //    using (DatabaseClient databaseClient = new DatabaseClient())
-        //    {
-        //        if (mediaProcessor == MediaProcessor.VideoAnalyzer)
-        //        {
-        //            metadata = databaseClient.GetDocument(collectionId, documentId);
-        //        }
-        //        else
-        //        {
-        //            metadata = databaseClient.GetDocument(collectionId, procedureId, documentId, timeSeconds);
-        //        }
-        //    }
-        //    return Json(metadata);
-        //}
-
         internal static SelectListItem[] GetListItems(Dictionary<string, string> dictionary)
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -56,22 +37,17 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 SelectListItem listItem = new SelectListItem()
                 {
-                    Text = item.Value.ToString(),
-                    Value = item.Key.ToString()
+                    Text = item.Value,
+                    Value = item.Key
                 };
                 listItems.Add(listItem);
             }
             return listItems.ToArray();
         }
 
-        internal static void SetViewData(string authToken, ViewDataDictionary viewData)
+        public static string GetAppSetting(string settingKey)
         {
-        //    User authUser = new User(authToken);
-        //    viewData["jobName"] = GetJobTemplates(authToken);
-        //    viewData["mediaProcessor1"] = GetMediaProcessors(authToken, false);
-        //    viewData["encoderConfig1"] = new List<SelectListItem>();
-        //    viewData["encoderStandardPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderStandard, authUser.MediaAccount.Name, true);
-        //    viewData["encoderPremiumPresets"] = presetController.GetProcessorPresets(MediaProcessor.EncoderPremium, authUser.MediaAccount.Name, false);
+            return AppSetting.GetValue(settingKey);
         }
 
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
@@ -100,18 +76,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             viewData["accountName"] = authUser.MediaAccount.Name;
         }
 
-        public static string GetAppSetting(string settingKey)
-        {
-            return AppSetting.GetValue(settingKey);
-        }
-
         public IActionResult Index()
         {
             string accountMessage = string.Empty;
             MediaStream[] mediaStreams = new MediaStream[] { };
-
             string authToken = GetAuthToken(Request, Response);
-            string queryString = Request.QueryString.Value.ToLower();
 
             if (Request.HasFormContentType)
             {
@@ -130,14 +99,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
 
             int streamNumber = 1;
-            if (queryString.Contains("stream"))
+            if (Request.Query.ContainsKey("stream"))
             {
                 streamNumber = int.Parse(Request.Query["stream"]);
             }
 
             string settingKey = Constant.AppSettingKey.MediaStreamTunerPageSize;
-            string pageSize = AppSetting.GetValue(settingKey);
-            int tunerPageSize = int.Parse(pageSize);
+            string tunerPageSize = AppSetting.GetValue(settingKey);
+            int streamTunerPageSize = int.Parse(tunerPageSize);
 
             int streamSkipCount = 0;
             bool streamLastPage = false;
@@ -158,7 +127,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                         else
                         {
-                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, tunerPageSize, out streamSkipCount, out streamLastPage);
+                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, streamTunerPageSize, out streamSkipCount, out streamLastPage);
                         }
                     }
                 }
@@ -167,14 +136,15 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 accountMessage = ex.ToString();
             }
-            ViewData["accountMessage"] = accountMessage;
 
             ViewData["mediaStreams"] = mediaStreams;
             ViewData["streamNumber"] = streamNumber;
 
-            ViewData["tunerPageSize"] = tunerPageSize;
+            ViewData["streamTunerPageSize"] = streamTunerPageSize;
             ViewData["streamSkipCount"] = streamSkipCount;
             ViewData["streamLastPage"] = streamLastPage;
+
+            ViewData["accountMessage"] = accountMessage;
 
             return View();
         }

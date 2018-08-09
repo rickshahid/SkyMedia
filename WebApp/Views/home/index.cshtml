@@ -1,24 +1,24 @@
-﻿@using AzureSkyMedia.PlatformServices;
-@using AzureSkyMedia.WebApp.Models;
+﻿@using AzureSkyMedia.WebApp.Models;
+@using AzureSkyMedia.PlatformServices;
 
 @{
+    MediaStream[] mediaStreams = (MediaStream[])ViewData["mediaStreams"];
+    int streamNumber = (int)ViewData["streamNumber"];
+
+    int streamTunerPageSize = (int)ViewData["streamTunerPageSize"];
+    int streamSkipCount = (int)ViewData["streamSkipCount"];
+    bool streamLastPage = (bool)ViewData["streamLastPage"];
+
+    string ampVersion = ViewData["mediaPlayerVersion"].ToString();
+    string ampSkin = ViewData["mediaPlayerSkin"].ToString();
+
+    string storageCdnUrl = ViewData["storageCdnUrl"].ToString();
+
     string userId = ViewData["userId"] as string;
     string authToken = ViewData["authToken"] as string;
 
     string accountName = ViewData["accountName"] as string;
     string accountMessage = ViewData["accountMessage"] as string;
-
-    MediaStream[] mediaStreams = ViewData["mediaStreams"] as MediaStream[];
-    int streamNumber = (int)ViewData["streamNumber"];
-
-    int tunerPageSize = (int)ViewData["tunerPageSize"];
-    int streamSkipCount = (int)ViewData["streamSkipCount"];
-    bool streamLastPage = (bool)ViewData["streamLastPage"];
-
-    string ampVersion = ViewData["mediaPlayerVersion"] as string;
-    string ampSkin = ViewData["mediaPlayerSkin"] as string;
-
-    string storageCdnUrl = ViewData["storageCdnUrl"] as string;
 }
 
 @section head {
@@ -29,13 +29,13 @@
     <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
-        var _mediaPlayer, _tunerPageSize = @tunerPageSize, _streamLastPage = @streamLastPage.ToString().ToLower();
+        var _mediaPlayer, _streamTunerPageSize = @streamTunerPageSize, _streamLastPage = @streamLastPage.ToString().ToLower();
         $(function () {
             var accountMessage = "@accountMessage";
             _authToken = "@authToken";
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
-            _mediaPlayer = GetMediaPlayer("@userId", "@accountName");
+            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName");
             _mediaPlayer.ready(function () {
                 this.videobreakdown({
                     syncTranscript: true,
@@ -60,9 +60,8 @@
             });
             if (_mediaStreams.length == 0) {
                 SetPlayerSpinner(false);
-            } else {
-                SetMediaStream(false, false);
             }
+            SetMediaStream(false, false);
             if (accountMessage != "") {
                 DisplayMessage("Account Message", accountMessage);
             }
@@ -74,19 +73,17 @@
     Azure Sky Media
 }
 
-<partial name="MediaPlayer" />
+<partial name="MediaPlayer" model='new MediaPlayer { StyleClass = "mediaPlayer", ControlId = "videoPlayer", Height = "auto", Width = "100%" }' />
 
 @*<div id="indexerInsight" class="indexerInsight">
-    <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
-</div>*@
+        <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
+    </div>*@
 
 <partial name="MediaWorkflow" model='new StreamTuner { StreamCount = mediaStreams.Length, StreamSkipCount = streamSkipCount }' />
 
-<div class="streamInfo">
-    <div id="streamName" class="streamInfoName"></div>
-    <div id="streamUrl" class="streamInfoUrl"></div>
-</div>
+<div id="streamName" class="streamName"></div>
+<div id="streamUrl" class="streamUrl"></div>
 
 <div class="mediaServicesCompliance">
-    <partial name="SiteButton" model='new SiteButton { ClientId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "http://www.microsoft.com/en-us/trustcenter/compliance/cdsa" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "http://www.microsoft.com/en-us/trustcenter/compliance/cdsa" }' />
 </div>

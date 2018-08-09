@@ -70,7 +70,7 @@ namespace AzureSkyMedia.PlatformServices
         public static string SendNotificationMessage(MediaPublish mediaPublish, Job job, string indexId, string indexState)
         {
             string message = Constant.Message.MobileNumberNotAvailable;
-            if (!string.IsNullOrEmpty(mediaPublish.UserAccount.MobileNumber))
+            if (mediaPublish.UserAccount != null && !string.IsNullOrEmpty(mediaPublish.UserAccount.MobileNumber))
             {
                 if (job == null)
                 {
@@ -80,7 +80,6 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     message = GetNotificationMessage(mediaPublish, job);
                 }
-
 
                 string settingKey = Constant.AppSettingKey.TwilioAccountId;
                 string accountId = AppSetting.GetValue(settingKey);

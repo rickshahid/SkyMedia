@@ -17,6 +17,14 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaTransformPreset
+    {
+        AdaptiveStreaming,
+        VideoAnalyzer,
+        AudioAnalyzer
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaProtection
     {
         AES,

@@ -15,7 +15,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             User authUser = new User(authToken);
             BlobClient blobClient = new BlobClient(authUser.MediaAccount, storageAccount);
             Stream blockStream = Request.Form.Files[0].OpenReadStream();
-            string containerName = Constant.Storage.Blob.Container.FileUpload;
+            string containerName = Constant.Storage.BlobContainer.FileUpload;
             blobClient.UploadBlock(blockStream, containerName, name, chunk, chunks, contentType);
             return Json(chunk);
         }
