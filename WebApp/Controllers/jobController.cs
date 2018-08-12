@@ -54,38 +54,20 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                bool standardEncoderPreset = false;
                 bool videoAnalyzerPreset = false;
                 bool audioAnalyzerPreset = false;
-                if (mediaClient.IndexerIsEnabled())
+                Transform transform = mediaClient.GetEntity<Transform>(MediaEntity.Transform, transformName);
+                foreach (TransformOutput transformOutput in transform.Outputs)
                 {
-                    Transform transform = mediaClient.GetEntity<Transform>(MediaEntity.Transform, transformName);
-                    foreach (TransformOutput transformOutput in transform.Outputs)
+                    if (transformOutput.Preset is VideoAnalyzerPreset)
                     {
-                        if (transformOutput.Preset is StandardEncoderPreset)
-                        {
-                            standardEncoderPreset = true;
-                        }
-                        else if (transformOutput.Preset is VideoAnalyzerPreset)
-                        {
-                            videoAnalyzerPreset = true;
-                        }
-                        else if (transformOutput.Preset is AudioAnalyzerPreset)
-                        {
-                            audioAnalyzerPreset = true;
-                        }
+                        videoAnalyzerPreset = true;
                     }
-                    if (!standardEncoderPreset)
+                    else if (transformOutput.Preset is AudioAnalyzerPreset)
                     {
-                        transformName = null;
-                    }
-                    else
-                    {
-                        transform = TransformController.Create(mediaClient, true, false, false);
-                        transformName = transform.Name;
+                        audioAnalyzerPreset = true;
                     }
                 }
-
                 string indexId = null;
                 if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                 {
@@ -97,7 +79,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     {
                         Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                         BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
-                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset, false);
                         string fileName = mediaAsset.Files[0].Name;
                         videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
                         videoName = inputAsset.Name;
@@ -114,7 +96,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 if (!string.IsNullOrEmpty(transformName))
                 {
-                    job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, outputAssetDescription, indexId, streamingPolicyName);
+                    job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, null, outputAssetDescription, indexId, streamingPolicyName);
                 }
             }
             return Json(job);

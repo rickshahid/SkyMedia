@@ -31,7 +31,8 @@ function LoadSubGrid(parentRowId, parentRowKey) {
         datatype: "local",
         data: childRows,
         loadComplete: ClearTitles,
-        sortname: "name"
+        sortname: "name",
+        rowNum: 50
     });
 }
 function LoadGrid(gridId, rows, columns) {
@@ -54,6 +55,7 @@ function LoadGrid(gridId, rows, columns) {
     for (var i = 0; i < rows.length; i++) {
         var rowId = rows[i].id;
         CreateTipTop(rowId + "_cancel", "Cancel");
+        CreateTipTop(rowId + "_reindex", "Reindex");
         CreateTipTop(rowId + "_publish", "Publish");
         CreateTipTop(rowId + "_edit", "Edit");
         CreateTipTop(rowId + "_delete", "Delete");

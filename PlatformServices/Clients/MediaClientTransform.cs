@@ -102,6 +102,11 @@ namespace AzureSkyMedia.PlatformServices
 
         public Transform CreateTransform(bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
         {
+            if (IndexerIsEnabled())
+            {
+                videoAnalyzerPreset = false;
+                audioAnalyzerPreset = false;
+            }
             MediaTransformOutput standardEncoderOutput = new MediaTransformOutput()
             {
                 PresetEnabled = standardEncoderPreset,
@@ -123,19 +128,6 @@ namespace AzureSkyMedia.PlatformServices
             };
             MediaTransformOutput[] transformOutputs = new MediaTransformOutput[] { standardEncoderOutput, videoAnalyzerOutput, audioAnalyzerOutput };
             return CreateTransform(null, null, transformOutputs);
-        }
-
-        public static bool HasTransformPreset(MediaTransformPreset[] transformPresets, MediaTransformPreset transformPreset)
-        {
-            bool hasTransformPreset = false;
-            foreach (MediaTransformPreset preset in transformPresets)
-            {
-                if (preset == transformPreset)
-                {
-                    hasTransformPreset = true;
-                }
-            }
-            return hasTransformPreset;
         }
     }
 }

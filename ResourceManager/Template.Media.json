@@ -31,7 +31,7 @@
     "storageService1Name": "[concat(variables('storageServiceName'), '1')]",
     "storageService2Name": "[concat(variables('storageServiceName'), '2')]",
     "storageService3Name": "[concat(variables('storageServiceName'), '3')]",
-    "mediaApiVersion": "2015-10-01",
+    "mediaApiVersion": "2018-03-30-preview",
     "mediaServiceName": "[toLower(parameters('mediaServiceName'))]"
   },
   "resources": [
@@ -85,36 +85,36 @@
         "storageAccounts": [
           {
             "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name'))]",
-            "isPrimary": true
+            "type": "Primary"
           },
           {
             "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService2Name'))]",
-            "isPrimary": false
+            "type": "Secondary"
           },
           {
             "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageService3Name'))]",
-            "isPrimary": false
+            "type": "Secondary"
           }
         ]
       }
     }
   ],
   "outputs": {
-    "storage1Connection": {
+    "storageAccount1Connection": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageService1Name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageService1Name')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     },
-    "storage2Connection": {
+    "storageAccount2Connection": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageService2Name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageService2Name')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     },
-    "storage3Connection": {
+    "storageAccount3Connection": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageService3Name'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageService3Name')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     },
-    "mediaEndpoint": {
+    "mediaAccountId": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName')), variables('mediaApiVersion')).apiEndpoints[0].endpoint]"
+      "value": "[reference(resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName')), variables('mediaApiVersion')).mediaServiceId]"
     }
   }
 }

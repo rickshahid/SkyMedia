@@ -72,6 +72,31 @@ function GetParentColumns(gridId, nameLabel) {
                 }
             ];
             break;
+        case "liveEvents":
+            columns = [
+                {
+                    label: nameLabel,
+                    name: "name",
+                    formatter: FormatName,
+                    align: "center",
+                    width: nameWidth
+                },
+                {
+                    label: "Input Protocol",
+                    name: "properties.input",
+                    formatter: FormatLiveInputProtocol,
+                    align: "center",
+                    width: 200
+                },
+                {
+                    label: "Encoding Type",
+                    name: "properties.encoding",
+                    formatter: FormatLiveEncodingType,
+                    align: "center",
+                    width: 200
+                }
+            ];
+            break;
         case "indexerInsights":
             columns = [
                 {
@@ -100,7 +125,8 @@ function GetParentColumns(gridId, nameLabel) {
                 }
             ];
     }
-    if (gridId != "storageAccounts") {
+    if (gridId != "storageAccounts" &&
+        gridId != "indexerInsights") {
         var created = {
                 label: "Created",
                 name: "properties.created",
@@ -276,6 +302,14 @@ function FormatJobOutputState(value, grid, row) {
     }
     return value;
 }
+function FormatLiveInputProtocol(value, grid, row) {
+    value = value["streamingProtocol"];
+    return FormatValue(value);
+}
+function FormatLiveEncodingType(value, grid, row) {
+    value = value["encodingType"];
+    return FormatValue(value);
+}
 function FormatProgress(value, grid, row) {
     return value + "%";
 }
@@ -292,28 +326,36 @@ function FormatRegions(value, grid, row) {
 }
 function FormatActions(value, grid, row) {
     var actionsHtml = "";
-    var entityName = grid.gid == "indexerInsights" ? row.id : row.name;
+    var entityName = row.name;
     var entityType = GetEntityType();
     if (entityName.indexOf("Predefined_") > -1) {
         actionsHtml = "N/A";
     } else {
+        var reindexHtml = "";
         var cancelHtml = "";
         var publishHtml = "";
-        if (grid.gid == "transformJobs") {
-            switch (row["properties.state"]) {
-                case "Queued":
-                case "Scheduled":
-                case "Processing":
-                    var onCancel = "CancelJob('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
-                    cancelHtml = "<button id='" + row.id + "_cancel' class='siteButton' onclick=" + onCancel + ">";
-                    cancelHtml = cancelHtml + "<img src='" + _storageCdnUrl + "/MediaEntityCancel.png'></button>";
-                    break;
-                case "Finished":
-                    var onPublish = "PublishJob('" + encodeURIComponent(entityName) + "')";
-                    publishHtml = "<button id='" + row.id + "_publish' class='siteButton' onclick=" + onPublish + ">";
-                    publishHtml = publishHtml + "<img src='" + _storageCdnUrl + "/MediaEntityPublish.png'></button>";
-                    break;
-            }
+        switch (grid.gid) {
+            case "indexerInsights":
+                var onReindex = "ReindexVideo('" + row.id + "', '" + encodeURIComponent(entityName) + "')";
+                reindexHtml = "<button id='" + row.id + "_reindex' class='siteButton' onclick=" + onReindex + ">";
+                reindexHtml = reindexHtml + "<img src='" + _storageCdnUrl + "/MediaEntityReindex.png'></button>";
+                break;
+            case "transformJobs":
+                switch (row["properties.state"]) {
+                    case "Queued":
+                    case "Scheduled":
+                    case "Processing":
+                        var onCancel = "CancelJob('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
+                        cancelHtml = "<button id='" + row.id + "_cancel' class='siteButton' onclick=" + onCancel + ">";
+                        cancelHtml = cancelHtml + "<img src='" + _storageCdnUrl + "/MediaEntityCancel.png'></button>";
+                        break;
+                    case "Finished":
+                        var onPublish = "PublishJob('" + encodeURIComponent(entityName) + "')";
+                        publishHtml = "<button id='" + row.id + "_publish' class='siteButton' onclick=" + onPublish + ">";
+                        publishHtml = publishHtml + "<img src='" + _storageCdnUrl + "/MediaEntityPublish.png'></button>";
+                        break;
+                }
+                break;
         }
         var editHtml = "";
         if (window.location.href.indexOf("/account") == -1) {
@@ -325,7 +367,7 @@ function FormatActions(value, grid, row) {
         var onDelete = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
         var deleteHtml = "<button id='" + row.id + "_delete' class='siteButton' onclick=" + onDelete + ">";
         deleteHtml = deleteHtml + "<img src='" + _storageCdnUrl + "/MediaEntityDelete.png'></button>";
-        actionsHtml = cancelHtml + publishHtml + editHtml + deleteHtml;
+        actionsHtml = reindexHtml + cancelHtml + publishHtml + editHtml + deleteHtml;
     }
     return actionsHtml
 }

@@ -69,6 +69,24 @@ function SetRowEdit(gridId, rowData) {
             break;
     }
 }
+function ReindexVideo(indexId, videoName) {
+    var title = "Confirm Reindex Video";
+    var message = "Are you sure you want to reindex the '" + FormatValue(videoName) + "' video?";
+    var onConfirm = function () {
+        SetCursor(true);
+        $.post("/asset/reindex",
+            {
+                indexId: indexId
+            },
+            function () {
+                SetCursor(false);
+                DisplayMessage("Reindex Video Initiated", indexId);
+            }
+        );
+        $(this).dialog("close");
+    }
+    ConfirmMessage(title, message, onConfirm);
+}
 function CancelJob(jobName, transformName) {
     var title = "Confirm Job Cancel Request";
     var message = "Are you sure you want to cancel the '" + FormatValue(jobName) + "' job?";

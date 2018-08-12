@@ -35,7 +35,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             //JObject clip = JObject.Parse(clipData);
             //MediaJobInput[] jobInputs = GetJobInputs(clip);
             //string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            //MediaClient mediaClient = new MediaClient(authToken);
+            //using MediaClient mediaClient = new MediaClient(authToken);
             //if (jobInputs[0].AssetFilter)
             //{
             //    string filterName = clip["name"].ToString();

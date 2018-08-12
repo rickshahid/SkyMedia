@@ -30,9 +30,9 @@ function GetFileNames() {
     }
     return fileNames;
 }
-function CreateAsset() {
+function CreateWorkflow() {
     SetCursor(true);
-    $.post("/asset/create",
+    $.post("/asset/workflow",
         {
             storageAccount: $("#storageAccount").val(),
             assetName: $("#assetName").val(),
@@ -86,7 +86,7 @@ function CreateUploader() {
             if (uploader.total.failed == 0) {
                 var uploadTime = GetUploadTime();
                 $("#mediaUploadMessage").text("Upload Elapsed Time: " + uploadTime);
-                CreateAsset();
+                CreateWorkflow();
             }
         },
         Error: function (uploader, error) {

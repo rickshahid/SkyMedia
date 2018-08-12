@@ -47,6 +47,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public UserAccount UserAccount { get; private set; }
 
+        public IList<StorageAccount> StorageAccounts
+        {
+            get
+            {
+                MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                return mediaService.StorageAccounts;
+            }
+        }
+
         public string PrimaryStorageAccount
         {
             get
@@ -54,15 +63,6 @@ namespace AzureSkyMedia.PlatformServices
                 MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
                 StorageAccount primaryStorage = mediaService.StorageAccounts.Where(s => s.Type == StorageAccountType.Primary).Single();
                 return Path.GetFileName(primaryStorage.Id);
-            }
-        }
-
-        public IList<StorageAccount> StorageAccounts
-        {
-            get
-            {
-                MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
-                return mediaService.StorageAccounts;
             }
         }
 

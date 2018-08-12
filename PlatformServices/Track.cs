@@ -33,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<TextTrack> textTracks = new List<TextTrack>();
             Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
-            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset, false);
             foreach (CloudBlockBlob file in mediaAsset.Files)
             {
                 string fileName = file.Name;

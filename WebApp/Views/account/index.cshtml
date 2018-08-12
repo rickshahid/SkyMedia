@@ -21,11 +21,11 @@
             }
             $("#accountInventory").html(inventoryHtml);
         }
-        function DeleteEntities(liveOnly) {
+        function DeleteEntities(skipIndexer) {
             SetCursor(true);
             $.post("/account/deleteEntities",
                 {
-                    liveOnly: liveOnly
+                    skipIndexer: skipIndexer
                 },
                 function () {
                     SetCursor(false);
@@ -42,19 +42,15 @@
             var buttons = {
                 OK: function () {
                     SetCursor(true);
-                    $.post("/account/createAssets",
+                    $.post("/asset/create",
                         {
                             assetCount: $("#assetCount").val(),
                             assetType: $("#assetType:checked").val(),
                             assetPublish: $("#assetPublish").prop("checked")
                         },
-                        function (exception) {
+                        function () {
                             SetCursor(false);
-                            if (exception != "") {
-                                DisplayMessage("Exception", exception);
-                            } else {
-                                window.location = window.location.href;
-                            }
+                            window.location = window.location.href;
                         }
                     );
                     $(this).dialog("close");
@@ -77,7 +73,7 @@
                     DeleteEntities(false);
                     $(this).dialog("close");
                 },
-                "Live Only": function () {
+                "Skip Indexer": function () {
                     DeleteEntities(true);
                     $(this).dialog("close");
                 },

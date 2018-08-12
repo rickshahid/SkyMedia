@@ -84,17 +84,10 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             if (Request.HasFormContentType)
             {
-                try
+                RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
+                if (redirectAction != null)
                 {
-                    RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
-                    if (redirectAction != null)
-                    {
-                        return redirectAction;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    accountMessage = ex.ToString();
+                    return redirectAction;
                 }
             }
 
@@ -131,6 +124,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                     }
                 }
+            }
+            catch (ApiErrorException apiEx)
+            {
+                accountMessage = string.Concat(apiEx.Response.Content, apiEx.ToString());
             }
             catch (Exception ex)
             {

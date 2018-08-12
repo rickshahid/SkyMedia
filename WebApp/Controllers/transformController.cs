@@ -7,20 +7,6 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class TransformController : Controller
     {
-        internal static Transform Create(MediaClient mediaClient, bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
-        {
-            Transform transform;
-            if (mediaClient.IndexerIsEnabled())
-            {
-                transform = mediaClient.CreateTransform(standardEncoderPreset, false, false);
-            }
-            else
-            {
-                transform = mediaClient.CreateTransform(standardEncoderPreset, videoAnalyzerPreset, audioAnalyzerPreset);
-            }
-            return transform;
-        }
-
         public JsonResult Create(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
         {
             Transform transform;

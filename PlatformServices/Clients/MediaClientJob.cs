@@ -15,25 +15,21 @@ namespace AzureSkyMedia.PlatformServices
             {
                 mediaJob.Name = Guid.NewGuid().ToString();
             }
-            JobInput jobInput;
-            string outputAssetName;
-            string storageAccount = null;
+            string outputAssetName = null;
             if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
             {
-                jobInput = new JobInputHttp()
-                {
-                    Files = new string[] { mediaJob.InputFileUrl }
-                };
                 outputAssetName = Path.GetFileNameWithoutExtension(mediaJob.InputFileUrl);
+                CreateAsset(mediaJob.OutputAssetStorage, outputAssetName, mediaJob.OutputAssetDescription, mediaJob.OutputAssetAlternateId);
             }
-            else
+            else if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
             {
-                Asset asset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
-                storageAccount = asset.StorageAccountName;
-                jobInput = new JobInputAsset(asset.Name);
                 outputAssetName = mediaJob.InputAssetName;
+                Asset asset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
+                MediaAsset mediaAsset = new MediaAsset(MediaAccount, asset, false);
+                string fileName = mediaAsset.Files[0].Name;
+                BlobClient blobClient = new BlobClient(MediaAccount, asset.StorageAccountName);
+                mediaJob.InputFileUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
             }
-            CreateAsset(storageAccount, outputAssetName, mediaJob.OutputAssetDescription, mediaJob.OutputAssetAlternateId);
             List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
             Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
             foreach (TransformOutput transformOutput in transform.Outputs)
@@ -45,13 +41,16 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Description = mediaJob.Description,
                 Priority = mediaJob.Priority,
-                Input = jobInput,
+                Input = new JobInputHttp()
+                {
+                    Files = new string[] { mediaJob.InputFileUrl }
+                },
                 Outputs = outputAssets.ToArray()
             };
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
         }
 
-        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string inputAssetName, string inputFileUrl, string outputAssetDescription, string indexId, string streamingPolicyName)
+        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string inputAssetName, string inputFileUrl, string outputAssetStorage, string outputAssetDescription, string outputAssetAlternateId, string streamingPolicyName)
         {
             MediaJob mediaJob = new MediaJob()
             {
@@ -60,52 +59,25 @@ namespace AzureSkyMedia.PlatformServices
                 Priority = jobPriority,
                 InputAssetName = inputAssetName,
                 InputFileUrl = inputFileUrl,
+                OutputAssetStorage = outputAssetStorage,
                 OutputAssetDescription = outputAssetDescription,
-                OutputAssetAlternateId = indexId
+                OutputAssetAlternateId = outputAssetAlternateId
             };
             Job job = CreateJob(transformName, mediaJob);
-            MediaPublish mediaPublish = new MediaPublish()
-            {
-                Id = job.Name,
-                TransformName = transformName,
-                StreamingPolicyName = streamingPolicyName,
-                MediaAccount = MediaAccount,
-                UserAccount = UserAccount
-            };
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
                 string collectionId = Constant.Database.Collection.ContentPublish;
+                MediaPublish mediaPublish = new MediaPublish()
+                {
+                    Id = job.Name,
+                    TransformName = transformName,
+                    StreamingPolicyName = streamingPolicyName,
+                    MediaAccount = MediaAccount,
+                    UserAccount = UserAccount
+                };
                 databaseClient.UpsertDocument(collectionId, mediaPublish);
             }
             return job;
-        }
-
-        public Job CreateJob(string transformName, MediaIngestManifest ingestManifest)
-        {
-            string indexId = null;
-            using (MediaClient mediaClient = new MediaClient(null, ingestManifest.MediaAccount))
-            {
-                bool videoAnalyzerPreset = HasTransformPreset(ingestManifest.TransformPresets, MediaTransformPreset.VideoAnalyzer);
-                bool audioAnalyzerPreset = HasTransformPreset(ingestManifest.TransformPresets, MediaTransformPreset.AudioAnalyzer);
-                if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
-                {
-                    string videoUrl = ingestManifest.JobInputFileUrl;
-                    if (string.IsNullOrEmpty(videoUrl))
-                    {
-                        BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, ingestManifest.StorageAccount);
-                        Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, ingestManifest.AssetName);
-                        string fileName = Path.GetFileNameWithoutExtension(ingestManifest.AssetFiles[0]);
-                        videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
-                    }
-                    bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
-                    indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, string.Empty, string.Empty, string.Empty, audioOnly);
-                }
-            }
-            if (string.IsNullOrEmpty(ingestManifest.AssetName) && ingestManifest.AssetFiles.Length > 0)
-            {
-                ingestManifest.AssetName = Path.GetFileNameWithoutExtension(ingestManifest.AssetFiles[0]);
-            }
-            return CreateJob(transformName, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.AssetName, ingestManifest.JobInputFileUrl, ingestManifest.JobOutputAssetDescription, indexId, ingestManifest.StreamingPolicyName);
         }
 
         public void CancelJob(string transformName, string jobName)

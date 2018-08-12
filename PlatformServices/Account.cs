@@ -23,15 +23,16 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static void DeleteEntities(MediaClient mediaClient, bool liveOnly)
+        public static void DeleteEntities(MediaClient mediaClient, bool skipIndexer)
         {
-            if (!liveOnly)
+            DeleteEntities<Asset>(mediaClient, MediaEntity.Asset);
+            DeleteEntities<Transform>(mediaClient, MediaEntity.Transform);
+            DeleteEntities<ContentKeyPolicy>(mediaClient, MediaEntity.ContentKeyPolicy);
+            DeleteEntities<StreamingPolicy>(mediaClient, MediaEntity.StreamingPolicy);
+            DeleteEntities<StreamingLocator>(mediaClient, MediaEntity.StreamingLocator);
+            DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
+            if (mediaClient.IndexerIsEnabled() && !skipIndexer)
             {
-                DeleteEntities<Asset>(mediaClient, MediaEntity.Asset);
-                DeleteEntities<Transform>(mediaClient, MediaEntity.Transform);
-                DeleteEntities<ContentKeyPolicy>(mediaClient, MediaEntity.ContentKeyPolicy);
-                DeleteEntities<StreamingPolicy>(mediaClient, MediaEntity.StreamingPolicy);
-                DeleteEntities<StreamingLocator>(mediaClient, MediaEntity.StreamingLocator);
                 JArray insights = mediaClient.IndexerGetInsights();
                 foreach (JToken insight in insights)
                 {
@@ -39,7 +40,6 @@ namespace AzureSkyMedia.PlatformServices
                     mediaClient.IndexerDeleteVideo(indexId, true);
                 }
             }
-            DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
         }
 
         public static string[][] GetEntityCounts(MediaClient mediaClient)
@@ -53,7 +53,7 @@ namespace AzureSkyMedia.PlatformServices
             int streamingLocatorCount = mediaClient.GetEntityCount<StreamingLocator>(MediaEntity.StreamingLocator);
             int liveEventCount = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputCount = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
-            int indexerInsights = mediaClient.IndexerGetInsights().Count;
+            int indexerInsights = !mediaClient.IndexerIsEnabled() ? 0 : mediaClient.IndexerGetInsights().Count;
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(Constant.TextFormatter.NumericLong), "/account/storageAccounts" });

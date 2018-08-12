@@ -191,10 +191,10 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct IngestManifest
             {
-                public const string FileExtension = ".json";
-                public const string FileExtensionLog = ".log";
                 public const string GalleryPrefix = "Gallery.";
                 public const string TriggerPrefix = "MediaIngestManifest";
+                public const string FileExtension = ".json";
+                public const string FileExtensionLog = ".log";
             }
 
             public struct ContentType
@@ -249,6 +249,11 @@ namespace AzureSkyMedia.PlatformServices
             public struct Thumbnail
             {
                 public const string Best = "Thumbnail000001.jpg";
+            }
+
+            public struct Live
+            {
+                public const string AllowedPreviewAccess = "Allowed Preview Access";
             }
         }
 

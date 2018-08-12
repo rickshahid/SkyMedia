@@ -1,17 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -19,31 +13,6 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class AccountController : Controller
     {
-        private string GetAssetName(CloudBlobDirectory assetDirectory)
-        {
-            string assetName = string.Empty;
-            IListBlobItem[] assetFiles = assetDirectory.ListBlobsSegmentedAsync(null).Result.Results.ToArray();
-            if (assetFiles.Length == 1)
-            {
-                assetName = assetFiles[0].Uri.ToString();
-            }
-            else
-            {
-                foreach (IListBlobItem assetFile in assetFiles)
-                {
-                    if (assetFile.Uri.ToString().EndsWith(Constant.Media.Stream.ManifestExtension))
-                    {
-                        assetName = assetFile.Uri.ToString();
-                    }
-                }
-            }
-            if (!string.IsNullOrEmpty(assetName))
-            {
-                assetName = Path.GetFileNameWithoutExtension(assetName);
-            }
-            return assetName;
-        }
-
         private void SetStyleHost()
         {
             ViewData["cssHost"] = string.Concat(Request.Scheme, "://", Request.Host.Value);
@@ -64,58 +33,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public JsonResult CreateAssets(int assetCount, string assetType, bool assetPublish)
-        {
-            string exception = string.Empty;
-            try
-            {
-                string authToken = HomeController.GetAuthToken(Request, Response);
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    BlobClient sourceBlobClient = new BlobClient();
-                    string storageAccount = mediaClient.PrimaryStorageAccount;
-                    BlobClient mediaBlobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
-                    for (int i = 1; i <= assetCount; i++)
-                    {
-                        int assetIndex = i % 2 == 0 ? 2 : i % 2;
-                        string containerName = Constant.Storage.BlobContainer.MediaServices;
-                        string directoryPath = string.Concat(assetType, "/", assetIndex.ToString());
-                        CloudBlobDirectory sourceDirectory = sourceBlobClient.GetBlobDirectory(containerName, directoryPath);
-                        string assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, GetAssetName(sourceDirectory));
-                        Asset asset = mediaClient.CreateAsset(storageAccount, assetName);
-                        IListBlobItem[] sourceFiles = sourceDirectory.ListBlobsSegmentedAsync(null).Result.Results.ToArray();
-                        List<Task> uploadTasks = new List<Task>();
-                        foreach (IListBlobItem sourceFile in sourceFiles)
-                        {
-                            string fileName = Path.GetFileName(sourceFile.Uri.ToString());
-                            CloudBlockBlob sourceBlob = sourceDirectory.GetBlockBlobReference(fileName);
-                            Stream sourceStream = sourceBlob.OpenReadAsync().Result;
-                            CloudBlockBlob assetBlob = mediaBlobClient.GetBlockBlob(asset.Container, fileName);
-                            Task uploadTask = assetBlob.UploadFromStreamAsync(sourceStream);
-                            uploadTasks.Add(uploadTask);
-                        }
-                        if (assetPublish)
-                        {
-                            Task.WaitAll(uploadTasks.ToArray());
-                            string streamingPolicyName = assetType == Constant.Media.Asset.SingleBitrate ? PredefinedStreamingPolicy.DownloadOnly : PredefinedStreamingPolicy.ClearStreamingOnly;
-                            mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                exception = ex.ToString();
-            }
-            return Json(exception);
-        }
-
-        public void DeleteEntities(bool liveOnly)
+        public void DeleteEntities(bool skipIndexer)
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                Account.DeleteEntities(mediaClient, liveOnly);
+                Account.DeleteEntities(mediaClient, skipIndexer);
             }
         }
 
@@ -209,7 +132,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 IPage<Asset> assets = mediaClient.GetEntities<Asset>(MediaEntity.Asset);
                 foreach (Asset asset in assets)
                 {
-                    MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+                    MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset, true);
                     mediaAssets.Add(mediaAsset);
                 }
             }

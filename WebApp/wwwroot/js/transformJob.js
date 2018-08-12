@@ -4,9 +4,9 @@
         {
             assetName: $("#inputAssetName").val()
         },
-        function (entityFound) {
+        function (asset) {
             SetCursor(false);
-            if (entityFound) {
+            if (asset != null) {
                 $("#inputAssetName").removeClass("entityNotFound").addClass("entityFound");
                 SetTipVisible("inputAssetName", false);
             } else {
