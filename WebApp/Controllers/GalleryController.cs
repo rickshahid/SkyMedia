@@ -15,14 +15,17 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/gallery/refresh")]
         public void RefreshContent(string rssUrl = "https://channel9.msdn.com/Shows/AI-Show/feed/mp4high", bool skipDelete = false)
         {
+            MediaIngestManifest ingestManifest;
             BlobClient blobClient = new BlobClient();
             string containerName = Constant.Storage.BlobContainer.MediaServices;
             string fileName = string.Concat(Constant.Media.IngestManifest.GalleryPrefix, Constant.Media.IngestManifest.TriggerPrefix, Constant.Media.IngestManifest.FileExtension);
             CloudBlockBlob manifestFile = blobClient.GetBlockBlob(containerName, fileName);
-            Stream manifestStream = manifestFile.OpenReadAsync().Result;
-            StreamReader manifestReader = new StreamReader(manifestStream);
-            string ingestManifestData = manifestReader.ReadToEnd();
-            MediaIngestManifest ingestManifest = JsonConvert.DeserializeObject<MediaIngestManifest>(ingestManifestData);
+            using (Stream manifestStream = manifestFile.OpenReadAsync().Result)
+            {
+                StreamReader manifestReader = new StreamReader(manifestStream);
+                string manifestData = manifestReader.ReadToEnd();
+                ingestManifest = JsonConvert.DeserializeObject<MediaIngestManifest>(manifestData);
+            }
             if (!skipDelete)
             {
                 using (MediaClient mediaClient = new MediaClient(null, ingestManifest.MediaAccount))

@@ -23,11 +23,7 @@ function SetPlayerControls(controlBar, storageCdnUrl) {
     var mediaStream = _mediaStreams[_streamNumber - 1];
     var buttonIds = ["searchButton", "insightButton", "markerButton"];
     ClearPlayerControls(controlBar, buttonIds);
-    var onClick = function () {
-        alert("Search");
-    };
-    SetPlayerControl(controlBar, storageCdnUrl, "MediaSearchAsset.png", "searchImage", "searchButton", onClick, "Search");
-    if (mediaStream.contentInsight.indexerHtml != null) {
+    if (mediaStream.contentInsight.indexerUrl != null) {
         onClick = function () {
             if ($("#indexerInsight").is(":visible")) {
                 $("#indexerInsight").hide();
@@ -35,23 +31,18 @@ function SetPlayerControls(controlBar, storageCdnUrl) {
             } else {
                 var playerHeight = $("#videoPlayer video").height();
                 $("#indexerInsight").height(playerHeight);
+                $("#indexerInsight").prop("src", mediaStream.contentInsight.indexerUrl);
                 $("#indexerInsight").show();
                 $(".layoutPanel.side").hide();
-
-                var insightContent = mediaStream.contentInsight.indexerHtml;
-                var insightDocument = document.getElementById("indexerInsight").contentWindow.document;
-                insightDocument.open("text/html");
-                insightDocument.write(insightContent);
-                insightDocument.close();
             }
         };
-        SetPlayerControl(controlBar, storageCdnUrl, "MediaInsight.png", "insightImage", "insightButton", onClick, "Insight");
+        SetPlayerControl(controlBar, storageCdnUrl, "MediaInsight.png", "insightImage", "insightButton", onClick, "Cognitive<br><br>Insight");
     }
     if (_mediaPlayer.isLive()) {
         onClick = function () {
             alert("Marker");
         };
-        SetPlayerControl(controlBar, storageCdnUrl, "MediaLiveMarker.png", "markerImage", "markerButton", onClick, "Marker");
+        SetPlayerControl(controlBar, storageCdnUrl, "MediaLiveMarker.png", "markerImage", "markerButton", onClick, "Insert<br><br>Marker");
     }
 }
 function SetMediaStream(streamTunerLeft, streamTunerRight) {

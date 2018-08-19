@@ -2,6 +2,6 @@
 {
     public class MediaInsight
     {
-        public string IndexerHtml { get; set; }
+        public string IndexerUrl { get; set; }
     }
 }

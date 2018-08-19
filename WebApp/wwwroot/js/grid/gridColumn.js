@@ -234,7 +234,7 @@ function GetParentColumns(gridId) {
                     label: "Video Name",
                     name: "name",
                     align: "center",
-                    width: nameWidth
+                    width: nameWidthEx
                 }
             ];
             break;

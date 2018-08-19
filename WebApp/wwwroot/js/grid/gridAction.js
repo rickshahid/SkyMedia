@@ -1,21 +1,30 @@
 ﻿function DownloadFile(fileUrl) {
     window.open(fileUrl, "_blank"); 
 }
-function DisplayInsight(rowId, fileName) {
-    alert(rowId);
-    alert(fileName);
+function DisplayInsight(fileName, assetName, indexId) {
+    SetCursor(true);
+    $.get("/asset/insight",
+        {
+            assetName: decodeURIComponent(assetName),
+            fileName: decodeURIComponent(fileName),
+            indexId: indexId
+        },
+        function (insight) {
+            SetCursor(false);
+            $("#insightData").jsonBrowse(insight);
+            var title = fileName == null ? indexId : fileName;
+            DisplayDialog("insightDialog", title, null, {}, 800, 1200);
+        }
+    );
 }
-function DisplayManifest(rowId, fileName) {
-    alert(rowId);
-    alert(fileName);
+function DisplayManifest(fileUrl) {
+    alert(fileUrl);
 }
-function DisplayTranscript(rowId, fileName) {
-    alert(rowId);
-    alert(fileName);
+function DisplayTranscript(fileUrl) {
+    alert(fileUrl);
 }
-function PlayVideo(rowId, fileName) {
-    alert(rowId);
-    alert(fileName);
+function PlayVideo(fileUrl) {
+    alert(fileUrl);
 }
 function ReindexVideo(indexId, videoName) {
     var title = "Confirm Reindex Video";
@@ -173,19 +182,19 @@ function FormatActions(value, grid, row) {
         actionsHtml = "N/A";
     } else if (grid.gid == "assetFiles") {
         if (row.name.indexOf(".json") > -1) {
-            onClick = "DisplayInsight('" + row.id + "','" + encodeURIComponent(entityName) + "')";
+            onClick = "DisplayInsight('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
             actionsHtml = "<button id='" + row.id + "_insight' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaInsight.png'></button>";
         } else if (row.name.indexOf(".mp4") > -1) {
-            onClick = "PlayVideo('" + row.id + "','" + encodeURIComponent(entityName) + "')";
+            onClick = "PlayVideo('" + row.downloadUrl + "')";
             actionsHtml = "<button id='" + row.id + "_video' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaPlayerFile.png'></button>";
         } else if (row.name.indexOf(".ism") > -1 || row.name.indexOf(".ismc") > -1) {
-            onClick = "DisplayManifest('" + row.id + "','" + encodeURIComponent(entityName) + "')";
+            onClick = "DisplayManifest('" + row.downloadUrl + "')";
             actionsHtml = "<button id='" + row.id + "_manifest' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaManifest.png'></button>";
         } else if (row.name.indexOf(".vtt") > -1 || row.name.indexOf(".ttml") > -1) {
-            onClick = "DisplayTranscript('" + row.id + "','" + encodeURIComponent(entityName) + "')";
+            onClick = "DisplayTranscript('" + row.downloadUrl + "')";
             actionsHtml = "<button id='" + row.id + "_transcript' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaTranscript.png'></button>";
         }
@@ -200,7 +209,7 @@ function FormatActions(value, grid, row) {
         var publishHtml = "";
         switch (grid.gid) {
             case "indexerInsights":
-                onClick = "DisplayInsight('" + row.id + "','" + encodeURIComponent(entityName) + "')";
+                onClick = "DisplayInsight(null,null,'" + entityName + "')";
                 insightHtml = "<button id='" + row.id + "_insight' class='siteButton' onclick=" + onClick + ">";
                 insightHtml = insightHtml + "<img src='" + _storageCdnUrl + "/MediaInsight.png'></button>";
                 onClick = "ReindexVideo('" + row.id + "','" + encodeURIComponent(entityName) + "')";

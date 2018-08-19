@@ -1,0 +1,50 @@
+{
+  "_from": "json-browse@0.2.0",
+  "_id": "json-browse@0.2.0",
+  "_inBundle": false,
+  "_integrity": "sha1-2916khC7M8q6o/v2awNRyOQGsTM=",
+  "_location": "/json-browse",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "json-browse@0.2.0",
+    "name": "json-browse",
+    "escapedName": "json-browse",
+    "rawSpec": "0.2.0",
+    "saveSpec": null,
+    "fetchSpec": "0.2.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/json-browse/-/json-browse-0.2.0.tgz",
+  "_shasum": "dbdd7a9210bb33cabaa3fbf66b0351c8e406b133",
+  "_spec": "json-browse@0.2.0",
+  "_where": "C:\\Solutions\\AzureSkyMedia\\WebApp\\wwwroot",
+  "author": {
+    "name": "Kevin Olson",
+    "email": "acidjazz@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/acidjazz/json-browse/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "jQuery plugin to easily browse and highlight your JSON",
+  "homepage": "https://github.com/acidjazz/json-browse",
+  "keywords": [
+    "jquery-plugin",
+    "json",
+    "json-viewer",
+    "json-browse",
+    "json2html"
+  ],
+  "license": "MIT",
+  "name": "json-browse",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acidjazz/json-browse.git"
+  },
+  "version": "0.2.0"
+}

@@ -159,7 +159,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             JObject index;
             string relativePath = string.Concat("/videos/", indexId, "/index");
-            string requestUrl = GetRequestUrl(relativePath, false, indexId);
+            string requestUrl = GetRequestUrl(relativePath, true, indexId);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
@@ -168,31 +168,17 @@ namespace AzureSkyMedia.PlatformServices
             return index;
         }
 
-        public string IndexerGetInsightHtml(string indexId)
+        public string IndexerGetInsightUrl(string indexId)
         {
-            string insightHtml;
             string relativePath = string.Concat("/videos/", indexId, "/insightsWidget");
             string requestUrl = GetRequestUrl(relativePath, true, indexId);
-            requestUrl = string.Concat(requestUrl, "&allowEdit=true");
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                insightHtml = webClient.GetResponse<string>(webRequest);
-            }
-            return insightHtml.Replace("\r\n", string.Empty);
+            return string.Concat(requestUrl, "&allowEdit=true");
         }
 
-        public string IndexerGetVideoCaptions(string indexId)
+        public string IndexerGetCaptionsUrl(string indexId)
         {
-            string videoCaptions;
             string relativePath = string.Concat("/videos/", indexId, "/captions");
-            string requestUrl = GetRequestUrl(relativePath, true, indexId);
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                videoCaptions = webClient.GetResponse<string>(webRequest);
-            }
-            return videoCaptions;
+            return GetRequestUrl(relativePath, true, indexId);
         }
     }
 }

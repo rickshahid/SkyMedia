@@ -33,7 +33,11 @@ namespace AzureSkyMedia.FunctionApp
                 }
                 else
                 {
-                    string requestBody = new StreamReader(request.Body).ReadToEnd();
+                    string requestBody;
+                    using (StreamReader requestReader = new StreamReader(request.Body))
+                    {
+                        requestBody = requestReader.ReadToEnd();
+                    }
                     log.Info($"Request Body: {requestBody}");
                     JToken eventInfo = JArray.Parse(requestBody)[0];
                     if (requestBody.Contains("validationCode"))

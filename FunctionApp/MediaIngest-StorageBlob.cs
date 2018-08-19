@@ -78,10 +78,13 @@ namespace AzureSkyMedia.FunctionApp
 
         private static MediaIngestManifest GetManifest(BlobClient blobClient, Stream manifestStream, string manifestName)
         {
-            StreamReader manifestReader = new StreamReader(manifestStream);
-            string manifestData = manifestReader.ReadToEnd();
-            MediaIngestManifest ingestManifest = JsonConvert.DeserializeObject<MediaIngestManifest>(manifestData);
-            ingestManifest.Name = manifestName;
+            MediaIngestManifest ingestManifest;
+            using (StreamReader manifestReader = new StreamReader(manifestStream))
+            {
+                string manifestData = manifestReader.ReadToEnd();
+                ingestManifest = JsonConvert.DeserializeObject<MediaIngestManifest>(manifestData);
+                ingestManifest.Name = manifestName;
+            }
             List<string> missingFiles = new List<string>();
             foreach (string fileName in ingestManifest.AssetFiles)
             {

@@ -223,12 +223,6 @@ namespace AzureSkyMedia.PlatformServices
                 public const string PresetNameAnalyzerAudio = "AudioAnalyzer";
             }
 
-            public struct Transcript
-            {
-                public const string Analyzer = "transcript.vtt";
-                public const string Indexer = "transcript-vi.vtt";
-            }
-
             public struct Publish
             {
                 public const string EventTriggerName = "AMS-Job-State";
@@ -246,6 +240,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string CaptionsType = "captions";
                 public const string CaptionsLabel = "Captions On";
+                public const string TranscriptFile = "transcript.vtt";
             }
 
             public struct Thumbnail

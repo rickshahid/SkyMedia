@@ -52,14 +52,14 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaInsight GetMediaInsight(MediaClient mediaClient, Asset asset)
         {
-            string indexerHtml = null;
+            string indexerUrl = null;
             if (mediaClient.IndexerIsEnabled() && !string.IsNullOrEmpty(asset.AlternateId))
             {
-                indexerHtml = mediaClient.IndexerGetInsightHtml(asset.AlternateId);
+                indexerUrl = mediaClient.IndexerGetInsightUrl(asset.AlternateId);
             }
             MediaInsight mediaInsight = new MediaInsight()
             {
-                IndexerHtml = indexerHtml
+                IndexerUrl = indexerUrl
             };
             return mediaInsight;
         }

@@ -7,6 +7,8 @@ using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 using Microsoft.WindowsAzure.Storage.Blob;
 
+using Newtonsoft.Json.Linq;
+
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -117,6 +119,32 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
             }
             return Json(asset);
+        }
+
+        public JsonResult Insight(string assetName, string fileName, string indexId)
+        {
+            JObject insight;
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                if (!string.IsNullOrEmpty(indexId))
+                {
+                    insight = mediaClient.IndexerGetInsight(indexId);
+                }
+                else
+                {
+                    Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
+                    BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
+                    CloudBlockBlob fileBlob = blobClient.GetBlockBlob(asset.Container, fileName);
+                    using (Stream fileStream = fileBlob.OpenReadAsync().Result)
+                    {
+                        StreamReader fileReader = new StreamReader(fileStream);
+                        string fileData = fileReader.ReadToEnd();
+                        insight = JObject.Parse(fileData);
+                    }
+                }
+            }
+            return Json(insight);
         }
 
         public void Reindex(string indexId)

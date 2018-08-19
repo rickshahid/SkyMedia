@@ -37,13 +37,13 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (string.IsNullOrEmpty(captionsUrl))
                 {
-                    if (string.Equals(assetFile.Name, Constant.Media.Transcript.Indexer, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(assetFile.Name, Constant.Media.Track.TranscriptFile, StringComparison.OrdinalIgnoreCase))
                     {
                         captionsUrl = mediaClient.GetDownloadUrl(asset, assetFile.Name);
                     }
-                    else if (string.Equals(assetFile.Name, Constant.Media.Transcript.Analyzer, StringComparison.OrdinalIgnoreCase))
+                    else if (!string.IsNullOrEmpty(asset.AlternateId))
                     {
-                        captionsUrl = mediaClient.GetDownloadUrl(asset, assetFile.Name);
+                        captionsUrl = mediaClient.IndexerGetCaptionsUrl(asset.AlternateId);
                     }
                 }
             }

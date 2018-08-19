@@ -381,7 +381,17 @@ body {
 }
 
 .indexerInsight {
+    background-color: azure;
     vertical-align: bottom;
     display: none;
     width: 600px;
+}
+
+.insightData {
+    text-align: left;
+    margin-top: 0px;
+}
+
+.json-toggle, .json-dict li {
+    font-size: large;
 }

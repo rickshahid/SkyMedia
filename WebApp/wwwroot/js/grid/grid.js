@@ -39,6 +39,7 @@ function SetChildRowIds(parentRow, childRows) {
     for (var i = 0; i < childRows.length; i++) {
         var childRowId = parentRow.id + "-" + i;
         childRows[i].id = childRowId;
+        childRows[i].parentEntityName = parentRow.name;
     }
 }
 function LoadSubGrid(parentRowId, parentRowKey) {
