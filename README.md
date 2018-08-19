@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
-![](http://skymedia.azureedge.net/docs/02.2.ApplicationArchitecture.png)
+![](http://skymedia.azureedge.net/docs/02.4.ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
