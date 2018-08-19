@@ -91,13 +91,16 @@ namespace AzureSkyMedia.WebApp
             {
                 redirectAction = controller.RedirectToAction("passwordReset", "account");
             }
-            MediaClient.SetPublishEvent(authToken);
-            using (MediaClient mediaClient = new MediaClient(authToken))
+            if (!string.IsNullOrEmpty(authToken))
             {
-                mediaClient.CreateTransform(true, false, false);
-                mediaClient.CreateTransform(true, true, false);
-                mediaClient.CreateTransform(true, false, true);
-                mediaClient.CreateTransform(false, false, true);
+                MediaClient.SetPublishEvent(authToken);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    mediaClient.CreateTransform(true, false, false);
+                    mediaClient.CreateTransform(true, true, false);
+                    mediaClient.CreateTransform(true, false, true);
+                    mediaClient.CreateTransform(false, false, true);
+                }
             }
             return redirectAction;
         }

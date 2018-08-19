@@ -69,30 +69,29 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                 }
                 string indexId = null;
+                Asset inputAsset = null;
+                string outputAssetDescription = null;
+                if (!string.IsNullOrEmpty(inputAssetName))
+                {
+                    inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
+                    outputAssetDescription = inputAsset.Description;
+                }
                 if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                 {
-                    bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
                     string videoUrl = inputFileUrl;
                     string videoName = null;
                     string videoDescription = null;
-                    if (string.IsNullOrEmpty(videoUrl))
+                    if (string.IsNullOrEmpty(videoUrl) && inputAsset != null) 
                     {
-                        Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                         BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
-                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset, false);
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
                         string fileName = mediaAsset.Files[0].Name;
                         videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
                         videoName = inputAsset.Name;
                         videoDescription = inputAsset.Description;
                     }
-                    indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, videoName, videoDescription, string.Empty, audioOnly);
-                }
-                string[] inputFileUrls = string.IsNullOrEmpty(inputFileUrl) ? null : new string[] { inputFileUrl };
-                string outputAssetDescription = string.Empty;
-                if (!string.IsNullOrEmpty(inputAssetName))
-                {
-                    Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
-                    outputAssetDescription = asset.Description;
+                    bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
+                    indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, videoName, videoDescription, null, audioOnly);
                 }
                 if (!string.IsNullOrEmpty(transformName))
                 {
@@ -113,7 +112,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public JsonResult Publish(string jobName)
         {
-            string publishMessage = string.Empty;
+            string publishMessage = null;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
                 string collectionId = Constant.Database.Collection.ContentPublish;
@@ -126,7 +125,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(publishMessage);
         }
 
-        public JsonResult Get()
+        public JsonResult List()
         {
             Job[] jobs;
             string authToken = HomeController.GetAuthToken(Request, Response);
@@ -142,8 +141,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["transforms"] = GetTransforms(mediaClient);
                 ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
+                ViewData["transforms"] = GetTransforms(mediaClient);
                 ViewData["streamingPolicies"] = GetStreamingPolicies(mediaClient);
             }
             return View();

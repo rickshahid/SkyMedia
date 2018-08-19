@@ -12,14 +12,25 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal class WebClient : IDisposable
     {
-        private HttpClient _httpClient;
+        private static HttpClient _httpClient;
 
         public WebClient(string apimKey)
         {
-            _httpClient = new HttpClient();
             if (!string.IsNullOrEmpty(apimKey))
             {
-                _httpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, apimKey);
+                HttpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, apimKey);
+            }
+        }
+
+        private HttpClient HttpClient
+        {
+            get
+            {
+                if (_httpClient == null)
+                {
+                    _httpClient = new HttpClient();
+                }
+                return _httpClient;
             }
         }
 
@@ -104,7 +115,7 @@ namespace AzureSkyMedia.PlatformServices
         public T GetResponse<T>(HttpRequestMessage webRequest, out HttpStatusCode statusCode)
         {
             T responseData = default(T);
-            using (HttpResponseMessage webResponse = _httpClient.SendAsync(webRequest).Result)
+            using (HttpResponseMessage webResponse = HttpClient.SendAsync(webRequest).Result)
             {
                 statusCode = webResponse.StatusCode;
                 if (webResponse.IsSuccessStatusCode)
@@ -113,7 +124,6 @@ namespace AzureSkyMedia.PlatformServices
                     responseData = GetResponseData<T>(responseContent);
                 }
             }
-            _httpClient.Dispose();
             return responseData;
         }
 

@@ -12,11 +12,11 @@
         width: 400px !important;
     }
 
-    .viewTitle, .accountContext, .streamInfoUrl {
+    .viewTitle, .accountContext, .streamUrl {
         font-size: medium !important;
     }
 
-    .streamInfoName {
+    .streamName {
         font-size: large !important;
     }
 }
@@ -35,11 +35,11 @@
         width: 600px !important;
     }
 
-    .viewTitle, .accountContext, .streamInfoUrl {
+    .viewTitle, .accountContext, .streamUrl {
         font-size: large !important;
     }
 
-    .streamInfoName {
+    .streamName {
         font-size: x-large !important;
     }
 }
@@ -59,6 +59,7 @@ body {
 }
 
 .layoutPanel.body {
+    padding-top: 10px;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -90,10 +91,8 @@ body {
 .accountInventory {
     border: 1px solid deepskyblue;
     border-radius: 20px;
-    font-style: italic;
     font-weight: bold;
     font-size: large;
-    margin-top: 20px;
     padding: 10px;
 }
 
@@ -113,7 +112,6 @@ body {
 .entity {
     border: 1px solid deepskyblue;
     border-radius: 20px;
-    margin-top: 20px;
 }
 
 .entity div {
@@ -209,9 +207,12 @@ body {
     width: 800px;
 }
 
+.mediaPlayerButton {
+    margin-top: 5px;
+}
+
 .mediaWorkflow {
     margin: 10px auto;
-    margin-top: 20px;
 }
 
 .ui-slider {
@@ -231,6 +232,7 @@ body {
 .streamTunerHandle {
     top: -12px !important;
     color: azure !important;
+    text-align: center;
 }
 
 .streamNumber {
@@ -378,6 +380,8 @@ body {
     width: 100%;
 }
 
-#underConstruction {
-    margin-top: 10px;
+.indexerInsight {
+    vertical-align: bottom;
+    display: none;
+    width: 600px;
 }

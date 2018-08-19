@@ -80,16 +80,6 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string accountMessage = string.Empty;
             MediaStream[] mediaStreams = new MediaStream[] { };
-            string authToken = GetAuthToken(Request, Response);
-
-            if (Request.HasFormContentType)
-            {
-                RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
-                if (redirectAction != null)
-                {
-                    return redirectAction;
-                }
-            }
 
             int streamNumber = 1;
             if (Request.Query.ContainsKey("stream"))
@@ -103,8 +93,20 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             int streamSkipCount = 0;
             bool streamLastPage = false;
+
             try
             {
+                string authToken = GetAuthToken(Request, Response);
+
+                if (Request.HasFormContentType)
+                {
+                    RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
+                    if (redirectAction != null)
+                    {
+                        return redirectAction;
+                    }
+                }
+
                 if (string.IsNullOrEmpty(authToken))
                 {
                     mediaStreams = Media.GetSampleStreams();
@@ -139,7 +141,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
             ViewData["streamTunerPageSize"] = streamTunerPageSize;
             ViewData["streamSkipCount"] = streamSkipCount;
-            ViewData["streamLastPage"] = streamLastPage;
+            ViewData["streamLastPage"] = streamLastPage ? 1 : 0;
 
             ViewData["accountMessage"] = accountMessage;
 

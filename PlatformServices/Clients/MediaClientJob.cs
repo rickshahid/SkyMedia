@@ -19,17 +19,17 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
             {
                 outputAssetName = Path.GetFileNameWithoutExtension(mediaJob.InputFileUrl);
-                CreateAsset(mediaJob.OutputAssetStorage, outputAssetName, mediaJob.OutputAssetDescription, mediaJob.OutputAssetAlternateId);
             }
             else if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
             {
                 outputAssetName = mediaJob.InputAssetName;
                 Asset asset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
-                MediaAsset mediaAsset = new MediaAsset(MediaAccount, asset, false);
+                MediaAsset mediaAsset = new MediaAsset(MediaAccount, asset);
                 string fileName = mediaAsset.Files[0].Name;
                 BlobClient blobClient = new BlobClient(MediaAccount, asset.StorageAccountName);
                 mediaJob.InputFileUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
             }
+            CreateAsset(mediaJob.OutputAssetStorage, outputAssetName, mediaJob.OutputAssetDescription, mediaJob.OutputAssetAlternateId);
             List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
             Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
             foreach (TransformOutput transformOutput in transform.Outputs)

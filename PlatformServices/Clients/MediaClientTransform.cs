@@ -112,19 +112,19 @@ namespace AzureSkyMedia.PlatformServices
                 PresetEnabled = standardEncoderPreset,
                 PresetName = EncoderNamedPreset.AdaptiveStreaming,
                 RelativePriority = Priority.Normal,
-                OnError = OnErrorType.StopProcessingJob
+                OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput videoAnalyzerOutput = new MediaTransformOutput()
             {
                 PresetEnabled = videoAnalyzerPreset,
                 RelativePriority = Priority.Normal,
-                OnError = OnErrorType.StopProcessingJob
+                OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput audioAnalyzerOutput = new MediaTransformOutput()
             {
                 PresetEnabled = audioAnalyzerPreset,
                 RelativePriority = Priority.Normal,
-                OnError = OnErrorType.StopProcessingJob
+                OnError = OnErrorType.ContinueJob
             };
             MediaTransformOutput[] transformOutputs = new MediaTransformOutput[] { standardEncoderOutput, videoAnalyzerOutput, audioAnalyzerOutput };
             return CreateTransform(null, null, transformOutputs);

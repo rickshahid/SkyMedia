@@ -36,6 +36,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] ThumbnailUrls { get; set; }
 
-        //public MediaInsight ContentInsight { get; set; }
+        public MediaInsight ContentInsight { get; set; }
     }
 }

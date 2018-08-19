@@ -1,4 +1,60 @@
-﻿function SetMediaStream(streamTunerLeft, streamTunerRight) {
+﻿function ClearPlayerControls(controlBar, childIds) {
+    for (var i = 0; i < childIds.length; i++) {
+        var childId = childIds[i];
+        var child = controlBar.children[childId];
+        if (child != null) {
+            controlBar.removeChild(child);
+        }
+    }
+}
+function SetPlayerControl(controlBar, storageCdnUrl, imageFile, imageId, buttonId, onClick, tipText) {
+    var image = document.createElement("img");
+    image.id = imageId;
+    image.src = storageCdnUrl + "/" + imageFile;
+    var button = document.createElement("button");
+    button.id = buttonId;
+    button.className = "vjs-control vjs-button mediaPlayerButton";
+    button.appendChild(image);
+    controlBar.appendChild(button);
+    $("#" + buttonId).click(onClick);
+    CreateTipTop(buttonId, tipText);
+}
+function SetPlayerControls(controlBar, storageCdnUrl) {
+    var mediaStream = _mediaStreams[_streamNumber - 1];
+    var buttonIds = ["searchButton", "insightButton", "markerButton"];
+    ClearPlayerControls(controlBar, buttonIds);
+    var onClick = function () {
+        alert("Search");
+    };
+    SetPlayerControl(controlBar, storageCdnUrl, "MediaSearchAsset.png", "searchImage", "searchButton", onClick, "Search");
+    if (mediaStream.contentInsight.indexerHtml != null) {
+        onClick = function () {
+            if ($("#indexerInsight").is(":visible")) {
+                $("#indexerInsight").hide();
+                $(".layoutPanel.side").show();
+            } else {
+                var playerHeight = $("#videoPlayer video").height();
+                $("#indexerInsight").height(playerHeight);
+                $("#indexerInsight").show();
+                $(".layoutPanel.side").hide();
+
+                var insightContent = mediaStream.contentInsight.indexerHtml;
+                var insightDocument = document.getElementById("indexerInsight").contentWindow.document;
+                insightDocument.open("text/html");
+                insightDocument.write(insightContent);
+                insightDocument.close();
+            }
+        };
+        SetPlayerControl(controlBar, storageCdnUrl, "MediaInsight.png", "insightImage", "insightButton", onClick, "Insight");
+    }
+    if (_mediaPlayer.isLive()) {
+        onClick = function () {
+            alert("Marker");
+        };
+        SetPlayerControl(controlBar, storageCdnUrl, "MediaLiveMarker.png", "markerImage", "markerButton", onClick, "Marker");
+    }
+}
+function SetMediaStream(streamTunerLeft, streamTunerRight) {
     var streamPageRefresh = false;
     var streamNumber = _streamNumber;
     if (_mediaStreams.length > 0) {

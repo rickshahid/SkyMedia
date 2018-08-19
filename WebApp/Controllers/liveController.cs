@@ -71,7 +71,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         [HttpPost]
         [Route("/live/event/output/create")]
-        public LiveOutput CreateEventOutput(string eventName, string eventOutputName, string eventOutputDescription, string archiveAssetName, int archiveAssetWindowMinutes = 60)
+        public LiveOutput CreateEventOutput(string eventName, string eventOutputName, string eventOutputDescription, string manifestName, string archiveAssetName, int archiveAssetWindowMinutes = 60)
         {
             LiveOutput liveEventOutput = null;
             string authToken = HomeController.GetAuthToken(Request, Response);
@@ -79,7 +79,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    liveEventOutput = mediaClient.CreateLiveEventOutput(eventName, eventOutputName, eventOutputDescription, archiveAssetName, archiveAssetWindowMinutes);
+                    liveEventOutput = mediaClient.CreateLiveEventOutput(eventName, eventOutputName, eventOutputDescription, manifestName, archiveAssetName, archiveAssetWindowMinutes);
                 }
             }
             return liveEventOutput;

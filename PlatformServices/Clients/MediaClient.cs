@@ -40,7 +40,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };
-            IndexerSetAccountContext();
+            if (!string.IsNullOrEmpty(MediaAccount.VideoIndexerKey))
+            {
+                IndexerSetAccountContext();
+            }
         }
 
         public MediaAccount MediaAccount { get; private set; }

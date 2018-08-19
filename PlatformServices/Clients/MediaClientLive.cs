@@ -70,11 +70,13 @@ namespace AzureSkyMedia.PlatformServices
             _media.LiveEvents.Stop(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName);
         }
 
-        public LiveOutput CreateLiveEventOutput(string eventName, string eventOutputName, string eventOutputDescription, string archiveAssetName, int archiveAssetWindowMinutes)
+        public LiveOutput CreateLiveEventOutput(string eventName, string eventOutputName, string eventOutputDescription, string manifestName, string archiveAssetName, int archiveAssetWindowMinutes)
         {
+            CreateAsset(null, archiveAssetName);
             LiveOutput eventOutput = new LiveOutput()
             {
                 Description = eventOutputDescription,
+                ManifestName = manifestName,
                 AssetName = archiveAssetName,
                 ArchiveWindowLength = new TimeSpan(0, archiveAssetWindowMinutes, 0)
             };

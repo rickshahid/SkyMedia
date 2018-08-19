@@ -12,7 +12,7 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Video Name");
+            var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
         })
     </script>

@@ -3,6 +3,8 @@
 }
 
 @section head {
+    <link type="text/css" rel="stylesheet" href="~/lib/jquery-json-browse/jquery.json-browse.css" />
+    <script type="text/javascript" src="~/lib/jquery-json-browse/jquery.json-browse.js"></script>
     <script type="text/javascript">
         $(function () {
             _childGridId = "assetFiles";
@@ -12,7 +14,7 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Asset Name");
+            var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
         })
     </script>

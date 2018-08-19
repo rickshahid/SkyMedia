@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
@@ -29,26 +28,34 @@ namespace AzureSkyMedia.PlatformServices
             return textTracks.ToArray();
         }
 
-        public static TextTrack[] GetTextTracks(MediaClient mediaClient, string assetName)
+        public static TextTrack[] GetTextTracks(MediaClient mediaClient, Asset asset)
         {
+            string captionsUrl = null;
             List<TextTrack> textTracks = new List<TextTrack>();
-            Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
-            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset, false);
-            foreach (CloudBlockBlob file in mediaAsset.Files)
+            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+            foreach (MediaFile assetFile in mediaAsset.Files)
             {
-                string fileName = file.Name;
-                if (fileName == Constant.Media.Analyzer.TranscriptFile)
+                if (string.IsNullOrEmpty(captionsUrl))
                 {
-                    string locatorName = string.Concat(assetName, Constant.Media.Asset.NameDelimiter, Constant.Media.Analyzer.Transcript);
-                    StreamingLocator locator = mediaClient.CreateLocator(locatorName, assetName, PredefinedStreamingPolicy.DownloadOnly, null);
-                    TextTrack textTrack = new TextTrack()
+                    if (string.Equals(assetFile.Name, Constant.Media.Transcript.Indexer, StringComparison.OrdinalIgnoreCase))
                     {
-                        Type = Constant.Media.Track.CaptionsType,
-                        Label = Constant.Media.Track.CaptionsLabel,
-                        SourceUrl = mediaClient.GetDownloadUrl(locator, fileName)
-                    };
-                    textTracks.Add(textTrack);
+                        captionsUrl = mediaClient.GetDownloadUrl(asset, assetFile.Name);
+                    }
+                    else if (string.Equals(assetFile.Name, Constant.Media.Transcript.Analyzer, StringComparison.OrdinalIgnoreCase))
+                    {
+                        captionsUrl = mediaClient.GetDownloadUrl(asset, assetFile.Name);
+                    }
                 }
+            }
+            if (!string.IsNullOrEmpty(captionsUrl))
+            {
+                TextTrack textTrack = new TextTrack()
+                {
+                    Type = Constant.Media.Track.CaptionsType,
+                    Label = Constant.Media.Track.CaptionsLabel,
+                    SourceUrl = captionsUrl
+                };
+                textTracks.Add(textTrack);
             }
             return textTracks.ToArray();
         }

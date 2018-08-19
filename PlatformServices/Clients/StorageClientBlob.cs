@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Web;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
@@ -101,7 +102,9 @@ namespace AzureSkyMedia.PlatformServices
                 accessPolicy.Permissions = accessPolicy.Permissions | SharedAccessBlobPermissions.Write;
             }
             string accessSignature = blockBlob.GetSharedAccessSignature(accessPolicy);
-            return string.Concat(blockBlob.Uri.ToString(), accessSignature);
+            fileName = HttpUtility.UrlPathEncode(fileName);
+            accessSignature = HttpUtility.UrlPathEncode(accessSignature);
+            return string.Concat(blockBlob.Container.Uri.ToString(), "/", fileName, accessSignature);
         }
 
         public void UploadBlock(Stream blockStream, string containerName, string fileName, int blockIndex, int blocksCount, string contentType)

@@ -15,10 +15,10 @@
             _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId, "Media Job Name");
+            var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
             CreateTipBottom("jobCreate", "Create Job");
-            setInterval(function () { ReloadGrid(gridId, "/job/get", columns); }, _refreshInterval);
+            setInterval(function () { ReloadGrid(gridId, "/job/list", columns); }, _refreshInterval);
        })
     </script>
 }

@@ -1,4 +1,4 @@
-﻿var _authToken, _mediaStreams, _streamNumber, _encoderConfig, _assetIds, _storageCdnUrl;
+﻿var _authToken, _mediaPlayer, _mediaStreams, _streamNumber, _encoderConfig, _assetIds, _storageCdnUrl;
 function SetCursor(isBusy) {
     if (isBusy) {
         $("body").css("cursor", "wait");
@@ -109,8 +109,6 @@ function GetMediaPlayer(playerId, userId, accountName) {
             appInsights: {
                 userId: userId,
                 accountId: accountName
-            },
-            spriteTip: {
             },
             videobreakdown: {
             }

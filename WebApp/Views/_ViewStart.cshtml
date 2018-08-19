@@ -9,10 +9,6 @@
 
     string authToken = HomeController.GetAuthToken(request, response);
     ViewData["authToken"] = authToken;
-
-    ViewData["spacingPatterns"] = Constant.TextFormatter.SpacingPatterns;
-    ViewData["spacingInserts"] = Constant.TextFormatter.SpacingInserts;
-
     if (!string.IsNullOrEmpty(authToken))
     {
         HomeController.SetAccountContext(authToken, ViewData);
@@ -63,6 +59,9 @@
     ViewData["accountSignUpIn"] = accountSignUpIn;
     ViewData["accountSignOut"] = string.Concat("SignOut('", Constant.HttpCookie.UserAuthToken, "')");
     ViewData["accountProfileEdit"] = "/account/profileEdit";
+
+    ViewData["spacingPatterns"] = Constant.TextFormatter.SpacingPatterns;
+    ViewData["spacingInserts"] = Constant.TextFormatter.SpacingInserts;
 
     string requestUrl = string.Concat(request.Host, request.Path, request.QueryString);
     if (!requestUrl.Contains("/account/signIn") && !requestUrl.Contains("/account/password") &&

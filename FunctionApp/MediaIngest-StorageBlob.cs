@@ -117,7 +117,7 @@ namespace AzureSkyMedia.FunctionApp
                 {
                     if (ingestManifest.AssetFiles.Length > 0)
                     {
-                        CreateAsset(blobClient, mediaClient, ingestManifest, log);
+                        ingestManifest = CreateAsset(blobClient, mediaClient, ingestManifest, log);
                     }
                     if (ingestManifest.TransformPresets.Length > 0)
                     {
@@ -127,7 +127,7 @@ namespace AzureSkyMedia.FunctionApp
             }
         }
 
-        private static void CreateAsset(BlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, TraceWriter log)
+        private static MediaIngestManifest CreateAsset(BlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, TraceWriter log)
         {
             string storageAccount = ingestManifest.StorageAccount;
             string assetName = ingestManifest.AssetName;
@@ -143,6 +143,8 @@ namespace AzureSkyMedia.FunctionApp
             logData = string.Concat("Asset Files: ", string.Join(",", assetFileNames));
             WriteLog(blobClient, ingestManifest.Name, logData);
             log.Info(logData);
+            ingestManifest.AssetName = asset.Name;
+            return ingestManifest;
         }
 
         private static void CreateJob(BlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, TraceWriter log)

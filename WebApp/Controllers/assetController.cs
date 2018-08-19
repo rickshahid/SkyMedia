@@ -43,7 +43,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                     {
                         BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
-                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset, false);
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
                         string fileName = mediaAsset.Files[0].Name;
                         string videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
                         bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
@@ -76,7 +76,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 BlobClient sourceBlobClient = new BlobClient();
-                BlobClient mediaBlobClient = new BlobClient(mediaClient.MediaAccount, mediaClient.PrimaryStorageAccount);
+                BlobClient assetBlobClient = new BlobClient(mediaClient.MediaAccount, mediaClient.PrimaryStorageAccount);
                 for (int i = 1; i <= assetCount; i++)
                 {
                     int assetId = i % 2 == 0 ? 2 : i % 2;
@@ -86,12 +86,12 @@ namespace AzureSkyMedia.WebApp.Controllers
                     string assetName = MediaAsset.GetAssetName(sourceBlobClient, containerName, directoryPath);
                     assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, assetName);
                     Asset asset = mediaClient.CreateAsset(mediaClient.PrimaryStorageAccount, assetName);
-                    CloudBlockBlob[] sourceFiles = MediaAsset.GetAssetFiles(sourceBlobClient, containerName, directoryPath, false);
-                    foreach (CloudBlockBlob sourceFile in sourceFiles)
+                    MediaFile[] sourceFiles = MediaAsset.GetAssetFiles(sourceBlobClient, containerName, directoryPath);
+                    foreach (MediaFile sourceFile in sourceFiles)
                     {
-                        string fileName = Path.GetFileName(sourceFile.Name);
-                        Stream sourceStream = sourceFile.OpenReadAsync().Result;
-                        CloudBlockBlob assetBlob = mediaBlobClient.GetBlockBlob(asset.Container, fileName);
+                        CloudBlockBlob sourceBlob = sourceBlobClient.GetBlockBlob(containerName, sourceFile.Name);
+                        CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, sourceFile.Name);
+                        Stream sourceStream = sourceBlob.OpenReadAsync().Result;
                         Task uploadTask = assetBlob.UploadFromStreamAsync(sourceStream);
                         uploadTasks.Add(uploadTask);
                     }

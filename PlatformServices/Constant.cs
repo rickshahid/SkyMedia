@@ -90,7 +90,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string MediaClipperVersion = "Media.Clipper.Version";
 
-            public const string MediaIndexerAuthUrl = "Media.Indexer.AuthUrl";
+            public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
+            public const string MediaIndexerLocation = "Media.Indexer.Location";
 
             public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
@@ -222,10 +223,10 @@ namespace AzureSkyMedia.PlatformServices
                 public const string PresetNameAnalyzerAudio = "AudioAnalyzer";
             }
 
-            public struct Analyzer
+            public struct Transcript
             {
-                public const string Transcript = "Transcript";
-                public const string TranscriptFile = "transcript.vtt";
+                public const string Analyzer = "transcript.vtt";
+                public const string Indexer = "transcript-vi.vtt";
             }
 
             public struct Publish
@@ -238,6 +239,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string DefaultEndpoint = "default";
                 public const string ManifestExtension = ".ism";
+                public const string InsightExtension = ".json";
             }
 
             public struct Track

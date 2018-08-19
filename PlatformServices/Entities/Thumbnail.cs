@@ -6,11 +6,7 @@
 
         public bool Best { get; set; }
 
-        public bool Single { get; set; }
-
-        public bool Sprite { get; set; }
-
-        public int Columns { get; set; }
+        public int? Columns { get; set; }
 
         public string Width { get; set; }
 

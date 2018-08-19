@@ -132,7 +132,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 IPage<Asset> assets = mediaClient.GetEntities<Asset>(MediaEntity.Asset);
                 foreach (Asset asset in assets)
                 {
-                    MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset, true);
+                    MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
                     mediaAssets.Add(mediaAsset);
                 }
             }
@@ -215,7 +215,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput>(MediaEntity.LiveEventOutput);
+                ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
             }
             return View();
         }

@@ -343,15 +343,19 @@
             },
             {
               "name": "Storage.SharedAccessMinutes",
-              "value": "10"
+              "value": "60"
             },
             {
               "name": "Database",
               "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=Media')]"
             },
             {
-              "name": "Media.Indexer.AuthUrl",
-              "value": "https://api.videoindexer.ai/auth/trial/accounts?generateAccessTokens=true&allowEdit=true"
+              "name": "Media.Indexer.ApiUrl",
+              "value": "https://api.videoindexer.ai/"
+            },
+            {
+              "name": "Media.Indexer.Location",
+              "value": "trial"
             },
             {
               "name": "Media.Publish.Queue",

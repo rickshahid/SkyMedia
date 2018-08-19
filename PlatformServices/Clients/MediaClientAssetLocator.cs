@@ -14,10 +14,10 @@ namespace AzureSkyMedia.PlatformServices
             return DateTime.Compare(leftItem.Created, rightItem.Created);
         }
 
-        private string GetDefaultUrl(string relativeUrl)
+        private string GetDefaultUrl(string relativePath)
         {
             StreamingEndpoint defaultEndpoint = GetEntity<StreamingEndpoint>(MediaEntity.StreamingEndpoint, Constant.Media.Stream.DefaultEndpoint);
-            return string.Concat("//", defaultEndpoint.HostName, relativeUrl);
+            return string.Concat("//", defaultEndpoint.HostName, relativePath);
         }
 
         public string GetPlayerUrl(StreamingLocator locator)
@@ -42,10 +42,12 @@ namespace AzureSkyMedia.PlatformServices
             return playerUrl;
         }
 
-        public string GetDownloadUrl(StreamingLocator locator, string fileName)
+        public string GetDownloadUrl(Asset asset, string fileName)
         {
-            string assetUrl = string.Concat("/", locator.StreamingLocatorId.ToString(), "/", fileName);
-            return GetDefaultUrl(assetUrl);
+            string streamingPolicyName = PredefinedStreamingPolicy.DownloadOnly;
+            StreamingLocator locator = CreateLocator(streamingPolicyName, asset.Name, streamingPolicyName, null);
+            string relativePath = string.Concat("/", locator.StreamingLocatorId, "/", fileName);
+            return GetDefaultUrl(relativePath);
         }
 
         public static IEnumerable<StreamingLocator> GetLocators(MediaClient mediaClient)

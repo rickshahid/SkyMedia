@@ -56,7 +56,7 @@ function CreateWorkflow() {
                 message = message + "Media " + entityType + " Created - " + entity.name;
                 if (indexId != null) {
                     var insightType = $("#audioAnalyzerPreset").prop("checked") ? "Audio" : "Video";
-                    message = message + "<br><br>" + insightType + " Indexer Insight - " + IndexId;
+                    message = message + "<br><br>" + insightType + " Indexer Insight - " + indexId;
                 }
             }
             $("#mediaUploadEntities").html(message);

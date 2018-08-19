@@ -5,7 +5,21 @@ function ClearTitles(grid) {
         tdElements[i].title = "";
     }
 }
-function SetRowIds(rows) {
+function CreateTips(rows) {
+    for (var i = 0; i < rows.length; i++) {
+        var rowId = rows[i].id;
+        CreateTipTop(rowId + "_video", "Video");
+        CreateTipTop(rowId + "_manifest", "Manifest");
+        CreateTipTop(rowId + "_transcript", "Transcript");
+        CreateTipTop(rowId + "_insight", "Insight");
+        CreateTipTop(rowId + "_reindex", "Reindex");
+        CreateTipTop(rowId + "_publish", "Publish");
+        CreateTipTop(rowId + "_edit", "Edit");
+        CreateTipTop(rowId + "_delete", "Delete");
+        CreateTipTop(rowId + "_download", "Download");
+    }
+}
+function SetParentRowIds(rows) {
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
         if (row.id != null) {
@@ -21,10 +35,17 @@ function SetRowIds(rows) {
         }
     }
 }
+function SetChildRowIds(parentRow, childRows) {
+    for (var i = 0; i < childRows.length; i++) {
+        var childRowId = parentRow.id + "-" + i;
+        childRows[i].id = childRowId;
+    }
+}
 function LoadSubGrid(parentRowId, parentRowKey) {
     var parentRow = $(this).jqGrid("getLocalRow", parentRowKey);
     var childRows = parentRow[_childPropertyName];
     var columns = GetChildColumns(_childGridId);
+    SetChildRowIds(parentRow, childRows);
     $("#" + parentRowId).html("<table id='" + _childGridId + "'></table>");
     $("#" + _childGridId).jqGrid({
         colModel: columns,
@@ -34,9 +55,10 @@ function LoadSubGrid(parentRowId, parentRowKey) {
         sortname: "name",
         rowNum: 50
     });
+    CreateTips(childRows);
 }
 function LoadGrid(gridId, rows, columns) {
-    SetRowIds(rows);
+    SetParentRowIds(rows);
     $("#" + gridId).jqGrid({
         colModel: columns,
         datatype: "local",
@@ -52,14 +74,7 @@ function LoadGrid(gridId, rows, columns) {
         height: "auto",
         rowNum: 10
     });
-    for (var i = 0; i < rows.length; i++) {
-        var rowId = rows[i].id;
-        CreateTipTop(rowId + "_cancel", "Cancel");
-        CreateTipTop(rowId + "_reindex", "Reindex");
-        CreateTipTop(rowId + "_publish", "Publish");
-        CreateTipTop(rowId + "_edit", "Edit");
-        CreateTipTop(rowId + "_delete", "Delete");
-    }
+    CreateTips(rows);
 }
 function ReloadGrid(gridId, relativeUrl, columns) {
     if (window.location.href.indexOf("disableRefresh") == -1) {

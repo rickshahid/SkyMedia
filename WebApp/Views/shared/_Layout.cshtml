@@ -43,31 +43,31 @@
                 </td>
                 <td class="headerSide right">
                     <partial name="SiteButton" model='new SiteButton { ControlId = "botService", ImageFile = "BotService.png", AbsoluteUrl = "http://azure.microsoft.com/services/bot-service/" }' />
-                @if (ViewData.ContainsKey("accountName"))
-                {
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "userProfileEdit", ImageFile = "UserProfileEdit.png", RelativeUrl = ViewData["accountProfileEdit"].ToString() }' />
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "userSignOut", ImageFile = "UserSignOut.png", OnClick = ViewData["accountSignOut"].ToString() }' />
-                }
-                else
-                {
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "userDirectory", ImageFile = "UserDirectory.png", AbsoluteUrl = "http://azure.microsoft.com/services/active-directory-b2c/" }' />
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "userSignIn", ImageFile = "UserSignIn.png", RelativeUrl = ViewData["accountSignUpIn"].ToString() }' />
-                }
+                    @if (ViewData.ContainsKey("accountName"))
+                    {
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "userProfileEdit", ImageFile = "UserProfileEdit.png", RelativeUrl = ViewData["accountProfileEdit"].ToString() }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "userSignOut", ImageFile = "UserSignOut.png", OnClick = ViewData["accountSignOut"].ToString() }' />
+                    }
+                    else
+                    {
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "userDirectory", ImageFile = "UserDirectory.png", AbsoluteUrl = "http://azure.microsoft.com/services/active-directory-b2c/" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "userSignIn", ImageFile = "UserSignIn.png", RelativeUrl = ViewData["accountSignUpIn"].ToString() }' />
+                    }
                 </td>
             </tr>
         </table>
         <table class="layout">
-        @if (ViewData.ContainsKey("accountName"))
-        {
-            <tr>
-                <td colspan="3">
-                    <div id="accountContext" class="accountContext">
-                        @ViewData["userId"]
-                        <a id="mediaAccount" class="siteLink" href="/account">(@ViewData["accountName"])</a>
-                    </div>
-                </td>
-            </tr>
-        }
+            @if (ViewData.ContainsKey("accountName"))
+            {
+                <tr>
+                    <td colspan="3">
+                        <div id="accountContext" class="accountContext">
+                            @ViewData["userId"]
+                            <a id="mediaAccount" class="siteLink" href="/account">(@ViewData["accountName"])</a>
+                        </div>
+                    </td>
+                </tr>
+            }
             <tr>
                 <td class="layoutPanel side">
                     <div>
@@ -94,7 +94,7 @@
                 </td>
                 <td class="layoutPanel side">
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStorage", ImageFile = "MediaStorage.png", AbsoluteUrl = "http://azure.microsoft.com/en-us/services/storage/blob/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStorage", ImageFile = "MediaStorage.png", AbsoluteUrl = "http://azure.microsoft.com/services/storage/blob/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "cosmosDB", ImageFile = "CosmosDB.png", AbsoluteUrl = "http://azure.microsoft.com/services/cosmos-db/", StyleClass = "layoutVertical" }' />
@@ -115,5 +115,6 @@
             </tr>
         </table>
         <div id="messageDialog"></div>
+        <div id="insightDialog"></div>
     </body>
 </html>

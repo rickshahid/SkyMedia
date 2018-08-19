@@ -7,7 +7,7 @@
 
     int streamTunerPageSize = (int)ViewData["streamTunerPageSize"];
     int streamSkipCount = (int)ViewData["streamSkipCount"];
-    bool streamLastPage = (bool)ViewData["streamLastPage"];
+    int streamLastPage = (int)ViewData["streamLastPage"];
 
     string ampVersion = ViewData["mediaPlayerVersion"].ToString();
     string ampSkin = ViewData["mediaPlayerSkin"].ToString();
@@ -26,16 +26,15 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
     <script type="text/javascript" src="~/js/amp/amp-appInsights.min.js"></script>
-    <script type="text/javascript" src="~/js/insight.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
-        var _mediaPlayer, _streamTunerPageSize = @streamTunerPageSize, _streamLastPage = @streamLastPage.ToString().ToLower();
+        var _streamTunerPageSize = @streamTunerPageSize;
+        var _streamLastPage = @streamLastPage == 1;
         $(function () {
-            var accountMessage = "@accountMessage";
             _authToken = "@authToken";
+            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName");
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
-            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName");
             _mediaPlayer.ready(function () {
                 this.videobreakdown({
                     syncTranscript: true,
@@ -49,21 +48,26 @@
             });
             _mediaPlayer.addEventListener(amp.eventName.play, function () {
                 var streamUrl = _mediaPlayer.currentSrc();
+                streamUrl = streamUrl.replace("http:", "");
                 streamUrl = streamUrl.split("/");
-                for (var i = streamUrl.length - 2; i > streamUrl.length - 5; i--) {
+                for (var i = 2; i < streamUrl.length; i++) {
                     streamUrl[i] = streamUrl[i] + "<br>";
                 }
                 var manifestIndex = streamUrl.length - 1;
                 streamUrl[manifestIndex] = streamUrl[manifestIndex].replace(",", "<br>,");
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
+                if (_authToken != "") {
+                    var controlBar = document.getElementsByClassName("amp-controlbaricons-right")[0];
+                    SetPlayerControls(controlBar, "@storageCdnUrl");
+                }
             });
             if (_mediaStreams.length == 0) {
                 SetPlayerSpinner(false);
             }
             SetMediaStream(false, false);
-            if (accountMessage != "") {
-                DisplayMessage("Account Message", accountMessage);
+            if ("@accountMessage" != "") {
+                DisplayMessage("Account Message", "@accountMessage");
             }
         })
     </script>
@@ -73,11 +77,16 @@
     Azure Sky Media
 }
 
-<partial name="MediaPlayer" model='new MediaPlayer { StyleClass = "mediaPlayer", ControlId = "videoPlayer", Height = "auto", Width = "100%" }' />
-
-@*<div id="indexerInsight" class="indexerInsight">
-        <iframe id="indexerFrame" height="100%" width="100%" frameborder="0"></iframe>
-    </div>*@
+<table>
+    <tr>
+        <td>
+            <partial name="MediaPlayer" model='new MediaPlayer { StyleClass = "mediaPlayer", ControlId = "videoPlayer", Height = "auto", Width = "100%" }' />
+        </td>
+        <td>
+            <iframe id="indexerInsight" class="indexerInsight" frameborder="0"></iframe>
+        </td>
+    </tr>
+</table>
 
 <partial name="MediaWorkflow" model='new StreamTuner { StreamCount = mediaStreams.Length, StreamSkipCount = streamSkipCount }' />
 
@@ -85,5 +94,5 @@
 <div id="streamUrl" class="streamUrl"></div>
 
 <div class="mediaServicesCompliance">
-    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "http://www.microsoft.com/en-us/trustcenter/compliance/cdsa" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "http://www.microsoft.com/trustcenter/compliance/cdsa" }' />
 </div>

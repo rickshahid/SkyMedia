@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -8,19 +9,25 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaAsset : Asset
     {
+        internal MediaAsset(MediaAccount mediaAccount, Asset asset) : base(asset.Id, asset.Name, asset.Type, asset.AssetId, asset.Created, asset.LastModified, asset.AlternateId, asset.Description, asset.Container, asset.StorageAccountName, asset.StorageEncryptionFormat)
+        {
+            BlobClient blobClient = new BlobClient(mediaAccount, asset.StorageAccountName);
+            Files = GetAssetFiles(blobClient, asset.Container, null);
+        }
+
         internal static string GetAssetName(BlobClient blobClient, string containerName, string directoryPath)
         {
-            string assetName = string.Empty;
-            CloudBlockBlob[] assetFiles = GetAssetFiles(blobClient, containerName, directoryPath, false);
+            string assetName = null;
+            MediaFile[] assetFiles = GetAssetFiles(blobClient, containerName, directoryPath);
             if (assetFiles.Length == 1)
             {
                 assetName = assetFiles[0].Name;
             }
             else
             {
-                foreach (CloudBlockBlob assetFile in assetFiles)
+                foreach (MediaFile assetFile in assetFiles)
                 {
-                    if (assetFile.Name.EndsWith(Constant.Media.Stream.ManifestExtension))
+                    if (assetFile.Name.EndsWith(Constant.Media.Stream.ManifestExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         assetName = assetFile.Name;
                     }
@@ -33,41 +40,45 @@ namespace AzureSkyMedia.PlatformServices
             return assetName;
         }
 
-        internal static CloudBlockBlob[] GetAssetFiles(BlobClient blobClient, string containerName, string directoryPath, bool fetchAtributes)
+        internal static MediaFile[] GetAssetFiles(BlobClient blobClient, string containerName, string directoryPath)
         {
             BlobContinuationToken continuationToken = null;
-            List<CloudBlockBlob> blobs = new List<CloudBlockBlob>();
+            List<MediaFile> files = new List<MediaFile>();
             CloudBlobContainer blobContainer = blobClient.GetBlobContainer(containerName);
             do
             {
-                BlobResultSegment blobSegment;
+                BlobResultSegment blobList;
                 if (!string.IsNullOrEmpty(directoryPath))
                 {
                     CloudBlobDirectory blobDirectory = blobContainer.GetDirectoryReference(directoryPath);
-                    blobSegment = blobDirectory.ListBlobsSegmentedAsync(continuationToken).Result;
+                    blobList = blobDirectory.ListBlobsSegmentedAsync(continuationToken).Result;
                 }
                 else
                 {
-                    blobSegment = blobContainer.ListBlobsSegmentedAsync(continuationToken).Result;
+                    blobList = blobContainer.ListBlobsSegmentedAsync(continuationToken).Result;
                 }
-                continuationToken = blobSegment.ContinuationToken;
-                IEnumerable<IListBlobItem> blobItems = blobSegment.Results;
-                foreach (IListBlobItem blobItem in blobItems)
+                foreach (IListBlobItem blobItem in blobList.Results)
                 {
                     string fileName = Path.GetFileName(blobItem.Uri.ToString());
-                    CloudBlockBlob blob = blobClient.GetBlockBlob(containerName, directoryPath, fileName, fetchAtributes);
-                    blobs.Add(blob);
+                    MediaFile file = new MediaFile()
+                    {
+                        Name = fileName,
+                        DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
+                    };
+                    files.Add(file);
                 }
+                continuationToken = blobList.ContinuationToken;
             } while (continuationToken != null);
-            return blobs.ToArray();
+            return files.ToArray();
         }
 
-        internal MediaAsset(MediaAccount mediaAccount, Asset asset, bool fetchAttributes) : base(asset.Id, asset.Name, asset.Type, asset.AssetId, asset.Created, asset.LastModified, asset.AlternateId, asset.Description, asset.Container, asset.StorageAccountName, asset.StorageEncryptionFormat)
-        {
-            BlobClient blobClient = new BlobClient(mediaAccount, asset.StorageAccountName);
-            Files = GetAssetFiles(blobClient, asset.Container, null, fetchAttributes);
-        }
+        public MediaFile[] Files { get; internal set; }
+    }
 
-        public CloudBlockBlob[] Files { get; internal set; }
+    public class MediaFile
+    {
+        public string Name { get; set; }
+
+        public string DownloadUrl { get; set; }
     }
 }

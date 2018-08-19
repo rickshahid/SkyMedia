@@ -29,26 +29,39 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<string> thumbnailUrls = new List<string>();
             Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
-            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset, false);
+            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
             BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
-            foreach (CloudBlockBlob file in mediaAsset.Files)
+            foreach (MediaFile assetFile in mediaAsset.Files)
             {
-                string fileName = file.Name;
-                if (fileName.Equals(Constant.Media.Thumbnail.Best, stringComparison))
+                if (assetFile.Name.Equals(Constant.Media.Thumbnail.Best, stringComparison))
                 {
-                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
+                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name, false);
                     thumbnailUrls.Insert(0, thumbnailUrl);
                 }
-                else if (fileName.EndsWith(MediaImageFormat.JPG.ToString(), stringComparison) ||
-                         fileName.EndsWith(MediaImageFormat.PNG.ToString(), stringComparison) ||
-                         fileName.EndsWith(MediaImageFormat.BMP.ToString(), stringComparison))
+                else if (assetFile.Name.EndsWith(MediaImageFormat.JPG.ToString(), stringComparison) ||
+                         assetFile.Name.EndsWith(MediaImageFormat.PNG.ToString(), stringComparison) ||
+                         assetFile.Name.EndsWith(MediaImageFormat.BMP.ToString(), stringComparison))
                 {
-                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
+                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name, false);
                     thumbnailUrls.Add(thumbnailUrl);
                 }
             }
             return thumbnailUrls.ToArray();
+        }
+
+        private static MediaInsight GetMediaInsight(MediaClient mediaClient, Asset asset)
+        {
+            string indexerHtml = null;
+            if (mediaClient.IndexerIsEnabled() && !string.IsNullOrEmpty(asset.AlternateId))
+            {
+                indexerHtml = mediaClient.IndexerGetInsightHtml(asset.AlternateId);
+            }
+            MediaInsight mediaInsight = new MediaInsight()
+            {
+                IndexerHtml = indexerHtml
+            };
+            return mediaInsight;
         }
 
         private static MediaStream GetMediaStream(string authToken, MediaClient mediaClient, StreamingLocator locator)
@@ -67,8 +80,9 @@ namespace AzureSkyMedia.PlatformServices
                         Url = playerUrl,
                         ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
                     },
-                    TextTracks = Track.GetTextTracks(mediaClient, locator.AssetName),
-                    ThumbnailUrls = GetThumbnailUrls(mediaClient, locator)
+                    TextTracks = Track.GetTextTracks(mediaClient, asset),
+                    ThumbnailUrls = GetThumbnailUrls(mediaClient, locator),
+                    ContentInsight = GetMediaInsight(mediaClient, asset)
                 };
             }
             return mediaStream;
