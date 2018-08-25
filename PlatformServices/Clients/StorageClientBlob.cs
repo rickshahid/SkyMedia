@@ -24,6 +24,36 @@ namespace AzureSkyMedia.PlatformServices
             _storage = storageAccount.CreateCloudBlobClient();
         }
 
+        private string MapByteCount(long byteCount)
+        {
+            string mappedCount;
+            if (byteCount >= 1099511627776)
+            {
+                mappedCount = (byteCount / 1099511627776.0).ToString(Constant.TextFormatter.Numeric) + " TB";
+            }
+            else if (byteCount >= 1073741824)
+            {
+                mappedCount = (byteCount / 1073741824.0).ToString(Constant.TextFormatter.Numeric) + " GB";
+            }
+            else if (byteCount >= 1048576)
+            {
+                mappedCount = (byteCount / 1048576.0).ToString(Constant.TextFormatter.Numeric) + " MB";
+            }
+            else if (byteCount >= 1024)
+            {
+                mappedCount = (byteCount / 1024.0).ToString(Constant.TextFormatter.Numeric) + " KB";
+            }
+            else if (byteCount == 1)
+            {
+                mappedCount = byteCount + " Byte";
+            }
+            else
+            {
+                mappedCount = byteCount + " Bytes";
+            }
+            return mappedCount;
+        }
+
         public CloudBlobContainer GetBlobContainer(string containerName)
         {
             CloudBlobContainer container = _storage.GetContainerReference(containerName);
@@ -85,6 +115,13 @@ namespace AzureSkyMedia.PlatformServices
         public CloudAppendBlob GetAppendBlob(string containerName, string fileName)
         {
             return GetAppendBlob(containerName, string.Empty, fileName, false);
+        }
+
+        public string GetBlobSize(string containerName, string fileName)
+        {
+            CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName, true);
+            long byteCount = blob.Properties.Length;
+            return MapByteCount(byteCount);
         }
 
         public string GetDownloadUrl(string containerName, string fileName, bool readWrite)

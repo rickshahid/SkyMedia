@@ -1,9 +1,5 @@
 ﻿@model AzureSkyMedia.WebApp.Models.MediaPlayer
 
-@{
-    string ampSkin = ViewData["mediaPlayerSkin"].ToString();
-}
-
-<div id="@Model.ContainerId" class="@Model.StyleClass">
-    <video id="@Model.ControlId" class="azuremediaplayer @ampSkin-skin amp-big-play-centered" controls playsinline height="@Model.Height" width="@Model.Width" />
+<div id="@Model.ContainerId" class="@Model.ContainerStyle">
+    <video id="@Model.ControlId" class="azuremediaplayer @Model.PlayerSkin-skin amp-big-play-centered" playsinline />
 </div>

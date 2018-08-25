@@ -1,31 +1,29 @@
-﻿<!DOCTYPE html>
-<html>
+﻿@using AzureSkyMedia.WebApp.Models;
+
+<!DOCTYPE html>
+<html lang="en-us">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <title>Azure Media Sprite Tip</title>
-        <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/2.2.0/skins/amp-default/azuremediaplayer.min.css" />
+        <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/2.2.0/skins/amp-flush/azuremediaplayer.min.css" />
         <script type="text/javascript" src="//amp.azure.net/libs/amp/2.2.0/azuremediaplayer.min.js"></script>
-        <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="~/js/amp/amp-spriteTip.js"></script>
+        <script type="text/javascript" src="~/js/site.js"></script>
         <script type="text/javascript">
             $(function () {
-                var mediaPlayer = amp("mediaPlayer", {
-                    "plugins": {
-                        "spriteTip": {
-                            vttUrl: "//viddy2-usct.streaming.media.azure.net/6e4f1543-7a3e-4199-87c8-76aeb50483a5/Tears of Steel_000001.vtt",
-                        }
-                    }
-                });
+                var spriteVttUrl = "//viddy2-usct.streaming.media.azure.net/6e4f1543-7a3e-4199-87c8-76aeb50483a5/Tears of Steel_000001.vtt";
+                var mediaPlayer = GetMediaPlayer("videoPlayer", null, null, false, spriteVttUrl);
                 mediaPlayer.src(
                     [{
-                        src: "//viddy2-usct.streaming.media.azure.net/6e4f1543-7a3e-4199-87c8-76aeb50483a5/Tears of Steel.ism/manifest",
+                        src: "//viddy2-usct.streaming.media.azure.net/6e4f1543-7a3e-4199-87c8-76aeb50483a5/Tears of Steel.ism/manifest"
                     }]
                 );
             })
         </script>
     </head>
     <body>
-        <video id="mediaPlayer" class="azuremediaplayer amp-default-skin" autoplay controls style="display:block;margin:0 auto" />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", PlayerSkin = "amp-flush" }' />
     </body>
 </html>

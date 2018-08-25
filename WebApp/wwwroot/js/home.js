@@ -25,18 +25,21 @@ function SetPlayerControls(controlBar, storageCdnUrl) {
     ClearPlayerControls(controlBar, buttonIds);
     if (mediaStream.contentInsight.indexerUrl != null) {
         onClick = function () {
+            var imageSource = $("#insightImage").prop("src");
             if ($("#indexerInsight").is(":visible")) {
                 $("#indexerInsight").hide();
                 $(".layoutPanel.side").show();
+                $("#insightImage").prop("src", imageSource.replace("Hide", "Show"));
             } else {
                 var playerHeight = $("#videoPlayer video").height();
                 $("#indexerInsight").height(playerHeight);
                 $("#indexerInsight").prop("src", mediaStream.contentInsight.indexerUrl);
                 $("#indexerInsight").show();
                 $(".layoutPanel.side").hide();
+                $("#insightImage").prop("src", imageSource.replace("Show", "Hide"));
             }
         };
-        SetPlayerControl(controlBar, storageCdnUrl, "MediaInsight.png", "insightImage", "insightButton", onClick, "Cognitive<br><br>Insight");
+        SetPlayerControl(controlBar, storageCdnUrl, "MediaInsightShow.png", "insightImage", "insightButton", onClick, "Cognitive<br><br>Insight");
     }
     if (_mediaPlayer.isLive()) {
         onClick = function () {

@@ -29,7 +29,8 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                   bool standardEncoderPreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset, string streamingPolicyName)
+                                   bool standardEncoderPreset, bool thumbnailSpritePreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset,
+                                   string streamingPolicyName)
         {
             Asset[] inputAssets;
             List<Job> jobs = new List<Job>();

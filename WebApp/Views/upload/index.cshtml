@@ -47,12 +47,12 @@
 
 <table class="mediaUploadOptions">
     <tr>
-        <td rowspan="2" class="mediaUploadEncoderPreset">
-            @Html.CheckBox("standardEncoderPreset", false, new { onchange = "SetUploadOption(this)" })
+        <td>
+            @Html.CheckBox("standardEncoderPreset", false)
         </td>
-        <td rowspan="2" class="mediaUploadEncoderPreset">
+        <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
-                Adaptive Streaming<br>(Auto Bitrate Ladder)
+                Adaptive Streaming
             </span>
         </td>
         <td class="mediaUploadOption">
@@ -65,6 +65,14 @@
         </td>
     </tr>
     <tr>
+        <td>
+            @Html.CheckBox("thumbnailSpritePreset", false)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
+                Thumbnail Sprite
+            </span>
+        </td>
         <td class="mediaUploadOption">
             @Html.CheckBox("audioAnalyzerPreset", false, new { onchange = "SetUploadOption(this)" })
         </td>

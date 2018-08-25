@@ -20,6 +20,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct TextFormatter
         {
+            public const string Numeric = "N2";
             public const string NumericLong = "N0";
 
             public static readonly string[] SpacingPatterns = new string[] { "([a-z])([A-Z])", "(H264)([A-Z])", "([a-z])(720p|1080p)" };

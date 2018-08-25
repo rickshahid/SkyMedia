@@ -7,9 +7,6 @@
     string ampVersion = ViewData["mediaPlayerVersion"].ToString();
     string ampSkin = ViewData["mediaPlayerSkin"].ToString();
 
-    string ampHeight = "400";
-    string ampWidth = "400";
-
     string userId = ViewData["userId"] as string;
     string accountName = ViewData["accountName"] as string;
 }
@@ -62,7 +59,7 @@
                 if (mediaStream == null) {
                     $("#" + playerId).remove();
                 } else {
-                    var mediaPlayer = GetMediaPlayer(playerId, "@userId", "@accountName");
+                    var mediaPlayer = GetMediaPlayer(playerId, "@userId", "@accountName", true);
                     SetPlayerContent(mediaPlayer, mediaStream);
                 }
             }
@@ -77,14 +74,14 @@
 
 <div class="carouselContainer">
     <div class="carousel">
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream1", StyleClass = "carouselItem", ControlId = "videoPlayer1", Height = ampHeight, Width = ampWidth }' />
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream2", StyleClass = "carouselItem", ControlId = "videoPlayer2", Height = ampHeight, Width = ampWidth }' />
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream3", StyleClass = "carouselItem", ControlId = "videoPlayer3", Height = ampHeight, Width = ampWidth }' />
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream4", StyleClass = "carouselItem", ControlId = "videoPlayer4", Height = ampHeight, Width = ampWidth }' />
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream5", StyleClass = "carouselItem", ControlId = "videoPlayer5", Height = ampHeight, Width = ampWidth }' />
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream6", StyleClass = "carouselItem", ControlId = "videoPlayer6", Height = ampHeight, Width = ampWidth }' />
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream7", StyleClass = "carouselItem", ControlId = "videoPlayer7", Height = ampHeight, Width = ampWidth }' />
-        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream8", StyleClass = "carouselItem", ControlId = "videoPlayer8", Height = ampHeight, Width = ampWidth }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream1", ContainerStyle = "carouselItem", ControlId = "videoPlayer1", PlayerSkin = ampSkin }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream2", ContainerStyle = "carouselItem", ControlId = "videoPlayer2", PlayerSkin = ampSkin }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream3", ContainerStyle = "carouselItem", ControlId = "videoPlayer3", PlayerSkin = ampSkin }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream4", ContainerStyle = "carouselItem", ControlId = "videoPlayer4", PlayerSkin = ampSkin }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream5", ContainerStyle = "carouselItem", ControlId = "videoPlayer5", PlayerSkin = ampSkin }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream6", ContainerStyle = "carouselItem", ControlId = "videoPlayer6", PlayerSkin = ampSkin }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream7", ContainerStyle = "carouselItem", ControlId = "videoPlayer7", PlayerSkin = ampSkin }' />
+        <partial name="MediaPlayer" model='new MediaPlayer { ContainerId = "stream8", ContainerStyle = "carouselItem", ControlId = "videoPlayer8", PlayerSkin = ampSkin }' />
     </div>
 </div>
 

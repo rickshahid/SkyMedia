@@ -81,7 +81,7 @@ function ReloadGrid(gridId, relativeUrl, columns) {
     if (window.location.href.indexOf("disableRefresh") == -1) {
         $.get(relativeUrl,
             function (rows) {
-                SetRowIds(rows);
+                SetParentRowIds(rows);
                 $("#" + gridId).jqGrid("clearGridData");
                 $("#" + gridId).jqGrid("setGridParam", {
                     datatype: "local",

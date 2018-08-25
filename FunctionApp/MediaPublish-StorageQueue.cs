@@ -2,7 +2,7 @@ using System;
 using System.Web.Http;
 
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
@@ -13,25 +13,25 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaPublishStorageQueue
     {
         [FunctionName("MediaPublish-StorageQueue")]
-        public static void Run([QueueTrigger("media-publish")] string message, TraceWriter log)
+        public static void Run([QueueTrigger("%Media.Publish.Queue%")] string message, ILogger logger)
         {
             try
             {
-                log.Info($"Queue Message: {message}");
+                logger.LogInformation("Queue Message: {0}", message);
                 MediaPublish mediaPublish = JsonConvert.DeserializeObject<MediaPublish>(message);
                 if (mediaPublish != null)
                 {
                     string publishMessage = MediaClient.PublishJobOutput(mediaPublish);
-                    log.Info($"Publish Message: {publishMessage}");
+                    logger.LogInformation("Publish Message: {0}", publishMessage);
                 }
             }
             catch (HttpResponseException ex)
             {
-                log.Info($"HTTP Exception: {ex.ToString()}");
+                logger.LogError(ex, "HTTP Exception: {0}", ex.Response.ToString());
             }
             catch (Exception ex)
             {
-                log.Info($"Exception: {ex.ToString()}");
+                logger.LogError(ex, "Exception: {0}", ex.ToString());
             }
         }
     }

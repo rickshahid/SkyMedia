@@ -288,6 +288,13 @@ function GetChildColumns(gridId) {
                     width: nameWidthEx + 270
                 },
                 {
+                    label: "File Size",
+                    name: "size",
+                    align: "center",
+                    width: defaultWidth,
+                    sortable: false
+                },
+                {
                     formatter: FormatActions,
                     label: "Actions",
                     align: "center",

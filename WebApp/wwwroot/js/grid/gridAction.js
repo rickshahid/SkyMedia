@@ -1,4 +1,4 @@
-﻿function DownloadFile(fileUrl) {
+﻿function OpenFile(fileUrl) {
     window.open(fileUrl, "_blank"); 
 }
 function DisplayInsight(fileName, assetName, indexId) {
@@ -16,12 +16,6 @@ function DisplayInsight(fileName, assetName, indexId) {
             DisplayDialog("insightDialog", title, null, {}, 800, 1200);
         }
     );
-}
-function DisplayManifest(fileUrl) {
-    alert(fileUrl);
-}
-function DisplayTranscript(fileUrl) {
-    alert(fileUrl);
 }
 function PlayVideo(fileUrl) {
     alert(fileUrl);
@@ -190,15 +184,15 @@ function FormatActions(value, grid, row) {
             actionsHtml = "<button id='" + row.id + "_video' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaPlayerFile.png'></button>";
         } else if (row.name.indexOf(".ism") > -1 || row.name.indexOf(".ismc") > -1) {
-            onClick = "DisplayManifest('" + row.downloadUrl + "')";
+            onClick = "OpenFile('" + row.downloadUrl + "')";
             actionsHtml = "<button id='" + row.id + "_manifest' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaManifest.png'></button>";
         } else if (row.name.indexOf(".vtt") > -1 || row.name.indexOf(".ttml") > -1) {
-            onClick = "DisplayTranscript('" + row.downloadUrl + "')";
+            onClick = "OpenFile('" + row.downloadUrl + "')";
             actionsHtml = "<button id='" + row.id + "_transcript' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaTranscript.png'></button>";
         }
-        onClick = "DownloadFile('" + row.downloadUrl + "')";
+        onClick = "OpenFile('" + row.downloadUrl + "')";
         var downloadHtml = "<button id='" + row.id + "_download' class='siteButton' onclick=" + onClick + ">";
         downloadHtml = downloadHtml + "<img src='" + _storageCdnUrl + "/MediaDownload.png'></button>";
         actionsHtml = actionsHtml + downloadHtml;

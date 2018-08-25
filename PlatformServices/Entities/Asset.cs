@@ -63,6 +63,7 @@ namespace AzureSkyMedia.PlatformServices
                     MediaFile file = new MediaFile()
                     {
                         Name = fileName,
+                        Size = blobClient.GetBlobSize(containerName, fileName),
                         DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
                     };
                     files.Add(file);
@@ -78,6 +79,8 @@ namespace AzureSkyMedia.PlatformServices
     public class MediaFile
     {
         public string Name { get; set; }
+
+        public string Size { get; set; }
 
         public string DownloadUrl { get; set; }
     }

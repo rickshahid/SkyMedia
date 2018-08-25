@@ -23,16 +23,17 @@
 
 @section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/diagnostic.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="https://breakdown.blob.core.windows.net/public/amp-vb.plugin.js"></script>
     <script type="text/javascript" src="~/js/amp/amp-appInsights.min.js"></script>
+    <script type="text/javascript" src="~/js/amp/amp-diagnostic.js"></script>
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
         var _streamTunerPageSize = @streamTunerPageSize;
         var _streamLastPage = @streamLastPage == 1;
         $(function () {
-            _authToken = "@authToken";
-            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName");
+            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", false);
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
             _mediaPlayer.ready(function () {
@@ -50,14 +51,14 @@
                 var streamUrl = _mediaPlayer.currentSrc();
                 streamUrl = streamUrl.replace("http:", "");
                 streamUrl = streamUrl.split("/");
-                for (var i = 2; i < streamUrl.length; i++) {
+                for (var i = streamUrl.length - 1; i > streamUrl.length - 5; i--) {
                     streamUrl[i] = streamUrl[i] + "<br>";
                 }
                 var manifestIndex = streamUrl.length - 1;
                 streamUrl[manifestIndex] = streamUrl[manifestIndex].replace(",", "<br>,");
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
-                if (_authToken != "") {
+                if ("@authToken" != "") {
                     var controlBar = document.getElementsByClassName("amp-controlbaricons-right")[0];
                     SetPlayerControls(controlBar, "@storageCdnUrl");
                 }
@@ -80,7 +81,7 @@
 <table>
     <tr>
         <td>
-            <partial name="MediaPlayer" model='new MediaPlayer { StyleClass = "mediaPlayer", ControlId = "videoPlayer", Height = "auto", Width = "100%" }' />
+            <partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", PlayerSkin = ampSkin }' />
         </td>
         <td>
             <iframe id="indexerInsight" class="indexerInsight" frameborder="0"></iframe>

@@ -125,7 +125,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 relativePath = string.Concat(relativePath, "/sourceFile");
             }
-            string requestUrl = GetRequestUrl(relativePath, false, indexId);
+            string requestUrl = GetRequestUrl(relativePath, true, indexId);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);

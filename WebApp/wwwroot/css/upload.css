@@ -86,16 +86,12 @@
 }
 
 .mediaUploadOptions td {
+    text-align: left;
     padding-bottom: 10px;
 }
 
-.mediaUploadEncoderPreset {
-    text-align: center;
-    vertical-align: top;
-}
-
 .mediaUploadOption {
-    padding-left: 50px;
+    padding-left: 100px;
 }
 
 .mediaUploadMessage {

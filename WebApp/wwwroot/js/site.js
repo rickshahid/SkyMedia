@@ -1,20 +1,14 @@
-﻿var _authToken, _mediaPlayer, _mediaStreams, _streamNumber, _encoderConfig, _assetIds, _storageCdnUrl;
-function SetCursor(isBusy) {
-    if (isBusy) {
-        $("body").css("cursor", "wait");
-    } else {
-        $("body").css("cursor", "auto");
-    }
-}
-function SetLayout() {
-    CreateTipBottom("siteHome", "Azure Sky Media<br><br>Site Home");
-    CreateTipBottom("siteCode", "Azure Sky Media<br><br>Open Source");
+﻿var _mediaPlayer, _mediaStreams, _streamNumber, _storageCdnUrl;
+function SetLayout(appTitle) {
+    CreateTipBottom("siteHome", appTitle + "<br><br>Site Home");
+    CreateTipBottom("siteCode", appTitle + "<br><br>Open Source");
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>News Blog");
     CreateTipBottom("botService", "Azure Bot Service");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
-    CreateTipBottom("userProfileEdit", "Azure Sky Media<br><br>Account Profile Edit");
-    CreateTipBottom("userSignIn", "Azure Sky Media<br><br>User Sign In");
-    CreateTipBottom("userSignOut", "Azure Sky Media<br><br>User Sign Out");
+    CreateTipBottom("userProfileEdit", appTitle + "<br><br>Account Profile Edit");
+    CreateTipBottom("userSignIn", appTitle + "<br><br>User Sign In");
+    CreateTipBottom("userSignOut", appTitle + "<br><br>User Sign Out");
+    CreateTipBottom("mediaAccount", "Azure Media Services<br><br>Account Inventory");
     CreateTipRight("amsPlatform", "Azure Media Services");
     CreateTipRight("amsPlayer", "Azure Media Player");
     CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
@@ -25,9 +19,8 @@ function SetLayout() {
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
     CreateTipLeft("appServiceWeb", "Azure Web Apps");
-    CreateTipLeft("appServiceFunctions", "Azure Function Apps");
+    CreateTipLeft("appServiceFunctions", "Azure Functions");
     CreateTipLeft("eventGrid", "Azure Event Grid");
-    CreateTipTop("mediaAccount", "Azure Media Services<br><br>Account Name");
     CreateTipTop("mediaUpload", "Upload");
     CreateTipTop("mediaTransform", "Transform");
     CreateTipTop("mediaJob", "Job");
@@ -35,7 +28,7 @@ function SetLayout() {
     CreateTipTop("mediaSearch", "Search");
     CreateTipTop("mediaCompose", "Compose");
     CreateTipTop("mediaGallery", "Gallery");
-    CreateTipBottom("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
+    CreateTipTop("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);
         if (error != "") {
@@ -45,6 +38,13 @@ function SetLayout() {
     $.ajaxSetup({
         cache: false
     });
+}
+function SetCursor(isBusy) {
+    if (isBusy) {
+        $("body").css("cursor", "wait");
+    } else {
+        $("body").css("cursor", "auto");
+    }
 }
 function SignOut(cookieName) {
     $.removeCookie(cookieName);
@@ -99,9 +99,13 @@ function ConfirmMessage(title, message, onConfirm) {
     };
     DisplayMessage(title, message, buttons);
 }
-function GetMediaPlayer(playerId, userId, accountName) {
-    var options = {
+function GetMediaPlayer(playerId, userId, accountName, galleryView, spriteVttUrl) {
+    var playerOptions = {
         fluid: true,
+        controls: true,
+        autoplay: true,
+        width: galleryView ? "400" : "100%",
+        height: galleryView ? "400" : "auto",
         playbackSpeed: {
             enabled: true
         },
@@ -110,11 +114,23 @@ function GetMediaPlayer(playerId, userId, accountName) {
                 userId: userId,
                 accountId: accountName
             },
+            spriteTip: {
+                vttUrl: spriteVttUrl
+            },
             videobreakdown: {
             }
         }
     };
-    return amp(playerId, options);
+    if (window.location.href.indexOf("debug") > -1) {
+        playerOptions.plugins.diagnosticOverlay = {
+            title: "Diagnostics",
+            bgColor: "Black",
+            opacity: 0.5,
+            x: "left",
+            y: "top"
+        };
+    }
+    return amp(playerId, playerOptions);
 }
 function SetPlayerSpinner(visible) {
     if (visible) {
@@ -143,4 +159,34 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
             mediaStream.textTracks
         );
     }
+}
+function CreateTip(targetId, tipText, tipPosition) {
+    $("#" + targetId).qtip({
+        content: { text: tipText },
+        position: tipPosition,
+        show: { delay: 1000 }
+    });
+}
+function CreateTipTop(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "bottom center", at: "top center", adjust: { x: adjustX, y: adjustY } };
+    CreateTip(targetId, tipText, tipPosition);
+}
+function CreateTipTopLeft(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "bottom center", at: "top left", adjust: { x: adjustX, y: adjustY } };
+    CreateTip(targetId, tipText, tipPosition);
+}
+function CreateTipBottom(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "top center", at: "bottom center", adjust: { x: adjustX, y: adjustY } };
+    CreateTip(targetId, tipText, tipPosition);
+}
+function CreateTipLeft(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "right center", at: "left center", adjust: { x: adjustX, y: adjustY } };
+    CreateTip(targetId, tipText, tipPosition);
+}
+function CreateTipRight(targetId, tipText, adjustX, adjustY) {
+    var tipPosition = { my: "left center", at: "right center", adjust: { x: adjustX, y: adjustY } };
+    CreateTip(targetId, tipText, tipPosition);
+}
+function SetTipVisible(targetId, tipVisible) {
+    $("#" + targetId).qtip("toggle", tipVisible);
 }

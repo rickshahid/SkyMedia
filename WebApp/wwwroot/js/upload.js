@@ -40,6 +40,7 @@ function CreateWorkflow() {
             assetAlternateId: $("#assetAlternateId").val(),
             fileNames: GetFileNames(),
             standardEncoderPreset: $("#standardEncoderPreset").prop("checked"),
+            thumbnailSpritePreset: $("#thumbnailSpritePreset").prop("checked"),
             videoAnalyzerPreset: $("#videoAnalyzerPreset").prop("checked"),
             audioAnalyzerPreset: $("#audioAnalyzerPreset").prop("checked")
         },

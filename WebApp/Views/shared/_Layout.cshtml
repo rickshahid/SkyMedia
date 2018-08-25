@@ -1,34 +1,33 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>@ViewData["appTitle"]</title>
-    <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-dist/jquery-ui.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/json-browse/json-browse/jquery.json-browse.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
-    <link type="text/css" rel="stylesheet" href="~/lib/qtip/jquery.qtip.min.css" />
-    <link type="text/css" rel="stylesheet" href="~/css/grid.css" />
-    <link type="text/css" rel="stylesheet" href="~/css/site.css" />
-    @Html.Raw(javaScriptSnippet.FullScript)
-    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="~/lib/jquery.cookie/jquery.cookie.js"></script>
-    <script type="text/javascript" src="~/lib/jquery-ui-dist/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="~/lib/json-browse/json-browse/jquery.json-browse.js"></script>
-    <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
-    <script type="text/javascript" src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
-    <script type="text/javascript" src="~/lib/qtip/jquery.qtip.min.js"></script>
-    <script type="text/javascript" src="~/js/grid/grid.js"></script>
-    <script type="text/javascript" src="~/js/grid/gridAction.js"></script>
-    <script type="text/javascript" src="~/js/grid/gridColumn.js"></script>
-    <script type="text/javascript" src="~/js/qtip.js"></script>
-    <script type="text/javascript" src="~/js/site.js"></script>
-    @RenderSection("head", false)
-</head>
-    <body onload="SetLayout()">
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>@ViewData["appTitle"]</title>
+        <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-dist/jquery-ui.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/json-browse/json-browse/jquery.json-browse.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/qtip/jquery.qtip.min.css" />
+        <link type="text/css" rel="stylesheet" href="~/css/grid.css" />
+        <link type="text/css" rel="stylesheet" href="~/css/site.css" />
+        @Html.Raw(javaScriptSnippet.FullScript)
+        <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="~/lib/jquery.cookie/jquery.cookie.js"></script>
+        <script type="text/javascript" src="~/lib/jquery-ui-dist/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="~/lib/json-browse/json-browse/jquery.json-browse.js"></script>
+        <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
+        <script type="text/javascript" src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
+        <script type="text/javascript" src="~/lib/qtip/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="~/js/grid/grid.js"></script>
+        <script type="text/javascript" src="~/js/grid/gridAction.js"></script>
+        <script type="text/javascript" src="~/js/grid/gridColumn.js"></script>
+        <script type="text/javascript" src="~/js/site.js"></script>
+        @RenderSection("head", false)
+    </head>
+    <body onload="SetLayout('@ViewData["appTitle"]')">
         <table class="header">
             <tr>
                 <td class="headerSide">
@@ -74,7 +73,7 @@
                         <partial name="SiteButton" model='new SiteButton { ControlId = "amsPlatform", ImageFile = "MediaServices.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "amsPlayer", ImageFile = "MediaPlayer.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-player/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "amsPlayer", ImageFile = "MediaPlayer.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/media-player/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreaming", ImageFile = "MediaStreaming.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/live-on-demand/", StyleClass = "layoutVertical" }' />
@@ -94,7 +93,7 @@
                 </td>
                 <td class="layoutPanel side">
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStorage", ImageFile = "MediaStorage.png", AbsoluteUrl = "http://azure.microsoft.com/services/storage/blob/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStorage", ImageFile = "MediaStorage.png", AbsoluteUrl = "http://azure.microsoft.com/services/storage/blobs/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "cosmosDB", ImageFile = "CosmosDB.png", AbsoluteUrl = "http://azure.microsoft.com/services/cosmos-db/", StyleClass = "layoutVertical" }' />

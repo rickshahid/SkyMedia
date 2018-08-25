@@ -2,11 +2,10 @@ using System;
 using System.IO;
 using System.Web.Http;
 
+using Microsoft.Azure.WebJobs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Azure.EventGrid.Models;
 
 using Newtonsoft.Json;
@@ -19,17 +18,17 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaPublishHttpPost
     {
         [FunctionName("MediaPublish-HttpPost")]
-        public static IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request, TraceWriter log)
+        public static IActionResult Run([HttpTrigger("post")] HttpRequest request, ILogger logger)
         {
             object eventResponse = null;
             try
             {
                 if (request.Query.ContainsKey("id"))
                 {
-                    log.Info($"Request Query: {request.QueryString}");
+                    logger.LogInformation("Request Query: {0}", request.QueryString);
                     string indexId = request.Query["id"].ToString();
                     string indexState = request.Query["state"].ToString();
-                    ProcessPublish(indexId, indexState, log);
+                    ProcessPublish(indexId, indexState, logger);
                 }
                 else
                 {
@@ -38,12 +37,12 @@ namespace AzureSkyMedia.FunctionApp
                     {
                         requestBody = requestReader.ReadToEnd();
                     }
-                    log.Info($"Request Body: {requestBody}");
+                    logger.LogInformation("Request Body: {0}", requestBody);
                     JToken eventInfo = JArray.Parse(requestBody)[0];
                     if (requestBody.Contains("validationCode"))
                     {
                         string validationCode = eventInfo["data"]["validationCode"].ToString();
-                        log.Info($"Validation Code: {validationCode}");
+                        logger.LogInformation("Validation Code: {0}", validationCode);
                         eventResponse = new SubscriptionValidationResponse(validationCode);
                     }
                     else
@@ -56,8 +55,8 @@ namespace AzureSkyMedia.FunctionApp
                                 if (string.Equals(eventState, "Finished", StringComparison.OrdinalIgnoreCase))
                                 {
                                     string jobName = Path.GetFileName(eventSubject);
-                                    log.Info($"Job Name: {jobName}");
-                                    ProcessPublish(jobName, null, log);
+                                    logger.LogInformation("Job Name: {0}", jobName);
+                                    ProcessPublish(jobName, null, logger);
                                 }
                                 break;
                         }
@@ -66,16 +65,16 @@ namespace AzureSkyMedia.FunctionApp
             }
             catch (HttpResponseException ex)
             {
-                log.Info($"HTTP Exception: {ex.ToString()}");
+                logger.LogError(ex, "HTTP Exception: {0}", ex.Response.ToString());
             }
             catch (Exception ex)
             {
-                log.Info($"Exception: {ex.ToString()}");
+                logger.LogError(ex, "Exception: {0}", ex.ToString());
             }
             return new OkObjectResult(eventResponse);
         }
 
-        private static void ProcessPublish(string documentId, string processState, TraceWriter log)
+        private static void ProcessPublish(string documentId, string processState, ILogger logger)
         {
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
@@ -83,7 +82,7 @@ namespace AzureSkyMedia.FunctionApp
                 MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, documentId);
                 if (mediaPublish != null)
                 {
-                    log.Info($"Media Publish: {JsonConvert.SerializeObject(mediaPublish)}");
+                    logger.LogInformation("Media Publish: {0}", JsonConvert.SerializeObject(mediaPublish));
                     if (!string.IsNullOrEmpty(processState))
                     {
                         MediaClient.SendNotificationMessage(mediaPublish, null, documentId, processState);
