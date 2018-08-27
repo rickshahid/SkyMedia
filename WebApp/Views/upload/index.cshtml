@@ -5,6 +5,7 @@
     <script type="text/javascript" src="~/lib/plupload/js/plupload.min.js"></script>
     <script type="text/javascript" src="~/lib/plupload/js/jquery.ui.plupload/jquery.ui.plupload.min.js"></script>
     <script type="text/javascript" src="~/js/upload.js"></script>
+    <script type="text/javascript" src="~/js/transform.js"></script>
     <script type="text/javascript">
         $(function () {
             SetStorageTip();
@@ -56,7 +57,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoAnalyzerPreset", false, new { onchange = "SetUploadOption(this)" })
+            @Html.CheckBox("videoAnalyzerPreset", false, new { onchange = "SetAnalyzerOptions(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
@@ -74,7 +75,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("audioAnalyzerPreset", false, new { onchange = "SetUploadOption(this)" })
+            @Html.CheckBox("audioAnalyzerPreset", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">

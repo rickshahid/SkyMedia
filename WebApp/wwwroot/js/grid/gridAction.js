@@ -138,7 +138,7 @@ function SetRowEdit(gridId, rowData) {
     $("#description").val(row["properties.description"]);
     switch (gridId) {
         case "transforms":
-            for (var i = 0; i < 3; i++) {
+            for (var i = 0; i < 4; i++) {
                 $("#presetEnabled" + i).prop("checked", false);
                 $("#relativePriority" + i + " option").prop("selected", function () {
                     return this.defaultSelected;

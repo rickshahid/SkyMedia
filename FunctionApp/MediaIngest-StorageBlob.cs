@@ -16,17 +16,17 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaIngestStorageBlob
     {
         [FunctionName("MediaIngest-StorageBlob")]
-        public static void Run([BlobTrigger("ams/{name}")] Stream blob, string name, ILogger logger)
+        public static void Run([BlobTrigger("ams/{blobName}")] Stream blob, string blobName, ILogger logger)
         {
             BlobClient blobClient = new BlobClient();
             try
             {
-                if (!name.EndsWith(Constant.Media.IngestManifest.FileExtensionLog, StringComparison.OrdinalIgnoreCase))
+                if (!blobName.EndsWith(Constant.Media.IngestManifest.FileExtensionLog, StringComparison.OrdinalIgnoreCase))
                 {
-                    logger.LogInformation("Media File: {0}", name);
-                    if (name.StartsWith(Constant.Media.IngestManifest.TriggerPrefix, StringComparison.OrdinalIgnoreCase))
+                    logger.LogInformation("Media File: {0}", blobName);
+                    if (blobName.StartsWith(Constant.Media.IngestManifest.TriggerPrefix, StringComparison.OrdinalIgnoreCase))
                     {
-                        ProcessManifest(blobClient, blob, name, logger);
+                        ProcessManifest(blobClient, blob, blobName, logger);
                     }
                     else
                     {
@@ -39,9 +39,9 @@ namespace AzureSkyMedia.FunctionApp
                                 List<string> missingFiles = new List<string>();
                                 foreach (string missingFile in ingestManifest.MissingFiles)
                                 {
-                                    if (!string.Equals(missingFile, name, StringComparison.OrdinalIgnoreCase))
+                                    if (!string.Equals(missingFile, blobName, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        missingFiles.Add(name);
+                                        missingFiles.Add(blobName);
                                     }
                                 }
                                 if (missingFiles.Count == 0)
@@ -65,13 +65,13 @@ namespace AzureSkyMedia.FunctionApp
             catch (ApiErrorException ex)
             {
                 string logData = ex.Response.ToString();
-                WriteLog(blobClient, name, logData);
+                WriteLog(blobClient, blobName, logData);
                 logger.LogError(ex, logData);
             }
             catch (Exception ex)
             {
                 string logData = ex.ToString();
-                WriteLog(blobClient, name, logData);
+                WriteLog(blobClient, blobName, logData);
                 logger.LogError(ex, logData);
             }
         }
@@ -153,14 +153,18 @@ namespace AzureSkyMedia.FunctionApp
         private static void CreateJob(BlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, ILogger logger)
         {
             bool standardEncoderPreset = false;
+            bool thumbnailSpritePreset = false;
             bool videoAnalyzerPreset = false;
             bool audioAnalyzerPreset = false;
             foreach (MediaTransformPreset transformPreset in ingestManifest.TransformPresets)
             {
                 switch (transformPreset)
                 {
-                    case MediaTransformPreset.AdaptiveStreaming:
+                    case MediaTransformPreset.StandardEncoder:
                         standardEncoderPreset = true;
+                        break;
+                    case MediaTransformPreset.ThumbnailSprite:
+                        thumbnailSpritePreset = true;
                         break;
                     case MediaTransformPreset.VideoAnalyzer:
                         videoAnalyzerPreset = true;
@@ -186,7 +190,7 @@ namespace AzureSkyMedia.FunctionApp
                 WriteLog(blobClient, ingestManifest.Name, logData);
                 logger.LogInformation(logData);
             }
-            Transform transform = mediaClient.CreateTransform(standardEncoderPreset, videoAnalyzerPreset, audioAnalyzerPreset);
+            Transform transform = mediaClient.CreateTransform(standardEncoderPreset, thumbnailSpritePreset, videoAnalyzerPreset, audioAnalyzerPreset);
             if (transform != null)
             {
                 Job job = mediaClient.CreateJob(transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.AssetName, ingestManifest.JobInputFileUrl, ingestManifest.StorageAccount, ingestManifest.JobOutputAssetDescription, indexId, ingestManifest.StreamingPolicyName);

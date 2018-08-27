@@ -50,60 +50,10 @@ function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signOut";
 }
-function DisplayDialog(dialogId, title, html, buttons, height, width, onOpen, onClose) {
-    title = decodeURIComponent(title);
-    if (buttons == null) {
-        buttons = {
-            OK: function () {
-                $(this).dialog("close");
-            }
-        };
-    }
-    if (html != null) {
-        var txtArea = document.createElement("textarea");
-        txtArea.innerHTML = html;
-        html = txtArea.value;
-        html = decodeURIComponent(html);
-        $("#" + dialogId).html(html);
-    }
-    if (height == null) {
-        height = "auto";
-    }
-    if (width == null) {
-        width = "auto";
-    }
-    $("#" + dialogId).dialog({
-        resizable: false,
-        buttons: buttons,
-        height: height,
-        width: width,
-        title: title,
-        open: onOpen,
-        close: onClose
-    });
-    if (jQuery.isEmptyObject(buttons)) {
-        $(".ui-dialog-titlebar-close").show();
-    }
-    $(".ui-button:last").focus();
-}
-function DisplayMessage(title, message, buttons, onClose) {
-    var dialogId = "messageDialog";
-    DisplayDialog(dialogId, title, message, buttons, null, null, null, onClose);
-}
-function ConfirmMessage(title, message, onConfirm) {
-    var buttons = {
-        Yes: onConfirm,
-        No: function () {
-            $(this).dialog("close");
-        }
-    };
-    DisplayMessage(title, message, buttons);
-}
 function GetMediaPlayer(playerId, userId, accountName, galleryView, spriteVttUrl) {
     var playerOptions = {
         fluid: true,
         controls: true,
-        autoplay: true,
         width: galleryView ? "400" : "100%",
         height: galleryView ? "400" : "auto",
         playbackSpeed: {
@@ -124,7 +74,7 @@ function GetMediaPlayer(playerId, userId, accountName, galleryView, spriteVttUrl
     if (window.location.href.indexOf("debug") > -1) {
         playerOptions.plugins.diagnosticOverlay = {
             title: "Diagnostics",
-            bgColor: "Black",
+            bgColor: "black",
             opacity: 0.5,
             x: "left",
             y: "top"
@@ -132,18 +82,16 @@ function GetMediaPlayer(playerId, userId, accountName, galleryView, spriteVttUrl
     }
     return amp(playerId, playerOptions);
 }
-function SetPlayerSpinner(visible) {
-    if (visible) {
-        $(".vjs-loading-spinner").show();
-    } else {
-        $(".vjs-loading-spinner").hide();
-    }
-}
 function SetPlayerContent(mediaPlayer, mediaStream) {
     $("#mediaStreamLeft").prop("disabled", true);
     $("#mediaStreamRight").prop("disabled", true);
     $("#streamTuner").slider("option", "disabled", true);
-    if (mediaStream.source.protectionInfo.length > 0 && window.location.href.indexOf("auth=off") == -1) {
+    if (mediaStream.source.protectionInfo.length > 0) {
+        if (window.location.href.indexOf("notoken") > -1) {
+            for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
+                mediaStream.source.protectionInfo[i].authenticationToken = null;
+            }
+        }
         mediaPlayer.src(
             [{
                 src: mediaStream.source.src,
@@ -159,6 +107,51 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
             mediaStream.textTracks
         );
     }
+}
+function DisplayDialog(dialogId, title, html, buttons, height, width) {
+    title = decodeURIComponent(title);
+    if (html != null) {
+        html = decodeURIComponent(html);
+        $("#" + dialogId).html(html);
+    }
+    if (buttons == null) {
+        buttons = {
+            OK: function () {
+                $(this).dialog("close");
+            }
+        };
+    }
+    if (height == null) {
+        height = "auto";
+    }
+    if (width == null) {
+        width = "auto";
+    }
+    $("#" + dialogId).dialog({
+        resizable: false,
+        title: title,
+        buttons: buttons,
+        height: height,
+        width: width
+    });
+    if (jQuery.isEmptyObject(buttons)) {
+        $(".ui-dialog-titlebar-close").show();
+    } else {
+        $(".ui-button:last").focus();
+    }
+}
+function DisplayMessage(title, message, buttons) {
+    var dialogId = "messageDialog";
+    DisplayDialog(dialogId, title, message, buttons);
+}
+function ConfirmMessage(title, message, onConfirm) {
+    var buttons = {
+        Yes: onConfirm,
+        No: function () {
+            $(this).dialog("close");
+        }
+    };
+    DisplayMessage(title, message, buttons);
 }
 function CreateTip(targetId, tipText, tipPosition) {
     $("#" + targetId).qtip({

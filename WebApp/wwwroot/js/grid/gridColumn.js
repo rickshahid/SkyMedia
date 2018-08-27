@@ -64,6 +64,12 @@ function GetParentColumns(gridId) {
                     name: "properties.storageAccountName",
                     align: "center",
                     width: defaultWidth
+                },
+                {
+                    label: "Size",
+                    name: "size",
+                    align: "center",
+                    width: defaultWidth
                 }
             ];
             break;
@@ -288,7 +294,7 @@ function GetChildColumns(gridId) {
                     width: nameWidthEx + 270
                 },
                 {
-                    label: "File Size",
+                    label: "Size",
                     name: "size",
                     align: "center",
                     width: defaultWidth,
@@ -307,10 +313,10 @@ function GetChildColumns(gridId) {
             columns = [
                 {
                     formatter: FormatName,
-                    label: "Preset Name",
+                    label: "Transform Output Preset Name",
                     name: "preset.presetName",
                     align: "center",
-                    width: nameWidth + 10
+                    width: nameWidthEx + 12
                 },
                 {
                     label: "Priority",

@@ -57,7 +57,7 @@
                     </tr>
                     <tr>
                         <td>
-                            @Html.CheckBox("presetEnabled0", true)
+                            @Html.CheckBox("presetType0", false, new { value = "StandardEncoder" })
                             <select id="presetName0" class="inputSelect">
                                 <option value="AdaptiveStreaming" selected>Adaptive Streaming</option>
                                 <option value="H264MultipleBitrate1080p">H264 Multiple Bitrate 1080p</option>
@@ -75,10 +75,11 @@
                     </tr>
                     <tr>
                         <td class="inputLeft">
-                            @Html.CheckBox("presetEnabled1", false, new { onchange = "SetAudioAnalyzer(this)" })
-                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
-                                Video Analyzer
+                            @Html.CheckBox("presetType1", false, new { value = "ThumbnailSprite" })
+                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
+                                Thumbnail Sprite
                             </span>
+                            @Html.Hidden("presetName1", "ThumbnailSprite")
                         </td>
                         <td>
                             <partial name="Priority" model='new ClientControl { ControlId = "relativePriority1" }' />
@@ -89,16 +90,32 @@
                     </tr>
                     <tr>
                         <td class="inputLeft">
-                            @Html.CheckBox("presetEnabled2", false)
-                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
-                                Audio Analyzer
+                            @Html.CheckBox("presetType2", false, new { value = "VideoAnalyzer", onchange = "SetAnalyzerOptions(this)" })
+                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
+                                Video Analyzer
                             </span>
+                            @Html.Hidden("presetName2", "VideoAnalyzer")
                         </td>
                         <td>
                             <partial name="Priority" model='new ClientControl { ControlId = "relativePriority2" }' />
                         </td>
                         <td>
                             <partial name="OnError" model='new ClientControl { ControlId = "onError2" }' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="inputLeft">
+                            @Html.CheckBox("presetType3", false, new { value = "AudioAnalyzer" })
+                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
+                                Audio Analyzer
+                            </span>
+                            @Html.Hidden("presetName3", "AudioAnalyzer")
+                        </td>
+                        <td>
+                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority3" }' />
+                        </td>
+                        <td>
+                            <partial name="OnError" model='new ClientControl { ControlId = "onError3" }' />
                         </td>
                     </tr>
                 </table>

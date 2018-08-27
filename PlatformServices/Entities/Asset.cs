@@ -60,10 +60,12 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (IListBlobItem blobItem in blobList.Results)
                 {
                     string fileName = Path.GetFileName(blobItem.Uri.ToString());
+                    string fileSize = blobClient.GetBlobSize(containerName, fileName, out long byteCount);
                     MediaFile file = new MediaFile()
                     {
                         Name = fileName,
-                        Size = blobClient.GetBlobSize(containerName, fileName),
+                        Size = fileSize,
+                        ByteCount = byteCount,
                         DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
                     };
                     files.Add(file);
@@ -74,6 +76,19 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public MediaFile[] Files { get; internal set; }
+
+        public string Size
+        {
+            get
+            {
+                long byteCount = 0;
+                foreach (MediaFile assetFile in Files)
+                {
+                    byteCount = byteCount + assetFile.ByteCount;
+                }
+                return BlobClient.MapByteCount(byteCount);
+            }
+        }
     }
 
     public class MediaFile
@@ -81,6 +96,8 @@ namespace AzureSkyMedia.PlatformServices
         public string Name { get; set; }
 
         public string Size { get; set; }
+
+        public long ByteCount { get; set; }
 
         public string DownloadUrl { get; set; }
     }

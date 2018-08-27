@@ -93,13 +93,10 @@ namespace AzureSkyMedia.WebApp
             }
             if (!string.IsNullOrEmpty(authToken))
             {
-                MediaClient.SetPublishEvent(authToken);
+                MediaClient.SetEventSubscription(authToken);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    mediaClient.CreateTransform(true, false, false);
-                    mediaClient.CreateTransform(true, true, false);
-                    mediaClient.CreateTransform(true, false, true);
-                    mediaClient.CreateTransform(false, false, true);
+                    mediaClient.CreateTransforms();
                 }
             }
             return redirectAction;

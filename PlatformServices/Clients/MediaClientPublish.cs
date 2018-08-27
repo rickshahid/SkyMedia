@@ -105,9 +105,9 @@ namespace AzureSkyMedia.PlatformServices
             return message;
         }
 
-        public static void SetPublishEvent(string authToken)
+        public static void SetEventSubscription(string authToken)
         {
-            EventSubscription eventSubscription = new EventSubscription(name: Constant.Media.Publish.EventTriggerName)
+            EventSubscription eventSubscription = new EventSubscription(name: Constant.Media.Publish.EventGrid.SubscriptionName)
             {
                 Destination = new WebHookEventSubscriptionDestination()
                 {
@@ -115,7 +115,7 @@ namespace AzureSkyMedia.PlatformServices
                 },
                 Filter = new EventSubscriptionFilter()
                 {
-                    IncludedEventTypes = Constant.Media.Publish.EventTriggerTypes
+                    IncludedEventTypes = Constant.Media.Publish.EventGrid.SubscriptionTypes
                 }
             };
 

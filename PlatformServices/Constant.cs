@@ -226,8 +226,11 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Publish
             {
-                public const string EventTriggerName = "AMS-Job-State";
-                public static readonly string[] EventTriggerTypes = new string[] { "Microsoft.Media.JobStateChange" };
+                public struct EventGrid
+                {
+                    public const string SubscriptionName = "AMS-Job-State";
+                    public static readonly string[] SubscriptionTypes = new string[] { "Microsoft.Media.JobStateChange" };
+                }
             }
 
             public struct Stream
@@ -246,7 +249,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Thumbnail
             {
-                public const string Best = "Thumbnail000001.jpg";
+                public const int SpriteColumns = 10;
+                public const string FileNamePrefix = "Thumbnail";
             }
 
             public struct Live

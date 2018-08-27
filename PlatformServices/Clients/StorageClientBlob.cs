@@ -24,7 +24,7 @@ namespace AzureSkyMedia.PlatformServices
             _storage = storageAccount.CreateCloudBlobClient();
         }
 
-        private string MapByteCount(long byteCount)
+        public static string MapByteCount(long byteCount)
         {
             string mappedCount;
             if (byteCount >= 1099511627776)
@@ -117,10 +117,10 @@ namespace AzureSkyMedia.PlatformServices
             return GetAppendBlob(containerName, string.Empty, fileName, false);
         }
 
-        public string GetBlobSize(string containerName, string fileName)
+        public string GetBlobSize(string containerName, string fileName, out long byteCount)
         {
             CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName, true);
-            long byteCount = blob.Properties.Length;
+            byteCount = blob.Properties.Length;
             return MapByteCount(byteCount);
         }
 

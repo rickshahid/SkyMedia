@@ -1,30 +1,13 @@
 using System;
-using System.IO;
-using System.Xml;
 using System.Linq;
-using System.Net.Http;
 using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
-
-using Newtonsoft.Json;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
-        private static void UploadIngestManifest(BlobClient blobClient, MediaIngestManifest ingestManifest)
-        {
-            string ingestManifestJson = JsonConvert.SerializeObject(ingestManifest);
-            string containerName = Constant.Storage.BlobContainer.MediaServices;
-            string assetName = Path.GetFileNameWithoutExtension(ingestManifest.JobInputFileUrl);
-            string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.TextDelimiter.File, assetName, Constant.Media.IngestManifest.FileExtension);
-            CloudBlockBlob manifest = blobClient.GetBlockBlob(containerName, fileName);
-            manifest.Properties.ContentType = Constant.Media.ContentType.IngestManifest;
-            manifest.UploadTextAsync(ingestManifestJson).Wait();
-        }
-
         private static string[] GetThumbnailUrls(MediaClient mediaClient, StreamingLocator locator)
         {
             List<string> thumbnailUrls = new List<string>();
@@ -34,14 +17,7 @@ namespace AzureSkyMedia.PlatformServices
             StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
             foreach (MediaFile assetFile in mediaAsset.Files)
             {
-                if (assetFile.Name.Equals(Constant.Media.Thumbnail.Best, stringComparison))
-                {
-                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name, false);
-                    thumbnailUrls.Insert(0, thumbnailUrl);
-                }
-                else if (assetFile.Name.EndsWith(MediaImageFormat.JPG.ToString(), stringComparison) ||
-                         assetFile.Name.EndsWith(MediaImageFormat.PNG.ToString(), stringComparison) ||
-                         assetFile.Name.EndsWith(MediaImageFormat.BMP.ToString(), stringComparison))
+                if (asset.Name.StartsWith(Constant.Media.Thumbnail.FileNamePrefix, stringComparison))
                 {
                     string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name, false);
                     thumbnailUrls.Add(thumbnailUrl);
@@ -213,33 +189,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return clipperStreams.ToArray();
-        }
-
-        public static void UploadIngestManifests(MediaIngestManifest ingestManifest, string rssUrl)
-        {
-            XmlDocument rssDocument;
-            BlobClient blobClient = new BlobClient();
-            using (WebClient webClient = new WebClient(null))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, rssUrl);
-                rssDocument = webClient.GetResponse<XmlDocument>(webRequest);
-            }
-            XmlElement channel = rssDocument.DocumentElement["channel"];
-            XmlNodeList videos = channel.SelectNodes("item");
-            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(rssDocument.NameTable);
-            namespaceManager.AddNamespace(Constant.Media.Channel9.NamespacePrefix, Constant.Media.Channel9.NamespaceUrl);
-            for (int i = 0; i < Constant.Media.Channel9.IngestVideoCount; i++)
-            {
-                XmlNode video = videos[i];
-                XmlNode videoContent = video.SelectSingleNode(Constant.Media.Channel9.XPathQuery, namespaceManager);
-                string videoUrl = videoContent.Attributes["url"].Value;
-                string videoDescription = video.SelectSingleNode("title").InnerText;
-                videoUrl = videoUrl.Replace(Constant.Media.Channel9.UrlHttp, Constant.Media.Channel9.UrlHttps);
-                videoUrl = videoUrl.Replace(Constant.Media.Channel9.Http, Constant.Media.Channel9.Https);
-                ingestManifest.JobInputFileUrl = videoUrl;
-                ingestManifest.JobOutputAssetDescription = videoDescription;
-                UploadIngestManifest(blobClient, ingestManifest);
-            }
         }
     }
 }

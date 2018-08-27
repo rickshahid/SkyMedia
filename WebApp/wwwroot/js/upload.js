@@ -3,12 +3,6 @@ function SetStorageTip() {
     var tipText = $("#storageAccount option:selected").text();
     CreateTipTop("storageAccount", tipText);
 }
-function SetUploadOption(checkbox) {
-    if (checkbox.id == "videoAnalyzerPreset") {
-        $("#audioAnalyzerPreset").prop("checked", false);
-        $("#audioAnalyzerPreset").prop("disabled", checkbox.checked);
-    }
-}
 function GetUploadTime() {
     var uploadTime = new Date() - _uploadStartTime;
     var elapsedSeconds = Math.floor(uploadTime / 1000);

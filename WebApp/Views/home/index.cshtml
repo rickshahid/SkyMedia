@@ -54,8 +54,6 @@
                 for (var i = streamUrl.length - 1; i > streamUrl.length - 5; i--) {
                     streamUrl[i] = streamUrl[i] + "<br>";
                 }
-                var manifestIndex = streamUrl.length - 1;
-                streamUrl[manifestIndex] = streamUrl[manifestIndex].replace(",", "<br>,");
                 streamUrl = streamUrl.join("/");
                 $("#streamUrl").html(streamUrl);
                 if ("@authToken" != "") {
@@ -63,9 +61,6 @@
                     SetPlayerControls(controlBar, "@storageCdnUrl");
                 }
             });
-            if (_mediaStreams.length == 0) {
-                SetPlayerSpinner(false);
-            }
             SetMediaStream(false, false);
             if ("@accountMessage" != "") {
                 DisplayMessage("Account Message", "@accountMessage");
