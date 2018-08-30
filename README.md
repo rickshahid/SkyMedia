@@ -75,7 +75,7 @@ The following Azure platform services were leveraged to create this sample media
 
   * **Search** - http://azure.microsoft.com/services/search/
 
-* **Cognitive Search** - http://azure.microsoft.com/blog/announcing-cognitive-search-azure-search-cognitive-capabilities/
+* **Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
 
 * **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
