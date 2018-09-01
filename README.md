@@ -53,11 +53,9 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
-* **App Service** - http://azure.microsoft.com/services/app-service/
-
-* **Function App** - http://azure.microsoft.com/services/functions/
-
 * **Event Grid** - http://azure.microsoft.com/services/event-grid/
+
+* **Functions** - http://azure.microsoft.com/services/functions/
 
 * **Media Services** - http://azure.microsoft.com/services/media-services/
 
@@ -69,6 +67,8 @@ The following Azure platform services were leveraged to create this sample media
   
   * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
+* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
+
 * **Video Indexer** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
 
   * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
@@ -77,9 +77,9 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
 
-* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
-
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
+
+* **App Service** - http://azure.microsoft.com/services/app-service/
 
 * **App Insights** - http://azure.microsoft.com/services/application-insights/
 
