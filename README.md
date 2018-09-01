@@ -90,5 +90,7 @@ If you have any issues or suggestions, please let me know.
 Thanks.
 
 Rick Shahid
-
+Azure M&E Solutions
+Architect & Developer
 rick.shahid@live.com
+rick.shahid@microsoft.com
