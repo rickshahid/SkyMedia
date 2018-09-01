@@ -1,3 +1,5 @@
+# Azure Sky Media v3
+
 Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.tv
 
 As a sample illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing within an Azure App Service web app via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. On-demand and live video content that is stored and managed in Azure Media Services is adaptively streamed, scaled and globally consumable across a wide range of devices and platforms.
@@ -93,6 +95,6 @@ Azure M&E Solutions
 
 Architect & Developer
 
-rick.shahid@live.com
-
 rick.shahid@microsoft.com
+
+rick.shahid@live.com
