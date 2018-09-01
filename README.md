@@ -77,11 +77,11 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
 
-* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
-
 * **App Service** - http://azure.microsoft.com/services/app-service/
 
 * **App Insights** - http://azure.microsoft.com/services/application-insights/
+
+* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
 * **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
 
