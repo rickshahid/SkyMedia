@@ -96,5 +96,3 @@ Azure M&E Solutions
 Architect & Developer
 
 rick.shahid@microsoft.com
-
-rick.shahid@live.com
