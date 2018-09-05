@@ -1,7 +1,10 @@
 ﻿@model AzureSkyMedia.WebApp.Models.ClientControl
 
-<select id="@Model.ControlId" class="inputSelect">
-    <option value="Low">Low</option>
-    <option value="Normal" selected>Normal</option>
-    <option value="High">High</option>
-</select>
+<input id="@Model.ControlId" name="@Model.ControlId" type="radio" value="Low">
+<span class="inputLabel">Low</span>
+&nbsp;
+<input id="@Model.ControlId" name="@Model.ControlId" type="radio" value="Normal" checked>
+<span class="inputLabel">Normal</span>
+&nbsp;
+<input id="@Model.ControlId" name="@Model.ControlId" type="radio" value="High">
+<span class="inputLabel">High</span>

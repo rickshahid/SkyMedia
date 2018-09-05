@@ -36,14 +36,14 @@ namespace AzureSkyMedia.PlatformServices
 
         public static TokenCredentials AcquireToken(string authToken, out string subscriptionId)
         {
-            User authUser = new User(authToken);
-            subscriptionId = authUser.MediaAccount.SubscriptionId;
+            User userProfile = new User(authToken);
+            subscriptionId = userProfile.MediaAccount.SubscriptionId;
 
-            ClientCredential clientCredential = new ClientCredential(authUser.MediaAccount.ServicePrincipalId, authUser.MediaAccount.ServicePrincipalKey);
+            ClientCredential clientCredential = new ClientCredential(userProfile.MediaAccount.ServicePrincipalId, userProfile.MediaAccount.ServicePrincipalKey);
 
             string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
             string issuerUrl = AppSetting.GetValue(settingKey);
-            issuerUrl = string.Format(issuerUrl, authUser.MediaAccount.DirectoryTenantId);
+            issuerUrl = string.Format(issuerUrl, userProfile.MediaAccount.DirectoryTenantId);
 
             settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
             string audienceUrl = AppSetting.GetValue(settingKey);

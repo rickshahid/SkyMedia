@@ -14,14 +14,16 @@
         HomeController.SetAccountContext(authToken, ViewData);
     }
 
-    string settingKey = Constant.AppSettingKey.AppTitle;
-    string appTitle = HomeController.GetAppSetting(settingKey);
+    string settingKey = Constant.AppSettingKey.AppName;
+    string appName = HomeController.GetAppSetting(settingKey);
+    string appTitle = appName;
     settingKey = Constant.AppSettingKey.AppRegionName;
     string appRegionName = HomeController.GetAppSetting(settingKey);
     if (!string.IsNullOrEmpty(appRegionName))
     {
         appTitle = string.Concat(appTitle, " (", appRegionName, ")");
     }
+    ViewData["appName"] = appName;
     ViewData["appTitle"] = appTitle;
 
     string ampVersion = request.Query["amp.version"];
@@ -57,7 +59,7 @@
         accountSignUpIn = string.Concat(accountSignUpIn, request.QueryString.Value);
     }
     ViewData["accountSignUpIn"] = accountSignUpIn;
-    ViewData["accountSignOut"] = string.Concat("SignOut('", Constant.HttpCookie.UserAuthToken, "')");
+    ViewData["accountSignOut"] = string.Concat("SignOut('", Constant.AccessAuthentication.UserToken, "')");
     ViewData["accountProfileEdit"] = "/account/profileEdit";
 
     ViewData["spacingPatterns"] = Constant.TextFormatter.SpacingPatterns;

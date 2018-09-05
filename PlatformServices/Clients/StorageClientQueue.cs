@@ -5,19 +5,19 @@ using Newtonsoft.Json;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class QueueClient
+    internal partial class StorageQueueClient
     {
-        private CloudQueueClient _storage;
+        private CloudQueueClient _queueClient;
 
-        public QueueClient()
+        public StorageQueueClient()
         {
             CloudStorageAccount storageAccount = Account.GetStorageAccount();
-            _storage = storageAccount.CreateCloudQueueClient();
+            _queueClient = storageAccount.CreateCloudQueueClient();
         }
 
         private CloudQueue GetQueue(string queueName)
         {
-            CloudQueue queue = _storage.GetQueueReference(queueName);
+            CloudQueue queue = _queueClient.GetQueueReference(queueName);
             queue.CreateIfNotExistsAsync().Wait();
             return queue;
         }

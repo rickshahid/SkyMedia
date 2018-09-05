@@ -1,5 +1,7 @@
 ﻿using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.PlatformServices
 {
     public class MediaJob
@@ -9,6 +11,8 @@ namespace AzureSkyMedia.PlatformServices
         public string Description { get; set; }
 
         public Priority Priority { get; set; }
+
+        public JObject Data { get; set; }
 
         public string InputAssetName { get; set; }
 

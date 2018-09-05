@@ -104,6 +104,13 @@ function GetParentColumns(gridId) {
                     name: "properties.state",
                     align: "center",
                     width: defaultWidth
+                },
+                {
+                    formatter: FormatJobData,
+                    label: "Data",
+                    name: "properties.correlationData",
+                    align: "center",
+                    width: defaultWidth
                 }
             ];
             break;
@@ -316,7 +323,7 @@ function GetChildColumns(gridId) {
                     label: "Transform Output Preset Name",
                     name: "preset.presetName",
                     align: "center",
-                    width: nameWidthEx + 12
+                    width: nameWidthEx
                 },
                 {
                     label: "Priority",
@@ -337,17 +344,17 @@ function GetChildColumns(gridId) {
             columns = [
                 {
                     formatter: FormatName,
-                    label: "Media Job Output Asset Name",
+                    label: "Job Output Asset Name",
                     name: "assetName",
                     align: "center",
-                    width: nameWidthEx + 140
+                    width: nameWidthEx + 130
                 },
                 {
                     formatter: FormatJobOutputState,
                     label: "State",
                     name: "state",
                     align: "center",
-                    width: defaultWidth + 5
+                    width: defaultWidth
                 },
                 {
                     formatter: FormatProgress,
@@ -362,8 +369,12 @@ function GetChildColumns(gridId) {
     return columns;
 }
 function FormatName(value, grid, row) {
-    if (row.preset != null && row.preset.audioLanguage != null) {
-        value = row.preset.audioInsightsOnly == null ? "Audio Analyzer" : "Video Analyzer";
+    if (row.preset != null) {
+        if (row.preset.audioLanguage != null) {
+            value = row.preset.audioInsightsOnly == null ? "Audio Analyzer" : "Video Analyzer";
+        } else if (row.preset.codecs != null) {
+            value = "Thumbnail Sprite";
+        }
     }
     value = FormatValue(value, grid, row);
     var description = row["properties.description"];
@@ -407,6 +418,16 @@ function FormatJobOutputState(value, grid, row) {
             message = row.error.details[0].message;
         }
         value = "<span class=\"siteLink\" onclick=DisplayMessage(\"" + encodeURIComponent(title) + "\",\"" + encodeURIComponent(message) + "\")>" + value + "</span>";
+    }
+    return value;
+}
+function FormatJobData(value, grid, row) {
+    if (jQuery.isEmptyObject(value)) {
+        value = "N/A";
+    } else {
+        var title = "Media Job Correlation Data";
+        var jsonData = JSON.stringify(value);
+        value = "<span class=\"siteLink\" onclick=DisplayJson(\"" + encodeURIComponent(title) + "\",\"" + encodeURIComponent(jsonData) + "\")>Job Data</span>";
     }
     return value;
 }

@@ -10,15 +10,13 @@
         $(function () {
             _childGridId = "transformJobOutputs";
             _childPropertyName = "properties.outputs";
-            _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
-            _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
-            _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
             CreateTipBottom("jobCreate", "Create Job");
-            setInterval(function () { ReloadGrid(gridId, "/job/list", columns); }, _refreshInterval);
+            CreateJsonEditor("jobData", "Media Job Correlation Data", null);
+            SetJobRefresh(gridId, columns);
        })
     </script>
 }
@@ -32,59 +30,67 @@
     <div id="gridPager"></div>
 </div>
 
-<div class="entity">
-    <div>
-        @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Media Job Name]" })
-        <br><br>
-        @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Media Job Description]" })
-    </div>
-    <table>
-        <tr>
-            <td class="inputLabel">
-                Media Job Priority
-            </td>
-            <td class="inputLeft">
-                <partial name="Priority" model='new ClientControl { ControlId = "jobPriority" }' />
-            </td>
-        </tr>
-        <tr>
-            <td class="inputLabel">
-                Media Transform
-            </td>
-            <td>
-                @Html.DropDownList("transforms", null, new { @class = "inputSelect transformJob" })
-            </td>
-        </tr>
-        <tr>
-            <td class="inputLabel">
-                Streaming Policy
-            </td>
-            <td>
-                @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect transformJob" })
-            </td>
-        </tr>
-        <tr>
-            <td class="inputLabel">
-                Input Asset Name
-            </td>
-            <td>
-                @Html.TextBox("inputAssetName", null, new { @class = "entityName transformJob", onfocusout = "FindAsset()" })
-            </td>
-        </tr>
-        <tr>
-            <td class="inputLabel">
-                <span class="inputFileUrl">
-                    Input File Url
-                    <br>
-                    (HTTPS Only)
-                </span>
-            </td>
-            <td>
-                @Html.TextBox("inputFileUrl", null, new { @class = "entityName transformJob" })
-            </td>
-        </tr>
-    </table>
-</div>
+<table class="mediaEntity">
+    <tr>
+        <td>
+            @Html.TextBox("name", null, new { @class = "mediaEntityName", placeholder = "[Media Job Name]" })
+        </td>
+        <td rowspan="3">
+            <div id="jobData" class="jobData"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.TextBox("description", null, new { @class = "mediaEntityName mediaEntityDescription", placeholder = "[Media Job Description]" })
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="mediaEntityProperties mediaJob">
+                <tr>
+                    <td class="inputLabel">
+                        Media Job Priority
+                    </td>
+                    <td class="inputOption">
+                        <partial name="Priority" model='new ClientControl { ControlId = "jobPriority" }' />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel">
+                        Media Transform
+                    </td>
+                    <td>
+                        @Html.DropDownList("transforms", null, new { @class = "inputSelect mediaJob" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel">
+                        Streaming Policy
+                    </td>
+                    <td>
+                        @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect mediaJob" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel">
+                        Input Asset Name
+                    </td>
+                    <td>
+                        @Html.TextBox("inputAssetName", null, new { @class = "mediaEntityName mediaJob", onfocusout = "FindAsset()" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel">
+                        Input File Url
+                    </td>
+                    <td>
+                        @Html.TextBox("inputFileUrl", null, new { @class = "mediaEntityName mediaJob", placeholder = "https://" })
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
 <div class="viewButtons">
     <partial name="SiteButton" model='new SiteButton { ControlId = "jobCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />

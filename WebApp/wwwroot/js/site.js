@@ -1,13 +1,13 @@
-﻿var _mediaPlayer, _mediaStreams, _streamNumber, _storageCdnUrl;
-function SetLayout(appTitle) {
-    CreateTipBottom("siteHome", appTitle + "<br><br>Site Home");
-    CreateTipBottom("siteCode", appTitle + "<br><br>Open Source");
+﻿var _mediaPlayer, _mediaStreams, _streamNumber, _spacingPatterns, _spacingInserts, _storageCdnUrl, _jsonEditor;
+function SetLayout(appName) {
+    CreateTipBottom("siteHome", appName + "<br><br>Site Home");
+    CreateTipBottom("siteCode", appName + "<br><br>Open Source");
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>News Blog");
     CreateTipBottom("botService", "Azure Bot Service");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
-    CreateTipBottom("userProfileEdit", appTitle + "<br><br>Account Profile Edit");
-    CreateTipBottom("userSignIn", appTitle + "<br><br>User Sign In");
-    CreateTipBottom("userSignOut", appTitle + "<br><br>User Sign Out");
+    CreateTipBottom("userProfileEdit", appName + "<br><br>Account Profile Edit");
+    CreateTipBottom("userSignIn", appName + "<br><br>User Sign In");
+    CreateTipBottom("userSignOut", appName + "<br><br>User Sign Out");
     CreateTipBottom("mediaAccount", "Azure Media Services<br><br>Account Inventory");
     CreateTipRight("amsPlatform", "Azure Media Services");
     CreateTipRight("amsPlayer", "Azure Media Player");
@@ -15,12 +15,12 @@ function SetLayout(appTitle) {
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
     CreateTipRight("mediaIndexer", "Azure Video Indexer");
-    CreateTipLeft("mediaStorage", "Azure Blob Storage");
-    CreateTipLeft("cosmosDB", "Azure Cosmos DB");
-    CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
-    CreateTipLeft("appServiceWeb", "Azure Web Apps");
-    CreateTipLeft("appServiceFunctions", "Azure Functions");
+    CreateTipLeft("cognitiveSearch", "Azure Cognitive Search");
+    CreateTipLeft("functionApp", "Azure Functions");
     CreateTipLeft("eventGrid", "Azure Event Grid");
+    CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
+    CreateTipLeft("cosmosDB", "Azure Cosmos DB");
+    CreateTipLeft("mediaStorage", "Azure Blob Storage");
     CreateTipTop("mediaUpload", "Upload");
     CreateTipTop("mediaTransform", "Transform");
     CreateTipTop("mediaJob", "Job");
@@ -87,7 +87,7 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
     $("#mediaStreamRight").prop("disabled", true);
     $("#streamTuner").slider("option", "disabled", true);
     if (mediaStream.source.protectionInfo.length > 0) {
-        if (window.location.href.indexOf("notoken") > -1) {
+        if (window.location.href.indexOf("droptoken") > -1) {
             for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
                 mediaStream.source.protectionInfo[i].authenticationToken = null;
             }
@@ -108,18 +108,25 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
         );
     }
 }
-function DisplayDialog(dialogId, title, html, buttons, height, width) {
+function CreateJsonEditor(containerId, jsonName, jsonData) {
+    var container = document.getElementById(containerId);
+    var options = {
+        "mode": jsonData != null ? "view" : "tree",
+        "search": jsonData != null
+    };
+    _jsonEditor = new JSONEditor(container, options);
+    if (jsonName != null) {
+        _jsonEditor.setName(jsonName);
+    }
+    if (jsonData != null) {
+        _jsonEditor.set(jsonData);
+    }
+}
+function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
     title = decodeURIComponent(title);
     if (html != null) {
         html = decodeURIComponent(html);
         $("#" + dialogId).html(html);
-    }
-    if (buttons == null) {
-        buttons = {
-            OK: function () {
-                $(this).dialog("close");
-            }
-        };
     }
     if (height == null) {
         height = "auto";
@@ -132,9 +139,10 @@ function DisplayDialog(dialogId, title, html, buttons, height, width) {
         title: title,
         buttons: buttons,
         height: height,
-        width: width
+        width: width,
+        close: onClose
     });
-    if (jQuery.isEmptyObject(buttons)) {
+    if (buttons == null) {
         $(".ui-dialog-titlebar-close").show();
     } else {
         $(".ui-button:last").focus();

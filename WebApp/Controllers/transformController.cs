@@ -23,8 +23,12 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                mediaClient.CreateTransforms();
-                ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
+                Transform[] transforms = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
+                if (transforms.Length == 0)
+                {
+                    transforms = mediaClient.CreateTransforms();
+                }
+                ViewData["transforms"] = transforms;
             }
             return View();
         }

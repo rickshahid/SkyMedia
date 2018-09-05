@@ -7,6 +7,8 @@ namespace AzureSkyMedia.PlatformServices
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
+        public string ProcessState { get; set; }
+
         public string TransformName { get; set; }
 
         public string StreamingPolicyName { get; set; }
@@ -15,6 +17,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaAccount MediaAccount { get; set; }
 
-        public UserAccount UserAccount { get; set; }
+        public UserContact UserContact { get; set; }
+    }
+
+    internal class UserContact
+    {
+        public string MobilePhoneNumber { get; set; }
+
+        public string NotificationMessage { get; set; }
     }
 }

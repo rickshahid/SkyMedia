@@ -3,6 +3,7 @@
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -25,7 +26,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] MissingFiles { get; set; }
 
-        public string[] AssetFiles { get; set; }
+        public string[] BlobFiles { get; set; }
 
         public string AssetName { get; set; }
 
@@ -33,13 +34,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public string AssetAlternateId { get; set; }
 
-        public MediaTransformPreset[] TransformPresets { get; set; }
+        public MediaProcessor[] MediaProcessors { get; set; }
 
         public string JobName { get; set; }
 
         public string JobDescription { get; set; }
 
         public Priority JobPriority { get; set; }
+
+        public JObject JobData { get; set; }
 
         public string JobInputFileUrl { get; set; }
 

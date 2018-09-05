@@ -11,11 +11,11 @@ namespace AzureSkyMedia.PlatformServices
     {
         internal MediaAsset(MediaAccount mediaAccount, Asset asset) : base(asset.Id, asset.Name, asset.Type, asset.AssetId, asset.Created, asset.LastModified, asset.AlternateId, asset.Description, asset.Container, asset.StorageAccountName, asset.StorageEncryptionFormat)
         {
-            BlobClient blobClient = new BlobClient(mediaAccount, asset.StorageAccountName);
+            StorageBlobClient blobClient = new StorageBlobClient(mediaAccount, asset.StorageAccountName);
             Files = GetAssetFiles(blobClient, asset.Container, null);
         }
 
-        internal static string GetAssetName(BlobClient blobClient, string containerName, string directoryPath)
+        internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath)
         {
             string assetName = null;
             MediaFile[] assetFiles = GetAssetFiles(blobClient, containerName, directoryPath);
@@ -40,7 +40,7 @@ namespace AzureSkyMedia.PlatformServices
             return assetName;
         }
 
-        internal static MediaFile[] GetAssetFiles(BlobClient blobClient, string containerName, string directoryPath)
+        internal static MediaFile[] GetAssetFiles(StorageBlobClient blobClient, string containerName, string directoryPath)
         {
             BlobContinuationToken continuationToken = null;
             List<MediaFile> files = new List<MediaFile>();
@@ -86,7 +86,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     byteCount = byteCount + assetFile.ByteCount;
                 }
-                return BlobClient.MapByteCount(byteCount);
+                return StorageBlobClient.MapByteCount(byteCount);
             }
         }
     }

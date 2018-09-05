@@ -18,13 +18,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public string ServicePrincipalKey { get; set; }
 
+        public string VideoIndexerRegion { get; set; }
+
         public string VideoIndexerKey { get; set; }
 
         public Dictionary<string, string> StorageAccounts { get; set; }
-    }
-
-    internal class UserAccount
-    {
-        public string MobileNumber { get; set; }
     }
 }

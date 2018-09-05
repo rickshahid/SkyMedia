@@ -10,9 +10,6 @@
         $(function () {
             _childGridId = "transformOutputs";
             _childPropertyName = "properties.outputs";
-            _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
-            _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
-            _storageCdnUrl = "@ViewData["storageCdnUrl"]";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId);
@@ -31,98 +28,115 @@
     <div id="gridPager"></div>
 </div>
 
-<div class="entity">
-    <div>
-        @Html.TextBox("name", null, new { @class = "entityName", placeholder = "[Media Transform Name]" })
-        <br><br>
-        @Html.TextBox("description", null, new { @class = "entityName", placeholder = "[Media Transform Description]" })
-    </div>
-    <table>
-        <tr>
-            <td class="inputLabel outputPresets">
-                Media Transform<br>Output Presets
-            </td>
-            <td>
-                <table>
-                    <tr>
-                        <td class="inputLabel centered">
-                            Transform Preset Name
-                        </td>
-                        <td class="inputLabel centered">
-                            Relative<br>Priority
-                        </td>
-                        <td class="inputLabel centered">
-                            On Error
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            @Html.CheckBox("presetType0", false, new { value = "StandardEncoder" })
-                            <select id="presetName0" class="inputSelect">
-                                <option value="AdaptiveStreaming" selected>Adaptive Streaming</option>
-                                <option value="H264MultipleBitrate1080p">H264 Multiple Bitrate 1080p</option>
-                                <option value="H264MultipleBitrate720p">H264 Multiple Bitrate 720p</option>
-                                <option value="H264MultipleBitrateSD">H264 Multiple Bitrate SD</option>
-                                <option value="AACGoodQualityAudio">AAC Good Quality Audio</option>
-                            </select>
-                        </td>
-                        <td>
-                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority0" }' />
-                        </td>
-                        <td>
-                            <partial name="OnError" model='new ClientControl { ControlId = "onError0" }' />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="inputLeft">
-                            @Html.CheckBox("presetType1", false, new { value = "ThumbnailSprite" })
-                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
-                                Thumbnail Sprite
-                            </span>
-                            @Html.Hidden("presetName1", "ThumbnailSprite")
-                        </td>
-                        <td>
-                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority1" }' />
-                        </td>
-                        <td>
-                            <partial name="OnError" model='new ClientControl { ControlId = "onError1" }' />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="inputLeft">
-                            @Html.CheckBox("presetType2", false, new { value = "VideoAnalyzer", onchange = "SetAnalyzerOptions(this)" })
-                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
-                                Video Analyzer
-                            </span>
-                            @Html.Hidden("presetName2", "VideoAnalyzer")
-                        </td>
-                        <td>
-                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority2" }' />
-                        </td>
-                        <td>
-                            <partial name="OnError" model='new ClientControl { ControlId = "onError2" }' />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="inputLeft">
-                            @Html.CheckBox("presetType3", false, new { value = "AudioAnalyzer" })
-                            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
-                                Audio Analyzer
-                            </span>
-                            @Html.Hidden("presetName3", "AudioAnalyzer")
-                        </td>
-                        <td>
-                            <partial name="Priority" model='new ClientControl { ControlId = "relativePriority3" }' />
-                        </td>
-                        <td>
-                            <partial name="OnError" model='new ClientControl { ControlId = "onError3" }' />
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</div>
+<table class="mediaEntity">
+    <tr>
+        <td>
+            @Html.TextBox("name", null, new { @class = "mediaEntityName", placeholder = "[Media Transform Name]" })
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.TextBox("description", null, new { @class = "mediaEntityName mediaEntityDescription", placeholder = "[Media Transform Description]" })
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="mediaEntityProperties">
+                <tr>
+                    <td class="inputLabel centered transformPresets">
+                        Media Transform<br>Output Presets
+                    </td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td class="inputLabel centered">
+                                    Preset Name
+                                </td>
+                                <td class="inputLabel centered">
+                                    Relative Priority
+                                </td>
+                                <td class="inputLabel centered">
+                                    On Error
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="inputOption">
+                                    @Html.CheckBox("presetType0", false, new { value = "StandardEncoder" })
+                                    <select id="presetName0" class="inputSelect">
+                                        <option value="AdaptiveStreaming" selected>Adaptive Streaming</option>
+                                        <option value="H264MultipleBitrate1080p">H264 Multiple Bitrate 1080p</option>
+                                        <option value="H264MultipleBitrate720p">H264 Multiple Bitrate 720p</option>
+                                        <option value="H264MultipleBitrateSD">H264 Multiple Bitrate SD</option>
+                                        <option value="AACGoodQualityAudio">AAC Good Quality Audio</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="Priority" model='new ClientControl { ControlId = "relativePriority0" }' />
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="OnError" model='new ClientControl { ControlId = "onError0" }' />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="inputOption">
+                                    @Html.CheckBox("presetType1", false, new { value = "ThumbnailSprite" })
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
+                                        Thumbnail Sprite (JPG)
+                                    </span>
+                                    @Html.Hidden("presetName1", "ThumbnailSprite")
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="Priority" model='new ClientControl { ControlId = "relativePriority1" }' />
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="OnError" model='new ClientControl { ControlId = "onError1" }' />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="inputOption">
+                                    @Html.CheckBox("presetType2", false, new { value = "VideoAnalyzer", onchange = "SetProcessingOptions(this)" })
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
+                                        Video Analyzer / Indexer
+                                    </span>
+                                    @Html.Hidden("presetName2", "VideoAnalyzer")
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="Priority" model='new ClientControl { ControlId = "relativePriority2" }' />
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="OnError" model='new ClientControl { ControlId = "onError2" }' />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="inputOption">
+                                    @Html.CheckBox("presetType3", false, new { value = "AudioAnalyzer" })
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
+                                        Audio Analyzer / Indexer
+                                    </span>
+                                    @Html.Hidden("presetName3", "AudioAnalyzer")
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="Priority" model='new ClientControl { ControlId = "relativePriority3" }' />
+                                </td>
+                                <td>
+                                    &nbsp;
+                                    <partial name="OnError" model='new ClientControl { ControlId = "onError3" }' />
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
 <div class="viewButtons">
     <partial name="SiteButton" model='new SiteButton { ControlId = "transformSave", ImageFile = "MediaEntitySave.png", OnClick = "CreateTransform()" }' />

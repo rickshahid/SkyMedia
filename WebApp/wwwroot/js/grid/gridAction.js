@@ -11,11 +11,21 @@ function DisplayInsight(fileName, assetName, indexId) {
         },
         function (insight) {
             SetCursor(false);
-            $("#insightData").jsonBrowse(insight);
             var title = fileName == null ? indexId : fileName;
-            DisplayDialog("insightDialog", title, null, {}, 800, 1200);
+            DisplayJson(title, insight);
         }
     );
+}
+function DisplayJson(title, jsonData) {
+    var dialogId = "metadataDialog";
+    var containerId = "contentMetadata";
+    var onClose = function () {
+        _jsonEditor.destroy();
+        $("#" + containerId).hide();
+    };
+    $("#" + containerId).show();
+    CreateJsonEditor(containerId, null, jsonData);
+    DisplayDialog(dialogId, title, null, null, null, null, onClose);
 }
 function PlayVideo(fileUrl) {
     alert(fileUrl);
@@ -38,18 +48,19 @@ function ReindexVideo(indexId, videoName) {
     }
     ConfirmMessage(title, message, onConfirm);
 }
-function PublishJob(jobName) {
-    var title = "Confirm Job Publish";
-    var message = "Are you sure you want to publish the '" + FormatValue(jobName) + "' job?";
+function PublishJobOutput(jobName) {
+    var title = "Confirm Job Output Publish";
+    var message = "Are you sure you want to publish the '" + FormatValue(jobName) + "' job output?";
     var onConfirm = function () {
         SetCursor(true);
         $.post("/job/publish",
             {
                 jobName: decodeURIComponent(jobName)
             },
-            function (message) {
+            function (mediaPublish) {
                 SetCursor(false);
-                DisplayMessage("Job Publish Message", message);
+                var message = mediaPublish.userContact.notificationMessage;
+                DisplayMessage("Job Output Publish Message", message);
             }
         );
         $(this).dialog("close");
@@ -132,6 +143,20 @@ function GetEntityType(gridId) {
     }
     return entityType;
 }
+function GetPresetIndex(preset) {
+    var presetIndex;
+    if (preset.presetName != null) {
+        presetIndex = 0;
+        $("#presetName0").val(preset.presetName);
+    } else if (preset.codecs != null) {
+        presetIndex = 1;
+    } else if (preset.audioInsightsOnly != null) {
+        presetIndex = 2;
+    } else {
+        presetIndex = 3;
+    }
+    return presetIndex;
+}
 function SetRowEdit(gridId, rowData) {
     var row = JSON.parse(decodeURIComponent(rowData));
     $("#name").val(row.name);
@@ -139,30 +164,20 @@ function SetRowEdit(gridId, rowData) {
     switch (gridId) {
         case "transforms":
             for (var i = 0; i < 4; i++) {
-                $("#presetEnabled" + i).prop("checked", false);
-                $("#relativePriority" + i + " option").prop("selected", function () {
-                    return this.defaultSelected;
-                });
-                $("#onErrorMode" + i + " option").prop("selected", function () {
-                    return this.defaultSelected;
-                });
+                $("#presetType" + i).prop("checked", false);
+                $("input[name=relativePriority" + i + "][value=Normal]").prop("checked", true);
+                $("#onError" + i).prop("checked", false);
             }
             var outputs = row["properties.outputs"];
             for (var i = 0; i < outputs.length; i++) {
-                var presetIndex;
                 var output = outputs[i];
                 var preset = output.preset;
-                if (preset.presetName != null) {
-                    presetIndex = 0;
-                    $("#presetName0").val(preset.presetName);
-                } else if (preset.audioInsightsOnly != null) {
-                    presetIndex = 1;
-                } else {
-                    presetIndex = 2;
+                var presetIndex = GetPresetIndex(preset);
+                $("#presetType" + presetIndex).prop("checked", true);
+                $("input[name=relativePriority" + presetIndex + "][value=" + output.relativePriority + "]").prop("checked", true);
+                if (output.onError == "ContinueJob") {
+                    $("#onError" + presetIndex).prop("checked", true);
                 }
-                $("#presetEnabled" + presetIndex).prop("checked", true);
-                $("#relativePriority" + presetIndex).val(output.relativePriority);
-                $("#onErrorMode" + presetIndex).val(output.onError);
             }
             break;
     }
@@ -177,7 +192,7 @@ function FormatActions(value, grid, row) {
     } else if (grid.gid == "assetFiles") {
         if (row.name.indexOf(".json") > -1) {
             onClick = "DisplayInsight('" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
-            actionsHtml = "<button id='" + row.id + "_insight' class='siteButton' onclick=" + onClick + ">";
+            actionsHtml = "<button id='" + row.id + "_json' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaInsight.png'></button>";
         } else if (row.name.indexOf(".mp4") > -1) {
             onClick = "PlayVideo('" + row.downloadUrl + "')";
@@ -219,9 +234,9 @@ function FormatActions(value, grid, row) {
                         cancelHtml = "<button id='" + row.id + "_cancel' class='siteButton' onclick=" + onClick + ">";
                         cancelHtml = cancelHtml + "<img src='" + _storageCdnUrl + "/MediaJobCancel.png'></button>";
                         break;
-                    case "Error":
+                    //case "Error":
                     case "Finished":
-                        onClick = "PublishJob('" + encodeURIComponent(entityName) + "')";
+                        onClick = "PublishJobOutput('" + encodeURIComponent(entityName) + "')";
                         publishHtml = "<button id='" + row.id + "_publish' class='siteButton' onclick=" + onClick + ">";
                         publishHtml = publishHtml + "<img src='" + _storageCdnUrl + "/MediaJobPublish.png'></button>";
                         break;

@@ -6,9 +6,7 @@ using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Azure.Management.EventGrid;
 using Microsoft.Azure.Management.EventGrid.Models;
 
-using Twilio;
-using Twilio.Types;
-using Twilio.Rest.Api.V2010.Account;
+using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -67,55 +65,20 @@ namespace AzureSkyMedia.PlatformServices
             return message.ToString();
         }
 
-        public static string SendNotificationMessage(MediaPublish mediaPublish, Job job, string indexId, string indexState)
-        {
-            string message = Constant.Message.MobileNumberNotAvailable;
-            if (mediaPublish.UserAccount != null && !string.IsNullOrEmpty(mediaPublish.UserAccount.MobileNumber))
-            {
-                if (job == null)
-                {
-                    message = GetNotificationMessage(mediaPublish, indexId, indexState);
-                }
-                else
-                {
-                    message = GetNotificationMessage(mediaPublish, job);
-                }
-
-                string settingKey = Constant.AppSettingKey.TwilioAccountId;
-                string accountId = AppSetting.GetValue(settingKey);
-
-                settingKey = Constant.AppSettingKey.TwilioAccountToken;
-                string accountToken = AppSetting.GetValue(settingKey);
-
-                settingKey = Constant.AppSettingKey.TwilioMessageFrom;
-                string messageFrom = AppSetting.GetValue(settingKey);
-
-                PhoneNumber fromPhoneNumber = new PhoneNumber(messageFrom);
-                PhoneNumber toPhoneNumber = new PhoneNumber(mediaPublish.UserAccount.MobileNumber);
-
-                CreateMessageOptions messageOptions = new CreateMessageOptions(toPhoneNumber)
-                {
-                    From = fromPhoneNumber,
-                    Body = message
-                };
-
-                TwilioClient.Init(accountId, accountToken);
-                MessageResource.CreateAsync(messageOptions);
-            }
-            return message;
-        }
-
         public static void SetEventSubscription(string authToken)
         {
+            string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
+            string publishJobUrl = AppSetting.GetValue(settingKey);
+
             EventSubscription eventSubscription = new EventSubscription(name: Constant.Media.Publish.EventGrid.SubscriptionName)
             {
                 Destination = new WebHookEventSubscriptionDestination()
                 {
-                    EndpointUrl = AppSetting.GetValue(Constant.AppSettingKey.MediaPublishUrl)
+                    EndpointUrl = publishJobUrl
                 },
                 Filter = new EventSubscriptionFilter()
                 {
-                    IncludedEventTypes = Constant.Media.Publish.EventGrid.SubscriptionTypes
+                    IncludedEventTypes = Constant.Media.Publish.EventGrid.EventTypes
                 }
             };
 
@@ -125,38 +88,53 @@ namespace AzureSkyMedia.PlatformServices
                 SubscriptionId = subscriptionId
             };
 
-            User authUser = new User(authToken);
-            string eventScope = authUser.MediaAccount.ResourceId;
+            User userProfile = new User(authToken);
+            string eventScope = userProfile.MediaAccount.ResourceId;
             eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
-        public static string PublishJobOutput(MediaPublish mediaPublish)
+        public static MediaPublish PublishJobOutput(MediaPublish mediaPublish)
         {
-            string publishMessage = string.Empty;
             using (MediaClient mediaClient = new MediaClient(null, mediaPublish.MediaAccount))
             {
-                string jobName = mediaPublish.Id;
-                string transformName = mediaPublish.TransformName;
-                Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
-                if (job != null)
+                if (!string.IsNullOrEmpty(mediaPublish.ProcessState))
                 {
-                    string streamingPolicyName = mediaPublish.StreamingPolicyName;
-                    if (string.IsNullOrEmpty(streamingPolicyName))
+                    string indexId = mediaPublish.Id;
+                    JObject insight = mediaClient.IndexerGetInsight(indexId);
+                    if (insight != null)
                     {
-                        streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
-                    }
-                    foreach (JobOutputAsset jobOutput in job.Outputs)
-                    {
-                        StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
-                        if (locator == null)
+                        using (DatabaseClient databaseClient = new DatabaseClient())
                         {
-                            mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
+                            string collectionId = Constant.Database.Collection.MediaInsight;
+                            databaseClient.UpsertDocument(collectionId, insight);
                         }
                     }
-                    publishMessage = SendNotificationMessage(mediaPublish, job, null, null);
+                }
+                else
+                {
+                    string jobName = mediaPublish.Id;
+                    string transformName = mediaPublish.TransformName;
+                    Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
+                    if (job != null)
+                    {
+                        string streamingPolicyName = mediaPublish.StreamingPolicyName;
+                        if (string.IsNullOrEmpty(streamingPolicyName))
+                        {
+                            streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                        }
+                        foreach (JobOutputAsset jobOutput in job.Outputs)
+                        {
+                            StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
+                            if (locator == null)
+                            {
+                                mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
+                            }
+                        }
+                        mediaPublish.UserContact.NotificationMessage = GetNotificationMessage(mediaPublish, job);
+                    }
                 }
             }
-            return publishMessage;
+            return mediaPublish;
         }
     }
 }

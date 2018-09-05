@@ -8,20 +8,20 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class BlobClient
+    internal class StorageBlobClient
     {
-        private CloudBlobClient _storage;
+        private CloudBlobClient _blobClient;
 
-        public BlobClient()
+        public StorageBlobClient()
         {
             CloudStorageAccount storageAccount = Account.GetStorageAccount();
-            _storage = storageAccount.CreateCloudBlobClient();
+            _blobClient = storageAccount.CreateCloudBlobClient();
         }
 
-        public BlobClient(MediaAccount mediaAccount, string accountName)
+        public StorageBlobClient(MediaAccount mediaAccount, string accountName)
         {
             CloudStorageAccount storageAccount = Account.GetStorageAccount(mediaAccount, accountName);
-            _storage = storageAccount.CreateCloudBlobClient();
+            _blobClient = storageAccount.CreateCloudBlobClient();
         }
 
         public static string MapByteCount(long byteCount)
@@ -56,7 +56,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public CloudBlobContainer GetBlobContainer(string containerName)
         {
-            CloudBlobContainer container = _storage.GetContainerReference(containerName);
+            CloudBlobContainer container = _blobClient.GetContainerReference(containerName);
             container.CreateIfNotExistsAsync().Wait();
             return container;
         }

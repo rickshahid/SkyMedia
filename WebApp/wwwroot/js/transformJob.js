@@ -7,11 +7,11 @@
         function (asset) {
             SetCursor(false);
             if (asset != null) {
-                $("#inputAssetName").removeClass("entityNotFound").addClass("entityFound");
+                $("#inputAssetName").removeClass("mediaEntityNotFound").addClass("mediaEntityFound");
                 SetTipVisible("inputAssetName", false);
             } else {
-                $("#inputAssetName").removeClass("entityFound").addClass("entityNotFound");
-                CreateTipRight("inputAssetName", "Asset Not Found");
+                $("#inputAssetName").removeClass("mediaEntityFound").addClass("mediaEntityNotFound");
+                CreateTipRight("inputAssetName", "Media Asset<br><br>Not Found");
                 SetTipVisible("inputAssetName", true);
             }
         }
@@ -51,7 +51,8 @@ function CreateJob() {
                     transformName: transformName,
                     jobName: $("#name").val(),
                     jobDescription: $("#description").val(),
-                    jobPriority: $("#jobPriority").val(),
+                    jobPriority: $("#jobPriority:checked").val(),
+                    jobData: _jsonEditor.getText(),
                     inputAssetName: inputAssetName,
                     inputFileUrl: inputFileUrl,
                     streamingPolicyName: $("#streamingPolicies").val()
@@ -62,7 +63,13 @@ function CreateJob() {
                 }
             );
             $(this).dialog("close");
-        }
+        };
         ConfirmMessage(title, message, onConfirm);
     }
+}
+function SetJobRefresh(gridId, columns) {
+    var reloadGrid = function () {
+        ReloadGrid(gridId, "/job/list", columns);
+    };
+    setInterval(reloadGrid, _refreshInterval);
 }

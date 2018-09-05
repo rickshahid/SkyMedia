@@ -49,7 +49,7 @@
 <table class="mediaUploadOptions">
     <tr>
         <td>
-            @Html.CheckBox("standardEncoderPreset", false)
+            @Html.CheckBox("adaptiveStreaming", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
@@ -57,17 +57,25 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoAnalyzerPreset", false, new { onchange = "SetAnalyzerOptions(this)" })
+            @Html.CheckBox("videoAnalyzer", false, new { onchange = "SetProcessingOptions(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
                 Video Analyzer
             </span>
         </td>
+        <td class="mediaUploadOption">
+            @Html.CheckBox("videoIndexer", false, new { onchange = "SetProcessingOptions(this)" })
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                Video Indexer
+            </span>
+        </td>
     </tr>
     <tr>
         <td>
-            @Html.CheckBox("thumbnailSpritePreset", false)
+            @Html.CheckBox("thumbnailSprite", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
@@ -75,11 +83,19 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("audioAnalyzerPreset", false)
+            @Html.CheckBox("audioAnalyzer", false, new { onchange = "SetProcessingOptions(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
                 Audio Analyzer
+            </span>
+        </td>
+        <td class="mediaUploadOption">
+            @Html.CheckBox("audioIndexer", false, new { onchange = "SetProcessingOptions(this)" })
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                Audio Indexer
             </span>
         </td>
     </tr>

@@ -66,3 +66,9 @@
     text-align: center;
     width: 40px !important;
 }
+
+.tablediv {
+    border: 1px dashed deepskyblue;
+    padding: 10px 5px 5px 10px;
+    border-radius: 20px;
+}

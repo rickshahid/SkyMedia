@@ -3,11 +3,6 @@
         display: none !important;
     }
 
-    .layoutPanel.body {
-        padding-left: 0px !important;
-        padding-right: 0px !important;
-    }
-
     .header, .mediaPlayer {
         width: 400px !important;
     }
@@ -24,11 +19,6 @@
 @media all and (min-width: 600px) and (max-width: 799px) {
     .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaGallery {
         display: none !important;
-    }
-
-    .layoutPanel.body {
-        padding-left: 0px !important;
-        padding-right: 0px !important;
     }
 
     .header, .mediaPlayer {
@@ -60,8 +50,6 @@ body {
 
 .layoutPanel.body {
     padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 
 .header {
@@ -79,6 +67,63 @@ body {
 
 .headerSide.right {
     text-align: right;
+}
+
+.qtip {
+    border-radius: 20px;
+    max-width: 1080px;
+    padding: 5px;
+}
+
+.qtip-content {
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
+
+.authToken {
+    margin: 20px auto;
+    overflow: hidden;
+    display: none;
+    width: 200px;
+}
+
+.siteButton {
+    border: none;
+    background: none;
+}
+
+.siteButton:hover {
+    cursor: pointer;
+}
+
+.siteButton.layoutVertical {
+    width: 65px;
+    height: 79px;
+}
+
+.siteLink {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.siteLink:hover {
+    cursor: pointer;
+}
+
+.viewTitle {
+    font-weight: bold;
+    font-size: xx-large;
+    text-align: center;
+}
+
+.viewButtons {
+    margin-top: 20px;
+}
+
+.viewButtons button {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .accountContext {
@@ -101,109 +146,59 @@ body {
     padding: 5px;
 }
 
-.assetCount {
-    width: 60px;
-}
-
 .entityCount {
     color: azure;
 }
 
-.entity {
+.assetCount {
+    width: 60px;
+}
+
+.mediaEntity {
     border: 1px solid deepskyblue;
     border-radius: 20px;
-}
-
-.entity div {
+    padding-top: 20px;
     margin-top: 20px;
+    width: 100%;
 }
 
-.entity > table {
-    margin: 10px auto;
+.mediaEntityName {
+    font-weight: bold;
+    width: 400px;
 }
 
-.entity table td {
+.mediaEntityName.mediaJob {
+    width: 405px !important;
+}
+
+.mediaEntityName.mediaEntityDescription {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.mediaEntityProperties {
+    margin: 0px auto;
+}
+
+.mediaEntityProperties.mediaJob {
+    margin-bottom: 10px;
+}
+
+.mediaEntityProperties td {
     padding: 5px;
 }
 
-.entityName {
-    font-weight: bold;
-    width: 300px;
-}
-
-.entityName.transformJob {
-    width: 305px !important;
-}
-
-.entityFound {
+.mediaEntityFound {
+    border: none;
     background-color: none;
-    border: none;
 }
 
-.entityNotFound {
-    background-color: red;
+.mediaEntityNotFound {
     border: 1px red solid;
-}
-
-.authToken {
-    margin: 20px auto;
-    overflow: hidden;
-    display: none;
-    width: 200px;
-}
-
-.viewTitle {
-    font-weight: bold;
-    font-size: xx-large;
-    text-align: center;
-}
-
-.siteButton {
-    border: none;
-    background: none;
-}
-
-.siteButton:hover {
-    cursor: pointer;
-}
-
-.siteButton.layoutVertical {
-    width: 60px;
-    height: 78px;
-}
-
-.siteLink {
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.siteLink:hover {
-    cursor: pointer;
-}
-
-.viewButtons {
-    margin-top: 20px;
-}
-
-.viewButtons button {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.qtip {
-    border-radius: 20px;
-    max-width: 1080px;
-    padding: 5px;
-}
-
-.qtip-content {
-    font-size: large;
-    font-weight: bold;
-    text-align: center;
+    background-color: red;
 }
 
 .mediaPlayer {
-    margin: 0px auto;
     width: 800px;
 }
 
@@ -230,15 +225,15 @@ body {
 }
 
 .streamTunerHandle {
-    top: -12px !important;
     color: azure !important;
+    top: -12px !important;
     text-align: center;
 }
 
 .streamNumber {
-    color: azure;
-    font-weight: bold;
     font-size: x-large;
+    font-weight: bold;
+    color: azure;
 }
 
 .streamNumber.sideLeft {
@@ -250,8 +245,8 @@ body {
 }
 
 .streamName {
-    font-weight: bold;
     font-size: xx-large;
+    font-weight: bold;
 }
 
 .streamName.galleryView {
@@ -265,8 +260,8 @@ body {
 }
 
 .streamUrl {
-    font-style: italic;
     font-size: x-large;
+    font-style: italic;
     margin-top: 10px;
 }
 
@@ -315,37 +310,55 @@ body {
     float: none;
 }
 
-.inputLeft {
-    text-align: left;
-}
-
 .inputLabel {
-    text-align: right;
-    font-weight: bold;
     white-space: nowrap;
+    font-weight: bold;
+    text-align: right;
 }
 
 .inputLabel.centered {
-    vertical-align: bottom;
-    text-align: center !important;
+    text-align: center;
 }
 
-.inputLabel.outputPresets {
-    text-align: center;
-    padding-top: 50px;
+.inputLabel.transformPresets {
+    padding-top: 30px;
 }
 
 .inputSelect {
     font-weight: bold;
 }
 
-.inputSelect.transformJob {
+.inputSelect.mediaJob {
     width: 100%;
 }
 
-.inputFileUrl {
-    display: inline-block;
-    text-align: center;
+.inputOption {
+    text-align: left;
+}
+
+.jobData {
+    margin-bottom: 15px;
+    text-align: left;
+    height: 225px;
+    width: 400px;
+}
+
+.jsoneditor-field {
+    color: azure !important;
+}
+
+.indexerInsight {
+    background-color: azure;
+    vertical-align: bottom;
+    display: none;
+    width: 600px;
+}
+
+.contentMetadata {
+    text-align: left;
+    display: none;
+    height: 600px;
+    width: 900px;
 }
 
 .videoClipper {
@@ -361,7 +374,7 @@ body {
     perspective: 2000px;
     margin: 0 auto;
     height: 225px;
-    width: 400px;
+    width: 500px;
 }
 
 .carousel {
@@ -378,20 +391,4 @@ body {
     position: absolute;
     height: 100%;
     width: 100%;
-}
-
-.indexerInsight {
-    background-color: azure;
-    vertical-align: bottom;
-    display: none;
-    width: 600px;
-}
-
-.insightData {
-    text-align: left;
-    margin-top: 0px;
-}
-
-.json-toggle, .json-dict li {
-    font-size: large;
 }

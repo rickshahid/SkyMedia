@@ -18,10 +18,10 @@ namespace AzureSkyMedia.WebApp.Controllers
         private Asset[] CreateInputAssets(MediaClient mediaClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames)
         {
             List<Asset> inputAssets = new List<Asset>();
-            BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
+            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
             foreach (string fileName in fileNames)
             {
-                string sourceContainer = Constant.Storage.BlobContainer.FileUpload;
+                string sourceContainer = Constant.Storage.BlobContainer.MediaServices;
                 Asset inputAsset = mediaClient.CreateAsset(blobClient, blobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, fileName);
                 inputAssets.Add(inputAsset);
             }
@@ -29,32 +29,32 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                   bool standardEncoderPreset, bool thumbnailSpritePreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset,
-                                   string streamingPolicyName)
+                                   bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer,
+                                   bool videoIndexer, bool audioIndexer, string streamingPolicyName)
         {
             Asset[] inputAssets;
             List<Job> jobs = new List<Job>();
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                Transform transform = mediaClient.CreateTransform(standardEncoderPreset, thumbnailSpritePreset, videoAnalyzerPreset, audioAnalyzerPreset);
+                Transform transform = mediaClient.CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer);
                 inputAssets = CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                 foreach (Asset inputAsset in inputAssets)
                 {
                     Job job = null;
                     string indexId = null;
-                    if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
+                    if (mediaClient.IndexerIsEnabled() && (videoIndexer || audioIndexer))
                     {
-                        BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, storageAccount);
+                        StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
                         MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
                         string fileName = mediaAsset.Files[0].Name;
                         string videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
-                        bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
+                        bool audioOnly = !videoIndexer && audioIndexer;
                         indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, inputAsset.Name, inputAsset.Description, string.Empty, audioOnly);
                     }
                     if (transform != null)
                     {
-                        job = mediaClient.CreateJob(transform.Name, null, null, Priority.Normal, inputAsset.Name, null, inputAsset.StorageAccountName, assetDescription, indexId, streamingPolicyName);
+                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputAsset.Name, null, inputAsset.StorageAccountName, assetDescription, indexId, streamingPolicyName);
                     }
                     if (job != null)
                     {
@@ -78,8 +78,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                BlobClient sourceBlobClient = new BlobClient();
-                BlobClient assetBlobClient = new BlobClient(mediaClient.MediaAccount, mediaClient.PrimaryStorageAccount);
+                StorageBlobClient sourceBlobClient = new StorageBlobClient();
+                StorageBlobClient assetBlobClient = new StorageBlobClient(mediaClient.MediaAccount, mediaClient.PrimaryStorageAccount);
                 for (int i = 1; i <= assetCount; i++)
                 {
                     int assetId = i % 2 == 0 ? 2 : i % 2;
@@ -135,7 +135,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 else
                 {
                     Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
-                    BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
+                    StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
                     CloudBlockBlob fileBlob = blobClient.GetBlockBlob(asset.Container, fileName);
                     using (Stream fileStream = fileBlob.OpenReadAsync().Result)
                     {

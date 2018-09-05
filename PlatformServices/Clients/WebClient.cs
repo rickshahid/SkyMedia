@@ -14,11 +14,11 @@ namespace AzureSkyMedia.PlatformServices
     {
         private static HttpClient _httpClient;
 
-        public WebClient(string apimKey)
+        public WebClient(string subscriptionKey)
         {
-            if (!string.IsNullOrEmpty(apimKey))
+            if (!string.IsNullOrEmpty(subscriptionKey))
             {
-                HttpClient.DefaultRequestHeaders.Add(Constant.HttpHeader.ApiManagementKey, apimKey);
+                HttpClient.DefaultRequestHeaders.Add(Constant.AccessAuthentication.SubscriptionKey, subscriptionKey);
             }
         }
 

@@ -53,27 +53,27 @@ namespace AzureSkyMedia.WebApp.Controllers
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = string.Empty;
-            string cookieKey = Constant.HttpCookie.UserAuthToken;
+            string userToken = Constant.AccessAuthentication.UserToken;
             if (request.HasFormContentType)
             {
-                authToken = request.Form[Constant.HttpForm.IdToken];
+                authToken = request.Form[userToken];
                 if (!string.IsNullOrEmpty(authToken))
                 {
-                    response.Cookies.Append(cookieKey, authToken);
+                    response.Cookies.Append(userToken, authToken);
                 }
             }
             if (string.IsNullOrEmpty(authToken))
             {
-                authToken = request.Cookies[cookieKey];
+                authToken = request.Cookies[userToken];
             }
             return authToken;
         }
 
         public static void SetAccountContext(string authToken, ViewDataDictionary viewData)
         {
-            User authUser = new User(authToken);
-            viewData["userId"] = authUser.Id;
-            viewData["accountName"] = authUser.MediaAccount.Name;
+            User userProfile = new User(authToken);
+            viewData["userId"] = userProfile.Id;
+            viewData["accountName"] = userProfile.MediaAccount.Name;
         }
 
         public IActionResult Index()

@@ -2,7 +2,7 @@
 {
     public class MediaTransformOutput
     {
-        public MediaTransformPreset PresetType { get; set; }
+        public MediaProcessor PresetProcessor { get; set; }
 
         public string PresetName { get; set; }
 

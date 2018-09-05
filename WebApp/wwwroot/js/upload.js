@@ -1,4 +1,4 @@
-﻿var _fileUploader, _uploadStartTime;
+﻿var _uploadStartTime;
 function SetStorageTip() {
     var tipText = $("#storageAccount option:selected").text();
     CreateTipTop("storageAccount", tipText);
@@ -16,15 +16,15 @@ function GetUploadTime() {
     }
     return uploadTime;
 }
-function GetFileNames() {
+function GetFileNames(files) {
     var fileNames = new Array();
-    for (var i = 0; i < _fileUploader.files.length; i++) {
-        var fileName = _fileUploader.files[i].name;
+    for (var i = 0; i < files.length; i++) {
+        var fileName = files[i].name;
         fileNames.push(fileName);
     }
     return fileNames;
 }
-function CreateWorkflow() {
+function CreateWorkflow(files) {
     SetCursor(true);
     $.post("/asset/workflow",
         {
@@ -32,11 +32,13 @@ function CreateWorkflow() {
             assetName: $("#assetName").val(),
             assetDescription: $("#assetDescription").val(),
             assetAlternateId: $("#assetAlternateId").val(),
-            fileNames: GetFileNames(),
-            standardEncoderPreset: $("#standardEncoderPreset").prop("checked"),
-            thumbnailSpritePreset: $("#thumbnailSpritePreset").prop("checked"),
-            videoAnalyzerPreset: $("#videoAnalyzerPreset").prop("checked"),
-            audioAnalyzerPreset: $("#audioAnalyzerPreset").prop("checked")
+            fileNames: GetFileNames(files),
+            adaptiveStreaming: $("#adaptiveStreaming").prop("checked"),
+            thumbnailSprite: $("#thumbnailSprite").prop("checked"),
+            videoAnalyzer: $("#videoAnalyzer").prop("checked"),
+            audioAnalyzer: $("#audioAnalyzer").prop("checked"),
+            videoIndexer: $("#videoIndexer").prop("checked"),
+            audioIndexer: $("#audioIndexer").prop("checked")
         },
         function (entities) {
             SetCursor(false);
@@ -50,7 +52,7 @@ function CreateWorkflow() {
                 }
                 message = message + "Media " + entityType + " Created - " + entity.name;
                 if (indexId != null) {
-                    var insightType = $("#audioAnalyzerPreset").prop("checked") ? "Audio" : "Video";
+                    var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
                     message = message + "<br><br>" + insightType + " Indexer Insight - " + indexId;
                 }
             }
@@ -60,9 +62,6 @@ function CreateWorkflow() {
 }
 function CreateUploader() {
     var eventHandlers = {
-        PostInit: function (uploader) {
-            _fileUploader = uploader;
-        },
         BeforeUpload: function (uploader, file) {
             uploader.settings.multipart_params = {
                 storageAccount: $("#storageAccount").val(),
@@ -81,7 +80,7 @@ function CreateUploader() {
             if (uploader.total.failed == 0) {
                 var uploadTime = GetUploadTime();
                 $("#mediaUploadMessage").text("Upload Elapsed Time: " + uploadTime);
-                CreateWorkflow();
+                CreateWorkflow(files);
             }
         },
         Error: function (uploader, error) {

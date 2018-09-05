@@ -12,10 +12,10 @@ namespace AzureSkyMedia.WebApp.Controllers
         public JsonResult Block(string name, int chunk, int chunks, string storageAccount, string contentType)
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
-            User authUser = new User(authToken);
-            BlobClient blobClient = new BlobClient(authUser.MediaAccount, storageAccount);
+            User userProfile = new User(authToken);
+            StorageBlobClient blobClient = new StorageBlobClient(userProfile.MediaAccount, storageAccount);
             Stream blockStream = Request.Form.Files[0].OpenReadStream();
-            string containerName = Constant.Storage.BlobContainer.FileUpload;
+            string containerName = Constant.Storage.BlobContainer.MediaServices;
             blobClient.UploadBlock(blockStream, containerName, name, chunk, chunks, contentType);
             return Json(chunk);
         }

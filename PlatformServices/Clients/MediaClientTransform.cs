@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
@@ -13,7 +14,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (!string.IsNullOrEmpty(transformName))
                 {
-                    transformName = string.Concat(transformName, Constant.Media.Transform.PresetNameDelimiter);
+                    transformName = string.Concat(transformName, Constant.Media.Transform.Preset.NameDelimiter);
                 }
                 transformName = string.Concat(transformName, transformOutput.PresetName);
             }
@@ -81,88 +82,91 @@ namespace AzureSkyMedia.PlatformServices
 
         public Transform CreateTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
         {
+            Transform transform = null;
             bool defaultName = string.IsNullOrEmpty(transformName);
-            List<TransformOutput> transformOutputList = new List<TransformOutput>();
+            List<TransformOutput> transformOutputPresets = new List<TransformOutput>();
             foreach (MediaTransformOutput transformOutput in transformOutputs)
             {
-                switch (transformOutput.PresetType)
+                TransformOutput transformOutputPreset;
+                switch (transformOutput.PresetProcessor)
                 {
-                    case MediaTransformPreset.StandardEncoder:
+                    case MediaProcessor.StandardEncoder:
                         transformName = GetTransformName(defaultName, transformName, transformOutput);
-                        BuiltInStandardEncoderPreset standardEncoderPreset = new BuiltInStandardEncoderPreset(transformOutput.PresetName);
-                        TransformOutput transformOutputItem = GetTransformOutput(standardEncoderPreset, transformOutput);
-                        transformOutputList.Add(transformOutputItem);
+                        if (string.Equals(transformOutput.PresetName, Constant.Media.Transform.Preset.ThumbnailSprite, StringComparison.OrdinalIgnoreCase)) {
+
+                            StandardEncoderPreset thumbnailSpritePreset = GetThumbnailPreset(Constant.Media.Thumbnail.SpriteColumns);
+                            transformOutputPreset = GetTransformOutput(thumbnailSpritePreset, transformOutput);
+                        }
+                        else
+                        {
+                            BuiltInStandardEncoderPreset standardEncoderPreset = new BuiltInStandardEncoderPreset(transformOutput.PresetName);
+                            transformOutputPreset = GetTransformOutput(standardEncoderPreset, transformOutput);
+                        }
+                        transformOutputPresets.Add(transformOutputPreset);
                         break;
-                    case MediaTransformPreset.ThumbnailSprite:
-                        transformName = GetTransformName(defaultName, transformName, transformOutput);
-                        StandardEncoderPreset thumbnailSpritePreset = GetThumbnailPreset(Constant.Media.Thumbnail.SpriteColumns);
-                        transformOutputItem = GetTransformOutput(thumbnailSpritePreset, transformOutput);
-                        transformOutputList.Add(transformOutputItem);
-                        break;
-                    case MediaTransformPreset.VideoAnalyzer:
+                    case MediaProcessor.VideoAnalyzer:
                         transformName = GetTransformName(defaultName, transformName, transformOutput);
                         VideoAnalyzerPreset videoAnalyzerPreset = (VideoAnalyzerPreset)GetAnalyzerPreset(false);
-                        transformOutputItem = GetTransformOutput(videoAnalyzerPreset, transformOutput);
-                        transformOutputList.Add(transformOutputItem);
+                        transformOutputPreset = GetTransformOutput(videoAnalyzerPreset, transformOutput);
+                        transformOutputPresets.Add(transformOutputPreset);
                         break;
-                    case MediaTransformPreset.AudioAnalyzer:
+                    case MediaProcessor.AudioAnalyzer:
                         transformName = GetTransformName(defaultName, transformName, transformOutput);
                         AudioAnalyzerPreset audioAnalyzerPreset = (AudioAnalyzerPreset)GetAnalyzerPreset(true);
-                        transformOutputItem = GetTransformOutput(audioAnalyzerPreset, transformOutput);
-                        transformOutputList.Add(transformOutputItem);
+                        transformOutputPreset = GetTransformOutput(audioAnalyzerPreset, transformOutput);
+                        transformOutputPresets.Add(transformOutputPreset);
                         break;
                 }
             }
-            return _media.Transforms.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputList.ToArray(), transformDescription);
+            if (transformOutputPresets.Count > 0)
+            {
+                transform = _media.Transforms.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputPresets.ToArray(), transformDescription);
+            }
+            return transform;
         }
 
-        public Transform CreateTransform(bool standardEncoderPreset, bool thumbnailSpritePreset, bool videoAnalyzerPreset, bool audioAnalyzerPreset)
+        public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer)
         {
-            if (IndexerIsEnabled())
-            {
-                videoAnalyzerPreset = false;
-                audioAnalyzerPreset = false;
-            }
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
-            if (standardEncoderPreset)
+            if (adaptiveStreaming)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
-                    PresetType = MediaTransformPreset.StandardEncoder,
+                    PresetProcessor = MediaProcessor.StandardEncoder,
                     PresetName = EncoderNamedPreset.AdaptiveStreaming,
+                    RelativePriority = Priority.High,
+                    OnError = OnErrorType.StopProcessingJob
+                };
+                transformOutputs.Add(transformOutput);
+            }
+            if (thumbnailSprite)
+            {
+                MediaTransformOutput transformOutput = new MediaTransformOutput()
+                {
+                    PresetProcessor = MediaProcessor.StandardEncoder,
+                    PresetName = Constant.Media.Transform.Preset.ThumbnailSprite,
                     RelativePriority = Priority.Normal,
                     OnError = OnErrorType.ContinueJob
                 };
                 transformOutputs.Add(transformOutput);
             }
-            if (thumbnailSpritePreset)
+            if (videoAnalyzer)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
-                    PresetType = MediaTransformPreset.ThumbnailSprite,
-                    PresetName = MediaTransformPreset.ThumbnailSprite.ToString(),
+                    PresetProcessor = MediaProcessor.VideoAnalyzer,
+                    PresetName = Constant.Media.Transform.Preset.VideoAnalyzer,
                     RelativePriority = Priority.Normal,
                     OnError = OnErrorType.ContinueJob
                 };
                 transformOutputs.Add(transformOutput);
             }
-            if (videoAnalyzerPreset)
+            if (audioAnalyzer)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
-                    PresetType = MediaTransformPreset.VideoAnalyzer,
-                    PresetName = MediaTransformPreset.VideoAnalyzer.ToString(),
-                    RelativePriority = Priority.Normal,
-                    OnError = OnErrorType.ContinueJob
-                };
-                transformOutputs.Add(transformOutput);
-            }
-            if (audioAnalyzerPreset)
-            {
-                MediaTransformOutput transformOutput = new MediaTransformOutput()
-                {
-                    PresetType = MediaTransformPreset.AudioAnalyzer,
-                    PresetName = MediaTransformPreset.AudioAnalyzer.ToString(),
+                    PresetProcessor = MediaProcessor.AudioAnalyzer,
+                    PresetName = Constant.Media.Transform.Preset.AudioAnalyzer,
                     RelativePriority = Priority.Normal,
                     OnError = OnErrorType.ContinueJob
                 };
@@ -171,17 +175,32 @@ namespace AzureSkyMedia.PlatformServices
             return CreateTransform(null, null, transformOutputs.ToArray());
         }
 
-        public void CreateTransforms()
+        public Transform[] CreateTransforms()
         {
-            CreateTransform(true, false, false, false);
-            CreateTransform(true, true, false, false);
-            CreateTransform(true, false, true, false);
-            CreateTransform(true, false, false, true);
-            CreateTransform(false, true, false, false);
-            CreateTransform(false, true, true, false);
-            CreateTransform(false, true, false, true);
-            CreateTransform(false, false, true, false);
-            CreateTransform(false, false, false, true);
+            List<Transform> transforms = new List<Transform>();
+            Transform transform = CreateTransform(true, false, false, false);
+            transforms.Add(transform);
+            transform = CreateTransform(true, true, false, false);
+            transforms.Add(transform);
+            transform = CreateTransform(true, false, true, false);
+            transforms.Add(transform);
+            transform = CreateTransform(true, false, false, true);
+            transforms.Add(transform);
+            transform = CreateTransform(true, true, true, false);
+            transforms.Add(transform);
+            transform = CreateTransform(true, true, false, true);
+            transforms.Add(transform);
+            transform = CreateTransform(false, true, false, false);
+            transforms.Add(transform);
+            transform = CreateTransform(false, true, true, false);
+            transforms.Add(transform);
+            transform = CreateTransform(false, true, false, true);
+            transforms.Add(transform);
+            transform = CreateTransform(false, false, true, false);
+            transforms.Add(transform);
+            transform = CreateTransform(false, false, false, true);
+            transforms.Add(transform);
+            return transforms.ToArray();
         }
     }
 }

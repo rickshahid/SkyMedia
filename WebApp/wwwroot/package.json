@@ -6,6 +6,6 @@
     "jquery": "3.3.1",
     "jquery-ui-dist": "1.12.1",
     "jquery.cookie": "1.4.1",
-    "json-browse": "0.2.0"
+    "jsoneditor": "5.24.3"
   }
 }

@@ -17,6 +17,7 @@ namespace AzureSkyMedia.PlatformServices
                 DirectoryTenantId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDirectoryTenantId),
                 ServicePrincipalId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalId),
                 ServicePrincipalKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalKey),
+                VideoIndexerRegion = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerRegion),
                 VideoIndexerKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey),
                 StorageAccounts = GetStorageAccounts()
             };
@@ -36,11 +37,11 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string MobileNumber
+        public string MobilePhoneNumber
         {
             get
             {
-                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MobileNumber);
+                return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MobilePhoneNumber);
             }
         }
 

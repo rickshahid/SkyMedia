@@ -28,7 +28,7 @@ namespace AzureSkyMedia.WebApp
             configBuilder.SetBasePath(appDirectory);
             configBuilder.AddEnvironmentVariables();
             configBuilder.AddApplicationInsightsSettings();
-            configBuilder.AddJsonFile(Constant.AppSettings, false, true);
+            configBuilder.AddJsonFile(Constant.AppSettingsFile, false, true);
             if (Debugger.IsAttached)
             {
                 configBuilder.AddUserSecrets<Startup>();
@@ -94,10 +94,6 @@ namespace AzureSkyMedia.WebApp
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient.SetEventSubscription(authToken);
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    mediaClient.CreateTransforms();
-                }
             }
             return redirectAction;
         }
@@ -144,13 +140,18 @@ namespace AzureSkyMedia.WebApp
 
         private void SetSwaggerOptions(SwaggerGenOptions options)
         {
-            Info apiInfo = new Info();
-            string settingKey = Constant.AppSettingKey.AppTitle;
-            apiInfo.Title = string.Concat(AppSetting.GetValue(settingKey), " API");
+            string settingKey = Constant.AppSettingKey.AppName;
+            string appName = AppSetting.GetValue(settingKey);
             settingKey = Constant.AppSettingKey.AppApiDescription;
-            apiInfo.Description = AppSetting.GetValue(settingKey);
+            string apiDescription = AppSetting.GetValue(settingKey);
             settingKey = Constant.AppSettingKey.AppApiVersion;
-            apiInfo.Version = AppSetting.GetValue(settingKey);
+            string apiVersion = AppSetting.GetValue(settingKey);
+            Info apiInfo = new Info()
+            {
+                Title = string.Concat(appName, " API"),
+                Description = apiDescription,
+                Version = apiVersion
+            };
             options.SwaggerDoc(apiInfo.Version, apiInfo);
         }
 

@@ -199,7 +199,7 @@ namespace AzureSkyMedia.PlatformServices
                     _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     using (DatabaseClient databaseClient = new DatabaseClient())
                     {
-                        string collectionId = Constant.Database.Collection.ContentPublish;
+                        string collectionId = Constant.Database.Collection.MediaPublish;
                         databaseClient.DeleteDocument(collectionId, entityName);
                     }
                     break;

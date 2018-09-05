@@ -35,7 +35,7 @@ namespace AzureSkyMedia.PlatformServices
             return CreateAsset(storageAccount, assetName, string.Empty, string.Empty);
         }
 
-        public Asset CreateAsset(BlobClient sourceBlobClient, BlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string[] fileNames)
+        public Asset CreateAsset(StorageBlobClient sourceBlobClient, StorageBlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string[] fileNames)
         {
             List<Task> copyTasks = new List<Task>();
             if (string.IsNullOrEmpty(assetName))
@@ -54,7 +54,7 @@ namespace AzureSkyMedia.PlatformServices
             return asset;
         }
 
-        public Asset CreateAsset(BlobClient sourceBlobClient, BlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string fileName)
+        public Asset CreateAsset(StorageBlobClient sourceBlobClient, StorageBlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string fileName)
         {
             return CreateAsset(sourceBlobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, new string[] { fileName });
         }

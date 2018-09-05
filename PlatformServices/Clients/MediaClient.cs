@@ -20,19 +20,14 @@ namespace AzureSkyMedia.PlatformServices
         private string _indexerAccountToken;
         private string _indexerAccountId;
 
-        public MediaClient(string authToken, MediaAccount mediaAccount = null, UserAccount userAccount = null)
+        public MediaClient(string authToken, MediaAccount mediaAccount = null)
         {
             if (!string.IsNullOrEmpty(authToken))
             {
-                User authUser = new User(authToken);
-                mediaAccount = authUser.MediaAccount;
-                userAccount = new UserAccount()
-                {
-                    MobileNumber = authUser.MobileNumber
-                };
+                User userProfile = new User(authToken);
+                mediaAccount = userProfile.MediaAccount;
             }
             MediaAccount = mediaAccount;
-            UserAccount = userAccount;
             string settingKey = Constant.AppSettingKey.AzureResourceManagementEndpointUrl;
             string endpointUrl = AppSetting.GetValue(settingKey);
             MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
@@ -40,15 +35,13 @@ namespace AzureSkyMedia.PlatformServices
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };
-            if (!string.IsNullOrEmpty(MediaAccount.VideoIndexerKey))
+            if (!string.IsNullOrEmpty(MediaAccount.VideoIndexerRegion))
             {
                 IndexerSetAccountContext();
             }
         }
 
         public MediaAccount MediaAccount { get; private set; }
-
-        public UserAccount UserAccount { get; private set; }
 
         public IList<StorageAccount> StorageAccounts
         {

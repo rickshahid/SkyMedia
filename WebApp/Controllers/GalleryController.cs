@@ -13,12 +13,12 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class GalleryController : Controller
     {
-        private void UploadIngestManifest(BlobClient blobClient, MediaIngestManifest ingestManifest)
+        private void UploadIngestManifest(StorageBlobClient blobClient, MediaIngestManifest ingestManifest)
         {
             string ingestManifestJson = JsonConvert.SerializeObject(ingestManifest);
             string containerName = Constant.Storage.BlobContainer.MediaServices;
             string assetName = Path.GetFileNameWithoutExtension(ingestManifest.JobInputFileUrl);
-            string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.TextDelimiter.File, assetName, Constant.Media.IngestManifest.FileExtension);
+            string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.TextDelimiter.Manifest, assetName, Constant.Media.IngestManifest.FileExtension);
             CloudBlockBlob manifest = blobClient.GetBlockBlob(containerName, fileName);
             manifest.Properties.ContentType = Constant.Media.ContentType.IngestManifest;
             manifest.UploadTextAsync(ingestManifestJson).Wait();
@@ -27,7 +27,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         private void UploadIngestManifests(MediaIngestManifest ingestManifest, string rssUrl)
         {
             XmlDocument rssDocument;
-            BlobClient blobClient = new BlobClient();
+            StorageBlobClient blobClient = new StorageBlobClient();
             using (WebClient webClient = new WebClient(null))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, rssUrl);
@@ -56,7 +56,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public void RefreshContent(string rssUrl = "https://channel9.msdn.com/Shows/AI-Show/feed/mp4high", bool skipDelete = false)
         {
             MediaIngestManifest ingestManifest;
-            BlobClient blobClient = new BlobClient();
+            StorageBlobClient blobClient = new StorageBlobClient();
             string containerName = Constant.Storage.BlobContainer.MediaServices;
             string fileName = string.Concat(Constant.Media.IngestManifest.GalleryPrefix, Constant.Media.IngestManifest.TriggerPrefix, Constant.Media.IngestManifest.FileExtension);
             CloudBlockBlob manifestFile = blobClient.GetBlockBlob(containerName, fileName);

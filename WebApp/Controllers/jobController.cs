@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -21,7 +23,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 SelectListItem transform = new SelectListItem()
                 {
-                    Text = Constant.TextFormatter.GetValue(mediaTransform.Name),
+                    Text = Constant.TextFormatter.FormatValue(mediaTransform.Name),
                     Value = mediaTransform.Name
                 };
                 transforms.Add(transform);
@@ -40,7 +42,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 SelectListItem policy = new SelectListItem()
                 {
-                    Text = Constant.TextFormatter.GetValue(streamingPolicy.Name),
+                    Text = Constant.TextFormatter.FormatValue(streamingPolicy.Name),
                     Value = streamingPolicy.Name
                 };
                 policies.Add(policy);
@@ -48,7 +50,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string inputAssetName, string inputFileUrl, string streamingPolicyName)
+        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData, string inputAssetName, string inputFileUrl, string streamingPolicyName)
         {
             Job job = null;
             string authToken = HomeController.GetAuthToken(Request, Response);
@@ -83,7 +85,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     string videoDescription = null;
                     if (string.IsNullOrEmpty(videoUrl) && inputAsset != null) 
                     {
-                        BlobClient blobClient = new BlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
+                        StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
                         MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
                         string fileName = mediaAsset.Files[0].Name;
                         videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
@@ -95,7 +97,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 if (!string.IsNullOrEmpty(transformName))
                 {
-                    job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputAssetName, inputFileUrl, null, outputAssetDescription, indexId, streamingPolicyName);
+                    job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, JObject.Parse(jobData), inputAssetName, inputFileUrl, null, outputAssetDescription, indexId, streamingPolicyName);
                 }
             }
             return Json(job);
@@ -112,17 +114,17 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public JsonResult Publish(string jobName)
         {
-            string publishMessage = null;
+            MediaPublish mediaPublish;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                string collectionId = Constant.Database.Collection.ContentPublish;
-                MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
+                string collectionId = Constant.Database.Collection.MediaPublish;
+                mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
                 if (mediaPublish != null)
                 {
-                    publishMessage = MediaClient.PublishJobOutput(mediaPublish);
+                    mediaPublish = MediaClient.PublishJobOutput(mediaPublish);
                 }
             }
-            return Json(publishMessage);
+            return Json(mediaPublish);
         }
 
         public JsonResult List()

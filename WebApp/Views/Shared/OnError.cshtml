@@ -1,6 +1,4 @@
 ﻿@model AzureSkyMedia.WebApp.Models.ClientControl
 
-<select id="@Model.ControlId" class="inputSelect">
-    <option value="StopProcessingJob" selected>Stop Job</option>
-    <option value="ContinueJob">Continue Job</option>
-</select>
+<input id="@Model.ControlId" type="checkbox" value="ContinueJob" />
+<span class="inputLabel">Continue Job</span>

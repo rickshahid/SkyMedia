@@ -86,7 +86,7 @@ namespace AzureSkyMedia.PlatformServices
                 if (_storageAccount != null)
                 {
                     replication = _storageAccount.Sku.Name.ToString();
-                    replication = Constant.TextFormatter.GetValue(replication);
+                    replication = Constant.TextFormatter.FormatValue(replication);
                 }
                 return replication;
             }

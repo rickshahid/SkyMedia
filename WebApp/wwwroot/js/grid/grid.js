@@ -1,4 +1,4 @@
-﻿var _childGridId, _childPropertyName, _spacingPatterns, _spacingInserts, _refreshInterval = 10000;
+﻿var _childGridId, _childPropertyName, _refreshInterval = 10000;
 function ClearTitles(grid) {
     var tdElements = document.getElementsByTagName("td");
     for (var i = 0; i < tdElements.length; i++) {
@@ -9,9 +9,9 @@ function CreateTips(rows) {
     for (var i = 0; i < rows.length; i++) {
         var rowId = rows[i].id;
         CreateTipTop(rowId + "_video", "Video");
+        CreateTipTop(rowId + "_json", "Metadata");
         CreateTipTop(rowId + "_manifest", "Manifest");
         CreateTipTop(rowId + "_transcript", "Transcript");
-        CreateTipTop(rowId + "_insight", "Insight");
         CreateTipTop(rowId + "_reindex", "Reindex");
         CreateTipTop(rowId + "_publish", "Publish");
         CreateTipTop(rowId + "_edit", "Edit");
@@ -73,7 +73,7 @@ function LoadGrid(gridId, rows, columns) {
         pager: "gridPager",
         sortname: "name",
         height: "auto",
-        rowNum: 10
+        rowNum: 5
     });
     CreateTips(rows);
 }

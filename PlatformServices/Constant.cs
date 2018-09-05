@@ -8,14 +8,14 @@ namespace AzureSkyMedia.PlatformServices
 {
     public struct Constant
     {
-        public const string AppSettings = "appsettings.json";
+        public const string AppSettingsFile = "appsettings.json";
         public const string ModelsDirectory = "Models";
 
         public struct TextDelimiter
         {
             public const char Connection = ';';
             public const char Application = ',';
-            public const string File = ".";
+            public const char Manifest = '.';
         }
 
         public struct TextFormatter
@@ -26,7 +26,7 @@ namespace AzureSkyMedia.PlatformServices
             public static readonly string[] SpacingPatterns = new string[] { "([a-z])([A-Z])", "(H264)([A-Z])", "([a-z])(720p|1080p)" };
             public static readonly string[] SpacingInserts = new string[] { "$1 $2", "$1 $2", "$1 $2" };
 
-            public static string GetValue(string value)
+            public static string FormatValue(string value)
             {
                 for (int i = 0; i < SpacingPatterns.Length; i++)
                 {
@@ -38,7 +38,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct AppSettingKey
         {
-            public const string AppTitle = "App.Title";
+            public const string AppName = "App.Name";
             public const string AppRegionName = "App.RegionName";
 
             public const string AppApiVersion = "App.Api.Version";
@@ -60,7 +60,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryPolicyIdPasswordReset = "Directory.PolicyId.PasswordReset";
 
             public const string DatabaseRegionsRead = "Database.Regions.Read";
-            public const string DatabaseCollectionThroughputUnits = "Database.Collection.ThroughputUnits";
 
             public const string StorageCdnEndpointUrl = "Storage.CdnEndpointUrl";
             public const string StorageSharedAccessMinutes = "Storage.SharedAccessMinutes";
@@ -83,16 +82,14 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream4SourceUrl = "Media.Stream4.SourceUrl";
             public const string MediaStream4TextTracks = "Media.Stream4.TextTracks";
 
-            public const string MediaPublishUrl = "Media.Publish.Url";
-            public const string MediaPublishQueue = "Media.Publish.Queue";
+            public const string MediaPublishJobUrl = "Media.Publish.JobUrl";
 
-            public const string MediaPlayerVersion = "Media.Player.Version";
-            public const string MediaPlayerSkin = "Media.Player.Skin";
+            public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
 
             public const string MediaClipperVersion = "Media.Clipper.Version";
 
-            public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
-            public const string MediaIndexerLocation = "Media.Indexer.Location";
+            public const string MediaPlayerVersion = "Media.Player.Version";
+            public const string MediaPlayerSkin = "Media.Player.Skin";
 
             public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
@@ -107,26 +104,17 @@ namespace AzureSkyMedia.PlatformServices
             public const string TwilioMessageFrom = "Twilio.Message.From";
         }
 
-        public struct HttpHeader
+        public struct AccessAuthentication
         {
-            public const string ApiManagementKey = "Ocp-Apim-Subscription-Key";
-        }
-
-        public struct HttpForm
-        {
-            public const string IdToken = "id_token";
-        }
-
-        public struct HttpCookie
-        {
-            public const string UserAuthToken = "UserAuthToken";
+            public const string UserToken = "id_token";
+            public const string SubscriptionKey = "Ocp-Apim-Subscription-Key";
         }
 
         public struct UserAttribute
         {
             public const string EMail = "email";
             public const string EMails = "emails";
-            public const string MobileNumber = "extension_MobileNumber";
+            public const string MobilePhoneNumber = "extension_MobilePhoneNumber";
 
             public const string MediaAccountName = "extension_MediaAccountName";
             public const string MediaAccountSubscriptionId = "extension_MediaAccountSubscriptionId";
@@ -134,6 +122,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaAccountDirectoryTenantId = "extension_MediaAccountDirectoryTenantId";
             public const string MediaAccountServicePrincipalId = "extension_MediaAccountServicePrincipalId";
             public const string MediaAccountServicePrincipalKey = "extension_MediaAccountServicePrincipalKey";
+            public const string MediaAccountVideoIndexerRegion = "extension_MediaAccountVideoIndexerRegion";
             public const string MediaAccountVideoIndexerKey = "extension_MediaAccountVideoIndexerKey";
 
             public const string StorageAccount1Name = "extension_StorageAccount1Name";
@@ -149,7 +138,6 @@ namespace AzureSkyMedia.PlatformServices
             public struct BlobContainer
             {
                 public const string MediaServices = "ams";
-                public const string FileUpload = "upload";
             }
         }
 
@@ -157,9 +145,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
-                public const string ContentPublish = "ContentPublish";
-                public const string ContentInsight = "ContentInsight";
-                public const string IngestManifest = "IngestManifest";
+                public const string MediaIngest = "MediaIngest";
+                public const string MediaInsight = "MediaInsight";
+                public const string MediaPublish = "MediaPublish";
             }
 
             public struct Script
@@ -219,9 +207,13 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Transform
             {
-                public const string PresetNameDelimiter = ", ";
-                public const string PresetNameAnalyzerVideo = "VideoAnalyzer";
-                public const string PresetNameAnalyzerAudio = "AudioAnalyzer";
+                public struct Preset
+                {
+                    public const string NameDelimiter = ", ";
+                    public const string VideoAnalyzer = "VideoAnalyzer";
+                    public const string AudioAnalyzer = "AudioAnalyzer";
+                    public const string ThumbnailSprite = "ThumbnailSprite";
+                }
             }
 
             public struct Publish
@@ -229,7 +221,7 @@ namespace AzureSkyMedia.PlatformServices
                 public struct EventGrid
                 {
                     public const string SubscriptionName = "AMS-Job-State";
-                    public static readonly string[] SubscriptionTypes = new string[] { "Microsoft.Media.JobStateChange" };
+                    public static readonly string[] EventTypes = new string[] { "Microsoft.Media.JobStateChange" };
                 }
             }
 
@@ -262,7 +254,6 @@ namespace AzureSkyMedia.PlatformServices
         public struct Message
         {
             public const string UserPasswordForgotten = "AADB2C90118";
-            public const string MobileNumberNotAvailable = "No message sent. Mobile number not available.";
             public const string StreamingEndpointNotStarted = "Your media account streaming endpoint has not been started.";
             public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
         }

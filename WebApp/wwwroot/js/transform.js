@@ -1,12 +1,20 @@
-﻿function SetAnalyzerOptions(videoAnalyzer) {
-    switch (videoAnalyzer.id) {
-        case "videoAnalyzerPreset":
-            $("#audioAnalyzerPreset").prop("checked", false);
-            $("#audioAnalyzerPreset").prop("disabled", videoAnalyzer.checked);
+﻿function SetProcessingOptions() {
+    switch (processingOption.id) {
+        case "videoAnalyzer":
+            $("#audioAnalyzer").prop("checked", false);
+            $("#audioAnalyzer").prop("disabled", processingOption.checked);
+            break;
+        case "videoIndexer":
+            $("#audioIndexer").prop("checked", false);
+            $("#audioIndexer").prop("disabled", processingOption.checked);
             break;
         case "presetType2":
             $("#presetType3").prop("checked", false);
-            $("#presetType3").prop("disabled", videoAnalyzer.checked);
+            $("#presetType3").prop("disabled", processingOption.checked);
+            break;
+        case "presetType4":
+            $("#presetType5").prop("checked", false);
+            $("#presetType5").prop("disabled", processingOption.checked);
             break;
     }
 }

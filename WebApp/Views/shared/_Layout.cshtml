@@ -8,7 +8,7 @@
         <title>@ViewData["appTitle"]</title>
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui-dist/jquery-ui.min.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jquery-ui/themes/dot-luv/jquery-ui.min.css" />
-        <link type="text/css" rel="stylesheet" href="~/lib/json-browse/json-browse/jquery.json-browse.css" />
+        <link type="text/css" rel="stylesheet" href="~/lib/jsoneditor/dist/jsoneditor.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/jqgrid/css/ui.jqgrid.css" />
         <link type="text/css" rel="stylesheet" href="~/lib/qtip/jquery.qtip.min.css" />
         <link type="text/css" rel="stylesheet" href="~/css/grid.css" />
@@ -17,7 +17,7 @@
         <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="~/lib/jquery.cookie/jquery.cookie.js"></script>
         <script type="text/javascript" src="~/lib/jquery-ui-dist/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="~/lib/json-browse/json-browse/jquery.json-browse.js"></script>
+        <script type="text/javascript" src="~/lib/jsoneditor/dist/jsoneditor.min.js"></script>
         <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
         <script type="text/javascript" src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
         <script type="text/javascript" src="~/lib/qtip/jquery.qtip.min.js"></script>
@@ -25,9 +25,14 @@
         <script type="text/javascript" src="~/js/grid/gridAction.js"></script>
         <script type="text/javascript" src="~/js/grid/gridColumn.js"></script>
         <script type="text/javascript" src="~/js/site.js"></script>
+        <script type="text/javascript">
+            _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
+            _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
+            _storageCdnUrl = "@ViewData["storageCdnUrl"]";
+        </script>
         @RenderSection("head", false)
     </head>
-    <body onload="SetLayout('@ViewData["appTitle"]')">
+    <body onload="SetLayout('@ViewData["appName"]')">
         <table class="header">
             <tr>
                 <td class="headerSide">
@@ -93,29 +98,29 @@
                 </td>
                 <td class="layoutPanel side">
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStorage", ImageFile = "MediaStorage.png", AbsoluteUrl = "http://azure.microsoft.com/services/storage/blobs/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "cognitiveSearch", ImageFile = "CognitiveSearch.png", AbsoluteUrl = "http://docs.microsoft.com/azure/search/cognitive-search-concept-intro", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "cosmosDB", ImageFile = "CosmosDB.png", AbsoluteUrl = "http://azure.microsoft.com/services/cosmos-db/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "functionApp", ImageFile = "FunctionApp.png", AbsoluteUrl = "http://azure.microsoft.com/services/functions/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "eventGrid", ImageFile = "EventGrid.png", AbsoluteUrl = "http://azure.microsoft.com/services/event-grid/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "contentDeliveryNetwork", ImageFile = "ContentDeliveryNetwork.png", AbsoluteUrl = "http://azure.microsoft.com/services/cdn/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "appServiceWeb", ImageFile = "AppServiceWeb.png", AbsoluteUrl = "http://azure.microsoft.com/services/app-service/web/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "cosmosDB", ImageFile = "CosmosDB.png", AbsoluteUrl = "http://azure.microsoft.com/services/cosmos-db/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "appServiceFunctions", ImageFile = "AppServiceFunctions.png", AbsoluteUrl = "http://azure.microsoft.com/services/functions/", StyleClass = "layoutVertical" }' />
-                    </div>
-                    <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "eventGrid", ImageFile = "EventGrid.png", AbsoluteUrl = "http://azure.microsoft.com/services/event-grid/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStorage", ImageFile = "MediaStorage.png", AbsoluteUrl = "http://azure.microsoft.com/services/storage/blobs/", StyleClass = "layoutVertical" }' />
                     </div>
                 </td>
             </tr>
         </table>
         <div id="messageDialog"></div>
-        <div id="insightDialog">
-            <pre id="insightData" class="insightData"></pre>
+        <div id="metadataDialog">
+            <div id="contentMetadata" class="contentMetadata"></div>
         </div>
     </body>
 </html>
