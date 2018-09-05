@@ -4,7 +4,7 @@ Welcome! This repository contains the multi-tenant Azure media solution sample t
 
 As a sample illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing within an Azure App Service web app via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. On-demand and live video content that is stored and managed in Azure Media Services is adaptively streamed, scaled and globally consumable across a wide range of devices and platforms.
 
-![](http://skymedia.azureedge.net/docs/01.1-ApplicationIntroduction.png)
+![](http://skymedia.azureedge.net/docs/01.2-ApplicationIntroduction.png)
 
 Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
 
@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
-![](http://skymedia.azureedge.net/docs/02.1-ApplicationArchitecture.png)
+![](http://skymedia.azureedge.net/docs/02.2-ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -53,11 +53,9 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
-* **App Service** - http://azure.microsoft.com/services/app-service/
-
-* **Function App** - http://azure.microsoft.com/services/functions/
-
 * **Event Grid** - http://azure.microsoft.com/services/event-grid/
+
+* **Functions** - http://azure.microsoft.com/services/functions/
 
 * **Media Services** - http://azure.microsoft.com/services/media-services/
 
@@ -69,19 +67,21 @@ The following Azure platform services were leveraged to create this sample media
   
   * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
+* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
+
 * **Video Indexer** - http://azure.microsoft.com/services/cognitive-services/video-indexer/
 
   * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
 
   * **Search** - http://azure.microsoft.com/services/search/
 
-* **Cognitive Search** - http://azure.microsoft.com/blog/announcing-cognitive-search-azure-search-cognitive-capabilities/
+* **Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
 
-* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
-
-* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
+* **App Service** - http://azure.microsoft.com/services/app-service/
 
 * **App Insights** - http://azure.microsoft.com/services/application-insights/
+
+* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
 * **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
 
@@ -91,4 +91,8 @@ Thanks.
 
 Rick Shahid
 
-rick.shahid@live.com
+Azure M&E Solutions
+
+Architect & Developer
+
+rick.shahid@microsoft.com
