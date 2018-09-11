@@ -91,8 +91,8 @@ Thanks.
 
 Rick Shahid
 
-Azure M&E Solutions
-
-Architect & Developer
-
 rick.shahid@microsoft.com
+
+Azure Architect & Developer
+
+Media & Entertainment Solutions
