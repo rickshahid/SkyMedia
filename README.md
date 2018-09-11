@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
 
-![](https://skymedia.azureedge.net/docs/02.3-ApplicationArchitecture.png)
+![](https://skymedia.azureedge.net/docs/02.4-ApplicationArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -83,7 +83,7 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
-* **Team Services** - http://azure.microsoft.com/services/visual-studio-team-services/
+* **DevOps Services** - http://azure.microsoft.com/services/devops/
 
 If you have any issues or suggestions, please let me know.
 
