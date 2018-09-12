@@ -78,7 +78,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Index()
         {
-            string accountMessage = string.Empty;
+            string userMessage = string.Empty;
             MediaStream[] mediaStreams = new MediaStream[] { };
 
             int streamNumber = 1;
@@ -118,7 +118,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     {
                         if (!IsStreamingEnabled(mediaClient))
                         {
-                            accountMessage = Constant.Message.StreamingEndpointNotStarted;
+                            userMessage = string.Format(Constant.Message.StreamingEndpointNotStarted, mediaClient.MediaAccount.Name);
                         }
                         else
                         {
@@ -129,11 +129,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
             catch (ApiErrorException apiEx)
             {
-                accountMessage = string.Concat(apiEx.Response.Content, apiEx.ToString());
+                userMessage = string.Concat(apiEx.Message, " (", apiEx.Response.Content, ")");
             }
             catch (Exception ex)
             {
-                accountMessage = ex.ToString();
+                userMessage = ex.Message;
             }
 
             ViewData["mediaStreams"] = mediaStreams;
@@ -143,7 +143,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["streamSkipCount"] = streamSkipCount;
             ViewData["streamLastPage"] = streamLastPage ? 1 : 0;
 
-            ViewData["accountMessage"] = accountMessage;
+            ViewData["userMessage"] = userMessage;
 
             return View();
         }

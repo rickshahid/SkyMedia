@@ -10,6 +10,7 @@ namespace AzureSkyMedia.PlatformServices
     {
         public const string AppSettingsFile = "appsettings.json";
         public const string ModelsDirectory = "Models";
+        public const string NotAvailable = "N/A";
 
         public struct TextDelimiter
         {
@@ -59,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string DirectoryPolicyIdProfileEdit = "Directory.PolicyId.ProfileEdit";
             public const string DirectoryPolicyIdPasswordReset = "Directory.PolicyId.PasswordReset";
 
-            public const string DatabaseRegionsRead = "Database.Regions.Read";
+            public const string DatabaseRegions = "Database.Regions";
 
             public const string StorageCdnEndpointUrl = "Storage.CdnEndpointUrl";
             public const string StorageSharedAccessMinutes = "Storage.SharedAccessMinutes";
@@ -254,7 +255,7 @@ namespace AzureSkyMedia.PlatformServices
         public struct Message
         {
             public const string UserPasswordForgotten = "AADB2C90118";
-            public const string StreamingEndpointNotStarted = "Your media account streaming endpoint has not been started.";
+            public const string StreamingEndpointNotStarted = "Your media account ({0}) does not have a streaming endpoint started.";
             public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
         }
     }

@@ -25,6 +25,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             Dictionary<string, string> storageAccounts = Account.GetStorageAccounts(authToken);
             ViewData["storageAccount"] = HomeController.GetListItems(storageAccounts);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["indexerEnabled"] = mediaClient.IndexerEnabled() ? 1 : 0;
+            }
             return View();
         }
     }

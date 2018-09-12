@@ -290,6 +290,8 @@ body {
 }
 
 .ui-dialog-content {
+    min-height: 30px !important;
+    max-width: 1080px;
     text-align: center;
     margin-top: 10px;
 }

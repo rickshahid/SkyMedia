@@ -1,0 +1,125 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "trafficManagerProfileName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "metadata": {
+        "description": "Subdomain name (<subdomain>.trafficmanager.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "trafficManagerRoutingMethod": {
+      "type": "string",
+      "defaultValue": "Performance",
+      "allowedValues": [
+        "Performance",
+        "Weighted",
+        "Priority",
+        "Geographic"
+      ],
+      "metadata": {
+        "description": "Routing method for the Traffic Manager resource."
+      }
+    },
+    "trafficManagerRoutingTimeToLive": {
+      "type": "int",
+      "defaultValue": 300,
+      "metadata": {
+        "description": "Routing record time-to-live (in seconds) for the Traffic Manager resource."
+      }
+    },
+    "trafficManagerEndpointGroupNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Resource group names for Traffic Manager endpoints."
+      }
+    },
+    "trafficManagerEndpointNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Endpoint names for the Traffic Manager resource."
+      }
+    }
+  },
+  "variables": {
+    "trafficManagerApiVersion": "2018-04-01",
+    "trafficManagerProfileName": "[toLower(parameters('trafficManagerProfileName'))]",
+    "trafficManagerProfileNameStaging": "[concat(variables('trafficManagerProfileName'), '-staging')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "apiVersion": "[variables('trafficManagerApiVersion')]",
+      "location": "global",
+      "name": "[variables('trafficManagerProfileName')]",
+      "properties": {
+        "trafficRoutingMethod": "[parameters('trafficManagerRoutingMethod')]",
+        "dnsConfig": {
+          "relativeName": "[variables('trafficManagerProfileName')]",
+          "ttl": "[parameters('trafficManagerRoutingTimeToLive')]"
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "apiVersion": "[variables('trafficManagerApiVersion')]",
+      "location": "global",
+      "name": "[variables('trafficManagerProfileNameStaging')]",
+      "properties": {
+        "trafficRoutingMethod": "[parameters('trafficManagerRoutingMethod')]",
+        "dnsConfig": {
+          "relativeName": "[variables('trafficManagerProfileNameStaging')]",
+          "ttl": "[parameters('trafficManagerRoutingTimeToLive')]"
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+      "apiVersion": "[variables('trafficManagerApiVersion')]",
+      "location": "global",
+      "name": "[concat(variables('trafficManagerProfileName'), '/', parameters('trafficManagerEndpointNames')[copyIndex('endpointNames')])]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerProfileName'))]"
+      ],
+      "copy": {
+        "name": "endpointNames",
+        "count": "[length(parameters('trafficManagerEndpointNames'))]"
+      },
+      "properties": {
+        "targetResourceId": "[resourceId(parameters('trafficManagerEndpointGroupNames')[copyIndex('endpointNames')], 'Microsoft.Web/sites', toLower(parameters('trafficManagerEndpointNames')[copyIndex('endpointNames')]))]",
+        "endpointStatus": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+      "apiVersion": "[variables('trafficManagerApiVersion')]",
+      "location": "global",
+      "name": "[concat(variables('trafficManagerProfileNameStaging'), '/', concat(parameters('trafficManagerEndpointNames')[copyIndex('endpointNames')]), '-Staging')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerProfileNameStaging'))]"
+      ],
+      "copy": {
+        "name": "endpointNames",
+        "count": "[length(parameters('trafficManagerEndpointNames'))]"
+      },
+      "properties": {
+        "targetResourceId": "[resourceId(parameters('trafficManagerEndpointGroupNames')[copyIndex('endpointNames')], 'Microsoft.Web/sites/slots', toLower(parameters('trafficManagerEndpointNames')[copyIndex('endpointNames')]), 'staging')]",
+        "endpointStatus": "Enabled"
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

@@ -15,19 +15,31 @@ function GetParentColumns(gridId) {
                     label: "Storage Type",
                     name: "accountType",
                     align: "center",
-                    width: typeWidth
+                    width: defaultWidth
+                },
+                {
+                    label: "Access Tier",
+                    name: "accessTier",
+                    align: "center",
+                    width: defaultWidth
                 },
                 {
                     label: "Media Type",
                     name: "type",
                     align: "center",
-                    width: typeWidth
+                    width: defaultWidth
+                },
+                {
+                    label: "HTTPS Only",
+                    name: "httpsOnly",
+                    align: "center",
+                    width: defaultWidth
                 },
                 {
                     label: "Encryption",
                     name: "encryption",
                     align: "center",
-                    width: typeWidth
+                    width: defaultWidth
                 },
                 {
                     label: "Replication",
@@ -63,7 +75,7 @@ function GetParentColumns(gridId) {
                     label: "Storage",
                     name: "properties.storageAccountName",
                     align: "center",
-                    width: defaultWidth
+                    width: typeWidthEx
                 },
                 {
                     label: "Size",

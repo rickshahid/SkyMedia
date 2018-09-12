@@ -33,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                string accountType = "N/A";
+                string accountType = Constant.NotAvailable;
                 if (_storageAccount != null && _storageAccount.Kind.HasValue)
                 {
                     switch (_storageAccount.Kind.Value)
@@ -46,10 +46,6 @@ namespace AzureSkyMedia.PlatformServices
                             break;
                         case Kind.BlobStorage:
                             accountType = "Blob";
-                            if (_storageAccount.AccessTier.HasValue)
-                            {
-                                accountType = string.Concat(accountType, " ", _storageAccount.AccessTier.Value.ToString());
-                            }
                             break;
                     }
                 }
@@ -57,11 +53,41 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        public string AccessTier
+        {
+            get
+            {
+                string accessTier = Constant.NotAvailable;
+                if (_storageAccount != null && _storageAccount.AccessTier.HasValue)
+                {
+                    accessTier = _storageAccount.AccessTier.Value.ToString();
+                }
+                return accessTier;
+            }
+        }
+
+        public string HttpsOnly
+        {
+            get
+            {
+                string httpsOnly = Constant.NotAvailable;
+                if (_storageAccount != null)
+                {
+                    if (!_storageAccount.EnableHttpsTrafficOnly.HasValue)
+                    {
+                        _storageAccount.EnableHttpsTrafficOnly = false;
+                    }
+                    httpsOnly = _storageAccount.EnableHttpsTrafficOnly.Value.ToString();
+                }
+                return httpsOnly;
+            }
+        }
+
         public string Encryption
         {
             get
             {
-                string encryption = "N/A";
+                string encryption = Constant.NotAvailable;
                 if (_storageAccount != null)
                 {
                     if (_storageAccount.Encryption.Services.Blob.Enabled.HasValue &&
@@ -82,7 +108,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                string replication = "N/A";
+                string replication = Constant.NotAvailable;
                 if (_storageAccount != null)
                 {
                     replication = _storageAccount.Sku.Name.ToString();
@@ -96,7 +122,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                string primaryRegion = "N/A";
+                string primaryRegion = Constant.NotAvailable;
                 if (_storageAccount != null)
                 {
                     primaryRegion = _storageAccount.PrimaryLocation.ToUpperInvariant();
@@ -109,7 +135,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             get
             {
-                string secondaryRegion = "N/A";
+                string secondaryRegion = Constant.NotAvailable;
                 if (_storageAccount != null && !string.IsNullOrEmpty(_storageAccount.SecondaryLocation))
                 {
                     secondaryRegion = _storageAccount.SecondaryLocation.ToUpperInvariant();
@@ -128,11 +154,9 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                mediaStorage = string.Concat(" (Type: ", this.AccountType);
-                mediaStorage = string.Concat(mediaStorage, ", Encryption: ", this.Encryption);
-                mediaStorage = string.Concat(mediaStorage, ", Replication: ", this.Replication);
-                mediaStorage = string.Concat(mediaStorage, ", Primary: ", this.PrimaryRegion);
-                mediaStorage = string.Concat(mediaStorage, ", Secondary: ", this.SecondaryRegion, ")");
+                mediaStorage = string.Concat(" (Storage Type: ", this.AccountType);
+                mediaStorage = string.Concat(mediaStorage, ", Access Tier: ", this.AccessTier);
+                mediaStorage = string.Concat(mediaStorage, ", Media Type: ", this.Type, ")");
             }
             return mediaStorage;
         }

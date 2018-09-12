@@ -78,7 +78,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                     outputAssetDescription = inputAsset.Description;
                 }
-                if (mediaClient.IndexerIsEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
+                if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                 {
                     string videoUrl = inputFileUrl;
                     string videoName = null;
@@ -114,17 +114,18 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public JsonResult Publish(string jobName)
         {
-            MediaPublish mediaPublish;
+            string notificationMessage = string.Empty;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
                 string collectionId = Constant.Database.Collection.MediaPublish;
-                mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
+                MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
                 if (mediaPublish != null)
                 {
                     mediaPublish = MediaClient.PublishJobOutput(mediaPublish);
+                    notificationMessage = mediaPublish.UserContact.NotificationMessage;
                 }
             }
-            return Json(mediaPublish);
+            return Json(notificationMessage);
         }
 
         public JsonResult List()

@@ -1,0 +1,123 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageServiceName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 23,
+      "metadata": {
+        "description": "Name must be between 3 and 23 characters (letters and numbers only)."
+      }
+    },
+    "storageServiceHttpsOnly": {
+      "type": "bool",
+      "metadata": {
+        "description": "Designates if HTTPS is required to establish a storage connection."
+      }
+    },
+    "storageServiceEncryptionEnabled": {
+      "type": "bool",
+      "metadata": {
+        "description": "Designates if storage data encryption at rest is enabled."
+      }
+    },
+    "mediaServiceName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 24,
+      "metadata": {
+        "description": "Name must be between 3 and 24 characters (letters and numbers only)."
+      }
+    }
+  },
+  "variables": {
+    "storageApiVersion": "2018-07-01",
+    "storageServiceName": "[toLower(parameters('storageServiceName'))]",
+    "storageServiceName1": "[concat(variables('storageServiceName'), '1')]",
+    "storageServiceName2": "[concat(variables('storageServiceName'), '2')]",
+    "mediaApiVersion": "2018-06-01-preview",
+    "mediaServiceName": "[toLower(parameters('mediaServiceName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "[variables('storageApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('storageServiceName1')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_RAGRS"
+      },
+      "properties": {
+        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "[variables('storageApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('storageServiceName2')]",
+      "kind": "BlobStorage",
+      "sku": {
+        "name": "Standard_RAGRS"
+      },
+      "properties": {
+        "accessTier": "Cool",
+        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Media/mediaServices",
+      "apiVersion": "[variables('mediaApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('mediaServiceName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName1'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2'))]"
+      ],
+      "properties": {
+        "storageAccounts": [
+          {
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName1'))]",
+            "type": "Primary"
+          },
+          {
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2'))]",
+            "type": "Secondary"
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "storageAccountConnection1": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName1'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName1')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "storageAccountConnection2": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName2'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "mediaAccountId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName')), variables('mediaApiVersion')).mediaServiceId]"
+    }
+  }
+}

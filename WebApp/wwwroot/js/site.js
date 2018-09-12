@@ -50,10 +50,11 @@ function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signOut";
 }
-function GetMediaPlayer(playerId, userId, accountName, galleryView, spriteVttUrl) {
+function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, spriteVttUrl) {
     var playerOptions = {
         fluid: true,
         controls: true,
+        autoplay: autoPlay,
         width: galleryView ? "400" : "100%",
         height: galleryView ? "400" : "auto",
         playbackSpeed: {

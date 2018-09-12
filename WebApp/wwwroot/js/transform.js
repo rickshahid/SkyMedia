@@ -1,20 +1,16 @@
-﻿function SetProcessingOptions() {
-    switch (processingOption.id) {
+﻿function SetIntelligenceOptions(intelligenceOption) {
+    switch (intelligenceOption.id) {
         case "videoAnalyzer":
             $("#audioAnalyzer").prop("checked", false);
-            $("#audioAnalyzer").prop("disabled", processingOption.checked);
+            $("#audioAnalyzer").prop("disabled", intelligenceOption.checked);
             break;
         case "videoIndexer":
             $("#audioIndexer").prop("checked", false);
-            $("#audioIndexer").prop("disabled", processingOption.checked);
+            $("#audioIndexer").prop("disabled", intelligenceOption.checked);
             break;
         case "presetType2":
             $("#presetType3").prop("checked", false);
-            $("#presetType3").prop("disabled", processingOption.checked);
-            break;
-        case "presetType4":
-            $("#presetType5").prop("checked", false);
-            $("#presetType5").prop("disabled", processingOption.checked);
+            $("#presetType3").prop("disabled", intelligenceOption.checked);
             break;
     }
 }

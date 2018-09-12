@@ -98,8 +98,8 @@
                             </tr>
                             <tr>
                                 <td class="inputOption">
-                                    @Html.CheckBox("presetType2", false, new { value = "VideoAnalyzer", onchange = "SetProcessingOptions(this)" })
-                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
+                                    @Html.CheckBox("presetType2", false, new { value = "VideoAnalyzer", onchange = "SetIntelligenceOptions(this)" })
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
                                         Video Analyzer / Indexer
                                     </span>
                                     @Html.Hidden("presetName2", "VideoAnalyzer")
@@ -116,7 +116,7 @@
                             <tr>
                                 <td class="inputOption">
                                     @Html.CheckBox("presetType3", false, new { value = "AudioAnalyzer" })
-                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
                                         Audio Analyzer / Indexer
                                     </span>
                                     @Html.Hidden("presetName3", "AudioAnalyzer")

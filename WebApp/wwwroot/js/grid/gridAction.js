@@ -48,8 +48,26 @@ function ReindexVideo(indexId, videoName) {
     }
     ConfirmMessage(title, message, onConfirm);
 }
+function PublishAsset(assetName) {
+    var title = "Confirm Publish Asset";
+    var message = "Are you sure you want to publish the '" + FormatValue(assetName) + "' asset?";
+    var onConfirm = function () {
+        SetCursor(true);
+        $.post("/asset/publish",
+            {
+                assetName: decodeURIComponent(assetName)
+            },
+            function (playerUrl) {
+                SetCursor(false);
+                DisplayMessage("Asset Publish Message", playerUrl);
+            }
+        );
+        $(this).dialog("close");
+    };
+    ConfirmMessage(title, message, onConfirm);
+}
 function PublishJobOutput(jobName) {
-    var title = "Confirm Job Output Publish";
+    var title = "Confirm Publish Job Output";
     var message = "Are you sure you want to publish the '" + FormatValue(jobName) + "' job output?";
     var onConfirm = function () {
         SetCursor(true);
@@ -57,14 +75,13 @@ function PublishJobOutput(jobName) {
             {
                 jobName: decodeURIComponent(jobName)
             },
-            function (mediaPublish) {
+            function (notificationMessage) {
                 SetCursor(false);
-                var message = mediaPublish.userContact.notificationMessage;
-                DisplayMessage("Job Output Publish Message", message);
+                DisplayMessage("Job Output Publish Message", notificationMessage);
             }
         );
         $(this).dialog("close");
-    }
+    };
     ConfirmMessage(title, message, onConfirm);
 }
 function CancelJob(jobName, transformName) {
@@ -217,13 +234,10 @@ function FormatActions(value, grid, row) {
         var cancelHtml = "";
         var publishHtml = "";
         switch (grid.gid) {
-            case "indexerInsights":
-                onClick = "DisplayInsight(null,null,'" + entityName + "')";
-                insightHtml = "<button id='" + row.id + "_insight' class='siteButton' onclick=" + onClick + ">";
-                insightHtml = insightHtml + "<img src='" + _storageCdnUrl + "/MediaInsight.png'></button>";
-                onClick = "ReindexVideo('" + row.id + "','" + encodeURIComponent(entityName) + "')";
-                reindexHtml = "<button id='" + row.id + "_reindex' class='siteButton' onclick=" + onClick + ">";
-                reindexHtml = reindexHtml + "<img src='" + _storageCdnUrl + "/MediaInsightReindex.png'></button>";
+            case "assets":
+                onClick = "PublishAsset('" + encodeURIComponent(entityName) + "')";
+                publishHtml = "<button id='" + row.id + "_publish' class='siteButton' onclick=" + onClick + ">";
+                publishHtml = publishHtml + "<img src='" + _storageCdnUrl + "/MediaJobPublish.png'></button>";
                 break;
             case "transformJobs":
                 switch (row["properties.state"]) {
@@ -241,6 +255,14 @@ function FormatActions(value, grid, row) {
                         publishHtml = publishHtml + "<img src='" + _storageCdnUrl + "/MediaJobPublish.png'></button>";
                         break;
                 }
+                break;
+            case "indexerInsights":
+                onClick = "DisplayInsight(null,null,'" + entityName + "')";
+                insightHtml = "<button id='" + row.id + "_insight' class='siteButton' onclick=" + onClick + ">";
+                insightHtml = insightHtml + "<img src='" + _storageCdnUrl + "/MediaInsight.png'></button>";
+                onClick = "ReindexVideo('" + row.id + "','" + encodeURIComponent(entityName) + "')";
+                reindexHtml = "<button id='" + row.id + "_reindex' class='siteButton' onclick=" + onClick + ">";
+                reindexHtml = reindexHtml + "<img src='" + _storageCdnUrl + "/MediaInsightReindex.png'></button>";
                 break;
         }
         var editHtml = "";

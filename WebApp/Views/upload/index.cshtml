@@ -1,4 +1,8 @@
-﻿@section head {
+﻿@{
+    int indexerEnabled = int.Parse(ViewData["indexerEnabled"].ToString());
+}
+
+@section head {
     <link type="text/css" rel="stylesheet" href="~/lib/plupload/js/jquery.ui.plupload/css/jquery.ui.plupload.css" />
     <link type="text/css" rel="stylesheet" href="~/css/upload.css" />
     <script type="text/javascript" src="~/lib/plupload/js/moxie.min.js"></script>
@@ -10,6 +14,10 @@
         $(function () {
             SetStorageTip();
             CreateUploader();
+            if (@indexerEnabled == 0) {
+                $("#videoIndexer").prop("disabled", true);
+                $("#audioIndexer").prop("disabled", true);
+            }
         })
     </script>
 }
@@ -57,7 +65,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoAnalyzer", false, new { onchange = "SetProcessingOptions(this)" })
+            @Html.CheckBox("videoAnalyzer", false, new { onchange = "SetIntelligenceOptions(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
@@ -65,7 +73,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoIndexer", false, new { onchange = "SetProcessingOptions(this)" })
+            @Html.CheckBox("videoIndexer", false, new { onchange = "SetIntelligenceOptions(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
@@ -83,7 +91,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("audioAnalyzer", false, new { onchange = "SetProcessingOptions(this)" })
+            @Html.CheckBox("audioAnalyzer", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
@@ -91,7 +99,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("audioIndexer", false, new { onchange = "SetProcessingOptions(this)" })
+            @Html.CheckBox("audioIndexer", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">

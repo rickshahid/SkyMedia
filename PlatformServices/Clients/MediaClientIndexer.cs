@@ -39,7 +39,7 @@ namespace AzureSkyMedia.PlatformServices
             return requestUrl;
         }
 
-        public bool IndexerIsEnabled()
+        public bool IndexerEnabled()
         {
             return !string.IsNullOrEmpty(_indexerAccountId);
         }

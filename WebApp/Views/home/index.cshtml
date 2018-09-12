@@ -15,10 +15,10 @@
     string storageCdnUrl = ViewData["storageCdnUrl"].ToString();
 
     string userId = ViewData["userId"] as string;
-    string authToken = ViewData["authToken"] as string;
+    string userMessage = ViewData["userMessage"] as string;
 
+    string authToken = ViewData["authToken"] as string;
     string accountName = ViewData["accountName"] as string;
-    string accountMessage = ViewData["accountMessage"] as string;
 }
 
 @section head {
@@ -33,7 +33,7 @@
         var _streamTunerPageSize = @streamTunerPageSize;
         var _streamLastPage = @streamLastPage == 1;
         $(function () {
-            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", false);
+            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", false, false);
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
             _mediaPlayer.ready(function () {
@@ -62,8 +62,8 @@
                 }
             });
             SetMediaStream(false, false);
-            if ("@accountMessage" != "") {
-                DisplayMessage("Account Message", "@accountMessage");
+            if ("@userMessage" != "") {
+                DisplayMessage("User Message", "@userMessage");
             }
         })
     </script>

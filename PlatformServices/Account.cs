@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
             DeleteEntities<StreamingPolicy>(mediaClient, MediaEntity.StreamingPolicy);
             DeleteEntities<StreamingLocator>(mediaClient, MediaEntity.StreamingLocator);
             DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
-            if (mediaClient.IndexerIsEnabled() && !skipIndexer)
+            if (mediaClient.IndexerEnabled() && !skipIndexer)
             {
                 JArray insights = mediaClient.IndexerGetInsights();
                 foreach (JToken insight in insights)
@@ -53,7 +53,7 @@ namespace AzureSkyMedia.PlatformServices
             int streamingLocatorCount = mediaClient.GetEntityCount<StreamingLocator>(MediaEntity.StreamingLocator);
             int liveEventCount = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputCount = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
-            int indexerInsights = !mediaClient.IndexerIsEnabled() ? 0 : mediaClient.IndexerGetInsights().Count;
+            int indexerInsights = !mediaClient.IndexerEnabled() ? 0 : mediaClient.IndexerGetInsights().Count;
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(Constant.TextFormatter.NumericLong), "/account/storageAccounts" });

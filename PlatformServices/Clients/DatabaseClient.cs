@@ -24,12 +24,12 @@ namespace AzureSkyMedia.PlatformServices
             string accountKey = accountCredentials[1];
             _databaseId = accountCredentials[2];
 
-            settingKey = Constant.AppSettingKey.DatabaseRegionsRead;
-            string[] dataRegionsRead = AppSetting.GetValue(settingKey, true);
+            settingKey = Constant.AppSettingKey.DatabaseRegions;
+            string[] regionNames = AppSetting.GetValue(settingKey, true);
             ConnectionPolicy connectionPolicy = new ConnectionPolicy();
-            foreach (string dataRegionRead in dataRegionsRead)
+            foreach (string regionName in regionNames)
             {
-                connectionPolicy.PreferredLocations.Add(dataRegionRead);
+                connectionPolicy.PreferredLocations.Add(regionName);
             }
 
             _cosmos = new DocumentClient(new Uri(accountEndpoint), accountKey, connectionPolicy);

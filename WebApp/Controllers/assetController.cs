@@ -43,7 +43,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     Job job = null;
                     string indexId = null;
-                    if (mediaClient.IndexerIsEnabled() && (videoIndexer || audioIndexer))
+                    if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
                     {
                         StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
                         MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
@@ -71,6 +71,20 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
             }
             return jobs.Count > 0 ? Json(jobs.ToArray()) : Json(inputAssets);
+        }
+
+        public JsonResult Publish(string assetName)
+        {
+            string playerUrl;
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
+                string streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
+                StreamingLocator locator = mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
+                playerUrl = mediaClient.GetPlayerUrl(locator);
+            }
+            return Json(playerUrl);
         }
 
         public void Create(int assetCount, string assetType, bool assetPublish)

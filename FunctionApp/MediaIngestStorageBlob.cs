@@ -177,7 +177,7 @@ namespace AzureSkyMedia.FunctionApp
                 }
             }
             string indexId = null;
-            if (mediaClient.IndexerIsEnabled() && (videoIndexer || audioIndexer))
+            if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
             {
                 string videoUrl = ingestManifest.JobInputFileUrl;
                 if (string.IsNullOrEmpty(videoUrl))
