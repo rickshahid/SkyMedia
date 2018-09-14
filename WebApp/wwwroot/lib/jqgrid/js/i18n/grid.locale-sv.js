@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid Swedish Translation
  * Harald Normann harald.normann@wts.se, harald.normann@gmail.com
@@ -6,59 +7,22 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["sv"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Visar {0} - {1} av {2}",
 		emptyrecords: "Det finns inga poster att visa",
 		loadtext: "Laddar...",
-		pgtext : "Sida {0} av {1}",
-		savetext: "Saving...",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Page:",
-		recordPage : "Records per Page",
-		nomorerecs : "No more records...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."
+		pgtext : "Sida {0} av {1}"
 	},
 	search : {
 		caption: "Sök Poster - Ange sökvillkor",
 		Find: "Sök",
 		Reset: "Nollställ Villkor",
-		odata: [{ oper:'eq', text:"lika"},{ oper:'ne', text:"ej lika"},{ oper:'lt', text:"mindre"},{ oper:'le', text:"mindre eller lika"},{ oper:'gt', text:"större"},{ oper:'ge', text:"större eller lika"},{ oper:'bw', text:"börjar med"},{ oper:'bn', text:"börjar inte med"},{ oper:'in', text:"tillhör"},{ oper:'ni', text:"tillhör inte"},{ oper:'ew', text:"slutar med"},{ oper:'en', text:"slutar inte med"},{ oper:'cn', text:"innehåller"},{ oper:'nc', text:"innehåller inte"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'between'}],
+		odata: [{ oper:'eq', text:"lika"},{ oper:'ne', text:"ej lika"},{ oper:'lt', text:"mindre"},{ oper:'le', text:"mindre eller lika"},{ oper:'gt', text:"större"},{ oper:'ge', text:"större eller lika"},{ oper:'bw', text:"börjar med"},{ oper:'bn', text:"börjar inte med"},{ oper:'in', text:"tillhör"},{ oper:'ni', text:"tillhör inte"},{ oper:'ew', text:"slutar med"},{ oper:'en', text:"slutar inte med"},{ oper:'cn', text:"innehåller"},{ oper:'nc', text:"innehåller inte"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 		groupOps: [	{ op: "AND", text: "alla" },	{ op: "OR",  text: "eller" }	],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "Ny Post",
@@ -109,12 +73,7 @@ $.jgrid.regional["sv"] = {
 		alertcap: "Varning",
 		alerttext: "Ingen rad är markerad",
 		viewtext: "",
-		viewtitle: "Visa markerad rad",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "Visa markerad rad"
 	},
 	col : {
 		caption: "Välj Kolumner",
@@ -158,26 +117,13 @@ $.jgrid.regional["sv"] = {
 	            UniversalSortableDateTime: "Y-m-d H:i:sO",
 	            YearMonth: "F, Y"
 			},
-			reformatAfterEdit : false,
-			userLocalTime : false
+			reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 		target: '',
 		checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

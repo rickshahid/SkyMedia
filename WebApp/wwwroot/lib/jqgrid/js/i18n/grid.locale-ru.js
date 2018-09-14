@@ -1,66 +1,28 @@
+;(function($){
 /**
  * jqGrid Russian Translation v1.0 02.07.2009 (based on translation by Alexey Kanaev v1.1 21.01.2009, http://softcore.com.ru)
  * Sergey Dyagovchenko
  * http://d.sumy.ua
- * Tony Tomov
- * http://www.guriddo.net
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["ru"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Просмотр {0} - {1} из {2}",
 		emptyrecords: "Нет записей для просмотра",
 		loadtext: "Загрузка...",
-		pgtext : "Стр. {0} из {1}",
-		savetext: "Сохранения...",
-		pgfirst : "Первая",
-		pglast : "Последняя",
-		pgnext : "Следующая",
-		pgprev : "Предыдущая",
-		pgrecs : "Записей на стр.",
-		showhide: "Показать/Скрыть таблицу",
-		// mobile
-		pagerCaption : "Грид::Параметры страницы",
-		pageText : "Страница:",
-		recordPage : "Записей на стр.",
-		nomorerecs : "Нет больше записей...",
-		scrollPullup: "Потяните, чтобы загрузить более...",
-		scrollPulldown : "Потяните вниз чтобы обновить...",
-		scrollRefresh : "Отпустите, чтобы обновить..."
+		pgtext : "Стр. {0} из {1}"
 	},
 	search : {
 		caption: "Поиск...",
 		Find: "Найти",
 		Reset: "Сброс",
-		odata: [{ oper:'eq', text:"равно"},{ oper:'ne', text:"не равно"},{ oper:'lt', text:"меньше"},{ oper:'le', text:"меньше или равно"},{ oper:'gt', text:"больше"},{ oper:'ge', text:"больше или равно"},{ oper:'bw', text:"начинается с"},{ oper:'bn', text:"не начинается с"},{ oper:'in', text:"находится в"},{ oper:'ni', text:"не находится в"},{ oper:'ew', text:"заканчивается на"},{ oper:'en', text:"не заканчивается на"},{ oper:'cn', text:"содержит"},{ oper:'nc', text:"не содержит"},{ oper:'nu', text:"равно NULL"},{ oper:'nn', text:"не равно NULL"}, {oper:'bt', text:'между'}],
+		odata: [{ oper:'eq', text:"равно"},{ oper:'ne', text:"не равно"},{ oper:'lt', text:"меньше"},{ oper:'le', text:"меньше или равно"},{ oper:'gt', text:"больше"},{ oper:'ge', text:"больше или равно"},{ oper:'bw', text:"начинается с"},{ oper:'bn', text:"не начинается с"},{ oper:'in', text:"находится в"},{ oper:'ni', text:"не находится в"},{ oper:'ew', text:"заканчивается на"},{ oper:'en', text:"не заканчивается на"},{ oper:'cn', text:"содержит"},{ oper:'nc', text:"не содержит"},{ oper:'nu', text:"равно NULL"},{ oper:'nn', text:"не равно NULL"}],
 		groupOps: [	{ op: "AND", text: "все" }, { op: "OR", text: "любой" }],
-		operandTitle : "Выбрать поисковую операцию.",
-		resetTitle : "Сбросить поиск",
-		addsubgrup : "Добавить группу",
-		addrule : "Добавить правило",
-		delgroup : "Удалить группу",
-		delrule : "Удалить правило"
+		operandTitle : "Click to select search operation.",
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "Добавить запись",
@@ -111,12 +73,7 @@ $.jgrid.regional["ru"] = {
 		alertcap: "Внимание",
 		alerttext: "Пожалуйста, выберите запись",
 		viewtext: "",
-		viewtitle: "Просмотреть выбранную запись",
-		savetext: "",
-		savetitle: "Сохранить запись",
-		canceltext: "",
-		canceltitle : "Отмена сохранения",
-		selectcaption : "Действия..."
+		viewtitle: "Просмотреть выбранную запись"
 	},
 	col : {
 		caption: "Показать/скрыть столбцы",
@@ -160,26 +117,13 @@ $.jgrid.regional["ru"] = {
 				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
 			},
-			reformatAfterEdit : false,
-			userLocalTime : false
+			reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 		target: '',
 		checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Сортировка по возрастанию",
-		sortdesc : "Сортировка по убыванию",
-		columns : "Колонны",
-		filter : "Филтрировать",
-		grouping : "Группа по",
-		ungrouping : "Разгруппировать",
-		searchTitle : "Строки со значениями",
-		freeze : "Закрепление",
-		unfreeze : "Отмена закрепление",
-		reorder : "Переместить в порядок"
 	}
-};
-}));
+});
+})(jQuery);

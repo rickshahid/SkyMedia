@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid German Translation
  * Version 1.0.0 (developed for jQuery Grid 3.3.1)
@@ -12,68 +13,27 @@
  * Oleg Kiriljuk oleg.kiriljuk@ok-soft-gmbh.com
  * the format corresponds now the format from
  * https://github.com/jquery/globalize/blob/master/lib/cultures/globalize.culture.de.js
- * 
- * Updated for jqGrid 4.8
- * Tony Tomov
- * http://www.guriddo.net
  *
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["de"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Zeige {0} - {1} von {2}",
 		emptyrecords: "Keine Datensätze vorhanden",
 		loadtext: "Lädt...",
-		savetext: "Speichern...",
-		pgtext : "Seite {0} von {1}",
-		pgfirst : "erste Seite",
-		pglast : "letzte Seite",
-		pgnext : "nächste Seite",
-		pgprev : "vorherige Seite",
-		pgrecs : "Datensätze pro Seite",
-		showhide: "Toggle erweitern reduzieren",
-		// mobile
-		pagerCaption : "Grid::Seite Optionen",
-		pageText : "Seite:",
-		recordPage : "Ergebnisse pro Seite",
-		nomorerecs : "Keine weiteren Datensätze...",
-		scrollPullup: "Ziehen Sie, um mehr zu laden...",
-		scrollPulldown : "Pulldown zu aktualisieren...",
-		scrollRefresh : "Lassen Sie zu aktualisieren..."
+		pgtext : "Seite {0} von {1}"
 	},
 	search : {
 		caption: "Suche...",
 		Find: "Suchen",
 		Reset: "Zurücksetzen",
-		odata: [{ oper:'eq', text:"gleich"},{ oper:'ne', text:"ungleich"},{ oper:'lt', text:"kleiner"},{ oper:'le', text:"kleiner gleich"},{ oper:'gt', text:"größer"},{ oper:'ge', text:"größer gleich"},{ oper:'bw', text:"beginnt mit"},{ oper:'bn', text:"beginnt nicht mit"},{ oper:'in', text:"ist in"},{ oper:'ni', text:"ist nicht in"},{ oper:'ew', text:"endet mit"},{ oper:'en', text:"endet nicht mit"},{ oper:'cn', text:"enthält"},{ oper:'nc', text:"enthält nicht"}, { oper:'nu', text:"ist Null" }, { oper:'nn', text:"ist nicht Null" }, {oper:'bt', text:'zwischen'}],
+		odata: [{ oper:'eq', text:"gleich"},{ oper:'ne', text:"ungleich"},{ oper:'lt', text:"kleiner"},{ oper:'le', text:"kleiner gleich"},{ oper:'gt', text:"größer"},{ oper:'ge', text:"größer gleich"},{ oper:'bw', text:"beginnt mit"},{ oper:'bn', text:"beginnt nicht mit"},{ oper:'in', text:"ist in"},{ oper:'ni', text:"ist nicht in"},{ oper:'ew', text:"endet mit"},{ oper:'en', text:"endet nicht mit"},{ oper:'cn', text:"enthält"},{ oper:'nc', text:"enthält nicht"}, { oper:'nu', text:"ist Null" }, { oper:'nn', text:"ist nicht Null" }],
 		groupOps: [{ op: "AND", text: "alle" },{ op: "OR", text: "mindestens eine" }],
-		operandTitle : "Klicken Sie auf Suchoperation zu wählen.",
-		resetTitle : "Reset Suche Wert",
-		addsubgrup : "Gruppe hinzufügen",
-		addrule : "In der Regel",
-		delgroup : "Gruppe löschen",
-		delrule : "Regel löschen"
+		operandTitle : "Click to select search operation.",
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "Datensatz hinzufügen",
@@ -124,12 +84,7 @@ $.jgrid.regional["de"] = {
 		alertcap: "Warnung",
 		alerttext: "Bitte Zeile auswählen",
 		viewtext: "",
-		viewtitle: "Ausgewählte Zeile anzeigen",
-		savetext: "",
-		savetitle: "Zeile speihern",
-		canceltext: "",
-		canceltitle : "Zeile abbrechen",
-		selectcaption : "Aktionen..."
+		viewtitle: "Ausgewählte Zeile anzeigen"
 	},
 	col : {
 		caption: "Spalten auswählen",
@@ -206,26 +161,13 @@ $.jgrid.regional["de"] = {
 				//    Y - A full numeric representation of a year, 4 digits
 				YearMonth: "F Y" // in jQuery UI Datepicker: "MMMM yyyy"
 			},
-			reformatAfterEdit : false,
-			userLocalTime : false
+			reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 		target: '',
 		checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Aufsteigend sortieren",
-		sortdesc : "Absteigend sortieren",
-		columns : "Spalte",
-		filter : "Filter",
-		grouping : "Gruppiere nach",
-		ungrouping : "Gruppierung aufheben",
-		searchTitle : "Erhalten Sie Artikel mit Wert:",
-		freeze : "Einfrieren",
-		unfreeze : "Freigeben",
-		reorder : "Bewegen neu anordnen"
 	}
-};
-}));
+});
+})(jQuery);

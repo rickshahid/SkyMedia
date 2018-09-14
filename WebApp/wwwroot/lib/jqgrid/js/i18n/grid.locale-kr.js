@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid English Translation
  * Tony Tomov tony@trirand.com
@@ -6,59 +7,22 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["kr"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "보기 {0} - {1} / {2}",
 		emptyrecords: "표시할 행이 없습니다",
 		loadtext: "조회중...",
-		pgtext : "페이지 {0} / {1}",
-		savetext: "Saving...",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Page:",
-		recordPage : "Records per Page",
-		nomorerecs : "No more records...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."
+		pgtext : "페이지 {0} / {1}"
 	},
 	search : {
 		caption: "검색...",
 		Find: "찾기",
 		Reset: "초기화",
-		odata: [{ oper:'eq', text:"같다"},{ oper:'ne', text:"같지 않다"},{ oper:'lt', text:"작다"},{ oper:'le', text:"작거나 같다"},{ oper:'gt', text:"크다"},{ oper:'ge', text:"크거나 같다"},{ oper:'bw', text:"로 시작한다"},{ oper:'bn', text:"로 시작하지 않는다"},{ oper:'in', text:"내에 있다"},{ oper:'ni', text:"내에 있지 않다"},{ oper:'ew', text:"로 끝난다"},{ oper:'en', text:"로 끝나지 않는다"},{ oper:'cn', text:"내에 존재한다"},{ oper:'nc', text:"내에 존재하지 않는다"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'between'}],
+		odata: [{ oper:'eq', text:"같다"},{ oper:'ne', text:"같지 않다"},{ oper:'lt', text:"작다"},{ oper:'le', text:"작거나 같다"},{ oper:'gt', text:"크다"},{ oper:'ge', text:"크거나 같다"},{ oper:'bw', text:"로 시작한다"},{ oper:'bn', text:"로 시작하지 않는다"},{ oper:'in', text:"내에 있다"},{ oper:'ni', text:"내에 있지 않다"},{ oper:'ew', text:"로 끝난다"},{ oper:'en', text:"로 끝나지 않는다"},{ oper:'cn', text:"내에 존재한다"},{ oper:'nc', text:"내에 존재하지 않는다"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 		groupOps: [	{ op: "AND", text: "전부" },	{ op: "OR",  text: "임의" }	],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "행 추가",
@@ -110,12 +74,7 @@ $.jgrid.regional["kr"] = {
 		alertcap: "경고",
 		alerttext: "행을 선택하세요",
 		viewtext: "",
-		viewtitle: "선택된 행 조회",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "선택된 행 조회"
 	},
 	col : {
 		caption: "열을 선택하세요",
@@ -159,26 +118,13 @@ $.jgrid.regional["kr"] = {
 				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
 			},
-			reformatAfterEdit : false,
-			userLocalTime : false
+			reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 		target: '',
 		checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

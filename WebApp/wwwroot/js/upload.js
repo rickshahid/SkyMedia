@@ -61,37 +61,6 @@ function CreateWorkflow(files) {
     );
 }
 function CreateUploader() {
-    var eventHandlers = {
-        BeforeUpload: function (uploader, file) {
-            uploader.settings.multipart_params = {
-                storageAccount: $("#storageAccount").val(),
-                contentType: file.type
-            };
-        },
-        StateChanged: function (uploader) {
-            var isBusy = false;
-            if (uploader.state == plupload.STARTED) {
-                _uploadStartTime = new Date();
-                isBusy = true;
-            }
-            SetCursor(isBusy);
-        },
-        UploadComplete: function (uploader, files) {
-            if (uploader.total.failed == 0) {
-                var uploadTime = GetUploadTime();
-                $("#mediaUploadMessage").text("Upload Elapsed Time: " + uploadTime);
-                CreateWorkflow(files);
-            }
-        },
-        Error: function (uploader, error) {
-            var title = "Error Message";
-            var message = error.message;
-            if (error.response != null && error.response != "") {
-                message = error.response;
-            }
-            DisplayMessage(title, message);
-        }
-    };
     $("#mediaFileUploader").plupload({
         url: "/upload/block",
         runtimes: "html5",
@@ -105,6 +74,36 @@ function CreateUploader() {
             prevent_duplicates: true,
             max_file_size: "4GB"
         },
-        init: eventHandlers
+        init: {
+            BeforeUpload: function (uploader, file) {
+                uploader.settings.multipart_params = {
+                    storageAccount: $("#storageAccount").val(),
+                    contentType: file.type
+                };
+            },
+            StateChanged: function (uploader) {
+                var isBusy = false;
+                if (uploader.state == plupload.STARTED) {
+                    _uploadStartTime = new Date();
+                    isBusy = true;
+                }
+                SetCursor(isBusy);
+            },
+            UploadComplete: function (uploader, files) {
+                if (uploader.total.failed == 0) {
+                    var uploadTime = GetUploadTime();
+                    $("#mediaUploadMessage").text("Upload Elapsed Time: " + uploadTime);
+                    CreateWorkflow(files);
+                }
+            },
+            Error: function (uploader, error) {
+                var title = "Error Message";
+                var message = error.message;
+                if (error.response != null && error.response != "") {
+                    message = error.response;
+                }
+                DisplayMessage(title, message);
+            }
+        }
     });
 }

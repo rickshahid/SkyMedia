@@ -25,7 +25,6 @@
   <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
   <!-- vertag<:>end -->
   <ItemGroup>
-    <None Include="Deployment.FDT.ps1" />
     <None Include="Deployment.Global.ps1" />
     <None Include="Deployment.Global.Traffic.ps1" />
     <None Include="Deployment.Media.Render.ps1" />
@@ -34,7 +33,6 @@
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
-    <None Include="Template.FDT.json" />
     <None Include="Template.Global.json" />
     <None Include="Template.Global.Traffic.json" />
     <None Include="Template.Media.Render.json" />

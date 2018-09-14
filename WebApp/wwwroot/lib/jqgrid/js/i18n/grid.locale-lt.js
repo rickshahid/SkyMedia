@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid Lithuanian Translation
  * aur1mas aur1mas@devnet.lt
@@ -6,59 +7,22 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["lt"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Peržiūrima {0} - {1} iš {2}",
 		emptyrecords: "Įrašų nėra",
 		loadtext: "Kraunama...",
-		pgtext : "Puslapis {0} iš {1}",
-		savetext: "Saving...",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Page:",
-		recordPage : "Records per Page",
-		nomorerecs : "No more records...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."
+		pgtext : "Puslapis {0} iš {1}"
 	},
 	search : {
 		caption: "Paieška...",
 		Find: "Ieškoti",
 		Reset: "Atstatyti",
-		odata: [{ oper:'eq', text:"lygu"},{ oper:'ne', text:"nelygu"},{ oper:'lt', text:"mažiau"},{ oper:'le', text:"mažiau arba lygu"},{ oper:'gt', text:"daugiau"},{ oper:'ge', text:"daugiau arba lygu"},{ oper:'bw', text:"prasideda"},{ oper:'bn', text:"neprasideda"},{ oper:'in', text:"reikšmė yra"},{ oper:'ni', text:"reikšmės nėra"},{ oper:'ew', text:"baigiasi"},{ oper:'en', text:"nesibaigia"},{ oper:'cn', text:"yra sudarytas"},{ oper:'nc', text:"nėra sudarytas"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'between'}],
+		odata: [{ oper:'eq', text:"lygu"},{ oper:'ne', text:"nelygu"},{ oper:'lt', text:"mažiau"},{ oper:'le', text:"mažiau arba lygu"},{ oper:'gt', text:"daugiau"},{ oper:'ge', text:"daugiau arba lygu"},{ oper:'bw', text:"prasideda"},{ oper:'bn', text:"neprasideda"},{ oper:'in', text:"reikšmė yra"},{ oper:'ni', text:"reikšmės nėra"},{ oper:'ew', text:"baigiasi"},{ oper:'en', text:"nesibaigia"},{ oper:'cn', text:"yra sudarytas"},{ oper:'nc', text:"nėra sudarytas"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 		groupOps: [	{ op: "AND", text: "visi" },	{ op: "OR",  text: "bet kuris" }	],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "Sukurti įrašą",
@@ -110,12 +74,7 @@ $.jgrid.regional["lt"] = {
 		alertcap: "Įspėjimas",
 		alerttext: "Pasirinkite eilutę",
 		viewtext: "",
-		viewtitle: "Peržiūrėti pasirinktą eilutę",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "Peržiūrėti pasirinktą eilutę"
 	},
 	col : {
 		caption: "Pasirinkti stulpelius",
@@ -159,26 +118,13 @@ $.jgrid.regional["lt"] = {
 				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
 			},
-			reformatAfterEdit : false,
-			userLocalTime : false
+			reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 		target: '',
 		checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

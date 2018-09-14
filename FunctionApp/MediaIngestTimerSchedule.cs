@@ -17,7 +17,7 @@ namespace AzureSkyMedia.FunctionApp
         public static void Run([TimerTrigger(ScheduleDaily)] TimerInfo timer, ILogger logger)
         {
             logger.LogInformation("Media Ingest @ {0}", DateTime.UtcNow);
-            WebClient.SendAsync("http://www.skymedia.tv/gallery/refresh");
+            //WebClient.SendAsync("http://www.skymedia.tv/gallery/refresh");
         }
     }
 }

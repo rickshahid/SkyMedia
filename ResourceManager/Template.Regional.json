@@ -91,6 +91,12 @@
         "description": "Subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
+    "functionPublishUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Function HTTP post url for media content publishing."
+      }
+    },
     "globalServicesResourceGroup": {
       "type": "string",
       "metadata": {
@@ -328,6 +334,10 @@
             {
               "name": "Database.Regions",
               "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.Publish.JobUrl",
+              "value": "[parameters('functionPublishUrl')]"
             }
           ]
         },
@@ -395,6 +405,10 @@
                 {
                   "name": "Database.Regions",
                   "value": "[parameters('databaseServiceRegions')]"
+                },
+                {
+                  "name": "Media.Publish.JobUrl",
+                  "value": "[parameters('functionPublishUrl')]"
                 }
               ]
             },
@@ -420,110 +434,225 @@
         "thumbprint": "[reference(resourceId('Microsoft.Web/certificates', variables('webAppCertificateName'))).Thumbprint]",
         "sslState": "SniEnabled"
       }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "[variables('webApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('functionAppName')]",
+      "kind": "functionapp",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]"
+      ],
+      "properties": {
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.Insights/components', parameters('appInsightsName')), variables('appInsightsApiVersion')).instrumentationKey]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "beta"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[variables('functionAppName')]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "Arm.EndpointUrl",
+              "value": "https://management.azure.com/"
+            },
+            {
+              "name": "Arm.AudienceUrl",
+              "value": "https://management.core.windows.net/"
+            },
+            {
+              "name": "Directory.ClientId",
+              "value": "[parameters('directoryClientId')]"
+            },
+            {
+              "name": "Directory.TenantId",
+              "value": "[parameters('directoryTenantId')]"
+            },
+            {
+              "name": "Directory.IssuerUrl",
+              "value": "[parameters('directoryIssuerUrl')]"
+            },
+            {
+              "name": "Directory.DiscoveryPath",
+              "value": "[parameters('directoryDiscoveryPath')]"
+            },
+            {
+              "name": "Directory.PolicyId.SignUpIn",
+              "value": "[parameters('directoryPolicyIdSignUpIn')]"
+            },
+            {
+              "name": "Storage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "Storage.SharedAccessMinutes",
+              "value": "60"
+            },
+            {
+              "name": "Database",
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+            },
+            {
+              "name": "Database.Regions",
+              "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.Indexer.ApiUrl",
+              "value": "https://api.videoindexer.ai/"
+            },
+            {
+              "name": "Twilio.Account.Id",
+              "value": "[parameters('twilioAccountId')]"
+            },
+            {
+              "name": "Twilio.Account.Token",
+              "value": "[parameters('twilioAccountToken')]"
+            },
+            {
+              "name": "Twilio.Message.From",
+              "value": "[parameters('twilioMessageFrom')]"
+            }
+          ]
+        },
+        "resources": [
+          {
+            "type": "config",
+            "apiVersion": "[variables('webApiVersion')]",
+            "name": "slotconfignames",
+            "dependsOn": [
+              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+            ],
+            "properties": {
+              "appSettingNames": [
+                "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "App.RegionName",
+                "Directory.ClientId",
+                "Directory.ClientSecret",
+                "Storage",
+                "Database",
+                "Database.Regions"
+              ]
+            }
+          },
+          {
+            "type": "slots",
+            "apiVersion": "[variables('webApiVersion')]",
+            "location": "[resourceGroup().location]",
+            "name": "staging",
+            "dependsOn": [
+              "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging'))]",
+              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+            ],
+            "properties": {
+              "siteConfig": {
+                "appSettings": [
+                  {
+                    "name": "FUNCTIONS_EXTENSION_VERSION",
+                    "value": "beta"
+                  },
+                  {
+                    "name": "WEBSITE_CONTENTSHARE",
+                    "value": "[variables('functionAppNameStaging')]"
+                  },
+                  {
+                    "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                  },
+                  {
+                    "name": "AzureWebJobsStorage",
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                  },
+                  {
+                    "name": "AzureWebJobsDashboard",
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                  },
+                  {
+                    "name": "Arm.EndpointUrl",
+                    "value": "https://management.azure.com/"
+                  },
+                  {
+                    "name": "Arm.AudienceUrl",
+                    "value": "https://management.core.windows.net/"
+                  },
+                  {
+                    "name": "Directory.ClientId",
+                    "value": "[parameters('directoryClientIdStaging')]"
+                  },
+                  {
+                    "name": "Directory.TenantId",
+                    "value": "[parameters('directoryTenantId')]"
+                  },
+                  {
+                    "name": "Directory.IssuerUrl",
+                    "value": "[parameters('directoryIssuerUrl')]"
+                  },
+                  {
+                    "name": "Directory.DiscoveryPath",
+                    "value": "[parameters('directoryDiscoveryPath')]"
+                  },
+                  {
+                    "name": "Directory.PolicyId.SignUpIn",
+                    "value": "[parameters('directoryPolicyIdSignUpIn')]"
+                  },
+                  {
+                    "name": "Storage",
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                  },
+                  {
+                    "name": "Storage.SharedAccessMinutes",
+                    "value": "60"
+                  },
+                  {
+                    "name": "Database",
+                    "value": "[concat('AccountEndpoint=https://', variables('databaseServiceNameStaging'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceNameStaging')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+                  },
+                  {
+                    "name": "Database.Regions",
+                    "value": "[parameters('databaseServiceRegions')]"
+                  },
+                  {
+                    "name": "Media.Indexer.ApiUrl",
+                    "value": "https://api.videoindexer.ai/"
+                  },
+                  {
+                    "name": "Twilio.Account.Id",
+                    "value": "[parameters('twilioAccountId')]"
+                  },
+                  {
+                    "name": "Twilio.Account.Token",
+                    "value": "[parameters('twilioAccountToken')]"
+                  },
+                  {
+                    "name": "Twilio.Message.From",
+                    "value": "[parameters('twilioMessageFrom')]"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
     }
-    //{
-    //  "type": "Microsoft.Web/sites",
-    //  "apiVersion": "[variables('webSiteApiVersion')]",
-    //  "location": "[resourceGroup().location]",
-    //  "name": "[variables('functionAppName')]",
-    //  "kind": "functionapp",
-    //  "dependsOn": [
-    //    "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]",
-    //    "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]"
-    //  ],
-    //  "properties": {
-    //    "siteConfig": {
-    //      "appSettings": [
-    //        {
-    //          "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-    //          "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), variables('appInsightsApiVersion')).instrumentationKey]"
-    //        },
-    //        {
-    //          "name": "FUNCTIONS_EXTENSION_VERSION",
-    //          "value": "beta"
-    //        },
-    //        {
-    //          "name": "WEBSITE_CONTENTSHARE",
-    //          "value": "[variables('functionAppName')]"
-    //        },
-    //        {
-    //          "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-    //          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    //        },
-    //        {
-    //          "name": "AzureWebJobsStorage",
-    //          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    //        },
-    //        {
-    //          "name": "AzureWebJobsDashboard",
-    //          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    //        }
-    //      ]
-    //    },
-    //    "resources": [
-    //      {
-    //        "type": "config",
-    //        "apiVersion": "[variables('webSiteApiVersion')]",
-    //        "name": "slotconfignames",
-    //        "dependsOn": [
-    //          "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-    //        ],
-    //        "properties": {
-    //          "appSettingNames": [
-    //            "APPINSIGHTS_INSTRUMENTATIONKEY",
-    //            "App.RegionName",
-    //            "Directory.ClientId",
-    //            "Directory.ClientSecret"
-    //          ]
-    //        }
-    //      },
-    //      {
-    //        "type": "slots",
-    //        "apiVersion": "[variables('webSiteApiVersion')]",
-    //        "location": "[resourceGroup().location]",
-    //        "name": "staging",
-    //        "dependsOn": [
-    //          "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging'))]",
-    //          "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-    //        ],
-    //        "properties": {
-    //          "siteConfig": {
-    //            "cors": {
-    //              "allowedOrigins": [
-    //                "*"
-    //              ]
-    //            },
-    //            "apiDefinition": {
-    //              "url": "/swagger/v1/swagger.json"
-    //            },
-    //            "appSettings": [
-    //              {
-    //                "name": "FUNCTIONS_EXTENSION_VERSION",
-    //                "value": "beta"
-    //              },
-    //              {
-    //                "name": "WEBSITE_CONTENTSHARE",
-    //                "value": "[variables('functionAppNameStaging')]"
-    //              },
-    //              {
-    //                "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-    //                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    //              },
-    //              {
-    //                "name": "AzureWebJobsStorage",
-    //                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    //              },
-    //              {
-    //                "name": "AzureWebJobsDashboard",
-    //                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    //              }
-    //            ]
-    //          }
-    //        }
-    //      }
-    //    ]
-    //  }
-    //}
   ],
   "outputs": {
   }

@@ -11,10 +11,9 @@ namespace AzureSkyMedia.PlatformServices
     {
         private string GetRequestUrl(string relativePath, bool authToken, string indexId)
         {
-            string accessToken = null;
+            string accessToken = string.Empty;
             string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
             string requestUrl = AppSetting.GetValue(settingKey);
-            string accountRegion = MediaAccount.VideoIndexerRegion;
             if (authToken)
             {
                 if (string.IsNullOrEmpty(indexId))
@@ -23,7 +22,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 else
                 {
-                    string authUrl = string.Concat(requestUrl, "auth/", accountRegion, "/accounts/", _indexerAccountId, "/videos/", indexId, "/accessToken?allowEdit=true");
+                    string authUrl = string.Concat(requestUrl, "auth/", MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId, "/videos/", indexId, "/accessToken?allowEdit=true");
                     using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
                     {
                         HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, authUrl);
@@ -31,7 +30,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                 }
             }
-            requestUrl = string.Concat(requestUrl, accountRegion, "/accounts/", _indexerAccountId, relativePath);
+            requestUrl = string.Concat(requestUrl, MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId, relativePath);
             if (authToken)
             {
                 requestUrl = string.Concat(requestUrl, "?accessToken=", accessToken);

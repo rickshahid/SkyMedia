@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid Japanese Translation
  * OKADA Yoshitada okada.dev@sth.jp
@@ -6,46 +7,13 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["ja"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "{2} \u4EF6\u4E2D {0} - {1} \u3092\u8868\u793A ",
 	    emptyrecords: "\u8868\u793A\u3059\u308B\u30EC\u30B3\u30FC\u30C9\u304C\u3042\u308A\u307E\u305B\u3093",
 		loadtext: "\u8aad\u307f\u8fbc\u307f\u4e2d...",
-		pgtext : "{1} \u30DA\u30FC\u30B8\u4E2D {0} \u30DA\u30FC\u30B8\u76EE ",
-		savetext: "\u4fdd\u5b58\u4e2d...",
-		pgfirst : "\u6700\u521d\u306e\u30da\u30fc\u30b8\u3078",
-		pglast : "\u6700\u5f8c\u306e\u30da\u30fc\u30b8\u3078",
-		pgnext : "\u6b21\u306e\u30da\u30fc\u30b8",
-		pgprev : "\u524d\u306e\u30da\u30fc\u30b8",
-		pgrecs : "\u30da\u30fc\u30b8\u5358\u4f4d\u306e\u30ec\u30b3\u30fc\u30c9\u6570",
-		showhide: "\u30b0\u30ea\u30c3\u30c9\u306e\u5c55\u958b/\u9589\u3058\u8fbc\u307f",
-		// mobile
-		pagerCaption : "\u30b0\u30ea\u30c3\u30c9::\u30da\u30fc\u30b8\u8a2d\u5b9a",
-		pageText : "\u30da\u30fc\u30b8:",
-		recordPage : "\u30da\u30fc\u30b8\u5358\u4f4d\u306e\u30ec\u30b3\u30fc\u30c9\u6570",
-		nomorerecs : "\u30ec\u30b3\u30fc\u30c9\u304c\u3042\u308a\u307e\u305b\u3093...",
-		scrollPullup: "\u4e0a\u306b\u30b9\u30af\u30ed\u30fc\u30eb\u3057\u3066\u8aad\u307f\u8fbc\u307f...",
-		scrollPulldown : "\u4e0b\u306b\u30b9\u30af\u30ed\u30fc\u30eb\u3057\u3066\u66f4\u65b0...",
-		scrollRefresh : "\u653e\u3057\u3066\u66f4\u65b0..."
+		pgtext : "{1} \u30DA\u30FC\u30B8\u4E2D {0} \u30DA\u30FC\u30B8\u76EE "
 	},
 	search : {
 	    caption: "\u691c\u7d22...",
@@ -58,7 +26,7 @@ $.jgrid.regional["ja"] = {
             { oper:'in', text:"\u6B21\u306B\u542B\u307E\u308C\u308B"}, { oper:'ni', text:"\u6B21\u306B\u542B\u307E\u308C\u306A\u3044"},
             { oper:'ew', text:"\u6B21\u3067\u7D42\u308F\u308B"}, { oper:'en', text:"\u6B21\u3067\u7D42\u308F\u3089\u306A\u3044"},
             { oper:'cn', text:"\u6B21\u3092\u542B\u3080"}, { oper:'nc', text:"\u6B21\u3092\u542B\u307E\u306A\u3044"},
-			{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'between'}],
+			{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 	    groupOps: [{
                 op: "AND",
                 text: "\u3059\u3079\u3066\u306E"
@@ -67,12 +35,8 @@ $.jgrid.regional["ja"] = {
                 op: "OR",
                 text: "\u3044\u305A\u308C\u304B\u306E"
             }],
-		operandTitle : "\u30af\u30ea\u30c3\u30af\u3057\u3066\u691c\u7d22\u64cd\u4f5c\u3092\u9078\u629e",
-		resetTitle : "\u691c\u7d22\u5024\u3092\u30ea\u30bb\u30c3\u30c8",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"		
+		operandTitle : "Click to select search operation.",
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 	    addCaption: "\u30ec\u30b3\u30fc\u30c9\u8ffd\u52a0",
@@ -123,12 +87,7 @@ $.jgrid.regional["ja"] = {
 	    alertcap: "\u8b66\u544a",
 	    alerttext: "\u884c\u3092\u9078\u629e\u3057\u3066\u4e0b\u3055\u3044\u3002",
       viewtext: "",
-      viewtitle: "\u9078\u629E\u3057\u305F\u884C\u3092\u8868\u793A",
-		savetext: "",
-		savetitle: "\u5217\u3092\u4fdd\u5b58",
-		canceltext: "",
-		canceltitle : "\u5217\u306e\u7de8\u96c6\u3092\u30ad\u30e3\u30f3\u30bb\u30eb",
-		selectcaption : "\u30a2\u30af\u30b7\u30e7\u30f3..."
+      viewtitle: "\u9078\u629E\u3057\u305F\u884C\u3092\u8868\u793A"
 	},
 	col : {
 	    caption: "\u5217\u3092\u8868\u793a\uff0f\u96a0\u3059",
@@ -187,26 +146,13 @@ $.jgrid.regional["ja"] = {
 	            UniversalSortableDateTime: "Y-m-d H:i:sO",
 	            YearMonth: "F, Y"
 	        },
-	        reformatAfterEdit : false,
-			userLocalTime : false
+	        reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 	    target: '',
 	    checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

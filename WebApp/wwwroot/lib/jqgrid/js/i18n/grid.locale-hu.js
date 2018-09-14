@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid Hungarian Translation
  * Őrszigety Ádám udx6bs@freemail.hu
@@ -7,59 +8,22 @@
  * http://www.gnu.org/licenses/gpl.html
 **/
 
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["hu"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Oldal {0} - {1} / {2}",
 		emptyrecords: "Nincs találat",
 		loadtext: "Betöltés...",
-		pgtext : "Oldal {0} / {1}",
-		savetext: "Mentés...",
-		pgfirst : "Első oldal",
-		pglast : "Utolsó oldal",
-		pgnext : "Következő oldal",
-		pgprev : "Előző oldal",
-		pgrecs : "Rekordok oldalanként",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Oldal:",
-		recordPage : "Rekordok oldalanként",
-		nomorerecs : "Nincs több rekord...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."
+		pgtext : "Oldal {0} / {1}"
 	},
 	search : {
 		caption: "Keresés...",
 		Find: "Keres",
 		Reset: "Alapértelmezett",
-		odata: [{ oper:'eq', text:"egyenlő"},{ oper:'ne', text:"nem egyenlő"},{ oper:'lt', text:"kevesebb"},{ oper:'le', text:"kevesebb vagy egyenlő"},{ oper:'gt', text:"nagyobb"},{ oper:'ge', text:"nagyobb vagy egyenlő"},{ oper:'bw', text:"ezzel kezdődik"},{ oper:'bn', text:"nem ezzel kezdődik"},{ oper:'in', text:"tartalmaz"},{ oper:'ni', text:"nem tartalmaz"},{ oper:'ew', text:"végződik"},{ oper:'en', text:"nem végződik"},{ oper:'cn', text:"tartalmaz"},{ oper:'nc', text:"nem tartalmaz"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'között'}],
+		odata: [{ oper:'eq', text:"egyenlő"},{ oper:'ne', text:"nem egyenlő"},{ oper:'lt', text:"kevesebb"},{ oper:'le', text:"kevesebb vagy egyenlő"},{ oper:'gt', text:"nagyobb"},{ oper:'ge', text:"nagyobb vagy egyenlő"},{ oper:'bw', text:"ezzel kezdődik"},{ oper:'bn', text:"nem ezzel kezdődik"},{ oper:'in', text:"tartalmaz"},{ oper:'ni', text:"nem tartalmaz"},{ oper:'ew', text:"végződik"},{ oper:'en', text:"nem végződik"},{ oper:'cn', text:"tartalmaz"},{ oper:'nc', text:"nem tartalmaz"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 		groupOps: [	{ op: "AND", text: "all" },	{ op: "OR",  text: "any" }	],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "Új tétel",
@@ -76,7 +40,7 @@ $.jgrid.regional["hu"] = {
 			number:"Kérjük, adjon meg egy helyes számot",
 			minValue:"Nagyobb vagy egyenlőnek kell lenni mint ",
 			maxValue:"Kisebb vagy egyenlőnek kell lennie mint",
-			email: "Hibás email cím",
+			email: "hibás emailcím",
 			integer: "Kérjük adjon meg egy helyes egész számot",
 			date: "Kérjük adjon meg egy helyes dátumot",
 			url: "nem helyes cím. Előtag kötelező ('http://' vagy 'https://')",
@@ -111,12 +75,7 @@ $.jgrid.regional["hu"] = {
 		alertcap: "Figyelmeztetés",
 		alerttext: "Kérem válasszon tételt.",
 		viewtext: "",
-		viewtitle: "Tétel megtekintése",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "Tétel megtekintése"
 	},
 	col : {
 		caption: "Oszlopok kiválasztása",
@@ -160,26 +119,13 @@ $.jgrid.regional["hu"] = {
 				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "Y, F"
 			},
-			reformatAfterEdit : false,
-			userLocalTime : false
+			reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 		target: '',
 		checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

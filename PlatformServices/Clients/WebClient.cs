@@ -112,24 +112,16 @@ namespace AzureSkyMedia.PlatformServices
             return GetRequest(requestMethod, requestUrl, null);
         }
 
-        public T GetResponse<T>(HttpRequestMessage webRequest, out HttpStatusCode statusCode)
+        public T GetResponse<T>(HttpRequestMessage webRequest)
         {
             T responseData = default(T);
             using (HttpResponseMessage webResponse = HttpClient.SendAsync(webRequest).Result)
             {
-                statusCode = webResponse.StatusCode;
-                if (webResponse.IsSuccessStatusCode)
-                {
-                    HttpContent responseContent = webResponse.Content;
-                    responseData = GetResponseData<T>(responseContent);
-                }
+                webResponse.EnsureSuccessStatusCode();
+                HttpContent responseContent = webResponse.Content;
+                responseData = GetResponseData<T>(responseContent);
             }
             return responseData;
-        }
-
-        public T GetResponse<T>(HttpRequestMessage webRequest)
-        {
-            return GetResponse<T>(webRequest, out HttpStatusCode statusCode);
         }
 
         public void Dispose()

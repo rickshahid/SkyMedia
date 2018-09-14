@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid Czech Translation
  * Pavel Jirak pavel.jirak@jipas.cz
@@ -7,59 +8,22 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["cs"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Zobrazeno {0} - {1} z {2} záznamů",
 	    emptyrecords: "Nenalezeny žádné záznamy",
 		loadtext: "Načítám...",
-		savetext: "Saving...",
-		pgtext : "Strana {0} z {1}",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Page:",
-		recordPage : "Records per Page",
-		nomorerecs : "No more records...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."		
+		pgtext : "Strana {0} z {1}"
 	},
 	search : {
 		caption: "Vyhledávám...",
 		Find: "Hledat",
 		Reset: "Reset",
-	    odata: [{ oper:'eq', text:"rovno"},{ oper:'ne', text:"nerovno"},{ oper:'lt', text:"menší"},{ oper:'le', text:"menší nebo rovno"},{ oper:'gt', text:"větší"},{ oper:'ge', text:"větší nebo rovno"},{ oper:'bw', text:"začíná s"},{ oper:'bn', text:"nezačíná s"},{ oper:'in', text:"je v"},{ oper:'ni', text:"není v"},{ oper:'ew', text:"končí s"},{ oper:'en', text:"nekončí s"},{ oper:'cn', text:"obsahuje"},{ oper:'nc', text:"neobsahuje"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'between'}],
+	    odata: [{ oper:'eq', text:"rovno"},{ oper:'ne', text:"nerovno"},{ oper:'lt', text:"menší"},{ oper:'le', text:"menší nebo rovno"},{ oper:'gt', text:"větší"},{ oper:'ge', text:"větší nebo rovno"},{ oper:'bw', text:"začíná s"},{ oper:'bn', text:"nezačíná s"},{ oper:'in', text:"je v"},{ oper:'ni', text:"není v"},{ oper:'ew', text:"končí s"},{ oper:'en', text:"nekončí s"},{ oper:'cn', text:"obsahuje"},{ oper:'nc', text:"neobsahuje"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 	    groupOps: [	{ op: "AND", text: "všech" },	{ op: "OR",  text: "některého z" }	],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "Přidat záznam",
@@ -110,12 +74,7 @@ $.jgrid.regional["cs"] = {
 		alertcap: "Varování",
 		alerttext: "Prosím, vyberte řádek",
 		viewtext: "",
-		viewtitle: "Zobrazit vybraný řádek",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "Zobrazit vybraný řádek"
 	},
 	col : {
 		caption: "Zobrazit/Skrýt sloupce",
@@ -159,26 +118,13 @@ $.jgrid.regional["cs"] = {
 		        UniversalSortableDateTime: "Y-m-d H:i:sO",
 		        YearMonth: "F, Y"
 		    },
-		    reformatAfterEdit : false,
-			userLocalTime : false
+		    reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 	    target: '',
 	    checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

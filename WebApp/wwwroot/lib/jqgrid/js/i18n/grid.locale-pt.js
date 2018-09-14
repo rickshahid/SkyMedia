@@ -1,63 +1,27 @@
+;(function($){
 /**
  * jqGrid Portuguese Translation
- * Traduçã da jqGrid em Portugues por Frederico Carvalho, http://www.eyeviewdesign.pt
+* Tradu��o da jqGrid em Portugues por Frederico Carvalho, http://www.eyeviewdesign.pt
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["pt"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "View {0} - {1} of {2}",
 	    emptyrecords: "No records to view",
 		loadtext: "A carregar...",
-		pgtext : "Página {0} de {1}",
-		savetext: "Saving...",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Page:",
-		recordPage : "Records per Page",
-		nomorerecs : "No more records...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."
+		pgtext : "Página {0} de {1}"
 	},
 	search : {
 	    caption: "Busca...",
 	    Find: "Procurar",
 	    Reset: "Limpar",
-	    odata: [{ oper:'eq', text:'igual'},{ oper:'ne', text:'desigual'},{oper:'lt', text:'menor'},{ oper:'le', text:'menor ou igual'},{ oper:'gt',text:'maior'},{ oper:'ge', text:'maior ou igual'},{ oper:'bw', text:'comecacom'},{ oper:'bn', text:'nao comeca com'},{ oper:'in', text:'estadentro'},{ oper:'ni', text:'nao esta dentro'},{ oper:'ew', text:'finalizacom'},{ oper:'en', text:'nao finaliza com'},{ oper:'cn', text:'contem'},{oper:'nc', text:'nao contem'}],
-	    groupOps: [ { op: "AND", text: "tudo" }, { op: "OR", text:"qualquer" } ],
+	    odata: [{ oper:'eq', text:'equal'},{ oper:'ne', text:'not equal'},{ oper:'lt', text:'less'},{ oper:'le', text:'less or equal'},{ oper:'gt', text:'greater'},{ oper:'ge', text:'greater or equal'},{ oper:'bw', text:'begins with'},{ oper:'bn', text:'does not begin with'},{ oper:'in', text:'is in'},{ oper:'ni', text:'is not in'},{ oper:'ew', text:'ends with'},{ oper:'en', text:'does not end with'},{ oper:'cn', text:'contains'},{ oper:'nc', text:'does not contain'},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
+	    groupOps: [	{ op: "AND", text: "all" },	{ op: "OR",  text: "any" }	],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 	    addCaption: "Adicionar Registo",
@@ -65,23 +29,22 @@ $.jgrid.regional["pt"] = {
 	    bSubmit: "Submeter",
 	    bCancel: "Cancelar",
 		bClose: "Fechar",
-		saveData: "Dados foram alterados. Guardar?",
-		bYes : "Sim",
-		bNo : "Nao",
-		bExit : "Cancelar",
+		saveData: "Data has been changed! Save changes?",
+		bYes : "Yes",
+		bNo : "No",
+		bExit : "Cancel",
 	    msg: {
-	        required:"Campo obrigatório",
+	        required:"Campo obrigat�rio",
 	        number:"Por favor, introduza um numero",
 	        minValue:"O valor deve ser maior ou igual que",
 	        maxValue:"O valor deve ser menor ou igual a",
-	        email: "Não é um email válid",
+	        email: "N�o � um endere�o de email v�lido",
 	        integer: "Por favor, introduza um numero inteiro",
-			date: "Introduza una fecha correcta ",
-			url: "nao e um URL valido. Requerido prefixo ('http://' or 'https://')",
-			nodefined : " nao esta definido!",
-			novalue : " valor requerido!",
-			customarray : "Funcao customizada deve entrar!",
-			customfcheck : "Funcao customizada deve estar presente em caso deconfirmar customizacao!"
+			url: "is not a valid URL. Prefix required ('http://' or 'https://')",
+			nodefined : " is not defined!",
+			novalue : " return value is required!",
+			customarray : "Custom function should return array!",
+			customfcheck : "Custom function should be present in case of custom checking!"
 		}
 	},
 	view : {
@@ -108,12 +71,7 @@ $.jgrid.regional["pt"] = {
 	    alertcap: "Aviso",
 	    alerttext: "Por favor, seleccione um registo",
 		viewtext: "",
-		viewtitle: "Ver coluna selecionada",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "View selected row"
 	},
 	col : {
 	    caption: "Mostrar/Ocultar Colunas",
@@ -122,8 +80,8 @@ $.jgrid.regional["pt"] = {
 	},
 	errors : {
 		errcap : "Erro",
-		nourl : "Não especificou um url",
-		norecords: "Não existem dados para processar",
+		nourl : "N�o especificou um url",
+		norecords: "N�o existem dados para processar",
 	    model : "Tamanho do colNames <> colModel!"
 	},
 	formatter : {
@@ -133,7 +91,7 @@ $.jgrid.regional["pt"] = {
 		date : {
 			dayNames:   [
 				"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab",
-				"Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"
+				"Domingo", "Segunda-Feira", "Ter�a-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "S�bado"
 			],
 			monthNames: [
 				"Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez",
@@ -157,26 +115,13 @@ $.jgrid.regional["pt"] = {
 	            UniversalSortableDateTime: "Y-m-d H:i:sO",
 	            YearMonth: "F, Y"
 	        },
-	        reformatAfterEdit : false,
-			userLocalTime : false
+	        reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 	    target: '',
 	    checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

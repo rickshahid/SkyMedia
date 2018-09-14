@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid Galician Translation
  * Translated by Jorge Barreiro <yortx.barry@gmail.com>
@@ -5,59 +6,22 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["gl"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Amosando {0} - {1} de {2}",
 	    emptyrecords: "Sen rexistros que amosar",
 		loadtext: "Cargando...",
-		pgtext : "Páxina {0} de {1}",
-		savetext: "Saving...",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Page:",
-		recordPage : "Records per Page",
-		nomorerecs : "No more records...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."
+		pgtext : "Páxina {0} de {1}"
 	},
 	search : {
 	    caption: "Búsqueda...",
 	    Find: "Buscar",
 	    Reset: "Limpar",
-	    odata: [{ oper:'eq', text:"igual "},{ oper:'ne', text:"diferente a"},{ oper:'lt', text:"menor que"},{ oper:'le', text:"menor ou igual que"},{ oper:'gt', text:"maior que"},{ oper:'ge', text:"maior ou igual a"},{ oper:'bw', text:"empece por"},{ oper:'bn', text:"non empece por"},{ oper:'in', text:"está en"},{ oper:'ni', text:"non está en"},{ oper:'ew', text:"termina por"},{ oper:'en', text:"non termina por"},{ oper:'cn', text:"contén"},{ oper:'nc', text:"non contén"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'between'}],
+	    odata: [{ oper:'eq', text:"igual "},{ oper:'ne', text:"diferente a"},{ oper:'lt', text:"menor que"},{ oper:'le', text:"menor ou igual que"},{ oper:'gt', text:"maior que"},{ oper:'ge', text:"maior ou igual a"},{ oper:'bw', text:"empece por"},{ oper:'bn', text:"non empece por"},{ oper:'in', text:"está en"},{ oper:'ni', text:"non está en"},{ oper:'ew', text:"termina por"},{ oper:'en', text:"non termina por"},{ oper:'cn', text:"contén"},{ oper:'nc', text:"non contén"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 	    groupOps: [	{ op: "AND", text: "todo" },	{ op: "OR",  text: "calquera" }	],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 	    addCaption: "Engadir rexistro",
@@ -108,12 +72,7 @@ $.jgrid.regional["gl"] = {
 	    alertcap: "Aviso",
 	    alerttext: "Seleccione unha fila",
 		viewtext: "",
-		viewtitle: "Ver fila seleccionada",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "Ver fila seleccionada"
 	},
 	col : {
 	    caption: "Mostrar/ocultar columnas",
@@ -157,26 +116,13 @@ $.jgrid.regional["gl"] = {
 	            UniversalSortableDateTime: "Y-m-d H:i:sO",
 	            YearMonth: "F, Y"
 	        },
-	        reformatAfterEdit : false,
-			userLocalTime : false
+	        reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 	    target: '',
 	    checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);

@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "cdnjs",
+      "library": "jquery@3.3.1",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jqueryui@1.12.1",
+      "destination": "wwwroot/lib/jqueryui/"
+    },
+    {
+      "library": "jquery-cookie@1.4.1",
+      "destination": "wwwroot/lib/jquery-cookie/"
+    },
+    {
+      "library": "jsoneditor@5.24.6",
+      "destination": "wwwroot/lib/jsoneditor/"
+    },
+    {
+      "library": "jqgrid@4.6.0",
+      "destination": "wwwroot/lib/jqgrid/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "plupload@2.3.6",
+      "destination": "wwwroot/lib/plupload/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "qtip2@3.0.3",
+      "destination": "wwwroot/lib/qtip2/"
+    }
+  ]
+}

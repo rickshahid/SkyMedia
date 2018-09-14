@@ -94,6 +94,7 @@
         "[resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerProfileName'))]"
       ],
       "copy": {
+        "mode": "Parallel",
         "name": "endpointNames",
         "count": "[length(parameters('trafficManagerEndpointNames'))]"
       },
@@ -111,6 +112,7 @@
         "[resourceId('Microsoft.Network/trafficManagerProfiles', variables('trafficManagerProfileNameStaging'))]"
       ],
       "copy": {
+        "mode": "Parallel",
         "name": "endpointNames",
         "count": "[length(parameters('trafficManagerEndpointNames'))]"
       },

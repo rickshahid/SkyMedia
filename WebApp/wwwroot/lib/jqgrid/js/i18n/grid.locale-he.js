@@ -1,3 +1,4 @@
+;(function($){
 /**
  * jqGrid Hebrew Translation
  * Shuki Shukrun shukrun.shuki@gmail.com
@@ -6,59 +7,22 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-/*global jQuery, define */
-(function( factory ) {
-	"use strict";
-	if ( typeof define === "function" && define.amd ) {
-		// AMD. Register as an anonymous module.
-		define([
-			"jquery",
-			"../grid.base"
-		], factory );
-	} else {
-		// Browser globals
-		factory( jQuery );
-	}
-}(function( $ ) {
-
 $.jgrid = $.jgrid || {};
-if(!$.jgrid.hasOwnProperty("regional")) {
-	$.jgrid.regional = [];
-}
-$.jgrid.regional["he"] = {
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "מציג {0} - {1} מתוך {2}",
 		emptyrecords: "אין רשומות להציג",
 		loadtext: "טוען...",
-		pgtext : "דף {0} מתוך {1}",
-		savetext: "Saving...",
-		pgfirst : "First Page",
-		pglast : "Last Page",
-		pgnext : "Next Page",
-		pgprev : "Previous Page",
-		pgrecs : "Records per Page",
-		showhide: "Toggle Expand Collapse Grid",
-		// mobile
-		pagerCaption : "Grid::Page Settings",
-		pageText : "Page:",
-		recordPage : "Records per Page",
-		nomorerecs : "No more records...",
-		scrollPullup: "Pull up to load more...",
-		scrollPulldown : "Pull down to refresh...",
-		scrollRefresh : "Release to refresh..."
+		pgtext : "דף {0} מתוך {1}"
 	},
 	search : {
 		caption: "מחפש...",
 		Find: "חפש",
 		Reset: "התחל",
-		odata: [{ oper:'eq', text:"שווה"},{ oper:'ne', text:"לא שווה"},{ oper:'lt', text:"קטן"},{ oper:'le', text:"קטן או שווה"},{ oper:'gt', text:"גדול"},{ oper:'ge', text:"גדול או שווה"},{ oper:'bw', text:"מתחיל ב"},{ oper:'bn', text:"לא מתחיל ב"},{ oper:'in', text:"נמצא ב"},{ oper:'ni', text:"לא נמצא ב"},{ oper:'ew', text:"מסתיים ב"},{ oper:'en', text:"לא מסתיים ב"},{ oper:'cn', text:"מכיל"},{ oper:'nc', text:"לא מכיל"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}, {oper:'bt', text:'between'}],
+		odata: [{ oper:'eq', text:"שווה"},{ oper:'ne', text:"לא שווה"},{ oper:'lt', text:"קטן"},{ oper:'le', text:"קטן או שווה"},{ oper:'gt', text:"גדול"},{ oper:'ge', text:"גדול או שווה"},{ oper:'bw', text:"מתחיל ב"},{ oper:'bn', text:"לא מתחיל ב"},{ oper:'in', text:"נמצא ב"},{ oper:'ni', text:"לא נמצא ב"},{ oper:'ew', text:"מסתיים ב"},{ oper:'en', text:"לא מסתיים ב"},{ oper:'cn', text:"מכיל"},{ oper:'nc', text:"לא מכיל"},{ oper:'nu', text:'is null'},{ oper:'nn', text:'is not null'}],
 		groupOps: [	{ op: "AND", text: "הכל" },	{ op: "OR",  text: "אחד מ" }],
 		operandTitle : "Click to select search operation.",
-		resetTitle : "Reset Search Value",
-		addsubgrup : "Add subgroup",
-		addrule : "Add rule",
-		delgroup : "Delete group",
-		delrule : "Delete rule"
+		resetTitle : "Reset Search Value"
 	},
 	edit : {
 		addCaption: "הוסף רשומה",
@@ -109,12 +73,7 @@ $.jgrid.regional["he"] = {
 		alertcap: "אזהרה",
 		alerttext: "אנא, בחר שורה",
 		viewtext: "",
-		viewtitle: "הצג שורה מסומנת",
-		savetext: "",
-		savetitle: "Save row",
-		canceltext: "",
-		canceltitle : "Cancel row editing",
-		selectcaption : "Actions..."
+		viewtitle: "הצג שורה מסומנת"
 	},
 	col : {
 		caption: "הצג/הסתר עמודות",
@@ -158,26 +117,13 @@ $.jgrid.regional["he"] = {
 				UniversalSortableDateTime: "Y-m-d H:i:sO",
 				YearMonth: "F, Y"
 			},
-			reformatAfterEdit : false,
-			userLocalTime : false
+			reformatAfterEdit : false
 		},
 		baseLinkUrl: '',
 		showAction: '',
 		target: '',
 		checkbox : {disabled:true},
 		idName : 'id'
-	},
-	colmenu : {
-		sortasc : "Sort Ascending",
-		sortdesc : "Sort Descending",
-		columns : "Columns",
-		filter : "Filter",
-		grouping : "Group By",
-		ungrouping : "Ungroup",
-		searchTitle : "Get items with value that:",
-		freeze : "Freeze",
-		unfreeze : "Unfreeze",
-		reorder : "Move to reorder"
 	}
-};
-}));
+});
+})(jQuery);
