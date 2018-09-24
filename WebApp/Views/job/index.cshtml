@@ -87,6 +87,17 @@
                         @Html.TextBox("inputFileUrl", null, new { @class = "mediaEntityName mediaJob", placeholder = "https://" })
                     </td>
                 </tr>
+                <tr>
+                    <td class="inputLabel">
+                        Output Assets
+                    </td>
+                    <td class="inputOption">
+                        @Html.CheckBox("outputAssetSeparation", false)
+                        <span class="inputLabel">
+                            Create A Separate Output Asset Per Transform Output
+                        </span>
+                    </td>
+                </tr>
             </table>
         </td>
     </tr>

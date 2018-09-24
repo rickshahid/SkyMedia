@@ -50,7 +50,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData, string inputAssetName, string inputFileUrl, string streamingPolicyName)
+        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData,
+                                 string inputAssetName, string inputFileUrl, bool outputAssetSeparation, string streamingPolicyName)
         {
             Job job = null;
             string authToken = HomeController.GetAuthToken(Request, Response);
@@ -72,11 +73,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 string indexId = null;
                 Asset inputAsset = null;
-                string outputAssetDescription = null;
+                string assetDescription = null;
                 if (!string.IsNullOrEmpty(inputAssetName))
                 {
                     inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
-                    outputAssetDescription = inputAsset.Description;
+                    assetDescription = inputAsset.Description;
                 }
                 if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                 {
@@ -97,7 +98,9 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 if (!string.IsNullOrEmpty(transformName))
                 {
-                    job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, JObject.Parse(jobData), inputAssetName, inputFileUrl, null, outputAssetDescription, indexId, streamingPolicyName);
+                    string[] assetDescriptions = new string[] { assetDescription };
+                    string[] assetAlternateIds = new string[] { indexId };
+                    job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, JObject.Parse(jobData), inputAssetName, inputFileUrl, outputAssetSeparation, assetDescriptions, assetAlternateIds, streamingPolicyName);
                 }
             }
             return Json(job);

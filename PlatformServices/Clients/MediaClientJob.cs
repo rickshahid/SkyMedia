@@ -17,27 +17,39 @@ namespace AzureSkyMedia.PlatformServices
             {
                 mediaJob.Name = Guid.NewGuid().ToString();
             }
+            string outputAssetStorage = null;
             string outputAssetName = null;
             if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
             {
+                outputAssetStorage = this.PrimaryStorageAccount;
                 outputAssetName = Path.GetFileNameWithoutExtension(mediaJob.InputFileUrl);
             }
             else if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
             {
-                outputAssetName = mediaJob.InputAssetName;
                 Asset asset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
                 MediaAsset mediaAsset = new MediaAsset(MediaAccount, asset);
                 string fileName = mediaAsset.Files[0].Name;
                 StorageBlobClient blobClient = new StorageBlobClient(MediaAccount, asset.StorageAccountName);
                 mediaJob.InputFileUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
+                outputAssetStorage = asset.StorageAccountName;
+                outputAssetName = mediaJob.InputAssetName;
             }
-            CreateAsset(mediaJob.OutputAssetStorage, outputAssetName, mediaJob.OutputAssetDescription, mediaJob.OutputAssetAlternateId);
             List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
             Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
-            foreach (TransformOutput transformOutput in transform.Outputs)
+            for (int i = 0; i < transform.Outputs.Count; i++)
             {
+                TransformOutput transformOutput = transform.Outputs[i];
+                string assetName = outputAssetName;
+                if (mediaJob.OutputAssetSeparation)
+                {
+                    assetName = string.Concat(assetName, " (", i, ")");
+                }
+                string assetDescription = i > mediaJob.OutputAssetDescriptions.Length - 1 ? null : mediaJob.OutputAssetDescriptions[i];
+                string assetAlternateId = i > mediaJob.OutputAssetAlternateIds.Length - 1 ? null : mediaJob.OutputAssetAlternateIds[i];
+                CreateAsset(outputAssetStorage, assetName, assetDescription, assetAlternateId);
                 JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
                 outputAssets.Add(outputAsset);
+
             }
             Dictionary<string, string> jobData = null;
             if (mediaJob.Data != null)
@@ -58,9 +70,9 @@ namespace AzureSkyMedia.PlatformServices
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
         }
 
-        public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority, JObject jobData,
-                             string inputAssetName, string inputFileUrl, string outputAssetStorage, string outputAssetDescription, string outputAssetAlternateId,
-                             string streamingPolicyName)
+        public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority,
+                             JObject jobData, string inputAssetName, string inputFileUrl, bool outputAssetSeparation,
+                             string[] outputAssetDescriptions, string[] outputAssetAlternateIds, string streamingPolicyName)
         {
             string mobilePhoneNumber = null;
             if (!string.IsNullOrEmpty(authToken))
@@ -76,9 +88,9 @@ namespace AzureSkyMedia.PlatformServices
                 Data = jobData,
                 InputAssetName = inputAssetName,
                 InputFileUrl = inputFileUrl,
-                OutputAssetStorage = outputAssetStorage,
-                OutputAssetDescription = outputAssetDescription,
-                OutputAssetAlternateId = outputAssetAlternateId
+                OutputAssetSeparation = outputAssetSeparation,
+                OutputAssetDescriptions = outputAssetDescriptions,
+                OutputAssetAlternateIds = outputAssetAlternateIds
             };
             Job job = CreateJob(transformName, mediaJob);
             MediaPublish mediaPublish = new MediaPublish()

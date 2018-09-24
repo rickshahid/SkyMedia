@@ -18,10 +18,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public string InputFileUrl { get; set; }
 
-        public string OutputAssetStorage { get; set; }
+        public bool OutputEncoderIndexer { get; set; }
 
-        public string OutputAssetDescription { get; set; }
+        public bool OutputAssetSeparation { get; set; }
 
-        public string OutputAssetAlternateId { get; set; }
+        public string[] OutputAssetDescriptions { get; set; }
+
+        public string[] OutputAssetAlternateIds { get; set; }
     }
 }

@@ -91,6 +91,12 @@
         "description": "Subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
+    "functionIngestSchedule": {
+      "type": "string",
+      "metadata": {
+        "description": "Function timer schedule for media ingest workflow."
+      }
+    },
     "functionPublishUrl": {
       "type": "string",
       "metadata": {
@@ -336,6 +342,10 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
+              "name": "Media.Publish.IngestSchedule",
+              "value": "[parameters('functionIngestSchedule')]"
+            },
+            {
               "name": "Media.Publish.JobUrl",
               "value": "[parameters('functionPublishUrl')]"
             }
@@ -405,6 +415,10 @@
                 {
                   "name": "Database.Regions",
                   "value": "[parameters('databaseServiceRegions')]"
+                },
+                {
+                  "name": "Media.Publish.IngestSchedule",
+                  "value": "[parameters('functionIngestSchedule')]"
                 },
                 {
                   "name": "Media.Publish.JobUrl",

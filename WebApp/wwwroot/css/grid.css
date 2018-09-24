@@ -1,7 +1,6 @@
 ﻿.grid {
     border: 1px solid deepskyblue;
     border-radius: 20px;
-    margin-top: 10px;
     padding: 10px;
 }
 
@@ -12,11 +11,11 @@
 .ui-jqgrid td {
     background: background;
     border: none !important;
-    padding-bottom: 15px !important;
+    padding-bottom: 20px !important;
 }
 
 .ui-jqgrid-view {
-    font-size: medium;
+    font-size: medium !important;
 }
 
 .ui-jqgrid-hbox {
@@ -32,7 +31,8 @@
 }
 
 .ui-jqgrid-htable div {
-    height: 20px !important;
+    height: 22px !important;
+    margin-top: 5px;
 }
 
 .ui-jqgrid-bdiv {
@@ -48,13 +48,12 @@
     margin-left: 5px;
 }
 
-.ui-icon-desc {
-    margin-left: 0px !important;
+.ui-jqgrid-pager {
+    border: none !important;
 }
 
 .ui-pager-control {
     font-size: medium;
-    background: background;
 }
 
 .ui-pg-table td {
@@ -64,11 +63,12 @@
 
 .ui-pg-input {
     text-align: center;
-    width: 40px !important;
+    width: 40px;
 }
 
 .tablediv {
     border: 1px dashed deepskyblue;
-    padding: 10px 5px 5px 10px;
+    padding-top: 15px;
+    padding-left: 15px;
     border-radius: 20px;
 }

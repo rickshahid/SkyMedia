@@ -359,7 +359,7 @@ function GetChildColumns(gridId) {
                     label: "Job Output Asset Name",
                     name: "assetName",
                     align: "center",
-                    width: nameWidthEx + 130
+                    width: nameWidthEx + 125
                 },
                 {
                     formatter: FormatJobOutputState,
@@ -435,7 +435,7 @@ function FormatJobOutputState(value, grid, row) {
 }
 function FormatJobData(value, grid, row) {
     if (jQuery.isEmptyObject(value)) {
-        value = "N/A";
+        value = "Empty";
     } else {
         var title = "Media Job Correlation Data";
         var jsonData = JSON.stringify(value);

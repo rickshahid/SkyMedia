@@ -54,7 +54,9 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     if (transform != null)
                     {
-                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputAsset.Name, null, inputAsset.StorageAccountName, assetDescription, indexId, streamingPolicyName);
+                        string[] assetDescriptions = new string[] { assetDescription };
+                        string[] assetAlternateIds = new string[] { indexId };
+                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputAsset.Name, null, false, assetDescriptions, assetAlternateIds, streamingPolicyName);
                     }
                     if (job != null)
                     {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Microsoft.Azure.Management.Media.Models;
+﻿using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,16 +11,6 @@ namespace AzureSkyMedia.PlatformServices
         public string Name { get; set; }
 
         public MediaAccount MediaAccount { get; set; }
-
-        public string StorageAccount
-        {
-            get
-            {
-                Dictionary<string, string>.Enumerator storageAccounts = MediaAccount.StorageAccounts.GetEnumerator();
-                storageAccounts.MoveNext();
-                return storageAccounts.Current.Key;
-            }
-        }
 
         public string[] MissingFiles { get; set; }
 
@@ -46,7 +34,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public string JobInputFileUrl { get; set; }
 
-        public string JobOutputAssetDescription { get; set; }
+        public bool JobOutputEncoderIndexer { get; set; }
+
+        public bool JobOutputAssetSeparation { get; set; }
+
+        public string[] JobOutputAssetDescriptions { get; set; }
+
+        public string[] JobOutputAssetAlternateIds { get; set; }
 
         public string StreamingPolicyName { get; set; }
     }

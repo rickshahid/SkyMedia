@@ -46,7 +46,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 videoUrl = videoUrl.Replace(Constant.Media.Channel9.UrlHttp, Constant.Media.Channel9.UrlHttps);
                 videoUrl = videoUrl.Replace(Constant.Media.Channel9.Http, Constant.Media.Channel9.Https);
                 ingestManifest.JobInputFileUrl = videoUrl;
-                ingestManifest.JobOutputAssetDescription = videoDescription;
+                ingestManifest.JobOutputAssetDescriptions = new string[] { videoDescription };
                 UploadIngestManifest(blobClient, ingestManifest);
             }
         }

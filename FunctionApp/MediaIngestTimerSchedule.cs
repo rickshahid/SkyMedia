@@ -9,15 +9,15 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static class MediaIngestTimerSchedule
     {
-        private const string ScheduleDaily = "0 0 0 * * *";
-        private const string ScheduleWeekly = "0 0 0 * * 1";
-        private const string ScheduleMonthly = "0 0 0 1 * *";
+        //private const string ScheduleDaily = "0 0 0 * * *";
+        //private const string ScheduleWeekly = "0 0 0 * * 1";
+        //private const string ScheduleMonthly = "0 0 0 1 * *";
 
         [FunctionName("MediaIngestTimerSchedule")]
-        public static void Run([TimerTrigger(ScheduleDaily)] TimerInfo timer, ILogger logger)
+        public static void Run([TimerTrigger("%Media.Publish.IngestSchedule%")] TimerInfo timer, ILogger logger)
         {
             logger.LogInformation("Media Ingest @ {0}", DateTime.UtcNow);
-            //WebClient.SendAsync("http://www.skymedia.tv/gallery/refresh");
+            WebClient.SendAsync("http://www.skymedia.tv/gallery/refresh");
         }
     }
 }
