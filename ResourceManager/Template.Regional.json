@@ -181,6 +181,26 @@
         "description": "Unique identifier of the metadata database."
       }
     },
+    "searchServiceName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "searchAdminKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Admin key for the Search service."
+      }
+    },
+    "searchQueryKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Query key for the Search service."
+      }
+    },
     "appRegionName": {
       "type": "string",
       "metadata": {
@@ -342,12 +362,20 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.Publish.IngestSchedule",
-              "value": "[parameters('functionIngestSchedule')]"
-            },
-            {
               "name": "Media.Publish.JobUrl",
               "value": "[parameters('functionPublishUrl')]"
+            },
+            {
+              "name": "Search.ServiceName",
+              "value": "[parameters('searchServiceName')]"
+            },
+            {
+              "name": "Search.AdminKey",
+              "value": "[parameters('searchAdminKey')]"
+            },
+            {
+              "name": "Search.QueryKey",
+              "value": "[parameters('searchQueryKey')]"
             }
           ]
         },
@@ -417,12 +445,20 @@
                   "value": "[parameters('databaseServiceRegions')]"
                 },
                 {
-                  "name": "Media.Publish.IngestSchedule",
-                  "value": "[parameters('functionIngestSchedule')]"
-                },
-                {
                   "name": "Media.Publish.JobUrl",
                   "value": "[parameters('functionPublishUrl')]"
+                },
+                {
+                  "name": "Search.ServiceName",
+                  "value": "[parameters('searchServiceName')]"
+                },
+                {
+                  "name": "Search.AdminKey",
+                  "value": "[parameters('searchAdminKey')]"
+                },
+                {
+                  "name": "Search.QueryKey",
+                  "value": "[parameters('searchQueryKey')]"
                 }
               ]
             },
@@ -533,6 +569,14 @@
             {
               "name": "Media.Indexer.ApiUrl",
               "value": "https://api.videoindexer.ai/"
+            },
+            {
+              "name": "Media.Publish.IngestSchedule",
+              "value": "[parameters('functionIngestSchedule')]"
+            },
+            {
+              "name": "Media.Publish.JobUrl",
+              "value": "[parameters('functionPublishUrl')]"
             },
             {
               "name": "Twilio.Account.Id",
@@ -647,6 +691,14 @@
                   {
                     "name": "Media.Indexer.ApiUrl",
                     "value": "https://api.videoindexer.ai/"
+                  },
+                  {
+                    "name": "Media.Publish.IngestSchedule",
+                    "value": "[parameters('functionIngestSchedule')]"
+                  },
+                  {
+                    "name": "Media.Publish.JobUrl",
+                    "value": "[parameters('functionPublishUrl')]"
                   },
                   {
                     "name": "Twilio.Account.Id",

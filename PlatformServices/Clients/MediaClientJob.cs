@@ -40,14 +40,14 @@ namespace AzureSkyMedia.PlatformServices
             {
                 TransformOutput transformOutput = transform.Outputs[i];
                 string assetName = outputAssetName;
-                if (mediaJob.OutputAssetSeparation)
+                if (!mediaJob.OutputAssetFilesMerge)
                 {
                     assetName = string.Concat(assetName, " (", i, ")");
                 }
                 string assetDescription = i > mediaJob.OutputAssetDescriptions.Length - 1 ? null : mediaJob.OutputAssetDescriptions[i];
                 string assetAlternateId = i > mediaJob.OutputAssetAlternateIds.Length - 1 ? null : mediaJob.OutputAssetAlternateIds[i];
                 CreateAsset(outputAssetStorage, assetName, assetDescription, assetAlternateId);
-                JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
+                JobOutputAsset outputAsset = new JobOutputAsset(assetName);
                 outputAssets.Add(outputAsset);
 
             }
@@ -71,7 +71,7 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority,
-                             JObject jobData, string inputAssetName, string inputFileUrl, bool outputAssetSeparation,
+                             JObject jobData, string inputAssetName, string inputFileUrl, bool outputAssetFilesMerge,
                              string[] outputAssetDescriptions, string[] outputAssetAlternateIds, string streamingPolicyName)
         {
             string mobilePhoneNumber = null;
@@ -88,7 +88,7 @@ namespace AzureSkyMedia.PlatformServices
                 Data = jobData,
                 InputAssetName = inputAssetName,
                 InputFileUrl = inputFileUrl,
-                OutputAssetSeparation = outputAssetSeparation,
+                OutputAssetFilesMerge = outputAssetFilesMerge,
                 OutputAssetDescriptions = outputAssetDescriptions,
                 OutputAssetAlternateIds = outputAssetAlternateIds
             };

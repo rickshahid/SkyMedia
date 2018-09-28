@@ -22,7 +22,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string AssetAlternateId { get; set; }
 
-        public MediaProcessor[] MediaProcessors { get; set; }
+        public MediaTransformPreset[] TransformPresets { get; set; }
 
         public string JobName { get; set; }
 
@@ -36,7 +36,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public bool JobOutputEncoderIndexer { get; set; }
 
-        public bool JobOutputAssetSeparation { get; set; }
+        public bool JobOutputAssetFilesMerge { get; set; }
 
         public string[] JobOutputAssetDescriptions { get; set; }
 

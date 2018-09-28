@@ -85,7 +85,6 @@ namespace AzureSkyMedia.PlatformServices
             }
             requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(videoUrl));
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
-            requestUrl = string.Concat(requestUrl, "&externalUrl=", HttpUtility.UrlEncode(videoUrl));
             requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
             requestUrl = string.Concat(requestUrl, "&language=auto");
             if (audioOnly)

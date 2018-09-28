@@ -51,6 +51,9 @@ function SignOut(cookieName) {
     window.location.href = "/account/signOut";
 }
 function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, spriteVttUrl) {
+    if (!autoPlay && userId == "") {
+        autoPlay = true;
+    }
     var playerOptions = {
         fluid: true,
         controls: true,

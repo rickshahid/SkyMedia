@@ -110,7 +110,7 @@ namespace AzureSkyMedia.FunctionApp
                     {
                         ingestManifest = CreateAsset(blobClient, mediaClient, ingestManifest, logger);
                     }
-                    if (ingestManifest.MediaProcessors.Length > 0)
+                    if (ingestManifest.TransformPresets.Length > 0)
                     {
                         CreateJob(blobClient, mediaClient, ingestManifest, logger);
                     }
@@ -143,59 +143,31 @@ namespace AzureSkyMedia.FunctionApp
 
         private static void CreateJob(StorageBlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, ILogger logger)
         {
-            bool adaptiveStreaming = false;
-            bool thumbnailSprite = false;
-            bool videoAnalyzer = false;
-            bool audioAnalyzer = false;
-            bool videoIndexer = false;
-            bool audioIndexer = false;
-            foreach (MediaProcessor mediaProcessor in ingestManifest.MediaProcessors)
-            {
-                switch (mediaProcessor)
-                {
-                    case MediaProcessor.StandardEncoder:
-                        adaptiveStreaming = true;
-                        //thumbnailSprite
-                        break;
-                    case MediaProcessor.VideoAnalyzer:
-                        videoAnalyzer = true;
-                        break;
-                    case MediaProcessor.AudioAnalyzer:
-                        audioAnalyzer = true;
-                        break;
-                    case MediaProcessor.VideoIndexer:
-                        videoIndexer = true;
-                        break;
-                    case MediaProcessor.AudioIndexer:
-                        audioIndexer = true;
-                        break;
-                }
-            }
-            string indexId = null;
-            if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
+            MediaTransformPresets transformPresets = mediaClient.GetTransformPresets(ingestManifest.TransformPresets);
+            if (mediaClient.IndexerEnabled() && (transformPresets.VideoIndexer || transformPresets.AudioIndexer))
             {
                 string logData;
-                string videoUrl = ingestManifest.JobInputFileUrl;
-                if (string.IsNullOrEmpty(videoUrl))
+                string inputFileUrl = ingestManifest.JobInputFileUrl;
+                if (string.IsNullOrEmpty(inputFileUrl))
                 {
                     StorageBlobClient assetBlobClient = new StorageBlobClient(ingestManifest.MediaAccount, mediaClient.PrimaryStorageAccount);
                     Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, ingestManifest.AssetName);
                     string fileName = Path.GetFileName(ingestManifest.BlobFiles[0]);
-                    videoUrl = assetBlobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
-                    logData = string.Concat("Video Url: ", videoUrl);
+                    inputFileUrl = assetBlobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
+                    logData = string.Concat("Input File Url: ", inputFileUrl);
                     WriteLog(blobClient, ingestManifest.Name, logData);
                     logger.LogInformation(logData);
                 }
-                bool audioOnly = !videoIndexer && audioIndexer;
-                indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, ingestManifest.AssetName, ingestManifest.AssetDescription, string.Empty, audioOnly);
+                bool audioOnly = !transformPresets.VideoIndexer && transformPresets.AudioIndexer;
+                string indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputFileUrl, ingestManifest.AssetName, ingestManifest.AssetDescription, string.Empty, audioOnly);
                 logData = string.Concat("Index Id: ", indexId);
                 WriteLog(blobClient, ingestManifest.Name, logData);
                 logger.LogInformation(logData);
             }
-            Transform transform = mediaClient.CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer);
+            Transform transform = mediaClient.CreateTransform(transformPresets);
             if (transform != null)
             {
-                Job job = mediaClient.CreateJob(null, transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.JobData, ingestManifest.AssetName, ingestManifest.JobInputFileUrl, ingestManifest.JobOutputAssetSeparation, ingestManifest.JobOutputAssetDescriptions, ingestManifest.JobOutputAssetAlternateIds, ingestManifest.StreamingPolicyName);
+                Job job = mediaClient.CreateJob(null, transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.JobData, ingestManifest.AssetName, ingestManifest.JobInputFileUrl, ingestManifest.JobOutputAssetFilesMerge, ingestManifest.JobOutputAssetDescriptions, ingestManifest.JobOutputAssetAlternateIds, ingestManifest.StreamingPolicyName);
                 string logData = string.Concat("Transform Name: ", transform.Name);
                 WriteLog(blobClient, ingestManifest.Name, logData);
                 logger.LogInformation(logData);

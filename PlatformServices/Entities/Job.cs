@@ -20,7 +20,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public bool OutputEncoderIndexer { get; set; }
 
-        public bool OutputAssetSeparation { get; set; }
+        public bool OutputAssetFilesMerge { get; set; }
 
         public string[] OutputAssetDescriptions { get; set; }
 

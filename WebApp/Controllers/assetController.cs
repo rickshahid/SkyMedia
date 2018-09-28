@@ -37,7 +37,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                Transform transform = mediaClient.CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer);
+                MediaTransformPresets transformPresets = new MediaTransformPresets()
+                {
+                    AdaptiveStreaming = adaptiveStreaming,
+                    ThumbnailSprite = thumbnailSprite,
+                    VideoAnalyzer = videoAnalyzer,
+                    AudioAnalyzer = audioAnalyzer
+                };
+                Transform transform = mediaClient.CreateTransform(transformPresets);
                 inputAssets = CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                 foreach (Asset inputAsset in inputAssets)
                 {

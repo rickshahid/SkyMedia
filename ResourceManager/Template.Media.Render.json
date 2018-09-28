@@ -21,15 +21,96 @@
       "metadata": {
         "description": "Designates if storage data encryption at rest is enabled."
       }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "metadata": {
+        "description": "Name must be between 2 and 64 characters (letters, numbers, underscores, periods or hyphens)."
+      }
+    },
+    "virtualNetworkAddresses": {
+      "type": "string",
+      "metadata": {
+        "description": "CIDR address range for the Virtual Network."
+      }
+    },
+    "virtualNetworkPublicAddressName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the public IP address for the Virtual Network."
+      }
+    },
+    "virtualNetworkSecurityGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the network security group for the Virtual Network."
+      }
+    },
+    "virtualNetworkInterfaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the network interface to the Virtual Network."
+      }
+    },
+    "virtualMachineName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the compute Virtual Machine."
+      }
+    },
+    "virtualMachineSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Size of the compute Virtual Machine."
+      }
+    },
+    "virtualMachineAdminName": {
+      "type": "string",
+      "metadata": {
+        "description": "Size of the compute Virtual Machine."
+      }
+    },
+    "virtualMachineAdminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": "Size of the compute Virtual Machine."
+      }
     }
   },
   "variables": {
     "storageApiVersion": "2018-07-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
+    "storageServiceName0": "[concat(variables('storageServiceName'), '0')]",
     "storageServiceName1": "[concat(variables('storageServiceName'), '1')]",
-    "storageServiceName2": "[concat(variables('storageServiceName'), '2')]",
+    "networkApiVersion": "2018-08-01",
+    "virtualNetworkId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+    "virtualNetworkSubnetId": "[concat(variables('virtualNetworkId'), '/subnets/default')]",
+    "computeApiVersion": "2018-10-01"
   },
   "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "[variables('storageApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('storageServiceName0')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Premium_LRS"
+      },
+      "properties": {
+        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
+        "encryption": {
+          "services": {
+            "blob": {
+              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
+            }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      }
+    },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
@@ -52,35 +133,147 @@
       }
     },
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "[variables('networkApiVersion')]",
       "location": "[resourceGroup().location]",
-      "name": "[variables('storageServiceName2')]",
-      "kind": "StorageV2",
-      "sku": {
-        "name": "Premium_LRS"
-      },
+      "name": "[parameters('virtualNetworkName')]",
       "properties": {
-        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
-        "encryption": {
-          "services": {
-            "blob": {
-              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('virtualNetworkAddresses')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "[parameters('virtualNetworkAddresses')]"
             }
-          },
-          "keySource": "Microsoft.Storage"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIpAddresses",
+      "apiVersion": "[variables('networkApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('virtualNetworkPublicAddressName')]",
+      "properties": {
+        "publicIpAllocationMethod": "Dynamic"
+      },
+      "sku": {
+        "name": "Basic"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "[variables('networkApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('virtualNetworkSecurityGroupName')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "HTTPS",
+            "properties": {
+              "priority": 300,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "443"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "[variables('networkApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('virtualNetworkInterfaceName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "[resourceId('Microsoft.Network/publicIpAddresses', parameters('virtualNetworkPublicAddressName'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('virtualNetworkSecurityGroupName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "default",
+            "properties": {
+              "subnet": {
+                "id": "[variables('virtualNetworkSubnetId')]"
+              },
+              "privateIpAllocationMethod": "Dynamic",
+              "publicIpAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('virtualNetworkPublicAddressName'))]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('virtualNetworkSecurityGroupName'))]"
         }
       }
     },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "[variables('computeApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('virtualMachineName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtualNetworkInterfaceName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName0'))]"
+      ],
+      "properties": {
+        "osProfile": {
+          "computerName": "[parameters('virtualMachineName')]",
+          "adminUsername": "[parameters('virtualMachineAdminName')]",
+          "adminPassword": "[parameters('virtualMachineAdminPassword')]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachineSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "microsoft-avere",
+            "offer": "vfxt",
+            "sku": "avere-vfxt-node",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            }
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('virtualNetworkInterfaceName'))]"
+            }
+          ]
+        }
+      },
+      "plan": {
+        "name": "avere-vfxt-node",
+        "publisher": "microsoft-avere",
+        "product": "vfxt"
+      }
+    }
   ],
   "outputs": {
+    "storageAccountConnection0": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName0'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName0')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
     "storageAccountConnection1": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName1'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName1')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-    },
-    "storageAccountConnection2": {
-      "type": "string",
-      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName2'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     }
   }
 }

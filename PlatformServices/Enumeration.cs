@@ -17,9 +17,10 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaProcessor
+    public enum MediaTransformPreset
     {
-        StandardEncoder,
+        AdaptiveStreaming,
+        ThumbnailSprite,
         VideoAnalyzer,
         AudioAnalyzer,
         VideoIndexer,
