@@ -62,10 +62,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
-                analyzerPreset = new VideoAnalyzerPreset()
-                {
-                    AudioInsightsOnly = false
-                };
+                analyzerPreset = new VideoAnalyzerPreset();
             }
             return analyzerPreset;
         }
@@ -74,8 +71,8 @@ namespace AzureSkyMedia.PlatformServices
         {
             return new TransformOutput(transformPreset)
             {
-                RelativePriority = (Priority)transformOutput.RelativePriority,
-                OnError = (OnErrorType)transformOutput.OnError
+                RelativePriority = transformOutput.RelativePriority,
+                OnError = transformOutput.OnError
             };
         }
 

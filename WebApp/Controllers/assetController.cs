@@ -52,12 +52,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                     string indexId = null;
                     if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
                     {
-                        StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
-                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
-                        string fileName = mediaAsset.Files[0].Name;
-                        string videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
                         bool audioOnly = !videoIndexer && audioIndexer;
-                        indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, inputAsset.Name, inputAsset.Description, string.Empty, audioOnly);
+                        indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, audioOnly);
                     }
                     if (transform != null)
                     {

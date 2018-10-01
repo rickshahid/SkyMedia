@@ -50,7 +50,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData,
+        public JsonResult Create(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
                                  string inputAssetName, string inputFileUrl, bool outputAssetSeparation, string streamingPolicyName)
         {
             Job job = null;
@@ -81,20 +81,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                 {
-                    string videoUrl = inputFileUrl;
-                    string videoName = null;
-                    string videoDescription = null;
-                    if (string.IsNullOrEmpty(videoUrl) && inputAsset != null) 
-                    {
-                        StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
-                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
-                        string fileName = mediaAsset.Files[0].Name;
-                        videoUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
-                        videoName = inputAsset.Name;
-                        videoDescription = inputAsset.Description;
-                    }
                     bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
-                    indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, videoUrl, videoName, videoDescription, null, audioOnly);
+                    indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, audioOnly);
                 }
                 if (!string.IsNullOrEmpty(transformName))
                 {

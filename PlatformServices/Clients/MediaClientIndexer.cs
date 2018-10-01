@@ -3,6 +3,8 @@ using System.IO;
 using System.Web;
 using System.Net.Http;
 
+using Microsoft.Azure.Management.Media.Models;
+
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -63,27 +65,23 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string IndexerUploadVideo(MediaAccount mediaAccount, string videoUrl, string videoName, string videoDescription, string videoMetadata, bool audioOnly)
+        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, bool audioOnly)
         {
             string indexId = null;
             string relativePath = "/videos";
             string requestUrl = GetRequestUrl(relativePath, true, null);
             string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
-            if (string.IsNullOrEmpty(videoName))
+            if (inputAsset == null)
             {
-                videoName = Path.GetFileNameWithoutExtension(videoUrl);
+                string videoName = Path.GetFileNameWithoutExtension(inputFileUrl);
+                requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlDecode(videoName));
+                requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(inputFileUrl));
             }
-            requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(videoName));
-            if (!string.IsNullOrEmpty(videoDescription))
+            else
             {
-                requestUrl = string.Concat(requestUrl, "&description=", HttpUtility.UrlEncode(videoDescription));
+                requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
             }
-            if (!string.IsNullOrEmpty(videoMetadata))
-            {
-                requestUrl = string.Concat(requestUrl, "&metadata=", HttpUtility.UrlEncode(videoMetadata));
-            }
-            requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(videoUrl));
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
             requestUrl = string.Concat(requestUrl, "&language=auto");

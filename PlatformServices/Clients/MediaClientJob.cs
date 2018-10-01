@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Web;
 using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media;
@@ -22,15 +23,12 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
             {
                 outputAssetStorage = this.PrimaryStorageAccount;
-                outputAssetName = Path.GetFileNameWithoutExtension(mediaJob.InputFileUrl);
+                string inputFileUrl = HttpUtility.UrlDecode(mediaJob.InputFileUrl);
+                outputAssetName = Path.GetFileNameWithoutExtension(inputFileUrl);
             }
-            else if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
+            else
             {
                 Asset asset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
-                MediaAsset mediaAsset = new MediaAsset(MediaAccount, asset);
-                string fileName = mediaAsset.Files[0].Name;
-                StorageBlobClient blobClient = new StorageBlobClient(MediaAccount, asset.StorageAccountName);
-                mediaJob.InputFileUrl = blobClient.GetDownloadUrl(asset.Container, fileName, false);
                 outputAssetStorage = asset.StorageAccountName;
                 outputAssetName = mediaJob.InputAssetName;
             }
@@ -49,22 +47,33 @@ namespace AzureSkyMedia.PlatformServices
                 CreateAsset(outputAssetStorage, assetName, assetDescription, assetAlternateId);
                 JobOutputAsset outputAsset = new JobOutputAsset(assetName);
                 outputAssets.Add(outputAsset);
-
             }
             Dictionary<string, string> jobData = null;
             if (mediaJob.Data != null)
             {
                 jobData = mediaJob.Data.ToObject<Dictionary<string, string>>();
             }
+            JobInput jobInput;
+            if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
+            {
+                jobInput = new JobInputHttp()
+                {
+                    Files = new string[] { mediaJob.InputFileUrl }
+                };
+            }
+            else
+            {
+                jobInput = new JobInputAsset()
+                {
+                    AssetName = mediaJob.InputAssetName
+                };
+            }
             Job job = new Job()
             {
                 Description = mediaJob.Description,
                 Priority = mediaJob.Priority,
                 CorrelationData = jobData,
-                Input = new JobInputHttp()
-                {
-                    Files = new string[] { mediaJob.InputFileUrl }
-                },
+                Input = jobInput,
                 Outputs = outputAssets.ToArray()
             };
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
