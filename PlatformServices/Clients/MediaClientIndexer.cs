@@ -72,14 +72,16 @@ namespace AzureSkyMedia.PlatformServices
             string requestUrl = GetRequestUrl(relativePath, true, null);
             string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
-            if (inputAsset == null)
+            if (!string.IsNullOrEmpty(inputFileUrl))
             {
-                string videoName = Path.GetFileNameWithoutExtension(inputFileUrl);
-                requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlDecode(videoName));
+                Uri inputFileUri = new Uri(inputFileUrl);
+                string videoName = Path.GetFileNameWithoutExtension(inputFileUri.LocalPath);
+                requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(videoName));
                 requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(inputFileUrl));
             }
-            else
+            else if (inputAsset != null)
             {
+                requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(inputAsset.Name));
                 requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
             }
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));

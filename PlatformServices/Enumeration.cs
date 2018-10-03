@@ -28,6 +28,14 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaJobInputType
+    {
+        UploadFile,
+        AssetFile,
+        Asset
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaProtection
     {
         AES,

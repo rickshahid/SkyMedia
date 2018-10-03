@@ -310,7 +310,7 @@ function GetChildColumns(gridId) {
                     label: "Media Asset File Name",
                     name: "name",
                     align: "center",
-                    width: nameWidthEx + 270
+                    width: nameWidthEx + 330
                 },
                 {
                     label: "Size",

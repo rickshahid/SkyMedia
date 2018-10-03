@@ -64,7 +64,10 @@ namespace AzureSkyMedia.FunctionApp
             }
             catch (ApiErrorException ex)
             {
-                string logData = ex.Response.Content;
+                string logData = ex.ToString();
+                WriteLog(blobClient, blobName, logData);
+                logger.LogError(ex, logData);
+                logData = ex.Response.Content;
                 WriteLog(blobClient, blobName, logData);
                 logger.LogError(ex, logData);
             }
@@ -110,7 +113,7 @@ namespace AzureSkyMedia.FunctionApp
             }
             else
             {
-                if (string.IsNullOrEmpty(ingestManifest.JobInputFileUrl))
+                if (string.IsNullOrEmpty(ingestManifest.JobInputFileUrl) && ingestManifest.JobInputType == MediaJobInputType.UploadFile)
                 {
                     string sourceContainer = Constant.Storage.BlobContainer.MediaServices;
                     string fileName = ingestManifest.BlobFiles[0];
@@ -118,19 +121,20 @@ namespace AzureSkyMedia.FunctionApp
                 }
                 using (MediaClient mediaClient = new MediaClient(null, ingestManifest.MediaAccount))
                 {
+                    Asset inputAsset = null;
                     if (ingestManifest.BlobFiles.Length > 0)
                     {
-                        ingestManifest = CreateAsset(blobClient, mediaClient, ingestManifest, logger);
+                        ingestManifest = CreateAsset(blobClient, mediaClient, ingestManifest, out inputAsset, logger);
                     }
                     if (ingestManifest.TransformPresets.Length > 0)
                     {
-                        CreateJob(blobClient, mediaClient, ingestManifest, logger);
+                        CreateJob(blobClient, mediaClient, ingestManifest, inputAsset, logger);
                     }
                 }
             }
         }
 
-        private static MediaIngestManifest CreateAsset(StorageBlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, ILogger logger)
+        private static MediaIngestManifest CreateAsset(StorageBlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, out Asset inputAsset, ILogger logger)
         {
             string storageAccount = mediaClient.PrimaryStorageAccount;
             string assetName = ingestManifest.AssetName;
@@ -139,14 +143,20 @@ namespace AzureSkyMedia.FunctionApp
             string sourceContainer = Constant.Storage.BlobContainer.MediaServices;
             string[] blobFileNames = ingestManifest.BlobFiles;
             StorageBlobClient assetBlobClient = new StorageBlobClient(ingestManifest.MediaAccount, storageAccount);
-            Asset asset = mediaClient.CreateAsset(blobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, blobFileNames);
-            string logData = string.Concat("New Asset: ", JsonConvert.SerializeObject(asset));
+            inputAsset = mediaClient.CreateAsset(blobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, blobFileNames);
+            string logData = string.Concat("New Asset: ", JsonConvert.SerializeObject(inputAsset));
             WriteLog(blobClient, ingestManifest.Name, logData);
             logger.LogInformation(logData);
+            ingestManifest.AssetName = inputAsset.Name;
+            if (string.IsNullOrEmpty(ingestManifest.JobInputFileUrl) && ingestManifest.JobInputType == MediaJobInputType.AssetFile)
+            {
+                string fileName = blobFileNames[0];
+                ingestManifest.JobInputFileUrl = assetBlobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
+            }
             return ingestManifest;
         }
 
-        private static void CreateJob(StorageBlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, ILogger logger)
+        private static void CreateJob(StorageBlobClient blobClient, MediaClient mediaClient, MediaIngestManifest ingestManifest, Asset inputAsset, ILogger logger)
         {
             string logData = string.Concat("Input File Url: ", ingestManifest.JobInputFileUrl);
             WriteLog(blobClient, ingestManifest.Name, logData);
@@ -155,7 +165,7 @@ namespace AzureSkyMedia.FunctionApp
             if (mediaClient.IndexerEnabled() && (transformPresets.VideoIndexer || transformPresets.AudioIndexer))
             {
                 bool audioOnly = !transformPresets.VideoIndexer && transformPresets.AudioIndexer;
-                string indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, null, ingestManifest.JobInputFileUrl, audioOnly);
+                string indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, audioOnly);
                 logData = string.Concat("Index Id: ", indexId);
                 WriteLog(blobClient, ingestManifest.Name, logData);
                 logger.LogInformation(logData);

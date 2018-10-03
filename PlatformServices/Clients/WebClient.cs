@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using System.Xml;
-using System.Net;
-using System.Net.Http;
 using System.Text;
+using System.Net.Http;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -61,32 +60,31 @@ namespace AzureSkyMedia.PlatformServices
             httpClient.SendAsync(requestMessage);
         }
 
-        private T GetResponseData<T>(HttpContent responseContent)
+        private T GetResponseData<T>(string responseContent)
         {
             T responseData;
-            string responseText = responseContent.ReadAsStringAsync().Result;
             if (typeof(T) == typeof(string))
             {
-                responseText = responseText.Trim('\"');
-                responseData = (T)Convert.ChangeType(responseText, typeof(T));
+                responseContent = responseContent.Trim('\"');
+                responseData = (T)Convert.ChangeType(responseContent, typeof(T));
             }
             else if (typeof(T) == typeof(XmlDocument))
             {
                 XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.LoadXml(responseText);
+                xmlDocument.LoadXml(responseContent);
                 responseData = (T)Convert.ChangeType(xmlDocument, typeof(T));
             }
             else if (typeof(T) == typeof(JObject))
             {
-                responseData = (T)Convert.ChangeType(JObject.Parse(responseText), typeof(T));
+                responseData = (T)Convert.ChangeType(JObject.Parse(responseContent), typeof(T));
             }
             else if (typeof(T) == typeof(JArray))
             {
-                responseData = (T)Convert.ChangeType(JArray.Parse(responseText), typeof(T));
+                responseData = (T)Convert.ChangeType(JArray.Parse(responseContent), typeof(T));
             }
             else
             {
-                responseData = JsonConvert.DeserializeObject<T>(responseText);
+                responseData = JsonConvert.DeserializeObject<T>(responseContent);
             }
             return responseData;
         }
@@ -117,9 +115,15 @@ namespace AzureSkyMedia.PlatformServices
             T responseData = default(T);
             using (HttpResponseMessage webResponse = HttpClient.SendAsync(webRequest).Result)
             {
-                webResponse.EnsureSuccessStatusCode();
-                HttpContent responseContent = webResponse.Content;
-                responseData = GetResponseData<T>(responseContent);
+                string responseContent = webResponse.Content.ReadAsStringAsync().Result;
+                if (!webResponse.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException(responseContent);
+                }
+                else
+                {
+                    responseData = GetResponseData<T>(responseContent);
+                }
             }
             return responseData;
         }

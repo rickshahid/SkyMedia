@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Web;
 using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media;
@@ -12,26 +11,28 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private Job CreateJob(string transformName, MediaJob mediaJob)
+        private JobInput GetJobInput(MediaJob mediaJob)
         {
-            if (string.IsNullOrEmpty(mediaJob.Name))
-            {
-                mediaJob.Name = Guid.NewGuid().ToString();
-            }
-            string outputAssetStorage = null;
-            string outputAssetName = null;
+            JobInput jobInput;
             if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
             {
-                outputAssetStorage = this.PrimaryStorageAccount;
-                string inputFileUrl = HttpUtility.UrlDecode(mediaJob.InputFileUrl);
-                outputAssetName = Path.GetFileNameWithoutExtension(inputFileUrl);
+                jobInput = new JobInputHttp()
+                {
+                    Files = new string[] { mediaJob.InputFileUrl }
+                };
             }
             else
             {
-                Asset asset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
-                outputAssetStorage = asset.StorageAccountName;
-                outputAssetName = mediaJob.InputAssetName;
+                jobInput = new JobInputAsset()
+                {
+                    AssetName = mediaJob.InputAssetName
+                };
             }
+            return jobInput;
+        }
+
+        private IList<JobOutput> GetJobOutputs(string transformName, MediaJob mediaJob, string outputAssetStorage, string outputAssetName)
+        {
             List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
             Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
             for (int i = 0; i < transform.Outputs.Count; i++)
@@ -48,33 +49,39 @@ namespace AzureSkyMedia.PlatformServices
                 JobOutputAsset outputAsset = new JobOutputAsset(assetName);
                 outputAssets.Add(outputAsset);
             }
+            return outputAssets.ToArray();
+        }
+
+        private Job CreateJob(string transformName, MediaJob mediaJob)
+        {
+            if (string.IsNullOrEmpty(mediaJob.Name))
+            {
+                mediaJob.Name = Guid.NewGuid().ToString();
+            }
+            string outputAssetStorage = this.PrimaryStorageAccount;
+            string outputAssetName = mediaJob.InputAssetName;
+            if (!string.IsNullOrEmpty(mediaJob.InputFileUrl) && string.IsNullOrEmpty(outputAssetName))
+            {
+                Uri inputFileUri = new Uri(mediaJob.InputFileUrl);
+                outputAssetName = Path.GetFileNameWithoutExtension(inputFileUri.LocalPath);
+            }
+            else if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
+            {
+                Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
+                outputAssetStorage = inputAsset.StorageAccountName;
+            }
             Dictionary<string, string> jobData = null;
             if (mediaJob.Data != null)
             {
                 jobData = mediaJob.Data.ToObject<Dictionary<string, string>>();
-            }
-            JobInput jobInput;
-            if (!string.IsNullOrEmpty(mediaJob.InputFileUrl))
-            {
-                jobInput = new JobInputHttp()
-                {
-                    Files = new string[] { mediaJob.InputFileUrl }
-                };
-            }
-            else
-            {
-                jobInput = new JobInputAsset()
-                {
-                    AssetName = mediaJob.InputAssetName
-                };
             }
             Job job = new Job()
             {
                 Description = mediaJob.Description,
                 Priority = mediaJob.Priority,
                 CorrelationData = jobData,
-                Input = jobInput,
-                Outputs = outputAssets.ToArray()
+                Input = GetJobInput(mediaJob),
+                Outputs = GetJobOutputs(transformName, mediaJob, outputAssetStorage, outputAssetName)
             };
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
         }
