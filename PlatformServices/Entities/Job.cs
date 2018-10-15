@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -14,9 +15,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public JObject Data { get; set; }
 
-        public string InputAssetName { get; set; }
-
         public string InputFileUrl { get; set; }
+
+        public string InputAssetName { get; set; }
 
         public bool OutputEncoderIndexer { get; set; }
 
@@ -25,5 +26,15 @@ namespace AzureSkyMedia.PlatformServices
         public string[] OutputAssetDescriptions { get; set; }
 
         public string[] OutputAssetAlternateIds { get; set; }
+    }
+
+    internal class MediaJobPublish
+    {
+        [JsonProperty(PropertyName = "id")]
+        public string JobName { get; set; }
+
+        public string TransformName { get; set; }
+
+        public MediaAccount MediaAccount { get; set; }
     }
 }

@@ -2,7 +2,27 @@
 
 @section head {
     <script type="text/javascript">
+        function DisplaySearchResults(searchResults) {
+            if (_jsonEditor != null) {
+                _jsonEditor.destroy();
+            }
+            CreateJsonEditor("searchResults", "Media Search Results", searchResults);
+        }
+        function SearchMediaLibrary() {
+            SetCursor(true);
+            $.get("/search/library",
+                {
+                    searchQuery: $("#searchQuery").val()
+                },
+                function (searchResults) {
+                    SetCursor(false);
+                    DisplaySearchResults(searchResults);
+                }
+            );
+        }
         $(function () {
+            DisplaySearchResults(null);
+            $("#searchQuery").focus();
         })
     </script>
 }
@@ -11,4 +31,13 @@
     Media Search
 }
 
-<partial name="SiteButton" model='new SiteButton { ControlId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />
+<div class="mediaSearch">
+    <div>
+        <input id="searchQuery" type="text" class="mediaSearchQuery" placeholder="[Media Search Query]" />
+    </div>
+    <div>
+        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaSearch", ImageFile = "MediaSearch.png", OnClick = "SearchMediaLibrary()" }' />
+    </div>
+</div>
+
+<div id="searchResults" class="mediaSearchResults"></div>

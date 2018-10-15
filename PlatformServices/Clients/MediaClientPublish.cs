@@ -6,24 +6,25 @@ using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Azure.Management.EventGrid;
 using Microsoft.Azure.Management.EventGrid.Models;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string GetNotificationMessage(MediaPublish mediaPublish, Job job)
+        private static string GetNotificationMessage(Job job, MediaJobPublish jobPublish, MediaPublish mediaPublish)
         {
             StringBuilder message = new StringBuilder();
             message.Append("AMS Transform Job Notification");
             message.Append("\n\nMedia Account\n");
-            message.Append(mediaPublish.MediaAccount.Name);
+            message.Append(jobPublish.MediaAccount.Name);
             message.Append("\n\nJob Name\n");
             message.Append(job.Name);
             message.Append("\n\nJob State\n");
             message.Append(job.State.ToString());
             message.Append("\n\nTransform Name\n");
-            message.Append(mediaPublish.TransformName);
+            message.Append(jobPublish.TransformName);
             message.Append("\n\nStreaming Policy Name\n");
             message.Append(mediaPublish.StreamingPolicyName);
             foreach (JobOutput jobOutput in job.Outputs)
@@ -52,17 +53,43 @@ namespace AzureSkyMedia.PlatformServices
             return message.ToString();
         }
 
-        private static string GetNotificationMessage(MediaPublish mediaPublish, string indexId, string indexState)
+        private static string GetNotificationMessage(MediaJobPublish jobPublish, string indexId, string indexState)
         {
             StringBuilder message = new StringBuilder();
             message.Append("VI Upload Index Notification");
             message.Append("\n\nVideo Indexer Account\n");
-            message.Append(mediaPublish.MediaAccount.VideoIndexerKey);
+            message.Append(jobPublish.MediaAccount.VideoIndexerKey);
             message.Append("\n\nIndex Id\n");
             message.Append(indexId);
             message.Append("\n\nIndex State\n");
             message.Append(indexState);
             return message.ToString();
+        }
+
+        private static MediaPublish GetJobPublish(Job job)
+        {
+            string jobOutputPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
+            return JsonConvert.DeserializeObject<MediaPublish>(jobOutputPublish);
+        }
+
+        public static void SetJobPublish(string authToken, JObject jobData, string streamingPolicyName)
+        {
+            string mobilePhoneNumber = null;
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                User userProfile = new User(authToken);
+                mobilePhoneNumber = userProfile.MobilePhoneNumber;
+            }
+            MediaPublish mediaPublish = new MediaPublish()
+            {
+                StreamingPolicyName = streamingPolicyName,
+                ContentProtection = null,
+                UserContact = new UserContact()
+                {
+                    MobilePhoneNumber = mobilePhoneNumber
+                }
+            };
+            jobData[Constant.Media.Job.OutputPublish] = JObject.FromObject(mediaPublish);
         }
 
         public static void SetEventSubscription(string authToken)
@@ -93,44 +120,53 @@ namespace AzureSkyMedia.PlatformServices
             eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
-        public static MediaPublish PublishJobOutput(MediaPublish mediaPublish)
+        public static MediaPublish PublishJobOutput(string jobName, string indexId)
         {
-            using (MediaClient mediaClient = new MediaClient(null, mediaPublish.MediaAccount))
+            MediaJobPublish jobPublish;
+            MediaPublish mediaPublish = null;
+            using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                if (!string.IsNullOrEmpty(mediaPublish.ProcessState))
+                string collectionId = Constant.Database.Collection.MediaJob;
+                string documentId = string.IsNullOrEmpty(jobName) ? indexId : jobName;
+                jobPublish = databaseClient.GetDocument<MediaJobPublish>(collectionId, documentId);
+            }
+            if (jobPublish != null)
+            {
+                using (MediaClient mediaClient = new MediaClient(null, jobPublish.MediaAccount))
                 {
-                    string indexId = mediaPublish.Id;
-                    JObject insight = mediaClient.IndexerGetInsight(indexId);
-                    if (insight != null)
+                    if (!string.IsNullOrEmpty(indexId))
                     {
-                        using (DatabaseClient databaseClient = new DatabaseClient())
+                        JObject insight = mediaClient.IndexerGetInsight(indexId);
+                        if (insight != null)
                         {
-                            string collectionId = Constant.Database.Collection.MediaInsight;
-                            databaseClient.UpsertDocument(collectionId, insight);
-                        }
-                    }
-                }
-                else
-                {
-                    string jobName = mediaPublish.Id;
-                    string transformName = mediaPublish.TransformName;
-                    Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
-                    if (job != null)
-                    {
-                        string streamingPolicyName = mediaPublish.StreamingPolicyName;
-                        if (string.IsNullOrEmpty(streamingPolicyName))
-                        {
-                            streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
-                        }
-                        foreach (JobOutputAsset jobOutput in job.Outputs)
-                        {
-                            StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
-                            if (locator == null)
+                            using (DatabaseClient databaseClient = new DatabaseClient())
                             {
-                                mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
+                                string collectionId = Constant.Database.Collection.MediaInsight;
+                                databaseClient.UpsertDocument(collectionId, insight);
                             }
                         }
-                        mediaPublish.UserContact.NotificationMessage = GetNotificationMessage(mediaPublish, job);
+                    }
+                    else
+                    {
+                        Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, jobPublish.TransformName);
+                        if (job != null)
+                        {
+                            mediaPublish = GetJobPublish(job);
+                            string streamingPolicyName = mediaPublish.StreamingPolicyName;
+                            if (string.IsNullOrEmpty(streamingPolicyName))
+                            {
+                                streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                            }
+                            foreach (JobOutputAsset jobOutput in job.Outputs)
+                            {
+                                StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
+                                if (locator == null)
+                                {
+                                    mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
+                                }
+                            }
+                            mediaPublish.UserContact.NotificationMessage = GetNotificationMessage(job, jobPublish, mediaPublish);
+                        }
                     }
                 }
             }

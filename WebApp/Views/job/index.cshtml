@@ -15,14 +15,14 @@
             var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
             CreateTipBottom("jobCreate", "Create Job");
-            CreateJsonEditor("jobData", "Media Job Correlation Data", null);
+            CreateJsonEditor("jobData", "Media Job Data", null);
             SetJobRefresh(gridId, columns);
        })
     </script>
 }
 
 @section title {
-    Media Jobs
+    Media Transform Jobs
 }
 
 <div class="grid">
@@ -91,11 +91,17 @@
                     <td class="inputLabel">
                         Output Assets
                     </td>
-                    <td class="inputOption">
-                        @Html.CheckBox("outputAssetSeparation", false)
-                        <span class="inputLabel">
-                            Create A Separate Output Asset Per Transform Output
-                        </span>
+                    <td class="inputOption jobOutputAssets">
+                        <table>
+                            <tr>
+                                <td class="jobOutputAssets">
+                                    @Html.CheckBox("mergeOutputAssets", false)
+                                </td>
+                                <td class="inputLabel">
+                                    Merge Transform Job Outputs Into Single Output Asset
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>

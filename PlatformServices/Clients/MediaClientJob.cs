@@ -11,6 +11,24 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private string GetAssetNameSuffix(TransformOutput transformOutput)
+        {
+            string assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.Default;
+            if (transformOutput.Preset is BuiltInStandardEncoderPreset)
+            {
+                assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AdaptiveStreaming;
+            }
+            else if (transformOutput.Preset is VideoAnalyzerPreset)
+            {
+                assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.VideoAnalyzer;
+            }
+            else if (transformOutput.Preset is AudioAnalyzerPreset)
+            {
+                assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AudioAnalyzer;
+            }
+            return string.Concat(" (", assetNameSuffix, ")");
+        }
+
         private JobInput GetJobInput(MediaJob mediaJob)
         {
             JobInput jobInput;
@@ -41,7 +59,8 @@ namespace AzureSkyMedia.PlatformServices
                 string assetName = outputAssetName;
                 if (!mediaJob.OutputAssetFilesMerge)
                 {
-                    assetName = string.Concat(assetName, " (", i, ")");
+                    string assetNameSuffix = GetAssetNameSuffix(transformOutput);
+                    assetName = string.Concat(assetName, assetNameSuffix);
                 }
                 string assetDescription = i > mediaJob.OutputAssetDescriptions.Length - 1 ? null : mediaJob.OutputAssetDescriptions[i];
                 string assetAlternateId = i > mediaJob.OutputAssetAlternateIds.Length - 1 ? null : mediaJob.OutputAssetAlternateIds[i];
@@ -73,7 +92,12 @@ namespace AzureSkyMedia.PlatformServices
             Dictionary<string, string> jobData = null;
             if (mediaJob.Data != null)
             {
-                jobData = mediaJob.Data.ToObject<Dictionary<string, string>>();
+                jobData = new Dictionary<string, string>();
+                foreach (KeyValuePair<string, JToken> property in mediaJob.Data)
+                {
+                    string propertyData = property.Value.ToString();
+                    jobData.Add(property.Key, propertyData);
+                }
             }
             Job job = new Job()
             {
@@ -87,43 +111,33 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority,
-                             JObject jobData, string inputAssetName, string inputFileUrl, bool outputAssetFilesMerge,
+                             JObject jobData, string inputFileUrl, string inputAssetName, bool outputAssetFilesMerge,
                              string[] outputAssetDescriptions, string[] outputAssetAlternateIds, string streamingPolicyName)
         {
-            string mobilePhoneNumber = null;
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                User userProfile = new User(authToken);
-                mobilePhoneNumber = userProfile.MobilePhoneNumber;
-            }
+            SetJobPublish(authToken, jobData, streamingPolicyName);
             MediaJob mediaJob = new MediaJob()
             {
                 Name = jobName,
                 Description = jobDescription,
                 Priority = jobPriority,
                 Data = jobData,
-                InputAssetName = inputAssetName,
                 InputFileUrl = inputFileUrl,
+                InputAssetName = inputAssetName,
                 OutputAssetFilesMerge = outputAssetFilesMerge,
                 OutputAssetDescriptions = outputAssetDescriptions,
                 OutputAssetAlternateIds = outputAssetAlternateIds
             };
             Job job = CreateJob(transformName, mediaJob);
-            MediaPublish mediaPublish = new MediaPublish()
+            MediaJobPublish jobPublish = new MediaJobPublish()
             {
-                Id = job.Name,
+                JobName = job.Name,
                 TransformName = transformName,
-                StreamingPolicyName = streamingPolicyName,
                 MediaAccount = MediaAccount,
-                UserContact = new UserContact()
-                {
-                    MobilePhoneNumber = mobilePhoneNumber
-                }
             };
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                string collectionId = Constant.Database.Collection.MediaPublish;
-                databaseClient.UpsertDocument(collectionId, mediaPublish);
+                string collectionId = Constant.Database.Collection.MediaJob;
+                databaseClient.UpsertDocument(collectionId, jobPublish);
             }
             return job;
         }

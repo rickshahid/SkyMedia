@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -26,7 +25,10 @@ namespace AzureSkyMedia.PlatformServices
 
             settingKey = Constant.AppSettingKey.DatabaseRegions;
             string[] regionNames = AppSetting.GetValue(settingKey, true);
-            ConnectionPolicy connectionPolicy = new ConnectionPolicy();
+            ConnectionPolicy connectionPolicy = new ConnectionPolicy()
+            {
+                UseMultipleWriteLocations = true
+            };
             foreach (string regionName in regionNames)
             {
                 connectionPolicy.PreferredLocations.Add(regionName);
@@ -68,10 +70,10 @@ namespace AzureSkyMedia.PlatformServices
             _cosmos.CreateDatabaseIfNotExistsAsync(database).Wait();
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            string collectionId = Constant.Database.Collection.MediaIngest;
+            string collectionId = Constant.Database.Collection.MediaJob;
             Uri collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionId = Constant.Database.Collection.MediaPublish;
+            collectionId = Constant.Database.Collection.MediaIngest;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
             collectionId = Constant.Database.Collection.MediaInsight;

@@ -81,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
     internal class MediaClientCredentials : ServiceClientCredentials
     {
         private AuthenticationContext _authContext;
-        private ClientCredential _clientCredential;
+        private readonly ClientCredential _clientCredential;
 
         public MediaClientCredentials(MediaAccount mediaAccount)
         {

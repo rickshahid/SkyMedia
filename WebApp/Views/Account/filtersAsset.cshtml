@@ -1,12 +1,12 @@
 ﻿@{
-    string gridId = "transforms";
+    string gridId = "filtersAsset";
 }
 
 @section head {
     <script type="text/javascript">
         $(function () {
-            _childGridId = "transformOutputs";
-            _childPropertyName = "properties.outputs";
+            _childGridId = null;
+            _childPropertyName = null;
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId);
@@ -16,7 +16,7 @@
 }
 
 @section title {
-    Media Transforms
+    Filters (Asset)
 }
 
 <div class="grid">

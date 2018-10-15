@@ -37,14 +37,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                MediaTransformPresets transformPresets = new MediaTransformPresets()
-                {
-                    AdaptiveStreaming = adaptiveStreaming,
-                    ThumbnailSprite = thumbnailSprite,
-                    VideoAnalyzer = videoAnalyzer,
-                    AudioAnalyzer = audioAnalyzer
-                };
-                Transform transform = mediaClient.CreateTransform(transformPresets);
+                Transform transform = mediaClient.CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
                 inputAssets = CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                 foreach (Asset inputAsset in inputAssets)
                 {
@@ -57,9 +50,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     if (transform != null)
                     {
+                        StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
+                        string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileNames[0], false);
                         string[] assetDescriptions = new string[] { assetDescription };
                         string[] assetAlternateIds = new string[] { indexId };
-                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputAsset.Name, null, false, assetDescriptions, assetAlternateIds, streamingPolicyName);
+                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, true, assetDescriptions, assetAlternateIds, streamingPolicyName);
                     }
                     if (job != null)
                     {

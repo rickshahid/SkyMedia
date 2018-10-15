@@ -338,6 +338,10 @@ body {
     text-align: left;
 }
 
+.jobOutputAssets {
+    padding: 0px !important;
+}
+
 .jobData {
     margin-bottom: 15px;
     text-align: left;
@@ -374,7 +378,7 @@ body {
 
 .carouselContainer {
     perspective: 2000px;
-    margin: 0 auto;
+    margin: 0px auto;
     height: 225px;
     width: 500px;
 }
@@ -393,4 +397,22 @@ body {
     position: absolute;
     height: 100%;
     width: 100%;
+}
+
+.mediaSearch {
+    margin: 0px auto;
+    display: table;
+}
+
+.mediaSearch div {
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.mediaSearchQuery {
+    width: 200px;
+}
+
+.mediaSearchResults {
+    width: 800px;
 }

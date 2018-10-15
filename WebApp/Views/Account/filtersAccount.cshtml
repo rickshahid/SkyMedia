@@ -1,23 +1,22 @@
 ﻿@{
-    string gridId = "transformJobs";
+    string gridId = "filtersAccount";
 }
 
 @section head {
     <script type="text/javascript">
         $(function () {
-            _childGridId = "transformJobOutputs";
-            _childPropertyName = "properties.outputs";
+            _childGridId = null;
+            _childPropertyName = null;
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
-            setInterval(function () { ReloadGrid(gridId, "/job/list", columns); }, _refreshInterval);
         })
     </script>
 }
 
 @section title {
-    Media Jobs
+    Filters (Account)
 }
 
 <div class="grid">

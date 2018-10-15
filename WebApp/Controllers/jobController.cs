@@ -51,7 +51,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Create(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
-                                 string inputAssetName, string inputFileUrl, bool outputAssetSeparation, string streamingPolicyName)
+                                 string inputFileUrl, string inputAssetName, bool outputAssetFilesMerge, string streamingPolicyName)
         {
             Job job = null;
             string authToken = HomeController.GetAuthToken(Request, Response);
@@ -86,9 +86,16 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 if (!string.IsNullOrEmpty(transformName))
                 {
+                    if (string.IsNullOrEmpty(inputFileUrl) && inputAsset != null)
+                    {
+                        StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
+                        string fileName = mediaAsset.Files[0].Name;
+                        inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
+                    }
                     string[] assetDescriptions = new string[] { assetDescription };
                     string[] assetAlternateIds = new string[] { indexId };
-                    job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, JObject.Parse(jobData), inputAssetName, inputFileUrl, outputAssetSeparation, assetDescriptions, assetAlternateIds, streamingPolicyName);
+                    job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, JObject.Parse(jobData), inputFileUrl, inputAssetName, outputAssetFilesMerge, assetDescriptions, assetAlternateIds, streamingPolicyName);
                 }
             }
             return Json(job);
@@ -105,17 +112,8 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public JsonResult Publish(string jobName)
         {
-            string notificationMessage = string.Empty;
-            using (DatabaseClient databaseClient = new DatabaseClient())
-            {
-                string collectionId = Constant.Database.Collection.MediaPublish;
-                MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, jobName);
-                if (mediaPublish != null)
-                {
-                    mediaPublish = MediaClient.PublishJobOutput(mediaPublish);
-                    notificationMessage = mediaPublish.UserContact.NotificationMessage;
-                }
-            }
+            MediaPublish mediaPublish = MediaClient.PublishJobOutput(jobName, null);
+            string notificationMessage = mediaPublish.UserContact.NotificationMessage;
             return Json(notificationMessage);
         }
 

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace AzureSkyMedia.PlatformServices
@@ -12,19 +14,22 @@ namespace AzureSkyMedia.PlatformServices
         StreamingPolicy,
         StreamingEndpoint,
         StreamingLocator,
+        FilterAccount,
+        FilterAsset,
         LiveEvent,
         LiveEventOutput
     }
 
+    [Flags]
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaTransformPreset
     {
-        AdaptiveStreaming,
-        ThumbnailSprite,
-        VideoAnalyzer,
-        AudioAnalyzer,
-        VideoIndexer,
-        AudioIndexer
+        AdaptiveStreaming = 1,
+        ThumbnailSprite = 2,
+        VideoAnalyzer = 4,
+        AudioAnalyzer = 8,
+        VideoIndexer = 16,
+        AudioIndexer = 32
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

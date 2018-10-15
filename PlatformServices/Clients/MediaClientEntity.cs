@@ -95,6 +95,12 @@ namespace AzureSkyMedia.PlatformServices
                     };
                     entities = (IPage<T>)_media.StreamingLocators.List(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocatorQuery);
                     break;
+                case MediaEntity.FilterAccount:
+                    entities = (IPage<T>)_media.AccountFilters.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
+                    break;
+                case MediaEntity.FilterAsset:
+                    entities = (IPage<T>)_media.AssetFilters.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName);
+                    break;
                 case MediaEntity.LiveEvent:
                     entities = (IPage<T>)_media.LiveEvents.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
                     break;
@@ -138,6 +144,12 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaEntity.StreamingLocator:
                         entities = (IPage<T>)_media.StreamingLocators.ListNext(currentPage.NextPageLink);
                         break;
+                    case MediaEntity.FilterAccount:
+                        entities = (IPage<T>)_media.AccountFilters.ListNext(currentPage.NextPageLink);
+                        break;
+                    case MediaEntity.FilterAsset:
+                        entities = (IPage<T>)_media.AssetFilters.ListNext(currentPage.NextPageLink);
+                        break;
                     case MediaEntity.LiveEvent:
                         entities = (IPage<T>)_media.LiveEvents.ListNext(currentPage.NextPageLink);
                         break;
@@ -175,6 +187,12 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.StreamingLocator:
                     entity = _media.StreamingLocators.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
                     break;
+                case MediaEntity.FilterAccount:
+                    entity = _media.AccountFilters.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
+                    break;
+                case MediaEntity.FilterAsset:
+                    entity = _media.AssetFilters.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName) as T;
+                    break;
                 case MediaEntity.LiveEvent:
                     entity = _media.LiveEvents.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
                     break;
@@ -199,7 +217,7 @@ namespace AzureSkyMedia.PlatformServices
                     _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     using (DatabaseClient databaseClient = new DatabaseClient())
                     {
-                        string collectionId = Constant.Database.Collection.MediaPublish;
+                        string collectionId = Constant.Database.Collection.MediaJob;
                         databaseClient.DeleteDocument(collectionId, entityName);
                     }
                     break;
@@ -214,6 +232,12 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 case MediaEntity.StreamingLocator:
                     _media.StreamingLocators.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
+                    break;
+                case MediaEntity.FilterAccount:
+                    _media.AccountFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
+                    break;
+                case MediaEntity.FilterAsset:
+                    _media.AssetFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     break;
                 case MediaEntity.LiveEvent:
                     _media.LiveEvents.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);

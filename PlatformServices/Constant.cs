@@ -150,9 +150,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
+                public const string MediaJob = "MediaJob";
                 public const string MediaIngest = "MediaIngest";
                 public const string MediaInsight = "MediaInsight";
-                public const string MediaPublish = "MediaPublish";
             }
 
             public struct Script
@@ -215,6 +215,20 @@ namespace AzureSkyMedia.PlatformServices
                 public struct Preset
                 {
                     public const string NameDelimiter = ", ";
+                }
+            }
+
+            public struct Job
+            {
+                public const string OutputPublish = "OutputPublish";
+
+                public struct OutputAssetNameSuffix
+                {
+                    public const string Default = "Other";
+                    public const string AdaptiveStreaming = "ABR";
+                    public const string VideoAnalyzer = "VAI";
+                    public const string AudioAnalyzer = "AAI";
+
                 }
             }
 

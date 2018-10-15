@@ -76,34 +76,34 @@ namespace AzureSkyMedia.PlatformServices
             };
         }
 
-        public MediaTransformPresets GetTransformPresets(MediaTransformPreset[] transformPresets)
+        public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
-            MediaTransformPresets presets = new MediaTransformPresets();
-            foreach (MediaTransformPreset transformPreset in transformPresets)
+            MediaTransformPreset transformPreset = new MediaTransformPreset();
+            if (adaptiveStreaming)
             {
-                switch (transformPreset)
-                {
-                    case MediaTransformPreset.AdaptiveStreaming:
-                        presets.AdaptiveStreaming = true;
-                        break;
-                    case MediaTransformPreset.ThumbnailSprite:
-                        presets.ThumbnailSprite = true;
-                        break;
-                    case MediaTransformPreset.VideoAnalyzer:
-                        presets.VideoAnalyzer = true;
-                        break;
-                    case MediaTransformPreset.AudioAnalyzer:
-                        presets.AudioAnalyzer = true;
-                        break;
-                    case MediaTransformPreset.VideoIndexer:
-                        presets.VideoIndexer = true;
-                        break;
-                    case MediaTransformPreset.AudioIndexer:
-                        presets.AudioIndexer = true;
-                        break;
-                }
+                transformPreset = transformPreset | MediaTransformPreset.AdaptiveStreaming;
             }
-            return presets;
+            if (thumbnailSprite)
+            {
+                transformPreset = transformPreset | MediaTransformPreset.ThumbnailSprite;
+            }
+            if (videoAnalyzer)
+            {
+                transformPreset = transformPreset | MediaTransformPreset.VideoAnalyzer;
+            }
+            if (audioAnalyzer)
+            {
+                transformPreset = transformPreset | MediaTransformPreset.AudioAnalyzer;
+            }
+            if (videoIndexer)
+            {
+                transformPreset = transformPreset | MediaTransformPreset.VideoIndexer;
+            }
+            if (audioIndexer)
+            {
+                transformPreset = transformPreset | MediaTransformPreset.AudioIndexer;
+            }
+            return CreateTransform(transformPreset);
         }
 
         public Transform CreateTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
@@ -149,10 +149,10 @@ namespace AzureSkyMedia.PlatformServices
             return transform;
         }
 
-        public Transform CreateTransform(MediaTransformPresets transformPresets)
+        public Transform CreateTransform(MediaTransformPreset transformPreset)
         {
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
-            if (transformPresets.AdaptiveStreaming)
+            if (transformPreset.HasFlag(MediaTransformPreset.AdaptiveStreaming))
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
@@ -162,7 +162,7 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 transformOutputs.Add(transformOutput);
             }
-            if (transformPresets.ThumbnailSprite)
+            if (transformPreset.HasFlag(MediaTransformPreset.ThumbnailSprite))
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
@@ -172,7 +172,7 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 transformOutputs.Add(transformOutput);
             }
-            if (transformPresets.VideoAnalyzer)
+            if (transformPreset.HasFlag(MediaTransformPreset.VideoAnalyzer))
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
@@ -182,7 +182,7 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 transformOutputs.Add(transformOutput);
             }
-            if (transformPresets.AudioAnalyzer)
+            if (transformPreset.HasFlag(MediaTransformPreset.AudioAnalyzer))
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
@@ -199,90 +199,48 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<Transform> transforms = new List<Transform>();
 
-            MediaTransformPresets transformPresets = new MediaTransformPresets()
-            {
-                AdaptiveStreaming = true
-            };
-            Transform transform = CreateTransform(transformPresets);
+            MediaTransformPreset transformPreset = MediaTransformPreset.AdaptiveStreaming;
+            Transform transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                AdaptiveStreaming = true,
-                ThumbnailSprite = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailSprite;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                AdaptiveStreaming = true,
-                VideoAnalyzer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.VideoAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                AdaptiveStreaming = true,
-                AudioIndexer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.AudioAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                AdaptiveStreaming = true,
-                ThumbnailSprite = true,
-                VideoAnalyzer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.VideoAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                AdaptiveStreaming = true,
-                ThumbnailSprite = true,
-                AudioAnalyzer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.AudioAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                ThumbnailSprite = true,
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.ThumbnailSprite;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                ThumbnailSprite = true,
-                VideoAnalyzer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.VideoAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                ThumbnailSprite = true,
-                AudioAnalyzer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.AudioAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                VideoAnalyzer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.VideoAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPresets = new MediaTransformPresets()
-            {
-                AudioAnalyzer = true
-            };
-            transform = CreateTransform(transformPresets);
+            transformPreset = MediaTransformPreset.AudioAnalyzer;
+            transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
             return transforms.ToArray();

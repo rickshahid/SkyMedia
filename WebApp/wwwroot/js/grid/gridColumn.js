@@ -382,9 +382,9 @@ function GetChildColumns(gridId) {
 }
 function FormatName(value, grid, row) {
     if (row.preset != null) {
-        if (row.preset.audioLanguage != null) {
-            value = row.preset.audioInsightsOnly == null ? "Audio Analyzer" : "Video Analyzer";
-        } else if (row.preset.codecs != null) {
+        if (row.preset.hasOwnProperty("audioLanguage")) {
+            value = row.preset.insightsToExtract != null ? "Video Analyzer" : "Audio Analyzer";
+        } else if (row.preset.hasOwnProperty("codecs")) {
             value = "Thumbnail Sprite";
         }
     }
@@ -435,11 +435,13 @@ function FormatJobOutputState(value, grid, row) {
 }
 function FormatJobData(value, grid, row) {
     if (jQuery.isEmptyObject(value)) {
-        value = "Empty";
+        value = "0 Items";
     } else {
-        var title = "Media Job Correlation Data";
+        value = JSON.parse(value["OutputPublish"]);
+        var title = "Media Job Data";
         var jsonData = JSON.stringify(value);
-        value = "<span class=\"siteLink\" onclick=DisplayJson(\"" + encodeURIComponent(title) + "\",\"" + encodeURIComponent(jsonData) + "\")>Job Data</span>";
+        var itemCount = Object.keys(value).length;
+        value = "<span class=\"siteLink\" onclick=DisplayJson(\"" + encodeURIComponent(title) + "\",\"" + encodeURIComponent(jsonData) + "\")>" + itemCount + " Items</span>";
     }
     return value;
 }

@@ -11,7 +11,7 @@ function DisplayInsight(fileName, assetName, indexId) {
         },
         function (insight) {
             SetCursor(false);
-            var title = fileName == null ? indexId : fileName;
+            var title = fileName == null ? "Video Indexer Insight (Index Id " + indexId + ")" : fileName;
             DisplayJson(title, insight);
         }
     );
@@ -165,9 +165,9 @@ function GetPresetIndex(preset) {
     if (preset.presetName != null) {
         presetIndex = 0;
         $("#presetName0").val(preset.presetName);
-    } else if (preset.codecs != null) {
+    } else if (preset.hasOwnProperty("codecs")) {
         presetIndex = 1;
-    } else if (preset.audioInsightsOnly != null) {
+    } else if (preset.hasOwnProperty("insightsToExtract")) {
         presetIndex = 2;
     } else {
         presetIndex = 3;

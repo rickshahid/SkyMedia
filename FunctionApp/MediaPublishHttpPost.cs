@@ -25,7 +25,7 @@ namespace AzureSkyMedia.FunctionApp
                 logger.LogInformation("Request Query: {0}", request.QueryString);
                 string indexId = request.Query["id"].ToString();
                 string indexState = request.Query["state"].ToString();
-                PublishJobOutput(indexId, indexState, logger);
+                PublishJobOutput(null, indexId, logger);
             }
             else
             {
@@ -59,19 +59,10 @@ namespace AzureSkyMedia.FunctionApp
             return new OkObjectResult(validationResponse);
         }
 
-        private static void PublishJobOutput(string documentId, string processState, ILogger logger)
+        private static void PublishJobOutput(string jobName, string indexId, ILogger logger)
         {
-            using (DatabaseClient databaseClient = new DatabaseClient())
-            {
-                string collectionId = Constant.Database.Collection.MediaPublish;
-                MediaPublish mediaPublish = databaseClient.GetDocument<MediaPublish>(collectionId, documentId);
-                if (mediaPublish != null)
-                {
-                    mediaPublish.ProcessState = processState;
-                    mediaPublish = MediaClient.PublishJobOutput(mediaPublish);
-                    logger.LogInformation("Media Publish: {0}", JsonConvert.SerializeObject(mediaPublish));
-                }
-            }
+            MediaPublish mediaPublish = MediaClient.PublishJobOutput(jobName, indexId);
+            logger.LogInformation("Media Publish: {0}", JsonConvert.SerializeObject(mediaPublish));
         }
     }
 }

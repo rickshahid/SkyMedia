@@ -82,7 +82,8 @@ namespace AzureSkyMedia.PlatformServices
             else if (inputAsset != null)
             {
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(inputAsset.Name));
-                requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
+                //requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
+                requestUrl = string.Concat(requestUrl, "&assetId=", HttpUtility.UrlEncode(inputAsset.Name));
             }
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
@@ -138,6 +139,20 @@ namespace AzureSkyMedia.PlatformServices
                     databaseClient.DeleteDocument(collectionId, indexId);
                 }
             }
+        }
+
+        public JObject IndexerSearch(string searchQuery)
+        {
+            JObject searchResults;
+            string relativePath = "/videos/search";
+            string requestUrl = GetRequestUrl(relativePath, true, null);
+            requestUrl = string.Concat(requestUrl, "&query=", HttpUtility.UrlEncode(searchQuery));
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            {
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                searchResults = webClient.GetResponse<JObject>(webRequest);
+            }
+            return searchResults;
         }
 
         public JArray IndexerGetInsights()

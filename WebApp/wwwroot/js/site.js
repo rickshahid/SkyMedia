@@ -123,6 +123,10 @@ function CreateJsonEditor(containerId, jsonName, jsonData) {
         _jsonEditor.setName(jsonName);
     }
     if (jsonData != null) {
+        if (typeof jsonData == "string") {
+            jsonData = decodeURIComponent(jsonData);
+            jsonData = JSON.parse(jsonData);
+        }
         _jsonEditor.set(jsonData);
     }
 }

@@ -67,6 +67,9 @@
                                         <option value="H264MultipleBitrate1080p">H264 Multiple Bitrate 1080p</option>
                                         <option value="H264MultipleBitrate720p">H264 Multiple Bitrate 720p</option>
                                         <option value="H264MultipleBitrateSD">H264 Multiple Bitrate SD</option>
+                                        <option value="H264SingleBitrate1080p">H264 Single Bitrate 1080p</option>
+                                        <option value="H264SingleBitrate720p">H264 Single Bitrate 720p</option>
+                                        <option value="H264SingleBitrateSD">H264 Single Bitrate SD</option>
                                         <option value="AACGoodQualityAudio">AAC Good Quality Audio</option>
                                     </select>
                                 </td>
@@ -99,7 +102,7 @@
                             <tr>
                                 <td class="inputOption">
                                     @Html.CheckBox("presetType2", false, new { value = "VideoAnalyzer", onchange = "SetIntelligenceOptions(this)" })
-                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
                                         Video Analyzer / Indexer
                                     </span>
                                     @Html.Hidden("presetName2", "VideoAnalyzer")
@@ -116,7 +119,7 @@
                             <tr>
                                 <td class="inputOption">
                                     @Html.CheckBox("presetType3", false, new { value = "AudioAnalyzer" })
-                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
                                         Audio Analyzer / Indexer
                                     </span>
                                     @Html.Hidden("presetName3", "AudioAnalyzer")

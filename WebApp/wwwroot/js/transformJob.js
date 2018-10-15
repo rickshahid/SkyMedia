@@ -53,9 +53,9 @@ function CreateJob() {
                     jobDescription: $("#description").val(),
                     jobPriority: $("#jobPriority:checked").val(),
                     jobData: _jsonEditor.getText(),
-                    inputAssetName: inputAssetName,
                     inputFileUrl: inputFileUrl,
-                    outputAssetSeparation: $("#outputAssetSeparation").prop("checked"),
+                    inputAssetName: inputAssetName,
+                    outputAssetFilesMerge: $("#outputAssetFilesMerge").prop("checked"),
                     streamingPolicyName: $("#streamingPolicies").val()
                 },
                 function (entity) {
