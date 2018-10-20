@@ -61,8 +61,8 @@ namespace AzureSkyMedia.FunctionApp
 
         private static void PublishJobOutput(string jobName, string indexId, ILogger logger)
         {
-            MediaPublish mediaPublish = MediaClient.PublishJobOutput(jobName, indexId);
-            logger.LogInformation("Media Publish: {0}", JsonConvert.SerializeObject(mediaPublish));
+            MediaJobPublish jobPublish = MediaClient.PublishJobOutput(jobName, indexId);
+            logger.LogInformation("Media Job Publish: {0}", JsonConvert.SerializeObject(jobPublish));
         }
     }
 }

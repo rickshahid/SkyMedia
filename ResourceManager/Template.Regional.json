@@ -45,7 +45,6 @@
     "appServicePlanNodeCountMinimum": {
       "type": "int",
       "minValue": 1,
-      "defaultValue": 1,
       "metadata": {
         "description": "Minimum number of compute nodes within the App Service Plan."
       }

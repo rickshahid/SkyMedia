@@ -13,83 +13,56 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string GetNotificationMessage(Job job, MediaJobPublish jobPublish, MediaPublish mediaPublish)
+        private static string GetNotificationMessage(Job job, MediaJobAccount jobAccount)
         {
             StringBuilder message = new StringBuilder();
-            message.Append("AMS Transform Job Notification");
-            message.Append("\n\nMedia Account\n");
-            message.Append(jobPublish.MediaAccount.Name);
+            string jobOutputPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
+            MediaJobPublish jobPublish = JsonConvert.DeserializeObject<MediaJobPublish>(jobOutputPublish);
+            message.Append("AMS Job Notification");
+            message.Append("\n\nMedia Services Account\n");
+            message.Append(jobAccount.MediaAccount.Name);
+            message.Append("\n\nTransform Name\n");
+            message.Append(jobAccount.TransformName);
             message.Append("\n\nJob Name\n");
             message.Append(job.Name);
             message.Append("\n\nJob State\n");
             message.Append(job.State.ToString());
-            message.Append("\n\nTransform Name\n");
-            message.Append(jobPublish.TransformName);
-            message.Append("\n\nStreaming Policy Name\n");
-            message.Append(mediaPublish.StreamingPolicyName);
+            message.Append("\n\nJob Priority\n");
+            message.Append(job.Priority);
+            message.Append("\n\nJob Created\n");
+            message.Append(job.Created);
+            message.Append("\n\nJob Last Modified\n");
+            message.Append(job.LastModified);
             foreach (JobOutput jobOutput in job.Outputs)
             {
+                message.Append("\n\nJob Output Label\n");
+                message.Append(jobOutput.Label);
                 message.Append("\n\nJob Output State\n");
                 message.Append(jobOutput.State.ToString());
                 message.Append("\n\nJob Output Progress\n");
                 message.Append(jobOutput.Progress);
                 if (jobOutput.Error != null)
                 {
-                    message.Append("\n\nError Category\n");
+                    message.Append("\n\nOutput Error Category\n");
                     message.Append(jobOutput.Error.Category.ToString());
-                    message.Append("\n\nError Code: ");
+                    message.Append("\n\nOutput Error Code\n");
                     message.Append(jobOutput.Error.Code.ToString());
-                    message.Append("\n\nError Message\n");
+                    message.Append("\n\nOutput Error Message\n");
                     message.Append(jobOutput.Error.Message);
+                    message.Append("\n\nOutput Error Retry\n");
+                    message.Append(jobOutput.Error.Retry);
                     foreach (JobErrorDetail errorDetail in jobOutput.Error.Details)
                     {
-                        message.Append("\n\nError Detail Code\n");
+                        message.Append("\n\nOutput Error Detail Code\n");
                         message.Append(errorDetail.Code.ToString());
-                        message.Append("\n\nError Detail Message\n");
+                        message.Append("\n\nOutput Error Detail Message\n");
                         message.Append(errorDetail.Message);
                     }
                 }
             }
+            message.Append("\n\nStreaming Policy Name\n");
+            message.Append(jobPublish.StreamingPolicyName);
             return message.ToString();
-        }
-
-        private static string GetNotificationMessage(MediaJobPublish jobPublish, string indexId, string indexState)
-        {
-            StringBuilder message = new StringBuilder();
-            message.Append("VI Upload Index Notification");
-            message.Append("\n\nVideo Indexer Account\n");
-            message.Append(jobPublish.MediaAccount.VideoIndexerKey);
-            message.Append("\n\nIndex Id\n");
-            message.Append(indexId);
-            message.Append("\n\nIndex State\n");
-            message.Append(indexState);
-            return message.ToString();
-        }
-
-        private static MediaPublish GetJobPublish(Job job)
-        {
-            string jobOutputPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
-            return JsonConvert.DeserializeObject<MediaPublish>(jobOutputPublish);
-        }
-
-        public static void SetJobPublish(string authToken, JObject jobData, string streamingPolicyName)
-        {
-            string mobilePhoneNumber = null;
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                User userProfile = new User(authToken);
-                mobilePhoneNumber = userProfile.MobilePhoneNumber;
-            }
-            MediaPublish mediaPublish = new MediaPublish()
-            {
-                StreamingPolicyName = streamingPolicyName,
-                ContentProtection = null,
-                UserContact = new UserContact()
-                {
-                    MobilePhoneNumber = mobilePhoneNumber
-                }
-            };
-            jobData[Constant.Media.Job.OutputPublish] = JObject.FromObject(mediaPublish);
         }
 
         public static void SetEventSubscription(string authToken)
@@ -120,19 +93,44 @@ namespace AzureSkyMedia.PlatformServices
             eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
-        public static MediaPublish PublishJobOutput(string jobName, string indexId)
+        public static JObject SetJobPublish(string authToken, JObject jobData, string streamingPolicyName)
         {
-            MediaJobPublish jobPublish;
-            MediaPublish mediaPublish = null;
+            string mobilePhoneNumber = null;
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                User userProfile = new User(authToken);
+                mobilePhoneNumber = userProfile.MobilePhoneNumber;
+            }
+            MediaJobPublish jobPublish = new MediaJobPublish()
+            {
+                StreamingPolicyName = streamingPolicyName,
+                ContentProtection = null,
+                UserNotification = new UserNotification()
+                {
+                    MobilePhoneNumber = mobilePhoneNumber
+                }
+            };
+            if (jobData == null)
+            {
+                jobData = new JObject();
+            }
+            jobData[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
+            return jobData;
+        }
+
+        public static MediaJobPublish PublishJobOutput(string jobName, string indexId)
+        {
+            MediaJobAccount jobAccount;
+            MediaJobPublish jobPublish = null;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                string collectionId = Constant.Database.Collection.MediaJob;
+                string collectionId = Constant.Database.Collection.MediaJobAccount;
                 string documentId = string.IsNullOrEmpty(jobName) ? indexId : jobName;
-                jobPublish = databaseClient.GetDocument<MediaJobPublish>(collectionId, documentId);
+                jobAccount = databaseClient.GetDocument<MediaJobAccount>(collectionId, documentId);
             }
-            if (jobPublish != null)
+            if (jobAccount != null)
             {
-                using (MediaClient mediaClient = new MediaClient(null, jobPublish.MediaAccount))
+                using (MediaClient mediaClient = new MediaClient(null, jobAccount.MediaAccount))
                 {
                     if (!string.IsNullOrEmpty(indexId))
                     {
@@ -141,18 +139,18 @@ namespace AzureSkyMedia.PlatformServices
                         {
                             using (DatabaseClient databaseClient = new DatabaseClient())
                             {
-                                string collectionId = Constant.Database.Collection.MediaInsight;
+                                string collectionId = Constant.Database.Collection.MediaContentInsight;
                                 databaseClient.UpsertDocument(collectionId, insight);
                             }
                         }
                     }
                     else
                     {
-                        Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, jobPublish.TransformName);
+                        Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, jobAccount.TransformName);
                         if (job != null)
                         {
-                            mediaPublish = GetJobPublish(job);
-                            string streamingPolicyName = mediaPublish.StreamingPolicyName;
+                            jobPublish.UserNotification.JobOutputMessage = GetNotificationMessage(job, jobAccount);
+                            string streamingPolicyName = jobPublish.StreamingPolicyName;
                             if (string.IsNullOrEmpty(streamingPolicyName))
                             {
                                 streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
@@ -162,15 +160,14 @@ namespace AzureSkyMedia.PlatformServices
                                 StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
                                 if (locator == null)
                                 {
-                                    mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, mediaPublish.ContentProtection);
+                                    mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, jobPublish.ContentProtection);
                                 }
                             }
-                            mediaPublish.UserContact.NotificationMessage = GetNotificationMessage(job, jobPublish, mediaPublish);
                         }
                     }
                 }
             }
-            return mediaPublish;
+            return jobPublish;
         }
     }
 }

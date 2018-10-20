@@ -91,7 +91,7 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
     $("#mediaStreamRight").prop("disabled", true);
     $("#streamTuner").slider("option", "disabled", true);
     if (mediaStream.source.protectionInfo.length > 0) {
-        if (window.location.href.indexOf("droptoken") > -1) {
+        if (window.location.href.indexOf("token=0") > -1) {
             for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
                 mediaStream.source.protectionInfo[i].authenticationToken = null;
             }
@@ -111,6 +111,11 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
             mediaStream.textTracks
         );
     }
+    if (window.location.href.indexOf("poster=0") == -1) {
+        if (mediaStream.thumbnailUrls != null && mediaStream.thumbnailUrls.length > 0) {
+            mediaPlayer.poster(mediaStream.thumbnailUrls[0]);
+        }
+    }
 }
 function CreateJsonEditor(containerId, jsonName, jsonData) {
     var container = document.getElementById(containerId);
@@ -126,6 +131,11 @@ function CreateJsonEditor(containerId, jsonName, jsonData) {
         if (typeof jsonData == "string") {
             jsonData = decodeURIComponent(jsonData);
             jsonData = JSON.parse(jsonData);
+        }
+        for (var dataItem in jsonData) {
+            if (jsonData[dataItem].startsWith("{")) {
+                jsonData[dataItem] = JSON.parse(jsonData[dataItem]);
+            }
         }
         _jsonEditor.set(jsonData);
     }

@@ -38,7 +38,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public bool JobOutputEncoderIndexer { get; set; }
 
-        public bool JobOutputAssetFilesMerge { get; set; }
+        public MediaJobOutputAssetMode JobOutputAssetMode { get; set; }
 
         public string[] JobOutputAssetDescriptions { get; set; }
 

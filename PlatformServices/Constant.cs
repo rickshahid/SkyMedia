@@ -150,9 +150,9 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
-                public const string MediaJob = "MediaJob";
-                public const string MediaIngest = "MediaIngest";
-                public const string MediaInsight = "MediaInsight";
+                public const string MediaJobAccount = "Media Job Account";
+                public const string MediaContentInsight = "Media Content Insight";
+                public const string MediaIngestManifest = "Media Ingest Manifest";
             }
 
             public struct Script
@@ -224,7 +224,7 @@ namespace AzureSkyMedia.PlatformServices
 
                 public struct OutputAssetNameSuffix
                 {
-                    public const string Default = "Other";
+                    public const string Default = "MES";
                     public const string AdaptiveStreaming = "ABR";
                     public const string VideoAnalyzer = "VAI";
                     public const string AudioAnalyzer = "AAI";

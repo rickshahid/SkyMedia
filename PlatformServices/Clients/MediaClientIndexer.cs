@@ -135,7 +135,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 using (DatabaseClient databaseClient = new DatabaseClient())
                 {
-                    string collectionId = Constant.Database.Collection.MediaInsight;
+                    string collectionId = Constant.Database.Collection.MediaContentInsight;
                     databaseClient.DeleteDocument(collectionId, indexId);
                 }
             }

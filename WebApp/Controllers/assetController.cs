@@ -52,9 +52,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                     {
                         StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
                         string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileNames[0], false);
-                        string[] assetDescriptions = new string[] { assetDescription };
-                        string[] assetAlternateIds = new string[] { indexId };
-                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, true, assetDescriptions, assetAlternateIds, streamingPolicyName);
+                        MediaJobOutputAssetMode outputAssetMode = MediaJobOutputAssetMode.InputAsset;
+                        string[] outputAssetDescriptions = new string[] { assetDescription };
+                        string[] outputAssetAlternateIds = new string[] { indexId };
+                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetDescriptions, outputAssetAlternateIds, streamingPolicyName);
                     }
                     if (job != null)
                     {

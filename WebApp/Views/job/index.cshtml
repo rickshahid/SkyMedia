@@ -51,7 +51,7 @@
                     <td class="inputLabel">
                         Media Job Priority
                     </td>
-                    <td class="inputOption">
+                    <td>
                         <partial name="Priority" model='new ClientControl { ControlId = "jobPriority" }' />
                     </td>
                 </tr>
@@ -91,14 +91,20 @@
                     <td class="inputLabel">
                         Output Assets
                     </td>
-                    <td class="inputOption jobOutputAssets">
+                    <td class="jobOutputAssets">
                         <table>
                             <tr>
-                                <td class="jobOutputAssets">
-                                    @Html.CheckBox("mergeOutputAssets", false)
+                                <td class="inputLabel">
+                                    @Html.RadioButton("outputAssetsMode", "DistinctAssets", true)
+                                    Distinct Assets
                                 </td>
                                 <td class="inputLabel">
-                                    Merge Transform Job Outputs Into Single Output Asset
+                                    @Html.RadioButton("outputAssetsMode", "InputAsset", false)
+                                    Input Asset
+                                </td>
+                                <td class="inputLabel">
+                                    @Html.RadioButton("outputAssetsMode", "SingleAsset", false)
+                                    Single Asset
                                 </td>
                             </tr>
                         </table>

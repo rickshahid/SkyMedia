@@ -342,6 +342,10 @@ body {
     padding: 0px !important;
 }
 
+.jobOutputAssets table {
+    margin: 0px auto;
+}
+
 .jobData {
     margin-bottom: 15px;
     text-align: left;
@@ -350,7 +354,12 @@ body {
 }
 
 .jsoneditor-field {
+    background-color: transparent !important;
     color: azure !important;
+}
+
+.jsoneditor-value {
+    background-color: transparent !important;
 }
 
 .indexerInsight {

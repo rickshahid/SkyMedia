@@ -437,7 +437,6 @@ function FormatJobData(value, grid, row) {
     if (jQuery.isEmptyObject(value)) {
         value = "0 Items";
     } else {
-        value = JSON.parse(value["OutputPublish"]);
         var title = "Media Job Data";
         var jsonData = JSON.stringify(value);
         var itemCount = Object.keys(value).length;

@@ -161,6 +161,7 @@
       "name": "[variables('databaseServiceName')]",
       "properties": {
         "databaseAccountOfferType": "Standard",
+        "enableMultipleWriteLocations": true,
         "copy": [
           {
             "name": "locations",
@@ -183,6 +184,7 @@
       "name": "[variables('databaseServiceNameStaging')]",
       "properties": {
         "databaseAccountOfferType": "Standard",
+        "enableMultipleWriteLocations": true,
         "copy": [
           {
             "name": "locations",

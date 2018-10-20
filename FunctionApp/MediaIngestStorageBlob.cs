@@ -33,7 +33,7 @@ namespace AzureSkyMedia.FunctionApp
                     }
                     else
                     {
-                        string collectionId = Constant.Database.Collection.MediaIngest;
+                        string collectionId = Constant.Database.Collection.MediaIngestManifest;
                         MediaIngestManifest[] ingestManifests = _databaseClient.GetDocuments<MediaIngestManifest>(collectionId);
                         foreach (MediaIngestManifest ingestManifest in ingestManifests)
                         {
@@ -108,7 +108,7 @@ namespace AzureSkyMedia.FunctionApp
             MediaIngestManifest ingestManifest = GetManifest(blobClient, blobStream, manifestName);
             if (ingestManifest.MissingFiles.Length > 0)
             {
-                string collectionId = Constant.Database.Collection.MediaIngest;
+                string collectionId = Constant.Database.Collection.MediaIngestManifest;
                 _databaseClient.UpsertDocument(collectionId, ingestManifest);
             }
             else
@@ -172,7 +172,7 @@ namespace AzureSkyMedia.FunctionApp
             Transform transform = mediaClient.CreateTransform(ingestManifest.TransformPreset.Value);
             if (transform != null)
             {
-                Job job = mediaClient.CreateJob(null, transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.JobData, ingestManifest.JobInputFileUrl, ingestManifest.AssetName, ingestManifest.JobOutputAssetFilesMerge, ingestManifest.JobOutputAssetDescriptions, ingestManifest.JobOutputAssetAlternateIds, ingestManifest.StreamingPolicyName);
+                Job job = mediaClient.CreateJob(null, transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.JobData, ingestManifest.JobInputFileUrl, ingestManifest.AssetName, ingestManifest.JobOutputAssetMode, ingestManifest.JobOutputAssetDescriptions, ingestManifest.JobOutputAssetAlternateIds, ingestManifest.StreamingPolicyName);
                 logData = string.Concat("Transform Name: ", transform.Name);
                 WriteLog(blobClient, ingestManifest.Name, logData);
                 logger.LogInformation(logData);

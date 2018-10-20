@@ -21,14 +21,14 @@ namespace AzureSkyMedia.PlatformServices
 
         public bool OutputEncoderIndexer { get; set; }
 
-        public bool OutputAssetFilesMerge { get; set; }
+        public MediaJobOutputAssetMode OutputAssetMode { get; set; }
 
         public string[] OutputAssetDescriptions { get; set; }
 
         public string[] OutputAssetAlternateIds { get; set; }
     }
 
-    internal class MediaJobPublish
+    internal class MediaJobAccount
     {
         [JsonProperty(PropertyName = "id")]
         public string JobName { get; set; }

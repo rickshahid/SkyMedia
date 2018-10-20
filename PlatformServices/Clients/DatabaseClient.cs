@@ -70,13 +70,13 @@ namespace AzureSkyMedia.PlatformServices
             _cosmos.CreateDatabaseIfNotExistsAsync(database).Wait();
             Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
 
-            string collectionId = Constant.Database.Collection.MediaJob;
+            string collectionId = Constant.Database.Collection.MediaJobAccount;
             Uri collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionId = Constant.Database.Collection.MediaIngest;
+            collectionId = Constant.Database.Collection.MediaIngestManifest;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
-            collectionId = Constant.Database.Collection.MediaInsight;
+            collectionId = Constant.Database.Collection.MediaContentInsight;
             collectionUri = CreateCollection(databaseUri, collectionId);
 
             //string collectionDirectory = Path.Combine(modelsDirectory, collectionId);

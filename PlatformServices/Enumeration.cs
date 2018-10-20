@@ -41,6 +41,14 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaJobOutputAssetMode
+    {
+        DistinctAssets,
+        InputAsset,
+        SingleAsset
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaProtection
     {
         AES,

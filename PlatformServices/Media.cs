@@ -17,7 +17,7 @@ namespace AzureSkyMedia.PlatformServices
             StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
             foreach (MediaFile assetFile in mediaAsset.Files)
             {
-                if (asset.Name.StartsWith(Constant.Media.Thumbnail.FileNamePrefix, stringComparison))
+                if (assetFile.Name.StartsWith(Constant.Media.Thumbnail.FileNamePrefix, stringComparison))
                 {
                     string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name, false);
                     thumbnailUrls.Add(thumbnailUrl);
