@@ -34,11 +34,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public string JobInputFileUrl { get; set; }
 
-        public MediaJobInputType JobInputType { get; set; }
+        public MediaJobInputMode JobInputMode { get; set; }
 
-        public bool JobOutputEncoderIndexer { get; set; }
-
-        public MediaJobOutputAssetMode JobOutputAssetMode { get; set; }
+        public MediaJobOutputMode JobOutputMode { get; set; }
 
         public string[] JobOutputAssetDescriptions { get; set; }
 

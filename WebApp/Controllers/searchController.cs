@@ -8,7 +8,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class SearchController : Controller
     {
-        public JsonResult Library(string searchQuery)
+        public JsonResult Query(string searchQuery)
         {
             JObject searchResults;
             string authToken = HomeController.GetAuthToken(Request, Response);

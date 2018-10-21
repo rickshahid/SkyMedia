@@ -82,8 +82,7 @@ namespace AzureSkyMedia.PlatformServices
             else if (inputAsset != null)
             {
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(inputAsset.Name));
-                //requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
-                requestUrl = string.Concat(requestUrl, "&assetId=", HttpUtility.UrlEncode(inputAsset.Name));
+                requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
             }
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");

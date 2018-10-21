@@ -51,7 +51,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Create(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
-                                 string inputFileUrl, string inputAssetName, MediaJobOutputAssetMode outputAssetMode, string streamingPolicyName)
+                                 string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
         {
             Job job = null;
             string authToken = HomeController.GetAuthToken(Request, Response);

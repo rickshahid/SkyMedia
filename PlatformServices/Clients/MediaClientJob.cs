@@ -27,7 +27,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             switch (mediaJob.OutputAssetMode)
             {
-                case MediaJobOutputAssetMode.DistinctAssets:
+                case MediaJobOutputMode.DistinctAssets:
                     string assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.Default;
                     if (transformOutput.Preset is BuiltInStandardEncoderPreset)
                     {
@@ -43,7 +43,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     outputAssetName = string.Concat(outputAssetName, " (", assetNameSuffix, ")");
                     break;
-                case MediaJobOutputAssetMode.SingleAsset:
+                case MediaJobOutputMode.SingleAsset:
                     outputAssetName = string.Concat(outputAssetName, " (", Constant.Media.Job.OutputAssetNameSuffix.Default, ")");
                     break;
             }
@@ -116,7 +116,7 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority,
-                             JObject jobData, string inputFileUrl, string inputAssetName, MediaJobOutputAssetMode outputAssetMode,
+                             JObject jobData, string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode,
                              string[] outputAssetDescriptions, string[] outputAssetAlternateIds, string streamingPolicyName)
         {
             jobData = SetJobPublish(authToken, jobData, streamingPolicyName);

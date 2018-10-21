@@ -19,9 +19,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string InputAssetName { get; set; }
 
-        public bool OutputEncoderIndexer { get; set; }
-
-        public MediaJobOutputAssetMode OutputAssetMode { get; set; }
+        public MediaJobOutputMode OutputAssetMode { get; set; }
 
         public string[] OutputAssetDescriptions { get; set; }
 

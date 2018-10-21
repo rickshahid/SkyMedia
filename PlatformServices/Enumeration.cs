@@ -33,7 +33,7 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaJobInputType
+    public enum MediaJobInputMode
     {
         UploadFile,
         AssetFile,
@@ -41,7 +41,7 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaJobOutputAssetMode
+    public enum MediaJobOutputMode
     {
         DistinctAssets,
         InputAsset,

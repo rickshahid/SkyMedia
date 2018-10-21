@@ -133,7 +133,7 @@ function CreateJsonEditor(containerId, jsonName, jsonData) {
             jsonData = JSON.parse(jsonData);
         }
         for (var dataItem in jsonData) {
-            if (jsonData[dataItem].startsWith("{")) {
+            if (typeof jsonData[dataItem] == "string" && jsonData[dataItem].indexOf("{") > -1 && jsonData[dataItem].indexOf("}") > -1) {
                 jsonData[dataItem] = JSON.parse(jsonData[dataItem]);
             }
         }

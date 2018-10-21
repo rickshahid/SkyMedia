@@ -8,9 +8,9 @@
             }
             CreateJsonEditor("searchResults", "Media Search Results", searchResults);
         }
-        function SearchMediaLibrary() {
+        function QuerySearchIndex() {
             SetCursor(true);
-            $.get("/search/library",
+            $.get("/search/query",
                 {
                     searchQuery: $("#searchQuery").val()
                 },
@@ -22,7 +22,7 @@
         }
         $(function () {
             DisplaySearchResults(null);
-            $("#searchQuery").focus();
+            CreateTipBottom("mediaSearchIndex", "Search Media Index");
         })
     </script>
 }
@@ -31,13 +31,16 @@
     Media Search
 }
 
-<div class="mediaSearch">
+@*<div class="mediaSearch">
     <div>
         <input id="searchQuery" type="text" class="mediaSearchQuery" placeholder="[Media Search Query]" />
     </div>
     <div>
-        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaSearch", ImageFile = "MediaSearch.png", OnClick = "SearchMediaLibrary()" }' />
     </div>
-</div>
+</div>*@
 
 <div id="searchResults" class="mediaSearchResults"></div>
+
+<div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaSearchIndex", ImageFile = "MediaSearch.png", OnClick = "QuerySearchIndex()" }' />
+</div>
