@@ -65,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, bool audioOnly)
+        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority, bool audioOnly)
         {
             string indexId = null;
             string relativePath = "/videos";
@@ -85,6 +85,7 @@ namespace AzureSkyMedia.PlatformServices
                 requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
             }
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
+            requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
             requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
             requestUrl = string.Concat(requestUrl, "&language=auto");
             if (audioOnly)
@@ -103,13 +104,15 @@ namespace AzureSkyMedia.PlatformServices
             return indexId;
         }
 
-        public void IndexerReindexVideo(string indexId)
+        public void IndexerReindexVideo(string indexId, Priority jobPriority)
         {
             string relativePath = string.Concat("/videos/", indexId, "/reindex");
             string requestUrl = GetRequestUrl(relativePath, true, indexId);
             string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             callbackUrl = HttpUtility.UrlEncode(callbackUrl);
+            requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
+            requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Put, requestUrl);

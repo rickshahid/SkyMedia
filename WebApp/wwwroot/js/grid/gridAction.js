@@ -45,7 +45,7 @@ function ReindexVideo(indexId, videoName) {
             }
         );
         $(this).dialog("close");
-    }
+    };
     ConfirmMessage(title, message, onConfirm);
 }
 function PublishAsset(assetName) {
@@ -100,7 +100,7 @@ function CancelJob(jobName, transformName) {
             }
         );
         $(this).dialog("close");
-    }
+    };
     ConfirmMessage(title, message, onConfirm);
 }
 function DeleteEntity(gridId, entityName, parentEntityName) {
@@ -121,7 +121,7 @@ function DeleteEntity(gridId, entityName, parentEntityName) {
             }
         );
         $(this).dialog("close");
-    }
+    };
     ConfirmMessage(title, message, onConfirm);
 }
 function GetEntityType(gridId) {

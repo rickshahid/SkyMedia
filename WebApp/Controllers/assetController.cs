@@ -46,7 +46,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
                     {
                         bool audioOnly = !videoIndexer && audioIndexer;
-                        indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, audioOnly);
+                        indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, Priority.Normal, audioOnly);
                     }
                     if (transform != null)
                     {
@@ -168,7 +168,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                mediaClient.IndexerReindexVideo(indexId);
+                mediaClient.IndexerReindexVideo(indexId, Priority.Normal);
             }
         }
 

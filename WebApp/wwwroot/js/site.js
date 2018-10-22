@@ -172,8 +172,8 @@ function DisplayMessage(title, message, buttons) {
 }
 function ConfirmMessage(title, message, onConfirm) {
     var buttons = {
-        Yes: onConfirm,
-        No: function () {
+        OK: onConfirm,
+        Cancel: function () {
             $(this).dialog("close");
         }
     };

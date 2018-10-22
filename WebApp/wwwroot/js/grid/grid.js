@@ -9,6 +9,7 @@ function CreateTips(rows) {
     for (var i = 0; i < rows.length; i++) {
         var rowId = rows[i].id;
         CreateTipTop(rowId + "_video", "Video");
+        CreateTipTop(rowId + "_insight", "Insight");
         CreateTipTop(rowId + "_json", "Metadata");
         CreateTipTop(rowId + "_manifest", "Manifest");
         CreateTipTop(rowId + "_transcript", "Transcript");

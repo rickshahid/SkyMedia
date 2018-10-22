@@ -408,20 +408,12 @@ body {
     width: 100%;
 }
 
-.mediaSearch {
-    margin: 0px auto;
-    display: table;
+.searchQuery {
+    width: 300px;
 }
 
-.mediaSearch div {
-    vertical-align: middle;
-    display: table-cell;
-}
-
-.mediaSearchQuery {
-    width: 200px;
-}
-
-.mediaSearchResults {
+.searchResults {
+    text-align: left;
+    height: 500px;
     width: 800px;
 }

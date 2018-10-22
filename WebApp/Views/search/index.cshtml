@@ -9,16 +9,23 @@
             CreateJsonEditor("searchResults", "Media Search Results", searchResults);
         }
         function QuerySearchIndex() {
-            SetCursor(true);
-            $.get("/search/query",
-                {
-                    searchQuery: $("#searchQuery").val()
-                },
-                function (searchResults) {
-                    SetCursor(false);
-                    DisplaySearchResults(searchResults);
-                }
-            );
+            var title = "Media Search Query";
+            var message = "<input id='searchQuery' type='text' class='searchQuery' />";
+            var onConfirm = function () {
+                SetCursor(true);
+                $.get("/search/query",
+                    {
+                        searchQuery: $("#searchQuery").val()
+                    },
+                    function (searchResults) {
+                        SetCursor(false);
+                        DisplaySearchResults(searchResults);
+                    }
+                );
+                $(this).dialog("close");
+            };
+            ConfirmMessage(title, message, onConfirm);
+            $("#searchQuery").focus();
         }
         $(function () {
             DisplaySearchResults(null);
@@ -31,15 +38,7 @@
     Media Search
 }
 
-@*<div class="mediaSearch">
-    <div>
-        <input id="searchQuery" type="text" class="mediaSearchQuery" placeholder="[Media Search Query]" />
-    </div>
-    <div>
-    </div>
-</div>*@
-
-<div id="searchResults" class="mediaSearchResults"></div>
+<div id="searchResults" class="searchResults"></div>
 
 <div class="viewButtons">
     <partial name="SiteButton" model='new SiteButton { ControlId = "mediaSearchIndex", ImageFile = "MediaSearch.png", OnClick = "QuerySearchIndex()" }' />
