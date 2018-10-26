@@ -49,15 +49,15 @@ namespace AzureSkyMedia.WebApp
                 string settingKey = Constant.AppSettingKey.DirectoryTenantId;
                 string tenantId = AppSetting.GetValue(settingKey);
 
-                settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                string issuerUrl = AppSetting.GetValue(settingKey);
-                issuerUrl = string.Format(issuerUrl, tenantId);
+                settingKey = Constant.AppSettingKey.DirectoryAuthorityUrl;
+                string authorityUrl = AppSetting.GetValue(settingKey);
+                authorityUrl = string.Format(authorityUrl, tenantId);
 
                 settingKey = Constant.AppSettingKey.DirectoryDiscoveryPath;
                 string discoveryPath = AppSetting.GetValue(settingKey);
 
-                options.Authority = issuerUrl;
-                options.MetadataAddress = string.Concat(issuerUrl, discoveryPath);
+                options.Authority = authorityUrl;
+                options.MetadataAddress = string.Concat(authorityUrl, discoveryPath);
 
                 settingKey = Constant.AppSettingKey.DirectoryClientId;
                 options.ClientId = AppSetting.GetValue(settingKey);

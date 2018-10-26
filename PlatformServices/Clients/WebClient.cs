@@ -17,7 +17,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             if (!string.IsNullOrEmpty(subscriptionKey))
             {
-                HttpClient.DefaultRequestHeaders.Add(Constant.AccessAuthentication.SubscriptionKey, subscriptionKey);
+                HttpClient.DefaultRequestHeaders.Add(Constant.AuthIntegration.SubscriptionKey, subscriptionKey);
             }
         }
 

@@ -46,11 +46,11 @@ namespace AzureSkyMedia.PlatformServices
             public const string AppApiEndpointUrl = "App.Api.EndpointUrl";
             public const string AppApiDescription = "App.Api.Description";
 
-            public const string AzureResourceManagementEndpointUrl = "Arm.EndpointUrl";
-            public const string AzureResourceManagementAudienceUrl = "Arm.AudienceUrl";
+            public const string AzureResourceManagementServiceUrl = "Arm.ServiceUrl";
+            public const string AzureResourceManagementTokenScope = "Arm.TokenScope";
 
             public const string DirectoryTenantId = "Directory.TenantId";
-            public const string DirectoryIssuerUrl = "Directory.IssuerUrl";
+            public const string DirectoryAuthorityUrl = "Directory.AuthorityUrl";
             public const string DirectoryDiscoveryPath = "Directory.DiscoveryPath";
 
             public const string DirectoryClientId = "Directory.ClientId";
@@ -109,9 +109,11 @@ namespace AzureSkyMedia.PlatformServices
             public const string TwilioMessageFrom = "Twilio.Message.From";
         }
 
-        public struct AccessAuthentication
+        public struct AuthIntegration
         {
+            public const string AuthScheme = "Bearer";
             public const string UserToken = "id_token";
+            public const string RedirectUri = "urn:ietf:wg:oauth:2.0:oob";
             public const string SubscriptionKey = "Ocp-Apim-Subscription-Key";
         }
 

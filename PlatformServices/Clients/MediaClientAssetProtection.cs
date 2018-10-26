@@ -18,9 +18,9 @@ namespace AzureSkyMedia.PlatformServices
                 settingKey = Constant.AppSettingKey.DirectoryTenantId;
                 string tenantId = AppSetting.GetValue(settingKey);
 
-                settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-                string issuerUrl = AppSetting.GetValue(settingKey);
-                issuerUrl = string.Format(issuerUrl, tenantId);
+                settingKey = Constant.AppSettingKey.DirectoryAuthorityUrl;
+                string authorityUrl = AppSetting.GetValue(settingKey);
+                authorityUrl = string.Format(authorityUrl, tenantId);
 
                 settingKey = Constant.AppSettingKey.DirectoryPolicyIdSignUpIn;
                 string signUpInPolicyId = AppSetting.GetValue(settingKey);
@@ -31,10 +31,10 @@ namespace AzureSkyMedia.PlatformServices
 
                 ContentKeyPolicyTokenRestriction policyRestriction = new ContentKeyPolicyTokenRestriction()
                 {
-                    OpenIdConnectDiscoveryDocument = string.Concat(issuerUrl, discoveryPath),
+                    OpenIdConnectDiscoveryDocument = string.Concat(authorityUrl, discoveryPath),
                     RestrictionTokenType = ContentKeyPolicyRestrictionTokenType.Jwt,
-                    Audience = clientId,
-                    Issuer = issuerUrl
+                    Issuer = authorityUrl,
+                    Audience = clientId
                 };
 
                 List<ContentKeyPolicyOption> policyOptions = new List<ContentKeyPolicyOption>();

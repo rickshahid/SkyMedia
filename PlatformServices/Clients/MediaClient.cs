@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Rest;
+using Microsoft.Identity.Client;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -28,10 +28,10 @@ namespace AzureSkyMedia.PlatformServices
                 mediaAccount = userProfile.MediaAccount;
             }
             MediaAccount = mediaAccount;
-            string settingKey = Constant.AppSettingKey.AzureResourceManagementEndpointUrl;
-            string endpointUrl = AppSetting.GetValue(settingKey);
-            MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
-            _media = new AzureMediaServicesClient(new Uri(endpointUrl), clientCredentials)
+            string settingKey = Constant.AppSettingKey.AzureResourceManagementServiceUrl;
+            string serviceUrl = AppSetting.GetValue(settingKey);
+            MediaClientCredentials clientCredentials = new MediaClientCredentials(mediaAccount);
+            _media = new AzureMediaServicesClient(new Uri(serviceUrl), clientCredentials)
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };
@@ -81,26 +81,20 @@ namespace AzureSkyMedia.PlatformServices
 
     internal class MediaClientCredentials : ServiceClientCredentials
     {
-        private AuthenticationContext _authContext;
-        private readonly ClientCredential _clientCredential;
+        private MediaAccount _mediaAccount;
 
         public MediaClientCredentials(MediaAccount mediaAccount)
         {
-            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-            string authorityUrl = AppSetting.GetValue(settingKey);
-            authorityUrl = string.Format(authorityUrl, mediaAccount.DirectoryTenantId);
-
-            _authContext = new AuthenticationContext(authorityUrl);
-            _clientCredential = new ClientCredential(mediaAccount.ServicePrincipalId, mediaAccount.ServicePrincipalKey);
+            _mediaAccount = mediaAccount;
         }
 
         public async override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            string settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
-            string audienceUrl = AppSetting.GetValue(settingKey);
+            AuthenticationResult authResult = await _mediaAccount.AcquireToken();
 
-            AuthenticationResult azureToken = await _authContext.AcquireTokenAsync(audienceUrl, _clientCredential);
-            request.Headers.Authorization = new AuthenticationHeaderValue(azureToken.AccessTokenType, azureToken.AccessToken);
+            string authScheme = Constant.AuthIntegration.AuthScheme; 
+            request.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authResult.AccessToken);
+
             await base.ProcessHttpRequestAsync(request, cancellationToken);
         }
     }

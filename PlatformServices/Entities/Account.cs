@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
+
+using Microsoft.Identity.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -23,5 +26,16 @@ namespace AzureSkyMedia.PlatformServices
         public string VideoIndexerKey { get; set; }
 
         public Dictionary<string, string> StorageAccounts { get; set; }
+
+        public ConfidentialClientApplication ClientApplication { get; set; }
+
+        public Task<AuthenticationResult> AcquireToken()
+        {
+            string settingKey = Constant.AppSettingKey.AzureResourceManagementTokenScope;
+            string tokenScope = AppSetting.GetValue(settingKey);
+
+            string[] tokenScopes = new string[] { tokenScope };
+            return ClientApplication.AcquireTokenForClientAsync(tokenScopes);
+        }
     }
 }

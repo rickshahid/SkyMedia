@@ -114,11 +114,11 @@
         "description": "Azure Active Directory B2C tenant identifier."
       }
     },
-    "directoryIssuerUrl": {
+    "directoryAuthorityUrl": {
       "type": "string",
       "defaultValue": "https://login.microsoftonline.com/{0}/v2.0/",
       "metadata": {
-        "description": "Azure Active Directory B2C tenant issuer url."
+        "description": "Azure Active Directory B2C tenant authority url."
       }
     },
     "directoryDiscoveryPath": {
@@ -245,7 +245,9 @@
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "databaseServiceNameStaging": "[concat(variables('databaseServiceName'), 'staging')]",
     "appRegionNameStaging": "[concat(parameters('appRegionName'), ' - Staging')]",
-    "appInsightsApiVersion": "2018-05-01-preview"
+    "appInsightsApiVersion": "2018-05-01-preview",
+    "cognitiveApiVersion": "2017-04-18",
+    "botApiVersion": "2018-07-12"
   },
   "resources": [
     {
@@ -522,12 +524,12 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "name": "Arm.EndpointUrl",
+              "name": "Arm.ServiceUrl",
               "value": "https://management.azure.com/"
             },
             {
-              "name": "Arm.AudienceUrl",
-              "value": "https://management.core.windows.net/"
+              "name": "Arm.TokenScope",
+              "value": "https://management.core.windows.net/.default"
             },
             {
               "name": "Directory.ClientId",
@@ -538,8 +540,8 @@
               "value": "[parameters('directoryTenantId')]"
             },
             {
-              "name": "Directory.IssuerUrl",
-              "value": "[parameters('directoryIssuerUrl')]"
+              "name": "Directory.AuthorityUrl",
+              "value": "[parameters('directoryAuthorityUrl')]"
             },
             {
               "name": "Directory.DiscoveryPath",
@@ -644,12 +646,12 @@
                     "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
                   },
                   {
-                    "name": "Arm.EndpointUrl",
+                    "name": "Arm.ServiceUrl",
                     "value": "https://management.azure.com/"
                   },
                   {
-                    "name": "Arm.AudienceUrl",
-                    "value": "https://management.core.windows.net/"
+                    "name": "Arm.TokenScope",
+                    "value": "https://management.core.windows.net/.default"
                   },
                   {
                     "name": "Directory.ClientId",
@@ -660,8 +662,8 @@
                     "value": "[parameters('directoryTenantId')]"
                   },
                   {
-                    "name": "Directory.IssuerUrl",
-                    "value": "[parameters('directoryIssuerUrl')]"
+                    "name": "Directory.AuthorityUrl",
+                    "value": "[parameters('directoryAuthorityUrl')]"
                   },
                   {
                     "name": "Directory.DiscoveryPath",

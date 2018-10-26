@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 
 using Microsoft.Rest;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -39,18 +39,8 @@ namespace AzureSkyMedia.PlatformServices
             User userProfile = new User(authToken);
             subscriptionId = userProfile.MediaAccount.SubscriptionId;
 
-            ClientCredential clientCredential = new ClientCredential(userProfile.MediaAccount.ServicePrincipalId, userProfile.MediaAccount.ServicePrincipalKey);
-
-            string settingKey = Constant.AppSettingKey.DirectoryIssuerUrl;
-            string issuerUrl = AppSetting.GetValue(settingKey);
-            issuerUrl = string.Format(issuerUrl, userProfile.MediaAccount.DirectoryTenantId);
-
-            settingKey = Constant.AppSettingKey.AzureResourceManagementAudienceUrl;
-            string audienceUrl = AppSetting.GetValue(settingKey);
-
-            AuthenticationContext authContext = new AuthenticationContext(issuerUrl);
-            AuthenticationResult tokenAuth = authContext.AcquireTokenAsync(audienceUrl, clientCredential).Result;
-            return new TokenCredentials(tokenAuth.AccessToken);
+            AuthenticationResult authResult = userProfile.MediaAccount.AcquireToken().Result;
+            return new TokenCredentials(authResult.AccessToken);
         }
     }
 }

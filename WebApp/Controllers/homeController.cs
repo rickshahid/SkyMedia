@@ -53,7 +53,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = string.Empty;
-            string userToken = Constant.AccessAuthentication.UserToken;
+            string userToken = Constant.AuthIntegration.UserToken;
             if (request.HasFormContentType)
             {
                 authToken = request.Form[userToken];
