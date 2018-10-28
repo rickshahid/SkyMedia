@@ -101,22 +101,13 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(job);
         }
 
-        public void Cancel(string jobName, string transformName)
+        public JsonResult Publish(string jobName, string indexId)
         {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                mediaClient.CancelJob(transformName, jobName);
-            }
-        }
-
-        public JsonResult Publish(string jobName)
-        {
-            MediaJobPublish jobPublish = MediaClient.PublishJobOutput(jobName, null);
+            MediaJobPublish jobPublish = MediaClient.PublishJobOutput(jobName, indexId);
             return Json(jobPublish);
         }
 
-        public JsonResult List()
+        public JsonResult Refresh()
         {
             Job[] jobs;
             string authToken = HomeController.GetAuthToken(Request, Response);
@@ -125,6 +116,30 @@ namespace AzureSkyMedia.WebApp.Controllers
                 jobs = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
             }
             return Json(jobs);
+        }
+
+        public JsonResult Update(string transformName, string jobDescription, Priority jobPriority)
+        {
+            Job job = new Job()
+            {
+                Description = jobDescription,
+                Priority = jobPriority
+            };
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                job = mediaClient.UpdateJob(transformName, job);
+            }
+            return Json(job);
+        }
+
+        public void Cancel(string transformName, string jobName)
+        {
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                mediaClient.CancelJob(transformName, jobName);
+            }
         }
 
         public IActionResult Index()

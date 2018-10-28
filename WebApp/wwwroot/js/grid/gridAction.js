@@ -91,8 +91,8 @@ function CancelJob(jobName, transformName) {
         SetCursor(true);
         $.post("/job/cancel",
             {
-                jobName: decodeURIComponent(jobName),
-                transformName: decodeURIComponent(transformName)
+                transformName: decodeURIComponent(transformName),
+                jobName: decodeURIComponent(jobName)
             },
             function () {
                 SetCursor(false);

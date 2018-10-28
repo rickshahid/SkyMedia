@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 599px) {
-    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaGallery {
+    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaEdit, #mediaGallery {
         display: none !important;
     }
 
@@ -17,7 +17,7 @@
 }
 
 @media all and (min-width: 600px) and (max-width: 799px) {
-    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaCompose, #mediaGallery {
+    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaEdit, #mediaGallery {
         display: none !important;
     }
 

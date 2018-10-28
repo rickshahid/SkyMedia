@@ -70,7 +70,7 @@ function CreateJob() {
 }
 function SetJobRefresh(gridId, columns) {
     var reloadGrid = function () {
-        ReloadGrid(gridId, "/job/list", columns);
+        ReloadGrid(gridId, "/job/refresh", columns);
     };
     setInterval(reloadGrid, _refreshInterval);
 }

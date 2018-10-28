@@ -26,7 +26,7 @@ function SetLayout(appName) {
     CreateTipTop("mediaJob", "Job");
     CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
     CreateTipTop("mediaSearch", "Search");
-    CreateTipTop("mediaCompose", "Compose");
+    CreateTipTop("mediaEdit", "Edit");
     CreateTipTop("mediaGallery", "Gallery");
     CreateTipTop("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {

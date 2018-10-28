@@ -4,7 +4,7 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class ComposeController : Controller
+    public class EditController : Controller
     {
         //private MediaJobInput[] GetJobInputs(JObject clip)
         //{

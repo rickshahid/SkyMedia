@@ -17,7 +17,7 @@
             var clipperSelector = "#videoClipper";
             var onSubmitClip = function (clipData) {
                 var promise = new Promise(function (resolve, reject) {
-                    $.post("/compose/clip", {
+                    $.post("/edit/clip", {
                         clipData: clipData
                     })
                     .then(function (clip) {
@@ -38,7 +38,7 @@
                         submitSubclipCallback: onSubmitClip
                     });
                     SetCursor(true);
-                    $.get("/compose/streams",
+                    $.get("/edit/streams",
                         function (streams) {
                             SetCursor(false);
                             clipper.load(streams);
@@ -48,7 +48,7 @@
                 case "dynamic":
                     var onLoadPanel = function (searchCriteria, skipCount, takeCount, streamType) {
                         var promise = new Promise(function (resolve, reject) {
-                            $.get("/compose/streams", {
+                            $.get("/edit/streams", {
                                 searchCriteria: searchCriteria,
                                 skipCount: skipCount,
                                 takeCount: takeCount,
@@ -83,7 +83,7 @@
 }
 
 @section title {
-    Media Composer
+    Media Editor
 }
 
 <div id="videoClipper" class="videoClipper azure-subclipper dark-skin"></div>
