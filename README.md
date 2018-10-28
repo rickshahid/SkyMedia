@@ -1,4 +1,4 @@
-# Azure Sky Media v3
+# Azure Sky Media
 
 Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.tv
 
@@ -14,9 +14,9 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 * Discover and extract actionable insights from your media content via integrated video / audio intelligence services
 
-The following web application architecture overview diagram depicts the sample deployment at http://www.skymedia.tv
+The following architecture overview diagram depicts the solution sample deployment at http://www.skymedia.tv
 
-![](https://skymedia.azureedge.net/docs/02.6-ApplicationArchitecture.png)
+![](https://skymedia.azureedge.net/docs/02.1-SolutionArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
