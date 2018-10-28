@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following architecture overview diagram depicts the solution sample deployment at http://www.skymedia.tv
 
-![](https://skymedia.azureedge.net/docs/02.1-SolutionArchitecture.png)
+![](https://skymedia.azureedge.net/docs/02.2-SolutionArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
