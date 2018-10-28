@@ -47,43 +47,41 @@ To deploy the parameterized solution sample within your Azure subscription, clic
 
 The following Azure platform services were leveraged to create this sample media application:
 
-* **Active Directory (B2C)** - http://azure.microsoft.com/services/active-directory-b2c/
+* **Azure Active Directory (B2C)** - http://azure.microsoft.com/services/active-directory-b2c/
 
-* **Storage** - http://azure.microsoft.com/services/storage/
+* **Azure Key Vault** - http://azure.microsoft.com/services/key-vault/
+
+* **Azure Storage** - http://azure.microsoft.com/services/storage/
 
   * **Data Box** - http://azure.microsoft.com/services/storage/databox/
 
-* **Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
+* **Azure Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
-* **Event Grid** - http://azure.microsoft.com/services/event-grid/
+* **Azure Event Grid** - http://azure.microsoft.com/services/event-grid/
 
-* **Functions** - http://azure.microsoft.com/services/functions/
+* **Azure Functions** - http://azure.microsoft.com/services/functions/
 
-* **Media Services** - http://azure.microsoft.com/services/media-services/
+* **Azure Media Services** - http://azure.microsoft.com/services/media-services/
 
-  * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
+  * **Media Encoding** - http://azure.microsoft.com/services/media-services/encoding/
 
-  * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
+  * **Media Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
 
-  * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
+  * **Content Protection** - http://azure.microsoft.com/services/media-services/content-protection/
   
-  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
+  * **Media Player** - http://azure.microsoft.com/services/media-services/media-player/
   
-  * **Indexer** - http://azure.microsoft.com/services/media-services/video-indexer/
+  * **Video Indexer** - http://azure.microsoft.com/services/media-services/video-indexer/
 
-    * **Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
+* **Azure Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
 
-    * **Search** - http://azure.microsoft.com/services/search/
+* **Azure Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
-* **Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
+* **Azure App Service** - http://azure.microsoft.com/services/app-service/
 
-* **Content Delivery Network** - http://azure.microsoft.com/services/cdn/
+* **Azure App Insights** - http://azure.microsoft.com/services/application-insights/
 
-* **App Service** - http://azure.microsoft.com/services/app-service/
-
-* **App Insights** - http://azure.microsoft.com/services/application-insights/
-
-* **Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
+* **Azure Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
 * **Azure DevOps** - http://azure.microsoft.com/services/devops/
 
