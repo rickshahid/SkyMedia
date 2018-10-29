@@ -1,25 +1,26 @@
 ﻿@{
-    string gridId = "assets";
+    string gridId = "transformJobs";
 }
 
 @section head {
+    <script type="text/javascript" src="~/js/transformJob.js"></script>
     <script type="text/javascript">
         $(function () {
-            _childGridId = "assetFiles";
-            _childPropertyName = "files";
+            _childGridId = "transformJobOutputs";
+            _childPropertyName = "properties.outputs";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
-        })
+            SetJobRefresh(gridId, columns);
+       })
     </script>
 }
 
 @section title {
-    Media Assets
+    Media Transform Job
 }
 
 <div class="grid">
-    <table id="@gridId"></table>
-    <div id="gridPager"></div>
+    <table id="transformJobs"></table>
 </div>

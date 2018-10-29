@@ -15,6 +15,7 @@
             var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
             CreateTipBottom("jobCreate", "Create Job");
+            CreateTipBottom("jobUpdate", "Update Job");
             CreateJsonEditor("jobData", "Media Job Data", null);
             SetJobRefresh(gridId, columns);
        })
@@ -117,4 +118,5 @@
 
 <div class="viewButtons">
     <partial name="SiteButton" model='new SiteButton { ControlId = "jobCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateJob()" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "jobUpdate", ImageFile = "MediaEntitySave.png", OnClick = "UpdateJob()" }' />
 </div>

@@ -45,12 +45,21 @@ function CreateWorkflow(files) {
             var message = "";
             for (var i = 0; i < entities.length; i++) {
                 var entity = entities[i];
-                var entityType = entity["properties.state"] != null ? "Job" : "Asset";
-                var indexId = entityType == "Job" ? entity["properties.correlationData"]["indexId"] : entity["properties.alternateId"];
+                var entityType = entity["properties.state"] == null ? "Asset" : "Job";
+                var entityItemRef, indexId;
+                if (entityType == "Asset") {
+                    entityItemRef = "/asset/item?assetName=" + entity.name;
+                    indexId = entity["properties.alternateId"];
+                } else {
+                    var transformName = GetParentResourceName(entity);
+                    entityItemRef = "/job/item?jobName=" + entity.name + "&transformName=" + transformName;
+                    indexId = entity["properties.correlationData"]["indexId"];
+                }
                 if (message != "") {
                     message = message + "<br><br>";
                 }
-                message = message + "Media " + entityType + " Created - " + entity.name;
+                message = message + "<a class='siteLink' href='" + entityItemRef + "'>";
+                message = message + "Media " + entityType + " Created - " + entity.name + "</a>";
                 if (indexId != null) {
                     var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
                     message = message + "<br><br>" + insightType + " Indexer Insight - " + indexId;

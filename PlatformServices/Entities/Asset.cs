@@ -9,10 +9,11 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaAsset : Asset
     {
-        internal MediaAsset(MediaAccount mediaAccount, Asset asset) : base(asset.Id, asset.Name, asset.Type, asset.AssetId, asset.Created, asset.LastModified, asset.AlternateId, asset.Description, asset.Container, asset.StorageAccountName, asset.StorageEncryptionFormat)
+        internal MediaAsset(MediaClient mediaClient, Asset asset) : base(asset.Id, asset.Name, asset.Type, asset.AssetId, asset.Created, asset.LastModified, asset.AlternateId, asset.Description, asset.Container, asset.StorageAccountName, asset.StorageEncryptionFormat)
         {
-            StorageBlobClient blobClient = new StorageBlobClient(mediaAccount, asset.StorageAccountName);
+            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             Files = GetAssetFiles(blobClient, asset.Container, null);
+            Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, asset.Name);
         }
 
         internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath)
@@ -75,7 +76,9 @@ namespace AzureSkyMedia.PlatformServices
             return files.ToArray();
         }
 
-        public MediaFile[] Files { get; internal set; }
+        public MediaFile[] Files { get; }
+
+        public AssetFilter[] Filters { get; }
 
         public string Size
         {

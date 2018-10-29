@@ -209,3 +209,7 @@ function CreateTipRight(targetId, tipText, adjustX, adjustY) {
 function SetTipVisible(targetId, tipVisible) {
     $("#" + targetId).qtip("toggle", tipVisible);
 }
+function GetParentResourceName(childResource) {
+    var childId = childResource.id.split("/");
+    return childId.length > 12 ? childId[childId.length - 3] : childId[childId.length - 1];
+}

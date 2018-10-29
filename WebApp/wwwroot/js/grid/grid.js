@@ -15,6 +15,7 @@ function CreateTips(rows) {
         CreateTipTop(rowId + "_transcript", "Transcript");
         CreateTipTop(rowId + "_reindex", "Reindex");
         CreateTipTop(rowId + "_publish", "Publish");
+        CreateTipTop(rowId + "_cancel", "Cancel");
         CreateTipTop(rowId + "_edit", "Edit");
         CreateTipTop(rowId + "_delete", "Delete");
         CreateTipTop(rowId + "_download", "Download");

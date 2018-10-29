@@ -13,11 +13,9 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string GetNotificationMessage(Job job, MediaJobAccount jobAccount)
+        private static string GetNotificationMessage(Job job, MediaJobAccount jobAccount, MediaJobPublish jobPublish)
         {
             StringBuilder message = new StringBuilder();
-            string jobOutputPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
-            MediaJobPublish jobPublish = JsonConvert.DeserializeObject<MediaJobPublish>(jobOutputPublish);
             message.Append("AMS Job Notification");
             message.Append("\n\nMedia Services Account\n");
             message.Append(jobAccount.MediaAccount.Name);
@@ -65,6 +63,37 @@ namespace AzureSkyMedia.PlatformServices
             return message.ToString();
         }
 
+        private static MediaJobPublish GetJobPublish(Job job)
+        {
+            string jobOutputPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
+            return JsonConvert.DeserializeObject<MediaJobPublish>(jobOutputPublish);
+        }
+
+        public static JObject SetJobPublish(string authToken, JObject jobData, string streamingPolicyName)
+        {
+            string mobilePhoneNumber = null;
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                User userProfile = new User(authToken);
+                mobilePhoneNumber = userProfile.MobilePhoneNumber;
+            }
+            MediaJobPublish jobPublish = new MediaJobPublish()
+            {
+                StreamingPolicyName = streamingPolicyName,
+                ContentProtection = null,
+                UserNotification = new UserNotification()
+                {
+                    MobilePhoneNumber = mobilePhoneNumber
+                }
+            };
+            if (jobData == null)
+            {
+                jobData = new JObject();
+            }
+            jobData[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
+            return jobData;
+        }
+
         public static void SetEventSubscription(string authToken)
         {
             string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
@@ -91,31 +120,6 @@ namespace AzureSkyMedia.PlatformServices
             User userProfile = new User(authToken);
             string eventScope = userProfile.MediaAccount.ResourceId;
             eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
-        }
-
-        public static JObject SetJobPublish(string authToken, JObject jobData, string streamingPolicyName)
-        {
-            string mobilePhoneNumber = null;
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                User userProfile = new User(authToken);
-                mobilePhoneNumber = userProfile.MobilePhoneNumber;
-            }
-            MediaJobPublish jobPublish = new MediaJobPublish()
-            {
-                StreamingPolicyName = streamingPolicyName,
-                ContentProtection = null,
-                UserNotification = new UserNotification()
-                {
-                    MobilePhoneNumber = mobilePhoneNumber
-                }
-            };
-            if (jobData == null)
-            {
-                jobData = new JObject();
-            }
-            jobData[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
-            return jobData;
         }
 
         public static MediaJobPublish PublishJobOutput(string jobName, string indexId)
@@ -149,7 +153,8 @@ namespace AzureSkyMedia.PlatformServices
                         Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, jobAccount.TransformName);
                         if (job != null)
                         {
-                            jobPublish.UserNotification.JobOutputMessage = GetNotificationMessage(job, jobAccount);
+                            jobPublish = GetJobPublish(job);
+                            jobPublish.UserNotification.JobOutputMessage = GetNotificationMessage(job, jobAccount, jobPublish);
                             string streamingPolicyName = jobPublish.StreamingPolicyName;
                             if (string.IsNullOrEmpty(streamingPolicyName))
                             {

@@ -7,6 +7,16 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class TransformController : Controller
     {
+        internal static Transform[] GetTransforms(MediaClient mediaClient)
+        {
+            Transform[] transforms = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
+            if (transforms.Length == 0)
+            {
+                transforms = mediaClient.CreateTransforms();
+            }
+            return transforms;
+        }
+
         public JsonResult Create(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
         {
             Transform transform;
@@ -23,12 +33,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                Transform[] transforms = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
-                if (transforms.Length == 0)
-                {
-                    transforms = mediaClient.CreateTransforms();
-                }
-                ViewData["transforms"] = transforms;
+                ViewData["transforms"] = GetTransforms(mediaClient);
             }
             return View();
         }

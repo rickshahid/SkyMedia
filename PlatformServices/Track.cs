@@ -32,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string captionsUrl = null;
             List<TextTrack> textTracks = new List<TextTrack>();
-            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+            MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
             foreach (MediaFile assetFile in mediaAsset.Files)
             {
                 if (string.IsNullOrEmpty(captionsUrl))

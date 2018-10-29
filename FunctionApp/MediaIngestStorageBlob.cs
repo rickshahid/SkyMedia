@@ -66,16 +66,18 @@ namespace AzureSkyMedia.FunctionApp
             {
                 string logData = ex.ToString();
                 WriteLog(blobName, logData);
-                logger.LogError(ex, logData);
+                logger.LogError(logData);
                 logData = ex.Response.Content;
                 WriteLog(blobName, logData);
-                logger.LogError(ex, logData);
+                logger.LogError(logData);
+                throw;
             }
             catch (Exception ex)
             {
                 string logData = ex.ToString();
                 WriteLog(blobName, logData);
-                logger.LogError(ex, logData);
+                logger.LogError(logData);
+                throw;
             }
         }
 

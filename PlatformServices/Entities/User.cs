@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Microsoft.Identity.Client;
-
 namespace AzureSkyMedia.PlatformServices
 {
     internal class User
@@ -23,7 +21,6 @@ namespace AzureSkyMedia.PlatformServices
                 VideoIndexerKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey),
                 StorageAccounts = GetStorageAccounts(_authToken)
             };
-            MediaAccount.ClientApplication = GetClientApplication();
             MediaAccount.ResourceId = string.Format(Constant.Media.AccountResourceId, MediaAccount.SubscriptionId, MediaAccount.ResourceGroupName, MediaAccount.Name);
         }
 
@@ -79,17 +76,6 @@ namespace AzureSkyMedia.PlatformServices
             storageAccounts.Add(storageAccountName, storageAccountKey);
 
             return storageAccounts;
-        }
-
-        private ConfidentialClientApplication GetClientApplication()
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryAuthorityUrl;
-            string authorityUrl = AppSetting.GetValue(settingKey);
-            authorityUrl = string.Format(authorityUrl, MediaAccount.DirectoryTenantId);
-
-            string redirectUri = Constant.AuthIntegration.RedirectUri;
-            ClientCredential clientCredential = new ClientCredential(MediaAccount.ServicePrincipalKey);
-            return new ConfidentialClientApplication(MediaAccount.ServicePrincipalId, authorityUrl, redirectUri, clientCredential, null, null);
         }
     }
 }

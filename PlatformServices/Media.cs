@@ -12,7 +12,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<string> thumbnailUrls = new List<string>();
             Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
-            MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
+            MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
             foreach (MediaFile assetFile in mediaAsset.Files)

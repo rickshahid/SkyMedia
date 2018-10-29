@@ -59,7 +59,7 @@ namespace AzureSkyMedia.PlatformServices
 
             List<string[]> entityCounts = new List<string[]>();
             entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(Constant.TextFormatter.NumericLong), "/account/storageAccounts" });
-            entityCounts.Add(new string[] { "Media Assets", assetCount.ToString(Constant.TextFormatter.NumericLong), "/account/assets" });
+            entityCounts.Add(new string[] { "Media Assets", assetCount.ToString(Constant.TextFormatter.NumericLong), "/asset" });
             entityCounts.Add(new string[] { "Media Transforms", transformCount.ToString(Constant.TextFormatter.NumericLong), "/transform" });
             entityCounts.Add(new string[] { "Media Transform Jobs", transformJobCount.ToString(Constant.TextFormatter.NumericLong), "/job" });
             entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicyCount.ToString(Constant.TextFormatter.NumericLong), "/account/contentKeyPolicies" });

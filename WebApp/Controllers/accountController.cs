@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 
-using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,11 +12,6 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class AccountController : Controller
     {
-        private void SetStyleHost()
-        {
-            ViewData["cssHost"] = string.Concat(Request.Scheme, "://", Request.Host.Value);
-        }
-
         public void SignUpIn()
         {
             HttpContext.ChallengeAsync().Wait();
@@ -129,43 +123,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult Assets()
-        {
-            List<MediaAsset> mediaAssets = new List<MediaAsset>();
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                IPage<Asset> assets = mediaClient.GetEntities<Asset>(MediaEntity.Asset);
-                foreach (Asset asset in assets)
-                {
-                    MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, asset);
-                    mediaAssets.Add(mediaAsset);
-                }
-            }
-            ViewData["assets"] = mediaAssets.ToArray();
-            return View();
-        }
-
-        public IActionResult Transforms()
-        {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                ViewData["transforms"] = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
-            }
-            return View();
-        }
-
-        public IActionResult TransformJobs()
-        {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
-            }
-            return View();
-        }
-
         public IActionResult ContentKeyPolicies()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
@@ -264,6 +221,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                 ViewData["entityCounts"] = Account.GetEntityCounts(mediaClient);
             }
             return View();
+        }
+
+        private void SetStyleHost()
+        {
+            ViewData["cssHost"] = string.Concat(Request.Scheme, "://", Request.Host.Value);
         }
     }
 }

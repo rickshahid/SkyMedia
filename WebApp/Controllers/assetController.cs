@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
+using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
@@ -29,8 +30,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                   bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer,
-                                   bool videoIndexer, bool audioIndexer, string streamingPolicyName)
+                                   bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             Asset[] inputAssets;
             List<Job> jobs = new List<Job>();
@@ -55,7 +55,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                         MediaJobOutputMode outputAssetMode = MediaJobOutputMode.InputAsset;
                         string[] outputAssetDescriptions = new string[] { assetDescription };
                         string[] outputAssetAlternateIds = new string[] { indexId };
-                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetDescriptions, outputAssetAlternateIds, streamingPolicyName);
+                        PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
+                        job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetDescriptions, outputAssetAlternateIds, streamingPolicy);
                     }
                     if (job != null)
                     {
@@ -179,6 +180,35 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Index()
         {
+            List<MediaAsset> mediaAssets = new List<MediaAsset>();
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                IPage<Asset> assets = mediaClient.GetEntities<Asset>(MediaEntity.Asset);
+                foreach (Asset asset in assets)
+                {
+                    MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
+                    mediaAssets.Add(mediaAsset);
+                }
+            }
+            ViewData["assets"] = mediaAssets.ToArray();
+            return View();
+        }
+
+        public IActionResult Item(string assetName)
+        {
+            List<MediaAsset> mediaAssets = new List<MediaAsset>();
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
+                if (asset != null)
+                {
+                    MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
+                    mediaAssets.Add(mediaAsset);
+                }
+            }
+            ViewData["assets"] = mediaAssets.ToArray();
             return View();
         }
     }

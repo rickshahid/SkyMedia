@@ -66,43 +66,6 @@ function PublishAsset(assetName) {
     };
     ConfirmMessage(title, message, onConfirm);
 }
-function PublishJobOutput(jobName) {
-    var title = "Confirm Publish Job Output";
-    var message = "Are you sure you want to publish the '" + FormatValue(jobName) + "' job output?";
-    var onConfirm = function () {
-        SetCursor(true);
-        $.post("/job/publish",
-            {
-                jobName: decodeURIComponent(jobName)
-            },
-            function (notificationMessage) {
-                SetCursor(false);
-                DisplayMessage("Job Output Publish Message", notificationMessage);
-            }
-        );
-        $(this).dialog("close");
-    };
-    ConfirmMessage(title, message, onConfirm);
-}
-function CancelJob(jobName, transformName) {
-    var title = "Confirm Job Cancel Request";
-    var message = "Are you sure you want to cancel the '" + FormatValue(jobName) + "' job?";
-    var onConfirm = function () {
-        SetCursor(true);
-        $.post("/job/cancel",
-            {
-                transformName: decodeURIComponent(transformName),
-                jobName: decodeURIComponent(jobName)
-            },
-            function () {
-                SetCursor(false);
-                window.location = window.location.href;
-            }
-        );
-        $(this).dialog("close");
-    };
-    ConfirmMessage(title, message, onConfirm);
-}
 function DeleteEntity(gridId, entityName, parentEntityName) {
     var entityType = GetEntityType(gridId);
     var title = "Confirm Delete " + entityType;
@@ -197,6 +160,14 @@ function SetRowEdit(gridId, rowData) {
                 }
             }
             break;
+        case "transformJobs":
+            $("input[name=jobPriority][value=" + row["properties.priority"] + "]").prop("checked", true);
+            $("#transforms").val(row.parentEntityName);
+            var jobData = row["properties.correlationData"];
+            var outputPublish = JSON.parse(jobData["OutputPublish"]);
+            var streamingPolicyName = outputPublish["StreamingPolicyName"];
+            $("#streamingPolicies").val(streamingPolicyName);
+            break;
     }
 }
 function FormatActions(value, grid, row) {
@@ -266,11 +237,9 @@ function FormatActions(value, grid, row) {
                 break;
         }
         var editHtml = "";
-        if (window.location.href.indexOf("/account") == -1) {
-            if (grid.gid == "transforms") {
-                editHtml = "<button id='" + row.id + "_edit' class='siteButton' onclick=SetRowEdit('" + grid.gid + "','" + encodeURIComponent(JSON.stringify(row)) + "')>";
-                editHtml = editHtml + "<img src='" + _storageCdnUrl + "/MediaEntityEdit.png'></button>";
-            }
+        if (grid.gid == "transforms" || grid.gid == "transformJobs") {
+            editHtml = "<button id='" + row.id + "_edit' class='siteButton' onclick=SetRowEdit('" + grid.gid + "','" + encodeURIComponent(JSON.stringify(row)) + "')>";
+            editHtml = editHtml + "<img src='" + _storageCdnUrl + "/MediaEntityEdit.png'></button>";
         }
         onClick = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityName) + "','" + encodeURIComponent(row.parentEntityName) + "')";
         var deleteHtml = "<button id='" + row.id + "_delete' class='siteButton' onclick=" + onClick + ">";

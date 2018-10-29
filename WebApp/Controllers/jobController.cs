@@ -18,7 +18,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 new SelectListItem()
             };
-            Transform[] mediaTransforms = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
+            Transform[] mediaTransforms = TransformController.GetTransforms(mediaClient);
             foreach (Transform mediaTransform in mediaTransforms)
             {
                 SelectListItem transform = new SelectListItem()
@@ -89,7 +89,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (string.IsNullOrEmpty(inputFileUrl) && inputAsset != null)
                     {
                         StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
-                        MediaAsset mediaAsset = new MediaAsset(mediaClient.MediaAccount, inputAsset);
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient, inputAsset);
                         string fileName = mediaAsset.Files[0].Name;
                         inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
                     }
@@ -118,7 +118,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(jobs);
         }
 
-        public JsonResult Update(string transformName, string jobDescription, Priority jobPriority)
+        public JsonResult Update(string transformName, string jobName, string jobDescription, Priority jobPriority)
         {
             Job job = new Job()
             {
@@ -128,7 +128,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                job = mediaClient.UpdateJob(transformName, job);
+                job = mediaClient.UpdateJob(transformName, jobName, job);
             }
             return Json(job);
         }
@@ -150,6 +150,17 @@ namespace AzureSkyMedia.WebApp.Controllers
                 ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
                 ViewData["transforms"] = GetTransforms(mediaClient);
                 ViewData["streamingPolicies"] = GetStreamingPolicies(mediaClient);
+            }
+            return View();
+        }
+
+        public IActionResult Item(string jobName, string transformName)
+        {
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
+                ViewData["transformJobs"] = job == null ? new Job[] { } : new Job[] { job };
             }
             return View();
         }

@@ -1,4 +1,28 @@
-﻿function FindAsset() {
+﻿function SetJobRefresh(gridId, columns) {
+    //var reloadGrid = function () {
+    //    ReloadGrid(gridId, "/job/refresh", columns);
+    //};
+    //setInterval(reloadGrid, _refreshInterval);
+}
+function PublishJobOutput(jobName) {
+    var title = "Confirm Publish Job Output";
+    var message = "Are you sure you want to publish the '" + FormatValue(jobName) + "' job output?";
+    var onConfirm = function () {
+        SetCursor(true);
+        $.post("/job/publish",
+            {
+                jobName: decodeURIComponent(jobName)
+            },
+            function (notificationMessage) {
+                SetCursor(false);
+                DisplayMessage("Job Output Publish Message", notificationMessage);
+            }
+        );
+        $(this).dialog("close");
+    };
+    ConfirmMessage(title, message, onConfirm);
+}
+function FindAsset() {
     SetCursor(true);
     $.post("/asset/find",
         {
@@ -58,7 +82,7 @@ function CreateJob() {
                     outputAssetMode: $("#outputAssetMode").val(),
                     streamingPolicyName: $("#streamingPolicies").val()
                 },
-                function (entity) {
+                function (job) {
                     SetCursor(false);
                     window.location = window.location.href;
                 }
@@ -68,9 +92,47 @@ function CreateJob() {
         ConfirmMessage(title, message, onConfirm);
     }
 }
-function SetJobRefresh(gridId, columns) {
-    var reloadGrid = function () {
-        ReloadGrid(gridId, "/job/refresh", columns);
+function UpdateJob() {
+    var transformName = $("#transforms").val();
+    var jobName = $("#name").val();
+    if (transformName != "" && jobName != "") {
+        var title = "Confirm Update Job";
+        var message = "Are you sure you want to update the current job?";
+        var onConfirm = function () {
+            SetCursor(true);
+            $.post("/job/update",
+                {
+                    transformName: transformName,
+                    jobName: jobName,
+                    jobDescription: $("#description").val(),
+                    jobPriority: $("#jobPriority:checked").val()
+                },
+                function (job) {
+                    SetCursor(false);
+                    window.location = window.location.href;
+                }
+            );
+            $(this).dialog("close");
+        };
+        ConfirmMessage(title, message, onConfirm);
+    }
+}
+function CancelJob(jobName, transformName) {
+    var title = "Confirm Job Cancel Request";
+    var message = "Are you sure you want to cancel the '" + FormatValue(jobName) + "' job?";
+    var onConfirm = function () {
+        SetCursor(true);
+        $.post("/job/cancel",
+            {
+                transformName: decodeURIComponent(transformName),
+                jobName: decodeURIComponent(jobName)
+            },
+            function () {
+                SetCursor(false);
+                window.location = window.location.href;
+            }
+        );
+        $(this).dialog("close");
     };
-    setInterval(reloadGrid, _refreshInterval);
+    ConfirmMessage(title, message, onConfirm);
 }

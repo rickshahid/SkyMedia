@@ -42,7 +42,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public MediaAccount MediaAccount { get; private set; }
+        public MediaAccount MediaAccount { get; }
 
         public IList<StorageAccount> StorageAccounts
         {
@@ -81,16 +81,33 @@ namespace AzureSkyMedia.PlatformServices
 
     internal class MediaClientCredentials : ServiceClientCredentials
     {
-        private MediaAccount _mediaAccount;
+        private readonly MediaAccount _mediaAccount;
 
         public MediaClientCredentials(MediaAccount mediaAccount)
         {
             _mediaAccount = mediaAccount;
         }
 
+        public static Task<AuthenticationResult> AcquireToken(MediaAccount mediaAccount)
+        {
+            string settingKey = Constant.AppSettingKey.DirectoryAuthorityUrl;
+            string authorityUrl = AppSetting.GetValue(settingKey);
+            authorityUrl = string.Format(authorityUrl, mediaAccount.DirectoryTenantId);
+
+            string redirectUri = Constant.AuthIntegration.RedirectUri;
+            ClientCredential clientCredential = new ClientCredential(mediaAccount.ServicePrincipalKey);
+            ConfidentialClientApplication clientApplication = new ConfidentialClientApplication(mediaAccount.ServicePrincipalId, authorityUrl, redirectUri, clientCredential, null, null);
+
+            settingKey = Constant.AppSettingKey.AzureResourceManagementTokenScope;
+            string tokenScope = AppSetting.GetValue(settingKey);
+
+            string[] tokenScopes = new string[] { tokenScope };
+            return clientApplication.AcquireTokenForClientAsync(tokenScopes);
+        }
+
         public async override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            AuthenticationResult authResult = await _mediaAccount.AcquireToken();
+            AuthenticationResult authResult = await AcquireToken(_mediaAccount);
 
             string authScheme = Constant.AuthIntegration.AuthScheme; 
             request.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authResult.AccessToken);

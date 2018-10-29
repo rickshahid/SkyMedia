@@ -152,9 +152,9 @@ namespace AzureSkyMedia.PlatformServices
             _media.Jobs.CancelJob(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName);
         }
 
-        public Job UpdateJob(string transformName, Job job)
+        public Job UpdateJob(string transformName, string jobName, Job job)
         {
-            return _media.Jobs.Update(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, job.Name, job);
+            return _media.Jobs.Update(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName, job);
         }
     }
 }

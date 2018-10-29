@@ -36,11 +36,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public static TokenCredentials AcquireToken(string authToken, out string subscriptionId)
         {
+            string accessToken;
             User userProfile = new User(authToken);
             subscriptionId = userProfile.MediaAccount.SubscriptionId;
-
-            AuthenticationResult authResult = userProfile.MediaAccount.AcquireToken().Result;
-            return new TokenCredentials(authResult.AccessToken);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                AuthenticationResult authResult = MediaClientCredentials.AcquireToken(mediaClient.MediaAccount).Result;
+                accessToken = authResult.AccessToken;
+            }
+            return new TokenCredentials(accessToken);
         }
     }
 }
