@@ -33,11 +33,18 @@
                 }
             );
         }
+        function ToggleAuthToken() {
+            if ($("#authToken").is(":visible")) {
+                $("#authToken").hide();
+            } else {
+                $("#authToken").show();
+            }
+        }
         function ConfirmCreate() {
             var title = "Confirm Media Account Create Assets";
             var message = "Are you sure that you want to create assets in your media account?";
             message = message + "<br><br><input id='assetType' name='assetType' type='radio' value='SBR' checked>&nbsp;Single Bitrate</input>";
-            message = message + "&nbsp;&nbsp;&nbsp;<input id='assetType' name='assetType' type='radio' value='MBR'>&nbsp;Multiple Bitrates</input>"; 
+            message = message + "&nbsp;&nbsp;&nbsp;<input id='assetType' name='assetType' type='radio' value='MBR'>&nbsp;Multiple Bitrates</input>";
             message = message + "&nbsp;&nbsp;&nbsp;<input id='assetPublish' type='checkbox' />&nbsp;Publish Assets";
             message = message + "<br><br>Asset Count&nbsp;&nbsp;<input id='assetCount' class='assetCount' value='1000' />";
             var buttons = {
@@ -86,12 +93,10 @@
         }
         $(function () {
             DisplayInventory();
-            CreateTipBottom("mediaEntityCreate", "Media Account<br><br>Create Assets");
+            CreateTipBottom("userAuthToken", "User Auth Token");
+            CreateTipBottom("mediaEntitiesCreate", "Media Account<br><br>Create Assets");
             CreateTipBottom("mediaEntitiesDelete", "Media Account<br><br>Delete Entities");
-            CreateTipBottom("authToken", "Azure Active Directory<br><br>JSON Web Token");
-            if (window.location.href.indexOf("authtoken") > -1) {
-                $("#authToken").show();
-            }
+            CreateTipBottom("authToken", "Azure Active Directory (B2C)<br><br>JSON Web Token (JWT)");
         })
     </script>
 }
@@ -103,11 +108,14 @@
 <table id="accountInventory" class="accountInventory"></table>
 
 <div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntityCreate", ImageFile = "MediaEntityCreate.png", OnClick = "ConfirmCreate()" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "userAuthToken", ImageFile = "UserAuthToken.png", OnClick = "ToggleAuthToken()" }' />
     @if (Debugger.IsAttached)
     {
+        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesCreate", ImageFile = "MediaEntityCreate.png", OnClick = "ConfirmCreate()" }' />
         <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesDelete", ImageFile = "MediaEntitiesDelete.png", OnClick = "ConfirmDelete()" }' />
     }
 </div>
 
-<div id="authToken" class="authToken">@ViewData["authToken"]</div>
+<div id="authToken" class="authToken">
+    @ViewData["authToken"]
+</div>

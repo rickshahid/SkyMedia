@@ -1,16 +1,63 @@
-﻿@{
+﻿@using AzureSkyMedia.WebApp.Models;
+
+@{
     string gridId = "liveEvents";
 }
 
 @section head {
     <script type="text/javascript">
+        function ConfirmCreate() {
+            var title = "Confirm Live Event Create";
+            var message = "What type of live event do you want to create?";
+            var buttons = {
+                "Live Encoding": function () {
+                    SetCursor(true);
+                    $.post("/live/create",
+                        {
+                            eventName: "Live-Encoding",
+                            encodingType: "Basic",
+                            inputProtocol: "RTMP",
+                            lowLatency: true,
+                            autoStart: false
+                        },
+                        function () {
+                            SetCursor(false);
+                            window.location = window.location.href;
+                        }
+                    );
+                    $(this).dialog("close");
+                },
+                "Live Streaming": function () {
+                    SetCursor(true);
+                    $.post("/live/create",
+                        {
+                            eventName: "Live-Streaming",
+                            encodingType: null,
+                            inputProtocol: "FragmentedMP4",
+                            lowLatency: true,
+                            autoStart: false
+                        },
+                        function () {
+                            SetCursor(false);
+                            window.location = window.location.href;
+                        }
+                    );
+                    $(this).dialog("close");
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            };
+            DisplayMessage(title, message, buttons);
+        }
         $(function () {
-            _childGridId = null;
+            _childGridType = null;
             _childPropertyName = null;
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
+            CreateTipBottom("liveEventCreate", "Create Live Event");
         })
     </script>
 }
@@ -22,4 +69,8 @@
 <div class="grid">
     <table id="@gridId"></table>
     <div id="gridPager"></div>
+</div>
+
+<div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ControlId = "liveEventCreate", ImageFile = "MediaEntityCreate.png", OnClick = "ConfirmCreate()" }' />
 </div>

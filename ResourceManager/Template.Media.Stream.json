@@ -36,7 +36,7 @@
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "storageServiceName1": "[concat(variables('storageServiceName'), '1')]",
     "storageServiceName2": "[concat(variables('storageServiceName'), '2')]",
-    "mediaApiVersion": "2018-06-01-preview",
+    "mediaApiVersion": "2018-07-01",
     "mediaServiceName": "[toLower(parameters('mediaServiceName'))]"
   },
   "resources": [
@@ -66,12 +66,11 @@
       "apiVersion": "[variables('storageApiVersion')]",
       "location": "[resourceGroup().location]",
       "name": "[variables('storageServiceName2')]",
-      "kind": "BlobStorage",
+      "kind": "BlockBlobStorage",
       "sku": {
-        "name": "Standard_RAGRS"
+        "name": "Premium_LRS"
       },
       "properties": {
-        "accessTier": "Cool",
         "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
         "encryption": {
           "services": {

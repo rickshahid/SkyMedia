@@ -23,7 +23,7 @@ function SetPlayerControls(controlBar, storageCdnUrl) {
     var mediaStream = _mediaStreams[_streamNumber - 1];
     var buttonIds = ["searchButton", "insightButton", "markerButton"];
     ClearPlayerControls(controlBar, buttonIds);
-    if (mediaStream.contentInsight.indexerUrl != null) {
+    if (mediaStream.contentInsight.widgetUrl != null) {
         onClick = function () {
             var imageSource = $("#insightImage").prop("src");
             if ($("#indexerInsight").is(":visible")) {
@@ -33,7 +33,7 @@ function SetPlayerControls(controlBar, storageCdnUrl) {
             } else {
                 var playerHeight = $("#videoPlayer video").height();
                 $("#indexerInsight").height(playerHeight);
-                $("#indexerInsight").prop("src", mediaStream.contentInsight.indexerUrl);
+                $("#indexerInsight").prop("src", mediaStream.contentInsight.widgetUrl);
                 $("#indexerInsight").show();
                 $(".layoutPanel.side").hide();
                 $("#insightImage").prop("src", imageSource.replace("Show", "Hide"));
@@ -126,7 +126,7 @@ function SetStreamNumber(streamNumber, streamIndex) {
 function GetStreamName(mediaStream, streamTuner) {
     var streamName = mediaStream.name;
     var lineBreak = streamTuner ? "<br><br>" : "<br>";
-    if (mediaStream.source.protectionInfo.length > 0) {
+    if (mediaStream.source.protectionInfo != null && mediaStream.source.protectionInfo.length > 0) {
         streamName = streamName + lineBreak + "(";
         for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
             if (i > 0) {

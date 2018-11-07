@@ -259,13 +259,14 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Thumbnail
             {
-                public const int SpriteColumns = 10;
                 public const string FileNamePrefix = "Thumbnail";
+                public const string FileNameSuffix = "{Index}{Extension}";
             }
 
             public struct Live
             {
-                public const string AllowedPreviewAccess = "Allowed Preview Access";
+                public const string EventOutputNameSuffix = "-Output";
+                public const string EventAssetNameSuffix = "-Asset";
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
 
@@ -10,13 +11,23 @@ namespace AzureSkyMedia.WebApp.Controllers
     {
         public JsonResult Query(string searchQuery)
         {
-            JObject searchResults;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
+            try
             {
-                searchResults = mediaClient.IndexerSearch(searchQuery);
+                JObject searchResults;
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    searchResults = mediaClient.IndexerSearch(searchQuery);
+                }
+                return Json(searchResults);
             }
-            return Json(searchResults);
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
         }
 
         public IActionResult Index()

@@ -18,6 +18,14 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (!entity.Name.StartsWith(Constant.Media.PredefinedPrefix))
                 {
+                    if (entityType == MediaEntity.Transform)
+                    {
+                        Job[] jobs = mediaClient.GetAllEntities<Job>(MediaEntity.TransformJob, entity.Name);
+                        foreach (Job job in jobs)
+                        {
+                            mediaClient.DeleteEntity(MediaEntity.TransformJob, job.Name, entity.Name);
+                        }
+                    }
                     mediaClient.DeleteEntity(entityType, entity.Name);
                 }
             }
@@ -30,6 +38,7 @@ namespace AzureSkyMedia.PlatformServices
             DeleteEntities<ContentKeyPolicy>(mediaClient, MediaEntity.ContentKeyPolicy);
             DeleteEntities<StreamingPolicy>(mediaClient, MediaEntity.StreamingPolicy);
             DeleteEntities<StreamingLocator>(mediaClient, MediaEntity.StreamingLocator);
+            DeleteEntities<AccountFilter>(mediaClient, MediaEntity.FilterAccount);
             DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
             if (mediaClient.IndexerEnabled() && !skipIndexer)
             {

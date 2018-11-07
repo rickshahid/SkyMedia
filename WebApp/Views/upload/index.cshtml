@@ -1,5 +1,6 @@
 ﻿@{
-    int indexerEnabled = int.Parse(ViewData["indexerEnabled"].ToString());
+    bool indexerEnabled = (bool)ViewData["indexerEnabled"];
+    string indexerNotEnabled = indexerEnabled ? "false" : "true";
 }
 
 @section head {
@@ -14,7 +15,7 @@
         $(function () {
             SetStorageTip();
             CreateUploader();
-            if (@indexerEnabled == 0) {
+            if (@indexerNotEnabled) {
                 $("#videoIndexer").prop("disabled", true);
                 $("#audioIndexer").prop("disabled", true);
             }
@@ -65,7 +66,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoAnalyzer", false, new { onchange = "SetIntelligenceOptions(this)" })
+            @Html.CheckBox("videoAnalyzer", !indexerEnabled, new { onchange = "SetIntelligenceOptions(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
@@ -73,7 +74,7 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoIndexer", false, new { onchange = "SetIntelligenceOptions(this)" })
+            @Html.CheckBox("videoIndexer", indexerEnabled, new { onchange = "SetIntelligenceOptions(this)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/cognitive-services/video-indexer/video-indexer-overview')">
@@ -83,11 +84,11 @@
     </tr>
     <tr>
         <td>
-            @Html.CheckBox("thumbnailSprite", false)
+            @Html.CheckBox("thumbnailImages", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
-                Thumbnail Sprite
+                Thumbnail Images
             </span>
         </td>
         <td class="mediaUploadOption">

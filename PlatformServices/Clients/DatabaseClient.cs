@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
         private Uri CreateCollection(Uri databaseUri, string collectionId)
         {
             DocumentCollection documentCollection = new DocumentCollection() { Id = collectionId };
-            ResourceResponse<DocumentCollection> collection = _cosmos.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection).Result;
+            _cosmos.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection).Wait();
             return UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
         }
 
@@ -163,8 +163,8 @@ namespace AzureSkyMedia.PlatformServices
         {
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Task<ResourceResponse<Document>> upsertTask = _cosmos.UpsertDocumentAsync(collectionUri, document);
-            ResourceResponse<Document> upsertResult = upsertTask.Result;
-            return upsertResult.Resource.Id;
+            ResourceResponse<Document> upsertResponse = upsertTask.Result;
+            return upsertResponse.Resource.Id;
         }
 
         public void DeleteDocument(string collectionId, string documentId)

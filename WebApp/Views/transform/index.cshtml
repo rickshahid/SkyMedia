@@ -8,7 +8,7 @@
     <script type="text/javascript" src="~/js/transform.js"></script>
     <script type="text/javascript">
         $(function () {
-            _childGridId = "transformOutputs";
+            _childGridType = "transformOutputs";
             _childPropertyName = "properties.outputs";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
@@ -84,11 +84,11 @@
                             </tr>
                             <tr>
                                 <td class="inputOption">
-                                    @Html.CheckBox("presetType1", false, new { value = "ThumbnailSprite" })
+                                    @Html.CheckBox("presetType1", false, new { value = "ThumbnailImages" })
                                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
-                                        Thumbnail Sprite (JPG)
+                                        Thumbnail Images (JPG)
                                     </span>
-                                    @Html.Hidden("presetName1", "ThumbnailSprite")
+                                    @Html.Hidden("presetName1", "ThumbnailImages")
                                 </td>
                                 <td>
                                     &nbsp;

@@ -1,4 +1,4 @@
-﻿var defaultWidth = 120, typeWidth = 150, typeWidthEx = 200, nameWidth = 300, nameWidthEx = 400;
+﻿var defaultWidth = 120, typeWidth = 150, typeWidthEx = 200, nameWidth = 300, nameWidthEx = 400, actionsWidth = 160;
 function GetParentColumns(gridId) {
     var columns;
     switch (gridId) {
@@ -293,16 +293,16 @@ function GetParentColumns(gridId) {
             formatter: FormatActions,
             label: "Actions",
             align: "center",
-            width: defaultWidth,
+            width: actionsWidth,
             sortable: false
         };
         columns.splice(columns.length, 0, actions);
     }
     return columns;
 }
-function GetChildColumns(gridId) {
+function GetChildColumns(gridType) {
     var columns;
-    switch (gridId) {
+    switch (gridType) {
         case "assetFiles":
             columns = [
                 {

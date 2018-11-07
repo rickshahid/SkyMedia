@@ -13,7 +13,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             Files = GetAssetFiles(blobClient, asset.Container, null);
-            Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, asset.Name);
+            Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, asset.Name);
         }
 
         internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath)

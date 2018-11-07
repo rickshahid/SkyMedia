@@ -26,10 +26,11 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Name { get; set; }
 
-        public string Type { get; set; }
+        public MediaClipType Type { get; set; }
 
         public string Description { get; set; }
 
+        [JsonProperty(PropertyName = "thumbnails")]
         public string[] ThumbnailUrls { get; set; }
 
         public StreamSource Source { get; set; }

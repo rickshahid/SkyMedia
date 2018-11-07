@@ -29,7 +29,7 @@ namespace AzureSkyMedia.PlatformServices
                     new JpgImage()
                     {
                         Start = "0%",
-                        Step = "1%",
+                        Step = "2%",
                         Range = "100%",
                         Layers = new JpgLayer[]
                         {
@@ -46,7 +46,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     new JpgFormat()
                     {
-                        FilenamePattern = "Thumbnail-{Basename}-{Index}{Extension}"
+                        FilenamePattern = string.Concat(Constant.Media.Thumbnail.FileNamePrefix, Constant.Media.Thumbnail.FileNameSuffix)
                     }
                 }
             };
@@ -76,16 +76,16 @@ namespace AzureSkyMedia.PlatformServices
             };
         }
 
-        public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+        public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailImages, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             MediaTransformPreset transformPreset = new MediaTransformPreset();
             if (adaptiveStreaming)
             {
                 transformPreset = transformPreset | MediaTransformPreset.AdaptiveStreaming;
             }
-            if (thumbnailSprite)
+            if (thumbnailImages)
             {
-                transformPreset = transformPreset | MediaTransformPreset.ThumbnailSprite;
+                transformPreset = transformPreset | MediaTransformPreset.ThumbnailImages;
             }
             if (videoAnalyzer)
             {
@@ -122,10 +122,10 @@ namespace AzureSkyMedia.PlatformServices
                         transformOutputPreset = GetTransformOutput(standardEncoderPreset, transformOutput);
                         transformOutputPresets.Add(transformOutputPreset);
                         break;
-                    case MediaTransformPreset.ThumbnailSprite:
+                    case MediaTransformPreset.ThumbnailImages:
                         transformName = GetTransformName(defaultName, transformName, transformOutput);
-                        StandardEncoderPreset thumbnailSpritePreset = GetThumbnailPreset(Constant.Media.Thumbnail.SpriteColumns);
-                        transformOutputPreset = GetTransformOutput(thumbnailSpritePreset, transformOutput);
+                        StandardEncoderPreset thumbnailPreset = GetThumbnailPreset(null);
+                        transformOutputPreset = GetTransformOutput(thumbnailPreset, transformOutput);
                         transformOutputPresets.Add(transformOutputPreset);
                         break;
                     case MediaTransformPreset.VideoAnalyzer:
@@ -162,11 +162,11 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 transformOutputs.Add(transformOutput);
             }
-            if (transformPreset.HasFlag(MediaTransformPreset.ThumbnailSprite))
+            if (transformPreset.HasFlag(MediaTransformPreset.ThumbnailImages))
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
-                    TransformPreset = MediaTransformPreset.ThumbnailSprite,
+                    TransformPreset = MediaTransformPreset.ThumbnailImages,
                     RelativePriority = Priority.Normal,
                     OnError = OnErrorType.ContinueJob
                 };
@@ -203,15 +203,15 @@ namespace AzureSkyMedia.PlatformServices
             Transform transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailSprite;
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailImages;
             transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.VideoAnalyzer;
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailImages | MediaTransformPreset.VideoAnalyzer;
             transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.AudioAnalyzer;
+            transformPreset = MediaTransformPreset.AdaptiveStreaming | MediaTransformPreset.ThumbnailImages | MediaTransformPreset.AudioAnalyzer;
             transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
@@ -223,15 +223,15 @@ namespace AzureSkyMedia.PlatformServices
             transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPreset = MediaTransformPreset.ThumbnailSprite;
+            transformPreset = MediaTransformPreset.ThumbnailImages;
             transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPreset = MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.VideoAnalyzer;
+            transformPreset = MediaTransformPreset.ThumbnailImages | MediaTransformPreset.VideoAnalyzer;
             transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 
-            transformPreset = MediaTransformPreset.ThumbnailSprite | MediaTransformPreset.AudioAnalyzer;
+            transformPreset = MediaTransformPreset.ThumbnailImages | MediaTransformPreset.AudioAnalyzer;
             transform = CreateTransform(transformPreset);
             transforms.Add(transform);
 

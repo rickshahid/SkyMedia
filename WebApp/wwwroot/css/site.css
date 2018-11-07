@@ -206,8 +206,13 @@ body {
     margin-top: 5px;
 }
 
-.mediaWorkflow {
+.mediaModules {
     margin: 10px auto;
+}
+
+.mediaModulesButton {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .ui-slider {
@@ -286,6 +291,8 @@ body {
 }
 
 .ui-dialog-titlebar-close {
+    margin-top: -9px !important;
+    margin-right: -7px !important;
     display: none;
 }
 
@@ -380,16 +387,11 @@ body {
     width: 1080px;
 }
 
-.clipLoader {
-    font-size: large;
-    margin-top: 20px;
-}
-
 .carouselContainer {
     perspective: 2000px;
     margin: 0px auto;
     height: 225px;
-    width: 500px;
+    width: 400px;
 }
 
 .carousel {
@@ -416,4 +418,8 @@ body {
     text-align: left;
     height: 500px;
     width: 800px;
+}
+
+#underConstruction {
+    margin-top: 180px;
 }

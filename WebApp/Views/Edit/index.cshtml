@@ -3,6 +3,8 @@
     string ampSkin = ViewData["mediaPlayerSkin"].ToString();
 
     string amcVersion = ViewData["mediaClipperVersion"].ToString();
+
+    string loadMode = ViewData["mediaClipperLoadMode"].ToString();
 }
 
 @section head {
@@ -11,73 +13,8 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
     <script type="text/javascript">
-        function LoadClipper(loadMode) {
-            var autoPlay = false;
-            var restVersion = "2.0";
-            var clipperSelector = "#videoClipper";
-            var onSubmitClip = function (clipData) {
-                var promise = new Promise(function (resolve, reject) {
-                    $.post("/edit/clip", {
-                        clipData: clipData
-                    })
-                    .then(function (clip) {
-                        resolve(true);
-                    }).catch(function () {
-                        reject();
-                    });
-                });
-                return promise;
-            };
-            switch (loadMode) {
-                case "static":
-                    var clipper = new subclipper({
-                        height: 600,
-                        autoplayVideo: autoPlay,
-                        restVersion: restVersion,
-                        selector: clipperSelector,
-                        submitSubclipCallback: onSubmitClip
-                    });
-                    SetCursor(true);
-                    $.get("/edit/streams",
-                        function (streams) {
-                            SetCursor(false);
-                            clipper.load(streams);
-                        }
-                    );
-                    break;
-                case "dynamic":
-                    var onLoadPanel = function (searchCriteria, skipCount, takeCount, streamType) {
-                        var promise = new Promise(function (resolve, reject) {
-                            $.get("/edit/streams", {
-                                searchCriteria: searchCriteria,
-                                skipCount: skipCount,
-                                takeCount: takeCount,
-                                streamType: streamType
-                            })
-                            .then(function (streams) {
-                                resolve({
-                                    total: streams.length,
-                                    assets: streams
-                                });
-                            }).catch(function () {
-                                reject();
-                            });
-                        });
-                        return promise;
-                    };
-                    var clipper = new subclipper({
-                        height: 850,
-                        autoplayVideo: autoPlay,
-                        restVersion: restVersion,
-                        selector: clipperSelector,
-                        submitSubclipCallback: onSubmitClip,
-                        assetsPanelLoaderCallback: onLoadPanel
-                    });
-                    break;
-            }
-        }
         $(function () {
-            $("#assetLoadMode").change();
+            LoadClipper("@loadMode", false);
         })
     </script>
 }
@@ -87,13 +24,3 @@
 }
 
 <div id="videoClipper" class="videoClipper azure-subclipper dark-skin"></div>
-
-<div class="clipLoader">
-    <span class="inputLabel">
-        Asset Load Mode:
-    </span>
-    @Html.RadioButton("assetLoadMode", "dynamic", true, new { onchange = "LoadClipper(this.value)" })
-    Dynamic
-    @Html.RadioButton("assetLoadMode", "static", false, new { onchange = "LoadClipper(this.value)" })
-    Static
-</div>

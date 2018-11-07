@@ -27,16 +27,16 @@ namespace AzureSkyMedia.PlatformServices
             IPage<T2> parentEntities = GetEntities<T2>(parentEntityType);
             foreach (T2 parentEntity in parentEntities)
             {
-                T1[] entities = GetAllEntities<T1>(entityType, parentEntity.Name);
+                T1[] entities = GetAllEntities<T1>(entityType, null, parentEntity.Name);
                 allEntities.AddRange(entities);
             }
             return allEntities.ToArray();
         }
 
-        public T[] GetAllEntities<T>(MediaEntity entityType, string parentEntityName = null) where T : Resource
+        public T[] GetAllEntities<T>(MediaEntity entityType, string queryFilter = null, string parentEntityName = null) where T : Resource
         {
             List<T> allEntities = new List<T>();
-            IPage<T> entities = GetEntities<T>(entityType, null, parentEntityName);
+            IPage<T> entities = GetEntities<T>(entityType, queryFilter, parentEntityName);
             while (entities != null)
             {
                 allEntities.AddRange(entities);
@@ -45,7 +45,7 @@ namespace AzureSkyMedia.PlatformServices
             return allEntities.ToArray();
         }
 
-        public IPage<T> GetEntities<T>(MediaEntity entityType, string entityFilter, string parentEntityName = null) where T : Resource
+        public IPage<T> GetEntities<T>(MediaEntity entityType, string queryFilter = null, string parentEntityName = null) where T : Resource
         {
             IPage<T> entities = null;
             switch (entityType)
@@ -53,35 +53,35 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.Asset:
                     ODataQuery<Asset> assetQuery = new ODataQuery<Asset>()
                     {
-                        Filter = entityFilter
+                        Filter = queryFilter
                     };
                     entities = (IPage<T>)_media.Assets.List(MediaAccount.ResourceGroupName, MediaAccount.Name, assetQuery);
                     break;
                 case MediaEntity.Transform:
                     ODataQuery<Transform> transformQuery = new ODataQuery<Transform>()
                     {
-                        Filter = entityFilter
+                        Filter = queryFilter
                     };
                     entities = (IPage<T>)_media.Transforms.List(MediaAccount.ResourceGroupName, MediaAccount.Name, transformQuery);
                     break;
                 case MediaEntity.TransformJob:
                     ODataQuery<Job> transformJobQuery = new ODataQuery<Job>()
                     {
-                        Filter = entityFilter
+                        Filter = queryFilter
                     };
                     entities = (IPage<T>)_media.Jobs.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, transformJobQuery);
                     break;
                 case MediaEntity.ContentKeyPolicy:
                     ODataQuery<ContentKeyPolicy> contentKeyPolicyQuery = new ODataQuery<ContentKeyPolicy>()
                     {
-                        Filter = entityFilter
+                        Filter = queryFilter
                     };
                     entities = (IPage<T>)_media.ContentKeyPolicies.List(MediaAccount.ResourceGroupName, MediaAccount.Name, contentKeyPolicyQuery);
                     break;
                 case MediaEntity.StreamingPolicy:
                     ODataQuery<StreamingPolicy> streamingPolicyQuery = new ODataQuery<StreamingPolicy>()
                     {
-                        Filter = entityFilter
+                        Filter = queryFilter
                     };
                     entities = (IPage<T>)_media.StreamingPolicies.List(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingPolicyQuery);
                     break;
@@ -91,7 +91,7 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.StreamingLocator:
                     ODataQuery<StreamingLocator> streamingLocatorQuery = new ODataQuery<StreamingLocator>()
                     {
-                        Filter = entityFilter
+                        Filter = queryFilter
                     };
                     entities = (IPage<T>)_media.StreamingLocators.List(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocatorQuery);
                     break;
@@ -109,11 +109,6 @@ namespace AzureSkyMedia.PlatformServices
                     break;
             }
             return entities;
-        }
-
-        public IPage<T> GetEntities<T>(MediaEntity entityType) where T : Resource
-        {
-            return GetEntities<T>(entityType, null);
         }
 
         public IPage<T> NextEntities<T>(MediaEntity entityType, IPage<T> currentPage)
@@ -240,7 +235,16 @@ namespace AzureSkyMedia.PlatformServices
                     _media.AssetFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
                     break;
                 case MediaEntity.LiveEvent:
-                    _media.LiveEvents.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
+                    LiveEvent liveEvent = GetEntity<LiveEvent>(MediaEntity.LiveEvent, entityName);
+                    if (liveEvent != null)
+                    {
+                        LiveOutput[] liveOutputs = GetAllEntities<LiveOutput>(MediaEntity.LiveEventOutput, null, entityName);
+                        foreach (LiveOutput liveOutput in liveOutputs)
+                        {
+                            _media.LiveOutputs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName, liveOutput.Name);
+                        }
+                        _media.LiveEvents.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
+                    }
                     break;
                 case MediaEntity.LiveEventOutput:
                     _media.LiveOutputs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);

@@ -19,13 +19,23 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public JsonResult Create(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
         {
-            Transform transform;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
+            try
             {
-                transform = mediaClient.CreateTransform(transformName, transformDescription, transformOutputs);
+                Transform transform;
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    transform = mediaClient.CreateTransform(transformName, transformDescription, transformOutputs);
+                }
+                return Json(transform);
             }
-            return Json(transform);
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
         }
 
         public IActionResult Index()

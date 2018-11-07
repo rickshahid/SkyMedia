@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Management.Media.Models;
+
+using Newtonsoft.Json.Linq;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -22,20 +25,58 @@ namespace AzureSkyMedia.WebApp.Controllers
         //    return jobInputs.ToArray();
         //}
 
-        public JsonResult Streams(string searchCriteria, int skipCount, int takeCount, string streamType)
+        public JsonResult Streams(string assetName, int skipCount, int takeCount, string streamType)
         {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            MediaStream[] streams = Media.GetClipperStreams(authToken, searchCriteria, skipCount, takeCount, streamType);
-            return Json(streams);
+            try
+            {
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                MediaStream[] mediaStreams = Media.GetClipperStreams(authToken, assetName, skipCount, takeCount, streamType);
+                return Json(mediaStreams);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
         }
 
         public JsonResult Clip(string clipData)
         {
-            object clipOutput = null;
-            //JObject clip = JObject.Parse(clipData);
+            try
+            {
+                JObject clip = JObject.Parse(clipData);
+                string clipName = clip["name"].ToString();
+                string clipType = clip["output"]["type"].ToString();
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    switch (clipType)
+                    {
+                        case "filter":
+                            string assetId = clip["inputsIds"][0]["id"].ToString();
+                            JToken timeRange = clip["output"]["filter"]["PresentationTimeRange"];
+                            long timescale = (long)timeRange["Timescale"];
+                            long startTimestamp = (long)timeRange["StartTimestamp"];
+                            long endTimestamp = (long)timeRange["EndTimestamp"];
+                            mediaClient.CreateFilter(assetId, clipName, timescale, startTimestamp, endTimestamp);
+                            break;
+
+                        case "rendered":
+                            break;
+                    }
+                }
+                return Json(true);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
             //MediaJobInput[] jobInputs = GetJobInputs(clip);
-            //string authToken = homeController.GetAuthToken(this.Request, this.Response);
-            //using MediaClient mediaClient = new MediaClient(authToken);
             //if (jobInputs[0].AssetFilter)
             //{
             //    string filterName = clip["name"].ToString();
@@ -59,11 +100,11 @@ namespace AzureSkyMedia.WebApp.Controllers
             //    mediaJob = MediaClient.GetJob(authToken, mediaClient, mediaJob, jobInputs.ToArray());
             //    clipOutput = Workflow.SubmitJob(directoryId, authToken, mediaClient, mediaJob, jobInputs.ToArray());
             //}
-            return Json(clipOutput);
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string assetName)
         {
+            ViewData["mediaClipperLoadMode"] = string.IsNullOrEmpty(assetName) ? "dynamic" : "static";
             return View();
         }
     }

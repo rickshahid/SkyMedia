@@ -85,7 +85,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                 }
             }
-            return protectionInfo.ToArray();
+            return protectionInfo.Count == 0 ? null : protectionInfo.ToArray();
         }
     }
 }

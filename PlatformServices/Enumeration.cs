@@ -25,7 +25,7 @@ namespace AzureSkyMedia.PlatformServices
     public enum MediaTransformPreset
     {
         AdaptiveStreaming = 1,
-        ThumbnailSprite = 2,
+        ThumbnailImages = 2,
         VideoAnalyzer = 4,
         AudioAnalyzer = 8,
         VideoIndexer = 16,
@@ -46,6 +46,13 @@ namespace AzureSkyMedia.PlatformServices
         DistinctAssets,
         InputAsset,
         SingleAsset
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaClipType
+    {
+        Asset,
+        Filter
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

@@ -8,94 +8,121 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class LiveController : Controller
     {
-        [HttpPost]
-        [Route("/live/event/create")]
-        public LiveEvent CreateEvent(string eventName, string eventDescription, string inputAccessToken,
-                                     LiveEventInputProtocol inputProtocol = LiveEventInputProtocol.FragmentedMP4, LiveEventEncodingType encodingType = LiveEventEncodingType.None,
-                                     string encodingPresetName = "Default720p", string previewStreamingPolicyName = "Predefined_ClearStreamingOnly",
-                                     string previewAllowedIpAddress = "0.0.0.0", int previewAllowedSubnetPrefixLength = 0, bool lowLatency = false, bool autoStart = false)
+        public JsonResult Create(string eventName, string eventDescription, LiveEventEncodingType encodingType = LiveEventEncodingType.None,
+                                 string encodingPresetName = null, LiveEventInputProtocol inputProtocol = LiveEventInputProtocol.FragmentedMP4,
+                                 bool lowLatency = false, bool autoStart = false)
         {
-            LiveEvent liveEvent = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
+            try
             {
+                LiveEvent liveEvent;
+                string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    liveEvent = mediaClient.CreateLiveEvent(eventName, eventDescription, inputAccessToken, inputProtocol, encodingType, encodingPresetName, previewStreamingPolicyName, previewAllowedIpAddress, previewAllowedSubnetPrefixLength, lowLatency, autoStart);
+                    liveEvent = mediaClient.CreateLiveEvent(eventName, eventDescription, encodingType, encodingPresetName, inputProtocol, lowLatency, autoStart);
+                    string outputName = string.Concat(eventName, Constant.Media.Live.EventOutputNameSuffix);
+                    string assetName = string.Concat(eventName, Constant.Media.Live.EventAssetNameSuffix);
+                    mediaClient.CreateLiveEventOutput(eventName, outputName, assetName);
                 }
+                return Json(liveEvent);
             }
-            return liveEvent;
-        }
-
-        [HttpDelete]
-        [Route("/live/event/delete")]
-        public void DeleteEvent(string eventName)
-        {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
+            catch (ApiErrorException ex)
             {
-                using (MediaClient mediaClient = new MediaClient(authToken))
+                return new JsonResult(ex.Response.Content)
                 {
-                    mediaClient.DeleteEntity(MediaEntity.LiveEvent, eventName);
-                }
+                    StatusCode = (int)ex.Response.StatusCode
+                };
             }
         }
 
-        [HttpPost]
-        [Route("/live/event/start")]
-        public void StartEvent(string eventName)
+        public JsonResult Update(string eventName, string eventDescription)
         {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
+            try
             {
-                using (MediaClient mediaClient = new MediaClient(authToken))
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                if (!string.IsNullOrEmpty(authToken))
                 {
-                    mediaClient.StartLiveEvent(eventName);
+                    using (MediaClient mediaClient = new MediaClient(authToken))
+                    {
+                        mediaClient.UpdateLiveEvent(eventName, eventDescription);
+                    }
                 }
+                return Json(eventName);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
             }
         }
 
-        [HttpPost]
-        [Route("/live/event/stop")]
-        public void StopEvent(string eventName)
+        public JsonResult Start(string eventName)
         {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
+            try
             {
-                using (MediaClient mediaClient = new MediaClient(authToken))
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                if (!string.IsNullOrEmpty(authToken))
                 {
-                    mediaClient.StopLiveEvent(eventName);
+                    using (MediaClient mediaClient = new MediaClient(authToken))
+                    {
+                        mediaClient.StartLiveEvent(eventName);
+                    }
                 }
+                return Json(eventName);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
             }
         }
 
-        [HttpPost]
-        [Route("/live/event/output/create")]
-        public LiveOutput CreateEventOutput(string eventName, string eventOutputName, string eventOutputDescription, string manifestName, string archiveAssetName, int archiveAssetWindowMinutes = 60)
+        public JsonResult Stop(string eventName)
         {
-            LiveOutput liveEventOutput = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
+            try
             {
-                using (MediaClient mediaClient = new MediaClient(authToken))
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                if (!string.IsNullOrEmpty(authToken))
                 {
-                    liveEventOutput = mediaClient.CreateLiveEventOutput(eventName, eventOutputName, eventOutputDescription, manifestName, archiveAssetName, archiveAssetWindowMinutes);
+                    using (MediaClient mediaClient = new MediaClient(authToken))
+                    {
+                        mediaClient.StopLiveEvent(eventName);
+                    }
                 }
+                return Json(eventName);
             }
-            return liveEventOutput;
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
         }
 
-        [HttpDelete]
-        [Route("/live/event/output/delete")]
-        public void DeleteEventOutput(string eventName, string eventOutputName)
+        public JsonResult Reset(string eventName)
         {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
+            try
             {
-                using (MediaClient mediaClient = new MediaClient(authToken))
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                if (!string.IsNullOrEmpty(authToken))
                 {
-                    mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, eventOutputName, eventName);
+                    using (MediaClient mediaClient = new MediaClient(authToken))
+                    {
+                        mediaClient.ResetLiveEvent(eventName);
+                    }
                 }
+                return Json(eventName);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
             }
         }
 

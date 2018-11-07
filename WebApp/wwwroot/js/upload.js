@@ -34,7 +34,7 @@ function CreateWorkflow(files) {
             assetAlternateId: $("#assetAlternateId").val(),
             fileNames: GetFileNames(files),
             adaptiveStreaming: $("#adaptiveStreaming").prop("checked"),
-            thumbnailSprite: $("#thumbnailSprite").prop("checked"),
+            thumbnailImages: $("#thumbnailImages").prop("checked"),
             videoAnalyzer: $("#videoAnalyzer").prop("checked"),
             audioAnalyzer: $("#audioAnalyzer").prop("checked"),
             videoIndexer: $("#videoIndexer").prop("checked"),
@@ -52,17 +52,19 @@ function CreateWorkflow(files) {
                     indexId = entity["properties.alternateId"];
                 } else {
                     var transformName = GetParentResourceName(entity);
-                    entityItemRef = "/job/item?jobName=" + entity.name + "&transformName=" + transformName;
+                    entityItemRef = "/job/item?transformName=" + transformName + "&jobName=" + entity.name;
                     indexId = entity["properties.correlationData"]["indexId"];
                 }
                 if (message != "") {
                     message = message + "<br><br>";
                 }
-                message = message + "<a class='siteLink' href='" + entityItemRef + "'>";
+                message = message + "<a class='siteLink' target='_blank' href='" + entityItemRef + "'>";
                 message = message + "Media " + entityType + " Created - " + entity.name + "</a>";
                 if (indexId != null) {
+                    var insightRef = "/account/indexerInsights?indexId=" + indexId;
                     var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
-                    message = message + "<br><br>" + insightType + " Indexer Insight - " + indexId;
+                    message = message + "<br><br><a class='siteLink' target='_blank' href='" + insightRef + "'>";
+                    message = message + insightType + " Indexer Insight - " + indexId + "</a>";
                 }
             }
             $("#mediaUploadEntities").html(message);

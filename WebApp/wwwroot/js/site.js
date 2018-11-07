@@ -1,5 +1,5 @@
-﻿var _mediaPlayer, _mediaStreams, _streamNumber, _spacingPatterns, _spacingInserts, _storageCdnUrl, _jsonEditor;
-function SetLayout(appName) {
+﻿var _spacingPatterns, _spacingInserts, _storageCdnUrl;
+function InitializeApp(appName) {
     CreateTipBottom("siteHome", appName + "<br><br>Site Home");
     CreateTipBottom("siteCode", appName + "<br><br>Open Source");
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>News Blog");
@@ -9,16 +9,16 @@ function SetLayout(appName) {
     CreateTipBottom("userSignIn", appName + "<br><br>User Sign In");
     CreateTipBottom("userSignOut", appName + "<br><br>User Sign Out");
     CreateTipBottom("mediaAccount", "Azure Media Services<br><br>Account Inventory");
-    CreateTipRight("amsPlatform", "Azure Media Services");
-    CreateTipRight("amsPlayer", "Azure Media Player");
-    CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
+    CreateTipRight("mediaServices", "Azure Media Services");
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
+    CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
+    CreateTipRight("mediaServicesPlayer", "Azure Media Player");
     CreateTipRight("mediaIndexer", "Azure Video Indexer");
     CreateTipLeft("cognitiveSearch", "Azure Cognitive Search");
-    CreateTipLeft("functionApp", "Azure Functions");
-    CreateTipLeft("eventGrid", "Azure Event Grid");
     CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
+    CreateTipLeft("functionApp", "Azure Functions");
+    CreateTipLeft("logicApp", "Azure Logic App");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("mediaStorage", "Azure Blob Storage");
     CreateTipTop("mediaUpload", "Upload");
@@ -27,20 +27,25 @@ function SetLayout(appName) {
     CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
     CreateTipTop("mediaSearch", "Search");
     CreateTipTop("mediaEdit", "Edit");
-    CreateTipTop("mediaGallery", "Gallery");
+    CreateTipTop("userEngagement", "Engagement");
     CreateTipTop("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);
-        if (error != "") {
-            DisplayMessage("Error Message", error);
+        var title = "Error Message";
+        var message = error;
+        if (xhr.responseJSON != null) {
+            var ex = JSON.parse(xhr.responseJSON);
+            title = title + " (" + ex.error.code + ")";
+            message = ex.error.message;
         }
+        DisplayMessage(title, message);
     });
     $.ajaxSetup({
         cache: false
     });
 }
-function SetCursor(isBusy) {
-    if (isBusy) {
+function SetCursor(busy) {
+    if (busy) {
         $("body").css("cursor", "wait");
     } else {
         $("body").css("cursor", "auto");
@@ -50,95 +55,9 @@ function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signOut";
 }
-function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, spriteVttUrl) {
-    if (!autoPlay && userId == "") {
-        autoPlay = true;
-    }
-    var playerOptions = {
-        fluid: true,
-        controls: true,
-        autoplay: autoPlay,
-        width: galleryView ? "400" : "100%",
-        height: galleryView ? "400" : "auto",
-        playbackSpeed: {
-            enabled: true
-        },
-        plugins: {
-            appInsights: {
-                userId: userId,
-                accountId: accountName
-            },
-            spriteTip: {
-                vttUrl: spriteVttUrl
-            },
-            videobreakdown: {
-            }
-        }
-    };
-    if (window.location.href.indexOf("debug") > -1) {
-        playerOptions.plugins.diagnosticOverlay = {
-            title: "Diagnostics",
-            bgColor: "black",
-            opacity: 0.5,
-            x: "left",
-            y: "top"
-        };
-    }
-    return amp(playerId, playerOptions);
-}
-function SetPlayerContent(mediaPlayer, mediaStream) {
-    $("#mediaStreamLeft").prop("disabled", true);
-    $("#mediaStreamRight").prop("disabled", true);
-    $("#streamTuner").slider("option", "disabled", true);
-    if (mediaStream.source.protectionInfo.length > 0) {
-        if (window.location.href.indexOf("token=0") > -1) {
-            for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
-                mediaStream.source.protectionInfo[i].authenticationToken = null;
-            }
-        }
-        mediaPlayer.src(
-            [{
-                src: mediaStream.source.src,
-                protectionInfo: mediaStream.source.protectionInfo
-            }],
-            mediaStream.textTracks
-        );
-    } else {
-        mediaPlayer.src(
-            [{
-                src: mediaStream.source.src
-            }],
-            mediaStream.textTracks
-        );
-    }
-    if (window.location.href.indexOf("poster=0") == -1) {
-        if (mediaStream.thumbnailUrls != null && mediaStream.thumbnailUrls.length > 0) {
-            mediaPlayer.poster(mediaStream.thumbnailUrls[0]);
-        }
-    }
-}
-function CreateJsonEditor(containerId, jsonName, jsonData) {
-    var container = document.getElementById(containerId);
-    var options = {
-        "mode": jsonData != null ? "view" : "tree",
-        "search": jsonData != null
-    };
-    _jsonEditor = new JSONEditor(container, options);
-    if (jsonName != null) {
-        _jsonEditor.setName(jsonName);
-    }
-    if (jsonData != null) {
-        if (typeof jsonData == "string") {
-            jsonData = decodeURIComponent(jsonData);
-            jsonData = JSON.parse(jsonData);
-        }
-        for (var dataItem in jsonData) {
-            if (typeof jsonData[dataItem] == "string" && jsonData[dataItem].indexOf("{") > -1 && jsonData[dataItem].indexOf("}") > -1) {
-                jsonData[dataItem] = JSON.parse(jsonData[dataItem]);
-            }
-        }
-        _jsonEditor.set(jsonData);
-    }
+function GetParentResourceName(childResource) {
+    var childId = childResource.id.split("/");
+    return childId.length > 12 ? childId[childId.length - 3] : childId[childId.length - 1];
 }
 function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
     title = decodeURIComponent(title);
@@ -208,8 +127,4 @@ function CreateTipRight(targetId, tipText, adjustX, adjustY) {
 }
 function SetTipVisible(targetId, tipVisible) {
     $("#" + targetId).qtip("toggle", tipVisible);
-}
-function GetParentResourceName(childResource) {
-    var childId = childResource.id.split("/");
-    return childId.length > 12 ? childId[childId.length - 3] : childId[childId.length - 1];
 }

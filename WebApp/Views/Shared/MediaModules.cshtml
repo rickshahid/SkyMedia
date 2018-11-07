@@ -7,17 +7,17 @@
     int streamTunerPageEnd = Model.StreamCount + Model.StreamSkipCount;
 }
 
-<table class="mediaWorkflow">
+<table class="mediaModules">
     <tr>
     @if (ViewData.ContainsKey("accountName"))
     {
-        <td>
+        <td class="mediaModulesButton">
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaUpload", ImageFile = "MediaUpload.png", RelativeUrl = "/upload" }' />
         </td>
-        <td>
+        <td class="mediaModulesButton">
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaTransform", ImageFile = "MediaTransform.png", RelativeUrl = "/transform" }' />
         </td>
-        <td>
+        <td class="mediaModulesButton">
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaJob", ImageFile = "MediaJob.png", RelativeUrl = "/job" }' />
         </td>
     }
@@ -38,14 +38,14 @@
         </td>
     @if (ViewData.ContainsKey("accountName"))
     {
-        <td>
+        <td class="mediaModulesButton">
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaSearch", ImageFile = "MediaSearch.png", RelativeUrl = "/search" }' />
         </td>
-        <td>
+        <td class="mediaModulesButton">
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEdit", ImageFile = "MediaEdit.png", RelativeUrl = "/edit" }' />
         </td>
-        <td>
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaGallery", ImageFile = "MediaGallery.png", RelativeUrl = "/gallery" }' />
+        <td class="mediaModulesButton">
+            <partial name="SiteButton" model='new SiteButton { ControlId = "userEngagement", ImageFile = "UserEngagement.png", RelativeUrl = "/engagement" }' />
         </td>
     }
     </tr>

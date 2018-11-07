@@ -1,8 +1,8 @@
-﻿var _childGridId, _childPropertyName, _refreshInterval = 10000;
-function ClearTitles(grid) {
-    var tdElements = document.getElementsByTagName("td");
-    for (var i = 0; i < tdElements.length; i++) {
-        tdElements[i].title = "";
+﻿var _childGridType, _childPropertyName;
+function ClearTitles() {
+    var tableCells = document.getElementsByTagName("td");
+    for (var i = 0; i < tableCells.length; i++) {
+        tableCells[i].title = "";
     }
 }
 function CreateTips(rows) {
@@ -15,10 +15,14 @@ function CreateTips(rows) {
         CreateTipTop(rowId + "_transcript", "Transcript");
         CreateTipTop(rowId + "_reindex", "Reindex");
         CreateTipTop(rowId + "_publish", "Publish");
-        CreateTipTop(rowId + "_cancel", "Cancel");
-        CreateTipTop(rowId + "_edit", "Edit");
-        CreateTipTop(rowId + "_delete", "Delete");
         CreateTipTop(rowId + "_download", "Download");
+        CreateTipTop(rowId + "_edit", "Edit");
+        CreateTipTop(rowId + "_clip", "Clip");
+        CreateTipTop(rowId + "_cancel", "Cancel");
+        CreateTipTop(rowId + "_delete", "Delete");
+        CreateTipTop(rowId + "_start", "Start");
+        CreateTipTop(rowId + "_stop", "Stop");
+        CreateTipTop(rowId + "_reset", "Reset");
     }
 }
 function SetParentRowIds(rows) {
@@ -42,23 +46,7 @@ function SetChildRowIds(parentRow, childRows) {
         var childRowId = parentRow.id + "-" + i;
         childRows[i].id = childRowId;
         childRows[i].parentEntityName = parentRow.name;
-    }
-}
-function LoadSubGrid(parentRowId, parentRowKey) {
-    var parentRow = $(this).jqGrid("getLocalRow", parentRowKey);
-    var childRows = parentRow[_childPropertyName];
-    var columns = GetChildColumns(_childGridId);
-    SetChildRowIds(parentRow, childRows);
-    $("#" + parentRowId).html("<table id='" + _childGridId + "'></table>");
-    $("#" + _childGridId).jqGrid({
-        colModel: columns,
-        datatype: "local",
-        data: childRows,
-        loadComplete: ClearTitles,
-        sortname: "name",
-        rowNum: 50
-    });
-    CreateTips(childRows);
+   }
 }
 function LoadGrid(gridId, rows, columns) {
     SetParentRowIds(rows);
@@ -67,7 +55,7 @@ function LoadGrid(gridId, rows, columns) {
         datatype: "local",
         data: rows,
         loadComplete: OnGridLoad,
-        subGrid: _childGridId != null,
+        subGrid: _childGridType != null,
         subGridOptions: {
             "openicon": "ui-icon-arrowreturnthick-1-e"
         },
@@ -79,24 +67,39 @@ function LoadGrid(gridId, rows, columns) {
     });
     CreateTips(rows);
 }
+function LoadSubGrid(parentRowId, parentRowKey) {
+    var parentRow = $(this).jqGrid("getLocalRow", parentRowKey);
+    var childRows = parentRow[_childPropertyName];
+    var columns = GetChildColumns(_childGridType);
+    SetChildRowIds(parentRow, childRows);
+    var childGridId = parentRowId + "_" + _childPropertyName.replace("properties.", "");
+    $("#" + parentRowId).html("<table id='" + childGridId + "'></table>");
+    $("#" + childGridId).jqGrid({
+        colModel: columns,
+        datatype: "local",
+        data: childRows,
+        gridComplete: ClearTitles,
+        sortname: "name",
+        rowNum: 100
+    });
+    CreateTips(childRows);
+}
 function ReloadGrid(gridId, relativeUrl, columns) {
-    if (window.location.href.indexOf("disableRefresh") == -1) {
-        $.get(relativeUrl,
-            function (rows) {
-                SetParentRowIds(rows);
-                $("#" + gridId).jqGrid("clearGridData");
-                $("#" + gridId).jqGrid("setGridParam", {
-                    datatype: "local",
-                    data: rows
-                });
-                $("#" + gridId).trigger("reloadGrid");
-            }
-        );
-    }
+    $.get(relativeUrl,
+        function (rows) {
+            SetParentRowIds(rows);
+            $("#" + gridId).jqGrid("clearGridData");
+            $("#" + gridId).jqGrid("setGridParam", {
+                datatype: "local",
+                data: rows
+            });
+            $("#" + gridId).trigger("reloadGrid");
+        }
+    );
 }
 function OnGridLoad(grid) {
-    ClearTitles(grid);
-    if (_childGridId == "transformJobOutputs") {
+    ClearTitles();
+    if (_childGridType == "transformJobOutputs") {
         var rows = grid.rows;
         for (var i = 0; i < rows.length; i++) {
             var jobState = rows[i]["properties.state"];

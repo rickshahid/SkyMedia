@@ -21,10 +21,12 @@
         <script type="text/javascript" src="~/lib/jqgrid/js/jquery.jqGrid.min.js"></script>
         <script type="text/javascript" src="~/lib/jqgrid/js/i18n/grid.locale-en.js"></script>
         <script type="text/javascript" src="~/lib/qtip2/jquery.qtip.min.js"></script>
+        <script type="text/javascript" src="~/js/site.js"></script>
+        <script type="text/javascript" src="~/js/player.js"></script>
+        <script type="text/javascript" src="~/js/editor.js"></script>
         <script type="text/javascript" src="~/js/grid/grid.js"></script>
         <script type="text/javascript" src="~/js/grid/gridAction.js"></script>
         <script type="text/javascript" src="~/js/grid/gridColumn.js"></script>
-        <script type="text/javascript" src="~/js/site.js"></script>
         <script type="text/javascript">
             _spacingPatterns = @Json.Serialize(ViewData["spacingPatterns"]);
             _spacingInserts = @Json.Serialize(ViewData["spacingInserts"]);
@@ -32,7 +34,7 @@
         </script>
         @RenderSection("head", false)
     </head>
-    <body onload="SetLayout('@ViewData["appName"]')">
+    <body onload="InitializeApp('@ViewData["appName"]')">
         <table class="header">
             <tr>
                 <td class="headerSide">
@@ -75,19 +77,19 @@
             <tr>
                 <td class="layoutPanel side">
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "amsPlatform", ImageFile = "MediaServices.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/", StyleClass = "layoutVertical" }' />
-                    </div>
-                    <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "amsPlayer", ImageFile = "MediaPlayer.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/media-player/", StyleClass = "layoutVertical" }' />
-                    </div>
-                    <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreaming", ImageFile = "MediaStreaming.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/live-on-demand/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServices", ImageFile = "MediaServices.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEncoding", ImageFile = "MediaEncoding.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/encoding/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "mediaProtection", ImageFile = "MediaProtection.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/content-protection/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreaming", ImageFile = "MediaStreaming.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/live-on-demand/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServicesPlayer", ImageFile = "MediaPlayer.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/media-player/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "mediaIndexer", ImageFile = "MediaIndexer.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/video-indexer/", StyleClass = "layoutVertical" }' />
@@ -101,13 +103,13 @@
                         <partial name="SiteButton" model='new SiteButton { ControlId = "cognitiveSearch", ImageFile = "CognitiveSearch.png", AbsoluteUrl = "http://docs.microsoft.com/azure/search/cognitive-search-concept-intro", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "contentDeliveryNetwork", ImageFile = "ContentDeliveryNetwork.png", AbsoluteUrl = "http://azure.microsoft.com/services/cdn/", StyleClass = "layoutVertical" }' />
+                    </div>
+                    <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "functionApp", ImageFile = "FunctionApp.png", AbsoluteUrl = "http://azure.microsoft.com/services/functions/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "eventGrid", ImageFile = "EventGrid.png", AbsoluteUrl = "http://azure.microsoft.com/services/event-grid/", StyleClass = "layoutVertical" }' />
-                    </div>
-                    <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "contentDeliveryNetwork", ImageFile = "ContentDeliveryNetwork.png", AbsoluteUrl = "http://azure.microsoft.com/services/cdn/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "logicApp", ImageFile = "LogicApp.png", AbsoluteUrl = "http://azure.microsoft.com/services/logic-apps/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "cosmosDB", ImageFile = "CosmosDB.png", AbsoluteUrl = "http://azure.microsoft.com/services/cosmos-db/", StyleClass = "layoutVertical" }' />

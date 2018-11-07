@@ -50,10 +50,22 @@ namespace AzureSkyMedia.PlatformServices
             return GetDefaultUrl(relativePath);
         }
 
-        public static IEnumerable<StreamingLocator> GetLocators(MediaClient mediaClient)
+        public IEnumerable<StreamingLocator> GetLocators()
         {
-            StreamingLocator[] locators = mediaClient.GetEntities<StreamingLocator>(MediaEntity.StreamingLocator).ToArray();
+            StreamingLocator[] locators = GetEntities<StreamingLocator>(MediaEntity.StreamingLocator).ToArray();
             Array.Sort<StreamingLocator>(locators, OrderByCreated);
+            return locators;
+        }
+
+        public IEnumerable<StreamingLocator> GetLocators(string assetName)
+        {
+            List<StreamingLocator> locators = new List<StreamingLocator>();
+            ListStreamingLocatorsResponse locatorList = _media.Assets.ListStreamingLocators(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);
+            foreach (AssetStreamingLocator streamingLocator in locatorList.StreamingLocators)
+            {
+                StreamingLocator locator = GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, streamingLocator.Name);
+                locators.Add(locator);
+            }
             return locators;
         }
 

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -27,59 +29,81 @@ namespace AzureSkyMedia.WebApp.Controllers
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public void DeleteEntities(bool skipIndexer)
+        public JsonResult DeleteEntities(bool skipIndexer)
         {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
+            try
             {
-                Account.DeleteEntities(mediaClient, skipIndexer);
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    Account.DeleteEntities(mediaClient, skipIndexer);
+                }
+                return Json(skipIndexer);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
             }
         }
 
-        public void DeleteEntity(string gridId, string entityName, string parentEntityName)
+        public JsonResult DeleteEntity(string gridId, string entityName, string parentEntityName)
         {
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
+            try
             {
-                switch (gridId)
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    case "assets":
-                        mediaClient.DeleteEntity(MediaEntity.Asset, entityName);
-                        break;
-                    case "transforms":
-                        mediaClient.DeleteEntity(MediaEntity.Transform, entityName);
-                        break;
-                    case "transformJobs":
-                        mediaClient.DeleteEntity(MediaEntity.TransformJob, entityName, parentEntityName);
-                        break;
-                    case "contentKeyPolicies":
-                        mediaClient.DeleteEntity(MediaEntity.ContentKeyPolicy, entityName);
-                        break;
-                    case "streamingPolicies":
-                        mediaClient.DeleteEntity(MediaEntity.StreamingPolicy, entityName);
-                        break;
-                    case "streamingEndpoints":
-                        mediaClient.DeleteEntity(MediaEntity.StreamingEndpoint, entityName);
-                        break;
-                    case "streamingLocators":
-                        mediaClient.DeleteEntity(MediaEntity.StreamingLocator, entityName);
-                        break;
-                    case "filtersAccount":
-                        mediaClient.DeleteEntity(MediaEntity.FilterAccount, entityName);
-                        break;
-                    case "filtersAsset":
-                        mediaClient.DeleteEntity(MediaEntity.FilterAsset, entityName, parentEntityName);
-                        break;
-                    case "liveEvents":
-                        mediaClient.DeleteEntity(MediaEntity.LiveEvent, entityName);
-                        break;
-                    case "liveEventOutputs":
-                        mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentEntityName);
-                        break;
-                    case "indexerInsights":
-                        mediaClient.IndexerDeleteVideo(entityName, true);
-                        break;
+                    switch (gridId)
+                    {
+                        case "assets":
+                            mediaClient.DeleteEntity(MediaEntity.Asset, entityName);
+                            break;
+                        case "transforms":
+                            mediaClient.DeleteEntity(MediaEntity.Transform, entityName);
+                            break;
+                        case "transformJobs":
+                            mediaClient.DeleteEntity(MediaEntity.TransformJob, entityName, parentEntityName);
+                            break;
+                        case "contentKeyPolicies":
+                            mediaClient.DeleteEntity(MediaEntity.ContentKeyPolicy, entityName);
+                            break;
+                        case "streamingPolicies":
+                            mediaClient.DeleteEntity(MediaEntity.StreamingPolicy, entityName);
+                            break;
+                        case "streamingEndpoints":
+                            mediaClient.DeleteEntity(MediaEntity.StreamingEndpoint, entityName);
+                            break;
+                        case "streamingLocators":
+                            mediaClient.DeleteEntity(MediaEntity.StreamingLocator, entityName);
+                            break;
+                        case "filtersAccount":
+                            mediaClient.DeleteEntity(MediaEntity.FilterAccount, entityName);
+                            break;
+                        case "filtersAsset":
+                            mediaClient.DeleteEntity(MediaEntity.FilterAsset, entityName, parentEntityName);
+                            break;
+                        case "liveEvents":
+                            mediaClient.DeleteEntity(MediaEntity.LiveEvent, entityName);
+                            break;
+                        case "liveEventOutputs":
+                            mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentEntityName);
+                            break;
+                        case "indexerInsights":
+                            mediaClient.IndexerDeleteVideo(entityName, true);
+                            break;
+                    }
                 }
+                return Json(entityName);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
             }
         }
 
@@ -203,13 +227,23 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult IndexerInsights()
+        public IActionResult IndexerInsights(string indexId)
         {
+            JArray insights;
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["indexerInsights"] = mediaClient.IndexerGetInsights();
+                if (!string.IsNullOrEmpty(indexId))
+                {
+                    JObject insight = mediaClient.IndexerGetInsight(indexId);
+                    insights = new JArray(insight);
+                }
+                else
+                {
+                    insights = mediaClient.IndexerGetInsights();
+                }
             }
+            ViewData["indexerInsights"] = insights;
             return View();
         }
 

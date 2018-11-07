@@ -2,7 +2,7 @@
     //var reloadGrid = function () {
     //    ReloadGrid(gridId, "/job/refresh", columns);
     //};
-    //setInterval(reloadGrid, _refreshInterval);
+    //setInterval(reloadGrid, 10000);
 }
 function PublishJobOutput(jobName) {
     var title = "Confirm Publish Job Output";
