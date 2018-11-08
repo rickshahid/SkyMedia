@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+
+using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.Azure.Management.Media.Models;
 
@@ -34,7 +36,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Update(string eventName, string eventDescription)
+        public JsonResult Update(string eventName, string eventDescription, IDictionary<string, string> eventTags, CrossSiteAccessPolicies accessPolicies,
+                                 string encodingPresetName, string keyFrameIntervalDuration)
         {
             try
             {
@@ -43,7 +46,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     using (MediaClient mediaClient = new MediaClient(authToken))
                     {
-                        mediaClient.UpdateLiveEvent(eventName, eventDescription);
+                        mediaClient.UpdateLiveEvent(eventName, eventDescription, eventTags, accessPolicies, encodingPresetName, keyFrameIntervalDuration);
                     }
                 }
                 return Json(eventName);

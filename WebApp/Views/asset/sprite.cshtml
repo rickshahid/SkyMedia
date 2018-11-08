@@ -1,16 +1,21 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
+@{
+    string ampVersion = ViewData["mediaPlayerVersion"].ToString();
+    string ampSkin = ViewData["mediaPlayerSkin"].ToString();
+}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <title>Azure Media Thumbnail Sprite Tip</title>
-        <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/2.2.2/skins/amp-flush/azuremediaplayer.min.css" />
-        <script type="text/javascript" src="//amp.azure.net/libs/amp/2.2.2/azuremediaplayer.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
+        <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="~/js/amp/amp-spriteTip.js"></script>
-        <script type="text/javascript" src="~/js/site.js"></script>
+        <script type="text/javascript" src="~/js/player.js"></script>
         <script type="text/javascript">
             $(function () {
                 var spriteVttUrl = "//skycast2-usea.streaming.media.azure.net/c15d6816-9f74-429a-9bad-cedd57fe6df7/Tears of Steel_000001.vtt";

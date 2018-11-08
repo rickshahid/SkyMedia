@@ -147,11 +147,6 @@ namespace AzureSkyMedia.PlatformServices
             return job;
         }
 
-        public void CancelJob(string transformName, string jobName)
-        {
-            _media.Jobs.CancelJob(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName);
-        }
-
         public Job UpdateJob(string transformName, string jobName, string jobDescription, Priority jobPriority)
         {
             Job job = new Job()
@@ -160,6 +155,11 @@ namespace AzureSkyMedia.PlatformServices
                 Priority = jobPriority
             };
             return _media.Jobs.Update(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName, job);
+        }
+
+        public void CancelJob(string transformName, string jobName)
+        {
+            _media.Jobs.CancelJob(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, jobName);
         }
     }
 }

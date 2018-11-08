@@ -2,7 +2,7 @@
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class EngagementController : Controller
+    public class UserController : Controller
     {
         public IActionResult Index()
         {

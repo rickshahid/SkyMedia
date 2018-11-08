@@ -176,7 +176,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Channel9
             {
-                public const int IngestVideoCount = 8;
                 public const string NamespacePrefix = "media";
                 public const string NamespaceUrl = "http://search.yahoo.com/mrss/";
                 public const string XPathQuery = "media:group/media:content[@type='video/mp4']";
@@ -188,7 +187,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct IngestManifest
             {
-                public const string GalleryPrefix = "Gallery.";
                 public const string TriggerPrefix = "MediaIngestManifest";
                 public const string FileExtension = ".json";
                 public const string FileExtensionLog = ".log";

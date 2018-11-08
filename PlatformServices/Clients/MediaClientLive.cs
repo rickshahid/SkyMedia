@@ -48,11 +48,22 @@ namespace AzureSkyMedia.PlatformServices
             return _media.LiveOutputs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, outputName, eventOutput);
         }
 
-        public void UpdateLiveEvent(string eventName, string eventDescription)
+        public void UpdateLiveEvent(string eventName, string eventDescription, IDictionary<string, string> eventTags, CrossSiteAccessPolicies accessPolicies,
+                                    string encodingPresetName, string keyFrameIntervalDuration)
         {
             LiveEvent liveEvent = new LiveEvent()
             {
-                Description = eventDescription
+                Description = eventDescription,
+                Tags = eventTags,
+                CrossSiteAccessPolicies = accessPolicies
+            };
+            liveEvent.Encoding = new LiveEventEncoding()
+            {
+                PresetName = encodingPresetName
+            };
+            liveEvent.Input = new LiveEventInput()
+            {
+                KeyFrameIntervalDuration = keyFrameIntervalDuration
             };
             _media.LiveEvents.Update(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, liveEvent);
         }

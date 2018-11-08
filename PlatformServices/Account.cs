@@ -20,7 +20,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     if (entityType == MediaEntity.Transform)
                     {
-                        Job[] jobs = mediaClient.GetAllEntities<Job>(MediaEntity.TransformJob, entity.Name);
+                        Job[] jobs = mediaClient.GetAllEntities<Job>(MediaEntity.TransformJob, null, entity.Name);
                         foreach (Job job in jobs)
                         {
                             mediaClient.DeleteEntity(MediaEntity.TransformJob, job.Name, entity.Name);

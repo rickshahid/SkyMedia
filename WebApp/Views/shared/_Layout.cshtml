@@ -48,14 +48,15 @@
                     </div>
                 </td>
                 <td class="headerSide right">
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "botService", ImageFile = "BotService.png", AbsoluteUrl = "http://azure.microsoft.com/services/bot-service/" }' />
                     @if (ViewData.ContainsKey("accountName"))
                     {
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "userEngagement", ImageFile = "UserEngagement.png", RelativeUrl = "/user" }' />
                         <partial name="SiteButton" model='new SiteButton { ControlId = "userProfileEdit", ImageFile = "UserProfileEdit.png", RelativeUrl = ViewData["accountProfileEdit"].ToString() }' />
                         <partial name="SiteButton" model='new SiteButton { ControlId = "userSignOut", ImageFile = "UserSignOut.png", OnClick = ViewData["accountSignOut"].ToString() }' />
                     }
                     else
                     {
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "userEngagement", ImageFile = "UserEngagement.png", AbsoluteUrl = "http://azure.microsoft.com/blog/player-analytics-azure-media-player-plugin/" }' />
                         <partial name="SiteButton" model='new SiteButton { ControlId = "userDirectory", ImageFile = "UserDirectory.png", AbsoluteUrl = "http://azure.microsoft.com/services/active-directory-b2c/" }' />
                         <partial name="SiteButton" model='new SiteButton { ControlId = "userSignIn", ImageFile = "UserSignIn.png", RelativeUrl = ViewData["accountSignUpIn"].ToString() }' />
                     }
@@ -106,10 +107,10 @@
                         <partial name="SiteButton" model='new SiteButton { ControlId = "contentDeliveryNetwork", ImageFile = "ContentDeliveryNetwork.png", AbsoluteUrl = "http://azure.microsoft.com/services/cdn/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "functionApp", ImageFile = "FunctionApp.png", AbsoluteUrl = "http://azure.microsoft.com/services/functions/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "logicApp", ImageFile = "LogicApp.png", AbsoluteUrl = "http://azure.microsoft.com/services/logic-apps/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "logicApp", ImageFile = "LogicApp.png", AbsoluteUrl = "http://azure.microsoft.com/services/logic-apps/", StyleClass = "layoutVertical" }' />
+                        <partial name="SiteButton" model='new SiteButton { ControlId = "functionApp", ImageFile = "FunctionApp.png", AbsoluteUrl = "http://azure.microsoft.com/services/functions/", StyleClass = "layoutVertical" }' />
                     </div>
                     <div>
                         <partial name="SiteButton" model='new SiteButton { ControlId = "cosmosDB", ImageFile = "CosmosDB.png", AbsoluteUrl = "http://azure.microsoft.com/services/cosmos-db/", StyleClass = "layoutVertical" }' />

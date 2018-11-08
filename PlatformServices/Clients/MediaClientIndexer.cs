@@ -65,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority, bool audioOnly)
+        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority, bool reduceNoise, bool audioOnly)
         {
             string indexId = null;
             string relativePath = "/videos";
@@ -88,7 +88,11 @@ namespace AzureSkyMedia.PlatformServices
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
             requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
             requestUrl = string.Concat(requestUrl, "&language=auto");
-            if (audioOnly)
+            if (reduceNoise)
+            {
+                requestUrl = string.Concat(requestUrl, "&indexingPreset=DefaultWithNoiseReduction");
+            }
+            else if (audioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
             }

@@ -15,8 +15,7 @@
 }
 
 @section title {
-    Azure Sky Media Live
+    Live Event
 }
 
-@*<partial name="MediaPlayer" />*@
-<partial name="SiteButton" model='new SiteButton { ControlId = "underConstruction", ImageFile = "UnderConstruction.gif" }' />
+<partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", PlayerSkin = ampSkin }' />

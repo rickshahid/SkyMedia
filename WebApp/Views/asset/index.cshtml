@@ -1,4 +1,6 @@
-﻿@{
+﻿@using AzureSkyMedia.WebApp.Models;
+
+@{
     string gridId = "assets";
 }
 
@@ -11,6 +13,7 @@
             var rows = @Json.Serialize(ViewData[gridId]);
             var columns = GetParentColumns(gridId);
             LoadGrid(gridId, rows, columns);
+            CreateTipBottom("mediaGallery", "Media Gallery");
         })
     </script>
 }
@@ -22,4 +25,8 @@
 <div class="grid">
     <table id="@gridId"></table>
     <div id="gridPager"></div>
+</div>
+
+<div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaGallery", ImageFile = "MediaGallery.png", RelativeUrl = "/asset/gallery" }' />
 </div>

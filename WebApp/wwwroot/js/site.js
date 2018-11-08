@@ -2,8 +2,8 @@
 function InitializeApp(appName) {
     CreateTipBottom("siteHome", appName + "<br><br>Site Home");
     CreateTipBottom("siteCode", appName + "<br><br>Open Source");
-    CreateTipBottom("mediaBlog", "Azure Media Services<br><br>News Blog");
-    CreateTipBottom("botService", "Azure Bot Service");
+    CreateTipBottom("mediaBlog", "Azure Media Services<br><br>Announcement Blog");
+    CreateTipBottom("userEngagement", "Azure Media Player<br><br>User Engagement");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
     CreateTipBottom("userProfileEdit", appName + "<br><br>Account Profile Edit");
     CreateTipBottom("userSignIn", appName + "<br><br>User Sign In");
@@ -17,8 +17,8 @@ function InitializeApp(appName) {
     CreateTipRight("mediaIndexer", "Azure Video Indexer");
     CreateTipLeft("cognitiveSearch", "Azure Cognitive Search");
     CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
-    CreateTipLeft("functionApp", "Azure Functions");
     CreateTipLeft("logicApp", "Azure Logic App");
+    CreateTipLeft("functionApp", "Azure Functions");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("mediaStorage", "Azure Blob Storage");
     CreateTipTop("mediaUpload", "Upload");
@@ -26,8 +26,8 @@ function InitializeApp(appName) {
     CreateTipTop("mediaJob", "Job");
     CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
     CreateTipTop("mediaSearch", "Search");
+    CreateTipTop("mediaLive", "Live");
     CreateTipTop("mediaEdit", "Edit");
-    CreateTipTop("userEngagement", "Engagement");
     CreateTipTop("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);
