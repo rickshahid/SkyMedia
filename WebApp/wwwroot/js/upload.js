@@ -51,7 +51,7 @@ function CreateWorkflow(files) {
                     entityItemRef = "/asset/item?assetName=" + entity.name;
                     indexId = entity["properties.alternateId"];
                 } else {
-                    var transformName = GetParentResourceName(entity);
+                    var transformName = GetParentName(entity);
                     entityItemRef = "/job/item?transformName=" + transformName + "&jobName=" + entity.name;
                     indexId = entity["properties.correlationData"]["indexId"];
                 }

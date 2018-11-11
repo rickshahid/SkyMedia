@@ -47,6 +47,9 @@ namespace AzureSkyMedia.PlatformServices
                         case Kind.BlobStorage:
                             accountType = "Blob";
                             break;
+                        case Kind.BlockBlobStorage:
+                            accountType = "Premium Blob";
+                            break;
                     }
                 }
                 return accountType;

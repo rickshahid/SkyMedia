@@ -55,8 +55,8 @@ function SignOut(cookieName) {
     $.removeCookie(cookieName);
     window.location.href = "/account/signOut";
 }
-function GetParentResourceName(childResource) {
-    var childId = childResource.id.split("/");
+function GetParentName(child) {
+    var childId = child.id.split("/");
     return childId.length > 12 ? childId[childId.length - 3] : childId[childId.length - 1];
 }
 function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
@@ -64,6 +64,13 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
     if (html != null) {
         html = decodeURIComponent(html);
         $("#" + dialogId).html(html);
+    }
+    if (buttons == null) {
+        buttons = {
+            OK: function () {
+                $(this).dialog("close");
+            }
+        };
     }
     if (height == null) {
         height = "auto";
@@ -79,11 +86,7 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
         width: width,
         close: onClose
     });
-    if (buttons == null) {
-        $(".ui-dialog-titlebar-close").show();
-    } else {
-        $(".ui-button:last").focus();
-    }
+    $(".ui-button:last").focus();
 }
 function DisplayMessage(title, message, buttons) {
     var dialogId = "messageDialog";

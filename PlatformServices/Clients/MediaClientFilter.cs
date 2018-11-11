@@ -28,8 +28,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     Timescale = timescale,
                     StartTimestamp = startTimestamp,
-                    EndTimestamp = endTimestamp,
-                    PresentationWindowDuration = endTimestamp - startTimestamp
+                    EndTimestamp = endTimestamp
                 }
             };
             return _media.AccountFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, filterName, accountFilter);
@@ -62,8 +61,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     Timescale = timescale,
                     StartTimestamp = startTimestamp,
-                    EndTimestamp = endTimestamp,
-                    PresentationWindowDuration = endTimestamp - startTimestamp
+                    EndTimestamp = endTimestamp
                 }
             };
             return _media.AssetFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, filterName, assetFilter);

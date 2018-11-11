@@ -1,28 +1,4 @@
-﻿function SetJobRefresh(gridId, columns) {
-    //var reloadGrid = function () {
-    //    ReloadGrid(gridId, "/job/refresh", columns);
-    //};
-    //setInterval(reloadGrid, 10000);
-}
-function PublishJobOutput(jobName) {
-    var title = "Confirm Publish Job Output";
-    var message = "Are you sure you want to publish the '" + FormatValue(jobName) + "' job output?";
-    var onConfirm = function () {
-        SetCursor(true);
-        $.post("/job/publish",
-            {
-                jobName: decodeURIComponent(jobName)
-            },
-            function (notificationMessage) {
-                SetCursor(false);
-                DisplayMessage("Job Output Publish Message", notificationMessage);
-            }
-        );
-        $(this).dialog("close");
-    };
-    ConfirmMessage(title, message, onConfirm);
-}
-function FindAsset() {
+﻿function FindAsset() {
     SetCursor(true);
     $.post("/asset/find",
         {

@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 599px) {
-    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaEdit, #mediaGallery {
+    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, .mediaModulesButton {
         display: none !important;
     }
 
@@ -17,7 +17,7 @@
 }
 
 @media all and (min-width: 600px) and (max-width: 799px) {
-    .layoutPanel.side, #mediaUpload, #mediaTransform, #mediaJob, #mediaSearch, #mediaEdit, #mediaGallery {
+    .layoutPanel.side, .mediaModulesButton {
         display: none !important;
     }
 
@@ -99,7 +99,7 @@ body {
 
 .siteButton.layoutVertical {
     width: 65px;
-    height: 79px;
+    height: 80px;
 }
 
 .siteLink {
@@ -291,8 +291,6 @@ body {
 }
 
 .ui-dialog-titlebar-close {
-    margin-top: -9px !important;
-    margin-right: -7px !important;
     display: none;
 }
 

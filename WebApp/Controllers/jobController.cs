@@ -132,11 +132,34 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Publish(string jobName, string indexId)
+        public JsonResult Publish(string entityName, string parentName, string indexId, bool unpublish)
         {
             try
             {
-                MediaJobPublish jobPublish = MediaClient.PublishJobOutput(jobName, indexId);
+                MediaJobPublish jobPublish;
+                if (unpublish)
+                {
+                    string authToken = HomeController.GetAuthToken(Request, Response);
+                    using (MediaClient mediaClient = new MediaClient(authToken))
+                    {
+                        Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, entityName, parentName);
+                        foreach (JobOutputAsset outputAsset in job.Outputs)
+                        {
+                            mediaClient.DeleteLocators(outputAsset.AssetName);
+                        }
+                    }
+                    jobPublish = new MediaJobPublish()
+                    {
+                        UserNotification = new UserNotification()
+                        {
+                            JobOutputMessage = string.Format(Constant.Message.JobOutputUnpublished, entityName)
+                        }
+                    };
+                }
+                else
+                {
+                    jobPublish = MediaClient.PublishJobOutput(entityName, indexId);
+                }
                 return Json(jobPublish);
             }
             catch (ApiErrorException ex)
@@ -148,25 +171,23 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Refresh(string transformName, string jobName)
+        public JsonResult Refresh(string[] transformNames, string[] jobNames)
         {
             try
             {
-                Job[] jobs;
+                List<Job> jobs = new List<Job>();
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    if (!string.IsNullOrEmpty(jobName))
+                    for (int i = 0; i < jobNames.Length; i++)
                     {
+                        string transformName = transformNames[i];
+                        string jobName = jobNames[i];
                         Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
-                        jobs = new Job[] { job };
-                    }
-                    else
-                    {
-                        jobs = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
+                        jobs.Add(job);
                     }
                 }
-                return Json(jobs);
+                return Json(jobs.ToArray());
             }
             catch (ApiErrorException ex)
             {

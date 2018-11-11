@@ -14,7 +14,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] MissingFiles { get; set; }
 
-        public string[] BlobFiles { get; set; }
+        public string[] FileNames { get; set; }
 
         public string AssetName { get; set; }
 

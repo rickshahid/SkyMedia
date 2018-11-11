@@ -1,4 +1,4 @@
-﻿var defaultWidth = 120, typeWidth = 150, typeWidthEx = 200, nameWidth = 300, nameWidthEx = 400, actionsWidth = 160;
+﻿var defaultWidth = 120, typeWidth = 150, typeWidthEx = 200, nameWidth = 300, nameWidthEx = 400;
 function GetParentColumns(gridId) {
     var columns;
     switch (gridId) {
@@ -15,19 +15,13 @@ function GetParentColumns(gridId) {
                     label: "Storage Type",
                     name: "accountType",
                     align: "center",
-                    width: defaultWidth
-                },
-                {
-                    label: "Access Tier",
-                    name: "accessTier",
-                    align: "center",
-                    width: defaultWidth
+                    width: typeWidth
                 },
                 {
                     label: "Media Type",
                     name: "type",
                     align: "center",
-                    width: defaultWidth
+                    width: typeWidth
                 },
                 {
                     label: "HTTPS Only",
@@ -72,7 +66,7 @@ function GetParentColumns(gridId) {
                     width: defaultWidth
                 },
                 {
-                    label: "Storage",
+                    label: "Storage Account",
                     name: "properties.storageAccountName",
                     align: "center",
                     width: typeWidthEx
@@ -273,7 +267,7 @@ function GetParentColumns(gridId) {
             align: "center",
             width: defaultWidth
         };
-        columns.splice(columns.length, 0, created);
+        columns.push(created);
     }
     if (gridId != "storageAccounts" &&
         gridId != "streamingPolicies" &&
@@ -286,18 +280,28 @@ function GetParentColumns(gridId) {
             align: "center",
             width: defaultWidth
         };
-        columns.splice(columns.length, 0, modified);
+        columns.push(modified);
     }
     if (gridId != "storageAccounts") {
+        var width = defaultWidth;
+        if (gridId == "liveEvents") {
+            width = typeWidth;
+        }
         var actions = {
             formatter: FormatActions,
             label: "Actions",
+            name: "actions",
             align: "center",
-            width: actionsWidth,
+            width: width,
             sortable: false
         };
-        columns.splice(columns.length, 0, actions);
+        columns.push(actions);
     }
+    var parentColumn = {
+        name: "parentName",
+        hidden: true
+    };
+    columns.unshift(parentColumn);
     return columns;
 }
 function GetChildColumns(gridType) {
@@ -355,11 +359,17 @@ function GetChildColumns(gridType) {
         case "transformJobOutputs":
             columns = [
                 {
-                    formatter: FormatName,
-                    label: "Job Output Asset Name",
-                    name: "assetName",
+                    label: "Job Output Label",
+                    name: "label",
                     align: "center",
-                    width: nameWidthEx + 125
+                    width: nameWidthEx - 10
+                },
+                {
+                    formatter: FormatProgress,
+                    label: "Progress",
+                    name: "progress",
+                    align: "center",
+                    width: defaultWidth + 5
                 },
                 {
                     formatter: FormatJobOutputState,
@@ -369,11 +379,11 @@ function GetChildColumns(gridType) {
                     width: defaultWidth
                 },
                 {
-                    formatter: FormatProgress,
-                    label: "Progress",
-                    name: "progress",
+                    formatter: FormatName,
+                    label: "Output Asset Name",
+                    name: "assetName",
                     align: "center",
-                    width: defaultWidth + 5
+                    width: nameWidthEx -20
                 }
             ];
             break;

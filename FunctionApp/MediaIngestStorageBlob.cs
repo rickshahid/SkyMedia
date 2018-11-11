@@ -64,18 +64,15 @@ namespace AzureSkyMedia.FunctionApp
             }
             catch (ApiErrorException ex)
             {
-                string logData = ex.ToString();
-                WriteLog(blobName, logData);
-                logger.LogError(logData);
-                logData = ex.Response.Content;
-                WriteLog(blobName, logData);
+                string logData = ex.Response.Content;
+                WriteLog(blobName, logData, null, true);
                 logger.LogError(logData);
                 throw;
             }
             catch (Exception ex)
             {
                 string logData = ex.ToString();
-                WriteLog(blobName, logData);
+                WriteLog(blobName, logData, null, true);
                 logger.LogError(logData);
                 throw;
             }
@@ -91,7 +88,7 @@ namespace AzureSkyMedia.FunctionApp
                 ingestManifest.Name = manifestName;
             }
             List<string> missingFiles = new List<string>();
-            foreach (string fileName in ingestManifest.BlobFiles)
+            foreach (string fileName in ingestManifest.FileNames)
             {
                 string containerName = Constant.Storage.BlobContainer.MediaServices;
                 CloudBlockBlob blobFile = _blobClient.GetBlockBlob(containerName, fileName);
@@ -106,28 +103,28 @@ namespace AzureSkyMedia.FunctionApp
 
         private static void ProcessManifest(Stream blobStream, string manifestName, ILogger logger)
         {
-            WriteLog(manifestName, null);
+            string logData = string.Concat("Process Manifest @ ", DateTime.UtcNow);
+            WriteLog(manifestName, logData, logger, true);
             MediaIngestManifest ingestManifest = GetManifest(blobStream, manifestName);
             if (ingestManifest.MissingFiles.Length > 0)
             {
-                string logData = string.Concat("Missing Files: ", string.Join(", ", ingestManifest.MissingFiles));
-                WriteLog(ingestManifest.Name, logData);
-                logger.LogInformation(logData);
+                logData = string.Concat("Missing Files: ", string.Join(", ", ingestManifest.MissingFiles));
+                WriteLog(ingestManifest.Name, logData, logger, false);
                 string collectionId = Constant.Database.Collection.MediaIngestManifest;
                 _databaseClient.UpsertDocument(collectionId, ingestManifest);
             }
-            else
+            else if (ingestManifest.FileNames.Length > 0 || !string.IsNullOrEmpty(ingestManifest.JobInputFileUrl))
             {
                 if (string.IsNullOrEmpty(ingestManifest.JobInputFileUrl) && ingestManifest.JobInputMode == MediaJobInputMode.UploadFile)
                 {
                     string sourceContainer = Constant.Storage.BlobContainer.MediaServices;
-                    string fileName = ingestManifest.BlobFiles[0];
+                    string fileName = ingestManifest.FileNames[0];
                     ingestManifest.JobInputFileUrl = _blobClient.GetDownloadUrl(sourceContainer, fileName, false);
                 }
                 using (MediaClient mediaClient = new MediaClient(null, ingestManifest.MediaAccount))
                 {
                     Asset inputAsset = null;
-                    if (ingestManifest.BlobFiles.Length > 0)
+                    if (ingestManifest.FileNames.Length > 0)
                     {
                         ingestManifest = CreateAsset(mediaClient, ingestManifest, out inputAsset, logger);
                     }
@@ -146,16 +143,15 @@ namespace AzureSkyMedia.FunctionApp
             string assetDescription = ingestManifest.AssetDescription;
             string assetAlternateId = ingestManifest.AssetAlternateId;
             string sourceContainer = Constant.Storage.BlobContainer.MediaServices;
-            string[] blobFileNames = ingestManifest.BlobFiles;
+            string[] fileNames = ingestManifest.FileNames;
             StorageBlobClient assetBlobClient = new StorageBlobClient(ingestManifest.MediaAccount, storageAccount);
-            inputAsset = mediaClient.CreateAsset(_blobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, blobFileNames);
+            inputAsset = mediaClient.CreateAsset(_blobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, fileNames);
             string logData = string.Concat("New Asset: ", JsonConvert.SerializeObject(inputAsset));
-            WriteLog(ingestManifest.Name, logData);
-            logger.LogInformation(logData);
+            WriteLog(ingestManifest.Name, logData, logger, false);
             ingestManifest.AssetName = inputAsset.Name;
             if (string.IsNullOrEmpty(ingestManifest.JobInputFileUrl) && ingestManifest.JobInputMode == MediaJobInputMode.AssetFile)
             {
-                string fileName = blobFileNames[0];
+                string fileName = fileNames[0];
                 ingestManifest.JobInputFileUrl = assetBlobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
             }
             return ingestManifest;
@@ -164,45 +160,38 @@ namespace AzureSkyMedia.FunctionApp
         private static void CreateJob(MediaClient mediaClient, MediaIngestManifest ingestManifest, Asset inputAsset, ILogger logger)
         {
             string logData = string.Concat("Input File Url: ", ingestManifest.JobInputFileUrl);
-            WriteLog(ingestManifest.Name, logData);
-            logger.LogInformation(logData);
+            WriteLog(ingestManifest.Name, logData, logger, false);
             if (mediaClient.IndexerEnabled() && (ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.VideoIndexer) || ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.AudioIndexer)))
             {
                 bool audioOnly = !ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.VideoIndexer) && ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.AudioIndexer);
                 string indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, true, audioOnly);
                 logData = string.Concat("Index Id: ", indexId);
-                WriteLog(ingestManifest.Name, logData);
-                logger.LogInformation(logData);
+                WriteLog(ingestManifest.Name, logData, logger, false);
             }
             Transform transform = mediaClient.CreateTransform(ingestManifest.TransformPreset.Value);
             if (transform != null)
             {
                 Job job = mediaClient.CreateJob(null, transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.JobData, ingestManifest.JobInputFileUrl, ingestManifest.AssetName, ingestManifest.JobOutputMode, ingestManifest.JobOutputAssetDescriptions, ingestManifest.JobOutputAssetAlternateIds, ingestManifest.StreamingPolicyName);
                 logData = string.Concat("Transform Name: ", transform.Name);
-                WriteLog(ingestManifest.Name, logData);
-                logger.LogInformation(logData);
+                WriteLog(ingestManifest.Name, logData, logger, false);
                 logData = string.Concat("Job Name: ", job.Name);
-                WriteLog(ingestManifest.Name, logData);
-                logger.LogInformation(logData);
+                WriteLog(ingestManifest.Name, logData, logger, false);
             }
         }
 
-        private static void WriteLog(string manifestName, string logData)
+        private static void WriteLog(string manifestName, string logData, ILogger logger, bool createNew)
         {
             string containerName = Constant.Storage.BlobContainer.MediaServices;
             string logName = manifestName.Replace(Constant.Media.IngestManifest.FileExtension, Constant.Media.IngestManifest.FileExtensionLog);
             CloudAppendBlob logBlob = _blobClient.GetAppendBlob(containerName, logName);
-            if (string.IsNullOrEmpty(logData))
+            CloudBlobStream logStream = logBlob.OpenWriteAsync(createNew).Result;
+            using (StreamWriter logWriter = new StreamWriter(logStream))
             {
-                logBlob.CreateOrReplaceAsync().Wait();
+                logWriter.WriteLine(logData);
             }
-            else
+            if (logger != null)
             {
-                CloudBlobStream logStream = logBlob.OpenWriteAsync(false).Result;
-                using (StreamWriter logWriter = new StreamWriter(logStream))
-                {
-                    logWriter.WriteLine(logData);
-                }
+                logger.LogInformation(logData);
             }
         }
     }

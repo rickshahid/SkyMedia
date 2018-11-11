@@ -7,6 +7,7 @@ function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, sp
         fluid: true,
         controls: true,
         autoplay: autoPlay,
+        heuristicProfile: "LowLatency",
         width: galleryView ? "400" : "100%",
         height: galleryView ? "400" : "auto",
         playbackSpeed: {

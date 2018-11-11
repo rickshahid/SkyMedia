@@ -54,7 +54,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         [HttpPost]
         [Route("/syndicate")]
-        public void Syndicate(string rssUrl = "https://channel9.msdn.com/Shows/AI-Show/feed/mp4high", int videoCount = 3)
+        public void Syndicate(string rssUrl = "https://channel9.msdn.com/Shows/AI-Show/feed/mp4high", int videoCount = Constant.Media.Channel9.DefaultIngestVideoCount)
         {
             StorageBlobClient blobClient = new StorageBlobClient();
             string containerName = Constant.Storage.BlobContainer.MediaServices;

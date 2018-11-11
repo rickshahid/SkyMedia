@@ -176,6 +176,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Channel9
             {
+                public const int DefaultIngestVideoCount = 8;
                 public const string NamespacePrefix = "media";
                 public const string NamespaceUrl = "http://search.yahoo.com/mrss/";
                 public const string XPathQuery = "media:group/media:content[@type='video/mp4']";
@@ -271,8 +272,11 @@ namespace AzureSkyMedia.PlatformServices
         public struct Message
         {
             public const string UserPasswordForgotten = "AADB2C90118";
+            public const string AssetUnpublished = "The '{0}' asset has been unpublished.";
+            public const string JobOutputUnpublished = "The '{0}' job output assets have been unpublished.";
             public const string StreamingEndpointNotStarted = "Your media account ({0}) does not have a streaming endpoint started.";
             public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
+
         }
     }
 }

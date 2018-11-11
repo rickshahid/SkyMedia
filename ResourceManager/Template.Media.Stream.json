@@ -66,11 +66,12 @@
       "apiVersion": "[variables('storageApiVersion')]",
       "location": "[resourceGroup().location]",
       "name": "[variables('storageServiceName2')]",
-      "kind": "BlockBlobStorage",
+      "kind": "BlobStorage",
       "sku": {
-        "name": "Premium_LRS"
+        "name": "Standard_RAGRS"
       },
       "properties": {
+        "accessTier": "Hot",
         "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
         "encryption": {
           "services": {

@@ -49,7 +49,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult DeleteEntity(string gridId, string entityName, string parentEntityName)
+        public JsonResult DeleteEntity(string gridId, string entityName, string parentName)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             mediaClient.DeleteEntity(MediaEntity.Transform, entityName);
                             break;
                         case "transformJobs":
-                            mediaClient.DeleteEntity(MediaEntity.TransformJob, entityName, parentEntityName);
+                            mediaClient.DeleteEntity(MediaEntity.TransformJob, entityName, parentName);
                             break;
                         case "contentKeyPolicies":
                             mediaClient.DeleteEntity(MediaEntity.ContentKeyPolicy, entityName);
@@ -83,13 +83,13 @@ namespace AzureSkyMedia.WebApp.Controllers
                             mediaClient.DeleteEntity(MediaEntity.FilterAccount, entityName);
                             break;
                         case "filtersAsset":
-                            mediaClient.DeleteEntity(MediaEntity.FilterAsset, entityName, parentEntityName);
+                            mediaClient.DeleteEntity(MediaEntity.FilterAsset, entityName, parentName);
                             break;
                         case "liveEvents":
                             mediaClient.DeleteEntity(MediaEntity.LiveEvent, entityName);
                             break;
                         case "liveEventOutputs":
-                            mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentEntityName);
+                            mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentName);
                             break;
                         case "indexerInsights":
                             mediaClient.IndexerDeleteVideo(entityName, true);

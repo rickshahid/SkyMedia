@@ -87,20 +87,28 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Publish(string assetName)
+        public JsonResult Publish(string entityName, bool unpublish)
         {
             try
             {
-                string playerUrl;
+                string message;
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
-                    string streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
-                    StreamingLocator locator = mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
-                    playerUrl = mediaClient.GetPlayerUrl(locator);
+                    if (unpublish)
+                    {
+                        mediaClient.DeleteLocators(entityName);
+                        message = string.Format(Constant.Message.AssetUnpublished, entityName);
+                    }
+                    else
+                    {
+                        Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, entityName);
+                        string streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
+                        StreamingLocator locator = mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
+                        message = mediaClient.GetPlayerUrl(locator);
+                    }
                 }
-                return Json(playerUrl);
+                return Json(message);
             }
             catch (ApiErrorException ex)
             {

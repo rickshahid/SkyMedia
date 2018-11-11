@@ -69,6 +69,15 @@ namespace AzureSkyMedia.PlatformServices
             return locators;
         }
 
+        public void DeleteLocators(string assetName)
+        {
+            ListStreamingLocatorsResponse locatorList = _media.Assets.ListStreamingLocators(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);
+            foreach (AssetStreamingLocator streamingLocator in locatorList.StreamingLocators)
+            {
+                DeleteEntity(MediaEntity.StreamingLocator, streamingLocator.Name);
+            }
+        }
+
         public StreamingLocator CreateLocator(string locatorName, string assetName, string streamingPolicyName, ContentProtection contentProtection)
         {
             StreamingLocator locator = _media.StreamingLocators.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, locatorName);

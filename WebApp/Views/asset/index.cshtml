@@ -11,8 +11,7 @@
             _childPropertyName = "files";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId);
-            LoadGrid(gridId, rows, columns);
+            LoadGrid(gridId, rows);
             CreateTipBottom("mediaGallery", "Media Gallery");
         })
     </script>

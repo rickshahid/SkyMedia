@@ -12,12 +12,10 @@
             _childPropertyName = "properties.outputs";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
-            var columns = GetParentColumns(gridId);
-            LoadGrid(gridId, rows, columns);
+            LoadGrid(gridId, rows);
             CreateTipBottom("jobCreate", "Create Job");
             CreateTipBottom("jobUpdate", "Update Job");
             CreateJsonEditor("jobData", "Media Job Data", null);
-            SetJobRefresh(gridId, columns);
        })
     </script>
 }

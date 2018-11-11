@@ -15,16 +15,16 @@ namespace AzureSkyMedia.PlatformServices
             return entities.Length;
         }
 
-        public int GetEntityCount<T1, T2>(MediaEntity entityType, MediaEntity parentEntityType) where T1 : Resource where T2 : Resource
+        public int GetEntityCount<T1, T2>(MediaEntity entityType, MediaEntity parentType) where T1 : Resource where T2 : Resource
         {
-            T1[] entities = GetAllEntities<T1, T2>(entityType, parentEntityType);
+            T1[] entities = GetAllEntities<T1, T2>(entityType, parentType);
             return entities.Length;
         }
 
-        public T1[] GetAllEntities<T1, T2>(MediaEntity entityType, MediaEntity parentEntityType) where T1 : Resource where T2 : Resource
+        public T1[] GetAllEntities<T1, T2>(MediaEntity entityType, MediaEntity parentType) where T1 : Resource where T2 : Resource
         {
             List<T1> allEntities = new List<T1>();
-            IPage<T2> parentEntities = GetEntities<T2>(parentEntityType);
+            IPage<T2> parentEntities = GetEntities<T2>(parentType);
             foreach (T2 parentEntity in parentEntities)
             {
                 T1[] entities = GetAllEntities<T1>(entityType, null, parentEntity.Name);
@@ -33,10 +33,10 @@ namespace AzureSkyMedia.PlatformServices
             return allEntities.ToArray();
         }
 
-        public T[] GetAllEntities<T>(MediaEntity entityType, string queryFilter = null, string parentEntityName = null) where T : Resource
+        public T[] GetAllEntities<T>(MediaEntity entityType, string queryFilter = null, string parentName = null) where T : Resource
         {
             List<T> allEntities = new List<T>();
-            IPage<T> entities = GetEntities<T>(entityType, queryFilter, parentEntityName);
+            IPage<T> entities = GetEntities<T>(entityType, queryFilter, parentName);
             while (entities != null)
             {
                 allEntities.AddRange(entities);
@@ -45,7 +45,7 @@ namespace AzureSkyMedia.PlatformServices
             return allEntities.ToArray();
         }
 
-        public IPage<T> GetEntities<T>(MediaEntity entityType, string queryFilter = null, string parentEntityName = null) where T : Resource
+        public IPage<T> GetEntities<T>(MediaEntity entityType, string queryFilter = null, string parentName = null) where T : Resource
         {
             IPage<T> entities = null;
             switch (entityType)
@@ -69,7 +69,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         Filter = queryFilter
                     };
-                    entities = (IPage<T>)_media.Jobs.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, transformJobQuery);
+                    entities = (IPage<T>)_media.Jobs.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, transformJobQuery);
                     break;
                 case MediaEntity.ContentKeyPolicy:
                     ODataQuery<ContentKeyPolicy> contentKeyPolicyQuery = new ODataQuery<ContentKeyPolicy>()
@@ -99,13 +99,13 @@ namespace AzureSkyMedia.PlatformServices
                     entities = (IPage<T>)_media.AccountFilters.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
                     break;
                 case MediaEntity.FilterAsset:
-                    entities = (IPage<T>)_media.AssetFilters.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName);
+                    entities = (IPage<T>)_media.AssetFilters.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName);
                     break;
                 case MediaEntity.LiveEvent:
                     entities = (IPage<T>)_media.LiveEvents.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
                     break;
                 case MediaEntity.LiveEventOutput:
-                    entities = (IPage<T>)_media.LiveOutputs.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName);
+                    entities = (IPage<T>)_media.LiveOutputs.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName);
                     break;
             }
             return entities;
@@ -156,7 +156,7 @@ namespace AzureSkyMedia.PlatformServices
             return entities;
         }
 
-        public T GetEntity<T>(MediaEntity entityType, string entityName, string parentEntityName = null) where T : Resource
+        public T GetEntity<T>(MediaEntity entityType, string entityName, string parentName = null) where T : Resource
         {
             T entity = default(T);
             switch (entityType)
@@ -168,7 +168,7 @@ namespace AzureSkyMedia.PlatformServices
                     entity = _media.Transforms.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
                     break;
                 case MediaEntity.TransformJob:
-                    entity = _media.Jobs.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName) as T;
+                    entity = _media.Jobs.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName) as T;
                     break;
                 case MediaEntity.ContentKeyPolicy:
                     entity = _media.ContentKeyPolicies.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
@@ -186,19 +186,19 @@ namespace AzureSkyMedia.PlatformServices
                     entity = _media.AccountFilters.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
                     break;
                 case MediaEntity.FilterAsset:
-                    entity = _media.AssetFilters.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName) as T;
+                    entity = _media.AssetFilters.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName) as T;
                     break;
                 case MediaEntity.LiveEvent:
                     entity = _media.LiveEvents.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
                     break;
                 case MediaEntity.LiveEventOutput:
-                    entity = _media.LiveOutputs.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName) as T;
+                    entity = _media.LiveOutputs.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName) as T;
                     break;
             }
             return entity;
         }
 
-        public void DeleteEntity(MediaEntity entityType, string entityName, string parentEntityName = null)
+        public void DeleteEntity(MediaEntity entityType, string entityName, string parentName = null)
         {
             switch (entityType)
             {
@@ -209,7 +209,7 @@ namespace AzureSkyMedia.PlatformServices
                     _media.Transforms.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
                     break;
                 case MediaEntity.TransformJob:
-                    _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
+                    _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName);
                     using (DatabaseClient databaseClient = new DatabaseClient())
                     {
                         string collectionId = Constant.Database.Collection.MediaJobAccount;
@@ -232,7 +232,7 @@ namespace AzureSkyMedia.PlatformServices
                     _media.AccountFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
                     break;
                 case MediaEntity.FilterAsset:
-                    _media.AssetFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
+                    _media.AssetFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName);
                     break;
                 case MediaEntity.LiveEvent:
                     LiveEvent liveEvent = GetEntity<LiveEvent>(MediaEntity.LiveEvent, entityName);
@@ -247,7 +247,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     break;
                 case MediaEntity.LiveEventOutput:
-                    _media.LiveOutputs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentEntityName, entityName);
+                    _media.LiveOutputs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName);
                     break;
             }
         }

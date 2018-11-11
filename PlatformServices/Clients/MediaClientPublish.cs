@@ -65,8 +65,8 @@ namespace AzureSkyMedia.PlatformServices
 
         private static MediaJobPublish GetJobPublish(Job job)
         {
-            string jobOutputPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
-            return JsonConvert.DeserializeObject<MediaJobPublish>(jobOutputPublish);
+            string jobPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
+            return JsonConvert.DeserializeObject<MediaJobPublish>(jobPublish);
         }
 
         public static JObject SetJobPublish(string authToken, JObject jobData, string streamingPolicyName)
