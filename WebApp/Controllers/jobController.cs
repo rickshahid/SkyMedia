@@ -18,7 +18,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 new SelectListItem()
             };
-            Transform[] mediaTransforms = TransformController.GetTransforms(mediaClient);
+            Transform[] mediaTransforms = mediaClient.GetAllEntities<Transform>(MediaEntity.Transform);
             foreach (Transform mediaTransform in mediaTransforms)
             {
                 SelectListItem transform = new SelectListItem()

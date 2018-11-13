@@ -117,10 +117,11 @@ namespace AzureSkyMedia.PlatformServices
             return GetAppendBlob(containerName, string.Empty, fileName, false);
         }
 
-        public string GetBlobSize(string containerName, string fileName, out long byteCount)
+        public string GetBlobSize(string containerName, string fileName, out long byteCount, out string contentType)
         {
             CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName, true);
             byteCount = blob.Properties.Length;
+            contentType = blob.Properties.ContentType;
             return MapByteCount(byteCount);
         }
 

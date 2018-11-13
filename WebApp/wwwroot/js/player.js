@@ -40,6 +40,7 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
     $("#mediaStreamLeft").prop("disabled", true);
     $("#mediaStreamRight").prop("disabled", true);
     $("#streamTuner").slider("option", "disabled", true);
+    var sourceUrl = mediaStream.source.src + "(format=mpd-time-cmaf)";
     if (mediaStream.source.protectionInfo != null && mediaStream.source.protectionInfo.length > 0) {
         if (window.location.href.indexOf("token=0") > -1) {
             for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
@@ -48,7 +49,7 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
         }
         mediaPlayer.src(
             [{
-                src: mediaStream.source.src,
+                src: sourceUrl,
                 protectionInfo: mediaStream.source.protectionInfo
             }],
             mediaStream.textTracks
@@ -56,7 +57,7 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
     } else {
         mediaPlayer.src(
             [{
-                src: mediaStream.source.src
+                src: sourceUrl
             }],
             mediaStream.textTracks
         );

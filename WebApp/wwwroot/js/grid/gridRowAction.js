@@ -136,6 +136,7 @@ function PublishContent(entityType, entityName, parentName, unpublish) {
                     message = message.userNotification.jobOutputMessage;
                 }
                 DisplayMessage(title, message);
+                window.location = window.location.href;
             }
         );
         $(this).dialog("close");

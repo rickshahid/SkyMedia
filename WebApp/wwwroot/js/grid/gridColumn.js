@@ -7,7 +7,7 @@ function GetParentColumns(gridId) {
                 {
                     formatter: FormatName,
                     label: "Storage Account Name",
-                    name: "id",
+                    name: "name",
                     align: "center",
                     width: nameWidth
                 },
@@ -66,14 +66,16 @@ function GetParentColumns(gridId) {
                     width: defaultWidth
                 },
                 {
-                    label: "Storage Account",
-                    name: "properties.storageAccountName",
-                    align: "center",
-                    width: typeWidthEx
-                },
-                {
+                    formatter: FormatAssetSize,
                     label: "Size",
                     name: "size",
+                    align: "center",
+                    width: defaultWidth
+                },
+                {
+                    formatter: FormatAssetLocators,
+                    label: "Locators",
+                    name: "streamingLocators",
                     align: "center",
                     width: defaultWidth
                 }
@@ -314,14 +316,19 @@ function GetChildColumns(gridType) {
                     label: "Media Asset File Name",
                     name: "name",
                     align: "center",
-                    width: nameWidthEx + 330
+                    width: nameWidthEx + 125
                 },
                 {
                     label: "Size",
                     name: "size",
                     align: "center",
-                    width: defaultWidth,
-                    sortable: false
+                    width: defaultWidth
+                },
+                {
+                    label: "Content Type",
+                    name: "contentType",
+                    align: "center",
+                    width: typeWidthEx + 50
                 },
                 {
                     formatter: FormatActions,
@@ -345,14 +352,14 @@ function GetChildColumns(gridType) {
                     label: "Priority",
                     name: "relativePriority",
                     align: "center",
-                    width: defaultWidth + 5
+                    width: defaultWidth
                 },
                 {
                     formatter: FormatValue,
                     label: "On Error",
                     name: "onError",
                     align: "center",
-                    width: defaultWidth + 5
+                    width: defaultWidth
                 }
             ];
             break;
@@ -428,6 +435,29 @@ function FormatDateTime(value, grid, row) {
         value = "N/A";
     } else {
         value = value.slice(11, 19) + "<br>" + value.slice(0, 10);
+    }
+    return value;
+}
+function FormatAssetSize(value, grid, row) {
+    var storageAccountName = row["properties.storageAccountName"];
+    return "<span class=\"siteLink\" onclick=DisplayMessage(\"Storage%20Account%20Name\",\"" + storageAccountName + "\")>" + value + "</span>";
+}
+function FormatAssetLocators(value, grid, row) {
+    var urlCount = value.length + " Url";
+    if (value.length != 1) {
+        urlCount = urlCount + "s";
+    }
+    var streamingUrls = "";
+    for (var i = 0; i < value.length; i++) {
+        if (streamingUrls != "") {
+            streamingUrls = streamingUrls + "<br><br>";
+        }
+        streamingUrls = streamingUrls + encodeURIComponent(value[i]);
+    }
+    if (value.length == 0) {
+        value = urlCount;
+    } else {
+        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Media%20Asset%20Streaming%20Locators\",\"" + streamingUrls + "\")>" + urlCount + "</span>";
     }
     return value;
 }

@@ -14,6 +14,7 @@ namespace AzureSkyMedia.PlatformServices
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             Files = GetAssetFiles(blobClient, asset.Container, null);
             Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, asset.Name);
+            StreamingLocators = mediaClient.GetStreamingUrls(asset.Name);
         }
 
         internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath)
@@ -61,12 +62,13 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (IListBlobItem blobItem in blobList.Results)
                 {
                     string fileName = Path.GetFileName(blobItem.Uri.ToString());
-                    string fileSize = blobClient.GetBlobSize(containerName, fileName, out long byteCount);
+                    string fileSize = blobClient.GetBlobSize(containerName, fileName, out long byteCount, out string contentType);
                     MediaFile file = new MediaFile()
                     {
                         Name = fileName,
                         Size = fileSize,
                         ByteCount = byteCount,
+                        ContentType = contentType,
                         DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
                     };
                     files.Add(file);
@@ -92,6 +94,8 @@ namespace AzureSkyMedia.PlatformServices
                 return StorageBlobClient.MapByteCount(byteCount);
             }
         }
+
+        public string[] StreamingLocators { get; }
     }
 
     public class MediaFile
@@ -101,6 +105,8 @@ namespace AzureSkyMedia.PlatformServices
         public string Size { get; set; }
 
         public long ByteCount { get; set; }
+
+        public string ContentType { get; set; }
 
         public string DownloadUrl { get; set; }
     }

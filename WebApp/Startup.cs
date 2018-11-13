@@ -94,6 +94,10 @@ namespace AzureSkyMedia.WebApp
             if (!string.IsNullOrEmpty(authToken))
             {
                 MediaClient.SetEventSubscription(authToken);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    mediaClient.CreateTransforms();
+                }
             }
             return redirectAction;
         }

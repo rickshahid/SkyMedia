@@ -29,6 +29,19 @@ namespace AzureSkyMedia.PlatformServices
             _storageAccount = storageAccounts.SingleOrDefault();
         }
 
+        public string Name
+        {
+            get
+            {
+                string accountName = Constant.NotAvailable;
+                if (_storageAccount != null)
+                {
+                    accountName = _storageAccount.Name;
+                }
+                return accountName;
+            }
+        }
+
         public string AccountType
         {
             get

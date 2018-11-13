@@ -69,6 +69,18 @@ namespace AzureSkyMedia.PlatformServices
             return locators;
         }
 
+        public string[] GetStreamingUrls(string assetName)
+        {
+            List<string> streamingUrls = new List<string>();
+            IEnumerable<StreamingLocator> streamingLocators = GetLocators(assetName);
+            foreach (StreamingLocator streamingLocator in streamingLocators)
+            {
+                string streamingUrl = GetPlayerUrl(streamingLocator);
+                streamingUrls.Add(streamingUrl);
+            }
+            return streamingUrls.ToArray();
+        }
+
         public void DeleteLocators(string assetName)
         {
             ListStreamingLocatorsResponse locatorList = _media.Assets.ListStreamingLocators(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);

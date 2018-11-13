@@ -21,16 +21,18 @@ function CreateTips(rows) {
         CreateTipTop(rowId + "_delete", "Delete");
     }
 }
-function SetParentRowIds(rows) {
-    for (var i = 0; i < rows.length; i++) {
-        var row = rows[i];
-        var rowId = row.name;
-        rowId = rowId.replace(/ /g, "-");
-        rowId = rowId.replace(/,/g, "-");
-        rowId = rowId.replace(/\(/g, "-");
-        rowId = rowId.replace(/\)/g, "-");
-        row.parentName = GetParentName(row);
-        row.id = rowId;
+function SetParentRowIds(gridId, rows) {
+    if (gridId != "indexerInsights") {
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            var rowId = row.name;
+            rowId = rowId.replace(/ /g, "-");
+            rowId = rowId.replace(/,/g, "-");
+            rowId = rowId.replace(/\(/g, "-");
+            rowId = rowId.replace(/\)/g, "-");
+            row.parentName = GetParentName(row);
+            row.id = rowId;
+        }
     }
 }
 function SetChildRowIds(parentRow, childRows) {
@@ -53,7 +55,7 @@ function OnGridLoad(grid) {
 }
 function LoadGrid(gridId, rows) {
     var columns = GetParentColumns(gridId);
-    SetParentRowIds(rows);
+    SetParentRowIds(gridId, rows);
     $("#" + gridId).jqGrid({
         colModel: columns,
         datatype: "local",
@@ -100,23 +102,25 @@ function RefreshJobs(gridId) {
     var rows = $("#" + gridId).jqGrid("getRowData");
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
-        if (row["properties.state"] == "Processing") {
+        if (row["properties.state"] == "Queued" || row["properties.state"] == "Scheduled" || row["properties.state"] == "Processing") {
             transformNames.push(row.parentName);
             jobNames.push(row.name);
         }
     }
-    $.post("/job/refresh",
-        {
-            transformNames: transformNames,
-            jobNames: jobNames
-        },
-        function (jobs) {
-            SetParentRowIds(jobs);
-            $("#" + gridId).jqGrid("setGridParam", {
-                datatype: "local",
-                data: jobs
-            });
-            $("#" + gridId).trigger("reloadGrid");
-        }
-    );
+    if (jobNames.length > 0) {
+        $.post("/job/refresh",
+            {
+                transformNames: transformNames,
+                jobNames: jobNames
+            },
+            function (jobs) {
+                SetParentRowIds(gridId, jobs);
+                $("#" + gridId).jqGrid("setGridParam", {
+                    datatype: "local",
+                    data: jobs
+                });
+                $("#" + gridId).trigger("reloadGrid");
+            }
+        );
+    }
 }
