@@ -17,8 +17,9 @@ namespace AzureSkyMedia.PlatformServices
     internal partial class MediaClient : IDisposable
     {
         private AzureMediaServicesClient _media;
-        private string _indexerAccountToken;
+
         private string _indexerAccountId;
+        private string _indexerAccountToken;
 
         public MediaClient(string authToken, MediaAccount mediaAccount = null)
         {

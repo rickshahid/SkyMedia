@@ -255,7 +255,19 @@ function GetParentColumns(gridId) {
                     label: "Video Name",
                     name: "name",
                     align: "center",
-                    width: nameWidthEx
+                    width: nameWidth
+                },
+                {
+                    label: "State",
+                    name: "state",
+                    align: "center",
+                    width: defaultWidth
+                },
+                {
+                    label: "Progress",
+                    name: "processingProgress",
+                    align: "center",
+                    width: defaultWidth
                 }
             ];
             break;
@@ -366,17 +378,11 @@ function GetChildColumns(gridType) {
         case "transformJobOutputs":
             columns = [
                 {
-                    label: "Job Output Label",
+                    formatter: FormatName,
+                    label: "Media Job Output Label",
                     name: "label",
                     align: "center",
-                    width: nameWidthEx - 10
-                },
-                {
-                    formatter: FormatProgress,
-                    label: "Progress",
-                    name: "progress",
-                    align: "center",
-                    width: defaultWidth + 5
+                    width: nameWidthEx + 120
                 },
                 {
                     formatter: FormatJobOutputState,
@@ -386,11 +392,18 @@ function GetChildColumns(gridType) {
                     width: defaultWidth
                 },
                 {
+                    formatter: FormatProgress,
+                    label: "Progress",
+                    name: "progress",
+                    align: "center",
+                    width: defaultWidth
+                },
+                {
                     formatter: FormatName,
                     label: "Output Asset Name",
                     name: "assetName",
                     align: "center",
-                    width: nameWidthEx -20
+                    width: nameWidth + 60
                 }
             ];
             break;

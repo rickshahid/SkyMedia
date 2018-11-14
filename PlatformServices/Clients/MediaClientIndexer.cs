@@ -56,7 +56,8 @@ namespace AzureSkyMedia.PlatformServices
                 JArray indexerAccounts = webClient.GetResponse<JArray>(webRequest);
                 foreach (JToken indexerAccount in indexerAccounts)
                 {
-                    if (string.Equals(indexerAccount["location"].ToString(), MediaAccount.VideoIndexerRegion, StringComparison.OrdinalIgnoreCase))
+                    string accountLocation = indexerAccount["location"].ToString();
+                    if (string.Equals(accountLocation, MediaAccount.VideoIndexerRegion, StringComparison.OrdinalIgnoreCase))
                     {
                         _indexerAccountId = indexerAccount["id"].ToString();
                         _indexerAccountToken = indexerAccount["accessToken"].ToString();

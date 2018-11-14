@@ -193,7 +193,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             try
             {
-                JObject insight;
+                JContainer insight;
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
@@ -209,8 +209,15 @@ namespace AzureSkyMedia.WebApp.Controllers
                         using (Stream fileStream = fileBlob.OpenReadAsync().Result)
                         {
                             StreamReader fileReader = new StreamReader(fileStream);
-                            string fileData = fileReader.ReadToEnd();
-                            insight = JObject.Parse(fileData);
+                            string fileData = fileReader.ReadToEnd().TrimStart();
+                            if (fileData.StartsWith("["))
+                            {
+                                insight = JArray.Parse(fileData);
+                            }
+                            else
+                            {
+                                insight = JObject.Parse(fileData);
+                            }
                         }
                     }
                 }

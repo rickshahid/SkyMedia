@@ -82,7 +82,7 @@ function DisplayInsight(fileName, assetName, indexId) {
         },
         function (insight) {
             SetCursor(false);
-            var title = fileName == null ? "Video Indexer Insight (Index Id " + indexId + ")" : fileName;
+            var title = fileName == null ? "Video Indexer Insight (" + indexId + ")" : fileName;
             DisplayJson(title, insight);
         }
     );

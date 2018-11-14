@@ -90,16 +90,16 @@
         "description": "Subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
-    "functionIngestSchedule": {
-      "type": "string",
-      "metadata": {
-        "description": "Function timer schedule for media ingest workflow."
-      }
-    },
     "functionPublishUrl": {
       "type": "string",
       "metadata": {
         "description": "Function HTTP post url for media content publishing."
+      }
+    },
+    "functionSyncSchedule": {
+      "type": "string",
+      "metadata": {
+        "description": "Function timer schedule for media account sync."
       }
     },
     "globalServicesResourceGroup": {
@@ -572,12 +572,12 @@
               "value": "https://api.videoindexer.ai/"
             },
             {
-              "name": "Media.Publish.IngestSchedule",
-              "value": "[parameters('functionIngestSchedule')]"
-            },
-            {
               "name": "Media.Publish.JobUrl",
               "value": "[parameters('functionPublishUrl')]"
+            },
+            {
+              "name": "Media.Sync.Schedule",
+              "value": "[parameters('functionSyncSchedule')]"
             },
             {
               "name": "Twilio.Account.Id",
@@ -694,12 +694,12 @@
                     "value": "https://api.videoindexer.ai/"
                   },
                   {
-                    "name": "Media.Publish.IngestSchedule",
-                    "value": "[parameters('functionIngestSchedule')]"
-                  },
-                  {
                     "name": "Media.Publish.JobUrl",
                     "value": "[parameters('functionPublishUrl')]"
+                  },
+                  {
+                    "name": "Media.Sync.Schedule",
+                    "value": "[parameters('functionSyncSchedule')]"
                   },
                   {
                     "name": "Twilio.Account.Id",
