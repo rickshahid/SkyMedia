@@ -25,9 +25,8 @@ namespace AzureSkyMedia.FunctionApp
                 if (request.Query.ContainsKey("id"))
                 {
                     logger.LogInformation("Request Query: {0}", request.QueryString);
-                    string indexId = request.Query["id"].ToString();
-                    string indexState = request.Query["state"].ToString();
-                    PublishJobOutput(null, indexId, logger);
+                    string insightId = request.Query["id"].ToString();
+                    PublishJobOutput(null, insightId, logger);
                 }
                 else
                 {
@@ -68,9 +67,9 @@ namespace AzureSkyMedia.FunctionApp
             return new OkObjectResult(validationResponse);
         }
 
-        private static void PublishJobOutput(string jobName, string indexId, ILogger logger)
+        private static void PublishJobOutput(string jobName, string insightId, ILogger logger)
         {
-            MediaJobPublish jobPublish = MediaClient.PublishJobOutput(jobName, indexId);
+            MediaJobPublish jobPublish = MediaClient.PublishJobOutput(jobName, insightId);
             logger.LogInformation("Media Job Publish: {0}", JsonConvert.SerializeObject(jobPublish));
         }
     }

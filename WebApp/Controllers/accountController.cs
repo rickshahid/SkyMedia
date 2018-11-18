@@ -227,15 +227,15 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult IndexerInsights(string indexId)
+        public IActionResult IndexerInsights(string insightId)
         {
             JArray insights;
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                if (!string.IsNullOrEmpty(indexId))
+                if (!string.IsNullOrEmpty(insightId))
                 {
-                    JObject insight = mediaClient.IndexerGetInsight(indexId);
+                    JObject insight = mediaClient.IndexerGetInsight(insightId);
                     insights = new JArray(insight);
                 }
                 else

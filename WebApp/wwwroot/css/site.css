@@ -343,6 +343,21 @@ body {
     text-align: left;
 }
 
+.thumbnailSpriteRow {
+    display: none;
+}
+
+.thumbnailSpriteRow td {
+    padding-left: 25px;
+}
+
+.thumbnailSpriteColumns {
+    font-size: small !important;
+    font-weight: bold;
+    padding: 0px;
+    width: 30px;
+}
+
 .jobOutputAssets {
     padding: 0px !important;
 }

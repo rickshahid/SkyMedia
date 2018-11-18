@@ -72,17 +72,17 @@ function DeleteEntity(gridId, entityName, parentName) {
     };
     ConfirmMessage(title, message, onConfirm);
 }
-function DisplayInsight(fileName, assetName, indexId) {
+function DisplayInsight(fileName, assetName, insightId) {
     SetCursor(true);
-    $.get("/asset/insight",
+    $.get("/insight/data",
         {
             assetName: decodeURIComponent(assetName),
             fileName: decodeURIComponent(fileName),
-            indexId: indexId
+            insightId: insightId
         },
         function (insight) {
             SetCursor(false);
-            var title = fileName == null ? "Video Indexer Insight (" + indexId + ")" : fileName;
+            var title = fileName == null ? "Video Indexer Insight (" + insightId + ")" : fileName;
             DisplayJson(title, insight);
         }
     );
@@ -98,18 +98,18 @@ function DisplayJson(title, jsonData) {
     CreateJsonEditor(containerId, null, jsonData);
     DisplayDialog(dialogId, title, null, null, null, null, onClose);
 }
-function ReindexVideo(indexId, videoName) {
+function ReindexVideo(insightId, videoName) {
     var title = "Confirm Reindex Video";
     var message = "Are you sure you want to reindex the '" + FormatValue(videoName) + "' video?";
     var onConfirm = function () {
         SetCursor(true);
-        $.post("/asset/reindex",
+        $.post("/insight/reindex",
             {
-                indexId: indexId
+                insightId: insightId
             },
             function () {
                 SetCursor(false);
-                DisplayMessage("Reindex Video Initiated", indexId);
+                DisplayMessage("Reindex Video Initiated", insightId);
             }
         );
         $(this).dialog("close");

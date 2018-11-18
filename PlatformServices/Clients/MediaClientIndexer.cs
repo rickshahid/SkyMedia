@@ -11,20 +11,20 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private string GetRequestUrl(string relativePath, bool authToken, string indexId)
+        private string GetRequestUrl(string relativePath, bool authToken, string insightId)
         {
             string accessToken = string.Empty;
             string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
             string requestUrl = AppSetting.GetValue(settingKey);
             if (authToken)
             {
-                if (string.IsNullOrEmpty(indexId))
+                if (string.IsNullOrEmpty(insightId))
                 {
                     accessToken = _indexerAccountToken;
                 }
                 else
                 {
-                    string authUrl = string.Concat(requestUrl, "auth/", MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId, "/videos/", indexId, "/accessToken?allowEdit=true");
+                    string authUrl = string.Concat(requestUrl, "auth/", MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId, "/videos/", insightId, "/accessToken?allowEdit=true");
                     using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
                     {
                         HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, authUrl);
@@ -68,7 +68,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority, bool reduceNoise, bool audioOnly)
         {
-            string indexId = null;
+            string insightId = null;
             string relativePath = "/videos";
             string requestUrl = GetRequestUrl(relativePath, true, null);
             string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
@@ -100,19 +100,19 @@ namespace AzureSkyMedia.PlatformServices
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Post, requestUrl);
-                JObject index = webClient.GetResponse<JObject>(webRequest);
-                if (index != null)
+                JObject insight = webClient.GetResponse<JObject>(webRequest);
+                if (insight != null)
                 {
-                    indexId = index["id"].ToString();
+                    insightId = insight["id"].ToString();
                 }
             }
-            return indexId;
+            return insightId;
         }
 
-        public void IndexerReindexVideo(string indexId, Priority jobPriority)
+        public void IndexerReindexVideo(string insightId, Priority jobPriority)
         {
-            string relativePath = string.Concat("/videos/", indexId, "/reindex");
-            string requestUrl = GetRequestUrl(relativePath, true, indexId);
+            string relativePath = string.Concat("/videos/", insightId, "/reindex");
+            string requestUrl = GetRequestUrl(relativePath, true, insightId);
             string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             callbackUrl = HttpUtility.UrlEncode(callbackUrl);
@@ -125,14 +125,14 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public void IndexerDeleteVideo(string indexId, bool deleteIndex)
+        public void IndexerDeleteVideo(string insightId, bool deleteIndex)
         {
-            string relativePath = string.Concat("/videos/", indexId);
+            string relativePath = string.Concat("/videos/", insightId);
             if (!deleteIndex)
             {
                 relativePath = string.Concat(relativePath, "/sourceFile");
             }
-            string requestUrl = GetRequestUrl(relativePath, true, indexId);
+            string requestUrl = GetRequestUrl(relativePath, true, insightId);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);
@@ -143,7 +143,7 @@ namespace AzureSkyMedia.PlatformServices
                 using (DatabaseClient databaseClient = new DatabaseClient())
                 {
                     string collectionId = Constant.Database.Collection.MediaContentInsight;
-                    databaseClient.DeleteDocument(collectionId, indexId);
+                    databaseClient.DeleteDocument(collectionId, insightId);
                 }
             }
         }
@@ -176,11 +176,11 @@ namespace AzureSkyMedia.PlatformServices
             return insights;
         }
 
-        public JObject IndexerGetInsight(string indexId)
+        public JObject IndexerGetInsight(string insightId)
         {
             JObject index;
-            string relativePath = string.Concat("/videos/", indexId, "/index");
-            string requestUrl = GetRequestUrl(relativePath, true, indexId);
+            string relativePath = string.Concat("/videos/", insightId, "/index");
+            string requestUrl = GetRequestUrl(relativePath, true, insightId);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
@@ -189,17 +189,17 @@ namespace AzureSkyMedia.PlatformServices
             return index;
         }
 
-        public string IndexerGetInsightUrl(string indexId)
+        public string IndexerGetInsightUrl(string insightId)
         {
-            string relativePath = string.Concat("/videos/", indexId, "/insightsWidget");
-            string requestUrl = GetRequestUrl(relativePath, true, indexId);
+            string relativePath = string.Concat("/videos/", insightId, "/insightsWidget");
+            string requestUrl = GetRequestUrl(relativePath, true, insightId);
             return string.Concat(requestUrl, "&allowEdit=true&version=2");
         }
 
-        public string IndexerGetCaptionsUrl(string indexId)
+        public string IndexerGetCaptionsUrl(string insightId)
         {
-            string relativePath = string.Concat("/videos/", indexId, "/captions");
-            return GetRequestUrl(relativePath, true, indexId);
+            string relativePath = string.Concat("/videos/", insightId, "/captions");
+            return GetRequestUrl(relativePath, true, insightId);
         }
     }
 }

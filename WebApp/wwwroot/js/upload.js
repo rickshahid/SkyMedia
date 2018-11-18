@@ -46,25 +46,25 @@ function CreateWorkflow(files) {
             for (var i = 0; i < entities.length; i++) {
                 var entity = entities[i];
                 var entityType = entity["properties.state"] == null ? "Asset" : "Job";
-                var entityItemRef, indexId;
+                var entityItemRef, insightId;
                 if (entityType == "Asset") {
                     entityItemRef = "/asset/item?assetName=" + entity.name;
-                    indexId = entity["properties.alternateId"];
+                    insightId = entity["properties.alternateId"];
                 } else {
                     var transformName = GetParentName(entity);
                     entityItemRef = "/job/item?transformName=" + transformName + "&jobName=" + entity.name;
-                    indexId = entity["properties.correlationData"]["indexId"];
+                    insightId = entity["properties.correlationData"]["insightId"];
                 }
                 if (message != "") {
                     message = message + "<br><br>";
                 }
                 message = message + "<a class='siteLink' target='_blank' href='" + entityItemRef + "'>";
                 message = message + "Media " + entityType + " Created - " + entity.name + "</a>";
-                if (indexId != null) {
-                    var insightRef = "/account/indexerInsights?indexId=" + indexId;
+                if (insightId != null) {
+                    var insightRef = "/account/indexerInsights?insightId=" + insightId;
                     var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
                     message = message + "<br><br><a class='siteLink' target='_blank' href='" + insightRef + "'>";
-                    message = message + insightType + " Indexer Insight - " + indexId + "</a>";
+                    message = message + insightType + " Indexer Insight - " + insightId + "</a>";
                 }
             }
             $("#mediaUploadEntities").html(message);

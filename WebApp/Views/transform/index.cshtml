@@ -14,6 +14,10 @@
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
             CreateTipBottom("transformSave", "Save Transform");
+            $("#thumbnailSpriteColumns").spinner({
+                min: 0,
+                max: 99
+            });
         })
     </script>
 }
@@ -83,7 +87,7 @@
                             </tr>
                             <tr>
                                 <td class="inputOption">
-                                    @Html.CheckBox("presetType1", false, new { value = "ThumbnailImages" })
+                                    @Html.CheckBox("presetType1", false, new { value = "ThumbnailImages", onchange = "SetThumbnailOptions(this)" })
                                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
                                         Thumbnail Images (JPG)
                                     </span>
@@ -96,6 +100,15 @@
                                 <td>
                                     &nbsp;
                                     <partial name="OnError" model='new ClientControl { ControlId = "onError1" }' />
+                                </td>
+                            </tr>
+                            <tr id="thumbnailSpriteRow" class="thumbnailSpriteRow">
+                                <td>
+                                    @Html.CheckBox("thumbnailSprite", false)
+                                    <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
+                                        Sprite Columns
+                                    </span>
+                                    <input id="thumbnailSpriteColumns" class="thumbnailSpriteColumns" value="0" />
                                 </td>
                             </tr>
                             <tr>

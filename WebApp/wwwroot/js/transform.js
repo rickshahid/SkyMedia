@@ -1,17 +1,25 @@
-﻿function SetIntelligenceOptions(intelligenceOption) {
-    switch (intelligenceOption.id) {
+﻿function SetIntelligenceOptions(intelligencePreset) {
+    switch (intelligencePreset.id) {
         case "videoAnalyzer":
             $("#audioAnalyzer").prop("checked", false);
-            $("#audioAnalyzer").prop("disabled", intelligenceOption.checked);
+            $("#audioAnalyzer").prop("disabled", intelligencePreset.checked);
             break;
         case "videoIndexer":
             $("#audioIndexer").prop("checked", false);
-            $("#audioIndexer").prop("disabled", intelligenceOption.checked);
+            $("#audioIndexer").prop("disabled", intelligencePreset.checked);
             break;
         case "presetType2":
             $("#presetType3").prop("checked", false);
-            $("#presetType3").prop("disabled", intelligenceOption.checked);
+            $("#presetType3").prop("disabled", intelligencePreset.checked);
             break;
+    }
+}
+function SetThumbnailOptions(thumbnailPreset) {
+    if (thumbnailPreset.checked) {
+        $("#thumbnailSpriteRow").show();
+    } else {
+        $("#thumbnailSprite").prop("checked", false);
+        $("#thumbnailSpriteRow").hide();
     }
 }
 function GetTransformOutputs() {

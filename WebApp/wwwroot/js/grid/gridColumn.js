@@ -245,7 +245,7 @@ function GetParentColumns(gridId) {
         case "indexerInsights":
             columns = [
                 {
-                    label: "Index Id",
+                    label: "Insight Id",
                     name: "id",
                     align: "center",
                     width: defaultWidth
@@ -264,6 +264,7 @@ function GetParentColumns(gridId) {
                     width: defaultWidth
                 },
                 {
+                    formatter: FormatProgress,
                     label: "Progress",
                     name: "processingProgress",
                     align: "center",
@@ -415,7 +416,7 @@ function FormatName(value, grid, row) {
         if (row.preset.hasOwnProperty("audioLanguage")) {
             value = row.preset.insightsToExtract != null ? "Video Analyzer" : "Audio Analyzer";
         } else if (row.preset.hasOwnProperty("codecs")) {
-            value = "Thumbnail Sprite";
+            value = "Thumbnail Images";
         }
     }
     value = FormatValue(value, grid, row);
@@ -441,7 +442,13 @@ function FormatRegions(value, grid, row) {
     return "Primary: " + value + "<br>Secondary: " + row.secondaryRegion;
 }
 function FormatProgress(value, grid, row) {
-    return value + "%";
+    if (value == null) {
+        value = "0";
+    }
+    if (value.toString().indexOf("%") == -1) {
+        value = value + "%";
+    }
+    return value;
 }
 function FormatDateTime(value, grid, row) {
     if (value == null) {
@@ -465,12 +472,12 @@ function FormatAssetLocators(value, grid, row) {
         if (streamingUrls != "") {
             streamingUrls = streamingUrls + "<br><br>";
         }
-        streamingUrls = streamingUrls + encodeURIComponent(value[i]);
+        streamingUrls = streamingUrls + value[i];
     }
     if (value.length == 0) {
         value = urlCount;
     } else {
-        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Media%20Asset%20Streaming%20Locators\",\"" + streamingUrls + "\")>" + urlCount + "</span>";
+        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Media%20Asset%20Streaming%20Locators\",\"" + encodeURIComponent(streamingUrls) + "\")>" + urlCount + "</span>";
     }
     return value;
 }

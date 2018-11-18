@@ -164,8 +164,8 @@ namespace AzureSkyMedia.FunctionApp
             if (mediaClient.IndexerEnabled() && (ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.VideoIndexer) || ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.AudioIndexer)))
             {
                 bool audioOnly = !ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.VideoIndexer) && ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.AudioIndexer);
-                string indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, true, audioOnly);
-                logData = string.Concat("Index Id: ", indexId);
+                string insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, true, audioOnly);
+                logData = string.Concat("Insight Id: ", insightId);
                 WriteLog(ingestManifest.Name, logData, logger, false);
             }
             Transform transform = mediaClient.CreateTransform(ingestManifest.TransformPreset.Value);

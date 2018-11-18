@@ -3,7 +3,7 @@ function InitializeApp(appName) {
     CreateTipBottom("siteHome", appName + "<br><br>Site Home");
     CreateTipBottom("siteCode", appName + "<br><br>Open Source");
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>Announcement Blog");
-    CreateTipBottom("userEngagement", "Azure Media Player<br><br>User Engagement");
+    CreateTipBottom("userInsight", "Azure Media Player<br><br>User Insight");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
     CreateTipBottom("userProfileEdit", appName + "<br><br>Account Profile Edit");
     CreateTipBottom("userSignIn", appName + "<br><br>User Sign In");
@@ -25,7 +25,7 @@ function InitializeApp(appName) {
     CreateTipTop("mediaTransform", "Transform");
     CreateTipTop("mediaJob", "Job");
     CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
-    CreateTipTop("mediaSearch", "Search");
+    CreateTipTop("mediaInsight", "Insight");
     CreateTipTop("mediaLive", "Live");
     CreateTipTop("mediaEdit", "Edit");
     CreateTipTop("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");

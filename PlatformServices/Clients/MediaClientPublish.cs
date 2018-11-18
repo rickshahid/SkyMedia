@@ -122,23 +122,23 @@ namespace AzureSkyMedia.PlatformServices
             eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
-        public static MediaJobPublish PublishJobOutput(string jobName, string indexId)
+        public static MediaJobPublish PublishJobOutput(string jobName, string insightId)
         {
             MediaJobAccount jobAccount;
             MediaJobPublish jobPublish = null;
             using (DatabaseClient databaseClient = new DatabaseClient())
             {
                 string collectionId = Constant.Database.Collection.MediaJobAccount;
-                string documentId = string.IsNullOrEmpty(jobName) ? indexId : jobName;
+                string documentId = string.IsNullOrEmpty(jobName) ? insightId : jobName;
                 jobAccount = databaseClient.GetDocument<MediaJobAccount>(collectionId, documentId);
             }
             if (jobAccount != null)
             {
                 using (MediaClient mediaClient = new MediaClient(null, jobAccount.MediaAccount))
                 {
-                    if (!string.IsNullOrEmpty(indexId))
+                    if (!string.IsNullOrEmpty(insightId))
                     {
-                        JObject insight = mediaClient.IndexerGetInsight(indexId);
+                        JObject insight = mediaClient.IndexerGetInsight(insightId);
                         if (insight != null)
                         {
                             using (DatabaseClient databaseClient = new DatabaseClient())

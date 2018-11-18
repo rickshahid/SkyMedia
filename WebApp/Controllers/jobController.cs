@@ -73,7 +73,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             audioAnalyzerPreset = true;
                         }
                     }
-                    string indexId = null;
+                    string insightId = null;
                     Asset inputAsset = null;
                     string assetDescription = null;
                     if (!string.IsNullOrEmpty(inputAssetName))
@@ -84,7 +84,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                     {
                         bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
-                        indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, jobPriority, true, audioOnly);
+                        insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, jobPriority, true, audioOnly);
                     }
                     if (!string.IsNullOrEmpty(transformName))
                     {
@@ -96,7 +96,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
                         }
                         string[] assetDescriptions = new string[] { assetDescription };
-                        string[] assetAlternateIds = new string[] { indexId };
+                        string[] assetAlternateIds = new string[] { insightId };
                         job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, JObject.Parse(jobData), inputFileUrl, inputAssetName, outputAssetMode, assetDescriptions, assetAlternateIds, streamingPolicyName);
                     }
                 }
@@ -132,7 +132,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Publish(string entityName, string parentName, string indexId, bool unpublish)
+        public JsonResult Publish(string entityName, string parentName, string insightId, bool unpublish)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 else
                 {
-                    jobPublish = MediaClient.PublishJobOutput(entityName, indexId);
+                    jobPublish = MediaClient.PublishJobOutput(entityName, insightId);
                 }
                 return Json(jobPublish);
             }

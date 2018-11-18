@@ -8,8 +8,6 @@ using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-using Newtonsoft.Json.Linq;
-
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -44,11 +42,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                     foreach (Asset inputAsset in inputAssets)
                     {
                         Job job = null;
-                        string indexId = null;
+                        string insightId = null;
                         if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
                         {
                             bool audioOnly = !videoIndexer && audioIndexer;
-                            indexId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, Priority.Normal, true, audioOnly);
+                            insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, Priority.Normal, true, audioOnly);
                         }
                         if (transform != null)
                         {
@@ -58,21 +56,21 @@ namespace AzureSkyMedia.WebApp.Controllers
                             string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
                             MediaJobOutputMode outputAssetMode = MediaJobOutputMode.InputAsset;
                             string[] outputAssetDescriptions = new string[] { assetDescription };
-                            string[] outputAssetAlternateIds = new string[] { indexId };
+                            string[] outputAssetAlternateIds = new string[] { insightId };
                             PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
                             job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetDescriptions, outputAssetAlternateIds, streamingPolicy);
                         }
                         if (job != null)
                         {
-                            if (!string.IsNullOrEmpty(indexId))
+                            if (!string.IsNullOrEmpty(insightId))
                             {
-                                job.CorrelationData.Add("indexId", indexId);
+                                job.CorrelationData.Add("insightId", insightId);
                             }
                             jobs.Add(job);
                         }
                         else
                         {
-                            inputAsset.AlternateId = indexId;
+                            inputAsset.AlternateId = insightId;
                         }
                     }
                 }
@@ -179,69 +177,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                 }
                 return Json(asset);
-            }
-            catch (ApiErrorException ex)
-            {
-                return new JsonResult(ex.Response.Content)
-                {
-                    StatusCode = (int)ex.Response.StatusCode
-                };
-            }
-        }
-
-        public JsonResult Insight(string assetName, string fileName, string indexId)
-        {
-            try
-            {
-                JContainer insight;
-                string authToken = HomeController.GetAuthToken(Request, Response);
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    if (!string.IsNullOrEmpty(indexId))
-                    {
-                        insight = mediaClient.IndexerGetInsight(indexId);
-                    }
-                    else
-                    {
-                        Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
-                        StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
-                        CloudBlockBlob fileBlob = blobClient.GetBlockBlob(asset.Container, fileName);
-                        using (Stream fileStream = fileBlob.OpenReadAsync().Result)
-                        {
-                            StreamReader fileReader = new StreamReader(fileStream);
-                            string fileData = fileReader.ReadToEnd().TrimStart();
-                            if (fileData.StartsWith("["))
-                            {
-                                insight = JArray.Parse(fileData);
-                            }
-                            else
-                            {
-                                insight = JObject.Parse(fileData);
-                            }
-                        }
-                    }
-                }
-                return Json(insight);
-            }
-            catch (ApiErrorException ex)
-            {
-                return new JsonResult(ex.Response.Content)
-                {
-                    StatusCode = (int)ex.Response.StatusCode
-                };
-            }
-        }
-
-        public JsonResult Reindex(string indexId)
-        {
-            try
-            {
-                string authToken = HomeController.GetAuthToken(Request, Response);
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    mediaClient.IndexerReindexVideo(indexId, Priority.Normal);
-                }
-                return Json(indexId);
             }
             catch (ApiErrorException ex)
             {

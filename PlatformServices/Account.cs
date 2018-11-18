@@ -45,8 +45,8 @@ namespace AzureSkyMedia.PlatformServices
                 JArray insights = mediaClient.IndexerGetInsights();
                 foreach (JToken insight in insights)
                 {
-                    string indexId = insight["id"].ToString();
-                    mediaClient.IndexerDeleteVideo(indexId, true);
+                    string insightId = insight["id"].ToString();
+                    mediaClient.IndexerDeleteVideo(insightId, true);
                 }
             }
         }
