@@ -41,14 +41,21 @@ function SetChildRowIds(parentRow, childRows) {
         childRows[i].id = parentRow.id + "-" + i;
    }
 }
-function OnGridLoad(grid) {
+function OnGridLoad(gridData, gridId, gridRows) {
     ClearTitles();
     if (_childGridType == "transformJobOutputs") {
-        var rows = grid.rows;
-        for (var i = 0; i < rows.length; i++) {
-            var row = rows[i];
-            if (row["properties.state"] == "Processing") {
-                $(this).expandSubGridRow(row.id);
+        if (gridData != null) {
+            gridRows = gridData.rows;
+        }
+        for (var i = 0; i < gridRows.length; i++) {
+            var gridRow = gridRows[i];
+            if (gridRow["properties.state"] == "Processing") {
+                if (gridData != null) {
+                    $(this).expandSubGridRow(gridRow.id);
+                } else {
+                    $("#" + gridId).collapseSubGridRow(gridRow.id);
+                    $("#" + gridId).expandSubGridRow(gridRow.id);
+                }
             }
         }
     }
@@ -57,6 +64,7 @@ function LoadGrid(gridId, rows) {
     var columns = GetParentColumns(gridId);
     SetParentRowIds(gridId, rows);
     $("#" + gridId).jqGrid({
+        multiselect: gridId == "assets",
         colModel: columns,
         datatype: "local",
         data: rows,
@@ -72,15 +80,23 @@ function LoadGrid(gridId, rows) {
         rowNum: 5
     });
     CreateTips(rows);
-    if (gridId == "transformJobs") {
-        var refreshJobs = function () {
-            RefreshJobs(gridId);
-        };
-        setInterval(refreshJobs, 10000);
+    switch (gridId) {
+        case "transformJobs":
+            var refreshJobs = function () {
+                RefreshJobs(gridId);
+            };
+            setInterval(refreshJobs, 10000);
+            break;
+        case "indexerInsights":
+            var refreshInsights = function () {
+                RefreshInsights(gridId);
+            };
+            setInterval(refreshInsights, 10000);
+            break;
     }
 }
 function LoadSubGrid(parentRowId, parentRowKey) {
-    var parentRow = $(this).jqGrid("getLocalRow", parentRowKey);
+    var parentRow = $(this).getLocalRow(parentRowKey);
     var childRows = parentRow[_childPropertyName];
     var columns = GetChildColumns(_childGridType);
     var childGridId = parentRowId + "_" + _childPropertyName.replace("properties.", "");
@@ -99,13 +115,11 @@ function LoadSubGrid(parentRowId, parentRowKey) {
 function RefreshJobs(gridId) {
     var transformNames = new Array();
     var jobNames = new Array();
-    var rows = $("#" + gridId).jqGrid("getRowData");
+    var rows = $("#" + gridId).getRowData();
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
-        if (row["properties.state"] == "Queued" || row["properties.state"] == "Scheduled" || row["properties.state"] == "Processing") {
-            transformNames.push(row.parentName);
-            jobNames.push(row.name);
-        }
+        transformNames.push(row.parentName);
+        jobNames.push(row.name);
     }
     if (jobNames.length > 0) {
         $.post("/job/refresh",
@@ -119,7 +133,30 @@ function RefreshJobs(gridId) {
                     datatype: "local",
                     data: jobs
                 });
-                $("#" + gridId).trigger("reloadGrid");
+                OnGridLoad(null, gridId, jobs);
+            }
+        );
+    }
+}
+function RefreshInsights(gridId) {
+    var insightIds = new Array();
+    var rows = $("#" + gridId).getRowData();
+    for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        insightIds.push(row.id);
+    }
+    if (insightIds.length > 0) {
+        $.post("/insight/refresh",
+            {
+                insightIds: insightIds
+            },
+            function (insights) {
+                SetParentRowIds(gridId, insights);
+                for (var i = 0; i < insights.length; i++) {
+                    var insight = insights[i];
+                    $("#" + gridId).setRowData(insight.id, insight);
+                }
+                OnGridLoad(null, gridId, insights);
             }
         );
     }

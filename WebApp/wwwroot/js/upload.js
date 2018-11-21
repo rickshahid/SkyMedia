@@ -61,7 +61,7 @@ function CreateWorkflow(files) {
                 message = message + "<a class='siteLink' target='_blank' href='" + entityItemRef + "'>";
                 message = message + "Media " + entityType + " Created - " + entity.name + "</a>";
                 if (insightId != null) {
-                    var insightRef = "/account/indexerInsights?insightId=" + insightId;
+                    var insightRef = "/insight/item?insightId=" + insightId;
                     var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
                     message = message + "<br><br><a class='siteLink' target='_blank' href='" + insightRef + "'>";
                     message = message + insightType + " Indexer Insight - " + insightId + "</a>";

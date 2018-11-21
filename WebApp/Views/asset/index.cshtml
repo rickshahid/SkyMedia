@@ -6,12 +6,26 @@
 
 @section head {
     <script type="text/javascript">
+        function CompareAssets() {
+            var selectedAssets = $("#assets").getGridParam("selarrrow");
+            if (selectedAssets.length != 2) {
+                var title = "Media Asset Comparison";
+                var message = "Select 2 media assets in order to compare their files.";
+                DisplayMessage(title, message);
+            } else {
+                for (var i = 0; i < selectedAssets.length; i++) {
+                    var selectedAsset = selectedAssets[i];
+                    alert(selectedAsset);
+                }
+            }
+        }
         $(function () {
             _childGridType = "assetFiles";
             _childPropertyName = "files";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
+            CreateTipBottom("mediaMetadata", "Media Metadata");
             CreateTipBottom("mediaGallery", "Media Gallery");
         })
     </script>
@@ -27,5 +41,6 @@
 </div>
 
 <div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaMetadata", ImageFile = "MediaMetadata.png", OnClick = "CompareAssets()" }' />
     <partial name="SiteButton" model='new SiteButton { ControlId = "mediaGallery", ImageFile = "MediaGallery.png", RelativeUrl = "/asset/gallery" }' />
 </div>

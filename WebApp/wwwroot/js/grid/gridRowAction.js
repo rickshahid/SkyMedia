@@ -150,7 +150,7 @@ function SetRowEdit(gridId, rowData) {
     switch (gridId) {
         case "transforms":
             for (var i = 0; i < 4; i++) {
-                $("#presetType" + i).prop("checked", false);
+                $("#presetType" + i).prop("checked", false).change();
                 $("input[name=relativePriority" + i + "][value=Normal]").prop("checked", true);
                 $("#onError" + i).prop("checked", false);
             }
@@ -159,7 +159,7 @@ function SetRowEdit(gridId, rowData) {
                 var output = outputs[i];
                 var preset = output.preset;
                 var presetIndex = GetPresetIndex(preset);
-                $("#presetType" + presetIndex).prop("checked", true);
+                $("#presetType" + presetIndex).prop("checked", true).change();
                 $("input[name=relativePriority" + presetIndex + "][value=" + output.relativePriority + "]").prop("checked", true);
                 if (output.onError == "ContinueJob") {
                     $("#onError" + presetIndex).prop("checked", true);

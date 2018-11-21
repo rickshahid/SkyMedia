@@ -20,7 +20,7 @@ namespace AzureSkyMedia.PlatformServices
             return transformName;
         }
 
-        private StandardEncoderPreset GetThumbnailPreset(int? spriteColumns)
+        private StandardEncoderPreset GetThumbnailPreset(int? thumbnailSpriteColumns)
         {
             StandardEncoderPreset thumbnailPreset = new StandardEncoderPreset()
             {
@@ -106,7 +106,7 @@ namespace AzureSkyMedia.PlatformServices
             return CreateTransform(transformPreset);
         }
 
-        public Transform CreateTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs)
+        public Transform CreateTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, int? thumbnailSpriteColumns)
         {
             Transform transform = null;
             bool defaultName = string.IsNullOrEmpty(transformName);
@@ -124,7 +124,7 @@ namespace AzureSkyMedia.PlatformServices
                         break;
                     case MediaTransformPreset.ThumbnailImages:
                         transformName = GetTransformName(defaultName, transformName, transformOutput);
-                        StandardEncoderPreset thumbnailPreset = GetThumbnailPreset(null);
+                        StandardEncoderPreset thumbnailPreset = GetThumbnailPreset(thumbnailSpriteColumns);
                         transformOutputPreset = GetTransformOutput(thumbnailPreset, transformOutput);
                         transformOutputPresets.Add(transformOutputPreset);
                         break;
@@ -149,7 +149,7 @@ namespace AzureSkyMedia.PlatformServices
             return transform;
         }
 
-        public Transform CreateTransform(MediaTransformPreset transformPreset)
+        public Transform CreateTransform(MediaTransformPreset transformPreset, int? thumbnailSpriteColumns)
         {
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
             if (transformPreset.HasFlag(MediaTransformPreset.AdaptiveStreaming))
@@ -192,7 +192,12 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 transformOutputs.Add(transformOutput);
             }
-            return CreateTransform(null, null, transformOutputs.ToArray());
+            return CreateTransform(null, null, transformOutputs.ToArray(), thumbnailSpriteColumns);
+        }
+
+        public Transform CreateTransform(MediaTransformPreset transformPreset)
+        {
+            return CreateTransform(transformPreset, null);
         }
 
         public Transform[] CreateTransforms()

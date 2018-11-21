@@ -50,7 +50,8 @@ function CreateTransform() {
                 {
                     transformName: $("#name").val(),
                     transformDescription: $("#description").val(),
-                    transformOutputs: transformOutputs
+                    transformOutputs: transformOutputs,
+                    thumbnailSpriteColumns: $("#thumbnailSpriteColumns").val()
                 },
                 function (transform) {
                     SetCursor(false);

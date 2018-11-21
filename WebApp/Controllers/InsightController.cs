@@ -96,8 +96,54 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
+        public JsonResult Refresh(string[] insightIds)
+        {
+            try
+            {
+                JArray insights = new JArray();
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    foreach (string insightId in insightIds)
+                    {
+                        JObject insight = mediaClient.IndexerGetInsight(insightId);
+                        insights.Add(insight);
+                    }
+                }
+                return Json(insights);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
+        }
+
         public IActionResult Index()
         {
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                ViewData["indexerInsights"] = mediaClient.IndexerGetInsights();
+            }
+            return View();
+        }
+
+        public IActionResult Item(string insightId)
+        {
+            JArray insights = new JArray();
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            using (MediaClient mediaClient = new MediaClient(authToken))
+            {
+                JObject insight = mediaClient.IndexerGetInsight(insightId);
+                if (insight != null)
+                {
+                    insights.Add(insight);
+                }
+            }
+            ViewData["indexerInsights"] = insights;
             return View();
         }
     }

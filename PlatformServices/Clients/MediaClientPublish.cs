@@ -155,18 +155,14 @@ namespace AzureSkyMedia.PlatformServices
                         {
                             jobPublish = GetJobPublish(job);
                             jobPublish.UserNotification.JobOutputMessage = GetNotificationMessage(job, jobAccount, jobPublish);
-                            string streamingPolicyName = jobPublish.StreamingPolicyName;
-                            if (string.IsNullOrEmpty(streamingPolicyName))
+                            string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                            if (!string.IsNullOrEmpty(jobPublish.StreamingPolicyName))
                             {
-                                streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                                streamingPolicyName = jobPublish.StreamingPolicyName;
                             }
                             foreach (JobOutputAsset jobOutput in job.Outputs)
                             {
-                                StreamingLocator locator = mediaClient.GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, jobOutput.AssetName);
-                                if (locator == null)
-                                {
-                                    mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, jobPublish.ContentProtection);
-                                }
+                                mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, jobPublish.ContentProtection);
                             }
                         }
                     }

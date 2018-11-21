@@ -40,6 +40,20 @@ namespace AzureSkyMedia.PlatformServices
             return requestUrl;
         }
 
+        private void SetJobAccount(string insightId)
+        {
+            MediaJobAccount jobAccount = new MediaJobAccount()
+            {
+                JobName = insightId,
+                MediaAccount = MediaAccount
+            };
+            using (DatabaseClient databaseClient = new DatabaseClient())
+            {
+                string collectionId = Constant.Database.Collection.MediaJobAccount;
+                databaseClient.UpsertDocument(collectionId, jobAccount);
+            }
+        }
+
         public bool IndexerEnabled()
         {
             return !string.IsNullOrEmpty(_indexerAccountId);
@@ -106,6 +120,7 @@ namespace AzureSkyMedia.PlatformServices
                     insightId = insight["id"].ToString();
                 }
             }
+            SetJobAccount(insightId);
             return insightId;
         }
 
@@ -123,28 +138,24 @@ namespace AzureSkyMedia.PlatformServices
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Put, requestUrl);
                 HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
             }
+            SetJobAccount(insightId);
         }
 
-        public void IndexerDeleteVideo(string insightId, bool deleteIndex)
+        public void IndexerDeleteVideo(string insightId)
         {
             string relativePath = string.Concat("/videos/", insightId);
-            if (!deleteIndex)
-            {
-                relativePath = string.Concat(relativePath, "/sourceFile");
-            }
             string requestUrl = GetRequestUrl(relativePath, true, insightId);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);
                 HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
             }
-            if (deleteIndex)
+            using (DatabaseClient databaseClient = new DatabaseClient())
             {
-                using (DatabaseClient databaseClient = new DatabaseClient())
-                {
-                    string collectionId = Constant.Database.Collection.MediaContentInsight;
-                    databaseClient.DeleteDocument(collectionId, insightId);
-                }
+                string collectionId = Constant.Database.Collection.MediaJobAccount;
+                databaseClient.DeleteDocument(collectionId, insightId);
+                collectionId = Constant.Database.Collection.MediaContentInsight;
+                databaseClient.DeleteDocument(collectionId, insightId);
             }
         }
 
@@ -185,6 +196,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
                 index = webClient.GetResponse<JObject>(webRequest);
+                index["processingProgress"] = index["videos"][0]["processingProgress"];
             }
             return index;
         }

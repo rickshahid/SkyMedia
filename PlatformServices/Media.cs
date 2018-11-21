@@ -36,6 +36,34 @@ namespace AzureSkyMedia.PlatformServices
             return mediaInsight;
         }
 
+        private static MediaStream GetMediaStream(string authToken, MediaClient mediaClient, Asset asset, AssetFilter assetFilter,
+                                                  StreamingLocator locator, string playerUrl)
+        {
+            string streamId = assetFilter != null ? assetFilter.Id : asset.AssetId.ToString();
+            string streamName = assetFilter != null ? assetFilter.Name : locator.Name;
+            MediaClipType streamType = assetFilter != null ? MediaClipType.Filter : MediaClipType.Asset;
+            if (streamType == MediaClipType.Filter)
+            {
+                playerUrl = string.Concat(playerUrl, "(filter=", assetFilter.Name, ")");
+            }
+            MediaStream mediaStream = new MediaStream()
+            {
+                Id = streamId,
+                Name = streamName,
+                Type = streamType,
+                Description = asset.Description,
+                Source = new StreamSource()
+                {
+                    Url = playerUrl,
+                    ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
+                },
+                TextTracks = Track.GetTextTracks(mediaClient, asset),
+                ThumbnailUrls = GetThumbnailUrls(mediaClient, locator),
+                ContentInsight = GetMediaInsight(mediaClient, asset)
+            };
+            return mediaStream;
+        }
+
         private static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, StreamingLocator locator)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
@@ -43,41 +71,12 @@ namespace AzureSkyMedia.PlatformServices
             if (!string.IsNullOrEmpty(playerUrl))
             {
                 Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
-                MediaStream mediaStream = new MediaStream()
-                {
-                    Id = asset.AssetId.ToString(),
-                    Name = locator.Name,
-                    Type = MediaClipType.Asset,
-                    Description = asset.Description,
-                    Source = new StreamSource()
-                    {
-                        Url = playerUrl,
-                        ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
-                    },
-                    TextTracks = Track.GetTextTracks(mediaClient, asset),
-                    ThumbnailUrls = GetThumbnailUrls(mediaClient, locator),
-                    ContentInsight = GetMediaInsight(mediaClient, asset)
-                };
+                MediaStream mediaStream = GetMediaStream(authToken, mediaClient, asset, null, locator, playerUrl);
                 mediaStreams.Add(mediaStream);
-
                 AssetFilter[] assetFilters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, locator.AssetName);
                 foreach (AssetFilter assetFilter in assetFilters)
                 {
-                    MediaStream mediaFilter = new MediaStream()
-                    {
-                        Id = assetFilter.Id,
-                        Name = assetFilter.Name,
-                        Type = MediaClipType.Filter,
-                        Description = asset.Description,
-                        Source = new StreamSource()
-                        {
-                            Url = string.Concat(playerUrl, "(filter=", assetFilter.Name, ")"),
-                            ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
-                        },
-                        TextTracks = Track.GetTextTracks(mediaClient, asset),
-                        ThumbnailUrls = GetThumbnailUrls(mediaClient, locator),
-                        ContentInsight = GetMediaInsight(mediaClient, asset)
-                    };
+                    MediaStream mediaFilter = GetMediaStream(authToken, mediaClient, asset, assetFilter, locator, playerUrl);
                     mediaStreams.Add(mediaFilter);
                 }
             }

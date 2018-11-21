@@ -46,7 +46,7 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (JToken insight in insights)
                 {
                     string insightId = insight["id"].ToString();
-                    mediaClient.IndexerDeleteVideo(insightId, true);
+                    mediaClient.IndexerDeleteVideo(insightId);
                 }
             }
         }
@@ -79,7 +79,7 @@ namespace AzureSkyMedia.PlatformServices
             entityCounts.Add(new string[] { "Filters (Asset)", filtersAsset.ToString(Constant.TextFormatter.NumericLong), "/account/filtersAsset" });
             entityCounts.Add(new string[] { "Live Events", liveEvents.ToString(Constant.TextFormatter.NumericLong), "/account/liveEvents" });
             entityCounts.Add(new string[] { "Live Event Outputs", liveEventOutputs.ToString(Constant.TextFormatter.NumericLong), "/account/liveEventOutputs" });
-            entityCounts.Add(new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/account/indexerInsights" });
+            entityCounts.Add(new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/insight" });
 
             return entityCounts.ToArray();
         }

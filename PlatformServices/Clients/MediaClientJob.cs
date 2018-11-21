@@ -137,7 +137,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 JobName = job.Name,
                 TransformName = transformName,
-                MediaAccount = MediaAccount,
+                MediaAccount = MediaAccount
             };
             using (DatabaseClient databaseClient = new DatabaseClient())
             {

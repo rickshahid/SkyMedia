@@ -1,10 +1,24 @@
-﻿@section head {
+﻿@{
+    string gridId = "indexerInsights";
+}
+
+@section head {
     <script type="text/javascript">
         $(function () {
+            _childGridType = null;
+            _childPropertyName = null;
+            var gridId = "@gridId";
+            var rows = @Json.Serialize(ViewData[gridId]);
+            LoadGrid(gridId, rows);
         })
     </script>
 }
 
 @section title {
-    Media Insight
+    Video Indexer Insights
 }
+
+<div class="grid">
+    <table id="@gridId"></table>
+    <div id="gridPager"></div>
+</div>

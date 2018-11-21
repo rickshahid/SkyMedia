@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Azure.Management.Media.Models;
 
-using Newtonsoft.Json.Linq;
-
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -92,7 +90,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, entityName, parentName);
                             break;
                         case "indexerInsights":
-                            mediaClient.IndexerDeleteVideo(entityName, true);
+                            mediaClient.IndexerDeleteVideo(entityName);
                             break;
                     }
                 }
@@ -224,26 +222,6 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
             }
-            return View();
-        }
-
-        public IActionResult IndexerInsights(string insightId)
-        {
-            JArray insights;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                if (!string.IsNullOrEmpty(insightId))
-                {
-                    JObject insight = mediaClient.IndexerGetInsight(insightId);
-                    insights = new JArray(insight);
-                }
-                else
-                {
-                    insights = mediaClient.IndexerGetInsights();
-                }
-            }
-            ViewData["indexerInsights"] = insights;
             return View();
         }
 

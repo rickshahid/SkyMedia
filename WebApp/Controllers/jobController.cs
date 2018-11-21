@@ -232,12 +232,17 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Item(string transformName, string jobName)
         {
+            List<Job> jobs = new List<Job>();
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
-                ViewData["transformJobs"] = job == null ? new Job[] { } : new Job[] { job };
+                if (job != null)
+                {
+                    jobs.Add(job);
+                }
             }
+            ViewData["transformJobs"] = jobs.ToArray();
             return View();
         }
     }
