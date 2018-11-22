@@ -4,6 +4,9 @@ using System.Xml;
 using System.Text;
 using System.Net.Http;
 
+using Microsoft.Rest;
+using Microsoft.Azure.Management.Media.Models;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -118,7 +121,10 @@ namespace AzureSkyMedia.PlatformServices
                 string responseContent = webResponse.Content.ReadAsStringAsync().Result;
                 if (!webResponse.IsSuccessStatusCode)
                 {
-                    throw new HttpRequestException(responseContent);
+                    throw new ApiErrorException()
+                    {
+                        Response = new HttpResponseMessageWrapper(webResponse, responseContent)
+                    };
                 }
                 else
                 {

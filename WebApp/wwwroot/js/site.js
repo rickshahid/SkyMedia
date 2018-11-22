@@ -25,8 +25,8 @@ function InitializeApp(appName) {
     CreateTipTop("mediaTransform", "Transform");
     CreateTipTop("mediaJob", "Job");
     CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
-    CreateTipTop("mediaInsight", "Insight");
     CreateTipTop("mediaLive", "Live");
+    CreateTipTop("mediaInsight", "Insight");
     CreateTipTop("mediaEdit", "Edit");
     CreateTipTop("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
@@ -35,10 +35,17 @@ function InitializeApp(appName) {
         var message = error;
         if (xhr.responseJSON != null) {
             var ex = JSON.parse(xhr.responseJSON);
-            title = title + " (" + ex.error.code + ")";
-            message = ex.error.message;
+            if (ex.ErrorType != null) {
+                title = title + " (" + ex.ErrorType + ")";
+                message = ex.Message;
+            } else {
+                title = title + " (" + ex.error.code + ")";
+                message = ex.error.message;
+            }
         }
-        DisplayMessage(title, message);
+        if (message != null) {
+            DisplayMessage(title, message);
+        }
     });
     $.ajaxSetup({
         cache: false

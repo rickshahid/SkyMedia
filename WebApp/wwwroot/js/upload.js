@@ -48,11 +48,11 @@ function CreateWorkflow(files) {
                 var entityType = entity["properties.state"] == null ? "Asset" : "Job";
                 var entityItemRef, insightId;
                 if (entityType == "Asset") {
-                    entityItemRef = "/asset/item?assetName=" + entity.name;
+                    entityItemRef = "/asset?assetName=" + entity.name;
                     insightId = entity["properties.alternateId"];
                 } else {
                     var transformName = GetParentName(entity);
-                    entityItemRef = "/job/item?transformName=" + transformName + "&jobName=" + entity.name;
+                    entityItemRef = "/job?transformName=" + transformName + "&jobName=" + entity.name;
                     insightId = entity["properties.correlationData"]["insightId"];
                 }
                 if (message != "") {
@@ -61,13 +61,13 @@ function CreateWorkflow(files) {
                 message = message + "<a class='siteLink' target='_blank' href='" + entityItemRef + "'>";
                 message = message + "Media " + entityType + " Created - " + entity.name + "</a>";
                 if (insightId != null) {
-                    var insightRef = "/insight/item?insightId=" + insightId;
+                    var insightRef = "/insight?insightId=" + insightId;
                     var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
                     message = message + "<br><br><a class='siteLink' target='_blank' href='" + insightRef + "'>";
                     message = message + insightType + " Indexer Insight - " + insightId + "</a>";
                 }
             }
-            $("#mediaUploadEntities").html(message);
+            $("#mediaEntitiesCreated").html(message);
         }
     );
 }

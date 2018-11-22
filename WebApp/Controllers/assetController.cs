@@ -202,34 +202,29 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string assetName)
         {
             List<MediaAsset> mediaAssets = new List<MediaAsset>();
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                IPage<Asset> assets = mediaClient.GetEntities<Asset>(MediaEntity.Asset);
-                foreach (Asset asset in assets)
+                if (!string.IsNullOrEmpty(assetName))
                 {
-                    MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
-                    mediaAssets.Add(mediaAsset);
+                    Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
+                    if (asset != null)
+                    {
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
+                        mediaAssets.Add(mediaAsset);
+                    }
                 }
-            }
-            ViewData["assets"] = mediaAssets.ToArray();
-            return View();
-        }
-
-        public IActionResult Item(string assetName)
-        {
-            List<MediaAsset> mediaAssets = new List<MediaAsset>();
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
-                if (asset != null)
+                else
                 {
-                    MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
-                    mediaAssets.Add(mediaAsset);
+                    IPage<Asset> assets = mediaClient.GetEntities<Asset>(MediaEntity.Asset);
+                    foreach (Asset asset in assets)
+                    {
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
+                        mediaAssets.Add(mediaAsset);
+                    }
                 }
             }
             ViewData["assets"] = mediaAssets.ToArray();

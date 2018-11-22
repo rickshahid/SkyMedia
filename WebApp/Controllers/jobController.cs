@@ -218,31 +218,28 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string transformName, string jobName)
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["transformJobs"] = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
+                Job[] jobs = new Job[] { };
+                if (!string.IsNullOrEmpty(jobName))
+                {
+                    Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
+                    if (job != null)
+                    {
+                        jobs = new Job[] { job };
+                    }
+                }
+                else
+                {
+                    jobs = mediaClient.GetAllEntities<Job, Transform>(MediaEntity.TransformJob, MediaEntity.Transform);
+                }
+                ViewData["transformJobs"] = jobs;
                 ViewData["transforms"] = GetTransforms(mediaClient);
                 ViewData["streamingPolicies"] = GetStreamingPolicies(mediaClient);
             }
-            return View();
-        }
-
-        public IActionResult Item(string transformName, string jobName)
-        {
-            List<Job> jobs = new List<Job>();
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            using (MediaClient mediaClient = new MediaClient(authToken))
-            {
-                Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
-                if (job != null)
-                {
-                    jobs.Add(job);
-                }
-            }
-            ViewData["transformJobs"] = jobs.ToArray();
             return View();
         }
     }

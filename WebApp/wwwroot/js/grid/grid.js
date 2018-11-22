@@ -112,14 +112,28 @@ function LoadSubGrid(parentRowId, parentRowKey) {
     });
     CreateTips(childRows);
 }
+function RefreshGrid(gridId, gridRows) {
+    SetParentRowIds(gridId, gridRows);
+    for (var i = 0; i < gridRows.length; i++) {
+        var gridRow = gridRows[i];
+        $("#" + gridId).setRowData(gridRow.id, gridRow);
+    }
+    $("#" + gridId).jqGrid("setGridParam", {
+        datatype: "local",
+        data: gridRows
+    });
+    OnGridLoad(null, gridId, gridRows);
+}
 function RefreshJobs(gridId) {
     var transformNames = new Array();
     var jobNames = new Array();
     var rows = $("#" + gridId).getRowData();
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
-        transformNames.push(row.parentName);
-        jobNames.push(row.name);
+        if (row["properties.state"] == "Queued" || row["properties.state"] == "Scheduled" || row["properties.state"] == "Processing") {
+            transformNames.push(row.parentName);
+            jobNames.push(row.name);
+        }
     }
     if (jobNames.length > 0) {
         $.post("/job/refresh",
@@ -128,12 +142,7 @@ function RefreshJobs(gridId) {
                 jobNames: jobNames
             },
             function (jobs) {
-                SetParentRowIds(gridId, jobs);
-                $("#" + gridId).jqGrid("setGridParam", {
-                    datatype: "local",
-                    data: jobs
-                });
-                OnGridLoad(null, gridId, jobs);
+                RefreshGrid(gridId, jobs);
             }
         );
     }
@@ -143,7 +152,9 @@ function RefreshInsights(gridId) {
     var rows = $("#" + gridId).getRowData();
     for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
-        insightIds.push(row.id);
+        if (row["state"] == "Processing") {
+            insightIds.push(row.id);
+        }
     }
     if (insightIds.length > 0) {
         $.post("/insight/refresh",
@@ -151,12 +162,7 @@ function RefreshInsights(gridId) {
                 insightIds: insightIds
             },
             function (insights) {
-                SetParentRowIds(gridId, insights);
-                for (var i = 0; i < insights.length; i++) {
-                    var insight = insights[i];
-                    $("#" + gridId).setRowData(insight.id, insight);
-                }
-                OnGridLoad(null, gridId, insights);
+                RefreshGrid(gridId, insights);
             }
         );
     }

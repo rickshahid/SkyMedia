@@ -42,8 +42,8 @@ function CreateJob() {
             SetTipVisible("inputAssetName", true);
         }
     } else {
-        var title = "Confirm Create Job";
-        var message = "Are you sure you want to create a new job?";
+        var title = "Confirm Create Media Job";
+        var message = "Are you sure you want to create a new media job?";
         var onConfirm = function () {
             SetCursor(true);
             $.post("/job/create",
@@ -60,10 +60,15 @@ function CreateJob() {
                 },
                 function (job) {
                     SetCursor(false);
-                    window.location = window.location.href;
+                    var buttons = {
+                        OK: function() {
+                            window.location = "/job?transformName=" + transformName + "&jobName=" + job.name;
+                            $(this).dialog("close");
+                        }
+                    };
+                    DisplayMessage("Media Job Created", job.name, buttons);
                 }
             );
-            $(this).dialog("close");
         };
         ConfirmMessage(title, message, onConfirm);
     }

@@ -213,5 +213,57 @@ namespace AzureSkyMedia.PlatformServices
             string relativePath = string.Concat("/videos/", insightId, "/captions");
             return GetRequestUrl(relativePath, true, insightId);
         }
+
+        public JArray IndexerGetBrands()
+        {
+            JArray brands;
+            string relativePath = "/customization/brands";
+            string requestUrl = GetRequestUrl(relativePath, true, null);
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            {
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                brands = webClient.GetResponse<JArray>(webRequest);
+            }
+            return brands;
+        }
+
+        public JObject IndexerGetBrandSettings()
+        {
+            JObject brandSettings;
+            string relativePath = "/customization/brandsModelSettings";
+            string requestUrl = GetRequestUrl(relativePath, true, null);
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            {
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                brandSettings = webClient.GetResponse<JObject>(webRequest);
+            }
+            return brandSettings;
+        }
+
+        public JArray IndexerGetLanguages()
+        {
+            JArray languages;
+            string relativePath = "/customization/language";
+            string requestUrl = GetRequestUrl(relativePath, true, null);
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            {
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                languages = webClient.GetResponse<JArray>(webRequest);
+            }
+            return languages;
+        }
+
+        public JArray IndexerGetPersons()
+        {
+            JArray persons;
+            string relativePath = "/customization/personModels";
+            string requestUrl = GetRequestUrl(relativePath, true, null);
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            {
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                persons = webClient.GetResponse<JArray>(webRequest);
+            }
+            return persons;
+        }
     }
 }
