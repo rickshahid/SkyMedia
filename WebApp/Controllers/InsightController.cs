@@ -104,7 +104,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     {
                         Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, assetName);
                         StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
-                        CloudBlockBlob fileBlob = blobClient.GetBlockBlob(asset.Container, fileName);
+                        CloudBlockBlob fileBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
                         using (Stream fileStream = fileBlob.OpenReadAsync().Result)
                         {
                             StreamReader fileReader = new StreamReader(fileStream);

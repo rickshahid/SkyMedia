@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
@@ -37,13 +38,14 @@ namespace AzureSkyMedia.PlatformServices
             return _media.LiveEvents.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, liveEvent, autoStart);
         }
 
-        public LiveOutput CreateLiveEventOutput(string eventName, string outputName, string assetName)
+        public LiveOutput CreateLiveEventOutput(string eventName, string outputName, string assetName, int dvrMinutes)
         {
             CreateAsset(null, assetName);
             CreateLocator(assetName, assetName, PredefinedStreamingPolicy.ClearStreamingOnly, null);
             LiveOutput eventOutput = new LiveOutput()
             {
-                AssetName = assetName
+                AssetName = assetName,
+                ArchiveWindowLength = new TimeSpan(0, dvrMinutes, 0)
             };
             return _media.LiveOutputs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, outputName, eventOutput);
         }
@@ -81,6 +83,11 @@ namespace AzureSkyMedia.PlatformServices
         public void ResetLiveEvent(string eventName)
         {
             _media.LiveEvents.Reset(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName);
+        }
+
+        public void InsertLiveEventSignal(string eventName, int signalId, int durationSeconds)
+        {
+            // TODO: Implement live event ad signaling
         }
     }
 }

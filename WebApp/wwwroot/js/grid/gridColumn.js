@@ -408,6 +408,23 @@ function GetChildColumns(gridType) {
                 }
             ];
             break;
+        case "liveEventOutputs":
+            columns = [
+                {
+                    formatter: FormatName,
+                    label: "Live Event Output Name",
+                    name: "name",
+                    align: "center",
+                    width: nameWidth
+                },
+                {
+                    label: "DVR Length",
+                    name: "properties.archiveWindowLength",
+                    align: "center",
+                    width: typeWidth
+                }
+            ];
+           break;
     }
     return columns;
 }

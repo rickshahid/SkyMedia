@@ -17,10 +17,10 @@ namespace AzureSkyMedia.PlatformServices
             StreamingLocators = mediaClient.GetStreamingUrls(asset.Name);
         }
 
-        internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath)
+        internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath, out MediaFile[] assetFiles)
         {
             string assetName = null;
-            MediaFile[] assetFiles = GetAssetFiles(blobClient, containerName, directoryPath);
+            assetFiles = GetAssetFiles(blobClient, containerName, directoryPath);
             if (assetFiles.Length == 1)
             {
                 assetName = assetFiles[0].Name;
@@ -62,7 +62,7 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (IListBlobItem blobItem in blobList.Results)
                 {
                     string fileName = Path.GetFileName(blobItem.Uri.ToString());
-                    string fileSize = blobClient.GetBlobSize(containerName, fileName, out long byteCount, out string contentType);
+                    string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);
                     MediaFile file = new MediaFile()
                     {
                         Name = fileName,

@@ -49,7 +49,7 @@ namespace AzureSkyMedia.FunctionApp
                             {
                                 _databaseClient.DeleteDocument(collectionId, ingestManifest.Name);
                                 string containerName = Constant.Storage.BlobContainer.MediaServices;
-                                CloudBlockBlob manifestBlob = _blobClient.GetBlockBlob(containerName, ingestManifest.Name);
+                                CloudBlockBlob manifestBlob = _blobClient.GetBlockBlob(containerName, null, ingestManifest.Name);
                                 blobStream = manifestBlob.OpenReadAsync().Result;
                                 ProcessManifest(blobStream, ingestManifest.Name, logger);
                             }
@@ -91,7 +91,7 @@ namespace AzureSkyMedia.FunctionApp
             foreach (string fileName in ingestManifest.FileNames)
             {
                 string containerName = Constant.Storage.BlobContainer.MediaServices;
-                CloudBlockBlob blobFile = _blobClient.GetBlockBlob(containerName, fileName);
+                CloudBlockBlob blobFile = _blobClient.GetBlockBlob(containerName, null, fileName);
                 if (!blobFile.ExistsAsync().Result)
                 {
                     missingFiles.Add(fileName);

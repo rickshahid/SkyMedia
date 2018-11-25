@@ -87,9 +87,9 @@ namespace AzureSkyMedia.PlatformServices
             return blob;
         }
 
-        public CloudBlockBlob GetBlockBlob(string containerName, string fileName)
+        public CloudBlockBlob GetBlockBlob(string containerName, string directoryPath, string fileName)
         {
-            return GetBlockBlob(containerName, string.Empty, fileName, false);
+            return GetBlockBlob(containerName, directoryPath, fileName, false);
         }
 
         public CloudAppendBlob GetAppendBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
@@ -117,9 +117,9 @@ namespace AzureSkyMedia.PlatformServices
             return GetAppendBlob(containerName, string.Empty, fileName, false);
         }
 
-        public string GetBlobSize(string containerName, string fileName, out long byteCount, out string contentType)
+        public string GetBlobSize(string containerName, string directoryPath, string fileName, out long byteCount, out string contentType)
         {
-            CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName, true);
+            CloudBlockBlob blob = GetBlockBlob(containerName, directoryPath, fileName, true);
             byteCount = blob.Properties.Length;
             contentType = blob.Properties.ContentType;
             return MapByteCount(byteCount);
@@ -127,7 +127,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string GetDownloadUrl(string containerName, string fileName, bool readWrite)
         {
-            CloudBlockBlob blockBlob = GetBlockBlob(containerName, fileName);
+            CloudBlockBlob blockBlob = GetBlockBlob(containerName, null, fileName);
             string settingKey = Constant.AppSettingKey.StorageSharedAccessMinutes;
             string sharedAccessMinutes = AppSetting.GetValue(settingKey);
             SharedAccessBlobPolicy accessPolicy = new SharedAccessBlobPolicy()
@@ -148,7 +148,7 @@ namespace AzureSkyMedia.PlatformServices
         public void UploadBlock(Stream blockStream, string containerName, string fileName, int blockIndex, int blocksCount, string contentType)
         {
             string blockId = Convert.ToBase64String(BitConverter.GetBytes(blockIndex));
-            CloudBlockBlob blob = GetBlockBlob(containerName, fileName);
+            CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName);
             blob.PutBlockAsync(blockId, blockStream, null).Wait();
             if (blockIndex == blocksCount - 1)
             {

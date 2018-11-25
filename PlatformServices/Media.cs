@@ -124,6 +124,16 @@ namespace AzureSkyMedia.PlatformServices
             settingKey3 = Constant.AppSettingKey.MediaStream4TextTracks;
             AddSampleStream(sampleStreams, settingKey1, settingKey2, settingKey3);
 
+            settingKey1 = Constant.AppSettingKey.MediaStream5Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream5SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream5TextTracks;
+            AddSampleStream(sampleStreams, settingKey1, settingKey2, settingKey3);
+
+            settingKey1 = Constant.AppSettingKey.MediaStream6Name;
+            settingKey2 = Constant.AppSettingKey.MediaStream6SourceUrl;
+            settingKey3 = Constant.AppSettingKey.MediaStream6TextTracks;
+            AddSampleStream(sampleStreams, settingKey1, settingKey2, settingKey3);
+
             return sampleStreams.ToArray();
         }
 
@@ -142,10 +152,10 @@ namespace AzureSkyMedia.PlatformServices
             return accountStreams.ToArray();
         }
 
-        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, int streamTunerPageSize, out int streamSkipCount, out bool streamLastPage)
+        public static MediaStream[] GetAccountStreams(string authToken, MediaClient mediaClient, int streamNumber, int streamTunerPageSize, out int streamSkipCount, out bool streamTunerLastPage)
         {
             streamSkipCount = 0;
-            streamLastPage = false;
+            streamTunerLastPage = true;
             List<MediaStream> accountStreams = new List<MediaStream>();
             IEnumerable<StreamingLocator> locators = mediaClient.GetLocators();
             int locatorsCount = locators.Count();
@@ -170,9 +180,9 @@ namespace AzureSkyMedia.PlatformServices
                         }
                     }
                 }
-                if (locatorsCount - streamSkipCount <= streamTunerPageSize)
+                if (locatorsCount >= streamSkipCount + streamTunerPageSize)
                 {
-                    streamLastPage = true;
+                    streamTunerLastPage = false;
                 }
             }
             return accountStreams.ToArray();

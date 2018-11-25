@@ -5,9 +5,9 @@
     MediaStream[] mediaStreams = (MediaStream[])ViewData["mediaStreams"];
     int streamNumber = (int)ViewData["streamNumber"];
 
-    int streamTunerPageSize = (int)ViewData["streamTunerPageSize"];
     int streamSkipCount = (int)ViewData["streamSkipCount"];
-    int streamLastPage = (int)ViewData["streamLastPage"];
+    int streamTunerPageSize = (int)ViewData["streamTunerPageSize"];
+    bool streamTunerLastPage = (bool)ViewData["streamTunerLastPage"];
 
     string ampVersion = ViewData["mediaPlayerVersion"].ToString();
     string ampSkin = ViewData["mediaPlayerSkin"].ToString();
@@ -31,36 +31,13 @@
     <script type="text/javascript" src="~/js/home.js"></script>
     <script type="text/javascript">
         var _streamTunerPageSize = @streamTunerPageSize;
-        var _streamLastPage = @streamLastPage == 1;
+        var _streamTunerLastPage = @streamTunerLastPage.ToString().ToLower();
         $(function () {
             _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", false, false);
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
-            _mediaPlayer.ready(function () {
-                this.videobreakdown({
-                    syncTranscript: true,
-                    syncLanguage: true
-                });
-            });
-            _mediaPlayer.addEventListener(amp.eventName.loadeddata, function () {
-                $("#mediaStreamLeft").prop("disabled", false);
-                $("#mediaStreamRight").prop("disabled", false);
-                $("#streamTuner").slider("option", "disabled", false);
-            });
-            _mediaPlayer.addEventListener(amp.eventName.play, function () {
-                var streamUrl = _mediaPlayer.currentSrc();
-                streamUrl = streamUrl.replace("http:", "");
-                streamUrl = streamUrl.split("/");
-                for (var i = streamUrl.length - 1; i > streamUrl.length - 5; i--) {
-                    streamUrl[i] = streamUrl[i] + "<br>";
-                }
-                streamUrl = streamUrl.join("/");
-                $("#streamUrl").html(streamUrl);
-                if ("@authToken" != "") {
-                    var controlBar = document.getElementsByClassName("amp-controlbaricons-right")[0];
-                    SetPlayerControls(controlBar, "@storageCdnUrl");
-                }
-            });
+            CreateStreamTuner();
+            SetPlayerEvents(_mediaPlayer, "@authToken", "@storageCdnUrl", false);
             SetMediaStream(false, false);
             if ("@userMessage" != "") {
                 DisplayMessage("User Message", "@userMessage");
@@ -84,7 +61,7 @@
     </tr>
 </table>
 
-<partial name="MediaModules" model='new StreamTuner { StreamCount = mediaStreams.Length, StreamSkipCount = streamSkipCount }' />
+<partial name="MediaModules" model='new StreamTuner { StreamSkipCount = streamSkipCount, StreamCount = mediaStreams.Length, StreamLastPage = streamTunerLastPage }' />
 
 <div id="streamName" class="streamName"></div>
 <div id="streamUrl" class="streamUrl"></div>

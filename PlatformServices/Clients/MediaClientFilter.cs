@@ -5,6 +5,13 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private string GetAssetName(string assetId)
+        {
+            string queryFilter = string.Concat("properties/assetId eq ", assetId);
+            Asset[] assets = GetAllEntities<Asset>(MediaEntity.Asset, queryFilter);
+            return assets.Length != 1 ? null : assets[0].Name;
+        }
+
         private FilterTrackSelection[] GetTrackSelections(FilterTrackPropertyType trackType, string trackValue)
         {
             FilterTrackPropertyCondition trackCondition = new FilterTrackPropertyCondition()

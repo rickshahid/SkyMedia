@@ -49,13 +49,11 @@ function OnGridLoad(gridData, gridId, gridRows) {
         }
         for (var i = 0; i < gridRows.length; i++) {
             var gridRow = gridRows[i];
-            if (gridRow["properties.state"] == "Processing") {
-                if (gridData != null) {
-                    $(this).expandSubGridRow(gridRow.id);
-                } else {
-                    $("#" + gridId).collapseSubGridRow(gridRow.id);
-                    $("#" + gridId).expandSubGridRow(gridRow.id);
-                }
+            if (gridData != null) {
+                $(this).expandSubGridRow(gridRow.id);
+            } else {
+                $("#" + gridId).collapseSubGridRow(gridRow.id);
+                $("#" + gridId).expandSubGridRow(gridRow.id);
             }
         }
     }

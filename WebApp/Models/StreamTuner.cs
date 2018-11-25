@@ -2,8 +2,10 @@
 {
     public class StreamTuner
     {
+        public int StreamSkipCount { get; set; }
+
         public int StreamCount { get; set; }
 
-        public int StreamSkipCount { get; set; }
+        public bool StreamLastPage { get; set; }
     }
 }

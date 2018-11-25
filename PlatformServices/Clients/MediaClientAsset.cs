@@ -11,12 +11,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        // Remove this workaround when fixed in v3 API
-        private void SetContainer(Asset asset)
-        {
-            asset.Container = string.Concat("asset-", asset.AssetId);
-        }
-
         private Asset CreateAsset(string storageAccount, string assetName, string assetDescription, string assetAlternateId)
         {
             Asset asset = new Asset(name: assetName)
@@ -26,7 +20,7 @@ namespace AzureSkyMedia.PlatformServices
                 AlternateId = assetAlternateId
             };
             asset = _media.Assets.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, asset.Name, asset);
-            SetContainer(asset);
+            asset.Container = string.Concat(Constant.Media.Asset.ContainerPrefix, asset.AssetId);
             return asset;
         }
 
@@ -46,7 +40,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (string fileName in fileNames)
             {
                 string sourceUrl = sourceBlobClient.GetDownloadUrl(sourceContainer, fileName, false);
-                CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, fileName);
+                CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, null, fileName);
                 Task copyTask = assetBlob.StartCopyAsync(new Uri(sourceUrl));
                 copyTasks.Add(copyTask);
             }
@@ -57,13 +51,6 @@ namespace AzureSkyMedia.PlatformServices
         public Asset CreateAsset(StorageBlobClient sourceBlobClient, StorageBlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string fileName)
         {
             return CreateAsset(sourceBlobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, new string[] { fileName });
-        }
-
-        public string GetAssetName(string assetId)
-        {
-            string queryFilter = string.Concat("properties/assetId eq ", assetId);
-            Asset[] assets = GetAllEntities<Asset>(MediaEntity.Asset, queryFilter);
-            return assets.Length != 1 ? null : assets[0].Name;
         }
     }
 }

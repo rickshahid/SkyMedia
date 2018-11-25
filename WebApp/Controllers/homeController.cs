@@ -92,7 +92,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             int streamTunerPageSize = int.Parse(tunerPageSize);
 
             int streamSkipCount = 0;
-            bool streamLastPage = false;
+            bool streamTunerLastPage = false;
 
             try
             {
@@ -110,7 +110,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 if (string.IsNullOrEmpty(authToken))
                 {
                     mediaStreams = Media.GetSampleStreams();
-                    streamLastPage = true;
+                    streamTunerLastPage = true;
                 }
                 else
                 {
@@ -122,7 +122,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                         else
                         {
-                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, streamTunerPageSize, out streamSkipCount, out streamLastPage);
+                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, streamTunerPageSize, out streamSkipCount, out streamTunerLastPage);
                         }
                     }
                 }
@@ -139,9 +139,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["mediaStreams"] = mediaStreams;
             ViewData["streamNumber"] = streamNumber;
 
-            ViewData["streamTunerPageSize"] = streamTunerPageSize;
             ViewData["streamSkipCount"] = streamSkipCount;
-            ViewData["streamLastPage"] = streamLastPage ? 1 : 0;
+            ViewData["streamTunerPageSize"] = streamTunerPageSize;
+            ViewData["streamTunerLastPage"] = streamTunerLastPage;
 
             ViewData["userMessage"] = userMessage;
 

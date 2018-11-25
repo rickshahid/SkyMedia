@@ -83,6 +83,14 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream4SourceUrl = "Media.Stream4.SourceUrl";
             public const string MediaStream4TextTracks = "Media.Stream4.TextTracks";
 
+            public const string MediaStream5Name = "Media.Stream5.Name";
+            public const string MediaStream5SourceUrl = "Media.Stream5.SourceUrl";
+            public const string MediaStream5TextTracks = "Media.Stream5.TextTracks";
+
+            public const string MediaStream6Name = "Media.Stream6.Name";
+            public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
+            public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
+
             public const string MediaPublishJobUrl = "Media.Publish.JobUrl";
 
             public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
@@ -209,6 +217,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string NameDelimiter = " - ";
                 public const string SingleBitrate = "SBR";
+                public const string ContainerPrefix = "asset-";
             }
 
             public struct Transform

@@ -207,11 +207,18 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult LiveEvents()
         {
+            List<MediaLiveEvent> mediaLiveEvents = new List<MediaLiveEvent>();
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["liveEvents"] = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
+                LiveEvent[] liveEvents = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
+                foreach (LiveEvent liveEvent in liveEvents)
+                {
+                    MediaLiveEvent mediaLiveEvent = new MediaLiveEvent(mediaClient, liveEvent);
+                    mediaLiveEvents.Add(mediaLiveEvent);
+                }
             }
+            ViewData["liveEvents"] = mediaLiveEvents.ToArray();
             return View();
         }
 

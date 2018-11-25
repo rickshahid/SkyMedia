@@ -51,8 +51,8 @@
             DisplayMessage(title, message, buttons);
         }
         $(function () {
-            _childGridType = null;
-            _childPropertyName = null;
+            _childGridType = "liveEventOutputs";
+            _childPropertyName = "outputs";
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);

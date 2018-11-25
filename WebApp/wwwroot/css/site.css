@@ -222,17 +222,14 @@ body {
 
 .ui-slider-handle {
     background: deepskyblue !important;
+    color: azure !important;
+    top: -11px !important;
     border-radius: 20px;
+    text-align: center;
 }
 
 .streamTuner {
-    width: 150px;
-}
-
-.streamTunerHandle {
-    color: azure !important;
-    top: -12px !important;
-    text-align: center;
+    width: 100px;
 }
 
 .streamNumber {
@@ -270,12 +267,16 @@ body {
     margin-top: 10px;
 }
 
+.streamUrl.liveEvent {
+    margin-top: 30px;
+}
+
 #mediaStreamLeft {
-    padding-left: 30px;
+    padding-left: 20px;
 }
 
 #mediaStreamRight {
-    padding-right: 30px;
+    padding-right: 20px;
 }
 
 .mediaServicesCompliance {

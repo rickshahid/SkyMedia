@@ -128,18 +128,16 @@ namespace AzureSkyMedia.WebApp.Controllers
                     StorageBlobClient assetBlobClient = new StorageBlobClient(mediaClient.MediaAccount, mediaClient.PrimaryStorageAccount);
                     for (int i = 1; i <= assetCount; i++)
                     {
-                        int assetId = i % 2 == 0 ? 2 : i % 2;
                         List<Task> uploadTasks = new List<Task>();
                         string containerName = Constant.Storage.BlobContainer.MediaServices;
-                        string directoryPath = string.Concat(assetType, "/", assetId.ToString());
-                        string assetName = MediaAsset.GetAssetName(sourceBlobClient, containerName, directoryPath);
+                        string directoryPath = assetType;
+                        string assetName = MediaAsset.GetAssetName(sourceBlobClient, containerName, directoryPath, out MediaFile[] sourceFiles);
                         assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, assetName);
                         Asset asset = mediaClient.CreateAsset(mediaClient.PrimaryStorageAccount, assetName);
-                        MediaFile[] sourceFiles = MediaAsset.GetAssetFiles(sourceBlobClient, containerName, directoryPath);
                         foreach (MediaFile sourceFile in sourceFiles)
                         {
-                            CloudBlockBlob sourceBlob = sourceBlobClient.GetBlockBlob(containerName, sourceFile.Name);
-                            CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, sourceFile.Name);
+                            CloudBlockBlob sourceBlob = sourceBlobClient.GetBlockBlob(containerName, directoryPath, sourceFile.Name);
+                            CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, null, sourceFile.Name);
                             Stream sourceStream = sourceBlob.OpenReadAsync().Result;
                             Task uploadTask = assetBlob.UploadFromStreamAsync(sourceStream);
                             uploadTasks.Add(uploadTask);

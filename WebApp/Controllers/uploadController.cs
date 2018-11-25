@@ -20,7 +20,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string containerName = Constant.Storage.BlobContainer.MediaServices;
             string assetName = Path.GetFileNameWithoutExtension(ingestManifest.JobInputFileUrl);
             string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.TextDelimiter.Manifest, assetName, Constant.Media.IngestManifest.FileExtension);
-            CloudBlockBlob manifest = blobClient.GetBlockBlob(containerName, fileName);
+            CloudBlockBlob manifest = blobClient.GetBlockBlob(containerName, null, fileName);
             manifest.Properties.ContentType = Constant.Media.ContentType.IngestManifest;
             manifest.UploadTextAsync(ingestManifestJson).Wait();
         }
@@ -59,7 +59,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             StorageBlobClient blobClient = new StorageBlobClient();
             string containerName = Constant.Storage.BlobContainer.MediaServices;
             string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.Media.IngestManifest.FileExtension);
-            CloudBlockBlob manifestFile = blobClient.GetBlockBlob(containerName, fileName);
+            CloudBlockBlob manifestFile = blobClient.GetBlockBlob(containerName, null, fileName);
             if (manifestFile.ExistsAsync().Result)
             {
                 MediaIngestManifest ingestManifest;

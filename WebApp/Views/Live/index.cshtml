@@ -3,6 +3,14 @@
 @{
     string ampVersion = ViewData["mediaPlayerVersion"].ToString();
     string ampSkin = ViewData["mediaPlayerSkin"].ToString();
+
+    string userId = ViewData["userId"] as string;
+    string authToken = ViewData["authToken"] as string;
+    string accountName = ViewData["accountName"] as string;
+    string storageCdnUrl = ViewData["storageCdnUrl"].ToString();
+
+    string liveEncoding = ViewData["liveEncoding"].ToString().ToLower();
+    string liveEventUrl = ViewData["liveEventUrl"].ToString();
 }
 
 @section head {
@@ -10,6 +18,25 @@
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript">
         $(function () {
+            var liveEventUrl = "@liveEventUrl";
+            if (liveEventUrl == "") {
+                var title = "Live Event";
+                var message = "A live event is currently not running.";
+                var buttons = {
+                    OK: function () {
+                        window.location = "/account/liveEvents";
+                    }
+                }
+                DisplayMessage(title, message, buttons);
+            } else {
+                var mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", true, @liveEncoding);
+                SetPlayerEvents(mediaPlayer, "@authToken", "@storageCdnUrl", @liveEncoding);
+                mediaPlayer.src(
+                    [{
+                        src: liveEventUrl
+                    }]
+                );
+            }
         })
     </script>
 }
@@ -19,3 +46,5 @@
 }
 
 <partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", PlayerSkin = ampSkin }' />
+
+<div id="streamUrl" class="streamUrl liveEvent"></div>
