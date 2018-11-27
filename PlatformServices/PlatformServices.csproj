@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.Bot.Builder" Version="4.1.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Identity.Client" Version="2.3.0-preview" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.2" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
 </Project>

@@ -69,6 +69,7 @@ function CreateJob() {
                     DisplayMessage("Media Job Created", job.name, buttons);
                 }
             );
+            $(this).dialog("close");
         };
         ConfirmMessage(title, message, onConfirm);
     }
@@ -77,8 +78,8 @@ function UpdateJob() {
     var transformName = $("#transforms").val();
     var jobName = $("#name").val();
     if (transformName != "" && jobName != "") {
-        var title = "Confirm Update Job";
-        var message = "Are you sure you want to update the current job?";
+        var title = "Confirm Media Job Update";
+        var message = "Are you sure you want to update the '" + jobName + "' job?";
         var onConfirm = function () {
             SetCursor(true);
             $.post("/job/update",
@@ -90,7 +91,13 @@ function UpdateJob() {
                 },
                 function (job) {
                     SetCursor(false);
-                    window.location = window.location.href;
+                    var buttons = {
+                        OK: function () {
+                            window.location = "/job?transformName=" + transformName + "&jobName=" + job.name;
+                            $(this).dialog("close");
+                        }
+                    };
+                    DisplayMessage("Media Job Updated", job.name, buttons);
                 }
             );
             $(this).dialog("close");

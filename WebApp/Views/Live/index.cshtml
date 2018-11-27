@@ -25,12 +25,13 @@
                 var buttons = {
                     OK: function () {
                         window.location = "/account/liveEvents";
+                        $(this).dialog("close");
                     }
                 }
                 DisplayMessage(title, message, buttons);
             } else {
                 var mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", true, @liveEncoding);
-                SetPlayerEvents(mediaPlayer, "@authToken", "@storageCdnUrl", @liveEncoding);
+                SetPlayerEvents(mediaPlayer, "@storageCdnUrl", @liveEncoding, false);
                 mediaPlayer.src(
                     [{
                         src: liveEventUrl

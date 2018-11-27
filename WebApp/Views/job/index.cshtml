@@ -35,7 +35,7 @@
             @Html.TextBox("name", null, new { @class = "mediaEntityName", placeholder = "[Media Job Name]" })
         </td>
         <td rowspan="3">
-            <div id="jobData" class="jobData"></div>
+            <div id="jobData" class="jsonData"></div>
         </td>
     </tr>
     <tr>
@@ -67,7 +67,7 @@
                         Streaming Policy
                     </td>
                     <td>
-                        @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect mediaJob" })
+                        @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect maxWidth" })
                     </td>
                 </tr>
                 <tr>

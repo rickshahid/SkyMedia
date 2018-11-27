@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Azure.Management.Media.Models;
 
-using Newtonsoft.Json.Linq;
-
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Controllers
@@ -31,7 +29,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return transforms.ToArray();
         }
 
-        private static SelectListItem[] GetStreamingPolicies(MediaClient mediaClient)
+        internal static SelectListItem[] GetStreamingPolicies(MediaClient mediaClient)
         {
             List<SelectListItem> policies = new List<SelectListItem>
             {
@@ -97,7 +95,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                         string[] assetDescriptions = new string[] { assetDescription };
                         string[] assetAlternateIds = new string[] { insightId };
-                        job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, JObject.Parse(jobData), inputFileUrl, inputAssetName, outputAssetMode, assetDescriptions, assetAlternateIds, streamingPolicyName);
+                        job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, assetDescriptions, assetAlternateIds, streamingPolicyName);
                     }
                 }
                 return Json(job);

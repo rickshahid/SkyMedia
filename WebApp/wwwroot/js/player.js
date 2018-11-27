@@ -36,9 +36,9 @@ function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, sp
     }
     return amp(playerId, playerOptions);
 }
-function SetPlayerEvents(mediaPlayer, authToken, storageCdnUrl, liveEncoding) {
+function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
     mediaPlayer.ready(function () {
-        if (authToken != "") {
+        if (homePage) {
             this.videobreakdown({
                 syncTranscript: true,
                 syncLanguage: true

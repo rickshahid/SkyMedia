@@ -1,0 +1,22 @@
+﻿.carouselContainer {
+    perspective: 2000px;
+    margin: 0px auto;
+    height: 225px;
+    width: 400px;
+}
+
+.carousel {
+    transform-style: preserve-3d;
+    transition: transform 1s;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 50px;
+}
+
+.carouselItem {
+    border: 1px solid deepskyblue;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}

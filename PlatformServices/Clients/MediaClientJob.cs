@@ -93,22 +93,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 mediaJob.Name = Guid.NewGuid().ToString();
             }
-
-            Dictionary<string, string> jobData = null;
-            if (mediaJob.Data != null)
-            {
-                jobData = new Dictionary<string, string>();
-                foreach (KeyValuePair<string, JToken> property in mediaJob.Data)
-                {
-                    string propertyData = property.Value.ToString();
-                    jobData.Add(property.Key, propertyData);
-                }
-            }
             Job job = new Job()
             {
                 Description = mediaJob.Description,
                 Priority = mediaJob.Priority,
-                CorrelationData = jobData,
+                CorrelationData = GetDataItems(mediaJob.Data),
                 Input = GetJobInput(mediaJob),
                 Outputs = GetJobOutputs(transformName, mediaJob)
             };
@@ -116,16 +105,16 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority,
-                             JObject jobData, string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode,
+                             string jobData, string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode,
                              string[] outputAssetDescriptions, string[] outputAssetAlternateIds, string streamingPolicyName)
         {
-            jobData = SetJobPublish(authToken, jobData, streamingPolicyName);
+            JObject jobPublish = GetJobPublish(authToken, jobData, streamingPolicyName);
             MediaJob mediaJob = new MediaJob()
             {
                 Name = jobName,
                 Description = jobDescription,
                 Priority = jobPriority,
-                Data = jobData,
+                Data = jobPublish,
                 InputFileUrl = inputFileUrl,
                 InputAssetName = inputAssetName,
                 OutputAssetMode = outputAssetMode,

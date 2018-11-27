@@ -13,18 +13,16 @@
 
 @section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/gallery.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript">
         var _maxStreams = @Constant.Media.Channel9.DefaultIngestVideoCount, _degreesDelta = 360 / _maxStreams, _currentsDegrees = 0, _currentIndex = 0;
-        function SetStreamInfo() {
+        function SetStreamName() {
             var streamName = "";
-            var streamDescription = "";
             if (_currentIndex < _mediaStreams.length) {
                 streamName = _mediaStreams[_currentIndex].name;
-                streamDescription = _mediaStreams[_currentIndex].description;
             }
             $("#streamName").html(streamName);
-            $("#streamDescription").html(streamDescription);
        }
         function RotateCarousel(forward) {
             if (forward) {
@@ -46,7 +44,7 @@
                 "-o-transform": "rotateY(" + _currentsDegrees + "deg)",
                 "transform": "rotateY(" + _currentsDegrees + "deg)"
             });
-            SetStreamInfo();
+            SetStreamName();
         }
         $(function () {
             $(".layoutPanel.side").hide();
@@ -63,7 +61,7 @@
                     SetPlayerContent(mediaPlayer, mediaStream);
                 }
             }
-            SetStreamInfo();
+            SetStreamName();
         })
     </script>
 }
@@ -86,8 +84,6 @@
 </div>
 
 <div id="streamName" class="streamName galleryView"></div>
-<div id="streamDescription" class="streamDescription"></div>
-
 
 <div class="viewButtons">
     <partial name="SiteButton" model='new SiteButton { ControlId = "mediaGalleryLeft", ImageFile = "MediaGalleryLeft.png", OnClick="RotateCarousel(false)" }' />

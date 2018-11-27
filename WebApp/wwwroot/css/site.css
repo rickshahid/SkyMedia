@@ -255,12 +255,6 @@ body {
     margin-top: 130px;
 }
 
-.streamDescription {
-    font-size: x-large;
-    font-style: italic;
-    margin-top: 20px;
-}
-
 .streamUrl {
     font-size: x-large;
     font-style: italic;
@@ -332,16 +326,21 @@ body {
     padding-top: 30px;
 }
 
+.inputOption {
+    text-align: left;
+}
+
 .inputSelect {
     font-weight: bold;
 }
 
-.inputSelect.mediaJob {
+.inputSelect.maxWidth {
     width: 100%;
 }
 
-.inputOption {
-    text-align: left;
+.encodingPresetName {
+    font-weight: bold;
+    width: 300px;
 }
 
 .thumbnailSpriteRow {
@@ -367,7 +366,7 @@ body {
     margin: 0px auto;
 }
 
-.jobData {
+.jsonData {
     margin-bottom: 15px;
     text-align: left;
     height: 225px;
@@ -399,29 +398,6 @@ body {
 
 .videoClipper {
     width: 1080px;
-}
-
-.carouselContainer {
-    perspective: 2000px;
-    margin: 0px auto;
-    height: 225px;
-    width: 400px;
-}
-
-.carousel {
-    transform-style: preserve-3d;
-    transition: transform 1s;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 50px;
-}
-
-.carouselItem {
-    border: 1px solid deepskyblue;
-    position: absolute;
-    height: 100%;
-    width: 100%;
 }
 
 .searchQuery {

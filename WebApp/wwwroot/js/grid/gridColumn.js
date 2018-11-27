@@ -200,14 +200,20 @@ function GetParentColumns(gridId) {
                     label: "Input Protocol",
                     name: "properties.input",
                     align: "center",
-                    width: typeWidthEx
+                    width: typeWidth
                 },
                 {
                     formatter: FormatLiveEncodingType,
                     label: "Encoding Type",
                     name: "properties.encoding",
                     align: "center",
-                    width: typeWidthEx
+                    width: typeWidth
+                },
+                {
+                    label: "State",
+                    name: "properties.resourceState",
+                    align: "center",
+                    width: defaultWidth
                 }
             ];
             break;
@@ -438,7 +444,7 @@ function FormatName(value, grid, row) {
     }
     value = FormatValue(value, grid, row);
     var description = row["properties.description"];
-    if (description != null) {
+    if (description != "") {
         value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Description\",\"" + encodeURIComponent(description) + "\")>" + value + "</span>";
     }
     value = value.replace("Microsoft.Media/mediaservices", "");
@@ -521,11 +527,32 @@ function FormatJobData(value, grid, row) {
     }
     return value;
 }
-function FormatLiveEncodingType(value, grid, row) {
-    value = value["encodingType"];
-    return FormatValue(value);
+function AddEndpointUrls(endpoints, endpointUrls) {
+    for (var i = 0; i < endpoints.length; i++) {
+        var endpoint = endpoints[i];
+        if (endpointUrls != "") {
+            endpointUrls = endpointUrls + "<br><br>";
+        }
+        endpointUrls = endpointUrls + endpoint["url"];
+    }
+    return endpointUrls;
 }
 function FormatLiveInputProtocol(value, grid, row) {
-    value = value["streamingProtocol"];
-    return FormatValue(value);
+    var endpointUrls = "";
+    var endpoints = value["endpoints"];
+    endpointUrls = AddEndpointUrls(endpoints, endpointUrls);
+    endpoints = row["properties.preview"]["endpoints"];
+    endpointUrls = AddEndpointUrls(endpoints, endpointUrls);
+    var inputProtocol = FormatValue(value["streamingProtocol"]);
+    return "<span class=\"siteLink\" onclick=DisplayMessage(\"Live%20Input%20&%20Preview%20Endpoints\",\"" + encodeURIComponent(endpointUrls) + "\")>" + inputProtocol + "</span>";
+}
+function FormatLiveEncodingType(value, grid, row) {
+    var encodingType = value["encodingType"];
+    if (encodingType == "None") {
+        value = encodingType;
+    } else {
+        var encodingPresetName = value["presetName"];
+        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Live%20Encoding%20Preset%20Name\",\"" + encodeURIComponent(encodingPresetName) + "\")>" + encodingType + "</span>";
+    }
+    return value;
 }

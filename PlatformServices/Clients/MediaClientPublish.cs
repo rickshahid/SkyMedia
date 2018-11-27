@@ -69,7 +69,7 @@ namespace AzureSkyMedia.PlatformServices
             return JsonConvert.DeserializeObject<MediaJobPublish>(jobPublish);
         }
 
-        public static JObject SetJobPublish(string authToken, JObject jobData, string streamingPolicyName)
+        public static JObject GetJobPublish(string authToken, string jobData, string streamingPolicyName)
         {
             string mobilePhoneNumber = null;
             if (!string.IsNullOrEmpty(authToken))
@@ -86,12 +86,9 @@ namespace AzureSkyMedia.PlatformServices
                     MobilePhoneNumber = mobilePhoneNumber
                 }
             };
-            if (jobData == null)
-            {
-                jobData = new JObject();
-            }
-            jobData[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
-            return jobData;
+            JObject jobPublishOutput = string.IsNullOrEmpty(jobData) ? new JObject() : JObject.Parse(jobData);
+            jobPublishOutput[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
+            return jobPublishOutput;
         }
 
         public static void SetEventSubscription(string authToken)

@@ -8,17 +8,22 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public LiveEvent CreateLiveEvent(string eventName, string eventDescription, LiveEventEncodingType encodingType, string encodingPresetName,
-                                         LiveEventInputProtocol inputProtocol, bool lowLatency, bool autoStart)
+        public LiveEvent CreateLiveEvent(string eventName, string eventDescription, string eventTags, LiveEventInputProtocol inputProtocol,
+                                         LiveEventEncodingType encodingType, string encodingPresetName, string streamingPolicyName,
+                                         bool lowLatency, bool autoStart)
         {
+            LiveEventInput eventInput = new LiveEventInput()
+            {
+                StreamingProtocol = inputProtocol
+            };
             LiveEventEncoding eventEncoding = new LiveEventEncoding()
             {
                 EncodingType = encodingType,
                 PresetName = encodingPresetName
             };
-            LiveEventInput eventInput = new LiveEventInput()
+            LiveEventPreview eventPreview = new LiveEventPreview()
             {
-                StreamingProtocol = inputProtocol
+                StreamingPolicyName = streamingPolicyName
             };
             List<StreamOptionsFlag?> streamOptions = new List<StreamOptionsFlag?>();
             if (lowLatency)
@@ -28,12 +33,14 @@ namespace AzureSkyMedia.PlatformServices
             MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
             LiveEvent liveEvent = new LiveEvent()
             {
-                Location = mediaService.Location,
-                StreamOptions = streamOptions,
+                VanityUrl = true,
                 Description = eventDescription,
-                Encoding = eventEncoding,
+                Tags = GetDataItems(eventTags),
                 Input = eventInput,
-                VanityUrl = true
+                Encoding = eventEncoding,
+                Preview = eventPreview,
+                StreamOptions = streamOptions,
+                Location = mediaService.Location
             };
             return _media.LiveEvents.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, liveEvent, autoStart);
         }
@@ -50,14 +57,14 @@ namespace AzureSkyMedia.PlatformServices
             return _media.LiveOutputs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, outputName, eventOutput);
         }
 
-        public void UpdateLiveEvent(string eventName, string eventDescription, IDictionary<string, string> eventTags, CrossSiteAccessPolicies accessPolicies,
-                                    string encodingPresetName, string keyFrameIntervalDuration)
+        public LiveEvent UpdateLiveEvent(string eventName, string eventDescription, string eventTags, string encodingPresetName,
+                                         string keyFrameIntervalDuration, CrossSiteAccessPolicies crossSiteAccessPolicies)
         {
             LiveEvent liveEvent = new LiveEvent()
             {
                 Description = eventDescription,
-                Tags = eventTags,
-                CrossSiteAccessPolicies = accessPolicies
+                Tags = GetDataItems(eventTags),
+                CrossSiteAccessPolicies = crossSiteAccessPolicies
             };
             liveEvent.Encoding = new LiveEventEncoding()
             {
@@ -67,7 +74,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 KeyFrameIntervalDuration = keyFrameIntervalDuration
             };
-            _media.LiveEvents.Update(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, liveEvent);
+            return _media.LiveEvents.Update(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, liveEvent);
         }
 
         public void StartLiveEvent(string eventName)

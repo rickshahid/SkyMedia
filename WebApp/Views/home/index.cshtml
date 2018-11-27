@@ -37,7 +37,7 @@
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
             CreateStreamTuner();
-            SetPlayerEvents(_mediaPlayer, "@authToken", "@storageCdnUrl", false);
+            SetPlayerEvents(_mediaPlayer, "@storageCdnUrl", false, true);
             SetMediaStream(false, false);
             if ("@userMessage" != "") {
                 DisplayMessage("User Message", "@userMessage");

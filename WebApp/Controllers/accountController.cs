@@ -217,6 +217,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     MediaLiveEvent mediaLiveEvent = new MediaLiveEvent(mediaClient, liveEvent);
                     mediaLiveEvents.Add(mediaLiveEvent);
                 }
+                ViewData["streamingPolicies"] = JobController.GetStreamingPolicies(mediaClient);
             }
             ViewData["liveEvents"] = mediaLiveEvents.ToArray();
             return View();

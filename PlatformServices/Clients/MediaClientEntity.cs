@@ -5,10 +5,37 @@ using Microsoft.Rest.Azure.OData;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        public IDictionary<string, string> GetDataItems(JObject jsonData)
+        {
+            Dictionary<string, string> dataItems = null;
+            if (jsonData != null)
+            {
+                dataItems = new Dictionary<string, string>();
+                foreach (KeyValuePair<string, JToken> property in jsonData)
+                {
+                    string propertyData = property.Value.ToString();
+                    dataItems.Add(property.Key, propertyData);
+                }
+            }
+            return dataItems;
+        }
+
+        public IDictionary<string, string> GetDataItems(string jsonData)
+        {
+            IDictionary<string, string> dataItems = null;
+            if (!string.IsNullOrEmpty(jsonData))
+            {
+                dataItems = GetDataItems(JObject.Parse(jsonData));
+            }
+            return dataItems;
+        }
+
         public int GetEntityCount<T>(MediaEntity entityType) where T : Resource
         {
             T[] entities = GetAllEntities<T>(entityType);
