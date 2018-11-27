@@ -54,7 +54,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             MediaAsset mediaAsset = new MediaAsset(mediaClient, inputAsset);
                             string fileName = mediaAsset.Files[0].Name;
                             string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
-                            MediaJobOutputMode outputAssetMode = MediaJobOutputMode.DistinctAssets;
+                            MediaJobOutputMode outputAssetMode = MediaJobOutputMode.SingleAsset;
                             string[] outputAssetDescriptions = new string[] { assetDescription };
                             string[] outputAssetAlternateIds = new string[] { insightId };
                             PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;

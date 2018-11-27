@@ -25,8 +25,8 @@
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
-            CreateTipBottom("mediaMetadata", "Media Metadata");
-            CreateTipBottom("mediaGallery", "Media Gallery");
+            CreateTipTop("mediaMetadata", "Media Metadata");
+            CreateTipTop("mediaGallery", "Media Gallery");
         })
     </script>
 }

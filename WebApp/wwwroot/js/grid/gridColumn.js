@@ -444,7 +444,7 @@ function FormatName(value, grid, row) {
     }
     value = FormatValue(value, grid, row);
     var description = row["properties.description"];
-    if (description != "") {
+    if (description != null && description != "") {
         value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Description\",\"" + encodeURIComponent(description) + "\")>" + value + "</span>";
     }
     value = value.replace("Microsoft.Media/mediaservices", "");

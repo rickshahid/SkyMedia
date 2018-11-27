@@ -27,6 +27,9 @@ namespace AzureSkyMedia.PlatformServices
             }
             switch (mediaJob.OutputAssetMode)
             {
+                case MediaJobOutputMode.SingleAsset:
+                    outputAssetName = string.Concat(outputAssetName, " (", Constant.Media.Job.OutputAssetNameSuffix.Default, ")");
+                    break;
                 case MediaJobOutputMode.DistinctAssets:
                     string assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.Default;
                     if (transformOutput.Preset is BuiltInStandardEncoderPreset)
@@ -42,9 +45,6 @@ namespace AzureSkyMedia.PlatformServices
                         assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AudioAnalyzer;
                     }
                     outputAssetName = string.Concat(outputAssetName, " (", assetNameSuffix, ")");
-                    break;
-                case MediaJobOutputMode.SingleAsset:
-                    outputAssetName = string.Concat(outputAssetName, " (", Constant.Media.Job.OutputAssetNameSuffix.Default, ")");
                     break;
             }
             return outputAssetName;

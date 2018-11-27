@@ -43,9 +43,9 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaJobOutputMode
     {
-        DistinctAssets,
+        SingleAsset,
         InputAsset,
-        SingleAsset
+        DistinctAssets
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

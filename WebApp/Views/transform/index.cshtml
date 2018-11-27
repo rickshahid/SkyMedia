@@ -13,7 +13,7 @@
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
-            CreateTipBottom("transformSave", "Save Transform");
+            CreateTipTop("transformSave", "Save Transform");
             $("#thumbnailSpriteColumns").spinner({
                 min: 0,
                 max: 99

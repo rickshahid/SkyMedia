@@ -13,8 +13,8 @@
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
-            CreateTipBottom("jobCreate", "Create Job");
-            CreateTipBottom("jobUpdate", "Update Job");
+            CreateTipTop("jobCreate", "Create Job");
+            CreateTipTop("jobUpdate", "Update Job");
             CreateJsonEditor("jobData", "Media Job Data", null);
        })
     </script>
@@ -45,7 +45,7 @@
     </tr>
     <tr>
         <td>
-            <table class="mediaEntityProperties mediaJob">
+            <table class="mediaEntityProperties">
                 <tr>
                     <td class="inputLabel">
                         Media Job Priority
@@ -59,7 +59,7 @@
                         Media Transform
                     </td>
                     <td>
-                        @Html.DropDownList("transforms", null, new { @class = "inputSelect mediaJob" })
+                        @Html.DropDownList("transforms", null, new { @class = "inputSelect maxWidth" })
                     </td>
                 </tr>
                 <tr>
@@ -75,7 +75,7 @@
                         Input Asset Name
                     </td>
                     <td>
-                        @Html.TextBox("inputAssetName", null, new { @class = "mediaEntityName mediaJob", onfocusout = "FindAsset()" })
+                        @Html.TextBox("inputAssetName", null, new { @class = "mediaEntityName", onfocusout = "FindAsset()" })
                     </td>
                 </tr>
                 <tr>
@@ -83,7 +83,7 @@
                         Input File Url
                     </td>
                     <td>
-                        @Html.TextBox("inputFileUrl", null, new { @class = "mediaEntityName mediaJob", placeholder = "https://" })
+                        @Html.TextBox("inputFileUrl", null, new { @class = "mediaEntityName", placeholder = "https://" })
                     </td>
                 </tr>
                 <tr>
@@ -91,22 +91,20 @@
                         Output Assets
                     </td>
                     <td class="jobOutputAssets">
-                        <table>
-                            <tr>
-                                <td class="inputLabel">
-                                    @Html.RadioButton("outputAssetsMode", "DistinctAssets", true)
-                                    Distinct Assets
-                                </td>
-                                <td class="inputLabel">
-                                    @Html.RadioButton("outputAssetsMode", "InputAsset", false)
-                                    Input Asset
-                                </td>
-                                <td class="inputLabel">
-                                    @Html.RadioButton("outputAssetsMode", "SingleAsset", false)
-                                    Single Asset
-                                </td>
-                            </tr>
-                        </table>
+                        <input id="outputAssetsMode" name="outputAssetsMode" type="radio" value="SingleAsset" checked>
+                        <span class="inputLabel">
+                            Single Asset
+                        </span>
+                        &nbsp;
+                        <input id="outputAssetsMode" name="outputAssetsMode" type="radio" value="InputAsset">
+                        <span class="inputLabel">
+                            Input Asset
+                        </span>
+                        &nbsp;
+                        <input id="outputAssetsMode" name="outputAssetsMode" type="radio" value="DistinctAssets">
+                        <span class="inputLabel">
+                            Distinct Assets
+                        </span>
                     </td>
                 </tr>
             </table>

@@ -358,14 +358,6 @@ body {
     width: 30px;
 }
 
-.jobOutputAssets {
-    padding: 0px !important;
-}
-
-.jobOutputAssets table {
-    margin: 0px auto;
-}
-
 .jsonData {
     margin-bottom: 15px;
     text-align: left;

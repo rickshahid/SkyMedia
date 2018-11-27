@@ -13,8 +13,8 @@
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
-            CreateTipBottom("liveEventCreate", "Create Live Event");
-            CreateTipBottom("liveEventUpdate", "Update Live Event");
+            CreateTipTop("liveEventCreate", "Create Live Event");
+            CreateTipTop("liveEventUpdate", "Update Live Event");
             CreateJsonEditor("liveEventTags", "Live Event Tags", null);
         })
     </script>
