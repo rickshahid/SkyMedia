@@ -30,7 +30,7 @@
                 }
                 DisplayMessage(title, message, buttons);
             } else {
-                var mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", true, @liveEncoding);
+                var mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", true, false);
                 SetPlayerEvents(mediaPlayer, "@storageCdnUrl", @liveEncoding, false);
                 mediaPlayer.src(
                     [{

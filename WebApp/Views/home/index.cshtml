@@ -33,7 +33,8 @@
         var _streamTunerPageSize = @streamTunerPageSize;
         var _streamTunerLastPage = @streamTunerLastPage.ToString().ToLower();
         $(function () {
-            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", false, false);
+            var autoPlay = "@userId" == "" ? true : false;
+            _mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", autoPlay, false);
             _mediaStreams = @Json.Serialize(ViewData["mediaStreams"]);
             _streamNumber = @streamNumber;
             CreateStreamTuner();

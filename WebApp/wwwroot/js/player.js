@@ -1,8 +1,5 @@
 ﻿var _mediaPlayer;
 function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, spriteVttUrl) {
-    if (userId == "") {
-        autoPlay = true;
-    }
     var playerOptions = {
         fluid: true,
         controls: true,
@@ -53,7 +50,7 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
         var streamUrl = mediaPlayer.currentSrc();
         streamUrl = streamUrl.replace("http:", "");
         streamUrl = streamUrl.split("/");
-        for (var i = streamUrl.length - 1; i > streamUrl.length - 5; i--) {
+        for (var i = streamUrl.length - 1; i > 1; i--) {
             streamUrl[i] = streamUrl[i] + "<br>";
         }
         streamUrl = streamUrl.join("/");
