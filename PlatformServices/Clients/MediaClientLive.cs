@@ -28,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
             List<StreamOptionsFlag?> streamOptions = new List<StreamOptionsFlag?>();
             if (lowLatency)
             {
-                streamOptions.Add(StreamOptionsFlag.LowLatency);
+               streamOptions.Add(StreamOptionsFlag.LowLatency);
             }
             MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
             LiveEvent liveEvent = new LiveEvent()
@@ -45,29 +45,35 @@ namespace AzureSkyMedia.PlatformServices
             return _media.LiveEvents.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, liveEvent, autoStart);
         }
 
-        public LiveOutput CreateLiveEventOutput(string eventName, string outputName, string assetName, int dvrMinutes)
+        public LiveOutput CreateLiveOutput(string eventName, string eventOutputName, string eventOutputDescription,
+                                           string eventOutputAssetName, int eventArchiveWindowMinutes)
         {
-            CreateAsset(null, assetName);
-            CreateLocator(assetName, assetName, PredefinedStreamingPolicy.ClearStreamingOnly, null);
+            CreateAsset(null, eventOutputAssetName);
+            CreateLocator(eventOutputAssetName, eventOutputAssetName, PredefinedStreamingPolicy.ClearStreamingOnly, null);
             LiveOutput eventOutput = new LiveOutput()
             {
-                AssetName = assetName,
-                ArchiveWindowLength = new TimeSpan(0, dvrMinutes, 0)
+                Description = eventOutputDescription,
+                AssetName = eventOutputAssetName,
+                ArchiveWindowLength = new TimeSpan(0, eventArchiveWindowMinutes, 0)
             };
-            return _media.LiveOutputs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, outputName, eventOutput);
+            return _media.LiveOutputs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, eventOutputName, eventOutput);
         }
 
-        public LiveEvent UpdateLiveEvent(string eventName, string eventDescription, string eventTags, string encodingPresetName,
+        public LiveEvent UpdateLiveEvent(string eventName, string eventDescription, string eventTags,
+                                         LiveEventEncodingType encodingType, string encodingPresetName,
                                          string keyFrameIntervalDuration, CrossSiteAccessPolicies crossSiteAccessPolicies)
         {
+            MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
             LiveEvent liveEvent = new LiveEvent()
             {
                 Description = eventDescription,
                 Tags = GetDataItems(eventTags),
-                CrossSiteAccessPolicies = crossSiteAccessPolicies
+                CrossSiteAccessPolicies = crossSiteAccessPolicies,
+                Location = mediaService.Location
             };
             liveEvent.Encoding = new LiveEventEncoding()
             {
+                EncodingType = encodingType,
                 PresetName = encodingPresetName
             };
             liveEvent.Input = new LiveEventInput()

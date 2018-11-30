@@ -76,7 +76,10 @@ namespace AzureSkyMedia.PlatformServices
             foreach (StreamingLocator streamingLocator in streamingLocators)
             {
                 string streamingUrl = GetPlayerUrl(streamingLocator);
-                streamingUrls.Add(streamingUrl);
+                if (!string.IsNullOrEmpty(streamingUrl))
+                {
+                    streamingUrls.Add(streamingUrl);
+                }
             }
             return streamingUrls.ToArray();
         }

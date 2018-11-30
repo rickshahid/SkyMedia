@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Azure.Management.Media.Models;
 
 using AzureSkyMedia.PlatformServices;
@@ -7,9 +10,28 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class LiveController : Controller
     {
-        public JsonResult Create(string eventName, string eventDescription, string eventTags, LiveEventInputProtocol inputProtocol = LiveEventInputProtocol.FragmentedMP4,
-                                 LiveEventEncodingType encodingType = LiveEventEncodingType.None, string encodingPresetName = null,
-                                 string streamingPolicyName = null, int dvrMinutes = 180, bool lowLatency = false, bool autoStart = false)
+        internal static SelectListItem[] GetLiveEvents(MediaClient mediaClient)
+        {
+            List<SelectListItem> liveEvents = new List<SelectListItem>
+            {
+                new SelectListItem()
+            };
+            LiveEvent[] mediaLiveEvents = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
+            foreach (LiveEvent mediaLiveEvent in mediaLiveEvents)
+            {
+                SelectListItem liveEvent = new SelectListItem()
+                {
+                    Text = Constant.TextFormatter.FormatValue(mediaLiveEvent.Name),
+                    Value = mediaLiveEvent.Name
+                };
+                liveEvents.Add(liveEvent);
+            }
+            return liveEvents.ToArray();
+        }
+
+        public JsonResult CreateEvent(string eventName, string eventDescription, string eventTags, LiveEventInputProtocol inputProtocol = LiveEventInputProtocol.FragmentedMP4,
+                                      LiveEventEncodingType encodingType = LiveEventEncodingType.None, string encodingPresetName = null, string streamingPolicyName = null,
+                                      bool lowLatency = false, bool autoStart = false)
         {
             try
             {
@@ -17,11 +39,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-
                     liveEvent = mediaClient.CreateLiveEvent(eventName, eventDescription, eventTags, inputProtocol, encodingType, encodingPresetName, streamingPolicyName, lowLatency, autoStart);
-                    string outputName = string.Concat(eventName, Constant.Media.Live.EventOutputNameSuffix);
-                    string assetName = string.Concat(eventName, Constant.Media.Live.EventAssetNameSuffix);
-                    mediaClient.CreateLiveEventOutput(eventName, outputName, assetName, dvrMinutes);
+                    string eventOutputName = string.Concat(eventName, Constant.Media.LiveEvent.OutputNameSuffix);
+                    string eventOutputAssetName = string.Concat(eventName, Constant.Media.LiveEvent.OutputAssetNameSuffix);
+                    CreateOutput(eventName, eventOutputName, null, eventOutputAssetName, Constant.Media.LiveEvent.OutputArchiveWindowMinutes);
                 }
                 return Json(liveEvent);
             }
@@ -34,8 +55,29 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Update(string eventName, string eventDescription, string eventTags, string encodingPresetName,
-                                 string keyFrameIntervalDuration, CrossSiteAccessPolicies crossSiteAccessPolicies)
+        public JsonResult CreateOutput(string eventName, string eventOutputName, string eventOutputDescription, string outputAssetName, int archiveWindowMinutes)
+        {
+            try
+            {
+                LiveOutput liveOutput;
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    liveOutput = mediaClient.CreateLiveOutput(eventName, eventOutputName, eventOutputDescription, outputAssetName, archiveWindowMinutes);
+                }
+                return Json(liveOutput);
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
+        }
+
+        public JsonResult UpdateEvent(string eventName, string eventDescription, string eventTags, LiveEventEncodingType encodingType, string encodingPresetName,
+                                      string keyFrameIntervalDuration, CrossSiteAccessPolicies crossSiteAccessPolicies)
         {
             try
             {
@@ -43,7 +85,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    liveEvent = mediaClient.UpdateLiveEvent(eventName, eventDescription, eventTags, encodingPresetName, keyFrameIntervalDuration, crossSiteAccessPolicies);
+                    liveEvent = mediaClient.UpdateLiveEvent(eventName, eventDescription, eventTags, encodingType, encodingPresetName, keyFrameIntervalDuration, crossSiteAccessPolicies);
                 }
                 return Json(liveEvent);
             }
@@ -56,7 +98,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Start(string eventName)
+        public JsonResult StartEvent(string eventName)
         {
             try
             {
@@ -76,7 +118,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Stop(string eventName)
+        public JsonResult StopEvent(string eventName)
         {
             try
             {
@@ -96,7 +138,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Reset(string eventName)
+        public JsonResult ResetEvent(string eventName)
         {
             try
             {
@@ -116,7 +158,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Signal(string eventName, int signalId, int durationSeconds)
+        public JsonResult InsertSignal(string eventName, int signalId, int durationSeconds)
         {
             try
             {

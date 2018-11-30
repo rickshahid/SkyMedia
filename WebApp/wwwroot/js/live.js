@@ -16,7 +16,7 @@ function CreateLiveEvent() {
     var message = "Are you sure you want to create a new live event?";
     var onConfirm = function () {
         SetCursor(true);
-        $.post("/live/create",
+        $.post("/live/createEvent",
             {
                 eventName: GetNewEventName(),
                 eventDescription: $("#description").val(),
@@ -24,7 +24,8 @@ function CreateLiveEvent() {
                 inputProtocol: $("#inputProtocol:checked").val(),
                 encodingType: $("#encodingType:checked").val(),
                 encodingPresetName: $("#encodingPresetName").val(),
-                lowLatency: true,
+                streamingPolicyName: $("#streamingPolicies").val(),
+                lowLatency: $("#lowLatency").prop("checked"),
                 autoStart: false
             },
             function (liveEvent) {
@@ -42,6 +43,34 @@ function CreateLiveEvent() {
     };
     ConfirmMessage(title, message, onConfirm);
 }
+function CreateLiveOutput() {
+    var title = "Confirm Live Event Output Create";
+    var message = "Are you sure you want to create a new live event output?";
+    var onConfirm = function () {
+        SetCursor(true);
+        $.post("/live/createOutput",
+            {
+                eventName: $("#liveEvents").val(),
+                eventOutputName: $("#name").val(),
+                eventOutputDescription: $("#description").val(),
+                outputAssetName: $("#outputAssetName").val(),
+                archiveWindowMinutes: $("#archiveWindowMinutes").val()
+            },
+            function (liveOutput) {
+                SetCursor(false);
+                var buttons = {
+                    OK: function () {
+                        window.location = window.location.href;
+                        $(this).dialog("close");
+                    }
+                };
+                DisplayMessage("Live Event Output Created", liveOutput.name, buttons);
+            }
+        );
+        $(this).dialog("close");
+    };
+    ConfirmMessage(title, message, onConfirm);
+}
 function UpdateLiveEvent() {
     var eventName = $("#name").val();
     if (eventName != "") {
@@ -49,11 +78,12 @@ function UpdateLiveEvent() {
         var message = "Are you sure you want to update the '" + eventName + "' event?";
         var onConfirm = function () {
             SetCursor(true);
-            $.post("/live/update",
+            $.post("/live/updateEvent",
                 {
                     eventName: eventName,
                     eventDescription: $("#description").val(),
                     eventTags: _jsonEditor.getText(),
+                    encodingType: $("#encodingType:checked").val(),
                     encodingPresetName: $("#encodingPresetName").val()
                 },
                 function (liveEvent) {

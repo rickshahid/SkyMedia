@@ -174,19 +174,29 @@ function SetRowEdit(gridId, rowData) {
             var streamingPolicyName = outputPublish["StreamingPolicyName"];
             $("#streamingPolicies").val(streamingPolicyName);
             break;
+        case "liveEvents":
+            $("input[name=inputProtocol][value=" + row["properties.input"]["streamingProtocol"] + "]").prop("checked", true);
+            $("input[name=encodingType][value=" + row["properties.encoding"]["encodingType"] + "]").prop("checked", true);
+            $("#encodingPresetName").val(row["properties.encoding"]["presetName"]);
+            $("#streamingPolicies").val(row["properties.preview"]["streamingPolicyName"]);
+            if (row["properties.streamOptions"].indexOf("LowLatency") > -1) {
+                $("#lowLatency").prop("checked", true);
+            }
+            _jsonEditor.set(row["tags"]);
+           break;
     }
 }
 function UpdateEvent(eventName, eventAction) {
     var actionUrl;
     switch (eventAction) {
         case "Start":
-            actionUrl = "/live/start";
+            actionUrl = "/live/startEvent";
             break;
         case "Stop":
-            actionUrl = "/live/stop";
+            actionUrl = "/live/stopEvent";
             break;
         case "Reset":
-            actionUrl = "/live/reset";
+            actionUrl = "/live/resetEvent";
             break;
     }
     var title = "Confirm Live Event " + eventAction;

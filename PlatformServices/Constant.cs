@@ -271,10 +271,11 @@ namespace AzureSkyMedia.PlatformServices
                 public const string FileNameSuffix = "{Index}{Extension}";
             }
 
-            public struct Live
+            public struct LiveEvent
             {
-                public const string EventOutputNameSuffix = "-Output";
-                public const string EventAssetNameSuffix = "-Asset";
+                public const int OutputArchiveWindowMinutes = 60;
+                public const string OutputNameSuffix = "-Output";
+                public const string OutputAssetNameSuffix = "-Asset";
             }
         }
 

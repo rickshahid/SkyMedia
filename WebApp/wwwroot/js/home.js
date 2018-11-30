@@ -9,11 +9,12 @@ function CreateStreamTuner() {
         slide: function (event, ui) {
             if (_mediaStreams.length > 0) {
                 var streamNumber = GetStreamNumber(ui.value, streamTunerStep);
-                var mediaStream = _mediaStreams[streamNumber - 1];
+                var streamIndex = GetStreamIndex(streamNumber);
+                var mediaStream = _mediaStreams[streamIndex];
                 var streamName = GetStreamName(mediaStream, true);
                 var adjustTipX = ui.value - (streamTunerWidth / 2) + 1;
                 var adjustTipY = -15;
-                SetStreamNumber(streamNumber);
+                SetStreamNumber(streamNumber, ui.value);
                 CreateTipTop("streamTuner", streamName, adjustTipX, adjustTipY);
                 SetTipVisible("streamTuner", true);
             }
@@ -26,11 +27,13 @@ function CreateStreamTuner() {
         }
     });
 }
+function GetStreamNumber(streamTunerValue, streamTunerStep) {
+    var streamPage = Math.floor(_streamNumber / _streamTunerPageSize);
+    var streamNumber = _mediaStreams.length == 1 ? 1 : (streamTunerValue / streamTunerStep) + 1;
+    return (streamPage * _streamTunerPageSize) + streamNumber;
+}
 function GetStreamIndex(streamNumber) {
     return (streamNumber - 1) % _streamTunerPageSize;
-}
-function GetStreamNumber(streamTunerValue, streamTunerStep) {
-    return _mediaStreams.length == 1 ? 1 : (streamTunerValue / streamTunerStep) + 1;
 }
 function GetStreamName(mediaStream, streamTuner) {
     var streamName = mediaStream.name;
@@ -60,6 +63,7 @@ function SetStreamTunerValue() {
     $("#streamTuner").slider({
         value: streamTunerValue
     });
+    return streamTunerValue;
 }
 function SetStreamTunerPage(streamTunerLeft, streamTunerRight) {
     var streamTunerPageChange = false;
@@ -85,13 +89,16 @@ function SetStreamTunerPage(streamTunerLeft, streamTunerRight) {
     }
     return streamTunerPageChange;
 }
-function SetStreamNumber(streamNumber) {
+function SetStreamNumber(streamNumber, leftOffset) {
     var streamIndex = GetStreamIndex(streamNumber);
-    var streamTunerHandle = $(".ui-slider-handle")[0];
     if (streamIndex == 0 || streamIndex == _mediaStreams.length - 1) {
-        streamTunerHandle.innerText = "";
+        $("#streamNumber").addClass("pageBoundary");
     } else {
-        streamTunerHandle.innerText = streamNumber;
+        var streamTunerWidth = $("#streamTuner").width();
+        leftOffset = leftOffset - (streamTunerWidth / 2) + 1;
+        $("#streamNumber").text(streamNumber);
+        $("#streamNumber").css({ left: leftOffset + "px" });
+        $("#streamNumber").removeClass("pageBoundary");
     }
 }
 function SetMediaStream(streamTunerLeft, streamTunerRight) {
@@ -105,8 +112,8 @@ function SetMediaStream(streamTunerLeft, streamTunerRight) {
             var streamName = GetStreamName(mediaStream, false);
             $("#streamName").html(streamName);
             $("#streamUrl").html("");
-            SetStreamTunerValue();
-            SetStreamNumber(_streamNumber);
+            var streamTunerValue = SetStreamTunerValue();
+            SetStreamNumber(_streamNumber, streamTunerValue);
             SetPlayerContent(_mediaPlayer, mediaStream);
         }
     }

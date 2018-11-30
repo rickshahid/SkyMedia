@@ -203,11 +203,11 @@ function GetParentColumns(gridId) {
                     width: typeWidth
                 },
                 {
-                    formatter: FormatLiveEncodingType,
-                    label: "Encoding Type",
+                    formatter: FormatLiveEncoding,
+                    label: "Encoding",
                     name: "properties.encoding",
                     align: "center",
-                    width: typeWidth
+                    width: defaultWidth
                 },
                 {
                     label: "State",
@@ -228,23 +228,22 @@ function GetParentColumns(gridId) {
                 },
                 {
                     Formatter: FormatName,
-                    label: "Asset Name",
+                    label: "Output Asset Name",
                     name: "properties.assetName",
                     align: "center",
                     width: nameWidth
                 },
                 {
-                    formatter: FormatName,
-                    label: "Manifest Name",
-                    name: "properties.manifestName",
-                    align: "center",
-                    width: nameWidth
-                },
-                {
-                    label: "Archive Window",
+                    label: "DVR Window",
                     name: "properties.archiveWindowLength",
                     align: "center",
-                    width: typeWidthEx
+                    width: typeWidth
+                },
+                {
+                    label: "State",
+                    name: "properties.resourceState",
+                    align: "center",
+                    width: defaultWidth
                 }
             ];
             break;
@@ -424,10 +423,24 @@ function GetChildColumns(gridType) {
                     width: nameWidth
                 },
                 {
-                    label: "DVR Length",
+                    Formatter: FormatName,
+                    label: "Output Asset Name",
+                    name: "properties.assetName",
+                    align: "center",
+                    width: nameWidth
+                },
+                {
+                    label: "DVR Window",
                     name: "properties.archiveWindowLength",
                     align: "center",
                     width: typeWidth
+                },
+                {
+                    formatter: FormatName,
+                    label: "Manifest Name",
+                    name: "properties.manifestName",
+                    align: "center",
+                    width: nameWidth + 30
                 }
             ];
            break;
@@ -442,16 +455,29 @@ function FormatName(value, grid, row) {
             value = "Thumbnail Images";
         }
     }
-    value = FormatValue(value, grid, row);
+    value = FormatValue(value);
     var description = row["properties.description"];
-    if (description != null && description != "") {
-        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"Description\",\"" + encodeURIComponent(description) + "\")>" + value + "</span>";
+    var streamOptions = row["properties.streamOptions"];
+    if (description == null) {
+        description = "";
+    }
+    if (description != "" || streamOptions != null) {
+        var title = "Description & Options";
+        var message = description;
+        if (streamOptions != null) {
+            if (message != "") {
+                message = message + "<br><br>";
+            }
+            var options = streamOptions.join(", ");
+            message = message + FormatValue(options);
+        }
+        value = "<span class=\"siteLink\" onclick=DisplayMessage(\"" + encodeURIComponent(title) + "\",\"" + encodeURIComponent(message) + "\")>" + value + "</span>";
     }
     value = value.replace("Microsoft.Media/mediaservices", "");
     value = value.replace("Microsoft.Media", "");
     return value;
 }
-function FormatValue(value, grid, row) {
+function FormatValue(value) {
     if (value == "StopProcessingJob") {
         value = "StopJob";
     }
@@ -546,7 +572,7 @@ function FormatLiveInputProtocol(value, grid, row) {
     var inputProtocol = FormatValue(value["streamingProtocol"]);
     return "<span class=\"siteLink\" onclick=DisplayMessage(\"Live%20Input%20&%20Preview%20Endpoints\",\"" + encodeURIComponent(endpointUrls) + "\")>" + inputProtocol + "</span>";
 }
-function FormatLiveEncodingType(value, grid, row) {
+function FormatLiveEncoding(value, grid, row) {
     var encodingType = value["encodingType"];
     if (encodingType == "None") {
         value = encodingType;

@@ -24,13 +24,14 @@
         <td>
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetMediaStream(true, false)" }' />
         </td>
-        <td class="streamNumber sideLeft">
+        <td class="streamNumber pageStart">
             @streamTunerPageStart
         </td>
         <td>
             <div id="streamTuner" class="streamTuner"></div>
+            <span id="streamNumber" class="streamNumber streamTunerNumber pageBoundary">0</span>
         </td>
-        <td class="streamNumber sideRight">
+        <td class="streamNumber pageEnd">
             @streamTunerPageEnd
             @if (!Model.StreamLastPage)
             {

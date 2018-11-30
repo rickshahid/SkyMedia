@@ -228,6 +228,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
+                ViewData["liveEvents"] = LiveController.GetLiveEvents(mediaClient);
                 ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
             }
             return View();

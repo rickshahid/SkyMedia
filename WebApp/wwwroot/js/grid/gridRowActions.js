@@ -1,14 +1,17 @@
 ﻿function FormatActions(value, grid, row) {
-    var onClick, actionsHtml = "", canDelete = true;
+    var onClick, actionsHtml = "";
     var entityId = grid.gid == "indexerInsights" ? row.id : row.name;
     switch (grid.gid) {
         case "assets":
-            onClick = "PublishContent('Asset','" + encodeURIComponent(entityId) + "','" + encodeURIComponent(row.parentName) + "',false)";
-            actionsHtml = "<button id='" + row.id + "_publish' class='siteButton' onclick=" + onClick + ">";
-            actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaPublishCreate.png'></button>";
-            onClick = "PublishContent('Asset','" + encodeURIComponent(entityId) + "','" + encodeURIComponent(row.parentName) + "',true)";
-            actionsHtml = actionsHtml + "<button id='" + row.id + "_unpublish' class='siteButton' onclick=" + onClick + ">";
-            actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaPublishDelete.png'></button>";
+            if (row["streamingLocators"].length > 0) {
+                onClick = "PublishContent('Asset','" + encodeURIComponent(entityId) + "','" + encodeURIComponent(row.parentName) + "',true)";
+                actionsHtml = actionsHtml + "<button id='" + row.id + "_unpublish' class='siteButton' onclick=" + onClick + ">";
+                actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaPublishDelete.png'></button>";
+            } else {
+                onClick = "PublishContent('Asset','" + encodeURIComponent(entityId) + "','" + encodeURIComponent(row.parentName) + "',false)";
+                actionsHtml = "<button id='" + row.id + "_publish' class='siteButton' onclick=" + onClick + ">";
+                actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaPublishCreate.png'></button>";
+            }
             break;
         case "transforms":
             onClick = "SetRowEdit('" + grid.gid + "','" + encodeURIComponent(JSON.stringify(row)) + "')";
@@ -40,15 +43,21 @@
             }
             break;
         case "liveEvents":
-            onClick = "UpdateEvent('" + encodeURIComponent(entityId) + "','Start')";
-            actionsHtml = "<button id='" + row.id + "_start' class='siteButton' onclick=" + onClick + ">";
-            actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaEventStart.png'></button>";
-            onClick = "UpdateEvent('" + encodeURIComponent(entityId) + "','Stop')";
-            actionsHtml = actionsHtml + "<button id='" + row.id + "_stop' class='siteButton' onclick=" + onClick + ">";
-            actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaEventStop.png'></button>";
+            if (row["properties.state"] == "Running") {
+                onClick = "UpdateEvent('" + encodeURIComponent(entityId) + "','Stop')";
+                actionsHtml = actionsHtml + "<button id='" + row.id + "_stop' class='siteButton' onclick=" + onClick + ">";
+                actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaEventStop.png'></button>";
+            } else {
+                onClick = "UpdateEvent('" + encodeURIComponent(entityId) + "','Start')";
+                actionsHtml = "<button id='" + row.id + "_start' class='siteButton' onclick=" + onClick + ">";
+                actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaEventStart.png'></button>";
+            }
             onClick = "UpdateEvent('" + encodeURIComponent(entityId) + "','Reset')";
             actionsHtml = actionsHtml + "<button id='" + row.id + "_reset' class='siteButton' onclick=" + onClick + ">";
             actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaEventReset.png'></button>";
+            onClick = "SetRowEdit('" + grid.gid + "','" + encodeURIComponent(JSON.stringify(row)) + "')";
+            actionsHtml = actionsHtml + "<button id='" + row.id + "_edit' class='siteButton' onclick=" + onClick + ">";
+            actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaEntityEdit.png'></button>";
             break;
         case "indexerInsights":
             onClick = "DisplayInsight(null,null,'" + row.id + "')";
@@ -72,14 +81,11 @@
                     actionsHtml = actionsHtml + downloadHtml;
                     break;
             }
-            canDelete = false;
             break;
     }
-    if (canDelete) {
-        onClick = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityId) + "','" + encodeURIComponent(row.parentName) + "')";
-        var deleteHtml = "<button id='" + row.id + "_delete' class='siteButton' onclick=" + onClick + ">";
-        deleteHtml = deleteHtml + "<img src='" + _storageCdnUrl + "/MediaEntityDelete.png'></button>";
-        actionsHtml = actionsHtml + deleteHtml;
-    }
+    onClick = "DeleteEntity('" + grid.gid + "','" + encodeURIComponent(entityId) + "','" + encodeURIComponent(row.parentName) + "')";
+    var deleteHtml = "<button id='" + row.id + "_delete' class='siteButton' onclick=" + onClick + ">";
+    deleteHtml = deleteHtml + "<img src='" + _storageCdnUrl + "/MediaEntityDelete.png'></button>";
+    actionsHtml = actionsHtml + deleteHtml;
     return actionsHtml;
 }

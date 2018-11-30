@@ -61,7 +61,10 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
     });
 }
 function SetPlayerContent(mediaPlayer, mediaStream) {
-    var sourceUrl = mediaStream.source.src + "(format=mpd-time-cmaf)";
+    var sourceUrl = mediaStream.source.src;
+    if (sourceUrl.indexOf("/manifest") > -1) {
+        sourceUrl = sourceUrl + "(format=mpd-time-cmaf)";
+    }
     if (mediaStream.source.protectionInfo != null && mediaStream.source.protectionInfo.length > 0) {
         if (window.location.href.indexOf("token=0") > -1) {
             for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {

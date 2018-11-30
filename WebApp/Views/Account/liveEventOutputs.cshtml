@@ -1,8 +1,10 @@
-﻿@{
-    string gridId = "liveEventOutputs";
+﻿@{@using AzureSkyMedia.WebApp.Models;
+
+string gridId = "liveEventOutputs";
 }
 
 @section head {
+    <script type="text/javascript" src="~/js/live.js"></script>
     <script type="text/javascript">
         $(function () {
             _childGridType = null;
@@ -10,6 +12,11 @@
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
+            CreateTipTop("liveEventOutputCreate", "Create Live Event Output");
+            $("#archiveWindowMinutes").slider({
+                min: 5,
+                max: 600
+            });
         })
     </script>
 }
@@ -21,4 +28,53 @@
 <div class="grid">
     <table id="@gridId"></table>
     <div id="gridPager"></div>
+</div>
+
+<table class="mediaEntity">
+    <tr>
+        <td>
+            @Html.TextBox("name", null, new { @class = "mediaEntityName", placeholder = "[Live Event Output Name]" })
+        </td>
+    </tr>
+    <tr>
+        <td>
+            @Html.TextBox("description", null, new { @class = "mediaEntityName mediaEntityDescription", placeholder = "[Live Event Output Description]" })
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="mediaEntityProperties">
+                <tr>
+                    <td class="inputLabel">
+                        Live Events
+                    </td>
+                    <td>
+                        @Html.DropDownList("liveEvents", null, new { @class = "inputSelect maxWidth" })
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel">
+                        Output Asset Name
+                    </td>
+                    <td>
+                        <input id="outputAssetName" class="mediaEntityName" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel centered">
+                        DRV Window
+                        <br>
+                        (Minutes)
+                    </td>
+                    <td>
+                        <div id="archiveWindowMinutes"></div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+<div class="viewButtons">
+    <partial name="SiteButton" model='new SiteButton { ControlId = "liveEventOutputCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateLiveOutput()" }' />
 </div>
