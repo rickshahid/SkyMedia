@@ -224,8 +224,28 @@ body {
     text-align: center;
 }
 
-.streamTuner {
+.sliderRange {
     margin-top: 25px;
+}
+
+.sliderRangeStart {
+    padding-right: 15px;
+}
+
+.sliderRangeEnd {
+    padding-left: 15px;
+}
+
+.sliderRangeBoundary {
+    color: transparent !important;
+}
+
+.sliderValue {
+    position: relative;
+    top: 10px;
+}
+
+.streamTuner {
     width: 100px;
 }
 
@@ -233,23 +253,6 @@ body {
     font-size: x-large;
     font-weight: bold;
     color: azure;
-}
-
-.streamNumber.pageStart {
-    padding-right: 15px;
-}
-
-.streamNumber.pageEnd {
-    padding-left: 15px;
-}
-
-.streamNumber.streamTunerNumber {
-    position: relative;
-    top: 10px;
-}
-
-.streamNumber.streamTunerNumber.pageBoundary {
-    color: transparent;
 }
 
 .streamName {
@@ -332,6 +335,11 @@ body {
     padding-top: 30px;
 }
 
+.inputLabel.archiveWindowMinutes {
+    position: relative;
+    top: 3px;
+}
+
 .inputOption {
     text-align: left;
 }
@@ -362,6 +370,13 @@ body {
     font-weight: bold;
     padding: 0px;
     width: 30px;
+}
+
+.archiveWindowMinutes {
+    text-align: right;
+    font-weight: bold;
+    padding: 0px;
+    width: 50px;
 }
 
 .jsonData {

@@ -1,11 +1,6 @@
 ﻿@using AzureSkyMedia.WebApp.Models;
 
-@model StreamTuner
-
-@{
-    int streamTunerPageStart = Model.StreamCount == 0 ? 0 : Model.StreamSkipCount + 1;
-    int streamTunerPageEnd = Model.StreamSkipCount + Model.StreamCount;
-}
+@model RangeSlider
 
 <table class="mediaModules">
     <tr>
@@ -24,20 +19,7 @@
         <td>
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetMediaStream(true, false)" }' />
         </td>
-        <td class="streamNumber pageStart">
-            @streamTunerPageStart
-        </td>
-        <td>
-            <div id="streamTuner" class="streamTuner"></div>
-            <span id="streamNumber" class="streamNumber streamTunerNumber pageBoundary">0</span>
-        </td>
-        <td class="streamNumber pageEnd">
-            @streamTunerPageEnd
-            @if (!Model.StreamLastPage)
-            {
-                <span>+</span>
-            }
-        </td>
+        <partial name="RangeSlider" model='new RangeSlider { RangeId = "streamTuner", RangeClass = "streamTuner", ValueId = "streamNumber", ValueClass = "streamNumber", SkipCount = Model.SkipCount, ValueCount = Model.ValueCount, LastPage = Model.LastPage }' />
         <td>
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamRight", ImageFile = "MediaStreamRight.png", OnClick = "SetMediaStream(false, true)" }' />
         </td>

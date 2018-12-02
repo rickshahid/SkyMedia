@@ -1,6 +1,8 @@
-﻿@{@using AzureSkyMedia.WebApp.Models;
+﻿@using AzureSkyMedia.WebApp.Models;
+@using AzureSkyMedia.PlatformServices;
 
-string gridId = "liveEventOutputs";
+@{
+    string gridId = "liveEventOutputs";
 }
 
 @section head {
@@ -13,10 +15,7 @@ string gridId = "liveEventOutputs";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
             CreateTipTop("liveEventOutputCreate", "Create Live Event Output");
-            $("#archiveWindowMinutes").slider({
-                min: 5,
-                max: 600
-            });
+            SetArchiveWindow(@Constant.Media.LiveEvent.OutputArchiveWindowMinutes);
         })
     </script>
 }
@@ -46,7 +45,7 @@ string gridId = "liveEventOutputs";
             <table class="mediaEntityProperties">
                 <tr>
                     <td class="inputLabel">
-                        Live Events
+                        Live Event Name
                     </td>
                     <td>
                         @Html.DropDownList("liveEvents", null, new { @class = "inputSelect maxWidth" })
@@ -61,15 +60,17 @@ string gridId = "liveEventOutputs";
                     </td>
                 </tr>
                 <tr>
-                    <td class="inputLabel centered">
-                        DRV Window
-                        <br>
-                        (Minutes)
+                    <td class="inputLabel">
+                        DVR Window Length
                     </td>
-                    <td>
-                        <div id="archiveWindowMinutes"></div>
+                    <td class="inputOption">
+                        <input id="archiveWindowMinutes" class="archiveWindowMinutes" />
+                        &nbsp;
+                        <span class="inputLabel archiveWindowMinutes">
+                            Minutes (<span id="archiveWindowHours"></span>)
+                        </span>
                     </td>
-                </tr>
+                <tr>
             </table>
         </td>
     </tr>

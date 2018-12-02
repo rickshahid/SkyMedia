@@ -50,8 +50,9 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
         var streamUrl = mediaPlayer.currentSrc();
         streamUrl = streamUrl.replace("http:", "");
         streamUrl = streamUrl.split("/");
-        for (var i = streamUrl.length - 1; i > 1; i--) {
-            streamUrl[i] = streamUrl[i] + "<br>";
+        for (var i = 0; i < 4; i++) {
+            var urlIndex = streamUrl.length - 1 - i;
+            streamUrl[urlIndex] = streamUrl[urlIndex] + "<br>";
         }
         streamUrl = streamUrl.join("/");
         $("#streamUrl").html(streamUrl);

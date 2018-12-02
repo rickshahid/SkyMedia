@@ -42,7 +42,7 @@ function CreateJob() {
             SetTipVisible("inputAssetName", true);
         }
     } else {
-        var title = "Confirm Create Media Job";
+        var title = "Confirm Create Job";
         var message = "Are you sure you want to create a new media job?";
         var onConfirm = function () {
             SetCursor(true);
@@ -78,7 +78,7 @@ function UpdateJob() {
     var transformName = $("#transforms").val();
     var jobName = $("#name").val();
     if (transformName != "" && jobName != "") {
-        var title = "Confirm Media Job Update";
+        var title = "Confirm Update Job";
         var message = "Are you sure you want to update the '" + jobName + "' job?";
         var onConfirm = function () {
             SetCursor(true);
@@ -106,7 +106,7 @@ function UpdateJob() {
     }
 }
 function CancelJob(jobName, transformName) {
-    var title = "Confirm Job Cancel Request";
+    var title = "Confirm Cancel Job";
     var message = "Are you sure you want to cancel the '" + FormatValue(jobName) + "' job?";
     var onConfirm = function () {
         SetCursor(true);

@@ -1,0 +1,23 @@
+﻿@model AzureSkyMedia.WebApp.Models.RangeSlider
+
+@{
+    int rangeStart = Model.ValueCount == 0 ? 0 : Model.SkipCount + 1;
+    int rangeEnd = Model.SkipCount + Model.ValueCount;
+}
+
+<td class="@Model.ValueClass sliderRangeStart">
+    @rangeStart
+</td>
+<td>
+    <div id="@Model.RangeId" class="@Model.RangeClass sliderRange"></div>
+    <span id="@Model.ValueId" class="@Model.ValueClass sliderValue sliderRangeBoundary">
+        @rangeStart
+    </span>
+</td>
+<td class="@Model.ValueClass sliderRangeEnd">
+    @rangeEnd
+    @if (!Model.LastPage)
+    {
+        <span>+</span>
+    }
+</td>

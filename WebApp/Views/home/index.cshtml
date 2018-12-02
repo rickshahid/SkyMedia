@@ -62,7 +62,7 @@
     </tr>
 </table>
 
-<partial name="MediaModules" model='new StreamTuner { StreamSkipCount = streamSkipCount, StreamCount = mediaStreams.Length, StreamLastPage = streamTunerLastPage }' />
+<partial name="MediaModules" model='new RangeSlider { SkipCount = streamSkipCount, ValueCount = mediaStreams.Length, LastPage = streamTunerLastPage }' />
 
 <div id="streamName" class="streamName"></div>
 <div id="streamUrl" class="streamUrl"></div>

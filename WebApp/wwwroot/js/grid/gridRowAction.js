@@ -53,7 +53,7 @@ function OpenFile(fileUrl) {
 }
 function DeleteEntity(gridId, entityName, parentName) {
     var entityType = GetEntityType(gridId);
-    var title = "Confirm " + entityType + " Delete";
+    var title = "Confirm Delete " + entityType;
     var message = "Are you sure you want to delete the '" + FormatValue(entityName) + "' " + entityType.toLowerCase() + "?";
     var onConfirm = function () {
         SetCursor(true);
@@ -199,7 +199,7 @@ function UpdateEvent(eventName, eventAction) {
             actionUrl = "/live/resetEvent";
             break;
     }
-    var title = "Confirm Live Event " + eventAction;
+    var title = "Confirm " + eventAction + " Live Event";
     var message = "Are you sure you want to " + eventAction.toLowerCase() + " the '" + eventName + "' event?";
     var onConfirm = function () {
         SetCursor(true);

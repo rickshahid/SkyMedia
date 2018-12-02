@@ -92,13 +92,13 @@ function SetStreamTunerPage(streamTunerLeft, streamTunerRight) {
 function SetStreamNumber(streamNumber, leftOffset) {
     var streamIndex = GetStreamIndex(streamNumber);
     if (streamIndex == 0 || streamIndex == _mediaStreams.length - 1) {
-        $("#streamNumber").addClass("pageBoundary");
+        $("#streamNumber").addClass("sliderRangeBoundary");
     } else {
         var streamTunerWidth = $("#streamTuner").width();
         leftOffset = leftOffset - (streamTunerWidth / 2) + 1;
         $("#streamNumber").text(streamNumber);
         $("#streamNumber").css({ left: leftOffset + "px" });
-        $("#streamNumber").removeClass("pageBoundary");
+        $("#streamNumber").removeClass("sliderRangeBoundary");
     }
 }
 function SetMediaStream(streamTunerLeft, streamTunerRight) {

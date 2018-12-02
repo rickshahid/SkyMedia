@@ -238,12 +238,6 @@ function GetParentColumns(gridId) {
                     name: "properties.archiveWindowLength",
                     align: "center",
                     width: typeWidth
-                },
-                {
-                    label: "State",
-                    name: "properties.resourceState",
-                    align: "center",
-                    width: defaultWidth
                 }
             ];
             break;
