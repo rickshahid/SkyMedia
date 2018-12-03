@@ -2,9 +2,9 @@
 {
     public class RangeSlider
     {
-        public string RangeId { get; set; }
+        public string SliderId { get; set; }
 
-        public string RangeClass { get; set; }
+        public string SliderClass { get; set; }
 
         public string ValueId { get; set; }
 

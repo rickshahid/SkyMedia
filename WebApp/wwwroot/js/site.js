@@ -138,3 +138,21 @@ function CreateTipRight(targetId, tipText, adjustX, adjustY) {
 function SetTipVisible(targetId, tipVisible) {
     $("#" + targetId).qtip("toggle", tipVisible);
 }
+function SetSliderValue(sliderId, valueId, value) {
+    var minValue = $("#" + sliderId).slider("option", "min");
+    var maxValue = $("#" + sliderId).slider("option", "max");
+    if (value == minValue || value == maxValue) {
+        $("#" + valueId).addClass("sliderRangeBoundary");
+    } else {
+        var leftOffset = GetLeftOffset(sliderId, value);
+        $("#" + valueId).text(value);
+        $("#" + valueId).css({ left: leftOffset + "px" });
+        $("#" + valueId).removeClass("sliderRangeBoundary");
+    }
+}
+function GetLeftOffset(sliderId, sliderValue) {
+    var sliderWidth = $("#" + sliderId).width();
+    var sliderMaxValue = $("#" + sliderId).slider("option", "max");
+    var sliderValueStep = sliderWidth / (sliderMaxValue - 1);
+    return sliderValueStep * (sliderValue - 1) - (sliderWidth / 2) + 2;
+}

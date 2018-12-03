@@ -1,36 +1,32 @@
 ﻿var _mediaStreams, _streamNumber;
 function CreateStreamTuner() {
-    var streamTunerStep = GetStreamTunerStep();
-    var streamTunerWidth = $("#streamTuner").width();
     $("#streamTuner").slider({
-        min: 0,
-        max: streamTunerWidth,
-        step: streamTunerStep,
+        min: _mediaStreams.length == 0 ? 0 : 1,
+        max: _mediaStreams.length < _streamTunerPageSize ? _mediaStreams.length : _streamTunerPageSize,
         slide: function (event, ui) {
             if (_mediaStreams.length > 0) {
-                var streamNumber = GetStreamNumber(ui.value, streamTunerStep);
+                var streamNumber = GetStreamNumber(ui.value);
                 var streamIndex = GetStreamIndex(streamNumber);
                 var mediaStream = _mediaStreams[streamIndex];
                 var streamName = GetStreamName(mediaStream, true);
-                var adjustTipX = ui.value - (streamTunerWidth / 2) + 1;
+                var adjustTipX = GetLeftOffset("streamTuner", ui.value);
                 var adjustTipY = -15;
-                SetStreamNumber(streamNumber, ui.value);
+                SetStreamNumber(streamNumber);
                 CreateTipTop("streamTuner", streamName, adjustTipX, adjustTipY);
                 SetTipVisible("streamTuner", true);
             }
         },
         stop: function (event, ui) {
             if (_mediaStreams.length > 0) {
-                _streamNumber = GetStreamNumber(ui.value, streamTunerStep);
+                _streamNumber = GetStreamNumber(ui.value);
                 SetMediaStream(false, false);
             }
         }
     });
 }
-function GetStreamNumber(streamTunerValue, streamTunerStep) {
+function GetStreamNumber(streamTunerValue) {
     var streamPage = Math.floor(_streamNumber / _streamTunerPageSize);
-    var streamNumber = _mediaStreams.length == 1 ? 1 : (streamTunerValue / streamTunerStep) + 1;
-    return (streamPage * _streamTunerPageSize) + streamNumber;
+    return (streamPage * _streamTunerPageSize) + streamTunerValue;
 }
 function GetStreamIndex(streamNumber) {
     return (streamNumber - 1) % _streamTunerPageSize;
@@ -48,22 +44,6 @@ function GetStreamName(mediaStream, streamTuner) {
         }
     }
     return streamName;
-}
-function GetStreamTunerStep() {
-    var streamTunerStep = $("#streamTuner").width();
-    if (_mediaStreams.length > 1) {
-        streamTunerStep = Math.floor(streamTunerStep / (_mediaStreams.length - 1));
-    }
-    return streamTunerStep;
-}
-function SetStreamTunerValue() {
-    var streamIndex = GetStreamIndex(_streamNumber);
-    var streamTunerStep = GetStreamTunerStep();
-    var streamTunerValue = streamIndex * streamTunerStep;
-    $("#streamTuner").slider({
-        value: streamTunerValue
-    });
-    return streamTunerValue;
 }
 function SetStreamTunerPage(streamTunerLeft, streamTunerRight) {
     var streamTunerPageChange = false;
@@ -89,17 +69,8 @@ function SetStreamTunerPage(streamTunerLeft, streamTunerRight) {
     }
     return streamTunerPageChange;
 }
-function SetStreamNumber(streamNumber, leftOffset) {
-    var streamIndex = GetStreamIndex(streamNumber);
-    if (streamIndex == 0 || streamIndex == _mediaStreams.length - 1) {
-        $("#streamNumber").addClass("sliderRangeBoundary");
-    } else {
-        var streamTunerWidth = $("#streamTuner").width();
-        leftOffset = leftOffset - (streamTunerWidth / 2) + 1;
-        $("#streamNumber").text(streamNumber);
-        $("#streamNumber").css({ left: leftOffset + "px" });
-        $("#streamNumber").removeClass("sliderRangeBoundary");
-    }
+function SetStreamNumber(streamNumber) {
+    SetSliderValue("streamTuner", "streamNumber", streamNumber);
 }
 function SetMediaStream(streamTunerLeft, streamTunerRight) {
     if (_mediaStreams.length > 0) {
@@ -112,8 +83,10 @@ function SetMediaStream(streamTunerLeft, streamTunerRight) {
             var streamName = GetStreamName(mediaStream, false);
             $("#streamName").html(streamName);
             $("#streamUrl").html("");
-            var streamTunerValue = SetStreamTunerValue();
-            SetStreamNumber(_streamNumber, streamTunerValue);
+            $("#streamTuner").slider({
+                value: _streamNumber
+            });
+            SetStreamNumber(_streamNumber);
             SetPlayerContent(_mediaPlayer, mediaStream);
         }
     }
