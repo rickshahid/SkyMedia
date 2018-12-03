@@ -138,21 +138,22 @@ function CreateTipRight(targetId, tipText, adjustX, adjustY) {
 function SetTipVisible(targetId, tipVisible) {
     $("#" + targetId).qtip("toggle", tipVisible);
 }
-function SetSliderValue(sliderId, valueId, value) {
+function SetSliderValue(sliderId, labelId, sliderValue) {
     var minValue = $("#" + sliderId).slider("option", "min");
     var maxValue = $("#" + sliderId).slider("option", "max");
-    if (value == minValue || value == maxValue) {
-        $("#" + valueId).addClass("sliderRangeBoundary");
+    if (sliderValue == minValue || sliderValue == maxValue) {
+        $("#" + labelId).addClass("sliderRangeBoundary");
     } else {
-        var leftOffset = GetLeftOffset(sliderId, value);
-        $("#" + valueId).text(value);
-        $("#" + valueId).css({ left: leftOffset + "px" });
-        $("#" + valueId).removeClass("sliderRangeBoundary");
+        var leftOffset = GetLeftOffset(sliderId, sliderValue);
+        $("#" + labelId).text(sliderValue);
+        $("#" + labelId).css({ left: leftOffset + "px" });
+        $("#" + labelId).removeClass("sliderRangeBoundary");
     }
 }
 function GetLeftOffset(sliderId, sliderValue) {
     var sliderWidth = $("#" + sliderId).width();
+    var sliderMinValue = $("#" + sliderId).slider("option", "min");
     var sliderMaxValue = $("#" + sliderId).slider("option", "max");
-    var sliderValueStep = sliderWidth / (sliderMaxValue - 1);
-    return sliderValueStep * (sliderValue - 1) - (sliderWidth / 2) + 2;
+    var sliderValueWidth = Math.floor(sliderWidth / (sliderMaxValue - sliderMinValue));
+    return (sliderValueWidth * (sliderValue - sliderMinValue)) - (sliderWidth / 2) + 1;
 }

@@ -19,7 +19,7 @@
         <td>
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetMediaStream(true, false)" }' />
         </td>
-        <partial name="RangeSlider" model='new RangeSlider { SliderId = "streamTuner", SliderClass = "streamTuner", ValueId = "streamNumber", ValueClass = "streamNumber", SkipCount = Model.SkipCount, ValueCount = Model.ValueCount, LastPage = Model.LastPage }' />
+        <partial name="RangeSlider" model='new RangeSlider { SliderId = "streamTuner", SliderClass = "streamTuner", LabelId = "streamNumber", LabelClass = "streamNumber", SkipCount = Model.SkipCount, ValueCount = Model.ValueCount, LastPage = Model.LastPage }' />
         <td>
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamRight", ImageFile = "MediaStreamRight.png", OnClick = "SetMediaStream(false, true)" }' />
         </td>

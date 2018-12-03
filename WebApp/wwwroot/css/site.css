@@ -240,7 +240,7 @@ body {
     color: transparent !important;
 }
 
-.sliderValue {
+.sliderLabel {
     position: relative;
     top: 10px;
 }

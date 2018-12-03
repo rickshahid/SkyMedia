@@ -6,9 +6,9 @@
 
         public string SliderClass { get; set; }
 
-        public string ValueId { get; set; }
+        public string LabelId { get; set; }
 
-        public string ValueClass { get; set; }
+        public string LabelClass { get; set; }
 
         public int SkipCount { get; set; }
 

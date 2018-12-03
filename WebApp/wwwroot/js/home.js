@@ -1,15 +1,15 @@
 ﻿var _mediaStreams, _streamNumber;
 function CreateStreamTuner() {
     $("#streamTuner").slider({
-        min: _mediaStreams.length == 0 ? 0 : 1,
-        max: _mediaStreams.length < _streamTunerPageSize ? _mediaStreams.length : _streamTunerPageSize,
+        min: GetStreamTunerMin(),
+        max: GetStreamTunerMax(),
         slide: function (event, ui) {
             if (_mediaStreams.length > 0) {
-                var streamNumber = GetStreamNumber(ui.value);
+                var streamNumber = ui.value;
                 var streamIndex = GetStreamIndex(streamNumber);
                 var mediaStream = _mediaStreams[streamIndex];
                 var streamName = GetStreamName(mediaStream, true);
-                var adjustTipX = GetLeftOffset("streamTuner", ui.value);
+                var adjustTipX = GetLeftOffset("streamTuner", streamNumber);
                 var adjustTipY = -15;
                 SetStreamNumber(streamNumber);
                 CreateTipTop("streamTuner", streamName, adjustTipX, adjustTipY);
@@ -18,15 +18,27 @@ function CreateStreamTuner() {
         },
         stop: function (event, ui) {
             if (_mediaStreams.length > 0) {
-                _streamNumber = GetStreamNumber(ui.value);
+                _streamNumber = ui.value;
                 SetMediaStream(false, false);
             }
         }
     });
 }
-function GetStreamNumber(streamTunerValue) {
-    var streamPage = Math.floor(_streamNumber / _streamTunerPageSize);
-    return (streamPage * _streamTunerPageSize) + streamTunerValue;
+function GetStreamTunerMin() {
+    var minValue = 0;
+    if (_mediaStreams.length > 0) {
+        var pageCount = Math.floor(_streamNumber / _streamTunerPageSize);
+        minValue = (pageCount * _streamTunerPageSize) + 1;
+    }
+    return minValue;
+}
+function GetStreamTunerMax() {
+    var maxValue = 0;
+    if (_mediaStreams.length > 0) {
+        var pageCount = Math.floor(_streamNumber / _streamTunerPageSize);
+        maxValue = (pageCount * _streamTunerPageSize) + _mediaStreams.length;
+    }
+    return maxValue;
 }
 function GetStreamIndex(streamNumber) {
     return (streamNumber - 1) % _streamTunerPageSize;
@@ -70,6 +82,13 @@ function SetStreamTunerPage(streamTunerLeft, streamTunerRight) {
     return streamTunerPageChange;
 }
 function SetStreamNumber(streamNumber) {
+    if (streamNumber == null) {
+        streamNumber = $("#streamTuner").slider("value");
+    } else {
+        $("#streamTuner").slider({
+            value: streamNumber
+        });
+    }
     SetSliderValue("streamTuner", "streamNumber", streamNumber);
 }
 function SetMediaStream(streamTunerLeft, streamTunerRight) {
@@ -83,9 +102,6 @@ function SetMediaStream(streamTunerLeft, streamTunerRight) {
             var streamName = GetStreamName(mediaStream, false);
             $("#streamName").html(streamName);
             $("#streamUrl").html("");
-            $("#streamTuner").slider({
-                value: _streamNumber
-            });
             SetStreamNumber(_streamNumber);
             SetPlayerContent(_mediaPlayer, mediaStream);
         }

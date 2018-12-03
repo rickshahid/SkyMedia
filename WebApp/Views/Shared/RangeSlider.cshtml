@@ -5,16 +5,16 @@
     int rangeEnd = Model.SkipCount + Model.ValueCount;
 }
 
-<td class="@Model.ValueClass sliderRangeStart">
+<td class="@Model.LabelClass sliderRangeStart">
     @rangeStart
 </td>
 <td>
     <div id="@Model.SliderId" class="@Model.SliderClass sliderRange"></div>
-    <span id="@Model.ValueId" class="@Model.ValueClass sliderValue sliderRangeBoundary">
+    <span id="@Model.LabelId" class="@Model.LabelClass sliderLabel sliderRangeBoundary">
         @rangeStart
     </span>
 </td>
-<td class="@Model.ValueClass sliderRangeEnd">
+<td class="@Model.LabelClass sliderRangeEnd">
     @rangeEnd
     @if (!Model.LastPage)
     {
