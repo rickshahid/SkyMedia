@@ -43,7 +43,7 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
         }
     });
     mediaPlayer.addEventListener(amp.eventName.loadeddata, function () {
-        var mediaStream = GetMediaStream();
+        var mediaStream = GetMediaStream(null);
         SetPlayerControls(mediaStream, storageCdnUrl, liveEncoding);
     });
     mediaPlayer.addEventListener(amp.eventName.play, function () {
