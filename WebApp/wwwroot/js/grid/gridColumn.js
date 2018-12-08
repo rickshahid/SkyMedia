@@ -74,8 +74,8 @@ function GetParentColumns(gridId) {
                 },
                 {
                     formatter: FormatAssetLocators,
-                    label: "Locators",
-                    name: "streamingLocators",
+                    label: "Stream Urls",
+                    name: "streamingUrls",
                     align: "center",
                     width: defaultWidth
                 }
@@ -140,7 +140,7 @@ function GetParentColumns(gridId) {
                     label: "Streaming Policy Name",
                     name: "name",
                     align: "center",
-                    width: 400
+                    width: nameWidthEx
                 }
             ];
             break;
@@ -151,7 +151,7 @@ function GetParentColumns(gridId) {
                     label: "Streaming Endpoint Name",
                     name: "name",
                     align: "center",
-                    width: 400
+                    width: nameWidth
                 }
             ];
             break;
@@ -162,13 +162,13 @@ function GetParentColumns(gridId) {
                     label: "Streaming Locator Name",
                     name: "name",
                     align: "center",
-                    width: 400
+                    width: nameWidthEx
                 },
                 {
                     label: "Streaming Policy Name",
                     name: "properties.streamingPolicyName",
                     align: "center",
-                    width: nameWidth
+                    width: nameWidthEx
                 },
                 {
                     formatter: FormatDateTime,
@@ -183,6 +183,28 @@ function GetParentColumns(gridId) {
                     name: "properties.endTime",
                     align: "center",
                     width: defaultWidth
+                }
+            ];
+            break;
+        case "filtersAccount":
+            columns = [
+                {
+                    formatter: FormatName,
+                    label: "Account Filter Name",
+                    name: "name",
+                    align: "center",
+                    width: nameWidth
+                }
+            ];
+            break;
+        case "filtersAsset":
+            columns = [
+                {
+                    formatter: FormatName,
+                    label: "Asset Filter Name",
+                    name: "name",
+                    align: "center",
+                    width: nameWidth
                 }
             ];
             break;

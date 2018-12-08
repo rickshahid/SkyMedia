@@ -45,7 +45,7 @@
             <table class="mediaEntityProperties">
                 <tr>
                     <td class="inputLabel">
-                        Live Event Name
+                        Live Event
                     </td>
                     <td>
                         @Html.DropDownList("liveEvents", null, new { @class = "inputSelect maxWidth" })
@@ -57,6 +57,14 @@
                     </td>
                     <td>
                         <input id="outputAssetName" class="mediaEntityName" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel">
+                        Streaming Policy
+                    </td>
+                    <td class="inputOption">
+                        @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect maxWidth" })
                     </td>
                 </tr>
                 <tr>

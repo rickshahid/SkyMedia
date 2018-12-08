@@ -57,7 +57,7 @@
                 if (mediaStream == null) {
                     $("#" + playerId).remove();
                 } else {
-                    var mediaPlayer = GetMediaPlayer(playerId, "@userId", "@accountName", false, true);
+                    var mediaPlayer = GetMediaPlayer(playerId, "@userId", "@accountName", false, true, false, null);
                     SetPlayerContent(mediaPlayer, mediaStream);
                 }
             }

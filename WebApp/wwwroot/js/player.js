@@ -1,10 +1,9 @@
-﻿var _mediaPlayer;
-function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, spriteVttUrl) {
+﻿var _mediaPlayer, _liveEventName;
+function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, lowLatency, spriteVttUrl) {
     var playerOptions = {
         fluid: true,
         controls: true,
         autoplay: autoPlay,
-        heuristicProfile: "LowLatency",
         width: galleryView ? "400" : "100%",
         height: galleryView ? "400" : "auto",
         playbackSpeed: {
@@ -22,6 +21,9 @@ function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, sp
             }
         }
     };
+    if (lowLatency) {
+        playerOptions.heuristicProfile = "LowLatency";
+    }
     if (window.location.href.indexOf("debug") > -1) {
         playerOptions.plugins.diagnosticOverlay = {
             title: "Diagnostics",
@@ -43,12 +45,19 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
         }
     });
     mediaPlayer.addEventListener(amp.eventName.loadeddata, function () {
-        var mediaStream = GetMediaStream(null);
-        SetPlayerControls(mediaStream, storageCdnUrl, liveEncoding);
+        var insightUrl = null;
+        if (homePage) {
+            var mediaStream = GetMediaStream(null);
+            if (mediaStream != null && mediaStream.contentInsight != null) {
+                insightUrl = mediaStream.contentInsight.widgetUrl;
+            }
+        }
+        CreatePlayerControls(storageCdnUrl, liveEncoding, insightUrl);
     });
     mediaPlayer.addEventListener(amp.eventName.play, function () {
         var streamUrl = mediaPlayer.currentSrc();
         streamUrl = streamUrl.replace("http:", "");
+        streamUrl = streamUrl.replace("https:", "");
         streamUrl = streamUrl.split("/");
         for (var i = 0; i < 4; i++) {
             var urlIndex = streamUrl.length - 1 - i;
@@ -60,37 +69,62 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
 }
 function SetPlayerContent(mediaPlayer, mediaStream) {
     var sourceUrl = mediaStream.source.src;
-    if (sourceUrl.indexOf("/manifest") > -1) {
-        sourceUrl = sourceUrl + "(format=mpd-time-cmaf)";
-    }
-    if (mediaStream.source.protectionInfo != null && mediaStream.source.protectionInfo.length > 0) {
-        if (window.location.href.indexOf("token=0") > -1) {
-            for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
-                mediaStream.source.protectionInfo[i].authenticationToken = null;
-            }
-        }
-        mediaPlayer.src(
-            [{
-                src: sourceUrl,
-                protectionInfo: mediaStream.source.protectionInfo
-            }],
-            mediaStream.textTracks
-        );
-    } else {
-        mediaPlayer.src(
-            [{
-                src: sourceUrl
-            }],
-            mediaStream.textTracks
-        );
-    }
+    var textTracks = mediaStream.textTracks;
+    var protectionInfo = mediaStream.source.protectionInfo;
+    SetPlayerSource(mediaPlayer, sourceUrl, textTracks, protectionInfo);
     if (window.location.href.indexOf("poster=0") == -1) {
         if (mediaStream.thumbnails != null && mediaStream.thumbnails.length > 0) {
             mediaPlayer.poster(mediaStream.thumbnails[0]);
         }
     }
 }
-function SetPlayerControl(controlBar, storageCdnUrl, imageFile, imageId, buttonId, onClick, tipText) {
+function SetPlayerSource(mediaPlayer, sourceUrl, textTracks, protectionInfo) {
+    if (sourceUrl.indexOf("/manifest") > -1) {
+        sourceUrl = sourceUrl + "(format=mpd-time-cmaf)";
+    }
+    if (protectionInfo != null && protectionInfo.length > 0) {
+        if (window.location.href.indexOf("token=0") > -1) {
+            for (var i = 0; i < protectionInfo.length; i++) {
+                protectionInfo[i].authenticationToken = null;
+            }
+        }
+        mediaPlayer.src(
+            [{
+                src: sourceUrl,
+                protectionInfo: protectionInfo
+            }],
+            textTracks
+        );
+    } else {
+        mediaPlayer.src(
+            [{
+                src: sourceUrl
+            }],
+            textTracks
+        );
+    }
+}
+function ClearPlayerControls(controlBar, childIds) {
+    for (var i = 0; i < childIds.length; i++) {
+        var childId = childIds[i];
+        var child = controlBar.children[childId];
+        if (child != null) {
+            controlBar.removeChild(child);
+        }
+    }
+}
+function CreatePlayerControls(storageCdnUrl, liveEncoding, insightUrl) {
+    var controlBar = $(".amp-controlbaricons-right")[0];
+    var buttonIds = ["signalButton", "insightButton"];
+    ClearPlayerControls(controlBar, buttonIds);
+    if (liveEncoding) {
+        CreatePlayerControl(controlBar, storageCdnUrl, InsertAdSignal, "signalButton", "signalImage", "MediaLiveSignal.png", "Insert<br><br>Ad Signal");
+    }
+    if (insightUrl != null) {
+        CreatePlayerControl(controlBar, storageCdnUrl, ToggleMediaInsight, "insightButton", "insightImage", "MediaInsightShow.png", "Media<br><br>Insight");
+    }
+}
+function CreatePlayerControl(controlBar, storageCdnUrl, onClick, buttonId, imageId, imageFile, tipText) {
     var image = document.createElement("img");
     image.id = imageId;
     image.src = storageCdnUrl + "/" + imageFile;
@@ -102,41 +136,49 @@ function SetPlayerControl(controlBar, storageCdnUrl, imageFile, imageId, buttonI
     $("#" + buttonId).click(onClick);
     CreateTipTop(buttonId, tipText);
 }
-function SetPlayerControls(mediaStream, storageCdnUrl, liveEncoding) {
-    var controlBar = $(".amp-controlbaricons-right")[0];
-    var buttonIds = ["insightButton", "signalButton"];
-    ClearPlayerControls(controlBar, buttonIds);
-    if (mediaStream != null && mediaStream.contentInsight != null && mediaStream.contentInsight.widgetUrl != null) {
-        onClick = function () {
-            var imageSource = $("#insightImage").prop("src");
-            if ($("#indexerInsight").is(":visible")) {
-                $("#indexerInsight").hide();
-                $(".layoutPanel.side").show();
-                $("#insightImage").prop("src", imageSource.replace("Hide", "Show"));
-            } else {
-                var playerHeight = $("#videoPlayer video").height();
-                $("#indexerInsight").height(playerHeight);
-                $("#indexerInsight").prop("src", mediaStream.contentInsight.widgetUrl);
-                $("#indexerInsight").show();
-                $(".layoutPanel.side").hide();
-                $("#insightImage").prop("src", imageSource.replace("Show", "Hide"));
-            }
-        };
-        SetPlayerControl(controlBar, storageCdnUrl, "MediaInsightShow.png", "insightImage", "insightButton", onClick, "Media<br><br>Insight");
-    }
-    if (liveEncoding) {
-        onClick = function () {
-            alert("Insert Ad Signal");
-        };
-        SetPlayerControl(controlBar, storageCdnUrl, "MediaLiveSignal.png", "signalImage", "signalButton", onClick, "Insert<br><br>Ad Signal");
+function ToggleMediaInsight() {
+    var imageSource = $("#insightImage").prop("src");
+    if ($("#indexerInsight").is(":visible")) {
+        $("#indexerInsight").hide();
+        $(".layoutPanel.side").show();
+        $("#insightImage").prop("src", imageSource.replace("Hide", "Show"));
+    } else {
+        var playerHeight = $("#videoPlayer video").height();
+        $("#indexerInsight").height(playerHeight);
+        $("#indexerInsight").prop("src", mediaStream.contentInsight.widgetUrl);
+        $("#indexerInsight").show();
+        $(".layoutPanel.side").hide();
+        $("#insightImage").prop("src", imageSource.replace("Show", "Hide"));
     }
 }
-function ClearPlayerControls(controlBar, childIds) {
-    for (var i = 0; i < childIds.length; i++) {
-        var childId = childIds[i];
-        var child = controlBar.children[childId];
-        if (child != null) {
-            controlBar.removeChild(child);
+function InsertAdSignal() {
+    var title = "Confirm Insert Advertising Signal";
+    var message = "Are you sure you want to insert an advertising signal?";
+    message = message + "<br><br>Signal Id&nbsp;&nbsp;<input id='signalId' type='text' />";
+    message = message + "<br><br>Signal Duration&nbsp;&nbsp;<input id='signalDuration' class='signalDuration' value='30' />&nbsp;Seconds";
+    var buttons = {
+        OK: function () {
+            SetCursor(true);
+            $.post("/live/insertSignal",
+                {
+                    eventName: _liveEventName,
+                    signalId: $("#signalId").val(),
+                    signalDurationSeconds: $("#signalDuration").val()
+                },
+                function () {
+                    SetCursor(false);
+                }
+            );
+            $(this).dialog("close");
+        },
+        Cancel: function () {
+            $(this).dialog("close");
         }
-    }
+    };
+    DisplayMessage(title, message, buttons);
+    $("#signalDuration").spinner({
+        min: 1,
+        max: 99
+    });
+    $("#signalId").focus();
 }

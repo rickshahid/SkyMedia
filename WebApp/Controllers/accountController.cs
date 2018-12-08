@@ -230,6 +230,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 ViewData["liveEvents"] = LiveController.GetLiveEvents(mediaClient);
                 ViewData["liveEventOutputs"] = mediaClient.GetAllEntities<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
+                ViewData["streamingPolicies"] = JobController.GetStreamingPolicies(mediaClient);
             }
             return View();
         }

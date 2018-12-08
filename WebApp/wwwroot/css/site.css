@@ -154,6 +154,10 @@ body {
     width: 60px;
 }
 
+.signalDuration {
+    width: 25px;
+}
+
 .mediaEntity {
     border: 1px solid deepskyblue;
     border-radius: 20px;
@@ -270,8 +274,10 @@ body {
     margin-top: 10px;
 }
 
-.streamUrl.liveEvent {
-    margin-top: 30px;
+.liveEventUrlType {
+    font-size: x-large;
+    display: none;
+    margin: 20px;
 }
 
 #mediaStreamLeft {

@@ -90,10 +90,16 @@
         "description": "Subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
+    "functionLiveUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Function HTTP post url for live event processing."
+      }
+    },
     "functionPublishUrl": {
       "type": "string",
       "metadata": {
-        "description": "Function HTTP post url for media content publishing."
+        "description": "Function HTTP post url for content publishing process."
       }
     },
     "functionSyncSchedule": {
@@ -363,7 +369,11 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.Publish.JobUrl",
+              "name": "Media.EventGrid.LiveUrl",
+              "value": "[parameters('functionLiveUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.PublishUrl",
               "value": "[parameters('functionPublishUrl')]"
             },
             {
@@ -446,7 +456,11 @@
                   "value": "[parameters('databaseServiceRegions')]"
                 },
                 {
-                  "name": "Media.Publish.JobUrl",
+                  "name": "Media.EventGrid.LiveUrl",
+                  "value": "[parameters('functionLiveUrl')]"
+                },
+                {
+                  "name": "Media.EventGrid.PublishUrl",
                   "value": "[parameters('functionPublishUrl')]"
                 },
                 {
@@ -572,7 +586,11 @@
               "value": "https://api.videoindexer.ai/"
             },
             {
-              "name": "Media.Publish.JobUrl",
+              "name": "Media.EventGrid.LiveUrl",
+              "value": "[parameters('functionLiveUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.PublishUrl",
               "value": "[parameters('functionPublishUrl')]"
             },
             {
@@ -694,7 +712,11 @@
                     "value": "https://api.videoindexer.ai/"
                   },
                   {
-                    "name": "Media.Publish.JobUrl",
+                    "name": "Media.EventGrid.LiveUrl",
+                    "value": "[parameters('functionLiveUrl')]"
+                  },
+                  {
+                    "name": "Media.EventGrid.PublishUrl",
                     "value": "[parameters('functionPublishUrl')]"
                   },
                   {

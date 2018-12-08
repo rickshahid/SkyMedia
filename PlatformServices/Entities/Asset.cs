@@ -14,7 +14,8 @@ namespace AzureSkyMedia.PlatformServices
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             Files = GetAssetFiles(blobClient, asset.Container, null);
             Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, asset.Name);
-            StreamingLocators = mediaClient.GetStreamingUrls(asset.Name);
+            StreamingUrls = mediaClient.GetStreamingUrls(asset.Name);
+            Published = mediaClient.GetLocators(asset.Name) != null;
         }
 
         internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath, out MediaFile[] assetFiles)
@@ -62,16 +63,19 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (IListBlobItem blobItem in blobList.Results)
                 {
                     string fileName = Path.GetFileName(blobItem.Uri.ToString());
-                    string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);
-                    MediaFile file = new MediaFile()
+                    if (!string.IsNullOrEmpty(fileName))
                     {
-                        Name = fileName,
-                        Size = fileSize,
-                        ByteCount = byteCount,
-                        ContentType = contentType,
-                        DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
-                    };
-                    files.Add(file);
+                        string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);
+                        MediaFile file = new MediaFile()
+                        {
+                            Name = fileName,
+                            Size = fileSize,
+                            ByteCount = byteCount,
+                            ContentType = contentType,
+                            DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
+                        };
+                        files.Add(file);
+                    }
                 }
                 continuationToken = blobList.ContinuationToken;
             } while (continuationToken != null);
@@ -95,7 +99,9 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string[] StreamingLocators { get; }
+        public string[] StreamingUrls { get; }
+
+        public bool Published { get; }
     }
 
     public class MediaFile

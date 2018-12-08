@@ -3,7 +3,7 @@
     var entityId = grid.gid == "indexerInsights" ? row.id : row.name;
     switch (grid.gid) {
         case "assets":
-            if (row["streamingLocators"].length > 0) {
+            if (row.published) {
                 onClick = "PublishContent('Asset','" + encodeURIComponent(entityId) + "','" + encodeURIComponent(row.parentName) + "',true)";
                 actionsHtml = actionsHtml + "<button id='" + row.id + "_unpublish' class='siteButton' onclick=" + onClick + ">";
                 actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaPublishDelete.png'></button>";
@@ -43,7 +43,7 @@
             }
             break;
         case "liveEvents":
-            if (row["properties.state"] == "Running") {
+            if (row["properties.resourceState"] == "Running") {
                 onClick = "UpdateEvent('" + encodeURIComponent(entityId) + "','Stop')";
                 actionsHtml = actionsHtml + "<button id='" + row.id + "_stop' class='siteButton' onclick=" + onClick + ">";
                 actionsHtml = actionsHtml + "<img src='" + _storageCdnUrl + "/MediaEventStop.png'></button>";

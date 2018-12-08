@@ -91,7 +91,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
-            public const string MediaPublishJobUrl = "Media.Publish.JobUrl";
+            public const string MediaEventGridLiveUrl = "Media.EventGrid.LiveUrl";
+            public const string MediaEventGridPublishUrl = "Media.EventGrid.PublishUrl";
 
             public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
 
@@ -242,13 +243,24 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
 
-            public struct Publish
+            public struct EventGrid
             {
-                public struct EventGrid
-                {
-                    public const string SubscriptionName = "AMS-Job-State";
-                    public static readonly string[] EventTypes = new string[] { "Microsoft.Media.JobStateChange" };
-                }
+                public const string PublishSubscriptionName = "AMS-Publish";
+                public static readonly string[] PublishEventTypes = new string[] {
+                    "Microsoft.Media.JobStateChange"
+                };
+
+                public const string LiveSubscriptionName = "AMS-Live";
+                public static readonly string[] LiveEventTypes = new string[] {
+                    "Microsoft.Media.LiveEventConnectionRejected",
+                    "Microsoft.Media.LiveEventEncoderConnected",
+                    "Microsoft.Media.LiveEventEncoderDisconnected",
+                    "Microsoft.Media.LiveEventIncomingDataChunkDropped",
+                    "Microsoft.Media.LiveEventIncomingStreamReceived",
+                    "Microsoft.Media.LiveEventIncomingStreamsOutOfSync",
+                    "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync",
+                    "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+                };
             }
 
             public struct Stream
@@ -275,7 +287,6 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const int OutputArchiveWindowMinutes = 60;
                 public const string OutputNameSuffix = "-Output";
-                public const string OutputAssetNameSuffix = "-Asset";
             }
         }
 

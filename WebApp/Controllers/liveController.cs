@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 using AzureSkyMedia.PlatformServices;
@@ -29,9 +31,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             return liveEvents.ToArray();
         }
 
-        public JsonResult CreateEvent(string eventName, string eventDescription, string eventTags, LiveEventInputProtocol inputProtocol = LiveEventInputProtocol.FragmentedMP4,
-                                      LiveEventEncodingType encodingType = LiveEventEncodingType.None, string encodingPresetName = null, string streamingPolicyName = null,
-                                      bool lowLatency = false, bool autoStart = false)
+        public JsonResult CreateEvent(string eventName, string eventDescription, string eventTags, LiveEventInputProtocol inputProtocol,
+                                      LiveEventEncodingType encodingType, string encodingPresetName, string streamingPolicyName,
+                                      bool lowLatency, bool autoStart)
         {
             try
             {
@@ -40,9 +42,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     liveEvent = mediaClient.CreateLiveEvent(eventName, eventDescription, eventTags, inputProtocol, encodingType, encodingPresetName, streamingPolicyName, lowLatency, autoStart);
-                    string eventOutputName = string.Concat(eventName, Constant.Media.LiveEvent.OutputNameSuffix);
-                    string eventOutputAssetName = string.Concat(eventName, Constant.Media.LiveEvent.OutputAssetNameSuffix);
-                    CreateOutput(eventName, eventOutputName, null, eventOutputAssetName, Constant.Media.LiveEvent.OutputArchiveWindowMinutes);
                 }
                 return Json(liveEvent);
             }
@@ -55,7 +54,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult CreateOutput(string eventName, string eventOutputName, string eventOutputDescription, string outputAssetName, int archiveWindowMinutes)
+        public JsonResult CreateOutput(string eventName, string eventOutputName, string eventOutputDescription, string outputAssetName,
+                                       string streamingPolicyName, int archiveWindowMinutes)
         {
             try
             {
@@ -63,7 +63,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    liveOutput = mediaClient.CreateLiveOutput(eventName, eventOutputName, eventOutputDescription, outputAssetName, archiveWindowMinutes);
+                    liveOutput = mediaClient.CreateLiveOutput(eventName, eventOutputName, eventOutputDescription, null, outputAssetName, archiveWindowMinutes);
+                    mediaClient.CreateLocator(outputAssetName, outputAssetName, streamingPolicyName, null);
                 }
                 return Json(liveOutput);
             }
@@ -105,6 +106,16 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
+                    LiveEvent liveEvent = mediaClient.GetEntity<LiveEvent>(MediaEntity.LiveEvent, eventName);
+                    MediaLiveEvent mediaLiveEvent = new MediaLiveEvent(mediaClient, liveEvent);
+                    if (mediaLiveEvent.Outputs.Length == 0)
+                    {
+                        string eventOutputName = string.Concat(eventName, Constant.Media.LiveEvent.OutputNameSuffix);
+                        string eventOutputAssetName = Guid.NewGuid().ToString();
+                        string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                        int archiveWindowMinutes = Constant.Media.LiveEvent.OutputArchiveWindowMinutes;
+                        CreateOutput(eventName, eventOutputName, null, eventOutputAssetName, streamingPolicyName, archiveWindowMinutes);
+                    }
                     mediaClient.StartLiveEvent(eventName);
                 }
                 return Json(eventName);
@@ -126,6 +137,12 @@ namespace AzureSkyMedia.WebApp.Controllers
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     mediaClient.StopLiveEvent(eventName);
+                    LiveEvent liveEvent = mediaClient.GetEntity<LiveEvent>(MediaEntity.LiveEvent, eventName);
+                    MediaLiveEvent mediaLiveEvent = new MediaLiveEvent(mediaClient, liveEvent);
+                    foreach (LiveOutput liveOutput in mediaLiveEvent.Outputs)
+                    {
+                        mediaClient.DeleteEntity(MediaEntity.LiveEventOutput, liveOutput.Name, mediaLiveEvent.Name);
+                    }
                 }
                 return Json(eventName);
             }
@@ -158,14 +175,14 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult InsertSignal(string eventName, int signalId, int durationSeconds)
+        public JsonResult InsertSignal(string eventName, string signalId, int signalDurationSeconds)
         {
             try
             {
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    mediaClient.InsertLiveEventSignal(eventName, signalId, durationSeconds);
+                    mediaClient.InsertLiveEventSignal(eventName, signalId, signalDurationSeconds);
                 }
                 return Json(eventName);
             }
@@ -180,27 +197,38 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Index()
         {
-            bool liveEncoding = false;
-            string liveEventUrl = string.Empty;
+            string liveEventName = string.Empty;
+            bool liveEventEncoding = false;
+            bool liveEventLowLatency = false;
+            string liveEventPreviewUrl = string.Empty;
+            string liveEventOutputUrl = string.Empty;
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
                 LiveEvent[] liveEvents = mediaClient.GetAllEntities<LiveEvent>(MediaEntity.LiveEvent);
                 foreach (LiveEvent liveEvent in liveEvents)
                 {
-                    if (liveEvent.Encoding.EncodingType.HasValue && liveEvent.Encoding.EncodingType != LiveEventEncodingType.None)
+                    if (liveEvent.ResourceState == LiveEventResourceState.Running && string.IsNullOrEmpty(liveEventPreviewUrl))
                     {
-                        liveEncoding = true;
+                        liveEventName = liveEvent.Name;
+                        if (liveEvent.Encoding.EncodingType.HasValue && liveEvent.Encoding.EncodingType != LiveEventEncodingType.None)
+                        {
+                            liveEventEncoding = true;
+                        }
+                        if (liveEvent.StreamOptions.Contains(StreamOptionsFlag.LowLatency))
+                        {
+                            liveEventLowLatency = true;
+                        }
+                        liveEventPreviewUrl = liveEvent.Preview.Endpoints[0].Url;
+                        liveEventOutputUrl = mediaClient.GetLiveOutputUrl(liveEvent);
                     }
-                    if (liveEvent.ResourceState == LiveEventResourceState.Running)
-                    {
-                        liveEventUrl = liveEvent.Preview.Endpoints[0].Url;
-                    }
-
                 }
             }
-            ViewData["liveEncoding"] = liveEncoding;
-            ViewData["liveEventUrl"] = liveEventUrl;
+            ViewData["liveEventName"] = liveEventName;
+            ViewData["liveEventEncoding"] = liveEventEncoding;
+            ViewData["liveEventLowLatency"] = liveEventLowLatency;
+            ViewData["liveEventPreviewUrl"] = liveEventPreviewUrl;
+            ViewData["liveEventOutputUrl"] = liveEventOutputUrl;
             return View();
         }
     }

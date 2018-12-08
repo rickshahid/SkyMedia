@@ -2,12 +2,15 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
+using Microsoft.Rest;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Azure.Management.EventGrid;
+using Microsoft.Azure.Management.EventGrid.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
@@ -93,7 +96,7 @@ namespace AzureSkyMedia.WebApp
             }
             if (!string.IsNullOrEmpty(authToken))
             {
-                MediaClient.SetEventSubscription(authToken);
+                SetEventGridSubscriptions(authToken);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     mediaClient.CreateTransforms();
@@ -166,6 +169,43 @@ namespace AzureSkyMedia.WebApp
             settingKey = Constant.AppSettingKey.AppApiVersion;
             string apiVersion = AppSetting.GetValue(settingKey);
             options.SwaggerEndpoint(endpointUrl, apiVersion);
+        }
+
+        private static void SetEventGridSubscriptions(string authToken)
+        {
+            string settingKey = Constant.AppSettingKey.MediaEventGridLiveUrl;
+            string liveUrl = AppSetting.GetValue(settingKey);
+
+            settingKey = Constant.AppSettingKey.MediaEventGridPublishUrl;
+            string publishUrl = AppSetting.GetValue(settingKey);
+
+            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
+            EventGridManagementClient eventGridClient = new EventGridManagementClient(azureToken)
+            {
+                SubscriptionId = subscriptionId
+            };
+
+            User userProfile = new User(authToken);
+            string eventScope = userProfile.MediaAccount.ResourceId;
+
+            SetEventGridSubscription(eventGridClient, eventScope, Constant.Media.EventGrid.LiveSubscriptionName, liveUrl, Constant.Media.EventGrid.LiveEventTypes);
+            SetEventGridSubscription(eventGridClient, eventScope, Constant.Media.EventGrid.PublishSubscriptionName, publishUrl, Constant.Media.EventGrid.PublishEventTypes);
+        }
+
+        private static void SetEventGridSubscription(EventGridManagementClient eventGridClient, string eventScope, string eventSubscriptionName, string eventUrl, string[] eventTypes)
+        {
+            EventSubscription eventSubscription = new EventSubscription(name: eventSubscriptionName)
+            {
+                Destination = new WebHookEventSubscriptionDestination()
+                {
+                    EndpointUrl = eventUrl
+                },
+                Filter = new EventSubscriptionFilter()
+                {
+                    IncludedEventTypes = eventTypes
+                }
+            };
+            eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
     }
 }

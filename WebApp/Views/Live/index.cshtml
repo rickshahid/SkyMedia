@@ -9,17 +9,30 @@
     string accountName = ViewData["accountName"] as string;
     string storageCdnUrl = ViewData["storageCdnUrl"].ToString();
 
-    string liveEncoding = ViewData["liveEncoding"].ToString().ToLower();
-    string liveEventUrl = ViewData["liveEventUrl"].ToString();
+    string liveEventName = ViewData["liveEventName"].ToString();
+    string liveEventEncoding = ViewData["liveEventEncoding"].ToString().ToLower();
+    string liveEventLowLatency = ViewData["liveEventLowLatency"].ToString().ToLower();
+    string liveEventPreviewUrl = ViewData["liveEventPreviewUrl"].ToString();
+    string liveEventOutputUrl = ViewData["liveEventOutputUrl"].ToString();
 }
 
 @section head {
     <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript">
+        _liveEventName = "@liveEventName";
+        function SetEventPlayer() {
+            var liveEventUrl = "@liveEventPreviewUrl";
+            if ($("#liveEventUrl:checked").val() == "Published") {
+                liveEventUrl = "@liveEventOutputUrl";
+            }
+            var mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", true, false, @liveEventLowLatency, null);
+            SetPlayerEvents(mediaPlayer, "@storageCdnUrl", @liveEventEncoding, false);
+            SetPlayerSource(mediaPlayer, liveEventUrl, null, null);
+            $("#liveEventUrlType").show();
+        }
         $(function () {
-            var liveEventUrl = "@liveEventUrl";
-            if (liveEventUrl == "") {
+            if ("@liveEventPreviewUrl" == "") {
                 var title = "Live Event";
                 var message = "A live event is currently not running.";
                 var buttons = {
@@ -30,13 +43,7 @@
                 }
                 DisplayMessage(title, message, buttons);
             } else {
-                var mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", true, false);
-                SetPlayerEvents(mediaPlayer, "@storageCdnUrl", @liveEncoding, false);
-                mediaPlayer.src(
-                    [{
-                        src: liveEventUrl
-                    }]
-                );
+                SetEventPlayer();
             }
         })
     </script>
@@ -48,4 +55,16 @@
 
 <partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", PlayerSkin = ampSkin }' />
 
-<div id="streamUrl" class="streamUrl liveEvent"></div>
+<div id="liveEventUrlType" class="liveEventUrlType">
+    <input id="liveEventUrl" name="liveEventUrl" type="radio" value="Preview" checked onchange="SetEventPlayer()">
+    <span class="inputLabel">
+        Preview
+    </span>
+    &nbsp;
+    <input id="liveEventUrl" name="liveEventUrl" type="radio" value="Published" onchange="SetEventPlayer()">
+    <span class="inputLabel">
+        Published
+    </span>
+</div>
+
+<div id="streamUrl" class="streamUrl"></div>

@@ -1,10 +1,7 @@
 ﻿using System.Text;
 
-using Microsoft.Rest;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
-using Microsoft.Azure.Management.EventGrid;
-using Microsoft.Azure.Management.EventGrid.Models;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -89,34 +86,6 @@ namespace AzureSkyMedia.PlatformServices
             JObject jobPublishOutput = string.IsNullOrEmpty(jobData) ? new JObject() : JObject.Parse(jobData);
             jobPublishOutput[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
             return jobPublishOutput;
-        }
-
-        public static void SetEventSubscription(string authToken)
-        {
-            string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
-            string publishJobUrl = AppSetting.GetValue(settingKey);
-
-            EventSubscription eventSubscription = new EventSubscription(name: Constant.Media.Publish.EventGrid.SubscriptionName)
-            {
-                Destination = new WebHookEventSubscriptionDestination()
-                {
-                    EndpointUrl = publishJobUrl
-                },
-                Filter = new EventSubscriptionFilter()
-                {
-                    IncludedEventTypes = Constant.Media.Publish.EventGrid.EventTypes
-                }
-            };
-
-            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
-            EventGridManagementClient eventGridClient = new EventGridManagementClient(azureToken)
-            {
-                SubscriptionId = subscriptionId
-            };
-
-            User userProfile = new User(authToken);
-            string eventScope = userProfile.MediaAccount.ResourceId;
-            eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
         public static MediaJobPublish PublishJobOutput(string jobName, string insightId)

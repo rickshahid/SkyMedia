@@ -1,13 +1,8 @@
 ﻿function GetNewEventName() {
     var eventName = $("#name").val();
     if (eventName == "") {
-        var inputProtocol = $("#inputProtocol:checked").val();
         var encodingType = $("#encodingType:checked").val();
         eventName = encodingType != "None" ? "Live-Encoding" : "Live-Streaming";
-        if (inputProtocol == "FragmentedMP4") {
-            inputProtocol = "FMP4";
-        }
-        eventName = eventName + "-" + inputProtocol;
     }
     return eventName;
 }
@@ -55,6 +50,7 @@ function CreateLiveOutput() {
                     eventOutputName: $("#name").val(),
                     eventOutputDescription: $("#description").val(),
                     outputAssetName: $("#outputAssetName").val(),
+                    streamingPolicyName: $("#streamingPolicies").val(),
                     archiveWindowMinutes: $("#archiveWindowMinutes").val()
                 },
                 function (liveOutput) {
@@ -129,7 +125,7 @@ function UpdateLiveEvent() {
 }
 function SetArchiveWindow(defaultMinutes) {
     $("#archiveWindowMinutes").spinner({
-        min: 0,
+        min: 3,
         max: 1500,
         change: function (event, ui) {
             var minutes = $(this).spinner("value");

@@ -85,7 +85,7 @@ namespace AzureSkyMedia.PlatformServices
             string insightId = null;
             string relativePath = "/videos";
             string requestUrl = GetRequestUrl(relativePath, true, null);
-            string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
+            string settingKey = Constant.AppSettingKey.MediaEventGridPublishUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             if (!string.IsNullOrEmpty(inputFileUrl))
             {
@@ -128,7 +128,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string relativePath = string.Concat("/videos/", insightId, "/reindex");
             string requestUrl = GetRequestUrl(relativePath, true, insightId);
-            string settingKey = Constant.AppSettingKey.MediaPublishJobUrl;
+            string settingKey = Constant.AppSettingKey.MediaEventGridPublishUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             callbackUrl = HttpUtility.UrlEncode(callbackUrl);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));

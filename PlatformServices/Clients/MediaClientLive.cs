@@ -14,7 +14,22 @@ namespace AzureSkyMedia.PlatformServices
         {
             LiveEventInput eventInput = new LiveEventInput()
             {
-                StreamingProtocol = inputProtocol
+                StreamingProtocol = inputProtocol,
+                AccessControl = new LiveEventInputAccessControl()
+                {
+                    Ip = new IPAccessControl()
+                    {
+                        Allow = new IPRange[]
+                        {
+                            new IPRange()
+                            {
+                                Name = "Any IP Address",
+                                Address = "0.0.0.0",
+                                SubnetPrefixLength = 0
+                            }
+                        }
+                    }
+                }
             };
             LiveEventEncoding eventEncoding = new LiveEventEncoding()
             {
@@ -45,11 +60,10 @@ namespace AzureSkyMedia.PlatformServices
             return _media.LiveEvents.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName, liveEvent, autoStart);
         }
 
-        public LiveOutput CreateLiveOutput(string eventName, string eventOutputName, string eventOutputDescription,
+        public LiveOutput CreateLiveOutput(string eventName, string eventOutputName, string eventOutputDescription, string eventOutputAssetStorage,
                                            string eventOutputAssetName, int eventArchiveWindowMinutes)
         {
-            CreateAsset(null, eventOutputAssetName);
-            CreateLocator(eventOutputAssetName, eventOutputAssetName, PredefinedStreamingPolicy.ClearStreamingOnly, null);
+            CreateAsset(eventOutputAssetStorage, eventOutputAssetName);
             LiveOutput eventOutput = new LiveOutput()
             {
                 Description = eventOutputDescription,
@@ -98,9 +112,25 @@ namespace AzureSkyMedia.PlatformServices
             _media.LiveEvents.Reset(MediaAccount.ResourceGroupName, MediaAccount.Name, eventName);
         }
 
-        public void InsertLiveEventSignal(string eventName, int signalId, int durationSeconds)
+        public string GetLiveOutputUrl(LiveEvent liveEvent)
         {
-            // TODO: Implement live event ad signaling
+            string liveOutputUrl = string.Empty;
+            MediaLiveEvent mediaLiveEvent = new MediaLiveEvent(this, liveEvent);
+            if (mediaLiveEvent.Outputs.Length > 0)
+            {
+                LiveOutput liveOutput = mediaLiveEvent.Outputs[0];
+                string[] streamingUrls = GetStreamingUrls(liveOutput.AssetName);
+                if (streamingUrls.Length > 0)
+                {
+                    liveOutputUrl = streamingUrls[0];
+                }
+            }
+            return liveOutputUrl;
+        }
+
+        public void InsertLiveEventSignal(string eventName, string signalId, int signalDurationSeconds)
+        {
+            // TODO: Implement v3 live event (encoding) ad signaling
         }
     }
 }

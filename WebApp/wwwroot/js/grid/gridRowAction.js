@@ -181,6 +181,8 @@ function SetRowEdit(gridId, rowData) {
             $("#streamingPolicies").val(row["properties.preview"]["streamingPolicyName"]);
             if (row["properties.streamOptions"].indexOf("LowLatency") > -1) {
                 $("#lowLatency").prop("checked", true);
+            } else {
+                $("#lowLatency").prop("checked", false);
             }
             _jsonEditor.set(row["tags"]);
            break;
