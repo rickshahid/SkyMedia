@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following architecture overview diagram depicts the solution sample deployment at http://www.skymedia.tv
 
-![](https://skymedia.azureedge.net/docs/02.9-SolutionArchitecture.png)
+![](https://skymedia.azureedge.net/docs/02.10-SolutionArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -74,8 +74,6 @@ The following Azure platform services were leveraged to create this sample media
   * **Media Player** - http://azure.microsoft.com/services/media-services/media-player/
   
   * **Video Indexer** - http://azure.microsoft.com/services/media-services/video-indexer/
-
-* **Azure Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
 
 * **Azure Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
