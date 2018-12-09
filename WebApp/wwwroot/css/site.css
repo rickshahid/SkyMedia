@@ -403,7 +403,6 @@ body {
 
 .indexerInsight {
     background-color: azure;
-    vertical-align: bottom;
     display: none;
     width: 600px;
 }

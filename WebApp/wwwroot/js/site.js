@@ -15,7 +15,7 @@ function InitializeApp(appName) {
     CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
     CreateTipRight("mediaServicesPlayer", "Azure Media Player");
     CreateTipRight("mediaIndexer", "Azure Video Indexer");
-    CreateTipLeft("cognitiveSearch", "Azure Cognitive Search");
+    CreateTipLeft("search", "Azure Search");
     CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
     CreateTipLeft("logicApp", "Azure Logic App");
     CreateTipLeft("functionApp", "Azure Functions");

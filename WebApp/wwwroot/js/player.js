@@ -1,4 +1,4 @@
-﻿var _mediaPlayer, _liveEventName;
+﻿var _mediaPlayer, _liveEventName, _insightWidgetUrl;
 function GetMediaPlayer(playerId, userId, accountName, autoPlay, galleryView, lowLatency, spriteVttUrl) {
     var playerOptions = {
         fluid: true,
@@ -45,14 +45,14 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
         }
     });
     mediaPlayer.addEventListener(amp.eventName.loadeddata, function () {
-        var insightUrl = null;
+        _insightWidgetUrl = null;
         if (homePage) {
             var mediaStream = GetMediaStream(null);
             if (mediaStream != null && mediaStream.contentInsight != null) {
-                insightUrl = mediaStream.contentInsight.widgetUrl;
+                _insightWidgetUrl = mediaStream.contentInsight.widgetUrl;
             }
         }
-        CreatePlayerControls(storageCdnUrl, liveEncoding, insightUrl);
+        CreatePlayerControls(storageCdnUrl, liveEncoding);
     });
     mediaPlayer.addEventListener(amp.eventName.play, function () {
         var streamUrl = mediaPlayer.currentSrc();
@@ -113,14 +113,14 @@ function ClearPlayerControls(controlBar, childIds) {
         }
     }
 }
-function CreatePlayerControls(storageCdnUrl, liveEncoding, insightUrl) {
+function CreatePlayerControls(storageCdnUrl, liveEncoding) {
     var controlBar = $(".amp-controlbaricons-right")[0];
     var buttonIds = ["signalButton", "insightButton"];
     ClearPlayerControls(controlBar, buttonIds);
     if (liveEncoding) {
         CreatePlayerControl(controlBar, storageCdnUrl, InsertAdSignal, "signalButton", "signalImage", "MediaLiveSignal.png", "Insert<br><br>Ad Signal");
     }
-    if (insightUrl != null) {
+    if (_insightWidgetUrl != null) {
         CreatePlayerControl(controlBar, storageCdnUrl, ToggleMediaInsight, "insightButton", "insightImage", "MediaInsightShow.png", "Media<br><br>Insight");
     }
 }
@@ -137,18 +137,18 @@ function CreatePlayerControl(controlBar, storageCdnUrl, onClick, buttonId, image
     CreateTipTop(buttonId, tipText);
 }
 function ToggleMediaInsight() {
-    var imageSource = $("#insightImage").prop("src");
+    var insightImageSource = $("#insightImage").prop("src");
     if ($("#indexerInsight").is(":visible")) {
         $("#indexerInsight").hide();
         $(".layoutPanel.side").show();
-        $("#insightImage").prop("src", imageSource.replace("Hide", "Show"));
+        $("#insightImage").prop("src", insightImageSource.replace("Hide", "Show"));
     } else {
         var playerHeight = $("#videoPlayer video").height();
         $("#indexerInsight").height(playerHeight);
-        $("#indexerInsight").prop("src", mediaStream.contentInsight.widgetUrl);
+        $("#indexerInsight").prop("src", _insightWidgetUrl);
         $("#indexerInsight").show();
         $(".layoutPanel.side").hide();
-        $("#insightImage").prop("src", imageSource.replace("Show", "Hide"));
+        $("#insightImage").prop("src", insightImageSource.replace("Show", "Hide"));
     }
 }
 function InsertAdSignal() {
