@@ -53,7 +53,7 @@ function OpenFile(fileUrl) {
 }
 function DeleteEntity(gridId, entityName, parentName) {
     var entityType = GetEntityType(gridId);
-    var title = "Confirm Delete " + entityType;
+    var title = "Delete " + entityType;
     var message = "Are you sure you want to delete the '" + FormatValue(entityName) + "' " + entityType.toLowerCase() + "?";
     var onConfirm = function () {
         SetCursor(true);
@@ -99,7 +99,7 @@ function DisplayJson(title, jsonData) {
     DisplayDialog(dialogId, title, null, null, null, null, onClose);
 }
 function ReindexVideo(insightId, videoName) {
-    var title = "Confirm Reindex Video";
+    var title = "Reindex Video";
     var message = "Are you sure you want to reindex the '" + FormatValue(videoName) + "' video?";
     var onConfirm = function () {
         SetCursor(true);
@@ -119,7 +119,7 @@ function ReindexVideo(insightId, videoName) {
 function PublishContent(entityType, entityName, parentName, unpublish) {
     var action = unpublish ? "Unpublish" : "Publish";
     var actionUrl = entityType == "Asset" ? "/asset/publish" : "/job/publish";
-    var title = "Confirm " + action + " " + entityType;
+    var title = action + " " + entityType;
     var message = "Are you sure you want to " + action.toLowerCase() + " the '" + FormatValue(entityName) + "' " + entityType.toLowerCase() + "?";
     var onConfirm = function () {
         SetCursor(true);
@@ -201,7 +201,7 @@ function UpdateEvent(eventName, eventAction) {
             actionUrl = "/live/resetEvent";
             break;
     }
-    var title = "Confirm " + eventAction + " Live Event";
+    var title = eventAction + " Live Event";
     var message = "Are you sure you want to " + eventAction.toLowerCase() + " the '" + eventName + "' event?";
     var onConfirm = function () {
         SetCursor(true);

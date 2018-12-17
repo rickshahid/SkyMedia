@@ -52,5 +52,13 @@ namespace AzureSkyMedia.PlatformServices
         {
             return CreateAsset(sourceBlobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, new string[] { fileName });
         }
+
+        public string GetAssetFileUrl(Asset asset)
+        {
+            StorageBlobClient blobClient = new StorageBlobClient(MediaAccount, asset.StorageAccountName);
+            MediaAsset mediaAsset = new MediaAsset(this, asset);
+            string fileName = mediaAsset.Files[0].Name;
+            return blobClient.GetDownloadUrl(asset.Container, fileName, false);
+        }
     }
 }

@@ -50,15 +50,12 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                         if (transform != null)
                         {
-                            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
-                            MediaAsset mediaAsset = new MediaAsset(mediaClient, inputAsset);
-                            string fileName = mediaAsset.Files[0].Name;
-                            string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
-                            MediaJobOutputMode outputAssetMode = MediaJobOutputMode.SingleAsset;
-                            string[] outputAssetDescriptions = new string[] { assetDescription };
+                            string inputFileUrl = mediaClient.GetAssetFileUrl(inputAsset);
+                            MediaJobOutputMode outputAssetMode = MediaJobOutputMode.OutputAsset;
                             string[] outputAssetAlternateIds = new string[] { insightId };
+                            string[] outputAssetDescriptions = new string[] { assetDescription };
                             PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
-                            job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetDescriptions, outputAssetAlternateIds, streamingPolicy);
+                            job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetAlternateIds, outputAssetDescriptions, streamingPolicy);
                         }
                         if (job != null)
                         {

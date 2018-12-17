@@ -87,17 +87,17 @@ namespace AzureSkyMedia.PlatformServices
             string requestUrl = GetRequestUrl(relativePath, true, null);
             string settingKey = Constant.AppSettingKey.MediaEventGridPublishUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
-            if (!string.IsNullOrEmpty(inputFileUrl))
+            if (inputAsset != null)
+            {
+                requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(inputAsset.Name));
+                requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
+            }
+            else
             {
                 Uri inputFileUri = new Uri(inputFileUrl);
                 string videoName = Path.GetFileNameWithoutExtension(inputFileUri.LocalPath);
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(videoName));
                 requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(inputFileUrl));
-            }
-            else if (inputAsset != null)
-            {
-                requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(inputAsset.Name));
-                requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
             }
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
@@ -173,18 +173,41 @@ namespace AzureSkyMedia.PlatformServices
             return searchResults;
         }
 
-        public JArray IndexerGetInsights()
+        public JObject IndexerGetInsights(int? pageSize, int? skipPageCount)
         {
-            JArray insights;
+            JObject insights;
             string relativePath = "/videos";
             string requestUrl = GetRequestUrl(relativePath, true, null);
+            if (pageSize.HasValue)
+            {
+                requestUrl = string.Concat(requestUrl, "&pageSize=", pageSize.Value);
+            }
+            if (skipPageCount.HasValue)
+            {
+                requestUrl = string.Concat(requestUrl, "&skip=", skipPageCount.Value);
+            }
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                JObject videos = webClient.GetResponse<JObject>(webRequest);
-                insights = (JArray)videos["results"];
+                insights = webClient.GetResponse<JObject>(webRequest);
             }
             return insights;
+        }
+
+        public JArray IndexerGetInsights()
+        {
+            bool lastPage;
+            JArray allInsights = new JArray();
+            do
+            {
+                JObject insights = IndexerGetInsights(null, null);
+                lastPage = (bool)insights["nextPage"]["done"];
+                foreach (JToken insight in insights["results"])
+                {
+                    allInsights.Add(insight);
+                }
+            } while (!lastPage);
+            return allInsights;
         }
 
         public JObject IndexerGetInsight(string insightId)

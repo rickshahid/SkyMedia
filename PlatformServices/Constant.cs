@@ -211,6 +211,7 @@ namespace AzureSkyMedia.PlatformServices
             public struct ContentKey
             {
                 public const string PolicyAES = "Content Key Policy AES";
+                public const string PolicyCENC = "Content Key Policy DRM (CENC)";
                 public const string PolicyDRM = "Content Key Policy DRM";
             }
 
@@ -235,11 +236,11 @@ namespace AzureSkyMedia.PlatformServices
 
                 public struct OutputAssetNameSuffix
                 {
-                    public const string Default = "MES";
-                    public const string AdaptiveStreaming = "ABR";
+                    public const string MultipleBitrate = "MBR";
+                    public const string SingleBitrate = "SBR";
+
                     public const string VideoAnalyzer = "VAI";
                     public const string AudioAnalyzer = "AAI";
-
                 }
             }
 

@@ -128,7 +128,7 @@ namespace AzureSkyMedia.FunctionApp
                     {
                         ingestManifest = CreateAsset(mediaClient, ingestManifest, out inputAsset, logger);
                     }
-                    if (ingestManifest.TransformPreset.HasValue)
+                    if (ingestManifest.TransformPresets != null && ingestManifest.TransformPresets.Length > 0)
                     {
                         CreateJob(mediaClient, ingestManifest, inputAsset, logger);
                     }
@@ -161,17 +161,23 @@ namespace AzureSkyMedia.FunctionApp
         {
             string logData = string.Concat("Input File Url: ", ingestManifest.JobInputFileUrl);
             WriteLog(ingestManifest.Name, logData, logger, false);
-            if (mediaClient.IndexerEnabled() && (ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.VideoIndexer) || ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.AudioIndexer)))
+            int videoIndex = Array.IndexOf(ingestManifest.TransformPresets, MediaTransformPreset.VideoIndexer);
+            int audioIndex = Array.IndexOf(ingestManifest.TransformPresets, MediaTransformPreset.AudioIndexer);
+            if (mediaClient.IndexerEnabled() && (videoIndex > -1 || audioIndex > -1))
             {
-                bool audioOnly = !ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.VideoIndexer) && ingestManifest.TransformPreset.Value.HasFlag(MediaTransformPreset.AudioIndexer);
+                if (ingestManifest.JobInputMode != MediaJobInputMode.Asset)
+                {
+                    inputAsset = null;
+                }
+                bool audioOnly = videoIndex == -1 && audioIndex > -1;
                 string insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, true, audioOnly);
                 logData = string.Concat("Insight Id: ", insightId);
                 WriteLog(ingestManifest.Name, logData, logger, false);
             }
-            Transform transform = mediaClient.CreateTransform(ingestManifest.TransformPreset.Value);
+            Transform transform = mediaClient.CreateTransform(ingestManifest.TransformPresets);
             if (transform != null)
             {
-                Job job = mediaClient.CreateJob(null, transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.JobData, ingestManifest.JobInputFileUrl, ingestManifest.AssetName, ingestManifest.JobOutputMode, ingestManifest.JobOutputAssetDescriptions, ingestManifest.JobOutputAssetAlternateIds, ingestManifest.StreamingPolicyName);
+                Job job = mediaClient.CreateJob(null, transform.Name, ingestManifest.JobName, ingestManifest.JobDescription, ingestManifest.JobPriority, ingestManifest.JobData, ingestManifest.JobInputFileUrl, ingestManifest.AssetName, ingestManifest.JobOutputMode, ingestManifest.JobOutputAssetAlternateIds, ingestManifest.JobOutputAssetDescriptions, ingestManifest.StreamingPolicyName);
                 logData = string.Concat("Transform Name: ", transform.Name);
                 WriteLog(ingestManifest.Name, logData, logger, false);
                 logData = string.Concat("Job Name: ", job.Name);

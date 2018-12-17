@@ -38,11 +38,8 @@ function CreateJob() {
             SetTipVisible("inputAssetName", false);
             SetTipVisible("inputFileUrl", false);
         }
-        if (inputFileUrl == "" && $("#inputAssetName").hasClass("entityNotFound")) {
-            SetTipVisible("inputAssetName", true);
-        }
     } else {
-        var title = "Confirm Create Job";
+        var title = "Create Media Job";
         var message = "Are you sure you want to create a new media job?";
         var onConfirm = function () {
             SetCursor(true);
@@ -53,8 +50,8 @@ function CreateJob() {
                     jobDescription: $("#description").val(),
                     jobPriority: $("#jobPriority:checked").val(),
                     jobData: _jsonEditor.getText(),
-                    inputFileUrl: inputFileUrl,
                     inputAssetName: inputAssetName,
+                    inputFileUrl: inputFileUrl,
                     outputAssetMode: $("#outputAssetMode").val(),
                     streamingPolicyName: $("#streamingPolicies").val()
                 },
@@ -78,7 +75,7 @@ function UpdateJob() {
     var transformName = $("#transforms").val();
     var jobName = $("#name").val();
     if (transformName != "" && jobName != "") {
-        var title = "Confirm Update Job";
+        var title = "Update Media Job";
         var message = "Are you sure you want to update the '" + jobName + "' job?";
         var onConfirm = function () {
             SetCursor(true);
@@ -106,7 +103,7 @@ function UpdateJob() {
     }
 }
 function CancelJob(jobName, transformName) {
-    var title = "Confirm Cancel Job";
+    var title = "Cancel Media Job";
     var message = "Are you sure you want to cancel the '" + FormatValue(jobName) + "' job?";
     var onConfirm = function () {
         SetCursor(true);
@@ -115,9 +112,9 @@ function CancelJob(jobName, transformName) {
                 transformName: decodeURIComponent(transformName),
                 jobName: decodeURIComponent(jobName)
             },
-            function () {
+            function (jobName) {
                 SetCursor(false);
-                window.location = window.location.href;
+                DisplayMessage("Media Job Canceling", jobName);
             }
         );
         $(this).dialog("close");

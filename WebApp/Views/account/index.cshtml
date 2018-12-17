@@ -21,11 +21,11 @@
             }
             $("#accountInventory").html(inventoryHtml);
         }
-        function DeleteEntities(skipIndexer) {
+        function DeleteEntities(skipLive) {
             SetCursor(true);
             $.post("/account/deleteEntities",
                 {
-                    skipIndexer: skipIndexer
+                    skipLive: skipLive
                 },
                 function () {
                     SetCursor(false);
@@ -41,7 +41,7 @@
             }
         }
         function ConfirmCreate() {
-            var title = "Confirm Create Media Account Assets";
+            var title = "Create Media Account Assets";
             var message = "Are you sure you want to create assets in your media account?";
             message = message + "<br><br><input id='assetType' name='assetType' type='radio' value='SBR' checked>&nbsp;Single Bitrate</input>";
             message = message + "&nbsp;&nbsp;&nbsp;<input id='assetType' name='assetType' type='radio' value='MBR'>&nbsp;Multiple Bitrates</input>";
@@ -74,14 +74,14 @@
             });
         }
         function ConfirmDelete() {
-            var title = "Confirm Delete Media Account Entities";
+            var title = "Delete Media Account Entities";
             var message = "Which set of entities do you want to delete from your media account?";
             var buttons = {
                 "All Entities": function () {
                     DeleteEntities(false);
                     $(this).dialog("close");
                 },
-                "Skip Indexer": function () {
+                "Skip Live": function () {
                     DeleteEntities(true);
                     $(this).dialog("close");
                 },

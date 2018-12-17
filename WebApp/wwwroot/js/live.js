@@ -7,7 +7,7 @@
     return eventName;
 }
 function CreateLiveEvent() {
-    var title = "Confirm Create Live Event";
+    var title = "Create Live Event";
     var message = "Are you sure you want to create a new live event?";
     var onConfirm = function () {
         SetCursor(true);
@@ -40,7 +40,7 @@ function CreateLiveEvent() {
 }
 function CreateLiveOutput() {
     if (ValidLiveOutput()) {
-        var title = "Confirm Create Live Event Output";
+        var title = "Create Live Event Output";
         var message = "Are you sure you want to create a new live event output?";
         var onConfirm = function () {
             SetCursor(true);
@@ -95,7 +95,7 @@ function ValidLiveOutput() {
 function UpdateLiveEvent() {
     var eventName = $("#name").val();
     if (eventName != "") {
-        var title = "Confirm Update Live Event";
+        var title = "Update Live Event";
         var message = "Are you sure you want to update the '" + eventName + "' event?";
         var onConfirm = function () {
             SetCursor(true);

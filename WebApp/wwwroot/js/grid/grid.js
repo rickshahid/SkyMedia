@@ -5,9 +5,9 @@ function ClearTitles() {
         tableCells[i].title = "";
     }
 }
-function CreateTips(rows) {
-    for (var i = 0; i < rows.length; i++) {
-        var rowId = rows[i].id;
+function CreateTips(gridRows) {
+    for (var i = 0; i < gridRows.length; i++) {
+        var rowId = gridRows[i].id;
         CreateTipTop(rowId + "_edit", "Edit");
         CreateTipTop(rowId + "_publish", "Publish");
         CreateTipTop(rowId + "_unpublish", "Unpublish");
@@ -21,10 +21,10 @@ function CreateTips(rows) {
         CreateTipTop(rowId + "_delete", "Delete");
     }
 }
-function SetParentRowIds(gridId, rows) {
+function SetParentRowIds(gridId, gridRows) {
     if (gridId != "indexerInsights") {
-        for (var i = 0; i < rows.length; i++) {
-            var row = rows[i];
+        for (var i = 0; i < gridRows.length; i++) {
+            var row = gridRows[i];
             var rowId = row.name;
             rowId = rowId.replace(/ /g, "-");
             rowId = rowId.replace(/,/g, "-");
@@ -58,26 +58,27 @@ function OnGridLoad(gridData, gridId, gridRows) {
         }
     }
 }
-function LoadGrid(gridId, rows) {
+function LoadGrid(gridId, gridRows) {
+    var pageSize = 5;
     var columns = GetParentColumns(gridId);
-    SetParentRowIds(gridId, rows);
+    SetParentRowIds(gridId, gridRows);
     $("#" + gridId).jqGrid({
         multiselect: gridId == "assets",
         colModel: columns,
         datatype: "local",
-        data: rows,
+        data: gridRows,
         loadComplete: OnGridLoad,
         subGrid: _childGridType != null,
         subGridOptions: {
             "openicon": "ui-icon-arrowreturnthick-1-e"
         },
         subGridRowExpanded: LoadSubGrid,
-        pager: "gridPager",
+        pager: gridRows.length > pageSize ? "gridPager" : null,
         sortname: "name",
         height: "auto",
-        rowNum: 5
+        rowNum: pageSize
     });
-    CreateTips(rows);
+    CreateTips(gridRows);
     switch (gridId) {
         case "transformJobs":
             var refreshJobs = function () {
@@ -94,6 +95,7 @@ function LoadGrid(gridId, rows) {
     }
 }
 function LoadSubGrid(parentRowId, parentRowKey) {
+    var pageSize = 10;
     var parentRow = $(this).getLocalRow(parentRowKey);
     var childRows = parentRow[_childPropertyName];
     var columns = GetChildColumns(_childGridType);
@@ -104,9 +106,10 @@ function LoadSubGrid(parentRowId, parentRowKey) {
         loadComplete: OnGridLoad,
         colModel: columns,
         datatype: "local",
-        sortname: "name",
         data: childRows,
-        rowNum: 100
+        pager: childRows.length > pageSize ? "gridPagerChild" : null,
+        sortname: "name",
+        rowNum: pageSize
     });
     CreateTips(childRows);
 }

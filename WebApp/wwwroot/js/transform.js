@@ -1,18 +1,18 @@
-﻿function SetIntelligenceOptions(intelligencePreset) {
-    switch (intelligencePreset.id) {
+﻿function SetIntelligenceOptions(videoPreset) {
+    var audioPresetId;
+    switch (videoPreset.id) {
         case "videoAnalyzer":
-            $("#audioAnalyzer").prop("checked", false);
-            $("#audioAnalyzer").prop("disabled", intelligencePreset.checked);
+            audioPresetId = "audioAnalyzer";
             break;
         case "videoIndexer":
-            $("#audioIndexer").prop("checked", false);
-            $("#audioIndexer").prop("disabled", intelligencePreset.checked);
+            audioPresetId = "audioIndexer";
             break;
         case "presetType2":
-            $("#presetType3").prop("checked", false);
-            $("#presetType3").prop("disabled", intelligencePreset.checked);
+            audioPresetId = "presetType3";
             break;
     }
+    $("#" + audioPresetId).prop("checked", false);
+    $("#" + audioPresetId).prop("disabled", videoPreset.checked);
 }
 function SetThumbnailOptions(thumbnailPreset) {
     if (thumbnailPreset.checked) {
@@ -28,13 +28,20 @@ function GetTransformOutputs() {
         if ($("#presetType" + i).prop("checked")) {
             var transformOutput = {
                 TransformPreset: $("#presetName" + i).val(),
-                RelativePriority: $("#relativePriority" + i).val(),
-                OnError: $("#onError" + i).val()
+                RelativePriority: $("#relativePriority" + i + ":checked").val(),
+                OnError: $("#onError" + i).prop("checked") ? 1 : 0
             };
             transformOutputs.push(transformOutput);
         }
     }
     return transformOutputs;
+}
+function GetThumbnailSpriteColumns() {
+    var thumbnailSpriteColumns;
+    if ($("#presetType1").prop("checked") && $("#thumbnailSprite").prop("checked")) {
+        thumbnailSpriteColumns = $("#thumbnailSpriteColumns").val();
+    }
+    return thumbnailSpriteColumns;
 }
 function CreateTransform() {
     var title = "Save Transform";
@@ -44,6 +51,7 @@ function CreateTransform() {
         message = "At least 1 transform output preset must be selected before a transform can be saved.";
         DisplayMessage(title, message);
     } else {
+        var thumbnailSpriteColumns = GetThumbnailSpriteColumns();
         var onConfirm = function () {
             SetCursor(true);
             $.post("/transform/create",
@@ -51,11 +59,12 @@ function CreateTransform() {
                     transformName: $("#name").val(),
                     transformDescription: $("#description").val(),
                     transformOutputs: transformOutputs,
-                    thumbnailSpriteColumns: $("#thumbnailSpriteColumns").val()
+                    thumbnailSpriteColumns: thumbnailSpriteColumns
                 },
                 function (transform) {
                     SetCursor(false);
-                    window.location = window.location.href;
+                    var transformName = FormatValue(transform.name);
+                    DisplayMessage("Media Transform Saved", transformName);
                 }
             );
             $(this).dialog("close");

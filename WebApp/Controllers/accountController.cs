@@ -27,16 +27,16 @@ namespace AzureSkyMedia.WebApp.Controllers
             HttpContext.ChallengeAsync().Wait();
         }
 
-        public JsonResult DeleteEntities(bool skipIndexer)
+        public JsonResult DeleteEntities(bool skipLive)
         {
             try
             {
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    Account.DeleteEntities(mediaClient, skipIndexer);
+                    Account.DeleteEntities(mediaClient, skipLive);
                 }
-                return Json(skipIndexer);
+                return Json(skipLive);
             }
             catch (ApiErrorException ex)
             {

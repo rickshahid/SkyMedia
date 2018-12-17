@@ -21,7 +21,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string AssetAlternateId { get; set; }
 
-        public MediaTransformPreset? TransformPreset { get; set; }
+        public MediaTransformPreset[] TransformPresets { get; set; }
 
         public string JobName { get; set; }
 

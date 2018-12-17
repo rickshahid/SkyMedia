@@ -104,7 +104,12 @@ namespace AzureSkyMedia.PlatformServices
                     CreateContentKeyPolicyAES();
                     contentKeyPolicyName = Constant.Media.ContentKey.PolicyAES;
                 }
-                else if (streamingPolicyName == PredefinedStreamingPolicy.SecureStreaming)
+                else if (streamingPolicyName == PredefinedStreamingPolicy.MultiDrmCencStreaming)
+                {
+                    CreateContentKeyPolicyDRM(contentProtection);
+                    contentKeyPolicyName = Constant.Media.ContentKey.PolicyCENC;
+                }
+                else if (streamingPolicyName == PredefinedStreamingPolicy.MultiDrmStreaming)
                 {
                     CreateContentKeyPolicyDRM(contentProtection);
                     contentKeyPolicyName = Constant.Media.ContentKey.PolicyDRM;

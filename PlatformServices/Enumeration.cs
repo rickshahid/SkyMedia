@@ -20,16 +20,15 @@ namespace AzureSkyMedia.PlatformServices
         LiveEventOutput
     }
 
-    [Flags]
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaTransformPreset
     {
-        AdaptiveStreaming = 1,
-        ThumbnailImages = 2,
-        VideoAnalyzer = 4,
-        AudioAnalyzer = 8,
-        VideoIndexer = 16,
-        AudioIndexer = 32
+        MediaEncoder,
+        ThumbnailImages,
+        VideoAnalyzer,
+        AudioAnalyzer,
+        VideoIndexer,
+        AudioIndexer
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -43,8 +42,8 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaJobOutputMode
     {
-        SingleAsset,
         InputAsset,
+        OutputAsset,
         DistinctAssets
     }
 

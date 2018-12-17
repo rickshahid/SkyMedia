@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 protectionInfo.Add(streamProtection);
             }
-            else if (locator.StreamingPolicyName == PredefinedStreamingPolicy.SecureStreaming)
+            else if (locator.StreamingPolicyName == PredefinedStreamingPolicy.MultiDrmCencStreaming || locator.StreamingPolicyName == PredefinedStreamingPolicy.MultiDrmStreaming)
             {
                 ContentKeyPolicy contentKeyPolicy = mediaClient.GetEntity<ContentKeyPolicy>(MediaEntity.ContentKeyPolicy, locator.DefaultContentKeyPolicyName);
                 foreach (ContentKeyPolicyOption contentKeyPolicyOption in contentKeyPolicy.Options)

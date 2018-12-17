@@ -11,6 +11,36 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private string GetOutputAssetNameSuffix(Preset transformPreset, MediaJobOutputMode outputAssetMode)
+        {
+            string outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.MultipleBitrate;
+            if (transformPreset is BuiltInStandardEncoderPreset standardEncoderPreset &&
+               (standardEncoderPreset.PresetName == EncoderNamedPreset.H264SingleBitrate1080p ||
+                standardEncoderPreset.PresetName == EncoderNamedPreset.H264SingleBitrate720p ||
+                standardEncoderPreset.PresetName == EncoderNamedPreset.H264SingleBitrateSD ||
+                standardEncoderPreset.PresetName == EncoderNamedPreset.AACGoodQualityAudio))
+            {
+                outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.SingleBitrate;
+            }
+            switch (outputAssetMode)
+            {
+                case MediaJobOutputMode.InputAsset:
+                    outputAssetNameSuffix = null;
+                    break;
+                case MediaJobOutputMode.DistinctAssets:
+                    if (transformPreset is VideoAnalyzerPreset)
+                    {
+                        outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.VideoAnalyzer;
+                    }
+                    else if (transformPreset is AudioAnalyzerPreset)
+                    {
+                        outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AudioAnalyzer;
+                    }
+                    break;
+            }
+            return outputAssetNameSuffix;
+        }
+
         private string GetOutputAssetName(TransformOutput transformOutput, MediaJob mediaJob, out string outputAssetStorage)
         {
             outputAssetStorage = this.PrimaryStorageAccount;
@@ -25,27 +55,10 @@ namespace AzureSkyMedia.PlatformServices
                 Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
                 outputAssetStorage = inputAsset.StorageAccountName;
             }
-            switch (mediaJob.OutputAssetMode)
+            string outputAssetNameSuffix = GetOutputAssetNameSuffix(transformOutput.Preset, mediaJob.OutputAssetMode);
+            if (!string.IsNullOrEmpty(outputAssetNameSuffix))
             {
-                case MediaJobOutputMode.SingleAsset:
-                    outputAssetName = string.Concat(outputAssetName, " (", Constant.Media.Job.OutputAssetNameSuffix.Default, ")");
-                    break;
-                case MediaJobOutputMode.DistinctAssets:
-                    string assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.Default;
-                    if (transformOutput.Preset is BuiltInStandardEncoderPreset)
-                    {
-                        assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AdaptiveStreaming;
-                    }
-                    else if (transformOutput.Preset is VideoAnalyzerPreset)
-                    {
-                        assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.VideoAnalyzer;
-                    }
-                    else if (transformOutput.Preset is AudioAnalyzerPreset)
-                    {
-                        assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AudioAnalyzer;
-                    }
-                    outputAssetName = string.Concat(outputAssetName, " (", assetNameSuffix, ")");
-                    break;
+                outputAssetName = string.Concat(outputAssetName, " (", outputAssetNameSuffix, ")");
             }
             return outputAssetName;
         }
@@ -106,7 +119,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority,
                              string jobData, string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode,
-                             string[] outputAssetDescriptions, string[] outputAssetAlternateIds, string streamingPolicyName)
+                             string[] outputAssetAlternateIds, string[] outputAssetDescriptions, string streamingPolicyName)
         {
             JObject jobPublish = GetJobPublish(authToken, jobData, streamingPolicyName);
             MediaJob mediaJob = new MediaJob()
@@ -118,8 +131,8 @@ namespace AzureSkyMedia.PlatformServices
                 InputFileUrl = inputFileUrl,
                 InputAssetName = inputAssetName,
                 OutputAssetMode = outputAssetMode,
-                OutputAssetDescriptions = outputAssetDescriptions,
-                OutputAssetAlternateIds = outputAssetAlternateIds
+                OutputAssetAlternateIds = outputAssetAlternateIds,
+                OutputAssetDescriptions = outputAssetDescriptions
             };
             Job job = CreateJob(transformName, mediaJob);
             MediaJobAccount jobAccount = new MediaJobAccount()

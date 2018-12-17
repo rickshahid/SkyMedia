@@ -92,7 +92,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             int streamTunerPageSize = int.Parse(tunerPageSize);
 
             int streamSkipCount = 0;
-            bool streamTunerLastPage = false;
+            bool streamTunerLastPage = true;
 
             try
             {
@@ -110,7 +110,6 @@ namespace AzureSkyMedia.WebApp.Controllers
                 if (string.IsNullOrEmpty(authToken))
                 {
                     mediaStreams = Media.GetSampleStreams();
-                    streamTunerLastPage = true;
                 }
                 else
                 {

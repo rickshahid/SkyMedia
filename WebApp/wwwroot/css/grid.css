@@ -52,6 +52,10 @@
     border: none !important;
 }
 
+#gridPagerChild {
+    margin-bottom: 10px !important;
+}
+
 .ui-pager-control {
     font-size: medium;
 }
@@ -62,7 +66,10 @@
 }
 
 .ui-pg-input {
+    font-size: medium !important;
+    height: 20px !important;
     text-align: center;
+    font-weight: bold;
     width: 40px;
 }
 

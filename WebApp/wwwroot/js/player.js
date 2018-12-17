@@ -152,7 +152,7 @@ function ToggleMediaInsight() {
     }
 }
 function InsertAdSignal() {
-    var title = "Confirm Insert Advertising Signal";
+    var title = "Insert Advertising Signal";
     var message = "Are you sure you want to insert an advertising signal?";
     message = message + "<br><br>Signal Id&nbsp;&nbsp;<input id='signalId' type='text' />";
     message = message + "<br><br>Signal Duration&nbsp;&nbsp;<input id='signalDuration' class='signalDuration' value='30' />&nbsp;Seconds";

@@ -4,7 +4,9 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaTransformOutput
     {
-        public MediaTransformPreset TransformPreset { get; set; }
+        public MediaTransformPreset PresetType { get; set; }
+
+        public string PresetName { get; set; }
 
         public Priority RelativePriority { get; set; }
 

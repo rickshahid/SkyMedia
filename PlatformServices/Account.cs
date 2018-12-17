@@ -31,7 +31,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public static void DeleteEntities(MediaClient mediaClient, bool skipIndexer)
+        public static void DeleteEntities(MediaClient mediaClient, bool skipLive)
         {
             DeleteEntities<Asset>(mediaClient, MediaEntity.Asset);
             DeleteEntities<Transform>(mediaClient, MediaEntity.Transform);
@@ -39,8 +39,11 @@ namespace AzureSkyMedia.PlatformServices
             DeleteEntities<StreamingPolicy>(mediaClient, MediaEntity.StreamingPolicy);
             DeleteEntities<StreamingLocator>(mediaClient, MediaEntity.StreamingLocator);
             DeleteEntities<AccountFilter>(mediaClient, MediaEntity.FilterAccount);
-            DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
-            if (mediaClient.IndexerEnabled() && !skipIndexer)
+            if (!skipLive)
+            {
+                DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
+            }
+            if (mediaClient.IndexerEnabled())
             {
                 JArray insights = mediaClient.IndexerGetInsights();
                 foreach (JToken insight in insights)

@@ -43,7 +43,7 @@ function InitializeApp(appName) {
                 message = ex.error.message;
             }
         }
-        if (message != null) {
+        if (message != null && message != "") {
             DisplayMessage(title, message);
         }
     });

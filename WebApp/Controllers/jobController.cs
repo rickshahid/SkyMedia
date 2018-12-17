@@ -49,7 +49,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Create(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
-                                 string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
+                                 string inputAssetName, string inputFileUrl, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
         {
             try
             {
@@ -79,23 +79,20 @@ namespace AzureSkyMedia.WebApp.Controllers
                         inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                         assetDescription = inputAsset.Description;
                     }
+                    if (string.IsNullOrEmpty(inputFileUrl))
+                    {
+                        inputFileUrl = mediaClient.GetAssetFileUrl(inputAsset);
+                    }
                     if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                     {
                         bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
-                        insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, jobPriority, true, audioOnly);
+                        insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, inputFileUrl, jobPriority, true, audioOnly);
                     }
                     if (!string.IsNullOrEmpty(transformName))
                     {
-                        if (string.IsNullOrEmpty(inputFileUrl) && inputAsset != null)
-                        {
-                            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
-                            MediaAsset mediaAsset = new MediaAsset(mediaClient, inputAsset);
-                            string fileName = mediaAsset.Files[0].Name;
-                            inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName, false);
-                        }
-                        string[] assetDescriptions = new string[] { assetDescription };
                         string[] assetAlternateIds = new string[] { insightId };
-                        job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, assetDescriptions, assetAlternateIds, streamingPolicyName);
+                        string[] assetDescriptions = new string[] { assetDescription };
+                        job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, assetAlternateIds, assetDescriptions, streamingPolicyName);
                     }
                 }
                 return Json(job);

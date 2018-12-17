@@ -21,9 +21,9 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaJobOutputMode OutputAssetMode { get; set; }
 
-        public string[] OutputAssetDescriptions { get; set; }
-
         public string[] OutputAssetAlternateIds { get; set; }
+
+        public string[] OutputAssetDescriptions { get; set; }
     }
 
     internal class MediaJobAccount
