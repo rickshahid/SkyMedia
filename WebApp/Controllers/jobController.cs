@@ -48,7 +48,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        public JsonResult Create(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
+        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData,
                                  string inputAssetName, string inputFileUrl, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
         {
             try

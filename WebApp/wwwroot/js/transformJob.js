@@ -52,7 +52,7 @@ function CreateJob() {
                     jobData: _jsonEditor.getText(),
                     inputAssetName: inputAssetName,
                     inputFileUrl: inputFileUrl,
-                    outputAssetMode: $("#outputAssetMode").val(),
+                    outputAssetMode: $("#outputAssetMode:checked").val(),
                     streamingPolicyName: $("#streamingPolicies").val()
                 },
                 function (job) {

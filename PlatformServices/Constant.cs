@@ -101,10 +101,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
 
-            public const string SearchServiceName = "Search.ServiceName";
-            public const string SearchAdminKey = "Search.AdminKey";
-            public const string SearchQueryKey = "Search.QueryKey";
-
             public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
             public const string AccountKeyPrefix = "AccountKey=";

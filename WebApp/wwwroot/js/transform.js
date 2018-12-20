@@ -27,9 +27,10 @@ function GetTransformOutputs() {
     for (var i = 0; i < 4; i++) {
         if ($("#presetType" + i).prop("checked")) {
             var transformOutput = {
-                TransformPreset: $("#presetName" + i).val(),
+                PresetType: $("#presetType" + i).val(),
+                PresetName: $("#presetName" + i).val(),
                 RelativePriority: $("#relativePriority" + i + ":checked").val(),
-                OnError: $("#onError" + i).prop("checked") ? 1 : 0
+                OnError: $("#onError" + i).prop("checked") ? $("#onError" + i).val() : null
             };
             transformOutputs.push(transformOutput);
         }

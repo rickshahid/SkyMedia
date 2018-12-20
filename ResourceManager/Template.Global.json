@@ -36,41 +36,6 @@
         "description": "Azure region names (delimited by semicolons) for data reads & writes (multi-master)."
       }
     },
-    "searchServiceName": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 60,
-      "metadata": {
-        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
-      }
-    },
-    "searchServiceRegion": {
-      "type": "string",
-      "metadata": {
-        "description": "Azure region name for the Search resource."
-      }
-    },
-    "searchServiceTier": {
-      "type": "string",
-      "defaultValue": "Standard",
-      "metadata": {
-        "description": "Search resource tier, which determines the maximum number of search indexes, documents, scaling units, etc."
-      }
-    },
-    "searchServiceReplicaCount": {
-      "type": "int",
-      "defaultValue": 1,
-      "metadata": {
-        "description": "Search replica count. 2 or more replicas are required for high availabiliy with Basic or Standard tiers."
-      }
-    },
-    "searchServicePartitionCount": {
-      "type": "int",
-      "defaultValue": 1,
-      "metadata": {
-        "description": "Search partition count, which enables scaling of document count and faster indexing across search units."
-      }
-    },
     "contentDeliveryProfileName": {
       "type": "string",
       "minLength": 2,
@@ -125,9 +90,6 @@
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "databaseServiceNameStaging": "[concat(variables('databaseServiceName'), 'staging')]",
     "databaseServiceRegions": "[split(parameters('databaseServiceRegions'), ';')]",
-    "searchApiVersion": "2015-08-19",
-    "searchServiceName": "[toLower(parameters('searchServiceName'))]",
-    "searchServiceTier": "[toLower(parameters('searchServiceTier'))]",
     "contentDeliveryApiVersion": "2018-04-02",
     "contentDeliveryEndpointSubdomain": "[toLower(parameters('contentDeliveryEndpointSubdomain'))]",
     "appInsightsApiVersion": "2018-05-01-preview"
@@ -198,19 +160,6 @@
         "tags": {
           "defaultExperience": "DocumentDB"
         }
-      }
-    },
-    {
-      "type": "Microsoft.Search/searchServices",
-      "apiVersion": "[variables('searchApiVersion')]",
-      "location": "[parameters('searchServiceRegion')]",
-      "name": "[variables('searchServiceName')]",
-      "sku": {
-        "name": "[variables('searchServiceTier')]"
-      },
-      "properties": {
-        "replicaCount": "[parameters('searchServiceReplicaCount')]",
-        "partitionCount": "[parameters('searchServicePartitionCount')]"
       }
     },
     {
