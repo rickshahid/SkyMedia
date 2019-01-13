@@ -127,10 +127,10 @@ body {
 }
 
 .accountContext {
-    font-size: large;
+    margin: 0px auto;
     font-weight: bold;
     font-style: italic;
-    margin-bottom: 10px;
+    font-size: x-large;
 }
 
 .accountInventory {

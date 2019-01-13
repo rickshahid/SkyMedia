@@ -29,7 +29,14 @@
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaLive", ImageFile = "MediaLive.png", RelativeUrl = "/live" }' />
         </td>
         <td class="mediaModulesButton">
+        @if (ViewData["indexerMessage"] != null)
+        {
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaInsight", ImageFile = "MediaInsight.png", OnClick = ViewData["indexerMessage"].ToString() }' />
+        }
+        else
+        {
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaInsight", ImageFile = "MediaInsight.png", RelativeUrl = "/insight" }' />
+        }
         </td>
         <td class="mediaModulesButton">
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEdit", ImageFile = "MediaEdit.png", RelativeUrl = "/edit" }' />

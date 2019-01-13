@@ -15,9 +15,9 @@ namespace AzureSkyMedia.PlatformServices
         private DocumentClient _cosmos;
         private string _databaseId;
 
-        public DatabaseClient()
+        public DatabaseClient(bool readWrite)
         {
-            string settingKey = Constant.AppSettingKey.AzureDatabase;
+            string settingKey = readWrite ? Constant.AppSettingKey.AzureDatabaseReadWrite : Constant.AppSettingKey.AzureDatabaseReadOnly;
             string[] accountCredentials = AppSetting.GetValue(settingKey, true);
             string accountEndpoint = accountCredentials[0];
             string accountKey = accountCredentials[1];

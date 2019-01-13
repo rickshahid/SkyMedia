@@ -5,9 +5,9 @@
     "storageServiceName": {
       "type": "string",
       "minLength": 3,
-      "maxLength": 17,
+      "maxLength": 24,
       "metadata": {
-        "description": "Name must be between 3 and 17 characters (letters and numbers only)."
+        "description": "Name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
     "storageServiceHttpsOnly": {
@@ -67,7 +67,13 @@
     "webAppHostNames": {
       "type": "array",
       "metadata": {
-        "description": "List of custom host names for the web application."
+        "description": "Custom host names for the App Service web application."
+      }
+    },
+    "webAppHostNamesStaging": {
+      "type": "array",
+      "metadata": {
+        "description": "Custom host names for the App Service web application (staging)."
       }
     },
     "webAppPfxCertificateBase64": {
@@ -90,16 +96,16 @@
         "description": "Subdomain name (<subdomain>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
-    "functionLiveUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Function HTTP post url for live event processing."
-      }
-    },
     "functionPublishUrl": {
       "type": "string",
       "metadata": {
         "description": "Function HTTP post url for content publishing process."
+      }
+    },
+    "functionLiveUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Function HTTP post url for live event processing."
       }
     },
     "functionSyncSchedule": {
@@ -186,24 +192,16 @@
         "description": "Unique identifier of the metadata database."
       }
     },
-    "searchServiceName": {
+    "searchReadOnly": {
       "type": "string",
-      "minLength": 2,
-      "maxLength": 60,
       "metadata": {
-        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+        "description": "Connection string for Search service data querying."
       }
     },
-    "searchAdminKey": {
+    "searchReadWrite": {
       "type": "string",
       "metadata": {
-        "description": "Admin key for the Search service."
-      }
-    },
-    "searchQueryKey": {
-      "type": "string",
-      "metadata": {
-        "description": "Query key for the Search service."
+        "description": "Connection string for Search service data updating."
       }
     },
     "appRegionName": {
@@ -240,20 +238,15 @@
   "variables": {
     "storageApiVersion": "2018-07-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
-    "storageServiceNameStaging": "[concat(variables('storageServiceName'), 'staging')]",
-    "webApiVersion": "2018-02-01",
+    "webApiVersion": "2018-11-01",
     "webAppName": "[toLower(parameters('webAppName'))]",
     "webAppNameStaging": "[concat(variables('webAppName'), '-staging')]",
-    "webAppCertificateName": "[concat(variables('webAppName'), '-certificate')]",
     "functionAppName": "[toLower(parameters('functionAppName'))]",
     "functionAppNameStaging": "[concat(variables('functionAppName'), '-staging')]",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
-    "databaseServiceNameStaging": "[concat(variables('databaseServiceName'), 'staging')]",
     "appRegionNameStaging": "[concat(parameters('appRegionName'), ' - Staging')]",
-    "appInsightsApiVersion": "2018-05-01-preview",
-    "cognitiveApiVersion": "2017-04-18",
-    "botApiVersion": "2018-07-12"
+    "appInsightsApiVersion": "2018-05-01-preview"
   },
   "resources": [
     {
@@ -261,27 +254,6 @@
       "apiVersion": "[variables('storageApiVersion')]",
       "location": "[resourceGroup().location]",
       "name": "[variables('storageServiceName')]",
-      "kind": "StorageV2",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "properties": {
-        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
-        "encryption": {
-          "services": {
-            "blob": {
-              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
-            }
-          },
-          "keySource": "Microsoft.Storage"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('storageApiVersion')]",
-      "location": "[resourceGroup().location]",
-      "name": "[variables('storageServiceNameStaging')]",
       "kind": "StorageV2",
       "sku": {
         "name": "Standard_LRS"
@@ -313,8 +285,12 @@
       "type": "Microsoft.Web/certificates",
       "apiVersion": "[variables('webApiVersion')]",
       "location": "[resourceGroup().location]",
-      "name": "[variables('webAppCertificateName')]",
+      "name": "[variables('webAppName')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]"
+      ],
       "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
         "pfxBlob": "[parameters('webAppPfxCertificateBase64')]",
         "password": "[parameters('webAppPfxCertificatePassword')]"
       }
@@ -326,7 +302,7 @@
       "name": "[variables('webAppName')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
-        "[resourceId('Microsoft.Web/certificates', variables('webAppCertificateName'))]"
+        "[resourceId('Microsoft.Web/certificates', variables('webAppName'))]"
       ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverFarms', parameters('appServicePlanName'))]",
@@ -369,24 +345,20 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.LiveUrl",
-              "value": "[parameters('functionLiveUrl')]"
-            },
-            {
               "name": "Media.EventGrid.PublishUrl",
               "value": "[parameters('functionPublishUrl')]"
             },
             {
-              "name": "Search.ServiceName",
-              "value": "[parameters('searchServiceName')]"
+              "name": "Media.EventGrid.LiveUrl",
+              "value": "[parameters('functionLiveUrl')]"
             },
             {
-              "name": "Search.AdminKey",
-              "value": "[parameters('searchAdminKey')]"
+              "name": "Search.ReadOnly",
+              "value": "[parameters('searchReadOnly')]"
             },
             {
-              "name": "Search.QueryKey",
-              "value": "[parameters('searchQueryKey')]"
+              "name": "Search.ReadWrite",
+              "value": "[parameters('searchReadWrite')]"
             }
           ]
         },
@@ -445,35 +417,31 @@
                 },
                 {
                   "name": "Storage",
-                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
                 },
                 {
                   "name": "Database",
-                  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceNameStaging'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceNameStaging')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+                  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
                 },
                 {
                   "name": "Database.Regions",
                   "value": "[parameters('databaseServiceRegions')]"
                 },
                 {
-                  "name": "Media.EventGrid.LiveUrl",
-                  "value": "[parameters('functionLiveUrl')]"
-                },
-                {
                   "name": "Media.EventGrid.PublishUrl",
                   "value": "[parameters('functionPublishUrl')]"
                 },
                 {
-                  "name": "Search.ServiceName",
-                  "value": "[parameters('searchServiceName')]"
+                  "name": "Media.EventGrid.LiveUrl",
+                  "value": "[parameters('functionLiveUrl')]"
                 },
                 {
-                  "name": "Search.AdminKey",
-                  "value": "[parameters('searchAdminKey')]"
+                  "name": "Search.ReadOnly",
+                  "value": "[parameters('searchReadOnly')]"
                 },
                 {
-                  "name": "Search.QueryKey",
-                  "value": "[parameters('searchQueryKey')]"
+                  "name": "Search.ReadWrite",
+                  "value": "[parameters('searchReadWrite')]"
                 }
               ]
             },
@@ -488,7 +456,7 @@
       "name": "[concat(variables('webAppName'), '/', parameters('webAppHostNames')[copyIndex('hostNames')])]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', variables('webAppName'))]",
-        "[resourceId('Microsoft.Web/certificates', variables('webAppCertificateName'))]"
+        "[resourceId('Microsoft.Web/certificates', variables('webAppName'))]"
       ],
       "copy": {
         "mode": "Serial",
@@ -496,7 +464,25 @@
         "count": "[length(parameters('webAppHostNames'))]"
       },
       "properties": {
-        "thumbprint": "[reference(resourceId('Microsoft.Web/certificates', variables('webAppCertificateName'))).Thumbprint]",
+        "thumbprint": "[reference(resourceId('Microsoft.Web/certificates', variables('webAppName'))).Thumbprint]",
+        "sslState": "SniEnabled"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/slots/hostNameBindings",
+      "apiVersion": "[variables('webApiVersion')]",
+      "name": "[concat(variables('webAppName'), '/staging/', parameters('webAppHostNamesStaging')[copyIndex('hostNames')])]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/slots', variables('webAppName'), 'staging')]",
+        "[resourceId('Microsoft.Web/certificates', variables('webAppName'))]"
+      ],
+      "copy": {
+        "mode": "Serial",
+        "name": "hostNames",
+        "count": "[length(parameters('webAppHostNamesStaging'))]"
+      },
+      "properties": {
+        "thumbprint": "[reference(resourceId('Microsoft.Web/certificates', variables('webAppName'))).Thumbprint]",
         "sslState": "SniEnabled"
       }
     },
@@ -507,7 +493,6 @@
       "name": "[variables('functionAppName')]",
       "kind": "functionapp",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]"
       ],
       "properties": {
@@ -586,12 +571,12 @@
               "value": "https://api.videoindexer.ai/"
             },
             {
-              "name": "Media.EventGrid.LiveUrl",
-              "value": "[parameters('functionLiveUrl')]"
-            },
-            {
               "name": "Media.EventGrid.PublishUrl",
               "value": "[parameters('functionPublishUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveUrl",
+              "value": "[parameters('functionLiveUrl')]"
             },
             {
               "name": "Media.Sync.Schedule",
@@ -637,7 +622,7 @@
             "location": "[resourceGroup().location]",
             "name": "staging",
             "dependsOn": [
-              "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging'))]",
+              "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]",
               "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
             ],
             "properties": {
@@ -653,15 +638,15 @@
                   },
                   {
                     "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
                   },
                   {
                     "name": "AzureWebJobsStorage",
-                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
                   },
                   {
                     "name": "AzureWebJobsDashboard",
-                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
                   },
                   {
                     "name": "Arm.ServiceUrl",
@@ -693,7 +678,7 @@
                   },
                   {
                     "name": "Storage",
-                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceNameStaging'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceNameStaging')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+                    "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
                   },
                   {
                     "name": "Storage.SharedAccessMinutes",
@@ -701,7 +686,7 @@
                   },
                   {
                     "name": "Database",
-                    "value": "[concat('AccountEndpoint=https://', variables('databaseServiceNameStaging'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceNameStaging')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+                    "value": "[concat('AccountEndpoint=https://', variables('storageServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalServicesResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
                   },
                   {
                     "name": "Database.Regions",
@@ -712,12 +697,12 @@
                     "value": "https://api.videoindexer.ai/"
                   },
                   {
-                    "name": "Media.EventGrid.LiveUrl",
-                    "value": "[parameters('functionLiveUrl')]"
-                  },
-                  {
                     "name": "Media.EventGrid.PublishUrl",
                     "value": "[parameters('functionPublishUrl')]"
+                  },
+                  {
+                    "name": "Media.EventGrid.LiveUrl",
+                    "value": "[parameters('functionLiveUrl')]"
                   },
                   {
                     "name": "Media.Sync.Schedule",

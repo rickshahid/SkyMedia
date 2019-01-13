@@ -52,12 +52,12 @@
       "properties": {
         "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
         "encryption": {
+          "keySource": "Microsoft.Storage",
           "services": {
             "blob": {
               "enabled": "[parameters('storageServiceEncryptionEnabled')]"
             }
-          },
-          "keySource": "Microsoft.Storage"
+          }
         }
       }
     },
@@ -71,16 +71,16 @@
         "name": "Standard_RAGRS"
       },
       "properties": {
-        "accessTier": "Hot",
         "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
         "encryption": {
+          "keySource": "Microsoft.Storage",
           "services": {
             "blob": {
               "enabled": "[parameters('storageServiceEncryptionEnabled')]"
             }
-          },
-          "keySource": "Microsoft.Storage"
-        }
+          }
+        },
+        "accessTier": "Hot"
       }
     },
     {

@@ -47,7 +47,7 @@ namespace AzureSkyMedia.PlatformServices
                 JobName = insightId,
                 MediaAccount = MediaAccount
             };
-            using (DatabaseClient databaseClient = new DatabaseClient())
+            using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
                 string collectionId = Constant.Database.Collection.MediaJobAccount;
                 databaseClient.UpsertDocument(collectionId, jobAccount);
@@ -80,7 +80,8 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority, bool reduceNoise, bool audioOnly)
+        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority,
+                                         bool indexingOnly, bool audioOnly)
         {
             string insightId = null;
             string relativePath = "/videos";
@@ -101,13 +102,12 @@ namespace AzureSkyMedia.PlatformServices
             }
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
-            requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
             requestUrl = string.Concat(requestUrl, "&language=auto");
-            if (reduceNoise)
+            if (indexingOnly)
             {
-                requestUrl = string.Concat(requestUrl, "&indexingPreset=DefaultWithNoiseReduction");
+                requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
             }
-            else if (audioOnly)
+            if (audioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
             }
@@ -150,7 +150,7 @@ namespace AzureSkyMedia.PlatformServices
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);
                 HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
             }
-            using (DatabaseClient databaseClient = new DatabaseClient())
+            using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
                 string collectionId = Constant.Database.Collection.MediaJobAccount;
                 databaseClient.DeleteDocument(collectionId, insightId);

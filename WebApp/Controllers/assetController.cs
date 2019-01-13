@@ -46,7 +46,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
                         {
                             bool audioOnly = !videoIndexer && audioIndexer;
-                            insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, Priority.Normal, true, audioOnly);
+                            insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, Priority.Normal, false, audioOnly);
                         }
                         if (transform != null)
                         {

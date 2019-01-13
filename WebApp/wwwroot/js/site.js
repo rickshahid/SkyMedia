@@ -1,14 +1,15 @@
 ﻿var _spacingPatterns, _spacingInserts, _storageCdnUrl;
-function InitializeApp(appName) {
+function InitializeApp(appName, userId) {
     CreateTipBottom("siteHome", appName + "<br><br>Site Home");
     CreateTipBottom("siteCode", appName + "<br><br>Open Source");
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>Announcement Blog");
     CreateTipBottom("userInsight", "Azure Media Player<br><br>User Insight");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
-    CreateTipBottom("userProfileEdit", appName + "<br><br>Account Profile Edit");
+    CreateTipBottom("userProfileEdit", appName + "<br><br>Account Profile Edit" + "<br><br>(" + userId + ")");
     CreateTipBottom("userSignIn", appName + "<br><br>User Sign In");
     CreateTipBottom("userSignOut", appName + "<br><br>User Sign Out");
-    CreateTipBottom("mediaAccount", "Azure Media Services<br><br>Account Inventory");
+    CreateTipBottom("mediaAccount", "Media Account");
+    CreateTipBottom("mediaSearch", "Media Search");
     CreateTipRight("mediaServices", "Azure Media Services");
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");

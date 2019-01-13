@@ -15,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
             Files = GetAssetFiles(blobClient, asset.Container, null);
             Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, asset.Name);
             StreamingUrls = mediaClient.GetStreamingUrls(asset.Name);
-            Published = mediaClient.GetLocators(asset.Name) != null;
+            Published = mediaClient.GetLocators(asset.Name).Length > 0;
         }
 
         internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath, out MediaFile[] assetFiles)

@@ -74,6 +74,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             User userProfile = new User(authToken);
             viewData["userId"] = userProfile.Id;
             viewData["accountName"] = userProfile.MediaAccount.Name;
+            if (string.IsNullOrEmpty(userProfile.MediaAccount.VideoIndexerRegion) || string.IsNullOrEmpty(userProfile.MediaAccount.VideoIndexerKey))
+            {
+                viewData["indexerMessage"] = "DisplayMessage('Azure Video Indexer Account', 'Your Azure Media Services account does not have an Azure Video Indexer account.<br><br>Verify your " + viewData["appName"] + " user account profile is configured.')";
+            }
         }
 
         public IActionResult Index()

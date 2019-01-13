@@ -141,7 +141,7 @@ namespace AzureSkyMedia.PlatformServices
                 TransformName = transformName,
                 MediaAccount = MediaAccount
             };
-            using (DatabaseClient databaseClient = new DatabaseClient())
+            using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
                 string collectionId = Constant.Database.Collection.MediaJobAccount;
                 databaseClient.UpsertDocument(collectionId, jobAccount);

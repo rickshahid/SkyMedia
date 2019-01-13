@@ -14,6 +14,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaStorage : MediaStorageAccount
     {
+        private string _storageAccountName;
         private StorageAccount _storageAccount;
 
         internal MediaStorage(string authToken, MediaStorageAccount storageAccount) : base(storageAccount.Type, storageAccount.Id)
@@ -23,23 +24,15 @@ namespace AzureSkyMedia.PlatformServices
             {
                 SubscriptionId = subscriptionId
             };
-            string accountName = Path.GetFileName(storageAccount.Id);
+            _storageAccountName = Path.GetFileName(storageAccount.Id);
             IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();
-            storageAccounts = storageAccounts.Where(s => s.Name.Equals(accountName, StringComparison.OrdinalIgnoreCase));
+            storageAccounts = storageAccounts.Where(s => s.Name.Equals(_storageAccountName, StringComparison.OrdinalIgnoreCase));
             _storageAccount = storageAccounts.SingleOrDefault();
         }
 
         public string Name
         {
-            get
-            {
-                string accountName = Constant.NotAvailable;
-                if (_storageAccount != null)
-                {
-                    accountName = _storageAccount.Name;
-                }
-                return accountName;
-            }
+            get { return _storageAccountName; }
         }
 
         public string AccountType

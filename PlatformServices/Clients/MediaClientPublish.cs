@@ -92,7 +92,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaJobAccount jobAccount;
             MediaJobPublish jobPublish = null;
-            using (DatabaseClient databaseClient = new DatabaseClient())
+            using (DatabaseClient databaseClient = new DatabaseClient(false))
             {
                 string collectionId = Constant.Database.Collection.MediaJobAccount;
                 string documentId = string.IsNullOrEmpty(jobName) ? insightId : jobName;
@@ -107,7 +107,7 @@ namespace AzureSkyMedia.PlatformServices
                         JObject insight = mediaClient.IndexerGetInsight(insightId);
                         if (insight != null)
                         {
-                            using (DatabaseClient databaseClient = new DatabaseClient())
+                            using (DatabaseClient databaseClient = new DatabaseClient(true))
                             {
                                 string collectionId = Constant.Database.Collection.MediaContentInsight;
                                 databaseClient.UpsertDocument(collectionId, insight);

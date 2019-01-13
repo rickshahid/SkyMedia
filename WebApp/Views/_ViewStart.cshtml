@@ -4,16 +4,6 @@
 @using AzureSkyMedia.WebApp.Controllers;
 
 @{
-    HttpRequest request = Context.Request;
-    HttpResponse response = Context.Response;
-
-    string authToken = HomeController.GetAuthToken(request, response);
-    ViewData["authToken"] = authToken;
-    if (!string.IsNullOrEmpty(authToken))
-    {
-        HomeController.SetAccountContext(authToken, ViewData);
-    }
-
     string settingKey = Constant.AppSettingKey.AppName;
     string appName = HomeController.GetAppSetting(settingKey);
     string appTitle = appName;
@@ -25,6 +15,16 @@
     }
     ViewData["appName"] = appName;
     ViewData["appTitle"] = appTitle;
+
+    HttpRequest request = Context.Request;
+    HttpResponse response = Context.Response;
+
+    string authToken = HomeController.GetAuthToken(request, response);
+    ViewData["authToken"] = authToken;
+    if (!string.IsNullOrEmpty(authToken))
+    {
+        HomeController.SetAccountContext(authToken, ViewData);
+    }
 
     string ampVersion = request.Query["amp.version"];
     if (string.IsNullOrEmpty(ampVersion))

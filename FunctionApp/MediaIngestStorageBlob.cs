@@ -16,7 +16,7 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaIngestStorageBlob
     {
         private static readonly StorageBlobClient _blobClient = new StorageBlobClient();
-        private static readonly DatabaseClient _databaseClient = new DatabaseClient();
+        private static readonly DatabaseClient _databaseClient = new DatabaseClient(true);
 
         [FunctionName("MediaIngestStorageBlob")]
         public static void Run([BlobTrigger(Constant.Storage.BlobContainer.MediaServices + "/{blobName}", Connection = "Storage")] Stream blobStream, string blobName, ILogger logger)
@@ -170,7 +170,7 @@ namespace AzureSkyMedia.FunctionApp
                     inputAsset = null;
                 }
                 bool audioOnly = videoIndex == -1 && audioIndex > -1;
-                string insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, true, audioOnly);
+                string insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, false, audioOnly);
                 logData = string.Concat("Insight Id: ", insightId);
                 WriteLog(ingestManifest.Name, logData, logger, false);
             }

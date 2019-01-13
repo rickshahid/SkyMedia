@@ -2,6 +2,20 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "keyVaultName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 24,
+      "metadata": {
+        "description": "Name must be between 3 and 24 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "keyVaultTenantId": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure Active Directory tenant identifier for the Key Vault service."
+      }
+    },
     "storageServiceName": {
       "type": "string",
       "minLength": 3,
@@ -31,9 +45,37 @@
       }
     },
     "databaseServiceRegions": {
-      "type": "string",
+      "type": "array",
       "metadata": {
-        "description": "Azure region names (delimited by semicolons) for data reads & writes (multi-master)."
+        "description": "Azure region names for data replication to support distributed reads & writes."
+      }
+    },
+    "searchServiceName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "searchServiceTier": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "Azure resource tier for the Search service."
+      }
+    },
+    "trafficManagerProfileNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Profile names (<profileName>.trafficmanager.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "trafficManagerRoutingTimeToLive": {
+      "type": "int",
+      "defaultValue": 300,
+      "metadata": {
+        "description": "Routing record time-to-live (in seconds) for the Traffic Manager resource."
       }
     },
     "contentDeliveryProfileName": {
@@ -56,18 +98,18 @@
         "description": "Resource tier for the Content Delivery Network service."
       }
     },
-    "contentDeliveryEndpointSubdomain": {
+    "contentDeliveryEndpointName": {
       "type": "string",
       "minLength": 2,
       "maxLength": 64,
       "metadata": {
-        "description": "Subdomain name (<subdomain>.azureedge.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
+        "description": "Endpoint name (<endpointName>.azureedge.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
       }
     },
     "contentDeliveryEndpointOriginPath": {
       "type": "string",
       "metadata": {
-        "description": "Optional origin path (in the form '/path') relative to the origin root."
+        "description": "Origin path (in the form '/path') relative to the origin root."
       }
     },
     "appInsightsRegion": {
@@ -84,17 +126,34 @@
     }
   },
   "variables": {
+    "keyVaultApiVersion": "2018-02-14-preview",
     "storageApiVersion": "2018-07-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
-    "databaseServiceNameStaging": "[concat(variables('databaseServiceName'), 'staging')]",
-    "databaseServiceRegions": "[split(parameters('databaseServiceRegions'), ';')]",
+    "searchApiVersion": "2015-08-19",
+    "searchServiceName": "[toLower(parameters('searchServiceName'))]",
+    "searchServiceTier": "[toLower(parameters('searchServiceTier'))]",
+    "trafficManagerApiVersion": "2018-08-01",
     "contentDeliveryApiVersion": "2018-04-02",
-    "contentDeliveryEndpointSubdomain": "[toLower(parameters('contentDeliveryEndpointSubdomain'))]",
+    "contentDeliveryEndpointName": "[toLower(parameters('contentDeliveryEndpointName'))]",
     "appInsightsApiVersion": "2018-05-01-preview"
   },
   "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('keyVaultName')]",
+      "properties": {
+        "sku": {
+          "name": "Premium",
+          "family": "A"
+        },
+        "tenantId": "[parameters('keyVaultTenantId')]",
+        "accessPolicies": []
+      }
+    },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "[variables('storageApiVersion')]",
@@ -107,12 +166,12 @@
       "properties": {
         "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
         "encryption": {
+          "keySource": "Microsoft.Storage",
           "services": {
             "blob": {
               "enabled": "[parameters('storageServiceEncryptionEnabled')]"
             }
-          },
-          "keySource": "Microsoft.Storage"
+          }
         }
       }
     },
@@ -127,9 +186,9 @@
         "copy": [
           {
             "name": "locations",
-            "count": "[length(variables('databaseServiceRegions'))]",
+            "count": "[length(parameters('databaseServiceRegions'))]",
             "input": {
-              "locationName": "[variables('databaseServiceRegions')[copyIndex('locations')]]",
+              "locationName": "[parameters('databaseServiceRegions')[copyIndex('locations')]]",
               "failoverPriority": "[copyIndex('locations')]"
             }
           }
@@ -140,25 +199,34 @@
       }
     },
     {
-      "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "[variables('databaseApiVersion')]",
+      "type": "Microsoft.Search/searchServices",
+      "apiVersion": "[variables('searchApiVersion')]",
       "location": "[resourceGroup().location]",
-      "name": "[variables('databaseServiceNameStaging')]",
+      "name": "[variables('searchServiceName')]",
+      "sku": {
+        "name": "[variables('searchServiceTier')]"
+      }
+    },
+    {
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "apiVersion": "[variables('trafficManagerApiVersion')]",
+      "location": "global",
+      "name": "[parameters('trafficManagerProfileNames')[copyIndex('profileNames')]]",
+      "copy": {
+        "mode": "Parallel",
+        "name": "profileNames",
+        "count": "[length(parameters('trafficManagerProfileNames'))]"
+      },
       "properties": {
-        "databaseAccountOfferType": "Standard",
-        "enableMultipleWriteLocations": true,
-        "copy": [
-          {
-            "name": "locations",
-            "count": "[length(variables('databaseServiceRegions'))]",
-            "input": {
-              "locationName": "[variables('databaseServiceRegions')[copyIndex('locations')]]",
-              "failoverPriority": "[copyIndex('locations')]"
-            }
-          }
-        ],
-        "tags": {
-          "defaultExperience": "DocumentDB"
+        "trafficRoutingMethod": "Performance",
+        "dnsConfig": {
+          "relativeName": "[parameters('trafficManagerProfileNames')[copyIndex('profileNames')]]",
+          "ttl": "[parameters('trafficManagerRoutingTimeToLive')]"
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/"
         }
       }
     },
@@ -175,15 +243,12 @@
           "type": "endpoints",
           "apiVersion": "[variables('contentDeliveryApiVersion')]",
           "location": "[resourceGroup().location]",
-          "name": "[variables('contentDeliveryEndpointSubdomain')]",
+          "name": "[variables('contentDeliveryEndpointName')]",
           "dependsOn": [
             "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))]",
             "[resourceId('Microsoft.Cdn/profiles', parameters('contentDeliveryProfileName'))]"
           ],
           "properties": {
-            "originHostHeader": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))).primaryEndpoints.blob, 'https://', ''), '/', '')]",
-            "isHttpAllowed": false,
-            "isHttpsAllowed": true,
             "origins": [
               {
                 "name": "[variables('storageServiceName')]",
@@ -192,7 +257,9 @@
                 }
               }
             ],
-            "originPath": "[parameters('contentDeliveryEndpointOriginPath')]"
+            "originPath": "[parameters('contentDeliveryEndpointOriginPath')]",
+            "isHttpAllowed": true,
+            "isHttpsAllowed": true
           }
         }
       ]
@@ -208,6 +275,10 @@
     }
   ],
   "outputs": {
+    "keyVaultUri": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), variables('keyVaultApiVersion')).vaultUri]"
+    },
     "storageConnection": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
@@ -216,13 +287,9 @@
       "type": "string",
       "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey)]"
     },
-    "databaseConnectionStaging": {
-      "type": "string",
-      "value": "[concat('AccountEndpoint=https://', variables('databaseServiceNameStaging'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceNameStaging')), variables('databaseApiVersion')).primaryMasterKey)]"
-    },
     "contentDeliveryHost": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('contentDeliveryProfileName'), variables('contentDeliveryEndpointSubdomain')), variables('contentDeliveryApiVersion')).hostName]"
+      "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('contentDeliveryProfileName'), variables('contentDeliveryEndpointName')), variables('contentDeliveryApiVersion')).hostName]"
     },
     "appInsightsKey": {
       "type": "string",

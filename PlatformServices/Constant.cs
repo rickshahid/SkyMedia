@@ -91,8 +91,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
-            public const string MediaEventGridLiveUrl = "Media.EventGrid.LiveUrl";
             public const string MediaEventGridPublishUrl = "Media.EventGrid.PublishUrl";
+            public const string MediaEventGridLiveUrl = "Media.EventGrid.LiveUrl";
 
             public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
 
@@ -107,7 +107,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string DatabaseIdPrefix = "DatabaseId=";
 
             public const string AzureStorage = "Storage";
-            public const string AzureDatabase = "Database";
+
+            public const string AzureDatabaseReadOnly = "Database.ReadOnly";
+            public const string AzureDatabaseReadWrite = "Database.ReadWrite";
 
             public const string TwilioAccountId = "Twilio.Account.Id";
             public const string TwilioAccountToken = "Twilio.Account.Token";

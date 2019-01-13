@@ -23,7 +23,7 @@ namespace AzureSkyMedia.FunctionApp
 
         private static void SyncMediaJobs()
         {
-            DatabaseClient databaseClient = new DatabaseClient();
+            DatabaseClient databaseClient = new DatabaseClient(true);
             string collectionId = Constant.Database.Collection.MediaJobAccount;
             MediaJobAccount[] jobAccounts = databaseClient.GetDocuments<MediaJobAccount>(collectionId);
             foreach (MediaJobAccount jobAccount in jobAccounts)

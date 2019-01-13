@@ -86,7 +86,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                     {
                         bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
-                        insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, inputFileUrl, jobPriority, true, audioOnly);
+                        insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, inputFileUrl, jobPriority, false, audioOnly);
                     }
                     if (!string.IsNullOrEmpty(transformName))
                     {

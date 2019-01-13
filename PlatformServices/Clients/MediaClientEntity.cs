@@ -237,7 +237,7 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 case MediaEntity.TransformJob:
                     _media.Jobs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName);
-                    using (DatabaseClient databaseClient = new DatabaseClient())
+                    using (DatabaseClient databaseClient = new DatabaseClient(true))
                     {
                         string collectionId = Constant.Database.Collection.MediaJobAccount;
                         databaseClient.DeleteDocument(collectionId, entityName);
