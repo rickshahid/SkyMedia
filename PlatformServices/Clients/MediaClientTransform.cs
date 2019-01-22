@@ -95,6 +95,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public Transform CreateTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, int? thumbnailSpriteColumns)
         {
+            Transform transform = null;
             List<TransformOutput> transformOutputList = new List<TransformOutput>();
             foreach (MediaTransformOutput transformOutput in transformOutputs)
             {
@@ -104,8 +105,12 @@ namespace AzureSkyMedia.PlatformServices
                     transformOutputList.Add(transformOutputItem);
                 }
             }
-            transformName = GetTransformName(transformName, transformOutputs);
-            return _media.Transforms.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputList.ToArray(), transformDescription);
+            if (transformOutputList.Count > 0)
+            {
+                transformName = GetTransformName(transformName, transformOutputs);
+                transform = _media.Transforms.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputList.ToArray(), transformDescription);
+            }
+            return transform;
         }
 
         public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailImages, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)

@@ -99,7 +99,11 @@ namespace AzureSkyMedia.PlatformServices
             if (locator == null)
             {
                 string contentKeyPolicyName = null;
-                if (streamingPolicyName == PredefinedStreamingPolicy.ClearKey)
+                if (streamingPolicyName == null)
+                {
+                    streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                }
+                else if (streamingPolicyName == PredefinedStreamingPolicy.ClearKey)
                 {
                     CreateContentKeyPolicyAES();
                     contentKeyPolicyName = Constant.Media.ContentKey.PolicyAES;

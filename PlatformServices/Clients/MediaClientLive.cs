@@ -43,7 +43,11 @@ namespace AzureSkyMedia.PlatformServices
             List<StreamOptionsFlag?> streamOptions = new List<StreamOptionsFlag?>();
             if (lowLatency)
             {
-               streamOptions.Add(StreamOptionsFlag.LowLatency);
+                streamOptions.Add(StreamOptionsFlag.LowLatency);
+            }
+            else
+            {
+                streamOptions.Add(StreamOptionsFlag.Default);
             }
             MediaService mediaService = _media.Mediaservices.Get(MediaAccount.ResourceGroupName, MediaAccount.Name);
             LiveEvent liveEvent = new LiveEvent()

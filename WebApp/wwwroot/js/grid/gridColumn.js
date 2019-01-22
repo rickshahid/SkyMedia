@@ -472,25 +472,40 @@ function FormatName(value, grid, row) {
         }
     }
     value = FormatValue(value);
+    var title = "", message = "";
+    var container = row["properties.container"];
     var description = row["properties.description"];
     var streamOptions = row["properties.streamOptions"];
-    if (description == null) {
-        description = "";
+    if (container != null && container != "") {
+        title = "Container";
+        message = container;
     }
-    if (description != "" || streamOptions != null) {
-        var title = "Description & Options";
-        var message = description;
-        if (streamOptions != null) {
-            if (message != "") {
-                message = message + "<br><br>";
-            }
-            var options = streamOptions.join(", ");
-            message = message + FormatValue(options);
+    if (description != null && description != "") {
+        if (title != "") {
+            title = title + " & ";
         }
+        title = title + "Description";
+        if (message != "") {
+            message = message + "<br><br>";
+        }
+        message = message + description;
+    }
+    if (streamOptions != null && streamOptions != "") {
+        if (title != "") {
+            title = title + " & ";
+        }
+        title = title + "Stream Options";
+        if (message != "") {
+            message = message + "<br><br>";
+        }
+        var options = streamOptions.join(", ");
+        message = message + FormatValue(options);
+    }
+    if (message != "") {
         value = "<span class=\"siteLink\" onclick=DisplayMessage(\"" + encodeURIComponent(title) + "\",\"" + encodeURIComponent(message) + "\")>" + value + "</span>";
     }
-    value = value.replace("Microsoft.Media/mediaservices", "");
-    value = value.replace("Microsoft.Media", "");
+    //value = value.replace("Microsoft.Media/mediaservices", "");
+    //value = value.replace("Microsoft.Media", "");
     return value;
 }
 function FormatValue(value) {

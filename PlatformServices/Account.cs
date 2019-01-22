@@ -65,7 +65,7 @@ namespace AzureSkyMedia.PlatformServices
             int streamingLocators = mediaClient.GetEntityCount<StreamingLocator>(MediaEntity.StreamingLocator);
             int filtersAccount = mediaClient.GetEntityCount<AccountFilter>(MediaEntity.FilterAccount);
             int filtersAsset = mediaClient.GetEntityCount<AssetFilter, Asset>(MediaEntity.FilterAsset, MediaEntity.Asset);
-            int liveEvents =mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
+            int liveEvents = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputs = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
             int indexerInsights = !mediaClient.IndexerEnabled() ? 0 : mediaClient.IndexerGetInsights().Count;
 

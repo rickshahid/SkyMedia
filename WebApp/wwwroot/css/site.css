@@ -52,6 +52,10 @@ body {
     padding-top: 10px;
 }
 
+.layoutHome {
+    margin: 0px auto;
+}
+
 .header {
     margin: 0px auto;
     width: 800px;
@@ -416,6 +420,10 @@ body {
 
 .videoClipper {
     width: 1080px;
+}
+
+.searchDialog {
+    display: none;
 }
 
 .searchQuery {

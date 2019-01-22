@@ -4,7 +4,7 @@
 
 @section head {
     <script type="text/javascript">
-        function DisplayEntity(inventoryHtml, entityCount) {
+        function DisplayAccountEntity(inventoryHtml, entityCount) {
             inventoryHtml = inventoryHtml + "<tr><td>";
             if (entityCount.length > 2) {
                 inventoryHtml = inventoryHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
@@ -13,25 +13,13 @@
             }
             return inventoryHtml + "</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
         }
-        function DisplayInventory() {
+        function DisplayAccountInventory() {
             var inventoryHtml = "";
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
             for (var i = 0; i < entityCounts.length; i++) {
-                inventoryHtml = DisplayEntity(inventoryHtml, entityCounts[i]);
+                inventoryHtml = DisplayAccountEntity(inventoryHtml, entityCounts[i]);
             }
             $("#accountInventory").html(inventoryHtml);
-        }
-        function DeleteEntities(skipLive) {
-            SetCursor(true);
-            $.post("/account/deleteEntities",
-                {
-                    skipLive: skipLive
-                },
-                function () {
-                    SetCursor(false);
-                    window.location = window.location.href;
-                }
-            );
         }
         function ToggleAuthToken() {
             if ($("#authToken").is(":visible")) {
@@ -40,7 +28,7 @@
                 $("#authToken").show();
             }
         }
-        function ConfirmCreate() {
+        function CreateAccountAssets() {
             var title = "Create Media Account Assets";
             var message = "Are you sure you want to create assets in your media account?";
             message = message + "<br><br><input id='assetType' name='assetType' type='radio' value='SBR' checked>&nbsp;Single Bitrate</input>";
@@ -73,7 +61,7 @@
                 max: 99999
             });
         }
-        function ConfirmDelete() {
+        function DeleteAccountEntities() {
             var title = "Delete Media Account Entities";
             var message = "Which set of entities do you want to delete from your media account?";
             var buttons = {
@@ -91,8 +79,20 @@
             };
             DisplayMessage(title, message, buttons);
         }
+        function DeleteEntities(skipLive) {
+            SetCursor(true);
+            $.post("/account/deleteEntities",
+                {
+                    skipLive: skipLive
+                },
+                function () {
+                    SetCursor(false);
+                    window.location = window.location.href;
+                }
+            );
+        }
         $(function () {
-            DisplayInventory();
+            DisplayAccountInventory();
             CreateTipTop("userAuthToken", "User Auth Token");
             CreateTipTop("mediaEntitiesCreate", "Media Account<br><br>Create Assets");
             CreateTipTop("mediaEntitiesDelete", "Media Account<br><br>Delete Entities");
@@ -108,11 +108,11 @@
 <table id="accountInventory" class="accountInventory"></table>
 
 <div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ControlId = "userAuthToken", ImageFile = "UserAuthToken.png", OnClick = "ToggleAuthToken()" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "userAuthToken", ImageFile = "UserAuthToken.png", OnClick = "ToggleAuthToken()", AltText = "Toggle User Auth Token" }' />
     @if (Debugger.IsAttached)
     {
-        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesCreate", ImageFile = "MediaEntityCreate.png", OnClick = "ConfirmCreate()" }' />
-        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesDelete", ImageFile = "MediaEntitiesDelete.png", OnClick = "ConfirmDelete()" }' />
+        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateAccountAssets()", AltText = "Create Account Assets" }' />
+        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesDelete", ImageFile = "MediaEntitiesDelete.png", OnClick = "DeleteAccountEntities()", AltText = "Delete Account Entities" }' />
     }
 </div>
 

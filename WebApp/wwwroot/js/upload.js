@@ -59,12 +59,12 @@ function CreateWorkflow(files) {
                     message = message + "<br><br>";
                 }
                 message = message + "<a class='siteLink' target='_blank' href='" + entityItemRef + "'>";
-                message = message + "Media " + entityType + " Created - " + entity.name + "</a>";
+                message = message + "Media " + entityType + " Name - " + entity.name + "</a>";
                 if (insightId != null) {
                     var insightRef = "/insight?insightId=" + insightId;
                     var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
                     message = message + "<br><br><a class='siteLink' target='_blank' href='" + insightRef + "'>";
-                    message = message + insightType + " Indexer Insight - " + insightId + "</a>";
+                    message = message + insightType + " Indexer Insight Id - " + insightId + "</a>";
                 }
             }
             $("#mediaEntitiesCreated").html(message);

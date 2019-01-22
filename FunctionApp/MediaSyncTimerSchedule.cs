@@ -28,9 +28,16 @@ namespace AzureSkyMedia.FunctionApp
             MediaJobAccount[] jobAccounts = databaseClient.GetDocuments<MediaJobAccount>(collectionId);
             foreach (MediaJobAccount jobAccount in jobAccounts)
             {
-                using (MediaClient mediaClient = new MediaClient(null, jobAccount.MediaAccount))
+                Job job = null;
+                try
                 {
-                    Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobAccount.JobName);
+                    using (MediaClient mediaClient = new MediaClient(null, jobAccount.MediaAccount))
+                    {
+                        job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobAccount.JobName);
+                    }
+                }
+                finally
+                {
                     if (job == null)
                     {
                         databaseClient.DeleteDocument(collectionId, jobAccount.JobName);

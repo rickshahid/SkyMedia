@@ -59,11 +59,11 @@ function OnGridLoad(gridData, gridId, gridRows) {
     }
 }
 function LoadGrid(gridId, gridRows) {
-    var pageSize = 5;
+    var pageSize = 10;
     var columns = GetParentColumns(gridId);
     SetParentRowIds(gridId, gridRows);
     $("#" + gridId).jqGrid({
-        multiselect: gridId == "assets",
+        //multiselect: gridId == "assets",
         colModel: columns,
         datatype: "local",
         data: gridRows,
@@ -95,7 +95,7 @@ function LoadGrid(gridId, gridRows) {
     }
 }
 function LoadSubGrid(parentRowId, parentRowKey) {
-    var pageSize = 10;
+    var pageSize = 20;
     var parentRow = $(this).getLocalRow(parentRowKey);
     var childRows = parentRow[_childPropertyName];
     var columns = GetChildColumns(_childGridType);

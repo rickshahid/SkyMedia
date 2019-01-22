@@ -257,6 +257,7 @@
                 }
               }
             ],
+            "originHostHeader": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))).primaryEndpoints.blob, 'https://', ''), '/', '')]",
             "originPath": "[parameters('contentDeliveryEndpointOriginPath')]",
             "isHttpAllowed": true,
             "isHttpsAllowed": true

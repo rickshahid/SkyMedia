@@ -219,5 +219,10 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["indexerInsights"] = insights;
             return View();
         }
+
+        public IActionResult Search()
+        {
+            return View();
+        }
     }
 }

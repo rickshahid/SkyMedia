@@ -51,7 +51,7 @@
     Azure Sky Media
 }
 
-<table>
+<table class="layoutHome">
     <tr>
         <td>
             <partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", PlayerSkin = ampSkin }' />
@@ -68,5 +68,5 @@
 <div id="streamUrl" class="streamUrl"></div>
 
 <div class="mediaServicesCompliance">
-    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "http://www.microsoft.com/trustcenter/compliance/cdsa" }' />
+    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "http://www.microsoft.com/trustcenter/compliance/cdsa", AltText = "Media Services Compliance" }' />
 </div>

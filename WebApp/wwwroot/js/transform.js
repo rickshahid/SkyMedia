@@ -44,7 +44,7 @@ function GetThumbnailSpriteColumns() {
     }
     return thumbnailSpriteColumns;
 }
-function CreateTransform() {
+function SaveTransform() {
     var title = "Save Transform";
     var message = "Are you sure you want to save the current transform?";
     var transformOutputs = GetTransformOutputs();

@@ -170,7 +170,8 @@ namespace AzureSkyMedia.FunctionApp
                     inputAsset = null;
                 }
                 bool audioOnly = videoIndex == -1 && audioIndex > -1;
-                string insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, false, audioOnly);
+                bool videoOnly = false;
+                string insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, ingestManifest.JobInputFileUrl, ingestManifest.JobPriority, false, audioOnly, videoOnly);
                 logData = string.Concat("Insight Id: ", insightId);
                 WriteLog(ingestManifest.Name, logData, logger, false);
             }

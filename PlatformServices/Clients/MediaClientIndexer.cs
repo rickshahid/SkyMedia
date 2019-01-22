@@ -81,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority,
-                                         bool indexingOnly, bool audioOnly)
+                                         bool indexingOnly, bool audioOnly, bool videoOnly)
         {
             string insightId = null;
             string relativePath = "/videos";
@@ -103,13 +103,15 @@ namespace AzureSkyMedia.PlatformServices
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
             requestUrl = string.Concat(requestUrl, "&language=auto");
-            if (indexingOnly)
-            {
-                requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
-            }
+            requestUrl = string.Concat(requestUrl, "&streamingPreset=");
+            requestUrl = string.Concat(requestUrl, indexingOnly ? "NoStreaming" : "AdaptiveBitrate");
             if (audioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
+            }
+            else if (videoOnly)
+            {
+                requestUrl = string.Concat(requestUrl, "&indexingPreset=VideoOnly");
             }
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {

@@ -3,13 +3,13 @@ function InitializeApp(appName, userId) {
     CreateTipBottom("siteHome", appName + "<br><br>Site Home");
     CreateTipBottom("siteCode", appName + "<br><br>Open Source");
     CreateTipBottom("mediaBlog", "Azure Media Services<br><br>Announcement Blog");
-    CreateTipBottom("userInsight", "Azure Media Player<br><br>User Insight");
+    CreateTipBottom("botService", "Azure Bot Service");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
     CreateTipBottom("userProfileEdit", appName + "<br><br>Account Profile Edit" + "<br><br>(" + userId + ")");
     CreateTipBottom("userSignIn", appName + "<br><br>User Sign In");
     CreateTipBottom("userSignOut", appName + "<br><br>User Sign Out");
     CreateTipBottom("mediaAccount", "Media Account");
-    CreateTipBottom("mediaSearch", "Media Search");
+    CreateTipBottom("mediaSearch", "Media Account<br><br>Search");
     CreateTipRight("mediaServices", "Azure Media Services");
     CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
@@ -108,6 +108,15 @@ function ConfirmMessage(title, message, onConfirm) {
         }
     };
     DisplayMessage(title, message, buttons);
+}
+function ConfirmDialog(dialogId, title, onConfirm) {
+    var buttons = {
+        OK: onConfirm,
+        Cancel: function () {
+            $(this).dialog("close");
+        }
+    };
+    DisplayDialog(dialogId, title, null, buttons);
 }
 function CreateTip(targetId, tipText, tipPosition) {
     $("#" + targetId).qtip({

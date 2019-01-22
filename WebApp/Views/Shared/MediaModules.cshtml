@@ -7,39 +7,39 @@
     @if (ViewData.ContainsKey("accountName"))
     {
         <td class="mediaModulesButton">
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaUpload", ImageFile = "MediaUpload.png", RelativeUrl = "/upload" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaUpload", ImageFile = "MediaUpload.png", RelativeUrl = "/upload", AltText = "Upload" }' />
         </td>
         <td class="mediaModulesButton">
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaTransform", ImageFile = "MediaTransform.png", RelativeUrl = "/transform" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaTransform", ImageFile = "MediaTransform.png", RelativeUrl = "/transform", AltText = "Transform" }' />
         </td>
         <td class="mediaModulesButton">
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaJob", ImageFile = "MediaJob.png", RelativeUrl = "/job" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaJob", ImageFile = "MediaJob.png", RelativeUrl = "/job", AltText = "Job" }' />
         </td>
     }
         <td>
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetMediaStream(true, false)" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetMediaStream(true, false)", AltText = "Stream Tuner Left" }' />
         </td>
-        <partial name="RangeSlider" model='new RangeSlider { SliderId = "streamTuner", SliderClass = "streamTuner", LabelId = "streamNumber", LabelClass = "streamNumber", SkipCount = Model.SkipCount, ValueCount = Model.ValueCount, LastPage = Model.LastPage }' />
+            <partial name="RangeSlider" model='new RangeSlider { SliderId = "streamTuner", SliderClass = "streamTuner", LabelId = "streamNumber", LabelClass = "streamNumber", SkipCount = Model.SkipCount, ValueCount = Model.ValueCount, LastPage = Model.LastPage }' />
         <td>
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamRight", ImageFile = "MediaStreamRight.png", OnClick = "SetMediaStream(false, true)" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamRight", ImageFile = "MediaStreamRight.png", OnClick = "SetMediaStream(false, true)", AltText = "Stream Tuner Right" }' />
         </td>
     @if (ViewData.ContainsKey("accountName"))
     {
         <td class="mediaModulesButton">
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaLive", ImageFile = "MediaLive.png", RelativeUrl = "/live" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaLive", ImageFile = "MediaLive.png", RelativeUrl = "/live", AltText = "Live" }' />
         </td>
         <td class="mediaModulesButton">
         @if (ViewData["indexerMessage"] != null)
         {
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaInsight", ImageFile = "MediaInsight.png", OnClick = ViewData["indexerMessage"].ToString() }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaInsight", ImageFile = "MediaInsight.png", OnClick = ViewData["indexerMessage"].ToString(), AltText = "Insight" }' />
         }
         else
         {
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaInsight", ImageFile = "MediaInsight.png", RelativeUrl = "/insight" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaInsight", ImageFile = "MediaInsight.png", RelativeUrl = "/insight", AltText = "Insight" }' />
         }
         </td>
         <td class="mediaModulesButton">
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEdit", ImageFile = "MediaEdit.png", RelativeUrl = "/edit" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEdit", ImageFile = "MediaEdit.png", RelativeUrl = "/edit", AltText = "Edit" }' />
         </td>
     }
     </tr>

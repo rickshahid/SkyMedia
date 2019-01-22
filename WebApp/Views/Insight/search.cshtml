@@ -1,46 +1,12 @@
-﻿@using AzureSkyMedia.WebApp.Models;
-
-@section head {
-    <script type="text/javascript" src="~/js/search.js"></script>
+﻿@section head {
     <script type="text/javascript">
-        function DisplaySearchResults(searchResults) {
-            if (_jsonEditor != null) {
-                _jsonEditor.destroy();
-            }
-            CreateJsonEditor("searchResults", "Media Search Results", searchResults);
-        }
-        function QuerySearchIndex() {
-            var title = "Media Search Query";
-            var message = "<input id='searchQuery' type='text' class='searchQuery' />";
-            var onConfirm = function () {
-                SetCursor(true);
-                $.get("/search/query",
-                    {
-                        searchQuery: $("#searchQuery").val()
-                    },
-                    function (searchResults) {
-                        SetCursor(false);
-                        DisplaySearchResults(searchResults);
-                    }
-                );
-                $(this).dialog("close");
-            };
-            ConfirmMessage(title, message, onConfirm);
-            $("#searchQuery").focus();
-        }
         $(function () {
-            DisplaySearchResults(null);
-            CreateTipTop("mediaSearchIndex", "Search Media Index");
         })
     </script>
 }
 
 @section title {
-    Media Search
+    Media Account Search Results
 }
 
 <div id="searchResults" class="searchResults"></div>
-
-<div class="viewButtons">
-    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaSearchIndex", ImageFile = "MediaSearch.png", OnClick = "QuerySearchIndex()" }' />
-</div>

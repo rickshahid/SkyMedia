@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-using AzureSkyMedia.PlatformServices;
+﻿using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp.Models
 {
@@ -11,6 +9,7 @@ namespace AzureSkyMedia.WebApp.Models
         private string _absoluteUrl;
         private string _onClick;
         private string _styleClass;
+        private string _altText;
 
         public string ImageFile
         {
@@ -66,6 +65,13 @@ namespace AzureSkyMedia.WebApp.Models
             }
 
             set { _styleClass = value; }
+        }
+
+        public string AltText
+        {
+            get { return _altText == null ? string.Empty : _altText; }
+
+            set { _altText = value; }
         }
     }
 }
