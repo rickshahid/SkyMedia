@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Net;
+using System.Collections.Generic;
 
+using Microsoft.Rest;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Azure.Management.Media.Models;
@@ -98,6 +100,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(job);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -118,6 +132,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     job = mediaClient.UpdateJob(transformName, jobName, jobDescription, jobPriority);
                 }
                 return Json(job);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {
@@ -158,6 +184,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(jobPublish);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -185,6 +223,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(jobs.ToArray());
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -204,6 +254,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     mediaClient.CancelJob(transformName, jobName);
                 }
                 return Json(jobName);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {

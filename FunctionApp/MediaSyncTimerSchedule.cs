@@ -4,6 +4,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.FunctionApp
@@ -28,19 +30,28 @@ namespace AzureSkyMedia.FunctionApp
             MediaJobAccount[] jobAccounts = databaseClient.GetDocuments<MediaJobAccount>(collectionId);
             foreach (MediaJobAccount jobAccount in jobAccounts)
             {
-                Job job = null;
+                bool entityFound = false;
                 try
                 {
-                    using (MediaClient mediaClient = new MediaClient(null, jobAccount.MediaAccount))
+                    using (MediaClient mediaClient = new MediaClient(jobAccount.MediaAccount, null))
                     {
-                        job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobAccount.JobName);
+                        if (!string.IsNullOrEmpty(jobAccount.InsightId))
+                        {
+                            JObject insight = mediaClient.IndexerGetInsight(jobAccount.InsightId);
+                            entityFound = insight != null;
+                        }
+                        else
+                        {
+                            Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobAccount.JobName);
+                            entityFound = job != null;
+                        }
                     }
                 }
                 finally
                 {
-                    if (job == null)
+                    if (!entityFound)
                     {
-                        databaseClient.DeleteDocument(collectionId, jobAccount.JobName);
+                        databaseClient.DeleteDocument(collectionId, jobAccount.Id);
                     }
                 }
             }

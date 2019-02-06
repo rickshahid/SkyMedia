@@ -69,7 +69,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     string manifestData = manifestReader.ReadToEnd();
                     ingestManifest = JsonConvert.DeserializeObject<MediaIngestManifest>(manifestData);
                 }
-                using (MediaClient mediaClient = new MediaClient(null, ingestManifest.MediaAccount))
+                using (MediaClient mediaClient = new MediaClient(ingestManifest.MediaAccount, null))
                 {
                     Account.DeleteEntities(mediaClient, false);
                 }

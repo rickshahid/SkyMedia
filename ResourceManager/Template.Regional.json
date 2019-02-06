@@ -357,7 +357,7 @@
         {
           "type": "config",
           "apiVersion": "[variables('webApiVersion')]",
-          "name": "slotconfignames",
+          "name": "slotConfigNames",
           "dependsOn": [
             "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
           ],
@@ -477,20 +477,16 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "name": "Arm.ServiceUrl",
-              "value": "https://management.azure.com/"
-            },
-            {
-              "name": "Arm.TokenScope",
-              "value": "https://management.core.windows.net/.default"
-            },
-            {
               "name": "Directory.ClientId",
               "value": "[parameters('directoryClientId')]"
             },
             {
               "name": "Directory.TenantId",
               "value": "[parameters('directoryTenantId')]"
+            },
+            {
+              "name": "Directory.TokenScope",
+              "value": "https://management.core.windows.net/.default"
             },
             {
               "name": "Directory.AuthorityUrl",
@@ -541,24 +537,24 @@
               "value": "[parameters('functionSyncSchedule')]"
             }
           ]
-        },
-        "resources": [
-          {
-            "type": "config",
-            "apiVersion": "[variables('webApiVersion')]",
-            "name": "slotconfignames",
-            "dependsOn": [
-              "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-            ],
-            "properties": {
-              "appSettingNames": [
-                "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "Directory.ClientId"
-              ]
-            }
+        }
+      },
+      "resources": [
+        {
+          "type": "config",
+          "apiVersion": "[variables('webApiVersion')]",
+          "name": "slotConfigNames",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+          ],
+          "properties": {
+            "appSettingNames": [
+              "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "Directory.ClientId"
+            ]
           }
-        ]
-      }
+        }
+      ]
     },
     {
       "type": "Microsoft.Web/sites/slots",
@@ -593,20 +589,16 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "name": "Arm.ServiceUrl",
-              "value": "https://management.azure.com/"
-            },
-            {
-              "name": "Arm.TokenScope",
-              "value": "https://management.core.windows.net/.default"
-            },
-            {
               "name": "Directory.ClientId",
               "value": "[parameters('directoryClientIdStaging')]"
             },
             {
               "name": "Directory.TenantId",
               "value": "[parameters('directoryTenantId')]"
+            },
+            {
+              "name": "Directory.TokenScope",
+              "value": "https://management.core.windows.net/.default"
             },
             {
               "name": "Directory.AuthorityUrl",

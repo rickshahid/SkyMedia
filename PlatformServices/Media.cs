@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
@@ -29,9 +31,15 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaInsight GetMediaInsight(MediaClient mediaClient, Asset asset)
         {
             MediaInsight mediaInsight = new MediaInsight();
-            if (mediaClient.IndexerEnabled() && !string.IsNullOrEmpty(asset.AlternateId))
+            if (mediaClient.IndexerEnabled())
             {
-                mediaInsight.WidgetUrl = mediaClient.IndexerGetInsightUrl(asset.AlternateId);
+                string insightId = asset.AlternateId;
+                if (!string.IsNullOrEmpty(insightId))
+                {
+                    JObject insight = mediaClient.IndexerGetInsight(insightId);
+                    mediaInsight.WidgetUrl = mediaClient.IndexerGetInsightUrl(insightId);
+                    mediaInsight.ViewToken = insight["videos"][0]["viewToken"].ToString();
+                }
             }
             return mediaInsight;
         }
@@ -46,6 +54,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 playerUrl = string.Concat(playerUrl, "(filter=", assetFilter.Name, ")");
             }
+            MediaInsight mediaInsight = GetMediaInsight(mediaClient, asset);
             MediaStream mediaStream = new MediaStream()
             {
                 Id = streamId,
@@ -55,11 +64,11 @@ namespace AzureSkyMedia.PlatformServices
                 Source = new StreamSource()
                 {
                     Url = playerUrl,
-                    ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, locator)
+                    ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, mediaInsight, locator)
                 },
                 TextTracks = Track.GetTextTracks(mediaClient, asset),
                 ThumbnailUrls = GetThumbnailUrls(mediaClient, locator),
-                ContentInsight = GetMediaInsight(mediaClient, asset)
+                ContentInsight = mediaInsight
             };
             return mediaStream;
         }

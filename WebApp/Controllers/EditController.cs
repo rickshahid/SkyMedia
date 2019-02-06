@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+
+using Microsoft.Rest;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
@@ -32,6 +35,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 MediaStream[] mediaStreams = Media.GetClipperStreams(authToken, assetName, skipCount, takeCount, streamType);
                 return Json(mediaStreams);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {

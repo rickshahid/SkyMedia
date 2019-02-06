@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using System.Net;
 
+using Microsoft.Rest;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
@@ -12,82 +14,6 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class InsightController : Controller
     {
-        [HttpGet]
-        [Route("/brandSettings")]
-        public JsonResult GetBrandSettings()
-        {
-            JObject brandSettings = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    if (mediaClient.IndexerEnabled())
-                    {
-                        brandSettings = mediaClient.IndexerGetBrandSettings();
-                    }
-                }
-            }
-            return Json(brandSettings);
-        }
-
-        [HttpGet]
-        [Route("/brands")]
-        public JsonResult GetBrands()
-        {
-            JArray brands = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    if (mediaClient.IndexerEnabled())
-                    {
-                        brands = mediaClient.IndexerGetBrands();
-                    }
-                }
-            }
-            return Json(brands);
-        }
-
-        [HttpGet]
-        [Route("/languages")]
-        public JsonResult GetLanguages()
-        {
-            JArray languages = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    if (mediaClient.IndexerEnabled())
-                    {
-                        languages = mediaClient.IndexerGetLanguages();
-                    }
-                }
-            }
-            return Json(languages);
-        }
-
-        [HttpGet]
-        [Route("/persons")]
-        public JsonResult GetPersons()
-        {
-            JArray persons = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    if (mediaClient.IndexerEnabled())
-                    {
-                        persons = mediaClient.IndexerGetPersons();
-                    }
-                }
-            }
-            return Json(persons);
-        }
-
         public JsonResult Data(string assetName, string fileName, string insightId)
         {
             try
@@ -122,6 +48,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(insight);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -141,6 +79,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     mediaClient.IndexerReindexVideo(insightId, Priority.Normal);
                 }
                 return Json(insightId);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {
@@ -162,6 +112,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     searchResults = mediaClient.IndexerSearch(searchQuery);
                 }
                 return Json(searchResults);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {
@@ -187,6 +149,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                 }
                 return Json(insights);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {

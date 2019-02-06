@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Generic;
 
+using Microsoft.Rest;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Azure.Management.Media;
@@ -45,6 +47,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(liveEvent);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -68,6 +82,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(liveOutput);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -89,6 +115,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     liveEvent = mediaClient.UpdateLiveEvent(eventName, eventDescription, eventTags, encodingType, encodingPresetName, keyFrameIntervalDuration, crossSiteAccessPolicies);
                 }
                 return Json(liveEvent);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {
@@ -120,6 +158,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(eventName);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -146,6 +196,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(eventName);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -166,6 +228,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 return Json(eventName);
             }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
             catch (ApiErrorException ex)
             {
                 return new JsonResult(ex.Response.Content)
@@ -185,6 +259,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     mediaClient.InsertLiveEventSignal(eventName, signalId, signalDurationSeconds);
                 }
                 return Json(eventName);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {

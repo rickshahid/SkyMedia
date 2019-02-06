@@ -100,7 +100,7 @@ namespace AzureSkyMedia.PlatformServices
             }
             if (jobAccount != null)
             {
-                using (MediaClient mediaClient = new MediaClient(null, jobAccount.MediaAccount))
+                using (MediaClient mediaClient = new MediaClient(jobAccount.MediaAccount, null))
                 {
                     if (!string.IsNullOrEmpty(insightId))
                     {

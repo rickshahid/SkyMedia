@@ -18,28 +18,34 @@ namespace AzureSkyMedia.PlatformServices
     {
         private AzureMediaServicesClient _media;
 
+        private string _indexerRegionUrl;
         private string _indexerAccountId;
         private string _indexerAccountToken;
 
-        public MediaClient(string authToken, MediaAccount mediaAccount = null)
+        public MediaClient(string authToken)
         {
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                User userProfile = new User(authToken);
-                mediaAccount = userProfile.MediaAccount;
-            }
+            User userProfile = new User(authToken);
+            MediaAccount = userProfile.MediaAccount;
+            BindContext(null);
+        }
+
+        public MediaClient(MediaAccount mediaAccount, HttpClient httpClient)
+        {
             MediaAccount = mediaAccount;
-            string settingKey = Constant.AppSettingKey.AzureResourceManagementServiceUrl;
-            string serviceUrl = AppSetting.GetValue(settingKey);
-            MediaClientCredentials clientCredentials = new MediaClientCredentials(mediaAccount);
-            _media = new AzureMediaServicesClient(new Uri(serviceUrl), clientCredentials)
+            BindContext(httpClient);
+        }
+
+        private void BindContext(HttpClient httpClient)
+        {
+            MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
+            _media = new AzureMediaServicesClient(clientCredentials, httpClient, true)
             {
-                SubscriptionId = mediaAccount.SubscriptionId
+                SubscriptionId = MediaAccount.SubscriptionId
             };
-            if (!string.IsNullOrEmpty(MediaAccount.VideoIndexerRegion) && 
+            if (!string.IsNullOrEmpty(MediaAccount.VideoIndexerId) &&
                 !string.IsNullOrEmpty(MediaAccount.VideoIndexerKey))
             {
-                IndexerSetAccountContext();
+                IndexerSetAccount();
             }
         }
 
@@ -99,7 +105,7 @@ namespace AzureSkyMedia.PlatformServices
             ClientCredential clientCredential = new ClientCredential(mediaAccount.ServicePrincipalKey);
             ConfidentialClientApplication clientApplication = new ConfidentialClientApplication(mediaAccount.ServicePrincipalId, authorityUrl, redirectUri, clientCredential, null, null);
 
-            settingKey = Constant.AppSettingKey.AzureResourceManagementTokenScope;
+            settingKey = Constant.AppSettingKey.DirectoryTokenScope;
             string tokenScope = AppSetting.GetValue(settingKey);
 
             string[] tokenScopes = new string[] { tokenScope };

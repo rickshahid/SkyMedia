@@ -11,31 +11,46 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private string GetRequestUrl(string relativePath, bool authToken, string insightId)
+        private string GetAccessToken(string insightId)
         {
-            string accessToken = string.Empty;
+            string accessToken;
             string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
             string requestUrl = AppSetting.GetValue(settingKey);
-            if (authToken)
+            requestUrl = string.Concat(requestUrl, "auth/", MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId);
+            requestUrl = string.Concat(requestUrl, "/videos/", insightId, "/accessToken?allowEdit=true");
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
-                if (string.IsNullOrEmpty(insightId))
-                {
-                    accessToken = _indexerAccountToken;
-                }
-                else
-                {
-                    string authUrl = string.Concat(requestUrl, "auth/", MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId, "/videos/", insightId, "/accessToken?allowEdit=true");
-                    using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-                    {
-                        HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, authUrl);
-                        accessToken = webClient.GetResponse<string>(webRequest);
-                    }
-                }
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                accessToken = webClient.GetResponse<string>(webRequest);
             }
-            requestUrl = string.Concat(requestUrl, MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId, relativePath);
-            if (authToken)
+            return accessToken;
+        }
+
+        private string GetRequestUrl(string parentPath, string insightId, string childPath)
+        {
+            string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
+            string requestUrl = AppSetting.GetValue(settingKey);
+            requestUrl = string.Concat(requestUrl, MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId);
+            if (!string.IsNullOrEmpty(parentPath))
             {
-                requestUrl = string.Concat(requestUrl, "?accessToken=", accessToken);
+                requestUrl = string.Concat(requestUrl, parentPath);
+            }
+            if (!string.IsNullOrEmpty(insightId))
+            {
+                requestUrl = string.Concat(requestUrl, insightId);
+            }
+            if (!string.IsNullOrEmpty(childPath))
+            {
+                requestUrl = string.Concat(requestUrl, childPath);
+            }
+            requestUrl = string.Concat(requestUrl, "?accessToken=");
+            if (string.IsNullOrEmpty(insightId))
+            {
+                requestUrl = string.Concat(requestUrl, _indexerAccountToken);
+            }
+            else
+            {
+                requestUrl = string.Concat(requestUrl, GetAccessToken(insightId));
             }
             return requestUrl;
         }
@@ -44,7 +59,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             MediaJobAccount jobAccount = new MediaJobAccount()
             {
-                JobName = insightId,
+                InsightId = insightId,
                 MediaAccount = MediaAccount
             };
             using (DatabaseClient databaseClient = new DatabaseClient(true))
@@ -56,10 +71,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public bool IndexerEnabled()
         {
-            return !string.IsNullOrEmpty(_indexerAccountId);
+            return !string.IsNullOrEmpty(_indexerAccountId) && !string.IsNullOrEmpty(_indexerAccountToken);
         }
 
-        public void IndexerSetAccountContext()
+        public void IndexerSetAccount()
         {
             string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
             string requestUrl = AppSetting.GetValue(settingKey);
@@ -70,10 +85,11 @@ namespace AzureSkyMedia.PlatformServices
                 JArray indexerAccounts = webClient.GetResponse<JArray>(webRequest);
                 foreach (JToken indexerAccount in indexerAccounts)
                 {
-                    string accountLocation = indexerAccount["location"].ToString();
-                    if (string.Equals(accountLocation, MediaAccount.VideoIndexerRegion, StringComparison.OrdinalIgnoreCase))
+                    string accountId = indexerAccount["id"].ToString();
+                    if (string.Equals(accountId, MediaAccount.VideoIndexerId, StringComparison.OrdinalIgnoreCase))
                     {
-                        _indexerAccountId = indexerAccount["id"].ToString();
+                        _indexerAccountId = accountId;
+                        _indexerRegionUrl = indexerAccount["url"].ToString();
                         _indexerAccountToken = indexerAccount["accessToken"].ToString();
                     }
                 }
@@ -84,8 +100,7 @@ namespace AzureSkyMedia.PlatformServices
                                          bool indexingOnly, bool audioOnly, bool videoOnly)
         {
             string insightId = null;
-            string relativePath = "/videos";
-            string requestUrl = GetRequestUrl(relativePath, true, null);
+            string requestUrl = GetRequestUrl("/videos", null, null);
             string settingKey = Constant.AppSettingKey.MediaEventGridPublishUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             if (inputAsset != null)
@@ -128,8 +143,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public void IndexerReindexVideo(string insightId, Priority jobPriority)
         {
-            string relativePath = string.Concat("/videos/", insightId, "/reindex");
-            string requestUrl = GetRequestUrl(relativePath, true, insightId);
+            string requestUrl = GetRequestUrl("/videos/", insightId, "/reindex");
             string settingKey = Constant.AppSettingKey.MediaEventGridPublishUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             callbackUrl = HttpUtility.UrlEncode(callbackUrl);
@@ -145,8 +159,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public void IndexerDeleteVideo(string insightId)
         {
-            string relativePath = string.Concat("/videos/", insightId);
-            string requestUrl = GetRequestUrl(relativePath, true, insightId);
+            string requestUrl = GetRequestUrl("/videos/", insightId, null);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);
@@ -164,8 +177,7 @@ namespace AzureSkyMedia.PlatformServices
         public JObject IndexerSearch(string searchQuery)
         {
             JObject searchResults;
-            string relativePath = "/videos/search";
-            string requestUrl = GetRequestUrl(relativePath, true, null);
+            string requestUrl = GetRequestUrl("/videos/search", null, null);
             requestUrl = string.Concat(requestUrl, "&query=", HttpUtility.UrlEncode(searchQuery));
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
@@ -178,8 +190,7 @@ namespace AzureSkyMedia.PlatformServices
         public JObject IndexerGetInsights(int? pageSize, int? skipPageCount)
         {
             JObject insights;
-            string relativePath = "/videos";
-            string requestUrl = GetRequestUrl(relativePath, true, null);
+            string requestUrl = GetRequestUrl("/videos", null, null);
             if (pageSize.HasValue)
             {
                 requestUrl = string.Concat(requestUrl, "&pageSize=", pageSize.Value);
@@ -215,8 +226,7 @@ namespace AzureSkyMedia.PlatformServices
         public JObject IndexerGetInsight(string insightId)
         {
             JObject index;
-            string relativePath = string.Concat("/videos/", insightId, "/index");
-            string requestUrl = GetRequestUrl(relativePath, true, insightId);
+            string requestUrl = GetRequestUrl("/videos/", insightId, "/index");
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
@@ -228,22 +238,19 @@ namespace AzureSkyMedia.PlatformServices
 
         public string IndexerGetInsightUrl(string insightId)
         {
-            string relativePath = string.Concat("/videos/", insightId, "/insightsWidget");
-            string requestUrl = GetRequestUrl(relativePath, true, insightId);
-            return string.Concat(requestUrl, "&allowEdit=true&version=2");
+            string requestUrl = string.Concat(_indexerRegionUrl, "embed/insights/", _indexerAccountId, "/", insightId);
+            return string.Concat(requestUrl, "?accessToken=", GetAccessToken(insightId), "&version=2");
         }
 
         public string IndexerGetCaptionsUrl(string insightId)
         {
-            string relativePath = string.Concat("/videos/", insightId, "/captions");
-            return GetRequestUrl(relativePath, true, insightId);
+            return GetRequestUrl("/videos/", insightId, "/captions");
         }
 
         public JArray IndexerGetBrands()
         {
             JArray brands;
-            string relativePath = "/customization/brands";
-            string requestUrl = GetRequestUrl(relativePath, true, null);
+            string requestUrl = GetRequestUrl("/customization/brands", null, null);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
@@ -255,8 +262,7 @@ namespace AzureSkyMedia.PlatformServices
         public JObject IndexerGetBrandSettings()
         {
             JObject brandSettings;
-            string relativePath = "/customization/brandsModelSettings";
-            string requestUrl = GetRequestUrl(relativePath, true, null);
+            string requestUrl = GetRequestUrl("/customization/brandsModelSettings", null, null);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
@@ -268,8 +274,7 @@ namespace AzureSkyMedia.PlatformServices
         public JArray IndexerGetLanguages()
         {
             JArray languages;
-            string relativePath = "/customization/language";
-            string requestUrl = GetRequestUrl(relativePath, true, null);
+            string requestUrl = GetRequestUrl("/customization/language", null, null);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
@@ -281,8 +286,7 @@ namespace AzureSkyMedia.PlatformServices
         public JArray IndexerGetPersons()
         {
             JArray persons;
-            string relativePath = "/customization/personModels";
-            string requestUrl = GetRequestUrl(relativePath, true, null);
+            string requestUrl = GetRequestUrl("/customization/personModels", null, null);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);

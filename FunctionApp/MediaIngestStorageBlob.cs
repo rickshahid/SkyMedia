@@ -121,7 +121,7 @@ namespace AzureSkyMedia.FunctionApp
                     string fileName = ingestManifest.FileNames[0];
                     ingestManifest.JobInputFileUrl = _blobClient.GetDownloadUrl(sourceContainer, fileName, false);
                 }
-                using (MediaClient mediaClient = new MediaClient(null, ingestManifest.MediaAccount))
+                using (MediaClient mediaClient = new MediaClient(ingestManifest.MediaAccount, null))
                 {
                     Asset inputAsset = null;
                     if (ingestManifest.FileNames.Length > 0)

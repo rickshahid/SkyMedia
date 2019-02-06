@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+
+using Microsoft.Rest;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Management.Media.Models;
 
 using AzureSkyMedia.PlatformServices;
@@ -18,6 +21,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                     transform = mediaClient.CreateTransform(transformName, transformDescription, transformOutputs, thumbnailSpriteColumns);
                 }
                 return Json(transform);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
             }
             catch (ApiErrorException ex)
             {

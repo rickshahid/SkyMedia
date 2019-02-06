@@ -1,4 +1,4 @@
-﻿var _childGridType, _childPropertyName;
+﻿var _childGridType, _childPropertyName, _pageRowCount = 10;
 function ClearTitles() {
     var tableCells = document.getElementsByTagName("td");
     for (var i = 0; i < tableCells.length; i++) {
@@ -59,7 +59,6 @@ function OnGridLoad(gridData, gridId, gridRows) {
     }
 }
 function LoadGrid(gridId, gridRows) {
-    var pageSize = 10;
     var columns = GetParentColumns(gridId);
     SetParentRowIds(gridId, gridRows);
     $("#" + gridId).jqGrid({
@@ -73,10 +72,10 @@ function LoadGrid(gridId, gridRows) {
             "openicon": "ui-icon-arrowreturnthick-1-e"
         },
         subGridRowExpanded: LoadSubGrid,
-        pager: gridRows.length > pageSize ? "gridPager" : null,
+        pager: gridRows.length > _pageRowCount ? "gridPager" : null,
         sortname: "name",
         height: "auto",
-        rowNum: pageSize
+        rowNum: _pageRowCount
     });
     CreateTips(gridRows);
     switch (gridId) {
@@ -95,7 +94,6 @@ function LoadGrid(gridId, gridRows) {
     }
 }
 function LoadSubGrid(parentRowId, parentRowKey) {
-    var pageSize = 20;
     var parentRow = $(this).getLocalRow(parentRowKey);
     var childRows = parentRow[_childPropertyName];
     var columns = GetChildColumns(_childGridType);
@@ -107,9 +105,9 @@ function LoadSubGrid(parentRowId, parentRowKey) {
         colModel: columns,
         datatype: "local",
         data: childRows,
-        pager: childRows.length > pageSize ? "gridPagerChild" : null,
+        pager: childRows.length > _pageRowCount ? "gridPagerChild" : null,
         sortname: "name",
-        rowNum: pageSize
+        rowNum: _pageRowCount
     });
     CreateTips(childRows);
 }

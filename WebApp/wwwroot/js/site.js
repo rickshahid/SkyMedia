@@ -35,7 +35,10 @@ function InitializeApp(appName, userId) {
         var title = "Error Message";
         var message = error;
         if (xhr.responseJSON != null) {
-            var ex = JSON.parse(xhr.responseJSON);
+            var ex = xhr.responseJSON;
+            if (typeof (ex) != "object") {
+                ex = JSON.parse(ex);
+            }
             if (ex.ErrorType != null) {
                 title = title + " (" + ex.ErrorType + ")";
                 message = ex.Message;

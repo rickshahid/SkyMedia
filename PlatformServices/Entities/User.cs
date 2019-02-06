@@ -17,8 +17,9 @@ namespace AzureSkyMedia.PlatformServices
                 DirectoryTenantId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountDirectoryTenantId),
                 ServicePrincipalId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalId),
                 ServicePrincipalKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalKey),
-                VideoIndexerRegion = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerRegion),
+                VideoIndexerId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerId),
                 VideoIndexerKey = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey),
+                VideoIndexerRegion = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerRegion),
                 StorageAccounts = GetStorageAccounts(_authToken)
             };
             MediaAccount.ResourceId = string.Format(Constant.Media.AccountResourceId, MediaAccount.SubscriptionId, MediaAccount.ResourceGroupName, MediaAccount.Name);

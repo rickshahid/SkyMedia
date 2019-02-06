@@ -46,10 +46,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string AppApiEndpointUrl = "App.Api.EndpointUrl";
             public const string AppApiDescription = "App.Api.Description";
 
-            public const string AzureResourceManagementServiceUrl = "Arm.ServiceUrl";
-            public const string AzureResourceManagementTokenScope = "Arm.TokenScope";
-
             public const string DirectoryTenantId = "Directory.TenantId";
+            public const string DirectoryTokenScope = "Directory.TokenScope";
             public const string DirectoryAuthorityUrl = "Directory.AuthorityUrl";
             public const string DirectoryDiscoveryPath = "Directory.DiscoveryPath";
 
@@ -136,8 +134,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaAccountDirectoryTenantId = "extension_MediaAccountDirectoryTenantId";
             public const string MediaAccountServicePrincipalId = "extension_MediaAccountServicePrincipalId";
             public const string MediaAccountServicePrincipalKey = "extension_MediaAccountServicePrincipalKey";
-            public const string MediaAccountVideoIndexerRegion = "extension_MediaAccountVideoIndexerRegion";
+            public const string MediaAccountVideoIndexerId = "extension_MediaAccountVideoIndexerId";
             public const string MediaAccountVideoIndexerKey = "extension_MediaAccountVideoIndexerKey";
+            public const string MediaAccountVideoIndexerRegion = "extension_MediaAccountVideoIndexerRegion";
 
             public const string StorageAccount1Name = "extension_StorageAccount1Name";
             public const string StorageAccount1Key = "extension_StorageAccount1Key";

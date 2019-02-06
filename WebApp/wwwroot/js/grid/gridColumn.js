@@ -129,7 +129,7 @@ function GetParentColumns(gridId) {
                     label: "Content Key Policy Name",
                     name: "name",
                     align: "center",
-                    width: nameWidth
+                    width: nameWidthEx
                 }
             ];
             break;
@@ -424,6 +424,22 @@ function GetChildColumns(gridType) {
                     formatter: FormatName,
                     label: "Output Asset Name",
                     name: "assetName",
+                    align: "center",
+                    width: nameWidth + 60
+                }
+            ];
+            break;
+        case "contentKeyPolicyOptions":
+            columns = [
+                {
+                    label: "Content Key Policy Option Id",
+                    name: "policyOptionId",
+                    align: "center",
+                    width: nameWidthEx - 5
+                },
+                {
+                    label: "Content Key Policy Option Name",
+                    name: "name",
                     align: "center",
                     width: nameWidth + 60
                 }
