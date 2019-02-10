@@ -2,6 +2,7 @@
 
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -29,18 +30,28 @@ namespace AzureSkyMedia.PlatformServices
 
     internal class MediaJobAccount
     {
-        public MediaJobAccount()
+        public MediaJobAccount(string mappingId)
         {
+            this.Id = mappingId;
             this.Created = DateTime.UtcNow;
         }
+
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; }
 
         public string InsightId { get; set; }
 
         public string JobName { get; set; }
 
+        public Priority JobPriority { get; set; }
+
         public string TransformName { get; set; }
 
         public MediaAccount MediaAccount { get; set; }
+
+        public bool AudioOnly { get; set; }
+
+        public bool VideoOnly { get; set; }
 
         public DateTime Created { get; }
     }

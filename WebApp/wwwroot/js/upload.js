@@ -82,8 +82,8 @@ function CreateUploader() {
         sortable: true,
         rename: true,
         filters: {
-            prevent_duplicates: true,
-            max_file_size: "4GB"
+            max_file_size: "10GB",
+            prevent_duplicates: true
         },
         init: {
             BeforeUpload: function (uploader, file) {

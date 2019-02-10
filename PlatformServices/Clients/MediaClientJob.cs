@@ -135,9 +135,10 @@ namespace AzureSkyMedia.PlatformServices
                 OutputAssetDescriptions = outputAssetDescriptions
             };
             Job job = CreateJob(transformName, mediaJob);
-            MediaJobAccount jobAccount = new MediaJobAccount()
+            MediaJobAccount jobAccount = new MediaJobAccount(job.Name)
             {
                 JobName = job.Name,
+                JobPriority = jobPriority,
                 TransformName = transformName,
                 MediaAccount = MediaAccount
             };

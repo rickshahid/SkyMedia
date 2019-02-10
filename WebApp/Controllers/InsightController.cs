@@ -76,7 +76,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    mediaClient.IndexerReindexVideo(insightId, Priority.Normal);
+                    mediaClient.IndexerReindexVideo(insightId);
                 }
                 return Json(insightId);
             }

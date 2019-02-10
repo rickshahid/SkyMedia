@@ -1,10 +1,5 @@
-﻿using System.IO;
-using System.Diagnostics;
-
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-
-using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.WebApp
 {
@@ -16,15 +11,6 @@ namespace AzureSkyMedia.WebApp
             webHostBuilder.UseStartup<Startup>();
             webHostBuilder.UseApplicationInsights();
             IWebHost webHost = webHostBuilder.Build();
-            if (Debugger.IsAttached)
-            {
-                string appDirectory = Directory.GetCurrentDirectory();
-                string modelsDirectory = Path.Combine(appDirectory, Constant.ModelsDirectory);
-                using (DatabaseClient databaseClient = new DatabaseClient(true))
-                {
-                    databaseClient.Initialize(modelsDirectory);
-                }
-            }
             webHost.Run();
         }
     }
