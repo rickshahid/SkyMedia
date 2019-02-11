@@ -1,5 +1,5 @@
 ﻿@media all and (max-width: 599px) {
-    #siteCode, #userDirectory, #userProfileEdit, .layoutPanel.side, .mediaModulesButton {
+    #siteHome, #userDirectory, #userProfileEdit, .layoutPanel.side, .mediaModulesButton {
         display: none !important;
     }
 
@@ -50,6 +50,14 @@ body {
 
 .layoutPanel.body {
     padding-top: 10px;
+}
+
+.header {
+    width: 100%;
+}
+
+.headerSide {
+    white-space: nowrap;
 }
 
 .qtip {
@@ -121,6 +129,7 @@ body {
     border-radius: 20px;
     font-weight: bold;
     font-size: large;
+    margin: 0px auto;
     padding: 10px;
 }
 
@@ -413,6 +422,11 @@ body {
     text-align: left;
     height: 500px;
     width: 800px;
+}
+
+.mailTo {
+    display: block;
+    margin-top: 20px;
 }
 
 #underConstruction {

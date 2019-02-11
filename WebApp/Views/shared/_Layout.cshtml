@@ -39,36 +39,39 @@
     <body onload="InitializeApp('@ViewData["appName"]','@ViewData["userId"]')">
         <table class="layout">
             <tr>
-                <td class="layoutPanel side" />
-                <td>
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "siteHome", ImageFile = "SiteHome.png", RelativeUrl = "/", AltText = "Site Home" }' />
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "siteCode", ImageFile = "SiteCode.png", AbsoluteUrl = "http://github.com/RickShahid/SkyMedia/", AltText = "Site Code" }' />
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "mediaBlog", ImageFile = "MediaBlog.png", AbsoluteUrl = "http://azure.microsoft.com/blog/topics/media-services/", AltText = "Media Blog" }' />
+                <td colspan="3">
+                    <table class="header">
+                        <tr>
+                            <td class="headerSide">
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "siteHome", ImageFile = "SiteHome.png", RelativeUrl = "/", AltText = "Site Home" }' />
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "siteCode", ImageFile = "SiteCode.png", AbsoluteUrl = "http://github.com/RickShahid/SkyMedia/", AltText = "Site Code" }' />
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "mediaBlog", ImageFile = "MediaBlog.png", AbsoluteUrl = "http://azure.microsoft.com/blog/topics/media-services/", AltText = "Media Blog" }' />
+                            </td>
+                            <td>
+                                <div class="viewTitle">
+                                    @RenderSection("title", true)
+                                </div>
+                            </td>
+                            <td class="headerSide">
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "botService", ImageFile = "BotService.png", AbsoluteUrl = "http://azure.microsoft.com/services/bot-service/", AltText = "Bot Service" }' />
+                            @if (ViewData.ContainsKey("accountName"))
+                            {
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "userProfileEdit", ImageFile = "UserProfileEdit.png", RelativeUrl = ViewData["accountProfileEdit"].ToString(), AltText = "User Profile Edit" }' />
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "userSignOut", ImageFile = "UserSignOut.png", OnClick = ViewData["accountSignOut"].ToString(), AltText = "User Sign Out" }' />
+                            }
+                            else
+                            {
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "userDirectory", ImageFile = "UserDirectory.png", AbsoluteUrl = "http://azure.microsoft.com/services/active-directory-b2c/", AltText = "User Directory" }' />
+                                <partial name="SiteButton" model='new SiteButton { ControlId = "userSignIn", ImageFile = "UserSignIn.png", RelativeUrl = ViewData["accountSignUpIn"].ToString(), AltText = "User Sign In" }' />
+                            }
+                            </td>
+                        </tr>
+                    </table>
                 </td>
-                <td>
-                    <div class="viewTitle">
-                        @RenderSection("title", true)
-                    </div>
-                </td>
-                <td>
-                    <partial name="SiteButton" model='new SiteButton { ControlId = "botService", ImageFile = "BotService.png", AbsoluteUrl = "http://azure.microsoft.com/services/bot-service/", AltText = "Bot Service" }' />
-                    @if (ViewData.ContainsKey("accountName"))
-                    {
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "userProfileEdit", ImageFile = "UserProfileEdit.png", RelativeUrl = ViewData["accountProfileEdit"].ToString(), AltText = "User Profile Edit" }' />
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "userSignOut", ImageFile = "UserSignOut.png", OnClick = ViewData["accountSignOut"].ToString(), AltText = "User Sign Out" }' />
-                    }
-                    else
-                    {
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "userDirectory", ImageFile = "UserDirectory.png", AbsoluteUrl = "http://azure.microsoft.com/services/active-directory-b2c/", AltText = "User Directory" }' />
-                        <partial name="SiteButton" model='new SiteButton { ControlId = "userSignIn", ImageFile = "UserSignIn.png", RelativeUrl = ViewData["accountSignUpIn"].ToString(), AltText = "User Sign In" }' />
-                    }
-                </td>
-                <td class="layoutPanel side" />
             </tr>
         @if (ViewData.ContainsKey("accountName"))
         {
             <tr>
-                <td class="layoutPanel side" />
                 <td colspan="3">
                     <table class="accountContext">
                         <tr>
@@ -88,7 +91,6 @@
                         </tr>
                     </table>
                 </td>
-                <td class="layoutPanel side" />
             </tr>
         }
             <tr>
@@ -112,7 +114,7 @@
                         <partial name="SiteButton" model='new SiteButton { ControlId = "mediaIndexer", ImageFile = "MediaIndexer.png", AbsoluteUrl = "http://azure.microsoft.com/services/media-services/video-indexer/", StyleClass = "layoutVertical", AltText = "Video Indexer" }' />
                     </div>
                 </td>
-                <td class="layoutPanel body" colspan="3">
+                <td class="layoutPanel body">
                     @RenderBody()
                 </td>
                 <td class="layoutPanel side">
