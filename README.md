@@ -2,7 +2,7 @@
 
 Welcome! This repository contains the multi-tenant Azure media serverless solution that is deployed at www.skymedia.tv
 
-As an example illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is delivered to a multi-regional Azure App Service Web App via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. Both on-demand and live video content that is encoded by Azure Media Services can be adaptively streamed, globally cached and consumed across a wide variety of devices and browsers.
+As an example illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is delivered to a multi-regional Azure App Service Web App via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. Both on-demand and live content that is encoded by Azure Media Services can be adaptively streamed, globally cached and consumed across a wide variety of devices and browsers.
 
 ![](https://skymedia.azureedge.net/docs/01.10-ApplicationIntroduction.png)
 
