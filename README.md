@@ -4,7 +4,7 @@ Welcome! This repository contains the multi-tenant Azure media <a href="http://a
 
 As an example illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is delivered into a multi-region <a href="http://azure.microsoft.com/services/app-service/web/" target="_blank">Azure App Service Web App</a> via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> and <a href="http://azure.microsoft.com/services/cdn/" target="_blank">Azure Content Delivery Network</a> integration. Both on-demand and live video content can be adaptively streamed and globally viewed across a wide variety of modern devices and browsers.
 
-![](https://skymedia.azureedge.net/docs/01.10-ApplicationIntroduction.png)
+![](https://skymedia.azureedge.net/docs/01.02-ApplicationIntroduction.png)
 
 Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
 
@@ -16,7 +16,7 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 The following architecture overview diagram depicts the solution sample deployment at http://www.skymedia.tv
 
-![](https://skymedia.azureedge.net/docs/02.12-SolutionArchitecture.png)
+![](https://skymedia.azureedge.net/docs/02.02-SolutionArchitecture.png)
 
 To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
 
@@ -57,8 +57,6 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Azure Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
-* **Azure Logic App** - http://azure.microsoft.com/services/logic-apps/
-
 * **Azure Functions** - http://azure.microsoft.com/services/functions/
 
 * **Azure Event Grid** - http://azure.microsoft.com/services/event-grid/
@@ -75,13 +73,17 @@ The following Azure platform services were leveraged to create this sample media
   
   * **Video Indexer** - http://azure.microsoft.com/services/media-services/video-indexer/
 
+* **Azure Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
+
 * **Azure Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
-* **Azure App Service** - http://azure.microsoft.com/services/app-service/
+* **Azure Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
 * **Azure App Insights** - http://azure.microsoft.com/services/application-insights/
 
-* **Azure Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
+* **Azure App Service** - http://azure.microsoft.com/services/app-service/
+
+* **Azure Bot Service** - http://azure.microsoft.com/services/bot-service/
 
 * **Azure DevOps** - http://azure.microsoft.com/services/devops/
 
