@@ -63,17 +63,19 @@ The following Azure serverless platform services were integrated to create this 
 
 * **Azure Event Grid** - http://azure.microsoft.com/services/event-grid/
 
+  * **Media Services Events** - http://docs.microsoft.com/azure/media-services/latest/media-services-event-schemas
+
 * **Azure Media Services** - http://azure.microsoft.com/services/media-services/
 
-  * **Media Encoding** - http://azure.microsoft.com/services/media-services/encoding/
+  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
-  * **Media Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
+  * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
 
-  * **Content Protection** - http://azure.microsoft.com/services/media-services/content-protection/
+  * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
+
+  * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
   
-  * **Media Player** - http://azure.microsoft.com/services/media-services/media-player/
-  
-  * **Video Indexer** - http://azure.microsoft.com/services/media-services/video-indexer/
+  * **Indexing** - http://azure.microsoft.com/services/media-services/video-indexer/
 
 * **Azure Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
 
