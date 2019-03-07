@@ -18,7 +18,7 @@ The following architecture overview diagram depicts the solution sample that is 
 
 ![](https://skymedia.azureedge.net/docs/02.02-SolutionArchitecture.png)
 
-To deploy the parameterized solution sample within your Azure subscription, leverage the "Deploy to Azure" buttons as follows
+To deploy this media solution sample within your Azure subscription, leverage the "Deploy to Azure" buttons as follows
 
 <table>
   <tr>
