@@ -18,7 +18,7 @@ The following architecture overview diagram depicts the solution sample that is 
 
 ![](https://skymedia.azureedge.net/docs/02.02-SolutionArchitecture.png)
 
-To deploy this media solution sample within your Azure subscription, leverage the "Deploy to Azure" buttons as follows
+To deploy this media solution sample within your Azure subscription, leverage the "Deploy to Azure" templates as follows
 
 <table>
   <tr>
@@ -45,7 +45,7 @@ To deploy this media solution sample within your Azure subscription, leverage th
   </tr>
 </table>
 
-The following Azure platform services were leveraged to create this sample media application:
+The following Azure serverless platform services were integrated to create this sample media solution:
 
 * **Azure Active Directory (B2C)** - http://azure.microsoft.com/services/active-directory-b2c/
 
