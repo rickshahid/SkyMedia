@@ -63,7 +63,7 @@ The following Azure serverless platform services were integrated to create this 
 
 * **Azure Event Grid** - http://azure.microsoft.com/services/event-grid/
 
-  * **Media Services Events** - http://docs.microsoft.com/azure/media-services/latest/media-services-event-schemas
+  * **Media Events** - http://docs.microsoft.com/azure/media-services/latest/media-services-event-schemas
 
 * **Azure Media Services** - http://azure.microsoft.com/services/media-services/
 
@@ -88,6 +88,8 @@ The following Azure serverless platform services were integrated to create this 
 * **Azure App Service** - http://azure.microsoft.com/services/app-service/
 
 * **Azure Bot Service** - http://azure.microsoft.com/services/bot-service/
+
+* **Azure Monitor** - http://azure.microsoft.com/services/monitor/
 
 * **Azure DevOps** - http://azure.microsoft.com/services/devops/
 
