@@ -6,7 +6,7 @@ As an example illustration, the screenshot below is an introductory <a href="htt
 
 ![](https://skymedia.azureedge.net/docs/01.04-ApplicationIntroduction.png)
 
-Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
+Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including
 
 * Multi-tenant, self-service account registration and profile management, including user, media and storage accounts
 
@@ -14,11 +14,11 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 * Discover and extract actionable insights from your media content via integrated video / audio intelligence services
 
-The following architecture overview diagram depicts the solution sample deployment at http://www.skymedia.tv
+The following architecture overview diagram depicts the solution sample that is deployed at http://www.skymedia.tv
 
 ![](https://skymedia.azureedge.net/docs/02.02-SolutionArchitecture.png)
 
-To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
+To deploy the parameterized solution sample within your Azure subscription, leverage the "Deploy to Azure" buttons as follows
 
 <table>
   <tr>
