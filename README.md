@@ -59,6 +59,8 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Azure Functions** - http://azure.microsoft.com/services/functions/
 
+  * **Durable Functions** - http://docs.microsoft.com/azure/azure-functions/durable/
+
 * **Azure Event Grid** - http://azure.microsoft.com/services/event-grid/
 
 * **Azure Media Services** - http://azure.microsoft.com/services/media-services/
