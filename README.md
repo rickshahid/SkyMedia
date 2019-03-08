@@ -83,13 +83,13 @@ The following Azure serverless platform services were integrated to create this 
 
 * **Azure Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
 
-* **Azure App Insights** - http://azure.microsoft.com/services/application-insights/
-
 * **Azure App Service** - http://azure.microsoft.com/services/app-service/
 
 * **Azure Bot Service** - http://azure.microsoft.com/services/bot-service/
 
 * **Azure Monitor** - http://azure.microsoft.com/services/monitor/
+
+  * **Application Insights** - http://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview
 
 * **Azure DevOps** - http://azure.microsoft.com/services/devops/
 
