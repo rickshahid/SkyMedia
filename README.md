@@ -89,7 +89,7 @@ The following Azure serverless platform services were integrated to create this 
 
 * **Azure Monitor** - http://azure.microsoft.com/services/monitor/
 
-  * **Application Insights** - http://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview
+  * **App Insights** - http://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview
 
 * **Azure DevOps** - http://azure.microsoft.com/services/devops/
 
