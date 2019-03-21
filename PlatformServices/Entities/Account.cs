@@ -2,7 +2,7 @@
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class MediaAccount
+    public class MediaAccount
     {
         public string Name { get; set; }
 

@@ -95,7 +95,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     {
                         string[] assetAlternateIds = new string[] { insightId };
                         string[] assetDescriptions = new string[] { assetDescription };
-                        job = mediaClient.CreateJob(authToken, transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, assetAlternateIds, assetDescriptions, streamingPolicyName);
+                        job = mediaClient.CreateJob(mediaClient.MediaAccount, transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, assetAlternateIds, assetDescriptions, streamingPolicyName);
                     }
                 }
                 return Json(job);

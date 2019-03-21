@@ -59,7 +59,7 @@
         accountSignUpIn = string.Concat(accountSignUpIn, request.QueryString.Value);
     }
     ViewData["accountSignUpIn"] = accountSignUpIn;
-    ViewData["accountSignOut"] = string.Concat("SignOut('", Constant.AuthIntegration.UserToken, "')");
+    ViewData["accountSignOut"] = string.Concat("SignOut('", Constant.AuthIntegration.TokenKey, "')");
     ViewData["accountProfileEdit"] = "/account/profileEdit";
 
     ViewData["spacingPatterns"] = Constant.TextFormatter.SpacingPatterns;

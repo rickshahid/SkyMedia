@@ -17,12 +17,12 @@ namespace AzureSkyMedia.PlatformServices
         private string _storageAccountName;
         private StorageAccount _storageAccount;
 
-        internal MediaStorage(string authToken, MediaStorageAccount storageAccount) : base(storageAccount.Type, storageAccount.Id)
+        internal MediaStorage(MediaAccount mediaAccount, MediaStorageAccount storageAccount) : base(storageAccount.Type, storageAccount.Id)
         {
-            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
-            StorageManagementClient storageClient = new StorageManagementClient(azureToken)
+            TokenCredentials authToken = AuthToken.AcquireToken(mediaAccount);
+            StorageManagementClient storageClient = new StorageManagementClient(authToken)
             {
-                SubscriptionId = subscriptionId
+                SubscriptionId = mediaAccount.SubscriptionId
             };
             _storageAccountName = Path.GetFileName(storageAccount.Id);
             IEnumerable<StorageAccount> storageAccounts = storageClient.StorageAccounts.List();

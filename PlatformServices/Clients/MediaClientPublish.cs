@@ -66,22 +66,22 @@ namespace AzureSkyMedia.PlatformServices
             return JsonConvert.DeserializeObject<MediaJobPublish>(jobPublish);
         }
 
-        public static JObject GetJobPublish(string authToken, string jobData, string streamingPolicyName)
+        public static JObject GetJobPublish(string jobData, string streamingPolicyName)
         {
-            string mobilePhoneNumber = null;
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                User userProfile = new User(authToken);
-                mobilePhoneNumber = userProfile.MobilePhoneNumber;
-            }
+            //string mobilePhoneNumber = null;
+            //if (!string.IsNullOrEmpty(authToken))
+            //{
+            //    User currentUser = new User(authToken);
+            //    mobilePhoneNumber = currentUser.MobilePhoneNumber;
+            //}
             MediaJobPublish jobPublish = new MediaJobPublish()
             {
                 StreamingPolicyName = streamingPolicyName,
                 ContentProtection = null,
-                UserNotification = new UserNotification()
-                {
-                    MobilePhoneNumber = mobilePhoneNumber
-                }
+                //UserNotification = new UserNotification()
+                //{
+                //    MobilePhoneNumber = mobilePhoneNumber
+                //}
             };
             JObject jobPublishOutput = string.IsNullOrEmpty(jobData) ? new JObject() : JObject.Parse(jobData);
             jobPublishOutput[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);

@@ -64,39 +64,24 @@ namespace AzureSkyMedia.PlatformServices
             return UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
         }
 
-        public void Initialize(string modelsDirectory)
-        {
-            Database database = new Database { Id = _databaseId };
-            _cosmos.CreateDatabaseIfNotExistsAsync(database).Wait();
-            Uri databaseUri = UriFactory.CreateDatabaseUri(_databaseId);
+        ////public void Initialize(string scriptDirectory)
+        ////{
+        ////    string scriptFile = Path.Combine(collectionDirectory, Constant.Database.Script.IsTimecodeFragment);
+        ////    UserDefinedFunction function = new UserDefinedFunction()
+        ////    {
+        ////        Id = Path.GetFileNameWithoutExtension(Constant.Database.Script.IsTimecodeFragment),
+        ////        Body = File.ReadAllText(scriptFile)
+        ////    };
+        ////    _cosmos.CreateUserDefinedFunctionAsync(collectionUri, function);
 
-            string collectionId = Constant.Database.Collection.MediaJobAccount;
-            Uri collectionUri = CreateCollection(databaseUri, collectionId);
-
-            collectionId = Constant.Database.Collection.MediaIngestManifest;
-            collectionUri = CreateCollection(databaseUri, collectionId);
-
-            collectionId = Constant.Database.Collection.MediaContentInsight;
-            collectionUri = CreateCollection(databaseUri, collectionId);
-
-            //string collectionDirectory = Path.Combine(modelsDirectory, collectionId);
-
-            //string scriptFile = Path.Combine(collectionDirectory, Constant.Database.Script.IsTimecodeFragment);
-            //UserDefinedFunction function = new UserDefinedFunction()
-            //{
-            //    Id = Path.GetFileNameWithoutExtension(Constant.Database.Script.IsTimecodeFragment),
-            //    Body = File.ReadAllText(scriptFile)
-            //};
-            //_cosmos.CreateUserDefinedFunctionAsync(collectionUri, function);
-
-            //scriptFile = Path.Combine(collectionDirectory, Constant.Database.Script.GetTimecodeFragment);
-            //StoredProcedure procedure = new StoredProcedure()
-            //{
-            //    Id = Path.GetFileNameWithoutExtension(Constant.Database.Script.GetTimecodeFragment),
-            //    Body = File.ReadAllText(scriptFile)
-            //};
-            //_cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
-        }
+        ////    scriptFile = Path.Combine(collectionDirectory, Constant.Database.Script.GetTimecodeFragment);
+        ////    StoredProcedure procedure = new StoredProcedure()
+        ////    {
+        ////        Id = Path.GetFileNameWithoutExtension(Constant.Database.Script.GetTimecodeFragment),
+        ////        Body = File.ReadAllText(scriptFile)
+        ////    };
+        ////    _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
+        ////}
 
         public T[] GetDocuments<T>(string collectionId)
         {

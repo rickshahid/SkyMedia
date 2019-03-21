@@ -14,22 +14,22 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class UploadController : Controller
     {
-        private void UploadIngestManifest(StorageBlobClient blobClient, MediaIngestManifest ingestManifest)
+        private void UploadManifest(StorageBlobClient blobClient, MediaWorkflowManifest workflowManifest)
         {
-            string ingestManifestJson = JsonConvert.SerializeObject(ingestManifest);
-            string containerName = Constant.Storage.BlobContainer.MediaServices;
-            string assetName = Path.GetFileNameWithoutExtension(ingestManifest.JobInputFileUrl);
-            string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.TextDelimiter.Manifest, assetName, Constant.Media.IngestManifest.FileExtension);
-            CloudBlockBlob manifest = blobClient.GetBlockBlob(containerName, null, fileName);
-            manifest.Properties.ContentType = Constant.Media.ContentType.IngestManifest;
-            manifest.UploadTextAsync(ingestManifestJson).Wait();
+            //string ingestManifestJson = JsonConvert.SerializeObject(workflowManifest);
+            //string containerName = Constant.Storage.BlobContainer.MediaServices;
+            //string assetName = Path.GetFileNameWithoutExtension(workflowManifest.JobInputFileUrl);
+            //string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.TextDelimiter.Manifest, assetName, Constant.Media.IngestManifest.FileExtension);
+            //CloudBlockBlob manifest = blobClient.GetBlockBlob(containerName, null, fileName);
+            //manifest.Properties.ContentType = Constant.Media.ContentType.IngestManifest;
+            //manifest.UploadTextAsync(ingestManifestJson).Wait();
         }
 
-        private void UploadIngestManifests(MediaIngestManifest ingestManifest, string rssUrl, int videoCount)
+        private void UploadManifests(MediaWorkflowManifest workflowManifest, string rssUrl, int videoCount)
         {
             XmlDocument rssDocument;
             StorageBlobClient blobClient = new StorageBlobClient();
-            using (WebClient webClient = new WebClient(null))
+            using (WebClient webClient = new WebClient())
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, rssUrl);
                 rssDocument = webClient.GetResponse<XmlDocument>(webRequest);
@@ -46,9 +46,9 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string videoDescription = video.SelectSingleNode("title").InnerText;
                 videoUrl = videoUrl.Replace(Constant.Media.Channel9.UrlHttp, Constant.Media.Channel9.UrlHttps);
                 videoUrl = videoUrl.Replace(Constant.Media.Channel9.Http, Constant.Media.Channel9.Https);
-                ingestManifest.JobInputFileUrl = videoUrl;
-                ingestManifest.JobOutputAssetDescriptions = new string[] { videoDescription };
-                UploadIngestManifest(blobClient, ingestManifest);
+                workflowManifest.JobInputFileUrl = videoUrl;
+                workflowManifest.JobOutputAssetDescriptions = new string[] { videoDescription };
+                UploadManifest(blobClient, workflowManifest);
             }
         }
 
@@ -56,32 +56,32 @@ namespace AzureSkyMedia.WebApp.Controllers
         [Route("/syndicate")]
         public void Syndicate(string rssUrl = "https://channel9.msdn.com/Shows/AI-Show/feed/mp4high", int videoCount = Constant.Media.Channel9.DefaultIngestVideoCount)
         {
-            StorageBlobClient blobClient = new StorageBlobClient();
-            string containerName = Constant.Storage.BlobContainer.MediaServices;
-            string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.Media.IngestManifest.FileExtension);
-            CloudBlockBlob manifestFile = blobClient.GetBlockBlob(containerName, null, fileName);
-            if (manifestFile.ExistsAsync().Result)
-            {
-                MediaIngestManifest ingestManifest;
-                using (Stream manifestStream = manifestFile.OpenReadAsync().Result)
-                {
-                    StreamReader manifestReader = new StreamReader(manifestStream);
-                    string manifestData = manifestReader.ReadToEnd();
-                    ingestManifest = JsonConvert.DeserializeObject<MediaIngestManifest>(manifestData);
-                }
-                using (MediaClient mediaClient = new MediaClient(ingestManifest.MediaAccount, null))
-                {
-                    Account.DeleteEntities(mediaClient, false);
-                }
-                UploadIngestManifests(ingestManifest, rssUrl, videoCount);
-            }
+            //StorageBlobClient blobClient = new StorageBlobClient();
+            //string containerName = Constant.Storage.BlobContainer.MediaServices;
+            //string fileName = string.Concat(Constant.Media.IngestManifest.TriggerPrefix, Constant.Media.IngestManifest.FileExtension);
+            //CloudBlockBlob manifestFile = blobClient.GetBlockBlob(containerName, null, fileName);
+            //if (manifestFile.ExistsAsync().Result)
+            //{
+            //    MediaWorkflowManifest workflowManifest;
+            //    using (Stream manifestStream = manifestFile.OpenReadAsync().Result)
+            //    {
+            //        StreamReader manifestReader = new StreamReader(manifestStream);
+            //        string manifestData = manifestReader.ReadToEnd();
+            //        workflowManifest = JsonConvert.DeserializeObject<MediaWorkflowManifest>(manifestData);
+            //    }
+            //    using (MediaClient mediaClient = new MediaClient(workflowManifest.MediaAccounts[0], null))
+            //    {
+            //        Account.DeleteEntities(mediaClient, false);
+            //    }
+            //    UploadManifests(workflowManifest, rssUrl, videoCount);
+            //}
         }
 
         public JsonResult Block(string name, int chunk, int chunks, string storageAccount, string contentType)
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
-            User userProfile = new User(authToken);
-            StorageBlobClient blobClient = new StorageBlobClient(userProfile.MediaAccount, storageAccount);
+            User currentUser = new User(authToken);
+            StorageBlobClient blobClient = new StorageBlobClient(currentUser.MediaAccountPrimary, storageAccount);
             Stream blockStream = Request.Form.Files[0].OpenReadStream();
             string containerName = Constant.Storage.BlobContainer.MediaServices;
             blobClient.UploadBlock(blockStream, containerName, name, chunk, chunks, contentType);

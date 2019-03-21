@@ -10,18 +10,6 @@
         "description": "Name must be between 3 and 23 characters (letters and numbers only)."
       }
     },
-    "storageServiceHttpsOnly": {
-      "type": "bool",
-      "metadata": {
-        "description": "Designates if HTTPS is required to establish a storage connection."
-      }
-    },
-    "storageServiceEncryptionEnabled": {
-      "type": "bool",
-      "metadata": {
-        "description": "Designates if storage data encryption at rest is enabled."
-      }
-    },
     "mediaServiceName": {
       "type": "string",
       "minLength": 3,
@@ -32,7 +20,7 @@
     }
   },
   "variables": {
-    "storageApiVersion": "2018-07-01",
+    "storageApiVersion": "2018-11-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "storageServiceName1": "[concat(variables('storageServiceName'), '1')]",
     "storageServiceName2": "[concat(variables('storageServiceName'), '2')]",
@@ -50,12 +38,12 @@
         "name": "Standard_RAGRS"
       },
       "properties": {
-        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
+        "supportsHttpsTrafficOnly": true,
         "encryption": {
           "keySource": "Microsoft.Storage",
           "services": {
             "blob": {
-              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
+              "enabled": true
             }
           }
         }
@@ -71,12 +59,12 @@
         "name": "Standard_RAGRS"
       },
       "properties": {
-        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
+        "supportsHttpsTrafficOnly": true,
         "encryption": {
           "keySource": "Microsoft.Storage",
           "services": {
             "blob": {
-              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
+              "enabled": true
             }
           }
         },
@@ -103,15 +91,157 @@
             "type": "Secondary"
           }
         ]
-      }
+      },
+      "resources": [
+        {
+          "type": "transforms",
+          "apiVersion": "[variables('mediaApiVersion')]",
+          "name": "AdaptiveStreaming",
+          "dependsOn": [
+            "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
+          ],
+          "properties": {
+            "outputs": [
+              {
+                "onError": "StopProcessingJob",
+                "relativePriority": "Normal",
+                "preset": {
+                  "@odata.type": "#Microsoft.Media.BuiltInStandardEncoderPreset",
+                  "presetName": "AdaptiveStreaming"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "transforms",
+          "apiVersion": "[variables('mediaApiVersion')]",
+          "name": "ThumbnailSprite",
+          "dependsOn": [
+            "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
+          ],
+          "properties": {
+            "outputs": [
+              {
+                "onError": "StopProcessingJob",
+                "relativePriority": "Normal",
+                "preset": {
+                  "@odata.type": "#Microsoft.Media.StandardEncoderPreset",
+                  "codecs": [
+                    {
+                      "@odata.type": "#Microsoft.Media.JpgImage",
+                      "stretchMode": "AutoSize",
+                      "start": "0%",
+                      "step": "1%",
+                      "range": "100%",
+                      "layers": [
+                        {
+                          "width": "10%",
+                          "height": "10%",
+                          "quality": 90
+                        }
+                      ],
+                      //"columns": 10
+                    }
+                  ],
+                  "formats": [
+                    {
+                      "@odata.type": "#Microsoft.Media.JpgFormat",
+                      "filenamePattern": "Thumbnail{Index}{Extension}"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "transforms",
+          "apiVersion": "[variables('mediaApiVersion')]",
+          "name": "VideoAnalysis",
+          "dependsOn": [
+            "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
+          ],
+          "properties": {
+            "outputs": [
+              {
+                "onError": "StopProcessingJob",
+                "relativePriority": "Normal",
+                "preset": {
+                  "@odata.type": "#Microsoft.Media.VideoAnalyzerPreset",
+                  "insightsToExtract": "AllInsights"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "transforms",
+          "apiVersion": "[variables('mediaApiVersion')]",
+          "name": "AdaptiveStreaming, ThumbnailSprite, VideoAnalysis",
+          "dependsOn": [
+            "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
+          ],
+          "properties": {
+            "outputs": [
+              {
+                "onError": "StopProcessingJob",
+                "relativePriority": "Normal",
+                "preset": {
+                  "@odata.type": "#Microsoft.Media.BuiltInStandardEncoderPreset",
+                  "presetName": "AdaptiveStreaming"
+                }
+              },
+              {
+                "onError": "StopProcessingJob",
+                "relativePriority": "Normal",
+                "preset": {
+                  "@odata.type": "#Microsoft.Media.StandardEncoderPreset",
+                  "codecs": [
+                    {
+                      "@odata.type": "#Microsoft.Media.JpgImage",
+                      "stretchMode": "AutoSize",
+                      "start": "0%",
+                      "step": "1%",
+                      "range": "100%",
+                      "layers": [
+                        {
+                          "width": "10%",
+                          "height": "10%",
+                          "quality": 90
+                        }
+                      ]
+                      //"columns": 10
+                    }
+                  ],
+                  "formats": [
+                    {
+                      "@odata.type": "#Microsoft.Media.JpgFormat",
+                      "filenamePattern": "Thumbnail{Index}{Extension}"
+                    }
+                  ]
+                }
+              },
+              {
+                "onError": "StopProcessingJob",
+                "relativePriority": "Normal",
+                "preset": {
+                  "@odata.type": "#Microsoft.Media.VideoAnalyzerPreset",
+                  "insightsToExtract": "AllInsights"
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "outputs": {
-    "storageAccountConnection1": {
+    "storageConnection1": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName1'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName1')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     },
-    "storageAccountConnection2": {
+    "storageConnection2": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName2'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     },

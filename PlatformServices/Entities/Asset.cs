@@ -45,40 +45,22 @@ namespace AzureSkyMedia.PlatformServices
 
         internal static MediaFile[] GetAssetFiles(StorageBlobClient blobClient, string containerName, string directoryPath)
         {
-            BlobContinuationToken continuationToken = null;
             List<MediaFile> files = new List<MediaFile>();
-            CloudBlobContainer blobContainer = blobClient.GetBlobContainer(containerName);
-            do
+            CloudBlob[] blobs = blobClient.ListBlobContainer(containerName, directoryPath);
+            foreach (CloudBlob blob in blobs)
             {
-                BlobResultSegment blobList;
-                if (!string.IsNullOrEmpty(directoryPath))
+                string fileName = blob.Name;
+                string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);
+                MediaFile file = new MediaFile()
                 {
-                    CloudBlobDirectory blobDirectory = blobContainer.GetDirectoryReference(directoryPath);
-                    blobList = blobDirectory.ListBlobsSegmentedAsync(continuationToken).Result;
-                }
-                else
-                {
-                    blobList = blobContainer.ListBlobsSegmentedAsync(continuationToken).Result;
-                }
-                foreach (IListBlobItem blobItem in blobList.Results)
-                {
-                    string fileName = Path.GetFileName(blobItem.Uri.ToString());
-                    if (!string.IsNullOrEmpty(fileName))
-                    {
-                        string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);
-                        MediaFile file = new MediaFile()
-                        {
-                            Name = fileName,
-                            Size = fileSize,
-                            ByteCount = byteCount,
-                            ContentType = contentType,
-                            DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
-                        };
-                        files.Add(file);
-                    }
-                }
-                continuationToken = blobList.ContinuationToken;
-            } while (continuationToken != null);
+                    Name = fileName,
+                    Size = fileSize,
+                    ByteCount = byteCount,
+                    ContentType = contentType,
+                    DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
+                };
+                files.Add(file);
+            }
             return files.ToArray();
         }
 

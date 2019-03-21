@@ -117,11 +117,12 @@ namespace AzureSkyMedia.PlatformServices
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
         }
 
-        public Job CreateJob(string authToken, string transformName, string jobName, string jobDescription, Priority jobPriority,
+        public Job CreateJob(MediaAccount mediaAccount, string transformName, string jobName, string jobDescription, Priority jobPriority,
                              string jobData, string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode,
                              string[] outputAssetAlternateIds, string[] outputAssetDescriptions, string streamingPolicyName)
         {
-            JObject jobPublish = GetJobPublish(authToken, jobData, streamingPolicyName);
+            EventGridClient.SetMediaSubscription(mediaAccount);
+            JObject jobPublish = GetJobPublish(jobData, streamingPolicyName);
             MediaJob mediaJob = new MediaJob()
             {
                 Name = jobName,

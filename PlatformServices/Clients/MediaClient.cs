@@ -24,8 +24,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaClient(string authToken)
         {
-            User userProfile = new User(authToken);
-            MediaAccount = userProfile.MediaAccount;
+            User currentUser = new User(authToken);
+            MediaAccount = currentUser.MediaAccountPrimary;
             BindContext(null);
         }
 
@@ -95,26 +95,9 @@ namespace AzureSkyMedia.PlatformServices
             _mediaAccount = mediaAccount;
         }
 
-        public static Task<AuthenticationResult> AcquireToken(MediaAccount mediaAccount)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryAuthorityUrl;
-            string authorityUrl = AppSetting.GetValue(settingKey);
-            authorityUrl = string.Format(authorityUrl, mediaAccount.DirectoryTenantId);
-
-            string redirectUri = Constant.AuthIntegration.RedirectUri;
-            ClientCredential clientCredential = new ClientCredential(mediaAccount.ServicePrincipalKey);
-            ConfidentialClientApplication clientApplication = new ConfidentialClientApplication(mediaAccount.ServicePrincipalId, authorityUrl, redirectUri, clientCredential, null, null);
-
-            settingKey = Constant.AppSettingKey.DirectoryTokenScope;
-            string tokenScope = AppSetting.GetValue(settingKey);
-
-            string[] tokenScopes = new string[] { tokenScope };
-            return clientApplication.AcquireTokenForClientAsync(tokenScopes);
-        }
-
         public async override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            AuthenticationResult authResult = await AcquireToken(_mediaAccount);
+            AuthenticationResult authResult = await AuthToken.AcquireTokenAsync(_mediaAccount);
 
             string authScheme = Constant.AuthIntegration.AuthScheme; 
             request.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authResult.AccessToken);

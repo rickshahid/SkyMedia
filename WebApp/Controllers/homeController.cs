@@ -53,28 +53,28 @@ namespace AzureSkyMedia.WebApp.Controllers
         public static string GetAuthToken(HttpRequest request, HttpResponse response)
         {
             string authToken = string.Empty;
-            string userToken = Constant.AuthIntegration.UserToken;
+            string tokenKey = Constant.AuthIntegration.TokenKey;
             if (request.HasFormContentType)
             {
-                authToken = request.Form[userToken];
+                authToken = request.Form[tokenKey];
                 if (!string.IsNullOrEmpty(authToken))
                 {
-                    response.Cookies.Append(userToken, authToken);
+                    response.Cookies.Append(tokenKey, authToken);
                 }
             }
             if (string.IsNullOrEmpty(authToken))
             {
-                authToken = request.Cookies[userToken];
+                authToken = request.Cookies[tokenKey];
             }
             return authToken;
         }
 
         public static void SetAccountContext(string authToken, ViewDataDictionary viewData)
         {
-            User userProfile = new User(authToken);
-            viewData["userId"] = userProfile.Id;
-            viewData["accountName"] = userProfile.MediaAccount.Name;
-            if (string.IsNullOrEmpty(userProfile.MediaAccount.VideoIndexerRegion) || string.IsNullOrEmpty(userProfile.MediaAccount.VideoIndexerKey))
+            User currentUser = new User(authToken);
+            viewData["userId"] = currentUser.Id;
+            viewData["accountName"] = currentUser.MediaAccountPrimary.Name;
+            if (string.IsNullOrEmpty(currentUser.MediaAccountPrimary.VideoIndexerRegion) || string.IsNullOrEmpty(currentUser.MediaAccountPrimary.VideoIndexerKey))
             {
                 viewData["indexerMessage"] = "DisplayMessage('Azure Video Indexer Account', 'Your Azure Media Services account does not have an Azure Video Indexer account.<br><br>Verify your " + viewData["appName"] + " user account profile is configured.')";
             }
@@ -101,6 +101,9 @@ namespace AzureSkyMedia.WebApp.Controllers
             try
             {
                 string authToken = GetAuthToken(Request, Response);
+
+                //CognitiveClient.GetSpeech("Hello Friend", false);
+                //CognitiveClient.GetSpeech("Hello Friend", true);
 
                 if (Request.HasFormContentType)
                 {

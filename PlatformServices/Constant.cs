@@ -37,6 +37,11 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        public struct FileExtension
+        {
+            public const string Json = ".json";
+        }
+
         public struct AppSettingKey
         {
             public const string AppName = "App.Name";
@@ -89,8 +94,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
-            public const string MediaEventGridPublishUrl = "Media.EventGrid.PublishUrl";
-            public const string MediaEventGridLiveUrl = "Media.EventGrid.LiveUrl";
+            public const string MediaEventGridLiveEventUrl = "Media.EventGrid.LiveEventUrl";
+            public const string MediaEventGridPublishOutputUrl = "Media.EventGrid.PublishOutputUrl";
 
             public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
 
@@ -116,10 +121,11 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct AuthIntegration
         {
-            public const string AuthScheme = "Bearer";
-            public const string UserToken = "id_token";
-            public const string RedirectUri = "urn:ietf:wg:oauth:2.0:oob";
-            public const string SubscriptionKey = "Ocp-Apim-Subscription-Key";
+            public const string TokenKey = "id_token";
+            public const string AuthScheme = "Bearer ";
+            public const string AuthHeader = "Authorization";
+            public const string ApiManagementKey = "ocp-apim-subscription-key";
+            public const string OpenAuthRedirectUri = "urn:ietf:wg:oauth:2.0:oob";
         }
 
         public struct UserAttribute
@@ -160,7 +166,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string MediaJobAccount = "Media Job Account";
                 public const string MediaContentInsight = "Media Content Insight";
-                public const string MediaIngestManifest = "Media Ingest Manifest";
+                public const string MediaWorkflowManifest = "Media Workflow Manifest";
             }
 
             public struct Script
@@ -190,13 +196,6 @@ namespace AzureSkyMedia.PlatformServices
                 public const string UrlHttps = "https://sec.ch9.ms/";
                 public const string Http = "http://";
                 public const string Https = "https://";
-            }
-
-            public struct IngestManifest
-            {
-                public const string TriggerPrefix = "MediaIngestManifest";
-                public const string FileExtension = ".json";
-                public const string FileExtensionLog = ".log";
             }
 
             public struct ContentType
@@ -243,13 +242,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct EventGrid
             {
-                public const string PublishSubscriptionName = "AMS-Publish";
-                public static readonly string[] PublishEventTypes = new string[] {
-                    "Microsoft.Media.JobStateChange"
-                };
-
-                public const string LiveSubscriptionName = "AMS-Live";
-                public static readonly string[] LiveEventTypes = new string[] {
+                public const string LiveEventSubscriptionName = "AMS-Live-Event";
+                public static readonly string[] LiveEventFilterTypes = new string[] {
                     "Microsoft.Media.LiveEventConnectionRejected",
                     "Microsoft.Media.LiveEventEncoderConnected",
                     "Microsoft.Media.LiveEventEncoderDisconnected",
@@ -258,6 +252,11 @@ namespace AzureSkyMedia.PlatformServices
                     "Microsoft.Media.LiveEventIncomingStreamsOutOfSync",
                     "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync",
                     "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+                };
+
+                public const string PublishOutputSubscriptionName = "AMS-Job-Publish";
+                public static readonly string[] PublishOutputFilterTypes = new string[] {
+                    "Microsoft.Media.JobStateChange"
                 };
             }
 

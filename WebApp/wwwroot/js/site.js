@@ -2,7 +2,7 @@
 function InitializeApp(appName, userId) {
     CreateTipBottom("siteHome", appName + "<br><br>Site Home");
     CreateTipBottom("siteCode", appName + "<br><br>Open Source");
-    CreateTipBottom("mediaBlog", "Azure Media Services<br><br>Announcement Blog");
+    CreateTipBottom("mediaBlog", "Azure Media<br><br>News Blog");
     CreateTipBottom("botService", "Azure Bot Service");
     CreateTipBottom("userDirectory", "Azure B2C<br><br>Active Directory");
     CreateTipBottom("userProfileEdit", appName + "<br><br>Account Profile Edit" + "<br><br>(" + userId + ")");
@@ -11,14 +11,14 @@ function InitializeApp(appName, userId) {
     CreateTipBottom("mediaAccount", "Media Account");
     CreateTipBottom("mediaSearch", "Media Account<br><br>Search");
     CreateTipRight("mediaServices", "Azure Media Services");
-    CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
+    CreateTipRight("mediaServicesPlayer", "Azure Media Services<br><br>Player");
     CreateTipRight("mediaProtection", "Azure Media Services<br><br>Content Protection");
     CreateTipRight("mediaStreaming", "Azure Media Services<br><br>Streaming");
-    CreateTipRight("mediaServicesPlayer", "Azure Media Player");
-    CreateTipRight("mediaIndexer", "Azure Video Indexer");
-    CreateTipLeft("search", "Azure Search");
+    CreateTipRight("mediaEncoding", "Azure Media Services<br><br>Encoding");
+    CreateTipRight("mediaIndexing", "Azure Media Services<br><br>Video Indexer");
     CreateTipLeft("contentDeliveryNetwork", "Azure Content Delivery Network");
-    CreateTipLeft("logicApp", "Azure Logic App");
+    CreateTipLeft("cognitiveServices", "Azure Cognitive Services");
+    CreateTipLeft("search", "Azure Search");
     CreateTipLeft("functionApp", "Azure Functions");
     CreateTipLeft("cosmosDB", "Azure Cosmos DB");
     CreateTipLeft("mediaStorage", "Azure Blob Storage");

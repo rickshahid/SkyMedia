@@ -6,41 +6,39 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal class EventGridClient
     {
-        private static void SetEventGridSubscription(EventGridManagementClient eventGridClient, string eventScope, string eventSubscriptionName, string eventUrl, string[] eventTypes)
+        private static void SetEventSubscription(EventGridManagementClient eventGridClient, string eventScope, string eventSubscriptionName, string eventHandlerUrl, string[] eventFilterTypes)
         {
             EventSubscription eventSubscription = new EventSubscription(name: eventSubscriptionName)
             {
                 Destination = new WebHookEventSubscriptionDestination()
                 {
-                    EndpointUrl = eventUrl
+                    EndpointUrl = eventHandlerUrl
                 },
                 Filter = new EventSubscriptionFilter()
                 {
-                    IncludedEventTypes = eventTypes
+                    IncludedEventTypes = eventFilterTypes
                 }
             };
             eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
-        public static void SetEventGridSubscriptions(string authToken)
+        public static void SetMediaSubscription(MediaAccount mediaAccount)
         {
-            string settingKey = Constant.AppSettingKey.MediaEventGridLiveUrl;
-            string liveUrl = AppSetting.GetValue(settingKey);
-
-            settingKey = Constant.AppSettingKey.MediaEventGridPublishUrl;
-            string publishUrl = AppSetting.GetValue(settingKey);
-
-            TokenCredentials azureToken = AuthToken.AcquireToken(authToken, out string subscriptionId);
-            EventGridManagementClient eventGridClient = new EventGridManagementClient(azureToken)
+            TokenCredentials authToken = AuthToken.AcquireToken(mediaAccount);
+            EventGridManagementClient eventGridClient = new EventGridManagementClient(authToken)
             {
-                SubscriptionId = subscriptionId
+                SubscriptionId = mediaAccount.SubscriptionId
             };
 
-            User userProfile = new User(authToken);
-            string eventScope = userProfile.MediaAccount.ResourceId;
+            string settingKey = Constant.AppSettingKey.MediaEventGridLiveEventUrl;
+            string liveEventUrl = AppSetting.GetValue(settingKey);
 
-            SetEventGridSubscription(eventGridClient, eventScope, Constant.Media.EventGrid.LiveSubscriptionName, liveUrl, Constant.Media.EventGrid.LiveEventTypes);
-            SetEventGridSubscription(eventGridClient, eventScope, Constant.Media.EventGrid.PublishSubscriptionName, publishUrl, Constant.Media.EventGrid.PublishEventTypes);
+            settingKey = Constant.AppSettingKey.MediaEventGridPublishOutputUrl;
+            string publishOutputUrl = AppSetting.GetValue(settingKey);
+
+            string eventScope = mediaAccount.ResourceId;
+            SetEventSubscription(eventGridClient, eventScope, Constant.Media.EventGrid.LiveEventSubscriptionName, liveEventUrl, Constant.Media.EventGrid.LiveEventFilterTypes);
+            SetEventSubscription(eventGridClient, eventScope, Constant.Media.EventGrid.PublishOutputSubscriptionName, publishOutputUrl, Constant.Media.EventGrid.PublishOutputFilterTypes);
         }
     }
 }

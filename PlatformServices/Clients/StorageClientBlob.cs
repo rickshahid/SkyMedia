@@ -24,47 +24,38 @@ namespace AzureSkyMedia.PlatformServices
             _blobClient = storageAccount.CreateCloudBlobClient();
         }
 
-        public static string MapByteCount(long byteCount)
-        {
-            string mappedCount;
-            if (byteCount >= 1099511627776)
-            {
-                mappedCount = (byteCount / 1099511627776.0).ToString(Constant.TextFormatter.Numeric) + " TB";
-            }
-            else if (byteCount >= 1073741824)
-            {
-                mappedCount = (byteCount / 1073741824.0).ToString(Constant.TextFormatter.Numeric) + " GB";
-            }
-            else if (byteCount >= 1048576)
-            {
-                mappedCount = (byteCount / 1048576.0).ToString(Constant.TextFormatter.Numeric) + " MB";
-            }
-            else if (byteCount >= 1024)
-            {
-                mappedCount = (byteCount / 1024.0).ToString(Constant.TextFormatter.Numeric) + " KB";
-            }
-            else if (byteCount == 1)
-            {
-                mappedCount = byteCount + " Byte";
-            }
-            else
-            {
-                mappedCount = byteCount + " Bytes";
-            }
-            return mappedCount;
-        }
-
-        public CloudBlobContainer GetBlobContainer(string containerName)
+        private CloudBlobContainer GetBlobContainer(string containerName)
         {
             CloudBlobContainer container = _blobClient.GetContainerReference(containerName);
             container.CreateIfNotExistsAsync().Wait();
             return container;
         }
 
-        public CloudBlobDirectory GetBlobDirectory(string containerName, string directoryPath)
+        public CloudBlob[] ListBlobContainer(string containerName, string directoryPath)
         {
-            CloudBlobContainer container = GetBlobContainer(containerName);
-            return container.GetDirectoryReference(directoryPath);
+            List<CloudBlob> blobs = new List<CloudBlob>();
+            BlobContinuationToken continuationToken = null;
+            CloudBlobContainer blobContainer = GetBlobContainer(containerName);
+            do
+            {
+                BlobResultSegment resultSegment;
+                if (!string.IsNullOrEmpty(directoryPath))
+                {
+                    CloudBlobDirectory blobDirectory = blobContainer.GetDirectoryReference(directoryPath);
+                    resultSegment = blobDirectory.ListBlobsSegmentedAsync(continuationToken).Result;
+                }
+                else
+                {
+                    resultSegment = blobContainer.ListBlobsSegmentedAsync(continuationToken).Result;
+                }
+                foreach (IListBlobItem blobItem in resultSegment.Results)
+                {
+                    CloudBlob blob = (CloudBlob)blobItem;
+                    blobs.Add(blob);
+                }
+                continuationToken = resultSegment.ContinuationToken;
+            } while (continuationToken != null);
+            return blobs.ToArray();
         }
 
         public CloudBlockBlob GetBlockBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
@@ -164,5 +155,78 @@ namespace AzureSkyMedia.PlatformServices
                 blob.SetPropertiesAsync().Wait();
             }
         }
+
+        public static string MapByteCount(long byteCount)
+        {
+            string mappedCount;
+            if (byteCount >= 1099511627776)
+            {
+                mappedCount = (byteCount / 1099511627776.0).ToString(Constant.TextFormatter.Numeric) + " TB";
+            }
+            else if (byteCount >= 1073741824)
+            {
+                mappedCount = (byteCount / 1073741824.0).ToString(Constant.TextFormatter.Numeric) + " GB";
+            }
+            else if (byteCount >= 1048576)
+            {
+                mappedCount = (byteCount / 1048576.0).ToString(Constant.TextFormatter.Numeric) + " MB";
+            }
+            else if (byteCount >= 1024)
+            {
+                mappedCount = (byteCount / 1024.0).ToString(Constant.TextFormatter.Numeric) + " KB";
+            }
+            else if (byteCount == 1)
+            {
+                mappedCount = byteCount + " Byte";
+            }
+            else
+            {
+                mappedCount = byteCount + " Bytes";
+            }
+            return mappedCount;
+        }
+
+        //static public async void CopyBlobsAsync(CloudBlobContainer sourceBlobContainer, CloudBlobContainer destinationBlobContainer, List<string> fileNames)
+        //{
+        //    if (fileNames != null)
+        //    {
+        //        foreach (var fileName in fileNames)
+        //        {
+        //            CloudBlob sourceBlob = sourceBlobContainer.GetBlockBlobReference(fileName);
+        //            CloudBlob destinationBlob = destinationBlobContainer.GetBlockBlobReference(fileName);
+        //            CopyBlobAsync(sourceBlob as CloudBlob, destinationBlob);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        string blobPrefix = null;
+        //        BlobContinuationToken blobContinuationToken = null;
+        //        do
+        //        {
+        //            var results = await sourceBlobContainer.ListBlobsSegmentedAsync(blobPrefix, blobContinuationToken);
+        //            Get the value of the continuation token returned by the listing call.
+        //            blobContinuationToken = results.ContinuationToken;
+        //            foreach (IListBlobItem item in results.Results)
+        //            {
+        //                if (item.GetType() == typeof(CloudBlockBlob))
+        //                {
+        //                    CloudBlockBlob sourceBlob = (CloudBlockBlob)item;
+        //                    CloudBlob destinationBlob = destinationBlobContainer.GetBlockBlobReference(sourceBlob.Name);
+        //                    CopyBlobAsync(sourceBlob as CloudBlob, destinationBlob);
+        //                }
+        //            }
+        //        } while (blobContinuationToken != null); // Loop while the continuation token is not null.
+        //    }
+        //}
+
+        //static public async void CopyBlobAsync(CloudBlob sourceBlob, CloudBlob destinationBlob)
+        //{
+        //    var signature = sourceBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy
+        //    {
+        //        Permissions = SharedAccessBlobPermissions.Read,
+        //        SharedAccessExpiryTime = DateTime.UtcNow.AddHours(24)
+        //    });
+        //    await destinationBlob.StartCopyAsync(new Uri(sourceBlob.Uri.AbsoluteUri + signature));
+        //}
     }
 }

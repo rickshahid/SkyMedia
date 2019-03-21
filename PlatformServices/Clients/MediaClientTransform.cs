@@ -186,45 +186,5 @@ namespace AzureSkyMedia.PlatformServices
             }
             return CreateTransform(null, null, transformOutputs.ToArray(), null);
         }
-
-        public Transform[] CreateTransforms()
-        {
-            List<Transform> transforms = new List<Transform>();
-
-            Transform transform = CreateTransform(true, false, false, false, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(true, true, false, false, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(true, true, true, false, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(true, true, false, true, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(true, false, true, false, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(true, false, false, true, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(false, true, false, false, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(false, true, true, false, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(false, true, false, true, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(false, false, true, false, false, false);
-            transforms.Add(transform);
-
-            transform = CreateTransform(false, false, false, true, false, false);
-            transforms.Add(transform);
-
-            return transforms.ToArray();
-        }
     }
 }

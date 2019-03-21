@@ -95,7 +95,7 @@ namespace AzureSkyMedia.PlatformServices
                 IList<StorageAccount> mediaStorageAccounts = mediaClient.StorageAccounts;
                 foreach (StorageAccount mediaStorageAccount in mediaStorageAccounts)
                 {
-                    MediaStorage mediaStorage = new MediaStorage(authToken, mediaStorageAccount);
+                    MediaStorage mediaStorage = new MediaStorage(mediaClient.MediaAccount, mediaStorageAccount);
                     string accountName = Path.GetFileName(mediaStorageAccount.Id);
                     string accountInfo = string.Concat(accountName, mediaStorage.ToString());
                     storageAccounts.Add(accountName, accountInfo);

@@ -26,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Deployment.Cosmos.ps1" />
     <Compile Include="Deployment.Global.ps1" />
     <Compile Include="Deployment.Media.ps1" />
     <Compile Include="Deployment.Regional.ps1" />

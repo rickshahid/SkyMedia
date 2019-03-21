@@ -4,12 +4,12 @@ using Newtonsoft.Json;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal class MediaIngestManifest
+    public class MediaWorkflowManifest
     {
         [JsonProperty(PropertyName = "id")]
         public string Name { get; set; }
 
-        public MediaAccount MediaAccount { get; set; }
+        public MediaAccount[] MediaAccounts { get; set; }
 
         public string[] MissingFiles { get; set; }
 

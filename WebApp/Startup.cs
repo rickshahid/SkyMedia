@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
@@ -33,14 +32,6 @@ namespace AzureSkyMedia.WebApp
                 configBuilder.AddUserSecrets<Startup>();
             }
             AppSetting.Configuration = configBuilder.Build();
-            if (Debugger.IsAttached)
-            {
-                string modelsDirectory = Path.Combine(hosting.ContentRootPath, Constant.ModelsDirectory);
-                using (DatabaseClient databaseClient = new DatabaseClient(true))
-                {
-                    databaseClient.Initialize(modelsDirectory);
-                }
-            }
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -97,14 +88,6 @@ namespace AzureSkyMedia.WebApp
             if (!string.IsNullOrEmpty(requestError) && requestError.Contains(Constant.Message.UserPasswordForgotten))
             {
                 redirectAction = controller.RedirectToAction("passwordReset", "account");
-            }
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                EventGridClient.SetEventGridSubscriptions(authToken);
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    mediaClient.CreateTransforms();
-                }
             }
             return redirectAction;
         }

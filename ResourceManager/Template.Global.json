@@ -10,10 +10,10 @@
         "description": "Name must be between 3 and 24 characters (letters, numbers and hyphens only)."
       }
     },
-    "keyVaultTenantId": {
+    "keyVaultAdminId": {
       "type": "string",
       "metadata": {
-        "description": "Azure Active Directory tenant identifier for the Key Vault service."
+        "description": "Azure Active Directory user admin object identifier for the Key Vault service."
       }
     },
     "storageServiceName": {
@@ -22,18 +22,6 @@
       "maxLength": 24,
       "metadata": {
         "description": "Name must be between 3 and 24 characters (letters and numbers only)."
-      }
-    },
-    "storageServiceHttpsOnly": {
-      "type": "bool",
-      "metadata": {
-        "description": "Designates if HTTPS is required to establish a storage connection."
-      }
-    },
-    "storageServiceEncryptionEnabled": {
-      "type": "bool",
-      "metadata": {
-        "description": "Designates if storage data encryption at rest is enabled."
       }
     },
     "databaseServiceName": {
@@ -62,20 +50,27 @@
       "type": "string",
       "defaultValue": "Standard",
       "metadata": {
-        "description": "Azure resource tier for the Search service."
+        "description": "Resource tier for the Search service."
+      }
+    },
+    "searchServiceReplicaCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Replica count for the Search service."
+      }
+    },
+    "searchServicePartitionCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Partition count for the Search service."
       }
     },
     "trafficManagerProfileNames": {
       "type": "array",
       "metadata": {
         "description": "Profile names (<profileName>.trafficmanager.net) must be between 2 and 64 characters (letters, numbers and hyphens only)."
-      }
-    },
-    "trafficManagerRoutingTimeToLive": {
-      "type": "int",
-      "defaultValue": 300,
-      "metadata": {
-        "description": "Routing record time-to-live (in seconds) for the Traffic Manager resource."
       }
     },
     "contentDeliveryProfileName": {
@@ -88,12 +83,7 @@
     },
     "contentDeliveryProfileTier": {
       "type": "string",
-      "allowedValues": [
-        "Standard_Akamai",
-        "Standard_Microsoft",
-        "Standard_Verizon",
-        "Premium_Verizon"
-      ],
+      "defaultValue": "Standard_Microsoft",
       "metadata": {
         "description": "Resource tier for the Content Delivery Network service."
       }
@@ -109,24 +99,36 @@
     "contentDeliveryEndpointOriginPath": {
       "type": "string",
       "metadata": {
-        "description": "Origin path (in the form '/path') relative to the origin root."
+        "description": "Endpoint path (in the form '/path') relative to the origin root."
+      }
+    },
+    "appServiceCertificateName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name must be between 3 and 15 characters (letters and numbers only)."
+      }
+    },
+    "appServiceCertificateDomainName": {
+      "type": "string",
+      "metadata": {
+        "description": "Root domain name for the App Service Certificate."
       }
     },
     "appInsightsRegion": {
       "type": "string",
       "metadata": {
-        "description": "Azure region name for the Application Insights resource."
+        "description": "Azure region name for the Application Insights service."
       }
     },
     "appInsightsName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the Application Insights resource."
+        "description": "Name of the Application Insights service."
       }
     }
   },
   "variables": {
-    "keyVaultApiVersion": "2018-02-14-preview",
+    "keyVaultApiVersion": "2018-02-14",
     "storageApiVersion": "2018-07-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseApiVersion": "2016-03-31",
@@ -137,6 +139,9 @@
     "trafficManagerApiVersion": "2018-08-01",
     "contentDeliveryApiVersion": "2018-04-02",
     "contentDeliveryEndpointName": "[toLower(parameters('contentDeliveryEndpointName'))]",
+    "contentDeliveryEndpointOrigin": "[concat(variables('storageServiceName'), '.blob.core.windows.net')]",
+    "certificateRegistrationApiVersion": "2018-02-01",
+    "certificateRegistrationDistinguishedName": "[concat('CN=*.', parameters('appServiceCertificateDomainName'))]",
     "appInsightsApiVersion": "2018-05-01-preview"
   },
   "resources": [
@@ -147,11 +152,47 @@
       "name": "[parameters('keyVaultName')]",
       "properties": {
         "sku": {
-          "name": "Premium",
-          "family": "A"
+          "family": "A",
+          "name": "Premium"
         },
-        "tenantId": "[parameters('keyVaultTenantId')]",
-        "accessPolicies": []
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[parameters('keyVaultAdminId')]",
+            "permissions": {
+              "keys": [
+                "All"
+              ],
+              "secrets": [
+                "All"
+              ],
+              "certificates": [
+                "All"
+              ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "ed47c2a1-bd23-4341-b39c-f4fd69138dd3", // Microsoft.Azure.CertificateRegistration
+            "permissions": {
+              "secrets": [
+                "Get",
+                "Set",
+                "Delete"
+              ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "f8daea97-62e7-4026-becf-13c2ea98e8b4", // Microsoft.Azure.WebSites
+            "permissions": {
+              "secrets": [
+                "Get"
+              ]
+            }
+          }
+        ]
       }
     },
     {
@@ -164,12 +205,12 @@
         "name": "Standard_LRS"
       },
       "properties": {
-        "supportsHttpsTrafficOnly": "[parameters('storageServiceHttpsOnly')]",
+        "supportsHttpsTrafficOnly": true,
         "encryption": {
           "keySource": "Microsoft.Storage",
           "services": {
             "blob": {
-              "enabled": "[parameters('storageServiceEncryptionEnabled')]"
+              "enabled": true
             }
           }
         }
@@ -180,6 +221,7 @@
       "apiVersion": "[variables('databaseApiVersion')]",
       "location": "[resourceGroup().location]",
       "name": "[variables('databaseServiceName')]",
+      "kind": "GlobalDocumentDB",
       "properties": {
         "databaseAccountOfferType": "Standard",
         "enableMultipleWriteLocations": true,
@@ -192,10 +234,7 @@
               "failoverPriority": "[copyIndex('locations')]"
             }
           }
-        ],
-        "tags": {
-          "defaultExperience": "DocumentDB"
-        }
+        ]
       }
     },
     {
@@ -205,29 +244,10 @@
       "name": "[variables('searchServiceName')]",
       "sku": {
         "name": "[variables('searchServiceTier')]"
-      }
-    },
-    {
-      "type": "Microsoft.Network/trafficManagerProfiles",
-      "apiVersion": "[variables('trafficManagerApiVersion')]",
-      "location": "global",
-      "name": "[parameters('trafficManagerProfileNames')[copyIndex('profileNames')]]",
-      "copy": {
-        "mode": "Parallel",
-        "name": "profileNames",
-        "count": "[length(parameters('trafficManagerProfileNames'))]"
       },
       "properties": {
-        "trafficRoutingMethod": "Performance",
-        "dnsConfig": {
-          "relativeName": "[parameters('trafficManagerProfileNames')[copyIndex('profileNames')]]",
-          "ttl": "[parameters('trafficManagerRoutingTimeToLive')]"
-        },
-        "monitorConfig": {
-          "protocol": "HTTP",
-          "port": 80,
-          "path": "/"
-        }
+        "replicaCount": "[parameters('searchServiceReplicaCount')]",
+        "partitionCount": "[parameters('searchServicePartitionCount')]"
       }
     },
     {
@@ -253,17 +273,42 @@
               {
                 "name": "[variables('storageServiceName')]",
                 "properties": {
-                  "hostName": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))).primaryEndpoints.blob, 'https://', ''), '/', '')]"
+                  "hostName": "[variables('contentDeliveryEndpointOrigin')]"
                 }
               }
             ],
-            "originHostHeader": "[replace(replace(reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName'))).primaryEndpoints.blob, 'https://', ''), '/', '')]",
+            "originHostHeader": "[variables('contentDeliveryEndpointOrigin')]",
             "originPath": "[parameters('contentDeliveryEndpointOriginPath')]",
-            "isHttpAllowed": true,
-            "isHttpsAllowed": true
+            "isHttpsAllowed": true,
+            "isHttpAllowed": true
           }
         }
       ]
+    },
+    {
+      "type": "Microsoft.CertificateRegistration/certificateOrders",
+      "name": "[parameters('appServiceCertificateName')]",
+      "apiVersion": "[variables('certificateRegistrationApiVersion')]",
+      "location": "global",
+      "properties": {
+        "ProductType": "StandardDomainValidatedWildCardSsl",
+        "DistinguishedName": "[variables('certificateRegistrationDistinguishedName')]",
+        "ValidityInYears": 1
+      }
+    },
+    {
+      "type": "Microsoft.CertificateRegistration/certificateOrders/certificates",
+      "name": "[concat(parameters('appServiceCertificateName'), '/', parameters('appServiceCertificateName'))]",
+      "apiVersion": "[variables('certificateRegistrationApiVersion')]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "[resourceId('Microsoft.CertificateRegistration/certificateOrders', parameters('appServiceCertificateName'))]"
+      ],
+      "properties": {
+        "keyVaultId": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+        "keyVaultSecretName": "[parameters('appServiceCertificateName')]"
+      }
     },
     {
       "type": "Microsoft.Insights/components",
@@ -284,13 +329,29 @@
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     },
-    "databaseConnection": {
+    "databaseConnectionReadOnly": {
+      "type": "string",
+      "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadOnlyMasterKey)]"
+    },
+    "databaseConnectionReadWrite": {
       "type": "string",
       "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey)]"
+    },
+    "searchConnectionReadOnly": {
+      "type": "string",
+      "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryKey)]"
+    },
+    "searchConnectionReadWrite": {
+      "type": "string",
+      "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryKey)]"
     },
     "contentDeliveryHost": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Cdn/profiles/endpoints', parameters('contentDeliveryProfileName'), variables('contentDeliveryEndpointName')), variables('contentDeliveryApiVersion')).hostName]"
+    },
+    "appCertificateThumbprint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.CertificateRegistration/certificateOrders', parameters('appServiceCertificateName')), variables('certificateRegistrationApiVersion')).signedCertificate.thumbprint]"
     },
     "appInsightsKey": {
       "type": "string",

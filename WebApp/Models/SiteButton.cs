@@ -15,9 +15,16 @@ namespace AzureSkyMedia.WebApp.Models
         {
             get
             {
-                string settingKey = Constant.AppSettingKey.StorageCdnEndpointUrl;
-                string storageCdnUrl = AppSetting.GetValue(settingKey);
-                return string.Concat(storageCdnUrl, "/", _imageFile);
+                if (_imageFile.StartsWith("/"))
+                {
+                    return _imageFile;
+                }
+                else
+                {
+                    string settingKey = Constant.AppSettingKey.StorageCdnEndpointUrl;
+                    string storageCdnUrl = AppSetting.GetValue(settingKey);
+                    return string.Concat(storageCdnUrl, "/", _imageFile);
+                }
             }
 
             set { _imageFile = value; }

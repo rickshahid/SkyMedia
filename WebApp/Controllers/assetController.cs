@@ -56,7 +56,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             string[] outputAssetAlternateIds = new string[] { insightId };
                             string[] outputAssetDescriptions = new string[] { assetDescription };
                             PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
-                            job = mediaClient.CreateJob(authToken, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetAlternateIds, outputAssetDescriptions, streamingPolicy);
+                            job = mediaClient.CreateJob(mediaClient.MediaAccount, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetAlternateIds, outputAssetDescriptions, streamingPolicy);
                         }
                         if (job != null)
                         {
