@@ -1,12 +1,12 @@
 # Azure Sky Media
 
-Welcome! This repository contains the multi-tenant Azure media solution sample that is deployed at http://www.skymedia.tv
+Welcome! This repository contains the multi-tenant Azure media <a href="http://azure.microsoft.com/overview/serverless-computing/" target="_blank">serverless</a> solution that is deployed at www.skymedia.tv
 
-As a sample illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is playing within an Azure App Service web app via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> integration. On-demand and live video content that is stored and managed in Azure Media Services is adaptively streamed, scaled and globally consumable across a wide range of devices and platforms.
+As an example illustration, the screenshot below is an introductory <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> stream that is delivered into a multi-region <a href="http://azure.microsoft.com/services/app-service/web/" target="_blank">Azure App Service Web App</a> via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> and <a href="http://azure.microsoft.com/services/cdn/" target="_blank">Azure Content Delivery Network</a> integration. Both on-demand and live video content can be adaptively streamed and globally viewed across a wide variety of modern devices and browsers.
 
-![](https://skymedia.azureedge.net/docs/01.10-ApplicationIntroduction.png)
+![](https://skymedia.azureedge.net/docs/01.04-ApplicationIntroduction.png)
 
-Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including:
+Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots of key application functionality, including
 
 * Multi-tenant, self-service account registration and profile management, including user, media and storage accounts
 
@@ -14,11 +14,11 @@ Refer to http://github.com/RickShahid/SkyMedia/wiki for additional screenshots o
 
 * Discover and extract actionable insights from your media content via integrated video / audio intelligence services
 
-The following architecture overview diagram depicts the solution sample deployment at http://www.skymedia.tv
+The following architecture overview diagram depicts the solution sample that is deployed at http://www.skymedia.tv
 
-![](https://skymedia.azureedge.net/docs/02.11-SolutionArchitecture.png)
+![](https://skymedia.azureedge.net/docs/02.03-SolutionArchitecture.png)
 
-To deploy the parameterized solution sample within your Azure subscription, click the "Deploy to Azure" button below:
+To deploy this media solution sample within your Azure subscription, leverage the "Deploy to Azure" templates as follows
 
 <table>
   <tr>
@@ -45,7 +45,7 @@ To deploy the parameterized solution sample within your Azure subscription, clic
   </tr>
 </table>
 
-The following Azure platform services were leveraged to create this sample media application:
+The following Azure serverless platform services were integrated to create this sample media solution:
 
 * **Azure Active Directory (B2C)** - http://azure.microsoft.com/services/active-directory-b2c/
 
@@ -57,31 +57,39 @@ The following Azure platform services were leveraged to create this sample media
 
 * **Azure Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
-* **Azure Logic App** - http://azure.microsoft.com/services/logic-apps/
-
 * **Azure Functions** - http://azure.microsoft.com/services/functions/
+
+  * **Durable Functions** - http://docs.microsoft.com/azure/azure-functions/durable/
 
 * **Azure Event Grid** - http://azure.microsoft.com/services/event-grid/
 
+  * **Media Events** - http://docs.microsoft.com/azure/media-services/latest/media-services-event-schemas
+
 * **Azure Media Services** - http://azure.microsoft.com/services/media-services/
 
-  * **Media Encoding** - http://azure.microsoft.com/services/media-services/encoding/
+  * **Player** - http://azure.microsoft.com/services/media-services/media-player/
 
-  * **Media Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
+  * **Streaming** - http://azure.microsoft.com/services/media-services/live-on-demand/
 
-  * **Content Protection** - http://azure.microsoft.com/services/media-services/content-protection/
+  * **Protection** - http://azure.microsoft.com/services/media-services/content-protection/
+
+  * **Encoding** - http://azure.microsoft.com/services/media-services/encoding/
   
-  * **Media Player** - http://azure.microsoft.com/services/media-services/media-player/
-  
-  * **Video Indexer** - http://azure.microsoft.com/services/media-services/video-indexer/
+  * **Indexing** - http://azure.microsoft.com/services/media-services/video-indexer/
+
+* **Azure Cognitive Services** - http://azure.microsoft.com/services/cognitive-services/
 
 * **Azure Content Delivery Network** - http://azure.microsoft.com/services/cdn/
 
+* **Azure Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
+
 * **Azure App Service** - http://azure.microsoft.com/services/app-service/
 
-* **Azure App Insights** - http://azure.microsoft.com/services/application-insights/
+* **Azure Bot Service** - http://azure.microsoft.com/services/bot-service/
 
-* **Azure Traffic Manager** - http://azure.microsoft.com/services/traffic-manager/
+* **Azure Monitor** - http://azure.microsoft.com/services/monitor/
+
+  * **App Insights** - http://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview
 
 * **Azure DevOps** - http://azure.microsoft.com/services/devops/
 
