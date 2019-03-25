@@ -3,14 +3,16 @@ using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Extensions.Logging;
 
+using Newtonsoft.Json;
+
 namespace AzureSkyMedia.FunctionApp
 {
-    public static partial class MediaWorkflow
+    public static class MediaWorkflowPublishAsset
     {
-        [FunctionName("MediaWorkflow-PublishOutput")]
+        [FunctionName("MediaWorkflow-PublishAsset")]
         public static void Run([EventGridTrigger] EventGridEvent eventTrigger, ILogger logger)
         {
-            logger.LogInformation(eventTrigger.Data.ToString());
+            logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));
         }
     }
 }

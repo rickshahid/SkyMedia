@@ -59,40 +59,16 @@
         "description": "Function application name (<appName>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
-    "functionPublishUrl": {
+    "functionLiveEventUrl": {
       "type": "string",
       "metadata": {
-        "description": "Function HTTP post url for content publishing process."
+        "description": "Function event handler url for live event processing."
       }
     },
-    "functionLiveUrl": {
+    "functionPublishAssetUrl": {
       "type": "string",
       "metadata": {
-        "description": "Function HTTP post url for live event processing."
-      }
-    },
-    "functionSyncSchedule": {
-      "type": "string",
-      "metadata": {
-        "description": "Function timer schedule for media account sync."
-      }
-    },
-    "functionPublishUrlStaging": {
-      "type": "string",
-      "metadata": {
-        "description": "(Staging) Function HTTP post url for content publishing process."
-      }
-    },
-    "functionLiveUrlStaging": {
-      "type": "string",
-      "metadata": {
-        "description": "(Staging) Function HTTP post url for live event processing."
-      }
-    },
-    "functionSyncScheduleStaging": {
-      "type": "string",
-      "metadata": {
-        "description": "(Staging) Function timer schedule for media account sync."
+        "description": "Function event handler for media asset publishing."
       }
     },
     "cognitiveServicesName": {
@@ -367,15 +343,15 @@
             {
               "name": "Database.Regions",
               "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.PublishAssetUrl",
+              "value": "[parameters('functionPublishAssetUrl')]"
             }
-            //{
-            //  "name": "Media.EventGrid.PublishUrl",
-            //  "value": "[parameters('functionPublishUrl')]"
-            //},
-            //{
-            //  "name": "Media.EventGrid.LiveUrl",
-            //  "value": "[parameters('functionLiveUrl')]"
-            //}
             //{
             //  "name": "Search.ReadOnly",
             //  "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryReadonlyMasterKey)]"
@@ -450,23 +426,15 @@
             {
               "name": "Database.Regions",
               "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.PublishAssetUrl",
+              "value": "[parameters('functionPublishAssetUrl')]"
             }
-            //{
-            //  "name": "Media.EventGrid.PublishUrl",
-            //  "value": "[parameters('functionPublishUrlStaging')]"
-            //},
-            //{
-            //  "name": "Media.EventGrid.LiveUrl",
-            //  "value": "[parameters('functionLiveUrlStaging')]"
-            //}
-            //{
-            //  "name": "Search.ReadOnly",
-            //  "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryReadonlyMasterKey)]"
-            //},
-            //{
-            //  "name": "Search.ReadWrite",
-            //  "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryMasterKey)]"
-            //}
           ]
         },
         "clientAffinityEnabled": false
@@ -515,63 +483,59 @@
             {
               "name": "Directory.ClientId",
               "value": "[parameters('directoryClientId')]"
+            },
+            {
+              "name": "Directory.TenantId",
+              "value": "[parameters('directoryTenantId')]"
+            },
+            {
+              "name": "Directory.TokenScope",
+              "value": "https://management.core.windows.net/.default"
+            },
+            {
+              "name": "Directory.AuthorityUrl",
+              "value": "[parameters('directoryAuthorityUrl')]"
+            },
+            {
+              "name": "Directory.DiscoveryPath",
+              "value": "[parameters('directoryDiscoveryPath')]"
+            },
+            {
+              "name": "Directory.PolicyId.SignUpIn",
+              "value": "[parameters('directoryPolicyIdSignUpIn')]"
+            },
+            {
+              "name": "Storage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "Storage.SharedAccessMinutes",
+              "value": "60"
+            },
+            {
+              "name": "Database.ReadOnly",
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+            },
+            {
+              "name": "Database.ReadWrite",
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+            },
+            {
+              "name": "Database.Regions",
+              "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.PublishAssetUrl",
+              "value": "[parameters('functionPublishAssetUrl')]"
+            },
+            {
+              "name": "Media.Indexer.ApiUrl",
+              "value": "https://api.videoindexer.ai/"
             }
-            //{
-            //  "name": "Directory.TenantId",
-            //  "value": "[parameters('directoryTenantId')]"
-            //},
-            //{
-            //  "name": "Directory.TokenScope",
-            //  "value": "https://management.core.windows.net/.default"
-            //},
-            //{
-            //  "name": "Directory.AuthorityUrl",
-            //  "value": "[parameters('directoryAuthorityUrl')]"
-            //},
-            //{
-            //  "name": "Directory.DiscoveryPath",
-            //  "value": "[parameters('directoryDiscoveryPath')]"
-            //},
-            //{
-            //  "name": "Directory.PolicyId.SignUpIn",
-            //  "value": "[parameters('directoryPolicyIdSignUpIn')]"
-            //},
-            //{
-            //  "name": "Storage",
-            //  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-            //},
-            //{
-            //  "name": "Storage.SharedAccessMinutes",
-            //  "value": "60"
-            //},
-            //{
-            //  "name": "Database.ReadOnly",
-            //  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
-            //},
-            //{
-            //  "name": "Database.ReadWrite",
-            //  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
-            //},
-            //{
-            //  "name": "Database.Regions",
-            //  "value": "[parameters('databaseServiceRegions')]"
-            //},
-            //{
-            //  "name": "Media.Indexer.ApiUrl",
-            //  "value": "https://api.videoindexer.ai/"
-            //},
-            //{
-            //  "name": "Media.EventGrid.PublishUrl",
-            //  "value": "[parameters('functionPublishUrl')]"
-            //},
-            //{
-            //  "name": "Media.EventGrid.LiveUrl",
-            //  "value": "[parameters('functionLiveUrl')]"
-            //},
-            //{
-            //  "name": "Media.Sync.Schedule",
-            //  "value": "[parameters('functionSyncSchedule')]"
-            //}
           ]
         }
       },
@@ -631,63 +595,59 @@
             {
               "name": "Directory.ClientId",
               "value": "[parameters('directoryClientIdStaging')]"
+            },
+            {
+              "name": "Directory.TenantId",
+              "value": "[parameters('directoryTenantId')]"
+            },
+            {
+              "name": "Directory.TokenScope",
+              "value": "https://management.core.windows.net/.default"
+            },
+            {
+              "name": "Directory.AuthorityUrl",
+              "value": "[parameters('directoryAuthorityUrl')]"
+            },
+            {
+              "name": "Directory.DiscoveryPath",
+              "value": "[parameters('directoryDiscoveryPath')]"
+            },
+            {
+              "name": "Directory.PolicyId.SignUpIn",
+              "value": "[parameters('directoryPolicyIdSignUpIn')]"
+            },
+            {
+              "name": "Storage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "Storage.SharedAccessMinutes",
+              "value": "60"
+            },
+            {
+              "name": "Database.ReadOnly",
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+            },
+            {
+              "name": "Database.ReadWrite",
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+            },
+            {
+              "name": "Database.Regions",
+              "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.PublishAssetUrl",
+              "value": "[parameters('functionPublishAssetUrl')]"
+            },
+            {
+              "name": "Media.Indexer.ApiUrl",
+              "value": "https://api.videoindexer.ai/"
             }
-            //{
-            //  "name": "Directory.TenantId",
-            //  "value": "[parameters('directoryTenantId')]"
-            //},
-            //{
-            //  "name": "Directory.TokenScope",
-            //  "value": "https://management.core.windows.net/.default"
-            //},
-            //{
-            //  "name": "Directory.AuthorityUrl",
-            //  "value": "[parameters('directoryAuthorityUrl')]"
-            //},
-            //{
-            //  "name": "Directory.DiscoveryPath",
-            //  "value": "[parameters('directoryDiscoveryPath')]"
-            //},
-            //{
-            //  "name": "Directory.PolicyId.SignUpIn",
-            //  "value": "[parameters('directoryPolicyIdSignUpIn')]"
-            //},
-            //{
-            //  "name": "Storage",
-            //  "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-            //},
-            //{
-            //  "name": "Storage.SharedAccessMinutes",
-            //  "value": "60"
-            //},
-            //{
-            //  "name": "Database.ReadOnly",
-            //  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
-            //},
-            //{
-            //  "name": "Database.ReadWrite",
-            //  "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
-            //},
-            //{
-            //  "name": "Database.Regions",
-            //  "value": "[parameters('databaseServiceRegions')]"
-            //},
-            //{
-            //  "name": "Media.Indexer.ApiUrl",
-            //  "value": "https://api.videoindexer.ai/"
-            //},
-            //{
-            //  "name": "Media.EventGrid.PublishUrl",
-            //  "value": "[parameters('functionPublishUrlStaging')]"
-            //},
-            //{
-            //  "name": "Media.EventGrid.LiveUrl",
-            //  "value": "[parameters('functionLiveUrlStaging')]"
-            //},
-            //{
-            //  "name": "Media.Sync.Schedule",
-            //  "value": "[parameters('functionSyncScheduleStaging')]"
-            //}
           ]
         }
       }

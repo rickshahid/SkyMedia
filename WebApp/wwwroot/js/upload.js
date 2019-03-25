@@ -34,7 +34,7 @@ function CreateWorkflow(files) {
             assetAlternateId: $("#assetAlternateId").val(),
             fileNames: GetFileNames(files),
             adaptiveStreaming: $("#adaptiveStreaming").prop("checked"),
-            thumbnailImages: $("#thumbnailImages").prop("checked"),
+            thumbnailSprite: $("#thumbnailSprite").prop("checked"),
             videoAnalyzer: $("#videoAnalyzer").prop("checked"),
             audioAnalyzer: $("#audioAnalyzer").prop("checked"),
             videoIndexer: $("#videoIndexer").prop("checked"),

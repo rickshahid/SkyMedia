@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage;
@@ -115,6 +116,10 @@ namespace AzureSkyMedia.PlatformServices
             }
             else
             {
+                if (string.IsNullOrEmpty(accountName))
+                {
+                    accountName = mediaAccount.StorageAccounts.First().Key;
+                }
                 string accountKey = mediaAccount.StorageAccounts[accountName];
                 StorageCredentials storageCredentials = new StorageCredentials(accountName, accountKey);
                 storageAccount = new CloudStorageAccount(storageCredentials, true);

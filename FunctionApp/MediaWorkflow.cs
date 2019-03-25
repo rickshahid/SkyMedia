@@ -7,7 +7,7 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.FunctionApp
 {
-    //public static partial class MediaWorkflow
+    //public static class MediaWorkflow
     //{
     //    [FunctionName("MediaWorkflow")]
     //    public static async Task<List<string>> RunOrchestrator([OrchestrationTrigger] DurableOrchestrationContext context)

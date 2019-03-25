@@ -14,7 +14,7 @@
     $("#" + audioPresetId).prop("checked", false);
     $("#" + audioPresetId).prop("disabled", videoPreset.checked);
 }
-function SetThumbnailOptions(thumbnailPreset) {
+function SetThumbnailSprite(thumbnailPreset) {
     if (thumbnailPreset.checked) {
         $("#thumbnailSpriteRow").show();
     } else {

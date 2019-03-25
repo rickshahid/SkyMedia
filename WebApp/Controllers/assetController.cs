@@ -20,7 +20,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
             foreach (string fileName in fileNames)
             {
-                string sourceContainer = Constant.Storage.BlobContainer.MediaServices;
+                string sourceContainer = Constant.Storage.Blob.WorkflowContainerName;
                 Asset inputAsset = mediaClient.CreateAsset(blobClient, blobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, fileName);
                 inputAssets.Add(inputAsset);
             }
@@ -28,7 +28,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public JsonResult Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                   bool adaptiveStreaming, bool thumbnailImages, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+                                   bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    Transform transform = mediaClient.CreateTransform(adaptiveStreaming, thumbnailImages, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
+                    Transform transform = mediaClient.CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
                     inputAssets = CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                     foreach (Asset inputAsset in inputAssets)
                     {
@@ -127,7 +127,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     for (int i = 1; i <= assetCount; i++)
                     {
                         List<Task> uploadTasks = new List<Task>();
-                        string containerName = Constant.Storage.BlobContainer.MediaServices;
+                        string containerName = Constant.Storage.Blob.WorkflowContainerName;
                         string directoryPath = assetType;
                         string assetName = MediaAsset.GetAssetName(sourceBlobClient, containerName, directoryPath, out MediaFile[] sourceFiles);
                         assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, assetName);

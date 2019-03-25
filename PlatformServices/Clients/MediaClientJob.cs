@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -11,23 +12,24 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private string GetOutputAssetNameSuffix(Preset transformPreset, MediaJobOutputMode outputAssetMode)
+        private string GetOutputAssetNameSuffix(Preset transformPreset, MediaJobOutputMode jobOutputMode)
         {
-            string outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.MultipleBitrate;
+            string outputAssetNameSuffix = null;
             if (transformPreset is BuiltInStandardEncoderPreset standardEncoderPreset &&
-               (standardEncoderPreset.PresetName == EncoderNamedPreset.H264SingleBitrate1080p ||
-                standardEncoderPreset.PresetName == EncoderNamedPreset.H264SingleBitrate720p ||
-                standardEncoderPreset.PresetName == EncoderNamedPreset.H264SingleBitrateSD ||
-                standardEncoderPreset.PresetName == EncoderNamedPreset.AACGoodQualityAudio))
+               (standardEncoderPreset.PresetName.ToString().Contains("Single") ||
+                standardEncoderPreset.PresetName.ToString().Contains("Audio")))
             {
                 outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.SingleBitrate;
             }
-            switch (outputAssetMode)
+            switch (jobOutputMode)
             {
                 case MediaJobOutputMode.InputAsset:
                     outputAssetNameSuffix = null;
                     break;
-                case MediaJobOutputMode.DistinctAssets:
+                case MediaJobOutputMode.OutputAsset:
+                    outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.MultipleBitrate;
+                    break;
+                case MediaJobOutputMode.OutputAssets:
                     if (transformPreset is VideoAnalyzerPreset)
                     {
                         outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.VideoAnalyzer;
@@ -91,8 +93,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 TransformOutput transformOutput = transform.Outputs[i];
                 string outputAssetName = GetOutputAssetName(transformOutput, mediaJob, out string outputAssetStorage);
-                string assetDescription = i > mediaJob.OutputAssetDescriptions.Length - 1 ? null : mediaJob.OutputAssetDescriptions[i];
-                string assetAlternateId = i > mediaJob.OutputAssetAlternateIds.Length - 1 ? null : mediaJob.OutputAssetAlternateIds[i];
+                string assetDescription = mediaJob.OutputAssetDescriptions == null || i > mediaJob.OutputAssetDescriptions.Length - 1 ? null : mediaJob.OutputAssetDescriptions[i];
+                string assetAlternateId = mediaJob.OutputAssetAlternateIds == null || i > mediaJob.OutputAssetAlternateIds.Length - 1 ? null : mediaJob.OutputAssetAlternateIds[i];
                 CreateAsset(outputAssetStorage, outputAssetName, assetDescription, assetAlternateId);
                 JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
                 outputAssets.Add(outputAsset);
@@ -117,11 +119,21 @@ namespace AzureSkyMedia.PlatformServices
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
         }
 
+        public Job CreateJob(MediaAccount mediaAccount, MediaWorkflowManifest workflowManifest, string transformName, string jobName,
+                             string inputFileUrl, string inputAssetName, ILogger logger)
+        {
+            EventGridClient.SetMediaSubscription(mediaAccount, logger);
+            Priority jobPriority = workflowManifest.JobPriority;
+            MediaJobOutputMode jobOutputMode = workflowManifest.JobOutputMode;
+            string streamingPolicyName = workflowManifest.StreamingPolicyName;
+            return CreateJob(mediaAccount, transformName, jobName, null, jobPriority, null, inputFileUrl, inputAssetName, jobOutputMode, null, null, streamingPolicyName);
+        }
+
         public Job CreateJob(MediaAccount mediaAccount, string transformName, string jobName, string jobDescription, Priority jobPriority,
                              string jobData, string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode,
                              string[] outputAssetAlternateIds, string[] outputAssetDescriptions, string streamingPolicyName)
         {
-            EventGridClient.SetMediaSubscription(mediaAccount);
+            EventGridClient.SetMediaSubscription(mediaAccount, null);
             JObject jobPublish = GetJobPublish(jobData, streamingPolicyName);
             MediaJob mediaJob = new MediaJob()
             {

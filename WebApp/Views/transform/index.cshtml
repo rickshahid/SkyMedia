@@ -64,7 +64,7 @@
                             </tr>
                             <tr>
                                 <td class="inputOption">
-                                    @Html.CheckBox("presetType0", false, new { value = "MediaEncoder" })
+                                    @Html.CheckBox("presetType0", false, new { value = "AdaptiveStreaming" })
                                     <select id="presetName0" class="inputSelect">
                                         <option value="AdaptiveStreaming" selected>Adaptive Streaming</option>
                                         <option value="H264MultipleBitrate1080p">H264 Multiple Bitrate 1080p</option>
@@ -87,11 +87,11 @@
                             </tr>
                             <tr>
                                 <td class="inputOption">
-                                    @Html.CheckBox("presetType1", false, new { value = "ThumbnailImages", onchange = "SetThumbnailOptions(this)" })
+                                    @Html.CheckBox("presetType1", false, new { value = "ThumbnailSprite", onchange = "SetThumbnailSprite(this)" })
                                     <span class="siteLink" onclick="window.open('http://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
-                                        Thumbnail Images (JPG)
+                                        Thumbnail Sprite (JPG)
                                     </span>
-                                    @Html.Hidden("presetName1", "ThumbnailImages")
+                                    @Html.Hidden("presetName1", "ThumbnailSprite")
                                 </td>
                                 <td>
                                     &nbsp;

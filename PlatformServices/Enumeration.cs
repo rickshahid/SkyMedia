@@ -21,8 +21,8 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaTransformPreset
     {
-        MediaEncoder,
-        ThumbnailImages,
+        AdaptiveStreaming,
+        ThumbnailSprite,
         VideoAnalyzer,
         AudioAnalyzer,
         VideoIndexer,
@@ -32,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaJobInputMode
     {
-        UploadFile,
+        InputFile,
         AssetFile,
         Asset
     }
@@ -42,14 +42,15 @@ namespace AzureSkyMedia.PlatformServices
     {
         InputAsset,
         OutputAsset,
-        DistinctAssets
+        OutputAssets
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaClipType
+    public enum MediaImageFormat
     {
-        Asset,
-        Filter
+        JPG,
+        PNG,
+        BMP
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -62,10 +63,9 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaImageFormat
+    public enum MediaClipType
     {
-        JPG,
-        PNG,
-        BMP
+        Asset,
+        Filter
     }
 }

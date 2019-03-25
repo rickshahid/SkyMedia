@@ -29,6 +29,15 @@ namespace AzureSkyMedia.PlatformServices
             return CreateAsset(storageAccount, assetName, string.Empty, string.Empty);
         }
 
+        public Asset CreateAsset(string storageAccount, string assetName, string fileName, Stream fileStream)
+        {
+            StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
+            Asset asset = CreateAsset(storageAccount, assetName);
+            CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
+            assetBlob.UploadFromStreamAsync(fileStream).Wait();
+            return asset;
+        }
+
         public Asset CreateAsset(StorageBlobClient sourceBlobClient, StorageBlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string[] fileNames)
         {
             //List<Task> copyTasks = new List<Task>();

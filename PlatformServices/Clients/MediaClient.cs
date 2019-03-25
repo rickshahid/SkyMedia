@@ -26,19 +26,19 @@ namespace AzureSkyMedia.PlatformServices
         {
             User currentUser = new User(authToken);
             MediaAccount = currentUser.MediaAccountPrimary;
-            BindContext(null);
+            BindContext();
         }
 
-        public MediaClient(MediaAccount mediaAccount, HttpClient httpClient)
+        public MediaClient(MediaAccount mediaAccount)
         {
             MediaAccount = mediaAccount;
-            BindContext(httpClient);
+            BindContext();
         }
 
-        private void BindContext(HttpClient httpClient)
+        private void BindContext()
         {
             MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
-            _media = new AzureMediaServicesClient(clientCredentials, httpClient, true)
+            _media = new AzureMediaServicesClient(clientCredentials)
             {
                 SubscriptionId = MediaAccount.SubscriptionId
             };

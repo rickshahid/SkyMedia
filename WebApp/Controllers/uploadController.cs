@@ -27,29 +27,29 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         private void UploadManifests(MediaWorkflowManifest workflowManifest, string rssUrl, int videoCount)
         {
-            XmlDocument rssDocument;
-            StorageBlobClient blobClient = new StorageBlobClient();
-            using (WebClient webClient = new WebClient())
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, rssUrl);
-                rssDocument = webClient.GetResponse<XmlDocument>(webRequest);
-            }
-            XmlElement channel = rssDocument.DocumentElement["channel"];
-            XmlNodeList videos = channel.SelectNodes("item");
-            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(rssDocument.NameTable);
-            namespaceManager.AddNamespace(Constant.Media.Channel9.NamespacePrefix, Constant.Media.Channel9.NamespaceUrl);
-            for (int i = 0; i < videoCount; i++)
-            {
-                XmlNode video = videos[i];
-                XmlNode videoContent = video.SelectSingleNode(Constant.Media.Channel9.XPathQuery, namespaceManager);
-                string videoUrl = videoContent.Attributes["url"].Value;
-                string videoDescription = video.SelectSingleNode("title").InnerText;
-                videoUrl = videoUrl.Replace(Constant.Media.Channel9.UrlHttp, Constant.Media.Channel9.UrlHttps);
-                videoUrl = videoUrl.Replace(Constant.Media.Channel9.Http, Constant.Media.Channel9.Https);
-                workflowManifest.JobInputFileUrl = videoUrl;
-                workflowManifest.JobOutputAssetDescriptions = new string[] { videoDescription };
-                UploadManifest(blobClient, workflowManifest);
-            }
+            //XmlDocument rssDocument;
+            //StorageBlobClient blobClient = new StorageBlobClient();
+            //using (WebClient webClient = new WebClient())
+            //{
+            //    HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, rssUrl);
+            //    rssDocument = webClient.GetResponse<XmlDocument>(webRequest);
+            //}
+            //XmlElement channel = rssDocument.DocumentElement["channel"];
+            //XmlNodeList videos = channel.SelectNodes("item");
+            //XmlNamespaceManager namespaceManager = new XmlNamespaceManager(rssDocument.NameTable);
+            //namespaceManager.AddNamespace(Constant.Media.Channel9.NamespacePrefix, Constant.Media.Channel9.NamespaceUrl);
+            //for (int i = 0; i < videoCount; i++)
+            //{
+            //    XmlNode video = videos[i];
+            //    XmlNode videoContent = video.SelectSingleNode(Constant.Media.Channel9.XPathQuery, namespaceManager);
+            //    string videoUrl = videoContent.Attributes["url"].Value;
+            //    string videoDescription = video.SelectSingleNode("title").InnerText;
+            //    videoUrl = videoUrl.Replace(Constant.Media.Channel9.UrlHttp, Constant.Media.Channel9.UrlHttps);
+            //    videoUrl = videoUrl.Replace(Constant.Media.Channel9.Http, Constant.Media.Channel9.Https);
+            //    workflowManifest.JobInputFileUrl = videoUrl;
+            //    workflowManifest.JobOutputAssetDescriptions = new string[] { videoDescription };
+            //    UploadManifest(blobClient, workflowManifest);
+            //}
         }
 
         [HttpPost]
@@ -83,7 +83,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             User currentUser = new User(authToken);
             StorageBlobClient blobClient = new StorageBlobClient(currentUser.MediaAccountPrimary, storageAccount);
             Stream blockStream = Request.Form.Files[0].OpenReadStream();
-            string containerName = Constant.Storage.BlobContainer.MediaServices;
+            string containerName = Constant.Storage.Blob.WorkflowContainerName;
             blobClient.UploadBlock(blockStream, containerName, name, chunk, chunks, contentType);
             return Json(chunk);
         }

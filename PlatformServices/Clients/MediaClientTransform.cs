@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
@@ -61,15 +62,15 @@ namespace AzureSkyMedia.PlatformServices
             Preset transformPreset = null;
             switch (transformOutput.PresetType)
             {
-                case MediaTransformPreset.MediaEncoder:
-                    EncoderNamedPreset presetName = EncoderNamedPreset.AdaptiveStreaming; 
+                case MediaTransformPreset.AdaptiveStreaming:
+                    EncoderNamedPreset presetName = EncoderNamedPreset.AdaptiveStreaming;
                     if (!string.IsNullOrEmpty(transformOutput.PresetName))
                     {
                         presetName = transformOutput.PresetName;
                     }
                     transformPreset = new BuiltInStandardEncoderPreset(presetName);
                     break;
-                case MediaTransformPreset.ThumbnailImages:
+                case MediaTransformPreset.ThumbnailSprite:
                     transformPreset = GetThumbnailPreset(thumbnailSpriteColumns);
                     break;
                 case MediaTransformPreset.VideoAnalyzer:
@@ -113,24 +114,24 @@ namespace AzureSkyMedia.PlatformServices
             return transform;
         }
 
-        public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailImages, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+        public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
             if (adaptiveStreaming)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
-                    PresetType = MediaTransformPreset.MediaEncoder,
+                    PresetType = MediaTransformPreset.AdaptiveStreaming,
                     PresetName = EncoderNamedPreset.AdaptiveStreaming.ToString()
                 };
                 transformOutputs.Add(transformOutput);
             }
-            if (thumbnailImages)
+            if (thumbnailSprite)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
-                    PresetType = MediaTransformPreset.ThumbnailImages,
-                    PresetName = MediaTransformPreset.ThumbnailImages.ToString()
+                    PresetType = MediaTransformPreset.ThumbnailSprite,
+                    PresetName = MediaTransformPreset.ThumbnailSprite.ToString()
                 };
                 transformOutputs.Add(transformOutput);
             }
@@ -175,16 +176,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public Transform CreateTransform(MediaTransformPreset[] transformPresets)
         {
-            List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
-            foreach (MediaTransformPreset transformPreset in transformPresets)
-            {
-                MediaTransformOutput transformOutput = new MediaTransformOutput()
-                {
-                    PresetType = transformPreset
-                };
-                transformOutputs.Add(transformOutput);
-            }
-            return CreateTransform(null, null, transformOutputs.ToArray(), null);
+            bool adaptiveStreaming = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AdaptiveStreaming);
+            bool thumbnailSprite = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ThumbnailSprite);
+            bool videoAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoAnalyzer);
+            bool audioAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioAnalyzer);
+            bool videoIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
+            bool audioIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
+            return CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
         }
     }
 }

@@ -95,7 +95,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
             public const string MediaEventGridLiveEventUrl = "Media.EventGrid.LiveEventUrl";
-            public const string MediaEventGridPublishOutputUrl = "Media.EventGrid.PublishOutputUrl";
+            public const string MediaEventGridPublishAssetUrl = "Media.EventGrid.PublishAssetUrl";
 
             public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
 
@@ -122,7 +122,7 @@ namespace AzureSkyMedia.PlatformServices
         public struct AuthIntegration
         {
             public const string TokenKey = "id_token";
-            public const string AuthScheme = "Bearer ";
+            public const string AuthScheme = "Bearer";
             public const string AuthHeader = "Authorization";
             public const string ApiManagementKey = "ocp-apim-subscription-key";
             public const string OpenAuthRedirectUri = "urn:ietf:wg:oauth:2.0:oob";
@@ -154,9 +154,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Storage
         {
-            public struct BlobContainer
+            public struct Blob
             {
-                public const string MediaServices = "ams";
+                public const string WorkflowContainerName = "ams";
+                public const string WorkflowManifestFile = WorkflowContainerName + "/WorkflowManifest.json";
             }
         }
 
@@ -254,9 +255,9 @@ namespace AzureSkyMedia.PlatformServices
                     "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
                 };
 
-                public const string PublishOutputSubscriptionName = "AMS-Job-Publish";
-                public static readonly string[] PublishOutputFilterTypes = new string[] {
-                    "Microsoft.Media.JobStateChange"
+                public const string PublishAssetSubscriptionName = "AMS-Publish-Asset";
+                public static readonly string[] PublishAssetFilterTypes = new string[] {
+                    "Microsoft.Media.JobFinished"
                 };
             }
 

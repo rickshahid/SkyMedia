@@ -10,7 +10,7 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.FunctionApp
 {
-    //public static partial class MediaWorkflow
+    //public static class MediaWorkflowSyncContent
     //{
     //    //private const string ScheduleDaily = "0 0 0 * * *";
     //    //private const string ScheduleWeekly = "0 0 0 * * 1";

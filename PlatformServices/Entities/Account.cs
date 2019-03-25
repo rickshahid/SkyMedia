@@ -8,7 +8,10 @@ namespace AzureSkyMedia.PlatformServices
 
         public string ResourceGroupName { get; set; }
 
-        public string ResourceId { get; set; }
+        public string ResourceId
+        {
+            get { return string.Format(Constant.Media.AccountResourceId, this.SubscriptionId, this.ResourceGroupName, this.Name); }
+        }
 
         public string SubscriptionId { get; set; }
 
