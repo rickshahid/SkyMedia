@@ -4,20 +4,19 @@ using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private static string GetNotificationMessage(Job job, MediaJobAccount jobAccount, MediaJobPublish jobPublish)
+        private static string GetNotificationMessage(MediaAccount mediaAccount, string transformName, Job job)
         {
             StringBuilder message = new StringBuilder();
             message.Append("AMS Job Notification");
             message.Append("\n\nMedia Services Account\n");
-            message.Append(jobAccount.MediaAccount.Name);
+            message.Append(mediaAccount.Name);
             message.Append("\n\nTransform Name\n");
-            message.Append(jobAccount.TransformName);
+            message.Append(transformName);
             message.Append("\n\nJob Name\n");
             message.Append(job.Name);
             message.Append("\n\nJob State\n");
@@ -56,85 +55,79 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             message.Append("\n\nStreaming Policy Name\n");
-            message.Append(jobPublish.StreamingPolicyName);
+            message.Append(job.CorrelationData["streamingPolicyName"]);
             return message.ToString();
         }
 
-        private static MediaJobPublish GetJobPublish(Job job)
-        {
-            string jobPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
-            return JsonConvert.DeserializeObject<MediaJobPublish>(jobPublish);
-        }
+        //private static MediaJobPublish GetJobPublish(Job job)
+        //{
+        //    string jobPublish = job.CorrelationData[Constant.Media.Job.OutputPublish];
+        //    return JsonConvert.DeserializeObject<MediaJobPublish>(jobPublish);
+        //}
 
-        public static JObject GetJobPublish(string jobData, string streamingPolicyName)
-        {
-            //string mobilePhoneNumber = null;
-            //if (!string.IsNullOrEmpty(authToken))
-            //{
-            //    User currentUser = new User(authToken);
-            //    mobilePhoneNumber = currentUser.MobilePhoneNumber;
-            //}
-            MediaJobPublish jobPublish = new MediaJobPublish()
-            {
-                StreamingPolicyName = streamingPolicyName,
-                ContentProtection = null,
-                //UserNotification = new UserNotification()
-                //{
-                //    MobilePhoneNumber = mobilePhoneNumber
-                //}
-            };
-            JObject jobPublishOutput = string.IsNullOrEmpty(jobData) ? new JObject() : JObject.Parse(jobData);
-            jobPublishOutput[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
-            return jobPublishOutput;
-        }
+        //public static JObject GetJobPublish(string jobData, string streamingPolicyName)
+        //{
+        //    //string mobilePhoneNumber = null;
+        //    //if (!string.IsNullOrEmpty(authToken))
+        //    //{
+        //    //    User currentUser = new User(authToken);
+        //    //    mobilePhoneNumber = currentUser.MobilePhoneNumber;
+        //    //}
+        //    MediaJobPublish jobPublish = new MediaJobPublish()
+        //    {
+        //        StreamingPolicyName = streamingPolicyName,
+        //        ContentProtection = null,
+        //        //UserNotification = new UserNotification()
+        //        //{
+        //        //    MobilePhoneNumber = mobilePhoneNumber
+        //        //}
+        //    };
+        //    JObject jobPublishOutput = string.IsNullOrEmpty(jobData) ? new JObject() : JObject.Parse(jobData);
+        //    jobPublishOutput[Constant.Media.Job.OutputPublish] = JObject.FromObject(jobPublish);
+        //    return jobPublishOutput;
+        //}
 
-        public static MediaJobPublish PublishJobOutput(string jobName, string insightId)
+        public static StreamingLocator PublishJobOutput(MediaAccount mediaAccount, string transformName, string jobName)
         {
-            MediaJobAccount jobAccount;
-            MediaJobPublish jobPublish = null;
-            using (DatabaseClient databaseClient = new DatabaseClient(false))
+            StreamingLocator streamingLocator = null;
+            using (MediaClient mediaClient = new MediaClient(mediaAccount))
             {
-                string collectionId = Constant.Database.Collection.MediaJobAccount;
-                string documentId = string.IsNullOrEmpty(jobName) ? insightId : jobName;
-                jobAccount = databaseClient.GetDocument<MediaJobAccount>(collectionId, documentId);
-            }
-            if (jobAccount != null)
-            {
-                using (MediaClient mediaClient = new MediaClient(jobAccount.MediaAccount))
+                Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
+                foreach (JobOutputAsset jobOutput in job.Outputs)
                 {
-                    if (!string.IsNullOrEmpty(insightId))
+                    Asset outputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, jobOutput.AssetName);
+                    MediaAsset mediaAsset = new MediaAsset(mediaClient, outputAsset);
+                    if (mediaAsset.Streamable)
                     {
-                        JObject insight = mediaClient.IndexerGetInsight(insightId);
-                        if (insight != null)
+                        string streamingPolicyName = job.CorrelationData["streamingPolicyName"];
+                        if (!string.IsNullOrEmpty(streamingPolicyName))
                         {
-                            using (DatabaseClient databaseClient = new DatabaseClient(true))
-                            {
-                                string collectionId = Constant.Database.Collection.MediaContentInsight;
-                                databaseClient.UpsertDocument(collectionId, insight);
-                            }
+                            streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
                         }
-                    }
-                    else
-                    {
-                        Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, jobName, jobAccount.TransformName);
-                        if (job != null)
+                        ContentProtection contentProtection = null;
+                        string contentProtectionJson = job.CorrelationData["contentProtection"];
+                        if (!string.IsNullOrEmpty(contentProtectionJson))
                         {
-                            jobPublish = GetJobPublish(job);
-                            jobPublish.UserNotification.JobOutputMessage = GetNotificationMessage(job, jobAccount, jobPublish);
-                            string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
-                            if (!string.IsNullOrEmpty(jobPublish.StreamingPolicyName))
-                            {
-                                streamingPolicyName = jobPublish.StreamingPolicyName;
-                            }
-                            foreach (JobOutputAsset jobOutput in job.Outputs)
-                            {
-                                mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, jobPublish.ContentProtection);
-                            }
+                            contentProtection = JsonConvert.DeserializeObject<ContentProtection>(contentProtectionJson);
                         }
+                        streamingLocator = mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, contentProtection);
                     }
                 }
+
+                //if (!string.IsNullOrEmpty(insightId))
+                //{
+                //    JObject insight = mediaClient.IndexerGetInsight(insightId);
+                //    if (insight != null)
+                //    {
+                //        using (DatabaseClient databaseClient = new DatabaseClient(true))
+                //        {
+                //            string collectionId = Constant.Database.Collection.MediaContentInsight;
+                //            databaseClient.UpsertDocument(collectionId, insight);
+                //        }
+                //    }
+                //}
             }
-            return jobPublish;
+            return streamingLocator;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -17,16 +18,8 @@ namespace AzureSkyMedia.PlatformServices
             T[] entities = mediaClient.GetAllEntities<T>(entityType);
             foreach (T entity in entities)
             {
-                if (!entity.Name.StartsWith(Constant.Media.PredefinedPrefix))
+                if (!entity.Name.StartsWith(Constant.Media.PredefinedPrefix, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (entityType == MediaEntity.Transform)
-                    {
-                        Job[] jobs = mediaClient.GetAllEntities<Job>(MediaEntity.TransformJob, null, entity.Name);
-                        foreach (Job job in jobs)
-                        {
-                            mediaClient.DeleteEntity(MediaEntity.TransformJob, job.Name, entity.Name);
-                        }
-                    }
                     mediaClient.DeleteEntity(entityType, entity.Name);
                 }
             }

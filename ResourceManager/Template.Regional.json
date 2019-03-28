@@ -165,9 +165,9 @@
     },
     "databaseIdentifier": {
       "type": "string",
-      "defaultValue": "MediaWorkflow",
+      "defaultValue": "MediaInsight",
       "metadata": {
-        "description": "Unique identifier of the media workflow database."
+        "description": "Unique identifier of the media insight database."
       }
     },
     "searchServiceName": {
@@ -278,6 +278,9 @@
             "allowedOrigins": [
               "https://login.microsoftonline.com"
             ]
+          },
+          "apiDefinition": {
+            "url": "/swagger/v1/swagger.json"
           },
           "appSettings": [
             {
@@ -397,6 +400,9 @@
             "allowedOrigins": [
               "https://login.microsoftonline.com"
             ]
+          },
+          "apiDefinition": {
+            "url": "/swagger/v1/swagger.json"
           },
           "appSettings": [
             {

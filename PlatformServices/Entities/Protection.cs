@@ -1,12 +1,7 @@
-﻿using Newtonsoft.Json;
-
-namespace AzureSkyMedia.PlatformServices
+﻿namespace AzureSkyMedia.PlatformServices
 {
     public class ContentProtection
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
         public bool PersistentLicense { get; set; }
     }
 

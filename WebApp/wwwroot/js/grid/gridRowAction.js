@@ -170,8 +170,8 @@ function SetRowEdit(gridId, rowData) {
             $("input[name=jobPriority][value=" + row["properties.priority"] + "]").prop("checked", true);
             $("#transforms").val(row.parentName);
             var jobData = row["properties.correlationData"];
-            var outputPublish = JSON.parse(jobData["OutputPublish"]);
-            var streamingPolicyName = outputPublish["StreamingPolicyName"];
+            var outputPublish = JSON.parse(jobData["outputPublish"]);
+            var streamingPolicyName = outputPublish["streamingPolicyName"];
             $("#streamingPolicies").val(streamingPolicyName);
             break;
         case "liveEvents":

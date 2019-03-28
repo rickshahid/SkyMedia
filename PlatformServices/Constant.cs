@@ -8,9 +8,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     public struct Constant
     {
-        public const string AppSettingsFile = "appsettings.json";
-        public const string ModelsDirectory = "Models";
         public const string NotAvailable = "N/A";
+        public const string AppSettingsFile = "appsettings.json";
 
         public struct TextDelimiter
         {
@@ -39,7 +38,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct FileExtension
         {
-            public const string Json = ".json";
+            public const string WorkflowManifest = ".json";
+            public const string StreamingManifest = ".ism";
         }
 
         public struct AppSettingKey
@@ -165,9 +165,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
-                public const string MediaJobAccount = "Media Job Account";
                 public const string MediaContentInsight = "Media Content Insight";
-                public const string MediaWorkflowManifest = "Media Workflow Manifest";
             }
 
             public struct Script
@@ -229,8 +227,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Job
             {
-                public const string OutputPublish = "OutputPublish";
-
                 public struct OutputAssetNameSuffix
                 {
                     public const string MultipleBitrate = "MBR";
@@ -295,7 +291,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string JobOutputUnpublished = "The '{0}' job output assets have been unpublished.";
             public const string StreamingEndpointNotStarted = "Your media account ({0}) does not have a streaming endpoint started.";
             public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
-
         }
     }
 }

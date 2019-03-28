@@ -14,6 +14,33 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class InsightController : Controller
     {
+        [HttpGet]
+        [Route("/customModels")]
+        public JsonResult GetCustomModels(MediaInsightModel modelType)
+        {
+            JArray models = null;
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    switch (modelType)
+                    {
+                        case MediaInsightModel.Brand:
+                            models = mediaClient.IndexerGetBrands();
+                            break;
+                        case MediaInsightModel.Person:
+                            models = mediaClient.IndexerGetPersons();
+                            break;
+                        case MediaInsightModel.Langauge:
+                            models = mediaClient.IndexerGetLanguages();
+                            break;
+                    }
+                }
+            }
+            return Json(models);
+        }
+
         public JsonResult Data(string assetName, string fileName, string insightId)
         {
             try

@@ -1,67 +1,17 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.Azure.Management.Media.Models;
+﻿using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    public class MediaAsset : Asset
+    internal class MediaAsset : Asset
     {
-        internal MediaAsset(MediaClient mediaClient, Asset asset) : base(asset.Id, asset.Name, asset.Type, asset.AssetId, asset.Created, asset.LastModified, asset.AlternateId, asset.Description, asset.Container, asset.StorageAccountName, asset.StorageEncryptionFormat)
+        public MediaAsset(MediaClient mediaClient, Asset asset) : base(asset.Id, asset.Name, asset.Type, asset.AssetId, asset.Created, asset.LastModified, asset.AlternateId, asset.Description, asset.Container, asset.StorageAccountName, asset.StorageEncryptionFormat)
         {
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
-            Files = GetAssetFiles(blobClient, asset.Container, null);
+            Files = MediaClient.GetAssetFiles(blobClient, asset.Container, null, out bool assetStreamable);
             Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, asset.Name);
             StreamingUrls = mediaClient.GetStreamingUrls(asset.Name);
+            Streamable = assetStreamable;
             Published = mediaClient.GetLocators(asset.Name).Length > 0;
-        }
-
-        internal static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath, out MediaFile[] assetFiles)
-        {
-            string assetName = null;
-            assetFiles = GetAssetFiles(blobClient, containerName, directoryPath);
-            if (assetFiles.Length == 1)
-            {
-                assetName = assetFiles[0].Name;
-            }
-            else
-            {
-                foreach (MediaFile assetFile in assetFiles)
-                {
-                    if (assetFile.Name.EndsWith(Constant.Media.Stream.ManifestExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        assetName = assetFile.Name;
-                    }
-                }
-            }
-            if (!string.IsNullOrEmpty(assetName))
-            {
-                assetName = Path.GetFileNameWithoutExtension(assetName);
-            }
-            return assetName;
-        }
-
-        internal static MediaFile[] GetAssetFiles(StorageBlobClient blobClient, string containerName, string directoryPath)
-        {
-            List<MediaFile> files = new List<MediaFile>();
-            CloudBlob[] blobs = blobClient.ListBlobContainer(containerName, directoryPath);
-            foreach (CloudBlob blob in blobs)
-            {
-                string fileName = blob.Name;
-                string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);
-                MediaFile file = new MediaFile()
-                {
-                    Name = fileName,
-                    Size = fileSize,
-                    ByteCount = byteCount,
-                    ContentType = contentType,
-                    DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
-                };
-                files.Add(file);
-            }
-            return files.ToArray();
         }
 
         public MediaFile[] Files { get; }
@@ -83,10 +33,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public string[] StreamingUrls { get; }
 
+        public bool Streamable { get; }
+
         public bool Published { get; }
     }
 
-    public class MediaFile
+    internal class MediaFile
     {
         public string Name { get; set; }
 

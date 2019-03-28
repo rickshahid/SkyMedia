@@ -47,16 +47,14 @@ namespace AzureSkyMedia.WebApp.Controllers
                         {
                             bool audioOnly = !videoIndexer && audioIndexer;
                             bool videoOnly = false;
-                            insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, null, Priority.Normal, false, audioOnly, videoOnly);
+                            insightId = mediaClient.IndexerUploadVideo(null, inputAsset.Name, Priority.Normal, false, audioOnly, videoOnly);
                         }
                         if (transform != null)
                         {
-                            string inputFileUrl = mediaClient.GetAssetFileUrl(inputAsset);
+                            string inputFileUrl = MediaClient.GetAssetFileUrl(mediaClient, inputAsset);
                             MediaJobOutputMode outputAssetMode = MediaJobOutputMode.OutputAsset;
-                            string[] outputAssetAlternateIds = new string[] { insightId };
-                            string[] outputAssetDescriptions = new string[] { assetDescription };
                             PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
-                            job = mediaClient.CreateJob(mediaClient.MediaAccount, transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, outputAssetAlternateIds, outputAssetDescriptions, streamingPolicy);
+                            job = mediaClient.CreateJob(transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, streamingPolicy);
                         }
                         if (job != null)
                         {
@@ -129,7 +127,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         List<Task> uploadTasks = new List<Task>();
                         string containerName = Constant.Storage.Blob.WorkflowContainerName;
                         string directoryPath = assetType;
-                        string assetName = MediaAsset.GetAssetName(sourceBlobClient, containerName, directoryPath, out MediaFile[] sourceFiles);
+                        string assetName = MediaClient.GetAssetName(sourceBlobClient, containerName, directoryPath, out MediaFile[] sourceFiles);
                         assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, assetName);
                         Asset asset = mediaClient.CreateAsset(mediaClient.PrimaryStorageAccount, assetName);
                         foreach (MediaFile sourceFile in sourceFiles)

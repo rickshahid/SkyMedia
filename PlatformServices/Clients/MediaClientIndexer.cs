@@ -71,24 +71,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=VideoOnly");
             }
+            requestUrl = string.Concat(requestUrl, "&sendSuccessEmail=true");
             return requestUrl;
-        }
-
-        private void SetJobAccount(string insightId, Priority jobPriority, bool audioOnly, bool videoOnly)
-        {
-            MediaJobAccount jobAccount = new MediaJobAccount(insightId)
-            {
-                InsightId = insightId,
-                JobPriority = jobPriority,
-                MediaAccount = MediaAccount,
-                AudioOnly = audioOnly,
-                VideoOnly = videoOnly
-            };
-            using (DatabaseClient databaseClient = new DatabaseClient(true))
-            {
-                string collectionId = Constant.Database.Collection.MediaJobAccount;
-                databaseClient.UpsertDocument(collectionId, jobAccount);
-            }
         }
 
         public bool IndexerEnabled()
@@ -111,22 +95,21 @@ namespace AzureSkyMedia.PlatformServices
                     if (string.Equals(accountId, MediaAccount.VideoIndexerId, StringComparison.OrdinalIgnoreCase))
                     {
                         _indexerAccountId = accountId;
-                        _indexerRegionUrl = indexerAccount["url"].ToString();
                         _indexerAccountToken = indexerAccount["accessToken"].ToString();
                     }
                 }
             }
         }
 
-        public string IndexerUploadVideo(MediaAccount mediaAccount, Asset inputAsset, string inputFileUrl, Priority jobPriority,
-                                         bool indexingOnly, bool audioOnly, bool videoOnly)
+        public string IndexerUploadVideo(string inputFileUrl, string inputAssetName, Priority jobPriority, bool indexingOnly, bool audioOnly, bool videoOnly)
         {
             string insightId;
             string requestUrl = GetRequestUrl("/videos", null, null);
             string settingKey = Constant.AppSettingKey.MediaEventGridPublishAssetUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
-            if (inputAsset != null)
+            if (!string.IsNullOrEmpty(inputAssetName))
             {
+                Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(inputAsset.Name));
                 requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
             }
@@ -144,28 +127,17 @@ namespace AzureSkyMedia.PlatformServices
                 JObject insight = webClient.GetResponse<JObject>(webRequest);
                 insightId = insight["id"].ToString();
             }
-            SetJobAccount(insightId, jobPriority, audioOnly, videoOnly);
             return insightId;
         }
 
         public void IndexerReindexVideo(string insightId)
         {
-            Priority jobPriority = Priority.Normal;
-            bool audioOnly = false;
-            bool videoOnly = false;
-            using (DatabaseClient databaseClient = new DatabaseClient(true))
-            {
-                string collectionId = Constant.Database.Collection.MediaJobAccount;
-                MediaJobAccount jobAccount = databaseClient.GetDocument<MediaJobAccount>(collectionId, insightId);
-                if (jobAccount != null)
-                {
-                    jobPriority = jobAccount.JobPriority;
-                    audioOnly = jobAccount.AudioOnly;
-                    videoOnly = jobAccount.VideoOnly;
-                }
-            }
+            JObject insight = IndexerGetInsight(insightId);
+            string indexingPreset = insight["videos"][0]["indexingPreset"].ToString();
+            bool audioOnly = indexingPreset == "AudioOnly";
+            bool videoOnly = indexingPreset == "VideoOnly";
             string requestUrl = GetRequestUrl("/videos/", insightId, "/reindex");
-            requestUrl = AddRequestParameters(requestUrl, jobPriority, true, audioOnly, videoOnly);
+            requestUrl = AddRequestParameters(requestUrl, Priority.Normal, true, audioOnly, videoOnly);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Put, requestUrl);
@@ -180,13 +152,6 @@ namespace AzureSkyMedia.PlatformServices
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);
                 HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
-            }
-            using (DatabaseClient databaseClient = new DatabaseClient(true))
-            {
-                string collectionId = Constant.Database.Collection.MediaJobAccount;
-                databaseClient.DeleteDocument(collectionId, insightId);
-                collectionId = Constant.Database.Collection.MediaContentInsight;
-                databaseClient.DeleteDocument(collectionId, insightId);
             }
         }
 
@@ -254,7 +219,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string IndexerGetInsightUrl(string insightId)
         {
-            string requestUrl = string.Concat(_indexerRegionUrl, "embed/insights/", _indexerAccountId, "/", insightId);
+            string requestUrl = GetRequestUrl("/embed/insights/", insightId, null);
             return string.Concat(requestUrl, "?accessToken=", GetAccessToken(insightId), "&version=2");
         }
 

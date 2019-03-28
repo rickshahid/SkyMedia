@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 //using System.Threading.Tasks;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media;
@@ -66,10 +66,61 @@ namespace AzureSkyMedia.PlatformServices
             return CreateAsset(sourceBlobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, new string[] { fileName });
         }
 
-        public string GetAssetFileUrl(Asset asset)
+        public static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath, out MediaFile[] assetFiles)
         {
-            StorageBlobClient blobClient = new StorageBlobClient(MediaAccount, asset.StorageAccountName);
-            MediaAsset mediaAsset = new MediaAsset(this, asset);
+            string assetName = null;
+            assetFiles = GetAssetFiles(blobClient, containerName, directoryPath, out bool assetStreamable);
+            if (assetFiles.Length == 1)
+            {
+                assetName = assetFiles[0].Name;
+            }
+            else
+            {
+                foreach (MediaFile assetFile in assetFiles)
+                {
+                    if (assetFile.Name.EndsWith(Constant.Media.Stream.ManifestExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        assetName = assetFile.Name;
+                    }
+                }
+            }
+            if (!string.IsNullOrEmpty(assetName))
+            {
+                assetName = Path.GetFileNameWithoutExtension(assetName);
+            }
+            return assetName;
+        }
+
+        public static MediaFile[] GetAssetFiles(StorageBlobClient blobClient, string containerName, string directoryPath, out bool assetStreamable)
+        {
+            assetStreamable = false;
+            List<MediaFile> files = new List<MediaFile>();
+            CloudBlob[] blobs = blobClient.ListBlobContainer(containerName, directoryPath);
+            foreach (CloudBlob blob in blobs)
+            {
+                string fileName = blob.Name;
+                string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);
+                MediaFile file = new MediaFile()
+                {
+                    Name = fileName,
+                    Size = fileSize,
+                    ByteCount = byteCount,
+                    ContentType = contentType,
+                    DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
+                };
+                if (file.Name.EndsWith(Constant.FileExtension.StreamingManifest, StringComparison.OrdinalIgnoreCase))
+                {
+                    assetStreamable = true;
+                }
+                files.Add(file);
+            }
+            return files.ToArray();
+        }
+
+        public static string GetAssetFileUrl(MediaClient mediaClient, Asset asset)
+        {
+            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
+            MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
             string fileName = mediaAsset.Files[0].Name;
             return blobClient.GetDownloadUrl(asset.Container, fileName, false);
         }

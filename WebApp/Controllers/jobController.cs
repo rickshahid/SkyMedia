@@ -74,28 +74,15 @@ namespace AzureSkyMedia.WebApp.Controllers
                         }
                     }
                     string insightId = null;
-                    Asset inputAsset = null;
-                    string assetDescription = null;
-                    if (!string.IsNullOrEmpty(inputAssetName))
-                    {
-                        inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
-                        assetDescription = inputAsset.Description;
-                    }
-                    if (string.IsNullOrEmpty(inputFileUrl))
-                    {
-                        inputFileUrl = mediaClient.GetAssetFileUrl(inputAsset);
-                    }
                     if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
                     {
                         bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
                         bool videoOnly = false;
-                        insightId = mediaClient.IndexerUploadVideo(mediaClient.MediaAccount, inputAsset, inputFileUrl, jobPriority, false, audioOnly, videoOnly);
+                        insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAssetName, jobPriority, false, audioOnly, videoOnly);
                     }
                     if (!string.IsNullOrEmpty(transformName))
                     {
-                        string[] assetAlternateIds = new string[] { insightId };
-                        string[] assetDescriptions = new string[] { assetDescription };
-                        job = mediaClient.CreateJob(mediaClient.MediaAccount, transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, assetAlternateIds, assetDescriptions, streamingPolicyName);
+                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, streamingPolicyName);
                     }
                 }
                 return Json(job);
@@ -154,56 +141,56 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        public JsonResult Publish(string entityName, string parentName, string insightId, bool unpublish)
-        {
-            try
-            {
-                MediaJobPublish jobPublish;
-                if (unpublish)
-                {
-                    string authToken = HomeController.GetAuthToken(Request, Response);
-                    using (MediaClient mediaClient = new MediaClient(authToken))
-                    {
-                        Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, entityName, parentName);
-                        foreach (JobOutputAsset outputAsset in job.Outputs)
-                        {
-                            mediaClient.DeleteLocators(outputAsset.AssetName);
-                        }
-                    }
-                    jobPublish = new MediaJobPublish()
-                    {
-                        UserNotification = new UserNotification()
-                        {
-                            JobOutputMessage = string.Format(Constant.Message.JobOutputUnpublished, entityName)
-                        }
-                    };
-                }
-                else
-                {
-                    jobPublish = MediaClient.PublishJobOutput(entityName, insightId);
-                }
-                return Json(jobPublish);
-            }
-            catch (ValidationException ex)
-            {
-                Error error = new Error()
-                {
-                    Type = HttpStatusCode.BadRequest,
-                    Message = ex.Message
-                };
-                return new JsonResult(error)
-                {
-                    StatusCode = (int)error.Type
-                };
-            }
-            catch (ApiErrorException ex)
-            {
-                return new JsonResult(ex.Response.Content)
-                {
-                    StatusCode = (int)ex.Response.StatusCode
-                };
-            }
-        }
+        //public JsonResult Publish(string entityName, string parentName, string insightId, bool unpublish)
+        //{
+        //    try
+        //    {
+        //        MediaJobPublish jobPublish;
+        //        if (unpublish)
+        //        {
+        //            string authToken = HomeController.GetAuthToken(Request, Response);
+        //            using (MediaClient mediaClient = new MediaClient(authToken))
+        //            {
+        //                Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, entityName, parentName);
+        //                foreach (JobOutputAsset outputAsset in job.Outputs)
+        //                {
+        //                    mediaClient.DeleteLocators(outputAsset.AssetName);
+        //                }
+        //            }
+        //            jobPublish = new MediaJobPublish()
+        //            {
+        //                UserNotification = new UserNotification()
+        //                {
+        //                    JobOutputMessage = string.Format(Constant.Message.JobOutputUnpublished, entityName)
+        //                }
+        //            };
+        //        }
+        //        else
+        //        {
+        //            jobPublish = MediaClient.PublishJobOutput(entityName, insightId);
+        //        }
+        //        return Json(jobPublish);
+        //    }
+        //    catch (ValidationException ex)
+        //    {
+        //        Error error = new Error()
+        //        {
+        //            Type = HttpStatusCode.BadRequest,
+        //            Message = ex.Message
+        //        };
+        //        return new JsonResult(error)
+        //        {
+        //            StatusCode = (int)error.Type
+        //        };
+        //    }
+        //    catch (ApiErrorException ex)
+        //    {
+        //        return new JsonResult(ex.Response.Content)
+        //        {
+        //            StatusCode = (int)ex.Response.StatusCode
+        //        };
+        //    }
+        //}
 
         public JsonResult Refresh(string[] transformNames, string[] jobNames)
         {

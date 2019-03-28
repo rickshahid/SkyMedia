@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Microsoft.Azure.Management.Media.Models;
 
-using Microsoft.Azure.Management.Media.Models;
-
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -22,37 +19,33 @@ namespace AzureSkyMedia.PlatformServices
         public string InputAssetName { get; set; }
 
         public MediaJobOutputMode OutputAssetMode { get; set; }
-
-        public string[] OutputAssetAlternateIds { get; set; }
-
-        public string[] OutputAssetDescriptions { get; set; }
     }
 
-    internal class MediaJobAccount
-    {
-        public MediaJobAccount(string mappingId)
-        {
-            this.Id = mappingId;
-            this.Created = DateTime.UtcNow;
-        }
+    //internal class MediaJobAccount
+    //{
+    //    public MediaJobAccount(string mappingId)
+    //    {
+    //        this.Id = mappingId;
+    //        this.Created = DateTime.UtcNow;
+    //    }
 
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; }
+    //    [JsonProperty(PropertyName = "id")]
+    //    public string Id { get; }
 
-        public string InsightId { get; set; }
+    //    public string InsightId { get; set; }
 
-        public string JobName { get; set; }
+    //    public string JobName { get; set; }
 
-        public Priority JobPriority { get; set; }
+    //    public Priority JobPriority { get; set; }
 
-        public string TransformName { get; set; }
+    //    public string TransformName { get; set; }
 
-        public MediaAccount MediaAccount { get; set; }
+    //    public MediaAccount MediaAccount { get; set; }
 
-        public bool AudioOnly { get; set; }
+    //    public bool AudioOnly { get; set; }
 
-        public bool VideoOnly { get; set; }
+    //    public bool VideoOnly { get; set; }
 
-        public DateTime Created { get; }
-    }
+    //    public DateTime Created { get; }
+    //}
 }

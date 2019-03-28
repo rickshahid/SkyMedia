@@ -18,7 +18,6 @@ namespace AzureSkyMedia.PlatformServices
     {
         private AzureMediaServicesClient _media;
 
-        private string _indexerRegionUrl;
         private string _indexerAccountId;
         private string _indexerAccountToken;
 

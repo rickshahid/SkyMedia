@@ -2,7 +2,6 @@
 using System.IO;
 using System.Collections.Generic;
 
-using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -85,7 +84,7 @@ namespace AzureSkyMedia.PlatformServices
             return jobInput;
         }
 
-        private IList<JobOutput> GetJobOutputs(string transformName, MediaJob mediaJob)
+        private IList<JobOutput> GetJobOutputs(string transformName, string insightId, MediaJob mediaJob)
         {
             List<JobOutputAsset> outputAssets = new List<JobOutputAsset>();
             Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
@@ -93,16 +92,25 @@ namespace AzureSkyMedia.PlatformServices
             {
                 TransformOutput transformOutput = transform.Outputs[i];
                 string outputAssetName = GetOutputAssetName(transformOutput, mediaJob, out string outputAssetStorage);
-                string assetDescription = mediaJob.OutputAssetDescriptions == null || i > mediaJob.OutputAssetDescriptions.Length - 1 ? null : mediaJob.OutputAssetDescriptions[i];
-                string assetAlternateId = mediaJob.OutputAssetAlternateIds == null || i > mediaJob.OutputAssetAlternateIds.Length - 1 ? null : mediaJob.OutputAssetAlternateIds[i];
-                CreateAsset(outputAssetStorage, outputAssetName, assetDescription, assetAlternateId);
+                string outputAssetDescription = null;
+                if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
+                {
+                    Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
+                    outputAssetDescription = inputAsset.Description;
+                }
+                string outputAssetAlternateId = null;
+                if (transformOutput.Preset is BuiltInStandardEncoderPreset || transformOutput.Preset is StandardEncoderPreset)
+                {
+                    outputAssetAlternateId = insightId;
+                }
+                CreateAsset(outputAssetStorage, outputAssetName, outputAssetDescription, outputAssetAlternateId);
                 JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
                 outputAssets.Add(outputAsset);
             }
             return outputAssets.ToArray();
         }
 
-        private Job CreateJob(string transformName, MediaJob mediaJob)
+        private Job CreateJob(string transformName, string insightId, MediaJob mediaJob)
         {
             if (string.IsNullOrEmpty(mediaJob.Name))
             {
@@ -112,55 +120,41 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Description = mediaJob.Description,
                 Priority = mediaJob.Priority,
-                CorrelationData = GetDataItems(mediaJob.Data),
+                CorrelationData = GetCorrelationData(mediaJob.Data),
                 Input = GetJobInput(mediaJob),
-                Outputs = GetJobOutputs(transformName, mediaJob)
+                Outputs = GetJobOutputs(transformName, insightId, mediaJob)
             };
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
         }
 
-        public Job CreateJob(MediaAccount mediaAccount, MediaWorkflowManifest workflowManifest, string transformName, string jobName,
-                             string inputFileUrl, string inputAssetName, ILogger logger)
+        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
+                             string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
         {
-            EventGridClient.SetMediaSubscription(mediaAccount, logger);
-            Priority jobPriority = workflowManifest.JobPriority;
-            MediaJobOutputMode jobOutputMode = workflowManifest.JobOutputMode;
-            string streamingPolicyName = workflowManifest.StreamingPolicyName;
-            return CreateJob(mediaAccount, transformName, jobName, null, jobPriority, null, inputFileUrl, inputAssetName, jobOutputMode, null, null, streamingPolicyName);
-        }
-
-        public Job CreateJob(MediaAccount mediaAccount, string transformName, string jobName, string jobDescription, Priority jobPriority,
-                             string jobData, string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode,
-                             string[] outputAssetAlternateIds, string[] outputAssetDescriptions, string streamingPolicyName)
-        {
-            EventGridClient.SetMediaSubscription(mediaAccount, null);
-            JObject jobPublish = GetJobPublish(jobData, streamingPolicyName);
+            string insightId = null;
+            EventGridClient.SetMediaSubscription(this.MediaAccount, null);
+            if (transformName.Contains("Indexer"))
+            {
+                insightId = IndexerUploadVideo(inputFileUrl, inputAssetName, jobPriority, false, false, false);
+            }
             MediaJob mediaJob = new MediaJob()
             {
                 Name = jobName,
                 Description = jobDescription,
                 Priority = jobPriority,
-                Data = jobPublish,
                 InputFileUrl = inputFileUrl,
                 InputAssetName = inputAssetName,
-                OutputAssetMode = outputAssetMode,
-                OutputAssetAlternateIds = outputAssetAlternateIds,
-                OutputAssetDescriptions = outputAssetDescriptions
+                OutputAssetMode = outputAssetMode
             };
-            Job job = CreateJob(transformName, mediaJob);
-            MediaJobAccount jobAccount = new MediaJobAccount(job.Name)
+            mediaJob.Data = new JObject
             {
-                JobName = job.Name,
-                JobPriority = jobPriority,
-                TransformName = transformName,
-                MediaAccount = MediaAccount
+                { "streamingPolicyName", streamingPolicyName },
+                { "contentProtection", JObject.FromObject(new ContentProtection()) }
             };
-            using (DatabaseClient databaseClient = new DatabaseClient(true))
+            if (!string.IsNullOrEmpty(jobData))
             {
-                string collectionId = Constant.Database.Collection.MediaJobAccount;
-                databaseClient.UpsertDocument(collectionId, jobAccount);
+                mediaJob.Data.Add(jobData);
             }
-            return job;
+            return CreateJob(transformName, insightId, mediaJob);
         }
 
         public Job UpdateJob(string transformName, string jobName, string jobDescription, Priority jobPriority)

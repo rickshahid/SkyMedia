@@ -63,6 +63,14 @@ namespace AzureSkyMedia.PlatformServices
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaInsightModel
+    {
+        Brand,
+        Person,
+        Langauge
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaClipType
     {
         Asset,

@@ -24,7 +24,7 @@ namespace AzureSkyMedia.FunctionApp
             try
             {
                 logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));
-                if (blobWorkflow != null && !eventTrigger.Subject.EndsWith(Constant.FileExtension.Json, StringComparison.OrdinalIgnoreCase))
+                if (blobWorkflow != null && !eventTrigger.Subject.EndsWith(Constant.FileExtension.WorkflowManifest, StringComparison.OrdinalIgnoreCase))
                 {
                     string workflowJson;
                     using (StreamReader workflowReader = new StreamReader(blobWorkflow))
@@ -50,7 +50,7 @@ namespace AzureSkyMedia.FunctionApp
                                     break;
                                 case MediaJobInputMode.AssetFile:
                                     Asset inputAsset = mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
-                                    string assetFileUrl = mediaClient.GetAssetFileUrl(inputAsset);
+                                    string assetFileUrl = MediaClient.GetAssetFileUrl(mediaClient, inputAsset);
                                     CreateJob(mediaClient, workflowManifest, transform, assetFileUrl, logger);
                                     break;
                                 case MediaJobInputMode.Asset:
@@ -83,13 +83,19 @@ namespace AzureSkyMedia.FunctionApp
             Uri inputFileUri = new Uri(inputFileUrl);
             string assetName = Path.GetFileNameWithoutExtension(inputFileUri.LocalPath);
             string jobName = string.IsNullOrEmpty(workflowManifest.JobName) ? assetName : workflowManifest.JobName;
-            mediaClient.CreateJob(mediaClient.MediaAccount, workflowManifest, transform.Name, jobName, inputFileUrl, null, logger);
+            Priority jobPriority = workflowManifest.JobPriority;
+            MediaJobOutputMode jobOutputMode = workflowManifest.JobOutputMode;
+            string streamingPolicyName = workflowManifest.StreamingPolicyName;
+            mediaClient.CreateJob(transform.Name, jobName, null, jobPriority, null, inputFileUrl, null, jobOutputMode, streamingPolicyName);
         }
 
         private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, Asset inputAsset, ILogger logger)
         {
             string jobName = string.IsNullOrEmpty(workflowManifest.JobName) ? inputAsset.Name : workflowManifest.JobName;
-            mediaClient.CreateJob(mediaClient.MediaAccount, workflowManifest, transform.Name, jobName, null, inputAsset.Name, logger);
+            Priority jobPriority = workflowManifest.JobPriority;
+            MediaJobOutputMode jobOutputMode = workflowManifest.JobOutputMode;
+            string streamingPolicyName = workflowManifest.StreamingPolicyName;
+            mediaClient.CreateJob(transform.Name, jobName, null, jobPriority, null, null, inputAsset.Name, jobOutputMode, streamingPolicyName);
         }
     }
 }
