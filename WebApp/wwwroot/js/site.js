@@ -99,6 +99,17 @@ function DisplayDialog(dialogId, title, html, buttons, height, width, onClose) {
     });
     $(".ui-button:last").focus();
 }
+function DisplayJson(title, jsonData) {
+    var dialogId = "metadataDialog";
+    var containerId = "contentMetadata";
+    var onClose = function () {
+        _jsonEditor.destroy();
+        $("#" + containerId).hide();
+    };
+    $("#" + containerId).show();
+    CreateJsonEditor(containerId, null, jsonData);
+    DisplayDialog(dialogId, title, null, null, null, null, onClose);
+}
 function DisplayMessage(title, message, buttons) {
     var dialogId = "messageDialog";
     DisplayDialog(dialogId, title, message, buttons);

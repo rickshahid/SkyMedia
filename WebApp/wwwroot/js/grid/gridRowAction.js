@@ -87,17 +87,6 @@ function DisplayInsight(fileName, assetName, insightId) {
         }
     );
 }
-function DisplayJson(title, jsonData) {
-    var dialogId = "metadataDialog";
-    var containerId = "contentMetadata";
-    var onClose = function () {
-        _jsonEditor.destroy();
-        $("#" + containerId).hide();
-    };
-    $("#" + containerId).show();
-    CreateJsonEditor(containerId, null, jsonData);
-    DisplayDialog(dialogId, title, null, null, null, null, onClose);
-}
 function ReindexVideo(insightId, videoName) {
     var title = "Reindex Video";
     var message = "Are you sure you want to reindex the '" + FormatValue(videoName) + "' video?";

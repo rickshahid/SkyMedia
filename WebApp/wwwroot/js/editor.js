@@ -5,6 +5,9 @@ function CreateJsonEditor(containerId, jsonName, jsonData) {
         "mode": jsonData != null ? "view" : "tree",
         "search": jsonData != null
     };
+    if (_jsonEditor != null) {
+        _jsonEditor.destroy();
+    }
     _jsonEditor = new JSONEditor(container, options);
     if (jsonName != null) {
         _jsonEditor.setName(jsonName);

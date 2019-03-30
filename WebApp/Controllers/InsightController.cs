@@ -41,6 +41,27 @@ namespace AzureSkyMedia.WebApp.Controllers
             return Json(models);
         }
 
+        [HttpGet]
+        [Route("/customSettings")]
+        public JsonResult GetCustomSettings(MediaInsightModel modelType)
+        {
+            JObject settings = null;
+            string authToken = HomeController.GetAuthToken(Request, Response);
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    switch (modelType)
+                    {
+                        case MediaInsightModel.Brand:
+                            settings = mediaClient.IndexerGetBrandSettings();
+                            break;
+                    }
+                }
+            }
+            return Json(settings);
+        }
+
         public JsonResult Data(string assetName, string fileName, string insightId)
         {
             try
