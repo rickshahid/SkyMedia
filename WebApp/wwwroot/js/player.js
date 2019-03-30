@@ -144,7 +144,7 @@ function ToggleMediaInsight() {
         $("#insightImage").prop("src", insightImageSource.replace("Hide", "Show"));
     } else {
         var playerHeight = $("#videoPlayer video").height();
-        $("#indexerInsight").height(playerHeight - 7);
+        $("#indexerInsight").height(playerHeight);
         $("#indexerInsight").prop("src", _insightWidgetUrl);
         $("#indexerInsight").show();
         $(".layoutPanel.side").hide();
