@@ -96,7 +96,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "AdaptiveStreaming",
+          "name": "Adaptive Streaming",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],
@@ -116,7 +116,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "ThumbnailSprite",
+          "name": "Thumbnail Sprite",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],
@@ -158,7 +158,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "VideoAnalysis",
+          "name": "Video Analyzer",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],
@@ -178,7 +178,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "AdaptiveStreaming, ThumbnailSprite, VideoAnalysis",
+          "name": "Adaptive Streaming, Thumbnail Sprite, Video Analyzer",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],

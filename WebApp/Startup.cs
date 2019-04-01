@@ -63,25 +63,25 @@ namespace AzureSkyMedia.WebApp
                 settingKey = Constant.AppSettingKey.DirectoryClientSecret;
                 options.ClientSecret = AppSetting.GetValue(settingKey);
 
+                options.CallbackPath = "/";
                 options.Events = new OpenIdConnectEvents
                 {
                     OnRedirectToIdentityProvider = OnAuthenticationRedirect
                 };
             });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
             services.AddSwaggerGen(SetSwaggerOptions);
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseStaticFiles();
-            app.UseAuthentication();
-            app.UseMvcWithDefaultRoute();
             app.UseSwagger();
             app.UseSwaggerUI(SetSwaggerOptions);
+            app.UseStaticFiles();
+            app.UseMvcWithDefaultRoute();
         }
 
-        internal static RedirectToActionResult OnSignIn(ControllerBase controller, string authToken)
+        internal static RedirectToActionResult OnSignIn(ControllerBase controller)
         {
             RedirectToActionResult redirectAction = null;
             string requestError = controller.Request.Form["error_description"];
@@ -99,7 +99,6 @@ namespace AzureSkyMedia.WebApp
             {
                 context.ProtocolMessage.Parameters.Add("p", policyId);
             }
-            context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("signin-oidc", string.Empty);
             if (!context.ProtocolMessage.RedirectUri.Contains("localhost"))
             {
                 context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http:", "https:");

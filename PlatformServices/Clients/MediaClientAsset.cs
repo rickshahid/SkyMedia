@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
-//using System.Threading.Tasks;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -40,7 +40,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public Asset CreateAsset(StorageBlobClient sourceBlobClient, StorageBlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string[] fileNames)
         {
-            //List<Task> copyTasks = new List<Task>();
+            List<Task> copyTasks = new List<Task>();
             if (string.IsNullOrEmpty(assetName))
             {
                 assetName = Path.GetFileNameWithoutExtension(fileNames[0]);
@@ -50,14 +50,10 @@ namespace AzureSkyMedia.PlatformServices
             {
                 string sourceUrl = sourceBlobClient.GetDownloadUrl(sourceContainer, fileName, false);
                 CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, null, fileName);
-                if (assetBlob.CopyState == null || assetBlob.CopyState.Status != CopyStatus.Pending)
-                {
-                    assetBlob.StartCopyAsync(new Uri(sourceUrl)).Wait();
-                }
-                //Task copyTask = assetBlob.StartCopyAsync(new Uri(sourceUrl));
-                //copyTasks.Add(copyTask);
+                Task copyTask = assetBlob.StartCopyAsync(new Uri(sourceUrl));
+                copyTasks.Add(copyTask);
             }
-            //Task.WaitAll(copyTasks.ToArray());
+            Task.WaitAll(copyTasks.ToArray());
             return asset;
         }
 
