@@ -57,6 +57,10 @@ The following Azure serverless platform services were integrated to create this 
 
 * **Azure Cosmos DB** - http://azure.microsoft.com/services/cosmos-db/
 
+* **Azure Search** - http://azure.microsoft.com/services/search/
+
+  * **Cognitive Search** - http://docs.microsoft.com/azure/search/cognitive-search-concept-intro
+
 * **Azure Functions** - http://azure.microsoft.com/services/functions/
 
   * **Durable Functions** - http://docs.microsoft.com/azure/azure-functions/durable/
