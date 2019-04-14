@@ -10,6 +10,48 @@
         "description": "Name must be between 3 and 24 characters (letters and numbers only)."
       }
     },
+    "searchServiceName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 60,
+      "metadata": {
+        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+      }
+    },
+    "searchServiceTier": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "Resource tier for the Search service."
+      }
+    },
+    "searchServiceReplicaCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Replica count for the Search service."
+      }
+    },
+    "searchServicePartitionCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Partition count for the Search service."
+      }
+    },
+    "cognitiveServicesName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name must be between 2 and 64 characters (letters and numbers only)."
+      }
+    },
+    "cognitiveServicesTier": {
+      "type": "string",
+      "defaultValue": "S0",
+      "metadata": {
+        "description": "Azure resource tier for Cognitive Services."
+      }
+    },
     "appServicePlanName": {
       "type": "string",
       "metadata": {
@@ -59,29 +101,22 @@
         "description": "Function application name (<appName>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
+    "functionJobOutputProgressUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Function event handler url for job output progress."
+      }
+    },
+    "functionJobStateFinalUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Function event handler url for job final states."
+      }
+    },
     "functionLiveEventUrl": {
       "type": "string",
       "metadata": {
-        "description": "Function event handler url for live event processing."
-      }
-    },
-    "functionPublishAssetUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Function event handler for media asset publishing."
-      }
-    },
-    "cognitiveServicesName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name must be between 2 and 64 characters (letters and numbers only)."
-      }
-    },
-    "cognitiveServicesTier": {
-      "type": "string",
-      "defaultValue": "S0",
-      "metadata": {
-        "description": "Azure resource tier for Cognitive Services."
+        "description": "Function event handler url for live events."
       }
     },
     "globalResourceGroupName": {
@@ -165,17 +200,9 @@
     },
     "databaseIdentifier": {
       "type": "string",
-      "defaultValue": "MediaInsight",
+      "defaultValue": "Insight",
       "metadata": {
-        "description": "Unique identifier of the media insight database."
-      }
-    },
-    "searchServiceName": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 60,
-      "metadata": {
-        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
+        "description": "Unique identifier of the insight database."
       }
     },
     "trafficManagerProfileName": {
@@ -206,10 +233,13 @@
   "variables": {
     "storageApiVersion": "2018-07-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
+    "searchApiVersion": "2015-08-19",
+    "searchServiceName": "[toLower(parameters('searchServiceName'))]",
+    "searchServiceTier": "[toLower(parameters('searchServiceTier'))]",
+    "cognitiveServicesApiVersion": "2017-04-18",
     "webApiVersion": "2018-11-01",
     "webAppName": "[toLower(parameters('webAppName'))]",
     "functionAppName": "[toLower(parameters('functionAppName'))]",
-    "cognitiveServicesApiVersion": "2017-04-18",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
     "appRegionNameStaging": "[concat(parameters('appRegionName'), ' - Staging')]",
@@ -234,6 +264,34 @@
               "enabled": true
             }
           }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Search/searchServices",
+      "apiVersion": "[variables('searchApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('searchServiceName')]",
+      "sku": {
+        "name": "[variables('searchServiceTier')]"
+      },
+      "properties": {
+        "replicaCount": "[parameters('searchServiceReplicaCount')]",
+        "partitionCount": "[parameters('searchServicePartitionCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "[variables('cognitiveServicesApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('cognitiveServicesName')]",
+      "kind": "CognitiveServices",
+      "sku": {
+        "name": "[parameters('cognitiveServicesTier')]"
+      },
+      "properties": {
+        "apiProperties": {
+          "statisticsEnabled": true
         }
       }
     },
@@ -348,12 +406,16 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
+              "name": "Media.EventGrid.JobOutputProgressUrl",
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.PublishAssetUrl",
-              "value": "[parameters('functionPublishAssetUrl')]"
+              "name": "Media.EventGrid.JobStateFinalUrl",
+              "value": "[parameters('functionJobStateFinalUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
             }
             //{
             //  "name": "Search.ReadOnly",
@@ -434,12 +496,16 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
+              "name": "Media.EventGrid.JobOutputProgressUrl",
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.PublishAssetUrl",
-              "value": "[parameters('functionPublishAssetUrl')]"
+              "name": "Media.EventGrid.JobStateFinalUrl",
+              "value": "[parameters('functionJobStateFinalUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
             }
           ]
         },
@@ -531,12 +597,16 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
+              "name": "Media.EventGrid.JobOutputProgressUrl",
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.PublishAssetUrl",
-              "value": "[parameters('functionPublishAssetUrl')]"
+              "name": "Media.EventGrid.JobStateFinalUrl",
+              "value": "[parameters('functionJobStateFinalUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
             },
             {
               "name": "Media.Indexer.ApiUrl",
@@ -643,12 +713,16 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
+              "name": "Media.EventGrid.JobOutputProgressUrl",
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.PublishAssetUrl",
-              "value": "[parameters('functionPublishAssetUrl')]"
+              "name": "Media.EventGrid.JobStateFinalUrl",
+              "value": "[parameters('functionJobStateFinalUrl')]"
+            },
+            {
+              "name": "Media.EventGrid.LiveEventUrl",
+              "value": "[parameters('functionLiveEventUrl')]"
             },
             {
               "name": "Media.Indexer.ApiUrl",
@@ -657,27 +731,20 @@
           ]
         }
       }
-    },
-    {
-      "type": "Microsoft.CognitiveServices/accounts",
-      "apiVersion": "[variables('cognitiveServicesApiVersion')]",
-      "location": "[resourceGroup().location]",
-      "name": "[parameters('cognitiveServicesName')]",
-      "kind": "CognitiveServices",
-      "sku": {
-        "name": "[parameters('cognitiveServicesTier')]"
-      },
-      "properties": {
-        "apiProperties": {
-          "statisticsEnabled": true
-        }
-      }
     }
   ],
   "outputs": {
     "storageConnection": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "searchConnectionReadOnly": {
+      "type": "string",
+      "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryKey)]"
+    },
+    "searchConnectionReadWrite": {
+      "type": "string",
+      "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryKey)]"
     },
     "cognitiveServicesKey": {
       "type": "string",

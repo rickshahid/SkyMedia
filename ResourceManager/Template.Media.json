@@ -24,6 +24,7 @@
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "storageServiceName1": "[concat(variables('storageServiceName'), '1')]",
     "storageServiceName2": "[concat(variables('storageServiceName'), '2')]",
+    "storageServiceName3": "[concat(variables('storageServiceName'), '3')]",
     "mediaApiVersion": "2018-07-01",
     "mediaServiceName": "[toLower(parameters('mediaServiceName'))]"
   },
@@ -72,13 +73,36 @@
       }
     },
     {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "[variables('storageApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('storageServiceName3')]",
+      "kind": "BlobStorage",
+      "sku": {
+        "name": "Standard_RAGRS"
+      },
+      "properties": {
+        "supportsHttpsTrafficOnly": true,
+        "encryption": {
+          "keySource": "Microsoft.Storage",
+          "services": {
+            "blob": {
+              "enabled": true
+            }
+          }
+        },
+        "accessTier": "Cool"
+      }
+    },
+    {
       "type": "Microsoft.Media/mediaServices",
       "apiVersion": "[variables('mediaApiVersion')]",
       "location": "[resourceGroup().location]",
       "name": "[variables('mediaServiceName')]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName1'))]",
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName3'))]"
       ],
       "properties": {
         "storageAccounts": [
@@ -89,6 +113,10 @@
           {
             "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2'))]",
             "type": "Secondary"
+          },
+          {
+            "id": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName3'))]",
+            "type": "Secondary"
           }
         ]
       },
@@ -96,7 +124,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "Adaptive Streaming",
+          "name": "AdaptiveStreaming",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],
@@ -116,7 +144,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "Thumbnail Sprite",
+          "name": "ThumbnailSprite",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],
@@ -140,7 +168,7 @@
                           "height": "10%",
                           "quality": 90
                         }
-                      ],
+                      ]
                       //"columns": 10
                     }
                   ],
@@ -158,7 +186,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "Video Analyzer",
+          "name": "VideoAnalyzer",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],
@@ -178,7 +206,7 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "Adaptive Streaming, Thumbnail Sprite, Video Analyzer",
+          "name": "AdaptiveStreaming, ThumbnailSprite, VideoAnalyzer",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],

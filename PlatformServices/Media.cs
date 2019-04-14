@@ -21,7 +21,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 if (assetFile.Name.StartsWith(Constant.Media.Thumbnail.FileNamePrefix, stringComparison))
                 {
-                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name, false);
+                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name);
                     thumbnailUrls.Add(thumbnailUrl);
                 }
             }

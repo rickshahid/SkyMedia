@@ -99,18 +99,21 @@ namespace AzureSkyMedia.PlatformServices
                     MediaAsset mediaAsset = new MediaAsset(mediaClient, outputAsset);
                     if (mediaAsset.Streamable)
                     {
-                        string streamingPolicyName = job.CorrelationData["streamingPolicyName"];
-                        if (!string.IsNullOrEmpty(streamingPolicyName))
+                        string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                        if (job.CorrelationData.ContainsKey("streamingPolicyName"))
                         {
-                            streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                            streamingPolicyName = job.CorrelationData["streamingPolicyName"];
                         }
                         ContentProtection contentProtection = null;
-                        string contentProtectionJson = job.CorrelationData["contentProtection"];
-                        if (!string.IsNullOrEmpty(contentProtectionJson))
+                        if (job.CorrelationData.ContainsKey("contentProtection"))
                         {
+                            string contentProtectionJson = job.CorrelationData["contentProtection"];
                             contentProtection = JsonConvert.DeserializeObject<ContentProtection>(contentProtectionJson);
                         }
                         streamingLocator = mediaClient.CreateLocator(jobOutput.AssetName, jobOutput.AssetName, streamingPolicyName, contentProtection);
+                        if (job.CorrelationData.ContainsKey("archiveInput"))
+                        {
+                        }
                     }
                 }
 

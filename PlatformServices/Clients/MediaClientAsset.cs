@@ -29,37 +29,27 @@ namespace AzureSkyMedia.PlatformServices
             return CreateAsset(storageAccount, assetName, string.Empty, string.Empty);
         }
 
-        public Asset CreateAsset(string storageAccount, string assetName, string fileName, Stream fileStream)
+        public async Task<Asset> CreateAsset(string storageAccount, string assetName, string fileName, Stream fileStream)
         {
             StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
             Asset asset = CreateAsset(storageAccount, assetName);
             CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
-            assetBlob.UploadFromStreamAsync(fileStream).Wait();
+            await assetBlob.UploadFromStreamAsync(fileStream);
             return asset;
         }
 
-        public Asset CreateAsset(StorageBlobClient sourceBlobClient, StorageBlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string[] fileNames)
+        public async Task<Asset> CreateAsset(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string fileName)
         {
-            List<Task> copyTasks = new List<Task>();
             if (string.IsNullOrEmpty(assetName))
             {
-                assetName = Path.GetFileNameWithoutExtension(fileNames[0]);
+                assetName = Path.GetFileNameWithoutExtension(fileName);
             }
+            StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
             Asset asset = CreateAsset(storageAccount, assetName, assetDescription, assetAlternateId);
-            foreach (string fileName in fileNames)
-            {
-                string sourceUrl = sourceBlobClient.GetDownloadUrl(sourceContainer, fileName, false);
-                CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, null, fileName);
-                Task copyTask = assetBlob.StartCopyAsync(new Uri(sourceUrl));
-                copyTasks.Add(copyTask);
-            }
-            Task.WaitAll(copyTasks.ToArray());
+            string sourceUrl = blobClient.GetDownloadUrl(sourceContainer, fileName);
+            CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
+            await assetBlob.StartCopyAsync(new Uri(sourceUrl));
             return asset;
-        }
-
-        public Asset CreateAsset(StorageBlobClient sourceBlobClient, StorageBlobClient assetBlobClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string fileName)
-        {
-            return CreateAsset(sourceBlobClient, assetBlobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, new string[] { fileName });
         }
 
         public static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath, out MediaFile[] assetFiles)
@@ -102,7 +92,7 @@ namespace AzureSkyMedia.PlatformServices
                     Size = fileSize,
                     ByteCount = byteCount,
                     ContentType = contentType,
-                    DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName, false)
+                    DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName)
                 };
                 if (file.Name.EndsWith(Constant.FileExtension.StreamingManifest, StringComparison.OrdinalIgnoreCase))
                 {
@@ -118,7 +108,7 @@ namespace AzureSkyMedia.PlatformServices
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
             string fileName = mediaAsset.Files[0].Name;
-            return blobClient.GetDownloadUrl(asset.Container, fileName, false);
+            return blobClient.GetDownloadUrl(asset.Container, fileName);
         }
     }
 }

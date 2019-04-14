@@ -14,21 +14,20 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class AssetController : Controller
     {
-        private Asset[] CreateInputAssets(MediaClient mediaClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames)
+        private async Task<Asset[]> CreateInputAssets(MediaClient mediaClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames)
         {
             List<Asset> inputAssets = new List<Asset>();
-            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
             foreach (string fileName in fileNames)
             {
                 string sourceContainer = Constant.Storage.Blob.WorkflowContainerName;
-                Asset inputAsset = mediaClient.CreateAsset(blobClient, blobClient, storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, fileName);
+                Asset inputAsset = await mediaClient.CreateAsset(storageAccount, assetName, assetDescription, assetAlternateId, sourceContainer, fileName);
                 inputAssets.Add(inputAsset);
             }
             return inputAssets.ToArray();
         }
 
-        public JsonResult Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                   bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+        public async Task<JsonResult> Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
+                                               bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             try
             {
@@ -37,8 +36,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    Transform transform = mediaClient.CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
-                    inputAssets = CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
+                    Transform transform = mediaClient.GetTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
+                    inputAssets = await CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                     foreach (Asset inputAsset in inputAssets)
                     {
                         Job job = null;

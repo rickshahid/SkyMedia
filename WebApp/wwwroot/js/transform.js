@@ -55,7 +55,7 @@ function SaveTransform() {
         var thumbnailSpriteColumns = GetThumbnailSpriteColumns();
         var onConfirm = function () {
             SetCursor(true);
-            $.post("/transform/create",
+            $.post("/transform/save",
                 {
                     transformName: $("#name").val(),
                     transformDescription: $("#description").val(),

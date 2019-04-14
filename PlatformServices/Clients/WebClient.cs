@@ -2,6 +2,9 @@ using System;
 using System.Net.Http;
 using System.IdentityModel.Tokens.Jwt;
 
+using Microsoft.Rest;
+using Microsoft.Azure.Management.Media.Models;
+
 using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
@@ -62,8 +65,15 @@ namespace AzureSkyMedia.PlatformServices
             T responseData = default(T);
             using (HttpResponseMessage webResponse = _httpClient.SendAsync(webRequest).Result)
             {
-                webResponse.EnsureSuccessStatusCode();
-                if (typeof(T) == typeof(byte[]))
+                if (!webResponse.IsSuccessStatusCode)
+                {
+                    string responseContent = webResponse.Content.ReadAsStringAsync().Result;
+                    throw new ApiErrorException()
+                    {
+                        Response = new HttpResponseMessageWrapper(webResponse, responseContent)
+                    };
+                }
+                else if (typeof(T) == typeof(byte[]))
                 {
                     byte[] responseContent = webResponse.Content.ReadAsByteArrayAsync().Result;
                     responseData = (T)Convert.ChangeType(responseContent, typeof(T));

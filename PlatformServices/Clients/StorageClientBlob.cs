@@ -62,14 +62,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             CloudBlockBlob blob;
             CloudBlobContainer container = GetBlobContainer(containerName);
-            if (string.IsNullOrEmpty(directoryPath))
-            {
-                blob = container.GetBlockBlobReference(fileName);
-            }
-            else
+            if (!string.IsNullOrEmpty(directoryPath))
             {
                 CloudBlobDirectory directory = container.GetDirectoryReference(directoryPath);
                 blob = directory.GetBlockBlobReference(fileName);
+            }
+            else
+            {
+                blob = container.GetBlockBlobReference(fileName);
             }
             if (fetchAttributes)
             {
@@ -83,31 +83,6 @@ namespace AzureSkyMedia.PlatformServices
             return GetBlockBlob(containerName, directoryPath, fileName, false);
         }
 
-        public CloudAppendBlob GetAppendBlob(string containerName, string directoryPath, string fileName, bool fetchAttributes)
-        {
-            CloudAppendBlob blob;
-            CloudBlobContainer container = GetBlobContainer(containerName);
-            if (string.IsNullOrEmpty(directoryPath))
-            {
-                blob = container.GetAppendBlobReference(fileName);
-            }
-            else
-            {
-                CloudBlobDirectory directory = container.GetDirectoryReference(directoryPath);
-                blob = directory.GetAppendBlobReference(fileName);
-            }
-            if (fetchAttributes)
-            {
-                blob.FetchAttributesAsync().Wait();
-            }
-            return blob;
-        }
-
-        public CloudAppendBlob GetAppendBlob(string containerName, string fileName)
-        {
-            return GetAppendBlob(containerName, string.Empty, fileName, false);
-        }
-
         public string GetBlobSize(string containerName, string directoryPath, string fileName, out long byteCount, out string contentType)
         {
             CloudBlockBlob blob = GetBlockBlob(containerName, directoryPath, fileName, true);
@@ -116,9 +91,9 @@ namespace AzureSkyMedia.PlatformServices
             return MapByteCount(byteCount);
         }
 
-        public string GetDownloadUrl(string containerName, string fileName, bool readWrite)
+        public string GetDownloadUrl(string containerName, string fileName)
         {
-            CloudBlockBlob blockBlob = GetBlockBlob(containerName, null, fileName);
+            CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName);
             string settingKey = Constant.AppSettingKey.StorageSharedAccessMinutes;
             string sharedAccessMinutes = AppSetting.GetValue(settingKey);
             SharedAccessBlobPolicy accessPolicy = new SharedAccessBlobPolicy()
@@ -126,14 +101,10 @@ namespace AzureSkyMedia.PlatformServices
                 SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddMinutes(double.Parse(sharedAccessMinutes)),
                 Permissions = SharedAccessBlobPermissions.Read
             };
-            if (readWrite)
-            {
-                accessPolicy.Permissions = accessPolicy.Permissions | SharedAccessBlobPermissions.Write;
-            }
-            string accessSignature = blockBlob.GetSharedAccessSignature(accessPolicy);
+            string accessSignature = blob.GetSharedAccessSignature(accessPolicy);
             fileName = HttpUtility.UrlPathEncode(fileName);
             accessSignature = HttpUtility.UrlPathEncode(accessSignature);
-            return string.Concat(blockBlob.Container.Uri.ToString(), "/", fileName, accessSignature);
+            return string.Concat(blob.Container.Uri.ToString(), "/", fileName, accessSignature);
         }
 
         public void UploadBlock(Stream blockStream, string containerName, string fileName, int blockIndex, int blocksCount, string contentType)
@@ -185,48 +156,5 @@ namespace AzureSkyMedia.PlatformServices
             }
             return mappedCount;
         }
-
-        //static public async void CopyBlobsAsync(CloudBlobContainer sourceBlobContainer, CloudBlobContainer destinationBlobContainer, List<string> fileNames)
-        //{
-        //    if (fileNames != null)
-        //    {
-        //        foreach (var fileName in fileNames)
-        //        {
-        //            CloudBlob sourceBlob = sourceBlobContainer.GetBlockBlobReference(fileName);
-        //            CloudBlob destinationBlob = destinationBlobContainer.GetBlockBlobReference(fileName);
-        //            CopyBlobAsync(sourceBlob as CloudBlob, destinationBlob);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        string blobPrefix = null;
-        //        BlobContinuationToken blobContinuationToken = null;
-        //        do
-        //        {
-        //            var results = await sourceBlobContainer.ListBlobsSegmentedAsync(blobPrefix, blobContinuationToken);
-        //            Get the value of the continuation token returned by the listing call.
-        //            blobContinuationToken = results.ContinuationToken;
-        //            foreach (IListBlobItem item in results.Results)
-        //            {
-        //                if (item.GetType() == typeof(CloudBlockBlob))
-        //                {
-        //                    CloudBlockBlob sourceBlob = (CloudBlockBlob)item;
-        //                    CloudBlob destinationBlob = destinationBlobContainer.GetBlockBlobReference(sourceBlob.Name);
-        //                    CopyBlobAsync(sourceBlob as CloudBlob, destinationBlob);
-        //                }
-        //            }
-        //        } while (blobContinuationToken != null); // Loop while the continuation token is not null.
-        //    }
-        //}
-
-        //static public async void CopyBlobAsync(CloudBlob sourceBlob, CloudBlob destinationBlob)
-        //{
-        //    var signature = sourceBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy
-        //    {
-        //        Permissions = SharedAccessBlobPermissions.Read,
-        //        SharedAccessExpiryTime = DateTime.UtcNow.AddHours(24)
-        //    });
-        //    await destinationBlob.StartCopyAsync(new Uri(sourceBlob.Uri.AbsoluteUri + signature));
-        //}
     }
 }

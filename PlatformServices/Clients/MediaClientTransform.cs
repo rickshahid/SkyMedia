@@ -94,7 +94,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public Transform CreateTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, int? thumbnailSpriteColumns)
+        public Transform GetTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, int? thumbnailSpriteColumns, bool createUpdate)
         {
             Transform transform = null;
             List<TransformOutput> transformOutputList = new List<TransformOutput>();
@@ -109,12 +109,19 @@ namespace AzureSkyMedia.PlatformServices
             if (transformOutputList.Count > 0)
             {
                 transformName = GetTransformName(transformName, transformOutputs);
-                transform = _media.Transforms.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputList.ToArray(), transformDescription);
+                if (!createUpdate)
+                {
+                    transform = _media.Transforms.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName);
+                }
+                if (transform == null)
+                {
+                    transform = _media.Transforms.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, transformOutputList.ToArray(), transformDescription);
+                }
             }
             return transform;
         }
 
-        public Transform CreateTransform(bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+        public Transform GetTransform(bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
             if (adaptiveStreaming)
@@ -171,10 +178,10 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 transformOutputs.Add(transformOutput);
             }
-            return CreateTransform(null, null, transformOutputs.ToArray(), null);
+            return GetTransform(null, null, transformOutputs.ToArray(), null, false);
         }
 
-        public Transform CreateTransform(MediaTransformPreset[] transformPresets)
+        public Transform GetTransform(MediaTransformPreset[] transformPresets)
         {
             bool adaptiveStreaming = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AdaptiveStreaming);
             bool thumbnailSprite = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ThumbnailSprite);
@@ -182,7 +189,7 @@ namespace AzureSkyMedia.PlatformServices
             bool audioAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioAnalyzer);
             bool videoIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
             bool audioIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
-            return CreateTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
+            return GetTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
         }
     }
 }

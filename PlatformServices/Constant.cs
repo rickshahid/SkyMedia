@@ -94,8 +94,9 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
+            public const string MediaEventGridJobOutputProgressUrl = "Media.EventGrid.JobOutputProgressUrl";
+            public const string MediaEventGridJobStateFinalUrl = "Media.EventGrid.JobStateFinalUrl";
             public const string MediaEventGridLiveEventUrl = "Media.EventGrid.LiveEventUrl";
-            public const string MediaEventGridPublishAssetUrl = "Media.EventGrid.PublishAssetUrl";
 
             public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
 
@@ -239,6 +240,18 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct EventGrid
             {
+                public const string JobOutputProgressSubscriptionName = "AMS-Job-Output-Progress";
+                public static readonly string[] JobOutputProgressFilterTypes = new string[] {
+                    "Microsoft.Media.JobOutputProgress"
+                };
+
+                public const string JobStateFinalSubscriptionName = "AMS-Job-State-Final";
+                public static readonly string[] JobStateFinalFilterTypes = new string[] {
+                    "Microsoft.Media.JobFinished",
+                    "Microsoft.Media.JobCanceled",
+                    "Microsoft.Media.JobErrored"
+                };
+
                 public const string LiveEventSubscriptionName = "AMS-Live-Event";
                 public static readonly string[] LiveEventFilterTypes = new string[] {
                     "Microsoft.Media.LiveEventConnectionRejected",
@@ -249,11 +262,6 @@ namespace AzureSkyMedia.PlatformServices
                     "Microsoft.Media.LiveEventIncomingStreamsOutOfSync",
                     "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync",
                     "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
-                };
-
-                public const string PublishAssetSubscriptionName = "AMS-Publish-Asset";
-                public static readonly string[] PublishAssetFilterTypes = new string[] {
-                    "Microsoft.Media.JobFinished"
                 };
             }
 

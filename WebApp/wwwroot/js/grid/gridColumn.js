@@ -12,6 +12,7 @@ function GetParentColumns(gridId) {
                     width: nameWidth
                 },
                 {
+                    formatter: FormatStorage,
                     label: "Storage Type",
                     name: "accountType",
                     align: "center",
@@ -534,8 +535,11 @@ function FormatValue(value) {
     }
     return value;
 }
+function FormatStorage(value, grid, row) {
+    return value + "<br>(" + row.accessTier + ")";
+}
 function FormatRegions(value, grid, row) {
-    return "Primary: " + value + "<br>Secondary: " + row.secondaryRegion;
+    return value + " (1st)<br>" + row.secondaryRegion + " (2nd)";
 }
 function FormatProgress(value, grid, row) {
     if (value == null) {

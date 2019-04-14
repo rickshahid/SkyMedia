@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.EventGrid.Models;
@@ -15,11 +16,11 @@ using AzureSkyMedia.PlatformServices;
 
 namespace AzureSkyMedia.FunctionApp
 {
-    public static class MediaWorkflowBlobStorage
+    public static class MediaWorkflowStorageBlobCreated
     {
-        [FunctionName("MediaWorkflow-BlobStorage")]
-        public static void Run([EventGridTrigger] EventGridEvent eventTrigger, [Blob("{data.url}", FileAccess.Read)] Stream blobInput,
-                               [Blob(Constant.Storage.Blob.WorkflowManifestFile, FileAccess.Read)] Stream blobWorkflow, ILogger logger)
+        [FunctionName("MediaWorkflow-StorageBlobCreated")]
+        public async static void Run([EventGridTrigger] EventGridEvent eventTrigger, [Blob("{data.url}", FileAccess.Read)] Stream blobInput,
+                                     [Blob(Constant.Storage.Blob.WorkflowManifestFile, FileAccess.Read)] Stream blobWorkflow, ILogger logger)
         {
             try
             {
@@ -40,21 +41,21 @@ namespace AzureSkyMedia.FunctionApp
                         MediaAccount mediaAccount = workflowManifest.MediaAccounts[0];
                         using (MediaClient mediaClient = new MediaClient(mediaAccount))
                         {
-                            Transform transform = mediaClient.CreateTransform(workflowManifest.TransformPresets);
+                            Transform transform = mediaClient.GetTransform(workflowManifest.TransformPresets);
                             switch (workflowManifest.JobInputMode)
                             {
                                 case MediaJobInputMode.InputFile:
                                     string contentType = eventData["contentType"].ToString();
-                                    string inputFileUrl = CreateBlob(mediaClient, workflowManifest, blobInput, fileName, contentType);
+                                    string inputFileUrl = await CopyBlob(mediaClient, workflowManifest, blobInput, fileName, contentType);
                                     CreateJob(mediaClient, workflowManifest, transform, inputFileUrl, logger);
                                     break;
                                 case MediaJobInputMode.AssetFile:
-                                    Asset inputAsset = mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
+                                    Asset inputAsset = await mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
                                     string assetFileUrl = MediaClient.GetAssetFileUrl(mediaClient, inputAsset);
                                     CreateJob(mediaClient, workflowManifest, transform, assetFileUrl, logger);
                                     break;
                                 case MediaJobInputMode.Asset:
-                                    inputAsset = mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
+                                    inputAsset = await mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
                                     CreateJob(mediaClient, workflowManifest, transform, inputAsset, logger);
                                     break;
                             }
@@ -68,14 +69,14 @@ namespace AzureSkyMedia.FunctionApp
             }
         }
 
-        private static string CreateBlob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Stream blobStream, string fileName, string contentType)
+        private async static Task<string> CopyBlob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Stream blobStream, string fileName, string contentType)
         {
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, workflowManifest.MediaStorage);
             CloudBlockBlob blob = blobClient.GetBlockBlob(Constant.Storage.Blob.WorkflowContainerName, null, fileName);
-            blob.UploadFromStreamAsync(blobStream).Wait();
             blob.Properties.ContentType = contentType;
-            blob.SetPropertiesAsync();
-            return blobClient.GetDownloadUrl(Constant.Storage.Blob.WorkflowContainerName, fileName, false);
+            await blob.UploadFromStreamAsync(blobStream);
+            //await blob.SetPropertiesAsync();
+            return blobClient.GetDownloadUrl(Constant.Storage.Blob.WorkflowContainerName, fileName);
         }
 
         private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, string inputFileUrl, ILogger logger)

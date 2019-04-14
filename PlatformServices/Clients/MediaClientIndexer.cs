@@ -57,7 +57,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private string AddRequestParameters(string requestUrl, Priority jobPriority, bool indexingOnly, bool audioOnly, bool videoOnly)
         {
-            string settingKey = Constant.AppSettingKey.MediaEventGridPublishAssetUrl;
+            string settingKey = Constant.AppSettingKey.MediaEventGridJobStateFinalUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
@@ -105,7 +105,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string insightId;
             string requestUrl = GetRequestUrl("/videos", null, null);
-            string settingKey = Constant.AppSettingKey.MediaEventGridPublishAssetUrl;
+            string settingKey = Constant.AppSettingKey.MediaEventGridJobStateFinalUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             if (!string.IsNullOrEmpty(inputAssetName))
             {

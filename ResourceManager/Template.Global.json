@@ -38,35 +38,6 @@
         "description": "Azure region names for data replication to support distributed reads & writes."
       }
     },
-    "searchServiceName": {
-      "type": "string",
-      "minLength": 2,
-      "maxLength": 60,
-      "metadata": {
-        "description": "Name must be between 2 and 60 characters (letters, numbers and hyphens only)."
-      }
-    },
-    "searchServiceTier": {
-      "type": "string",
-      "defaultValue": "Standard",
-      "metadata": {
-        "description": "Resource tier for the Search service."
-      }
-    },
-    "searchServiceReplicaCount": {
-      "type": "int",
-      "defaultValue": 1,
-      "metadata": {
-        "description": "Replica count for the Search service."
-      }
-    },
-    "searchServicePartitionCount": {
-      "type": "int",
-      "defaultValue": 1,
-      "metadata": {
-        "description": "Partition count for the Search service."
-      }
-    },
     "trafficManagerProfileNames": {
       "type": "array",
       "metadata": {
@@ -133,9 +104,6 @@
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",
-    "searchApiVersion": "2015-08-19",
-    "searchServiceName": "[toLower(parameters('searchServiceName'))]",
-    "searchServiceTier": "[toLower(parameters('searchServiceTier'))]",
     "trafficManagerApiVersion": "2018-08-01",
     "contentDeliveryApiVersion": "2018-04-02",
     "contentDeliveryEndpointName": "[toLower(parameters('contentDeliveryEndpointName'))]",
@@ -238,19 +206,6 @@
       }
     },
     {
-      "type": "Microsoft.Search/searchServices",
-      "apiVersion": "[variables('searchApiVersion')]",
-      "location": "[resourceGroup().location]",
-      "name": "[variables('searchServiceName')]",
-      "sku": {
-        "name": "[variables('searchServiceTier')]"
-      },
-      "properties": {
-        "replicaCount": "[parameters('searchServiceReplicaCount')]",
-        "partitionCount": "[parameters('searchServicePartitionCount')]"
-      }
-    },
-    {
       "type": "Microsoft.Cdn/profiles",
       "apiVersion": "[variables('contentDeliveryApiVersion')]",
       "location": "[resourceGroup().location]",
@@ -336,14 +291,6 @@
     "databaseConnectionReadWrite": {
       "type": "string",
       "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey)]"
-    },
-    "searchConnectionReadOnly": {
-      "type": "string",
-      "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryKey)]"
-    },
-    "searchConnectionReadWrite": {
-      "type": "string",
-      "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listAdminKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryKey)]"
     },
     "contentDeliveryHost": {
       "type": "string",
