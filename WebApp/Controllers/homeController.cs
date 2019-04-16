@@ -73,8 +73,8 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             User currentUser = new User(authToken);
             viewData["userId"] = currentUser.Id;
-            viewData["accountName"] = currentUser.MediaAccountPrimary.Name;
-            if (string.IsNullOrEmpty(currentUser.MediaAccountPrimary.VideoIndexerRegion) || string.IsNullOrEmpty(currentUser.MediaAccountPrimary.VideoIndexerKey))
+            viewData["accountName"] = currentUser.MediaAccount.Name;
+            if (string.IsNullOrEmpty(currentUser.MediaAccount.VideoIndexerRegion) || string.IsNullOrEmpty(currentUser.MediaAccount.VideoIndexerKey))
             {
                 viewData["indexerMessage"] = "DisplayMessage('Azure Video Indexer Account', 'Your Azure Media Services account does not have an Azure Video Indexer account.<br><br>Verify your " + viewData["appName"] + " user account profile is configured.')";
             }
@@ -107,7 +107,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
                 if (Request.HasFormContentType)
                 {
-                    RedirectToActionResult redirectAction = Startup.OnSignIn(this);
+                    RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
                     if (redirectAction != null)
                     {
                         return redirectAction;

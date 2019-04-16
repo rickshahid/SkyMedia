@@ -1,14 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Rest;
-using Microsoft.Identity.Client;
+using Microsoft.Rest.Azure.Authentication;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -24,7 +20,7 @@ namespace AzureSkyMedia.PlatformServices
         public MediaClient(string authToken)
         {
             User currentUser = new User(authToken);
-            MediaAccount = currentUser.MediaAccountPrimary;
+            MediaAccount = currentUser.MediaAccount;
             BindContext();
         }
 
@@ -36,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private void BindContext()
         {
-            MediaClientCredentials clientCredentials = new MediaClientCredentials(MediaAccount);
+            ServiceClientCredentials clientCredentials = ApplicationTokenProvider.LoginSilentAsync(MediaAccount.DirectoryTenantId, MediaAccount.ServicePrincipalId, MediaAccount.ServicePrincipalKey).Result;
             _media = new AzureMediaServicesClient(clientCredentials)
             {
                 SubscriptionId = MediaAccount.SubscriptionId
@@ -82,26 +78,6 @@ namespace AzureSkyMedia.PlatformServices
                 _media.Dispose();
                 _media = null;
             }
-        }
-    }
-
-    internal class MediaClientCredentials : ServiceClientCredentials
-    {
-        private readonly MediaAccount _mediaAccount;
-
-        public MediaClientCredentials(MediaAccount mediaAccount)
-        {
-            _mediaAccount = mediaAccount;
-        }
-
-        public async override Task ProcessHttpRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            AuthenticationResult authResult = await AuthToken.AcquireTokenAsync(_mediaAccount);
-
-            string authScheme = Constant.AuthIntegration.AuthScheme; 
-            request.Headers.Authorization = new AuthenticationHeaderValue(authScheme, authResult.AccessToken);
-
-            await base.ProcessHttpRequestAsync(request, cancellationToken);
         }
     }
 }

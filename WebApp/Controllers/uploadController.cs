@@ -79,7 +79,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
             User currentUser = new User(authToken);
-            StorageBlobClient blobClient = new StorageBlobClient(currentUser.MediaAccountPrimary, storageAccount);
+            StorageBlobClient blobClient = new StorageBlobClient(currentUser.MediaAccount, storageAccount);
             Stream blockStream = Request.Form.Files[0].OpenReadStream();
             string containerName = Constant.Storage.Blob.WorkflowContainerName;
             blobClient.UploadBlock(blockStream, containerName, name, chunk, chunks, contentType);

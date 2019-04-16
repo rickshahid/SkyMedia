@@ -52,7 +52,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string AppApiDescription = "App.Api.Description";
 
             public const string DirectoryTenantId = "Directory.TenantId";
-            public const string DirectoryTokenScope = "Directory.TokenScope";
             public const string DirectoryAuthorityUrl = "Directory.AuthorityUrl";
             public const string DirectoryDiscoveryPath = "Directory.DiscoveryPath";
 
@@ -94,6 +93,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
+            public const string MediaEventGridStorageBlobCreatedUrl = "Media.EventGrid.StorageBlobCreatedUrl";
             public const string MediaEventGridJobOutputProgressUrl = "Media.EventGrid.JobOutputProgressUrl";
             public const string MediaEventGridJobStateFinalUrl = "Media.EventGrid.JobStateFinalUrl";
             public const string MediaEventGridLiveEventUrl = "Media.EventGrid.LiveEventUrl";
@@ -126,7 +126,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string AuthScheme = "Bearer";
             public const string AuthHeader = "Authorization";
             public const string ApiManagementKey = "ocp-apim-subscription-key";
-            public const string OpenAuthRedirectUri = "urn:ietf:wg:oauth:2.0:oob";
         }
 
         public struct UserAttribute
@@ -155,8 +154,11 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Storage
         {
+            public const string AccountResourceId = "/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.storage/storageAccounts/{2}";
+
             public struct Blob
             {
+                public const string WorkflowContainers = "/blobServices/default/containers/";
                 public const string WorkflowContainerName = "ams";
                 public const string WorkflowManifestFile = WorkflowContainerName + "/WorkflowManifest.json";
             }
@@ -240,20 +242,25 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct EventGrid
             {
-                public const string JobOutputProgressSubscriptionName = "AMS-Job-Output-Progress";
-                public static readonly string[] JobOutputProgressFilterTypes = new string[] {
+                public const string StorageBlobCreatedSubscriptionName = "Storage-Blob-Created";
+                public static string[] StorageBlobCreatedSubscriptionEvents = new string[] {
+                    "Microsoft.Storage.BlobCreated"
+                };
+
+                public const string JobOutputProgressSubscriptionName = "Media-Job-Output-Progress";
+                public static string[] JobOutputProgressSubscriptionEvents = new string[] {
                     "Microsoft.Media.JobOutputProgress"
                 };
 
-                public const string JobStateFinalSubscriptionName = "AMS-Job-State-Final";
-                public static readonly string[] JobStateFinalFilterTypes = new string[] {
+                public const string JobStateFinalSubscriptionName = "Media-Job-State-Final";
+                public static string[] JobStateFinalSubscriptionEvents = new string[] {
                     "Microsoft.Media.JobFinished",
                     "Microsoft.Media.JobCanceled",
                     "Microsoft.Media.JobErrored"
                 };
 
-                public const string LiveEventSubscriptionName = "AMS-Live-Event";
-                public static readonly string[] LiveEventFilterTypes = new string[] {
+                public const string LiveEventSubscriptionName = "Media-Live-Event";
+                public static string[] LiveEventSubscriptionEvents = new string[] {
                     "Microsoft.Media.LiveEventConnectionRejected",
                     "Microsoft.Media.LiveEventEncoderConnected",
                     "Microsoft.Media.LiveEventEncoderDisconnected",

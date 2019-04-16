@@ -101,6 +101,12 @@
         "description": "Function application name (<appName>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
+    "functionStorageBlobCreatedUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Function event handler url for storage blob created."
+      }
+    },
     "functionJobOutputProgressUrl": {
       "type": "string",
       "metadata": {
@@ -406,6 +412,10 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
+              "name": "Media.EventGrid.StorageBlobCreatedUrl",
+              "value": "[parameters('functionStorageBlobCreatedUrl')]"
+            },
+            {
               "name": "Media.EventGrid.JobOutputProgressUrl",
               "value": "[parameters('functionJobOutputProgressUrl')]"
             },
@@ -496,6 +506,10 @@
               "value": "[parameters('databaseServiceRegions')]"
             },
             {
+              "name": "Media.EventGrid.StorageBlobCreatedUrl",
+              "value": "[parameters('functionStorageBlobCreatedUrl')]"
+            },
+            {
               "name": "Media.EventGrid.JobOutputProgressUrl",
               "value": "[parameters('functionJobOutputProgressUrl')]"
             },
@@ -561,10 +575,6 @@
               "value": "[parameters('directoryTenantId')]"
             },
             {
-              "name": "Directory.TokenScope",
-              "value": "https://management.core.windows.net/.default"
-            },
-            {
               "name": "Directory.AuthorityUrl",
               "value": "[parameters('directoryAuthorityUrl')]"
             },
@@ -595,6 +605,10 @@
             {
               "name": "Database.Regions",
               "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.EventGrid.StorageBlobCreatedUrl",
+              "value": "[parameters('functionStorageBlobCreatedUrl')]"
             },
             {
               "name": "Media.EventGrid.JobOutputProgressUrl",
@@ -677,10 +691,6 @@
               "value": "[parameters('directoryTenantId')]"
             },
             {
-              "name": "Directory.TokenScope",
-              "value": "https://management.core.windows.net/.default"
-            },
-            {
               "name": "Directory.AuthorityUrl",
               "value": "[parameters('directoryAuthorityUrl')]"
             },
@@ -711,6 +721,10 @@
             {
               "name": "Database.Regions",
               "value": "[parameters('databaseServiceRegions')]"
+            },
+            {
+              "name": "Media.EventGrid.StorageBlobCreatedUrl",
+              "value": "[parameters('functionStorageBlobCreatedUrl')]"
             },
             {
               "name": "Media.EventGrid.JobOutputProgressUrl",

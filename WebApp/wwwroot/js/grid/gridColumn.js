@@ -536,7 +536,12 @@ function FormatValue(value) {
     return value;
 }
 function FormatStorage(value, grid, row) {
-    return value + "<br>(" + row.accessTier + ")";
+    if (value.length <= 4) {
+        value = value + " ";
+    } else {
+        value = value + "<br>";
+    }
+    return value + "(" + row.accessTier + ")";
 }
 function FormatRegions(value, grid, row) {
     return value + " (1st)<br>" + row.secondaryRegion + " (2nd)";

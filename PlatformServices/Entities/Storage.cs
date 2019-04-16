@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.Rest;
+using Microsoft.Rest.Azure.Authentication;
 using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 
@@ -19,8 +20,8 @@ namespace AzureSkyMedia.PlatformServices
 
         internal MediaStorage(MediaAccount mediaAccount, MediaStorageAccount storageAccount) : base(storageAccount.Type, storageAccount.Id)
         {
-            TokenCredentials authToken = AuthToken.AcquireToken(mediaAccount);
-            StorageManagementClient storageClient = new StorageManagementClient(authToken)
+            ServiceClientCredentials clientCredentials = ApplicationTokenProvider.LoginSilentAsync(mediaAccount.DirectoryTenantId, mediaAccount.ServicePrincipalId, mediaAccount.ServicePrincipalKey).Result;
+            StorageManagementClient storageClient = new StorageManagementClient(clientCredentials)
             {
                 SubscriptionId = mediaAccount.SubscriptionId
             };

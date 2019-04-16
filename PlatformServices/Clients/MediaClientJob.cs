@@ -131,7 +131,7 @@ namespace AzureSkyMedia.PlatformServices
                              string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
         {
             string insightId = null;
-            EventGridClient.SetMediaSubscription(this.MediaAccount, null);
+            EventGridClient.SetMediaSubscription(this.MediaAccount);
             if (transformName.Contains("Indexer"))
             {
                 insightId = IndexerUploadVideo(inputFileUrl, inputAssetName, jobPriority, false, false, false);

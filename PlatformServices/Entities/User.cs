@@ -21,7 +21,7 @@ namespace AzureSkyMedia.PlatformServices
             string[] videoIndexerKeys = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey);
             string[] videoIndexerRegions = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerRegion);
 
-            List< MediaAccount > mediaAccounts = new List<MediaAccount>();
+            List<MediaAccount> mediaAccounts = new List<MediaAccount>();
             for (var i = 0; i < accountNames.Length; i++)
             {
                 MediaAccount mediaAccount = new MediaAccount()
@@ -60,7 +60,7 @@ namespace AzureSkyMedia.PlatformServices
             get { return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.MobilePhoneNumber); }
         }
 
-        public MediaAccount MediaAccountPrimary
+        public MediaAccount MediaAccount
         {
             get { return _mediaAccounts[0]; }
         }

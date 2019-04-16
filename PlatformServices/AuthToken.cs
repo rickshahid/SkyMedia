@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-
-using Microsoft.Rest;
-using Microsoft.Identity.Client;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -48,29 +44,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
             return claimValues;
-        }
-
-        public static TokenCredentials AcquireToken(MediaAccount mediaAccount)
-        {
-            AuthenticationResult authResult = AcquireTokenAsync(mediaAccount).Result;
-            return new TokenCredentials(authResult.AccessToken);
-        }
-
-        public static Task<AuthenticationResult> AcquireTokenAsync(MediaAccount mediaAccount)
-        {
-            string settingKey = Constant.AppSettingKey.DirectoryAuthorityUrl;
-            string authorityUrl = AppSetting.GetValue(settingKey);
-            authorityUrl = string.Format(authorityUrl, mediaAccount.DirectoryTenantId);
-
-            string redirectUri = Constant.AuthIntegration.OpenAuthRedirectUri;
-            ClientCredential clientCredential = new ClientCredential(mediaAccount.ServicePrincipalKey);
-            ConfidentialClientApplication clientApplication = new ConfidentialClientApplication(mediaAccount.ServicePrincipalId, authorityUrl, redirectUri, clientCredential, null, null);
-
-            settingKey = Constant.AppSettingKey.DirectoryTokenScope;
-            string tokenScope = AppSetting.GetValue(settingKey);
-
-            string[] tokenScopes = new string[] { tokenScope };
-            return clientApplication.AcquireTokenForClientAsync(tokenScopes);
         }
     }
 }
