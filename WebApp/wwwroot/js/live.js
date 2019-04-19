@@ -16,6 +16,7 @@ function CreateLiveEvent() {
                 eventName: GetNewEventName(),
                 eventDescription: $("#description").val(),
                 eventTags: _jsonEditor.getText(),
+                inputAccessToken: "myInputAccessToken",
                 inputProtocol: $("#inputProtocol:checked").val(),
                 encodingType: $("#encodingType:checked").val(),
                 encodingPresetName: $("#encodingPresetName").val(),

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 using AzureSkyMedia.PlatformServices;
 

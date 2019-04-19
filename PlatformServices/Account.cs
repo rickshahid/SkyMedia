@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Auth;
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
@@ -63,20 +63,22 @@ namespace AzureSkyMedia.PlatformServices
             int liveEventOutputs = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
             int indexerInsights = !mediaClient.IndexerEnabled() ? 0 : mediaClient.IndexerGetInsights().Count;
 
-            List<string[]> entityCounts = new List<string[]>();
-            entityCounts.Add(new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(Constant.TextFormatter.NumericLong), "/account/storageAccounts" });
-            entityCounts.Add(new string[] { "Media Assets", assets.ToString(Constant.TextFormatter.NumericLong), "/asset" });
-            entityCounts.Add(new string[] { "Media Transforms", transforms.ToString(Constant.TextFormatter.NumericLong), "/transform" });
-            entityCounts.Add(new string[] { "Media Transform Jobs", transformJobs.ToString(Constant.TextFormatter.NumericLong), "/job" });
-            entityCounts.Add(new string[] { "Content Key Policies", contentKeyPolicies.ToString(Constant.TextFormatter.NumericLong), "/account/contentKeyPolicies" });
-            entityCounts.Add(new string[] { "Streaming Policies", streamingPolicies.ToString(Constant.TextFormatter.NumericLong), "/account/streamingPolicies" });
-            entityCounts.Add(new string[] { "Streaming Endpoints", streamingEndpoints.ToString(Constant.TextFormatter.NumericLong), "/account/streamingEndpoints" });
-            entityCounts.Add(new string[] { "Streaming Locators", streamingLocators.ToString(Constant.TextFormatter.NumericLong), "/account/streamingLocators" });
-            entityCounts.Add(new string[] { "Filters (Account)", filtersAccount.ToString(Constant.TextFormatter.NumericLong), "/account/filtersAccount" });
-            entityCounts.Add(new string[] { "Filters (Asset)", filtersAsset.ToString(Constant.TextFormatter.NumericLong), "/account/filtersAsset" });
-            entityCounts.Add(new string[] { "Live Events", liveEvents.ToString(Constant.TextFormatter.NumericLong), "/account/liveEvents" });
-            entityCounts.Add(new string[] { "Live Event Outputs", liveEventOutputs.ToString(Constant.TextFormatter.NumericLong), "/account/liveEventOutputs" });
-            entityCounts.Add(new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/insight" });
+            List<string[]> entityCounts = new List<string[]>
+            {
+                new string[] { "Storage Accounts", mediaClient.StorageAccounts.Count.ToString(Constant.TextFormatter.NumericLong), "/account/storageAccounts" },
+                new string[] { "Media Assets", assets.ToString(Constant.TextFormatter.NumericLong), "/asset" },
+                new string[] { "Media Transforms", transforms.ToString(Constant.TextFormatter.NumericLong), "/transform" },
+                new string[] { "Media Transform Jobs", transformJobs.ToString(Constant.TextFormatter.NumericLong), "/job" },
+                new string[] { "Content Key Policies", contentKeyPolicies.ToString(Constant.TextFormatter.NumericLong), "/account/contentKeyPolicies" },
+                new string[] { "Streaming Policies", streamingPolicies.ToString(Constant.TextFormatter.NumericLong), "/account/streamingPolicies" },
+                new string[] { "Streaming Endpoints", streamingEndpoints.ToString(Constant.TextFormatter.NumericLong), "/account/streamingEndpoints" },
+                new string[] { "Streaming Locators", streamingLocators.ToString(Constant.TextFormatter.NumericLong), "/account/streamingLocators" },
+                new string[] { "Filters (Account)", filtersAccount.ToString(Constant.TextFormatter.NumericLong), "/account/filtersAccount" },
+                new string[] { "Filters (Asset)", filtersAsset.ToString(Constant.TextFormatter.NumericLong), "/account/filtersAsset" },
+                new string[] { "Live Events", liveEvents.ToString(Constant.TextFormatter.NumericLong), "/account/liveEvents" },
+                new string[] { "Live Event Outputs", liveEventOutputs.ToString(Constant.TextFormatter.NumericLong), "/account/liveEventOutputs" },
+                new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/insight" }
+            };
 
             return entityCounts.ToArray();
         }

@@ -8,12 +8,13 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public LiveEvent CreateLiveEvent(string eventName, string eventDescription, string eventTags, LiveEventInputProtocol inputProtocol,
-                                         LiveEventEncodingType encodingType, string encodingPresetName, string streamingPolicyName,
-                                         bool lowLatency, bool autoStart)
+        public LiveEvent CreateLiveEvent(string eventName, string eventDescription, string eventTags, string inputAccessToken,
+                                         LiveEventInputProtocol inputProtocol, LiveEventEncodingType encodingType, string encodingPresetName,
+                                         string streamingPolicyName, bool lowLatency, bool autoStart)
         {
             LiveEventInput eventInput = new LiveEventInput()
             {
+                AccessToken = inputAccessToken,
                 StreamingProtocol = inputProtocol,
                 AccessControl = new LiveEventInputAccessControl()
                 {

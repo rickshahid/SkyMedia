@@ -15,8 +15,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaStorage : MediaStorageAccount
     {
-        private string _storageAccountName;
-        private StorageAccount _storageAccount;
+        private readonly string _storageAccountName;
+        private readonly StorageAccount _storageAccount;
 
         internal MediaStorage(MediaAccount mediaAccount, MediaStorageAccount storageAccount) : base(storageAccount.Type, storageAccount.Id)
         {
@@ -41,9 +41,9 @@ namespace AzureSkyMedia.PlatformServices
             get
             {
                 string accountType = Constant.NotAvailable;
-                if (_storageAccount != null && _storageAccount.Kind.HasValue)
+                if (_storageAccount != null)
                 {
-                    switch (_storageAccount.Kind.Value)
+                    switch (_storageAccount.Kind)
                     {
                         case Kind.Storage:
                             accountType = "General v1";

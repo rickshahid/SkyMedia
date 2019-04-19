@@ -3,8 +3,8 @@ using System.IO;
 using System.Web;
 using System.Collections.Generic;
 
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
 
 namespace AzureSkyMedia.PlatformServices
 {

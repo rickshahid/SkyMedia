@@ -237,7 +237,7 @@
     }
   },
   "variables": {
-    "storageApiVersion": "2018-07-01",
+    "storageApiVersion": "2019-04-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "searchApiVersion": "2015-08-19",
     "searchServiceName": "[toLower(parameters('searchServiceName'))]",

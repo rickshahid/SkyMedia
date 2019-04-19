@@ -20,7 +20,7 @@
     }
   },
   "variables": {
-    "storageApiVersion": "2018-11-01",
+    "storageApiVersion": "2019-04-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "storageServiceName1": "[concat(variables('storageServiceName'), '1')]",
     "storageServiceName2": "[concat(variables('storageServiceName'), '2')]",

@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Collections.Generic;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 using Newtonsoft.Json;
 

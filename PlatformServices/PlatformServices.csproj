@@ -7,26 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.ContentModerator" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Language.LUIS.Authoring" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Language.SpellCheck" Version="4.0.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Search.ImageSearch" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Search.NewsSearch" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Search.WebSearch" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="4.0.0" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.3.0" />
     <PackageReference Include="Microsoft.Azure.Management.EventGrid" Version="4.0.0" />
     <PackageReference Include="Microsoft.Azure.Management.Media" Version="2.0.2" />
-    <PackageReference Include="Microsoft.Azure.Management.Storage" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Azure.Search" Version="5.0.3" />
-    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Azure.Management.Storage" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="2.7.1" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.3.7" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
 </Project>

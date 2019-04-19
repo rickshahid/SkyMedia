@@ -1,5 +1,5 @@
-using Microsoft.Azure.Search;
-using Microsoft.Azure.Search.Models;
+//using Microsoft.Azure.Search;
+//using Microsoft.Azure.Search.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {

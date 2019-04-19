@@ -3,7 +3,7 @@ using System.Net;
 
 using Microsoft.Rest;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;

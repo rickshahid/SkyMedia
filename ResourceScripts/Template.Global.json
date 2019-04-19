@@ -100,7 +100,7 @@
   },
   "variables": {
     "keyVaultApiVersion": "2018-02-14",
-    "storageApiVersion": "2018-07-01",
+    "storageApiVersion": "2019-04-01",
     "storageServiceName": "[toLower(parameters('storageServiceName'))]",
     "databaseApiVersion": "2016-03-31",
     "databaseServiceName": "[toLower(parameters('databaseServiceName'))]",

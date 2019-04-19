@@ -6,7 +6,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
-    <Name>ResourceManager</Name>
+    <Name>ResourceScripts</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,16 +25,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Compile Include="Deployment.Cosmos.ps1" />
-    <Compile Include="Deployment.Global.ps1" />
-    <Compile Include="Deployment.Media.ps1" />
-    <Compile Include="Deployment.Regional.ps1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Template.Global.json" />
-    <Content Include="Template.Media.json" />
-    <Content Include="Template.Regional.json" />
+    <None Include="Deployment.Cosmos.ps1" />
+    <None Include="Deployment.Global.ps1" />
+    <None Include="Deployment.Media.ps1" />
+    <None Include="Deployment.Regional.ps1" />
+    <None Include="Template.Global.json" />
+    <None Include="Template.Regional.json" />
+    <None Include="Template.Media.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

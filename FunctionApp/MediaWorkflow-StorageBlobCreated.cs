@@ -3,10 +3,10 @@ using System.IO;
 using System.Threading.Tasks;
 
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
@@ -47,16 +47,16 @@ namespace AzureSkyMedia.FunctionApp
                                 case MediaJobInputMode.InputFile:
                                     string contentType = eventData["contentType"].ToString();
                                     string inputFileUrl = await CopyBlob(mediaClient, workflowManifest, blobInput, fileName, contentType);
-                                    CreateJob(mediaClient, workflowManifest, transform, inputFileUrl, logger);
+                                    CreateJob(mediaClient, workflowManifest, transform, inputFileUrl);
                                     break;
                                 case MediaJobInputMode.AssetFile:
                                     Asset inputAsset = await mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
                                     string assetFileUrl = MediaClient.GetAssetFileUrl(mediaClient, inputAsset);
-                                    CreateJob(mediaClient, workflowManifest, transform, assetFileUrl, logger);
+                                    CreateJob(mediaClient, workflowManifest, transform, assetFileUrl);
                                     break;
                                 case MediaJobInputMode.Asset:
                                     inputAsset = await mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
-                                    CreateJob(mediaClient, workflowManifest, transform, inputAsset, logger);
+                                    CreateJob(mediaClient, workflowManifest, transform, inputAsset);
                                     break;
                             }
                         }
@@ -79,7 +79,7 @@ namespace AzureSkyMedia.FunctionApp
             return blobClient.GetDownloadUrl(Constant.Storage.Blob.WorkflowContainerName, fileName);
         }
 
-        private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, string inputFileUrl, ILogger logger)
+        private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, string inputFileUrl)
         {
             Uri inputFileUri = new Uri(inputFileUrl);
             string assetName = Path.GetFileNameWithoutExtension(inputFileUri.LocalPath);
@@ -90,7 +90,7 @@ namespace AzureSkyMedia.FunctionApp
             mediaClient.CreateJob(transform.Name, jobName, null, jobPriority, null, inputFileUrl, null, jobOutputMode, streamingPolicyName);
         }
 
-        private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, Asset inputAsset, ILogger logger)
+        private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, Asset inputAsset)
         {
             string jobName = string.IsNullOrEmpty(workflowManifest.JobName) ? inputAsset.Name : workflowManifest.JobName;
             Priority jobPriority = workflowManifest.JobPriority;
