@@ -350,7 +350,7 @@ body {
     width: 100%;
 }
 
-.encodingPresetName {
+.inputStreamId {
     font-weight: bold;
     width: 300px;
 }
@@ -379,9 +379,10 @@ body {
 
 .jsonData {
     margin-bottom: 10px;
+    margin-left: 50px;
     text-align: left;
-    height: 200px;
-    width: 400px;
+    height: 250px;
+    width: 500px;
 }
 
 .jsoneditor-field {

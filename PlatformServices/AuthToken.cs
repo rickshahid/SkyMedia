@@ -31,9 +31,9 @@ namespace AzureSkyMedia.PlatformServices
             return claimValue;
         }
 
-        public static string[] GetClaimValues(string authToken, string claimType)
+        public static string[] GetClaimValues(string authToken, string claimType, bool notRequired)
         {
-            string[] claimValues = null;
+            string[] claimValues = notRequired ? new string[] { null } : null;
             Claim tokenClaim = GetTokenClaim(authToken, claimType);
             if (tokenClaim != null)
             {

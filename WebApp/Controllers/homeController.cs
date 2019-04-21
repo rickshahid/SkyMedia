@@ -120,6 +120,15 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 else
                 {
+                    using (SearchClient searchClient = new SearchClient(authToken, false))
+                    {
+                        string searchAccountName = searchClient.AccountName;
+                        if (!string.IsNullOrEmpty(searchAccountName))
+                        {
+                            userMessage = searchAccountName;
+                        }
+                    }
+
                     using (MediaClient mediaClient = new MediaClient(authToken))
                     {
                         if (!IsStreamingEnabled(mediaClient))

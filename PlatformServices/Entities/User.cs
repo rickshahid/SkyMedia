@@ -11,15 +11,15 @@ namespace AzureSkyMedia.PlatformServices
         {
             _authToken = authToken;
 
-            string[] accountNames = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountName);
-            string[] resourceGroupNames = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountResourceGroupName);
-            string[] subscriptionIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountSubscriptionId);
-            string[] directoryTenantIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountDirectoryTenantId);
-            string[] servicePrincipalIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalId);
-            string[] servicePrincipalKeys = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalKey);
-            string[] videoIndexerIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerId);
-            string[] videoIndexerKeys = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey);
-            string[] videoIndexerRegions = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerRegion);
+            string[] accountNames = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountName, false);
+            string[] resourceGroupNames = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountResourceGroupName, false);
+            string[] subscriptionIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountSubscriptionId, false);
+            string[] directoryTenantIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountDirectoryTenantId, false);
+            string[] servicePrincipalIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalId, false);
+            string[] servicePrincipalKeys = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountServicePrincipalKey, false);
+            string[] videoIndexerIds = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerId, true);
+            string[] videoIndexerKeys = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerKey, true);
+            string[] videoIndexerRegions = AuthToken.GetClaimValues(_authToken, Constant.UserAttribute.MediaAccountVideoIndexerRegion, true);
 
             List<MediaAccount> mediaAccounts = new List<MediaAccount>();
             for (var i = 0; i < accountNames.Length; i++)
@@ -71,28 +71,28 @@ namespace AzureSkyMedia.PlatformServices
 
             string nameClaimType = Constant.UserAttribute.StorageAccount1Name;
             string keyClaimType = Constant.UserAttribute.StorageAccount1Key;
-            AddStorageAccount(nameClaimType, keyClaimType, storageAccounts, i);
+            AddStorageAccount(storageAccounts, nameClaimType, keyClaimType, false, i);
 
             nameClaimType = Constant.UserAttribute.StorageAccount2Name;
             keyClaimType = Constant.UserAttribute.StorageAccount2Key;
-            AddStorageAccount(nameClaimType, keyClaimType, storageAccounts, i);
+            AddStorageAccount(storageAccounts, nameClaimType, keyClaimType, true, i);
 
             nameClaimType = Constant.UserAttribute.StorageAccount3Name;
             keyClaimType = Constant.UserAttribute.StorageAccount3Key;
-            AddStorageAccount(nameClaimType, keyClaimType, storageAccounts, i);
+            AddStorageAccount(storageAccounts, nameClaimType, keyClaimType, true, i);
 
             return storageAccounts;
         }
 
-        private void AddStorageAccount(string nameClaimType, string keyClaimType, Dictionary<string, string> storageAccounts, int i)
+        private void AddStorageAccount(Dictionary<string, string> storageAccounts, string nameClaimType, string keyClaimType, bool notRequired, int i)
         {
-            string[] claimValues = AuthToken.GetClaimValues(_authToken, nameClaimType);
+            string[] claimValues = AuthToken.GetClaimValues(_authToken, nameClaimType, notRequired);
             if (claimValues != null)
             {
                 string storageAccountName = claimValues[i];
                 string storageAccountKey = string.Empty;
 
-                claimValues = AuthToken.GetClaimValues(_authToken, keyClaimType);
+                claimValues = AuthToken.GetClaimValues(_authToken, keyClaimType, notRequired);
                 if (claimValues != null)
                 {
                     storageAccountKey = claimValues[i];

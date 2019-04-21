@@ -8,13 +8,13 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public LiveEvent CreateLiveEvent(string eventName, string eventDescription, string eventTags, string inputAccessToken,
+        public LiveEvent CreateLiveEvent(string eventName, string eventDescription, string eventTags, string inputStreamId,
                                          LiveEventInputProtocol inputProtocol, LiveEventEncodingType encodingType, string encodingPresetName,
                                          string streamingPolicyName, bool lowLatency, bool autoStart)
         {
             LiveEventInput eventInput = new LiveEventInput()
             {
-                AccessToken = inputAccessToken,
+                AccessToken = inputStreamId,
                 StreamingProtocol = inputProtocol,
                 AccessControl = new LiveEventInputAccessControl()
                 {
@@ -39,6 +39,7 @@ namespace AzureSkyMedia.PlatformServices
             };
             LiveEventPreview eventPreview = new LiveEventPreview()
             {
+                PreviewLocator = inputStreamId,
                 StreamingPolicyName = streamingPolicyName
             };
             List<StreamOptionsFlag?> streamOptions = new List<StreamOptionsFlag?>();
@@ -55,7 +56,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 VanityUrl = true,
                 Description = eventDescription,
-                Tags = GetCorrelationData(eventTags),
+                Tags = GetCorrelationData(eventTags, false),
                 Input = eventInput,
                 Encoding = eventEncoding,
                 Preview = eventPreview,
@@ -86,7 +87,7 @@ namespace AzureSkyMedia.PlatformServices
             LiveEvent liveEvent = new LiveEvent()
             {
                 Description = eventDescription,
-                Tags = GetCorrelationData(eventTags),
+                Tags = GetCorrelationData(eventTags, false),
                 CrossSiteAccessPolicies = crossSiteAccessPolicies,
                 Location = mediaService.Location
             };

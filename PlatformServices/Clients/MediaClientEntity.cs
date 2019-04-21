@@ -12,11 +12,14 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public IDictionary<string, string> GetCorrelationData(JObject jsonData)
+        public IDictionary<string, string> GetCorrelationData(JObject jsonData, bool addAccount)
         {
             Dictionary<string, string> correlationData = new Dictionary<string, string>();
-            string mediaAccount = JsonConvert.SerializeObject(this.MediaAccount);
-            correlationData.Add("mediaAccount", mediaAccount);
+            if (addAccount)
+            {
+                string mediaAccount = JsonConvert.SerializeObject(this.MediaAccount);
+                correlationData.Add("mediaAccount", mediaAccount);
+            }
             if (jsonData != null)
             {
                 foreach (KeyValuePair<string, JToken> property in jsonData)
@@ -28,12 +31,12 @@ namespace AzureSkyMedia.PlatformServices
             return correlationData;
         }
 
-        public IDictionary<string, string> GetCorrelationData(string jsonData)
+        public IDictionary<string, string> GetCorrelationData(string jsonData, bool addAccount)
         {
             IDictionary<string, string> correlationData = null;
             if (!string.IsNullOrEmpty(jsonData))
             {
-                correlationData = GetCorrelationData(JObject.Parse(jsonData));
+                correlationData = GetCorrelationData(JObject.Parse(jsonData), addAccount);
             }
             return correlationData;
         }

@@ -427,14 +427,6 @@
               "name": "Media.EventGrid.LiveEventUrl",
               "value": "[parameters('functionLiveEventUrl')]"
             }
-            //{
-            //  "name": "Search.ReadOnly",
-            //  "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryReadonlyMasterKey)]"
-            //},
-            //{
-            //  "name": "Search.ReadWrite",
-            //  "value": "[concat('AccountName=', variables('searchServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Search/searchServices', variables('searchServiceName')), variables('searchApiVersion')).primaryMasterKey)]"
-            //}
           ]
         },
         "clientAffinityEnabled": false

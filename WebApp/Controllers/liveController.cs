@@ -33,7 +33,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             return liveEvents.ToArray();
         }
 
-        public JsonResult CreateEvent(string eventName, string eventDescription, string eventTags, string inputAccessToken,
+        public JsonResult CreateEvent(string eventName, string eventDescription, string eventTags, string inputStreamId,
                                       LiveEventInputProtocol inputProtocol, LiveEventEncodingType encodingType, string encodingPresetName,
                                       string streamingPolicyName, bool lowLatency, bool autoStart)
         {
@@ -43,7 +43,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    liveEvent = mediaClient.CreateLiveEvent(eventName, eventDescription, eventTags, inputAccessToken, inputProtocol, encodingType, encodingPresetName, streamingPolicyName, lowLatency, autoStart);
+                    liveEvent = mediaClient.CreateLiveEvent(eventName, eventDescription, eventTags, inputStreamId, inputProtocol, encodingType, encodingPresetName, streamingPolicyName, lowLatency, autoStart);
                 }
                 return Json(liveEvent);
             }

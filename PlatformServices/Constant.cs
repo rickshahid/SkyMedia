@@ -150,6 +150,10 @@ namespace AzureSkyMedia.PlatformServices
             public const string StorageAccount2Key = "extension_StorageAccount2Key";
             public const string StorageAccount3Name = "extension_StorageAccount3Name";
             public const string StorageAccount3Key = "extension_StorageAccount3Key";
+
+            public const string SearchAccountName = "extension_SearchAccountName";
+            public const string SearchAccountKeyReadOnly = "extension_SearchAccountKeyReadOnly";
+            public const string SearchAccountKeyReadWrite = "extension_SearchAccountKeyReadWrite";
         }
 
         public struct Storage
@@ -191,13 +195,13 @@ namespace AzureSkyMedia.PlatformServices
             public struct Channel9
             {
                 public const int DefaultIngestVideoCount = 8;
-                public const string NamespacePrefix = "media";
-                public const string NamespaceUrl = "http://search.yahoo.com/mrss/";
-                public const string XPathQuery = "media:group/media:content[@type='video/mp4']";
-                public const string UrlHttp = "http://video.ch9.ms/";
-                public const string UrlHttps = "https://sec.ch9.ms/";
-                public const string Http = "http://";
-                public const string Https = "https://";
+                //public const string NamespacePrefix = "media";
+                //public const string NamespaceUrl = "http://search.yahoo.com/mrss/";
+                //public const string XPathQuery = "media:group/media:content[@type='video/mp4']";
+                //public const string UrlHttp = "http://video.ch9.ms/";
+                //public const string UrlHttps = "https://sec.ch9.ms/";
+                //public const string Http = "http://";
+                //public const string Https = "https://";
             }
 
             public struct ContentType

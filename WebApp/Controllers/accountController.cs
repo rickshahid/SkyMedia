@@ -220,6 +220,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 ViewData["streamingPolicies"] = JobController.GetStreamingPolicies(mediaClient);
             }
             ViewData["liveEvents"] = mediaLiveEvents.ToArray();
+            ViewData["inputStreamId"] = AuthToken.GetClaimValues(authToken, Constant.UserAttribute.MediaAccountServicePrincipalId, true)[0];
             return View();
         }
 

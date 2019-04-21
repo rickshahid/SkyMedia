@@ -2,6 +2,7 @@
 
 @{
     string gridId = "liveEvents";
+    string inputStreamId = ViewData["inputStreamId"].ToString();
 }
 
 @section head {
@@ -13,6 +14,7 @@
             var gridId = "@gridId";
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
+            $("#inputStreamId").val("@inputStreamId");
             CreateTipTop("liveEventCreate", "Create Live Event");
             CreateTipTop("liveEventUpdate", "Update Live Event");
             CreateJsonEditor("liveEventTags", "Live Event Tags", null);
@@ -48,9 +50,17 @@
             <table class="mediaEntityProperties">
                 <tr>
                     <td class="inputLabel">
+                        Input Stream Id
+                    </td>
+                    <td>
+                        <input id="inputStreamId" class="inputStreamId" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="inputLabel">
                         Input Protocol
                     </td>
-                    <td class="inputOption">
+                    <td>
                         <input id="inputProtocol" name="inputProtocol" type="radio" value="FragmentedMP4" checked />
                         <span class="inputLabel">Fragmented MP4</span>
                         &nbsp;
@@ -65,12 +75,15 @@
                     <td class="inputLabel">
                         Encoding Type
                     </td>
-                    <td class="inputOption">
-                        <input id="encodingType" name="encodingType" type="radio" value="None" checked />
+                    <td>
+                        <input id="encodingType" name="encodingType" type="radio" value="None" onclick="SetEncodingPreset(this)" checked />
                         <span class="inputLabel">None</span>
                         &nbsp;
-                        <input id="encodingType" name="encodingType" type="radio" value="Basic" />
-                        <span class="inputLabel">Basic</span>
+                        <input id="encodingType" name="encodingType" type="radio" value="Standard" onclick="SetEncodingPreset(this)" />
+                        <span class="inputLabel">Standard</span>
+                        &nbsp;
+                        <input id="encodingType" name="encodingType" type="radio" value="Premium" onclick="SetEncodingPreset(this)" disabled />
+                        <span class="inputLabel">Premium</span>
                     </td>
                 </tr>
                 <tr>
@@ -78,12 +91,14 @@
                         Encoding Preset
                     </td>
                     <td>
-                        <input id="encodingPresetName" class="encodingPresetName" type="text" />
+                        <input id="encodingPresetName" class="inputStreamId" type="text" />
                     </td>
                 </tr>
                 <tr>
                     <td class="inputLabel">
-                        Streaming Policy
+                        <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/streaming-policy-concept')">
+                            Streaming Policy
+                        </span>
                     </td>
                     <td class="inputOption">
                         @Html.DropDownList("streamingPolicies", null, new { @class = "inputSelect maxWidth" })
@@ -91,7 +106,9 @@
                 </tr>
                 <tr>
                     <td class="inputLabel">
-                        Low Latency
+                        <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/live-event-latency')">
+                            Low Latency
+                        </span>
                     </td>
                     <td class="inputOption">
                         <input id="lowLatency" type="checkbox" />

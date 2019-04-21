@@ -44,7 +44,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private string GetOutputAssetName(TransformOutput transformOutput, MediaJob mediaJob, out string outputAssetStorage)
         {
-            outputAssetStorage = this.PrimaryStorageAccount;
+            outputAssetStorage = this.StorageAccount;
             string outputAssetName = mediaJob.InputAssetName;
             if (!string.IsNullOrEmpty(mediaJob.InputFileUrl) && string.IsNullOrEmpty(outputAssetName))
             {
@@ -120,7 +120,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Description = mediaJob.Description,
                 Priority = mediaJob.Priority,
-                CorrelationData = GetCorrelationData(mediaJob.Data),
+                CorrelationData = GetCorrelationData(mediaJob.Data, true),
                 Input = GetJobInput(mediaJob),
                 Outputs = GetJobOutputs(transformName, insightId, mediaJob)
             };

@@ -55,7 +55,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string PrimaryStorageAccount
+        public string StorageAccount
         {
             get
             {

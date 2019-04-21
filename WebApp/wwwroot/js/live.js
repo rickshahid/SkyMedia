@@ -6,6 +6,18 @@
     }
     return eventName;
 }
+function SetEncodingPreset(radioButton) {
+    var presetName = "";
+    switch (radioButton.value) {
+        case "Standard":
+            presetName = "[default720p]";
+            break;
+        case "Premium":
+            presetName = "[default1080p]";
+            break;
+    }
+    $("#encodingPresetName").prop("placeholder", presetName);
+}
 function CreateLiveEvent() {
     var title = "Create Live Event";
     var message = "Are you sure you want to create a new live event?";
@@ -16,7 +28,7 @@ function CreateLiveEvent() {
                 eventName: GetNewEventName(),
                 eventDescription: $("#description").val(),
                 eventTags: _jsonEditor.getText(),
-                inputAccessToken: "myInputAccessToken",
+                inputStreamId: $("#inputStreamId").val(),
                 inputProtocol: $("#inputProtocol:checked").val(),
                 encodingType: $("#encodingType:checked").val(),
                 encodingPresetName: $("#encodingPresetName").val(),

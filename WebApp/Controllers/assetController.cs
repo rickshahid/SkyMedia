@@ -120,7 +120,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     StorageBlobClient sourceBlobClient = new StorageBlobClient();
-                    StorageBlobClient assetBlobClient = new StorageBlobClient(mediaClient.MediaAccount, mediaClient.PrimaryStorageAccount);
+                    StorageBlobClient assetBlobClient = new StorageBlobClient(mediaClient.MediaAccount, mediaClient.StorageAccount);
                     for (int i = 1; i <= assetCount; i++)
                     {
                         List<Task> uploadTasks = new List<Task>();
@@ -128,7 +128,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         string directoryPath = assetType;
                         string assetName = MediaClient.GetAssetName(sourceBlobClient, containerName, directoryPath, out MediaFile[] sourceFiles);
                         assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, assetName);
-                        Asset asset = mediaClient.CreateAsset(mediaClient.PrimaryStorageAccount, assetName);
+                        Asset asset = mediaClient.CreateAsset(mediaClient.StorageAccount, assetName);
                         foreach (MediaFile sourceFile in sourceFiles)
                         {
                             CloudBlockBlob sourceBlob = sourceBlobClient.GetBlockBlob(containerName, directoryPath, sourceFile.Name);

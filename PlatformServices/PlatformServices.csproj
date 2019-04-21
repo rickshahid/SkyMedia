@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Azure.Management.EventGrid" Version="4.0.0" />
     <PackageReference Include="Microsoft.Azure.Management.Media" Version="2.0.2" />
     <PackageReference Include="Microsoft.Azure.Management.Storage" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Azure.Search" Version="5.0.3" />
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="10.0.1" />
     <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
