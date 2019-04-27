@@ -1,6 +1,6 @@
 # Azure Sky Media
 
-Welcome! This repository contains the <a href="https://azure.microsoft.com/en-us/solutions/serverless/" target="_blank">Azure serverless</a> media solution that is deployed at www.skymedia.tv, which is based upon the <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> platform capabilities.
+Welcome! This repository contains the <a href="https://azure.microsoft.com/en-us/solutions/serverless/" target="_blank">Azure serverless</a> media solution that is deployed at www.skymedia.tv. The solution is based upon <a href="http://azure.microsoft.com/services/media-services/" target="_blank">Azure Media Services</a> capabilities combined with several other Azure platform services.
 
 As an example illustration, the screenshot below is an introductory media stream that is delivered to a multi-region <a href="http://azure.microsoft.com/services/app-service/web/" target="_blank">Azure Web App</a> via <a href="http://azure.microsoft.com/services/media-services/media-player/" target="_blank">Azure Media Player</a> and <a href="http://azure.microsoft.com/services/cdn/" target="_blank">Azure Content Delivery Network</a> integration. Both on-demand and live video content can be adaptively streamed and globally viewed across a wide variety of modern devices and browsers.
 
