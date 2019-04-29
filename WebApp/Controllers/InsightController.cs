@@ -32,7 +32,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         case MediaInsightModel.Person:
                             models = mediaClient.IndexerGetPersons();
                             break;
-                        case MediaInsightModel.Langauge:
+                        case MediaInsightModel.Language:
                             models = mediaClient.IndexerGetLanguages();
                             break;
                     }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Azure.WebJobs;
@@ -19,45 +20,68 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaWorkflowStorageBlobCreated
     {
         [FunctionName("MediaWorkflow-StorageBlobCreated")]
-        public async static void Run([EventGridTrigger] EventGridEvent eventTrigger, [Blob("{data.url}", FileAccess.Read)] Stream blobInput,
-                                     [Blob(Constant.Storage.Blob.WorkflowManifestFile, FileAccess.Read)] Stream blobWorkflow, ILogger logger)
+        public async static Task Run([EventGridTrigger] EventGridEvent eventTrigger, [Blob("{data.url}", FileAccess.Read)] Stream workflowInput,
+                                     [Blob(Constant.Storage.Blob.WorkflowManifestPath, FileAccess.Read)] Stream manifestInput, ILogger logger)
         {
             try
             {
                 logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));
-                if (blobWorkflow != null && !eventTrigger.Subject.EndsWith(Constant.FileExtension.WorkflowManifest, StringComparison.OrdinalIgnoreCase))
+                if (ValidInput(eventTrigger, manifestInput, logger, out MediaWorkflowManifest workflowManifest))
                 {
-                    string workflowJson;
-                    using (StreamReader workflowReader = new StreamReader(blobWorkflow))
+                    using (workflowInput)
                     {
-                        workflowJson = workflowReader.ReadToEnd();
-                    }
-                    logger.LogInformation(workflowJson);
-                    MediaWorkflowManifest workflowManifest = JsonConvert.DeserializeObject<MediaWorkflowManifest>(workflowJson);
-                    using (blobInput)
-                    {
-                        string fileName = Path.GetFileName(eventTrigger.Subject);
                         JObject eventData = JObject.FromObject(eventTrigger.Data);
                         MediaAccount mediaAccount = workflowManifest.MediaAccounts[0];
                         using (MediaClient mediaClient = new MediaClient(mediaAccount))
                         {
+                            Asset inputAsset = null;
+                            string inputFileUrl = null;
+                            string inputFileName = workflowManifest.InputFileName;
+                            if (string.IsNullOrEmpty(inputFileName))
+                            {
+                                inputFileName = Path.GetFileName(eventTrigger.Subject);
+                            }
                             Transform transform = mediaClient.GetTransform(workflowManifest.TransformPresets);
                             switch (workflowManifest.JobInputMode)
                             {
                                 case MediaJobInputMode.InputFile:
-                                    string contentType = eventData["contentType"].ToString();
-                                    string inputFileUrl = await CopyBlob(mediaClient, workflowManifest, blobInput, fileName, contentType);
-                                    CreateJob(mediaClient, workflowManifest, transform, inputFileUrl);
+                                    StorageBlobClient blobClient = new StorageBlobClient();
+                                    string containerName = Constant.Storage.Blob.WorkflowContainerName;
+                                    inputFileUrl = blobClient.GetDownloadUrl(containerName, inputFileName);
+                                    logger.LogInformation(inputFileUrl);
+                                    if (transform != null)
+                                    {
+                                        CreateJob(mediaClient, workflowManifest, transform, inputFileUrl);
+                                    }
                                     break;
                                 case MediaJobInputMode.AssetFile:
-                                    Asset inputAsset = await mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
-                                    string assetFileUrl = MediaClient.GetAssetFileUrl(mediaClient, inputAsset);
-                                    CreateJob(mediaClient, workflowManifest, transform, assetFileUrl);
+                                    inputAsset = await mediaClient.CreateAsset(workflowManifest.OutputAssetStorage, inputFileName, inputFileName, workflowInput);
+                                    blobClient = new StorageBlobClient(mediaClient.MediaAccount, inputAsset.StorageAccountName);
+                                    inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, inputFileName);
+                                    logger.LogInformation(inputFileUrl);
+                                    if (transform != null)
+                                    {
+                                        CreateJob(mediaClient, workflowManifest, transform, inputFileUrl);
+                                    }
                                     break;
                                 case MediaJobInputMode.Asset:
-                                    inputAsset = await mediaClient.CreateAsset(workflowManifest.MediaStorage, fileName, fileName, blobInput);
-                                    CreateJob(mediaClient, workflowManifest, transform, inputAsset);
+                                    inputAsset = await mediaClient.CreateAsset(workflowManifest.OutputAssetStorage, inputFileName, inputFileName, workflowInput);
+                                    logger.LogInformation(inputAsset.Name);
+                                    if (transform != null)
+                                    {
+                                        CreateJob(mediaClient, workflowManifest, transform, inputAsset);
+                                    }
                                     break;
+                            }
+                            bool videoIndexer = workflowManifest.TransformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
+                            bool audioIndexer = workflowManifest.TransformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
+                            bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
+                            bool indexOnly = false;
+                            bool audioOnly = !videoIndexer && audioIndexer;
+                            bool videoOnly = false;
+                            if (indexerEnabled)
+                            {
+                                string insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, workflowManifest.JobPriority, indexOnly, audioOnly, videoOnly);
                             }
                         }
                     }
@@ -69,14 +93,35 @@ namespace AzureSkyMedia.FunctionApp
             }
         }
 
-        private async static Task<string> CopyBlob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Stream blobStream, string fileName, string contentType)
+        private static bool ValidInput(EventGridEvent eventTrigger, Stream manifestInput, ILogger logger, out MediaWorkflowManifest workflowManifest)
         {
-            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, workflowManifest.MediaStorage);
-            CloudBlockBlob blob = blobClient.GetBlockBlob(Constant.Storage.Blob.WorkflowContainerName, null, fileName);
-            blob.Properties.ContentType = contentType;
-            await blob.UploadFromStreamAsync(blobStream);
-            //await blob.SetPropertiesAsync();
-            return blobClient.GetDownloadUrl(Constant.Storage.Blob.WorkflowContainerName, fileName);
+            bool validInput = false;
+            workflowManifest = null;
+            if (manifestInput != null)
+            {
+                string workflowManifestJson;
+                using (StreamReader manifestReader = new StreamReader(manifestInput))
+                {
+                    workflowManifestJson = manifestReader.ReadToEnd();
+                }
+                logger.LogInformation(workflowManifestJson);
+                workflowManifest = JsonConvert.DeserializeObject<MediaWorkflowManifest>(workflowManifestJson);
+                if (eventTrigger.Subject.EndsWith(Constant.Storage.Blob.WorkflowManifestFile, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!string.IsNullOrEmpty(workflowManifest.InputFileName))
+                    {
+                        StorageBlobClient blobClient = new StorageBlobClient();
+                        string containerName = Constant.Storage.Blob.WorkflowContainerName;
+                        CloudBlockBlob blob = blobClient.GetBlockBlob(containerName, null, workflowManifest.InputFileName);
+                        validInput = blob.Exists();
+                    }
+                }
+                else
+                {
+                    validInput = true;
+                }
+            }
+            return validInput;
         }
 
         private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, string inputFileUrl)
@@ -86,8 +131,9 @@ namespace AzureSkyMedia.FunctionApp
             string jobName = string.IsNullOrEmpty(workflowManifest.JobName) ? assetName : workflowManifest.JobName;
             Priority jobPriority = workflowManifest.JobPriority;
             MediaJobOutputMode jobOutputMode = workflowManifest.JobOutputMode;
+            string outputAssetStorage = workflowManifest.OutputAssetStorage;
             string streamingPolicyName = workflowManifest.StreamingPolicyName;
-            mediaClient.CreateJob(transform.Name, jobName, null, jobPriority, null, inputFileUrl, null, jobOutputMode, streamingPolicyName);
+            mediaClient.CreateJob(transform.Name, jobName, null, jobPriority, null, inputFileUrl, null, jobOutputMode, outputAssetStorage, streamingPolicyName);
         }
 
         private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, Asset inputAsset)
@@ -95,8 +141,9 @@ namespace AzureSkyMedia.FunctionApp
             string jobName = string.IsNullOrEmpty(workflowManifest.JobName) ? inputAsset.Name : workflowManifest.JobName;
             Priority jobPriority = workflowManifest.JobPriority;
             MediaJobOutputMode jobOutputMode = workflowManifest.JobOutputMode;
+            string outputAssetStorage = workflowManifest.OutputAssetStorage;
             string streamingPolicyName = workflowManifest.StreamingPolicyName;
-            mediaClient.CreateJob(transform.Name, jobName, null, jobPriority, null, null, inputAsset.Name, jobOutputMode, streamingPolicyName);
+            mediaClient.CreateJob(transform.Name, jobName, null, jobPriority, null, null, inputAsset.Name, jobOutputMode, outputAssetStorage, streamingPolicyName);
         }
     }
 }

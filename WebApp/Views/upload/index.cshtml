@@ -58,11 +58,19 @@
 <table class="mediaUploadOptions">
     <tr>
         <td>
-            @Html.CheckBox("adaptiveStreaming", true)
+            @Html.CheckBox("contentAwareEncoding", true)
         </td>
         <td>
-            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
-                Adaptive Streaming
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/cae-experimental')">
+                Content-Aware Encoding
+            </span>
+        </td>
+        <td class="mediaUploadOption">
+            @Html.CheckBox("thumbnailImages", true)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
+                Thumbnail Images
             </span>
         </td>
         <td class="mediaUploadOption">
@@ -84,6 +92,14 @@
     </tr>
     <tr>
         <td>
+            @Html.CheckBox("adaptiveStreaming", false)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
+                Adaptive Streaming
+            </span>
+        </td>
+        <td class="mediaUploadOption">
             @Html.CheckBox("thumbnailSprite", false)
         </td>
         <td>

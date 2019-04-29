@@ -8,6 +8,22 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private StandardEncoderPreset GetThumbnailGeneration(Image thumbnailCodec)
+        {
+            StandardEncoderPreset customEncoding = new StandardEncoderPreset
+            {
+                Codecs = new List<Codec>(),
+                Formats = new List<Format>()
+            };
+            JpgFormat thumbnailFormat = new JpgFormat()
+            {
+                FilenamePattern = string.Concat(Constant.Media.Thumbnail.FileNamePrefix, Constant.Media.Thumbnail.FileNameSuffix)
+            };
+            customEncoding.Codecs.Add(thumbnailCodec);
+            customEncoding.Formats.Add(thumbnailFormat);
+            return customEncoding;
+        }
+
         private string GetTransformName(string transformName, MediaTransformOutput[] transformOutputs)
         {
             if (string.IsNullOrEmpty(transformName))
@@ -24,44 +40,14 @@ namespace AzureSkyMedia.PlatformServices
             return transformName;
         }
 
-        private StandardEncoderPreset GetThumbnailPreset(int? thumbnailSpriteColumns)
-        {
-            StandardEncoderPreset thumbnailPreset = new StandardEncoderPreset()
-            {
-                Codecs = new Codec[]
-                {
-                    new JpgImage()
-                    {
-                        Start = "0%",
-                        Step = "2%",
-                        Range = "100%",
-                        Layers = new JpgLayer[]
-                        {
-                            new JpgLayer()
-                            {
-                                Height = "10%",
-                                Width = "10%",
-                                Quality = 90
-                            }
-                        }
-                    }
-                },
-                Formats = new Format[]
-                {
-                    new JpgFormat()
-                    {
-                        FilenamePattern = string.Concat(Constant.Media.Thumbnail.FileNamePrefix, Constant.Media.Thumbnail.FileNameSuffix)
-                    }
-                }
-            };
-            return thumbnailPreset;
-        }
-
-        private TransformOutput GetTransformOutput(MediaTransformOutput transformOutput, int? thumbnailSpriteColumns)
+        private TransformOutput GetTransformOutput(MediaTransformOutput transformOutput, Image thumbnailCodec)
         {
             Preset transformPreset = null;
             switch (transformOutput.PresetType)
             {
+                case MediaTransformPreset.ContentAwareEncoding:
+                    transformPreset = new BuiltInStandardEncoderPreset(EncoderNamedPreset.ContentAwareEncodingExperimental);
+                    break;
                 case MediaTransformPreset.AdaptiveStreaming:
                     EncoderNamedPreset presetName = EncoderNamedPreset.AdaptiveStreaming;
                     if (!string.IsNullOrEmpty(transformOutput.PresetName))
@@ -70,8 +56,9 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     transformPreset = new BuiltInStandardEncoderPreset(presetName);
                     break;
+                case MediaTransformPreset.ThumbnailImages:
                 case MediaTransformPreset.ThumbnailSprite:
-                    transformPreset = GetThumbnailPreset(thumbnailSpriteColumns);
+                    transformPreset = GetThumbnailGeneration(thumbnailCodec);
                     break;
                 case MediaTransformPreset.VideoAnalyzer:
                     transformPreset = new VideoAnalyzerPreset();
@@ -94,13 +81,13 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public Transform GetTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, int? thumbnailSpriteColumns, bool createUpdate)
+        public Transform GetTransform(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, Image thumbnailCodec, bool createUpdate)
         {
             Transform transform = null;
             List<TransformOutput> transformOutputList = new List<TransformOutput>();
             foreach (MediaTransformOutput transformOutput in transformOutputs)
             {
-                TransformOutput transformOutputItem = GetTransformOutput(transformOutput, thumbnailSpriteColumns);
+                TransformOutput transformOutputItem = GetTransformOutput(transformOutput, thumbnailCodec);
                 if (transformOutputItem != null)
                 {
                     transformOutputList.Add(transformOutputItem);
@@ -121,15 +108,33 @@ namespace AzureSkyMedia.PlatformServices
             return transform;
         }
 
-        public Transform GetTransform(bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+        public Transform GetTransform(bool contentAwareEncoding, bool adaptiveStreaming, bool thumbnailImages, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
+            if (contentAwareEncoding)
+            {
+                MediaTransformOutput transformOutput = new MediaTransformOutput()
+                {
+                    PresetType = MediaTransformPreset.ContentAwareEncoding,
+                    PresetName = EncoderNamedPreset.ContentAwareEncodingExperimental.ToString()
+                };
+                transformOutputs.Add(transformOutput);
+            }
             if (adaptiveStreaming)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
                     PresetType = MediaTransformPreset.AdaptiveStreaming,
                     PresetName = EncoderNamedPreset.AdaptiveStreaming.ToString()
+                };
+                transformOutputs.Add(transformOutput);
+            }
+            if (thumbnailImages)
+            {
+                MediaTransformOutput transformOutput = new MediaTransformOutput()
+                {
+                    PresetType = MediaTransformPreset.ThumbnailImages,
+                    PresetName = MediaTransformPreset.ThumbnailImages.ToString()
                 };
                 transformOutputs.Add(transformOutput);
             }
@@ -183,13 +188,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public Transform GetTransform(MediaTransformPreset[] transformPresets)
         {
+            bool contentAwareEncoding = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ContentAwareEncoding);
             bool adaptiveStreaming = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AdaptiveStreaming);
+            bool thumbnailImages = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ThumbnailImages);
             bool thumbnailSprite = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ThumbnailSprite);
             bool videoAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoAnalyzer);
             bool audioAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioAnalyzer);
             bool videoIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
             bool audioIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
-            return GetTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
+            return GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
         }
     }
 }

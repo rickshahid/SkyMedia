@@ -27,7 +27,8 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public async Task<JsonResult> Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                               bool adaptiveStreaming, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+                                               bool contentAwareEncoding, bool adaptiveStreaming, bool thumbnailImages, bool thumbnailSprite,
+                                               bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
         {
             try
             {
@@ -36,31 +37,33 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    Transform transform = mediaClient.GetTransform(adaptiveStreaming, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
+                    Transform transform = mediaClient.GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
                     inputAssets = await CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
+                    StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
                     foreach (Asset inputAsset in inputAssets)
                     {
                         Job job = null;
-                        string insightId = null;
-                        if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
-                        {
-                            bool audioOnly = !videoIndexer && audioIndexer;
-                            bool videoOnly = false;
-                            insightId = mediaClient.IndexerUploadVideo(null, inputAsset.Name, Priority.Normal, false, audioOnly, videoOnly);
-                        }
+                        Priority jobPriority = Priority.Normal;
+                        MediaAsset mediaAsset = new MediaAsset(mediaClient, inputAsset);
+                        string fileName = mediaAsset.Files[0].Name;
+                        string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName);
                         if (transform != null)
                         {
-                            string inputFileUrl = MediaClient.GetAssetFileUrl(mediaClient, inputAsset);
-                            MediaJobOutputMode outputAssetMode = MediaJobOutputMode.OutputAsset;
+                            MediaJobOutputMode outputAssetMode = MediaJobOutputMode.MultipleAssets;
                             PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
-                            job = mediaClient.CreateJob(transform.Name, null, null, Priority.Normal, null, inputFileUrl, inputAsset.Name, outputAssetMode, streamingPolicy);
+                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputFileUrl, inputAsset.Name, outputAssetMode, null, streamingPolicy);
+                        }
+                        string insightId = null;
+                        bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
+                        bool indexOnly = false;
+                        bool audioOnly = !videoIndexer && audioIndexer;
+                        bool videoOnly = false;
+                        if (indexerEnabled)
+                        {
+                            insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, indexOnly, audioOnly, videoOnly);
                         }
                         if (job != null)
                         {
-                            if (!string.IsNullOrEmpty(insightId))
-                            {
-                                job.CorrelationData.Add("insightId", insightId);
-                            }
                             jobs.Add(job);
                         }
                         else

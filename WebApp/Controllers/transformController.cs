@@ -10,7 +10,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class TransformController : Controller
     {
-        public JsonResult Save(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, int? thumbnailSpriteColumns)
+        public JsonResult Save(string transformName, string transformDescription, MediaTransformOutput[] transformOutputs, Image thumbnailCodec)
         {
             try
             {
@@ -18,7 +18,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    transform = mediaClient.GetTransform(transformName, transformDescription, transformOutputs, thumbnailSpriteColumns, true);
+                    transform = mediaClient.GetTransform(transformName, transformDescription, transformOutputs, thumbnailCodec, true);
                 }
                 return Json(transform);
             }

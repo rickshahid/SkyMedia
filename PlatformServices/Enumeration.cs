@@ -12,8 +12,8 @@ namespace AzureSkyMedia.PlatformServices
         StreamingPolicy,
         StreamingEndpoint,
         StreamingLocator,
-        FilterAccount,
-        FilterAsset,
+        StreamingFilterAccount,
+        StreamingFilterAsset,
         LiveEvent,
         LiveEventOutput
     }
@@ -21,7 +21,9 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaTransformPreset
     {
+        ContentAwareEncoding,
         AdaptiveStreaming,
+        ThumbnailImages,
         ThumbnailSprite,
         VideoAnalyzer,
         AudioAnalyzer,
@@ -40,17 +42,8 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaJobOutputMode
     {
-        InputAsset,
-        OutputAsset,
-        OutputAssets
-    }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaImageFormat
-    {
-        JPG,
-        PNG,
-        BMP
+        MultipleAssets,
+        SingleAsset
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -67,13 +60,13 @@ namespace AzureSkyMedia.PlatformServices
     {
         Brand,
         Person,
-        Langauge
+        Language
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaClipType
     {
-        Asset,
-        Filter
+        Filter,
+        Asset
     }
 }

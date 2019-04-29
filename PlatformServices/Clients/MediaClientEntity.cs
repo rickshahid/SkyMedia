@@ -127,10 +127,10 @@ namespace AzureSkyMedia.PlatformServices
                     };
                     entities = (IPage<T>)_media.StreamingLocators.List(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocatorQuery);
                     break;
-                case MediaEntity.FilterAccount:
+                case MediaEntity.StreamingFilterAccount:
                     entities = (IPage<T>)_media.AccountFilters.List(MediaAccount.ResourceGroupName, MediaAccount.Name);
                     break;
-                case MediaEntity.FilterAsset:
+                case MediaEntity.StreamingFilterAsset:
                     entities = (IPage<T>)_media.AssetFilters.List(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName);
                     break;
                 case MediaEntity.LiveEvent:
@@ -171,10 +171,10 @@ namespace AzureSkyMedia.PlatformServices
                     case MediaEntity.StreamingLocator:
                         entities = (IPage<T>)_media.StreamingLocators.ListNext(currentPage.NextPageLink);
                         break;
-                    case MediaEntity.FilterAccount:
+                    case MediaEntity.StreamingFilterAccount:
                         entities = (IPage<T>)_media.AccountFilters.ListNext(currentPage.NextPageLink);
                         break;
-                    case MediaEntity.FilterAsset:
+                    case MediaEntity.StreamingFilterAsset:
                         entities = (IPage<T>)_media.AssetFilters.ListNext(currentPage.NextPageLink);
                         break;
                     case MediaEntity.LiveEvent:
@@ -214,10 +214,10 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.StreamingLocator:
                     entity = _media.StreamingLocators.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
                     break;
-                case MediaEntity.FilterAccount:
+                case MediaEntity.StreamingFilterAccount:
                     entity = _media.AccountFilters.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName) as T;
                     break;
-                case MediaEntity.FilterAsset:
+                case MediaEntity.StreamingFilterAsset:
                     entity = _media.AssetFilters.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName) as T;
                     break;
                 case MediaEntity.LiveEvent:
@@ -260,10 +260,10 @@ namespace AzureSkyMedia.PlatformServices
                 case MediaEntity.StreamingLocator:
                     _media.StreamingLocators.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
                     break;
-                case MediaEntity.FilterAccount:
+                case MediaEntity.StreamingFilterAccount:
                     _media.AccountFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
                     break;
-                case MediaEntity.FilterAsset:
+                case MediaEntity.StreamingFilterAsset:
                     _media.AssetFilters.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, parentName, entityName);
                     break;
                 case MediaEntity.LiveEvent:

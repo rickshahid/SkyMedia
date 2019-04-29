@@ -42,14 +42,6 @@
     }
     ViewData["mediaPlayerSkin"] = ampSkin;
 
-    string amcVersion = request.Query["amc.version"];
-    if (string.IsNullOrEmpty(amcVersion))
-    {
-        settingKey = Constant.AppSettingKey.MediaClipperVersion;
-        amcVersion = HomeController.GetAppSetting(settingKey);
-    }
-    ViewData["mediaClipperVersion"] = amcVersion;
-
     settingKey = Constant.AppSettingKey.StorageCdnEndpointUrl;
     ViewData["storageCdnUrl"] = HomeController.GetAppSetting(settingKey);
 

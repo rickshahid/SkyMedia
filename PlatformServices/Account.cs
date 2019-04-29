@@ -32,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
             DeleteEntities<ContentKeyPolicy>(mediaClient, MediaEntity.ContentKeyPolicy);
             DeleteEntities<StreamingPolicy>(mediaClient, MediaEntity.StreamingPolicy);
             DeleteEntities<StreamingLocator>(mediaClient, MediaEntity.StreamingLocator);
-            DeleteEntities<AccountFilter>(mediaClient, MediaEntity.FilterAccount);
+            DeleteEntities<AccountFilter>(mediaClient, MediaEntity.StreamingFilterAccount);
             if (!skipLive)
             {
                 DeleteEntities<LiveEvent>(mediaClient, MediaEntity.LiveEvent);
@@ -57,11 +57,12 @@ namespace AzureSkyMedia.PlatformServices
             int streamingPolicies = mediaClient.GetEntityCount<StreamingPolicy>(MediaEntity.StreamingPolicy);
             int streamingEndpoints = mediaClient.GetEntityCount<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
             int streamingLocators = mediaClient.GetEntityCount<StreamingLocator>(MediaEntity.StreamingLocator);
-            int filtersAccount = mediaClient.GetEntityCount<AccountFilter>(MediaEntity.FilterAccount);
-            int filtersAsset = mediaClient.GetEntityCount<AssetFilter, Asset>(MediaEntity.FilterAsset, MediaEntity.Asset);
+            int streamingFiltersAccount = mediaClient.GetEntityCount<AccountFilter>(MediaEntity.StreamingFilterAccount);
+            int streamingFiltersAsset = mediaClient.GetEntityCount<AssetFilter, Asset>(MediaEntity.StreamingFilterAsset, MediaEntity.Asset);
             int liveEvents = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputs = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
             int indexerInsights = !mediaClient.IndexerEnabled() ? 0 : mediaClient.IndexerGetInsights().Count;
+            int indexerProjects = !mediaClient.IndexerEnabled() ? 0 : mediaClient.IndexerGetProjects().Count;
 
             List<string[]> entityCounts = new List<string[]>
             {
@@ -73,11 +74,12 @@ namespace AzureSkyMedia.PlatformServices
                 new string[] { "Streaming Policies", streamingPolicies.ToString(Constant.TextFormatter.NumericLong), "/account/streamingPolicies" },
                 new string[] { "Streaming Endpoints", streamingEndpoints.ToString(Constant.TextFormatter.NumericLong), "/account/streamingEndpoints" },
                 new string[] { "Streaming Locators", streamingLocators.ToString(Constant.TextFormatter.NumericLong), "/account/streamingLocators" },
-                new string[] { "Filters (Account)", filtersAccount.ToString(Constant.TextFormatter.NumericLong), "/account/filtersAccount" },
-                new string[] { "Filters (Asset)", filtersAsset.ToString(Constant.TextFormatter.NumericLong), "/account/filtersAsset" },
+                new string[] { "Streaming Filters (Account)", streamingFiltersAccount.ToString(Constant.TextFormatter.NumericLong), "/account/streamingFiltersAccount" },
+                new string[] { "Streaming Filters (Asset)", streamingFiltersAsset.ToString(Constant.TextFormatter.NumericLong), "/account/streamingFiltersAsset" },
                 new string[] { "Live Events", liveEvents.ToString(Constant.TextFormatter.NumericLong), "/account/liveEvents" },
                 new string[] { "Live Event Outputs", liveEventOutputs.ToString(Constant.TextFormatter.NumericLong), "/account/liveEventOutputs" },
-                new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/insight" }
+                new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/insight" },
+                new string[] { "Video Indexer Projects", indexerProjects.ToString(Constant.TextFormatter.NumericLong), "/insight/projects" }
             };
 
             return entityCounts.ToArray();

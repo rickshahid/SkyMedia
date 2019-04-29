@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="10.0.1" />
     <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.3.7" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.3.8" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
   </ItemGroup>
 

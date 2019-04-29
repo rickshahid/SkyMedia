@@ -81,19 +81,13 @@ namespace AzureSkyMedia.WebApp
             app.UseMvcWithDefaultRoute();
         }
 
-        internal static RedirectToActionResult OnSignIn(ControllerBase controller, string authToken)
+        internal static RedirectToActionResult OnSignIn(ControllerBase controller)
         {
             RedirectToActionResult redirectAction = null;
             string requestError = controller.Request.Form["error_description"];
             if (!string.IsNullOrEmpty(requestError) && requestError.Contains(Constant.Message.UserPasswordForgotten))
             {
                 redirectAction = controller.RedirectToAction("passwordReset", "account");
-            }
-            else if (!string.IsNullOrEmpty(authToken))
-            {
-                User currentUser = new User(authToken);
-                MediaAccount mediaAccount = currentUser.MediaAccount;
-                EventGridClient.SetStorageSubscription(mediaAccount);
             }
             return redirectAction;
         }

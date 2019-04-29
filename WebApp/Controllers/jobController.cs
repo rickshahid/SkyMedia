@@ -73,16 +73,18 @@ namespace AzureSkyMedia.WebApp.Controllers
                             audioAnalyzerPreset = true;
                         }
                     }
-                    string insightId = null;
-                    if (mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset))
-                    {
-                        bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
-                        bool videoOnly = false;
-                        insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAssetName, jobPriority, false, audioOnly, videoOnly);
-                    }
                     if (!string.IsNullOrEmpty(transformName))
                     {
-                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, streamingPolicyName);
+                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, null, streamingPolicyName);
+                    }
+                    bool indexerEnabled = mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset);
+                    bool indexOnly = false;
+                    bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
+                    bool videoOnly = false;
+                    if (indexerEnabled)
+                    {
+                        Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
+                        string insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, indexOnly, audioOnly, videoOnly);
                     }
                 }
                 return Json(job);

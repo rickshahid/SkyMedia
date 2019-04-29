@@ -82,7 +82,7 @@ namespace AzureSkyMedia.PlatformServices
                 Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
                 MediaStream mediaStream = GetMediaStream(authToken, mediaClient, asset, null, locator, playerUrl);
                 mediaStreams.Add(mediaStream);
-                AssetFilter[] assetFilters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, locator.AssetName);
+                AssetFilter[] assetFilters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.StreamingFilterAsset, null, locator.AssetName);
                 foreach (AssetFilter assetFilter in assetFilters)
                 {
                     MediaStream mediaFilter = GetMediaStream(authToken, mediaClient, asset, assetFilter, locator, playerUrl);

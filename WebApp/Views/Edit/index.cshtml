@@ -1,20 +1,11 @@
-﻿@{
-    string ampVersion = ViewData["mediaPlayerVersion"].ToString();
-    string ampSkin = ViewData["mediaPlayerSkin"].ToString();
+﻿@using AzureSkyMedia.WebApp.Models;
 
-    string amcVersion = ViewData["mediaClipperVersion"].ToString();
-
-    string loadMode = ViewData["mediaClipperLoadMode"].ToString();
+@{
 }
 
 @section head {
-    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amp/@ampVersion/skins/@ampSkin/azuremediaplayer.min.css" />
-    <link type="text/css" rel="stylesheet" href="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.css">
-    <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
-    <script type="text/javascript" src="//amp.azure.net/libs/amc/@amcVersion/azuremediaclipper.min.js"></script>
     <script type="text/javascript">
         $(function () {
-            LoadClipper("@loadMode", false);
         })
     </script>
 }
@@ -23,4 +14,4 @@
     Media Editor
 }
 
-<div id="videoClipper" class="videoClipper azure-subclipper dark-skin"></div>
+<partial name="SiteButton" model='new SiteButton { ControlId = "underConstruction", ImageFile = "UnderConstruction.gif", AltText = "Under Construction" }' />

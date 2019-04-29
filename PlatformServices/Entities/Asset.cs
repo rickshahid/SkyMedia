@@ -8,7 +8,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             Files = MediaClient.GetAssetFiles(blobClient, asset.Container, null, out bool assetStreamable);
-            Filters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.FilterAsset, null, asset.Name);
+            StreamingFilters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.StreamingFilterAsset, null, asset.Name);
             StreamingUrls = mediaClient.GetStreamingUrls(asset.Name);
             Streamable = assetStreamable;
             Published = mediaClient.GetLocators(asset.Name).Length > 0;
@@ -16,7 +16,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaFile[] Files { get; }
 
-        public AssetFilter[] Filters { get; }
+        public AssetFilter[] StreamingFilters { get; }
+
+        public string[] StreamingUrls { get; }
+
+        public bool Streamable { get; }
+
+        public bool Published { get; }
 
         public string Size
         {
@@ -30,24 +36,18 @@ namespace AzureSkyMedia.PlatformServices
                 return StorageBlobClient.MapByteCount(byteCount);
             }
         }
-
-        public string[] StreamingUrls { get; }
-
-        public bool Streamable { get; }
-
-        public bool Published { get; }
     }
 
     internal class MediaFile
     {
         public string Name { get; set; }
 
-        public string Size { get; set; }
-
-        public long ByteCount { get; set; }
-
         public string ContentType { get; set; }
 
         public string DownloadUrl { get; set; }
+
+        public long ByteCount { get; set; }
+
+        public string Size { get; set; }
     }
 }

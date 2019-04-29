@@ -78,10 +78,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                             mediaClient.DeleteEntity(MediaEntity.StreamingLocator, entityName);
                             break;
                         case "filtersAccount":
-                            mediaClient.DeleteEntity(MediaEntity.FilterAccount, entityName);
+                            mediaClient.DeleteEntity(MediaEntity.StreamingFilterAccount, entityName);
                             break;
                         case "filtersAsset":
-                            mediaClient.DeleteEntity(MediaEntity.FilterAsset, entityName, parentName);
+                            mediaClient.DeleteEntity(MediaEntity.StreamingFilterAsset, entityName, parentName);
                             break;
                         case "liveEvents":
                             mediaClient.DeleteEntity(MediaEntity.LiveEvent, entityName);
@@ -190,7 +190,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["filtersAccount"] = mediaClient.GetAllEntities<AccountFilter>(MediaEntity.FilterAccount);
+                ViewData["filtersAccount"] = mediaClient.GetAllEntities<AccountFilter>(MediaEntity.StreamingFilterAccount);
             }
             return View();
         }
@@ -200,7 +200,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["filtersAsset"] = mediaClient.GetAllEntities<AssetFilter, Asset>(MediaEntity.FilterAsset, MediaEntity.Asset);
+                ViewData["filtersAsset"] = mediaClient.GetAllEntities<AssetFilter, Asset>(MediaEntity.StreamingFilterAsset, MediaEntity.Asset);
             }
             return View();
         }

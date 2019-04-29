@@ -101,12 +101,6 @@
         "description": "Function application name (<appName>.azurewebsites.net) must be between 2 and 60 characters (letters, numbers and hyphens only)."
       }
     },
-    "functionStorageBlobCreatedUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Function event handler url for storage blob created."
-      }
-    },
     "functionJobOutputProgressUrl": {
       "type": "string",
       "metadata": {
@@ -394,38 +388,43 @@
             {
               "name": "Directory.ClientSecret",
               "value": "[parameters('directoryClientSecret')]"
-            },
+            }
+          ],
+          "connectionStrings": [
             {
+              "type": "Custom",
               "name": "Storage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadOnly",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadWrite",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.Regions",
-              "value": "[parameters('databaseServiceRegions')]"
+              "connectionString": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.StorageBlobCreatedUrl",
-              "value": "[parameters('functionStorageBlobCreatedUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobOutputProgressUrl",
+              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobOutputProgressUrl",
-              "value": "[parameters('functionJobOutputProgressUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobStateFinalUrl",
+              "connectionString": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobStateFinalUrl",
-              "value": "[parameters('functionJobStateFinalUrl')]"
-            },
-            {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.LiveEventUrl",
+              "connectionString": "[parameters('functionLiveEventUrl')]"
             }
           ]
         },
@@ -480,38 +479,43 @@
             {
               "name": "Directory.ClientSecret",
               "value": "[parameters('directoryClientSecretStaging')]"
-            },
+            }
+          ],
+          "connectionStrings": [
             {
+              "type": "Custom",
               "name": "Storage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadOnly",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadWrite",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.Regions",
-              "value": "[parameters('databaseServiceRegions')]"
+              "connectionString": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.StorageBlobCreatedUrl",
-              "value": "[parameters('functionStorageBlobCreatedUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobOutputProgressUrl",
+              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobOutputProgressUrl",
-              "value": "[parameters('functionJobOutputProgressUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobStateFinalUrl",
+              "connectionString": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobStateFinalUrl",
-              "value": "[parameters('functionJobStateFinalUrl')]"
-            },
-            {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.LiveEventUrl",
+              "connectionString": "[parameters('functionLiveEventUrl')]"
             }
           ]
         },
@@ -579,44 +583,50 @@
               "value": "[parameters('directoryPolicyIdSignUpIn')]"
             },
             {
-              "name": "Storage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-            },
-            {
               "name": "Storage.SharedAccessMinutes",
               "value": "60"
+            }
+          ],
+          "connectionStrings": [
+            {
+              "type": "Custom",
+              "name": "Storage",
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadOnly",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadWrite",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.Regions",
-              "value": "[parameters('databaseServiceRegions')]"
+              "connectionString": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.StorageBlobCreatedUrl",
-              "value": "[parameters('functionStorageBlobCreatedUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobOutputProgressUrl",
+              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobOutputProgressUrl",
-              "value": "[parameters('functionJobOutputProgressUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobStateFinalUrl",
+              "connectionString": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobStateFinalUrl",
-              "value": "[parameters('functionJobStateFinalUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.LiveEventUrl",
+              "connectionString": "[parameters('functionLiveEventUrl')]"
             },
             {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
-            },
-            {
-              "name": "Media.Indexer.ApiUrl",
-              "value": "https://api.videoindexer.ai/"
+              "type": "Custom",
+              "name": "VideoIndexer.ApiUrl",
+              "connectionString": "https://api.videoindexer.ai/"
             }
           ]
         }
@@ -695,44 +705,50 @@
               "value": "[parameters('directoryPolicyIdSignUpIn')]"
             },
             {
-              "name": "Storage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
-            },
-            {
               "name": "Storage.SharedAccessMinutes",
               "value": "60"
+            }
+          ],
+          "connectionStrings": [
+            {
+              "type": "Custom",
+              "name": "Storage",
+              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadOnly",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.ReadWrite",
-              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
+              "type": "Custom",
               "name": "Database.Regions",
-              "value": "[parameters('databaseServiceRegions')]"
+              "connectionString": "[parameters('databaseServiceRegions')]"
             },
             {
-              "name": "Media.EventGrid.StorageBlobCreatedUrl",
-              "value": "[parameters('functionStorageBlobCreatedUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobOutputProgressUrl",
+              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobOutputProgressUrl",
-              "value": "[parameters('functionJobOutputProgressUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.JobStateFinalUrl",
+              "connectionString": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "name": "Media.EventGrid.JobStateFinalUrl",
-              "value": "[parameters('functionJobStateFinalUrl')]"
+              "type": "Custom",
+              "name": "EventGrid.LiveEventUrl",
+              "connectionString": "[parameters('functionLiveEventUrl')]"
             },
             {
-              "name": "Media.EventGrid.LiveEventUrl",
-              "value": "[parameters('functionLiveEventUrl')]"
-            },
-            {
-              "name": "Media.Indexer.ApiUrl",
-              "value": "https://api.videoindexer.ai/"
+              "type": "Custom",
+              "name": "VideoIndexer.ApiUrl",
+              "connectionString": "https://api.videoindexer.ai/"
             }
           ]
         }

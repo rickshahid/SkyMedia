@@ -89,10 +89,10 @@ namespace AzureSkyMedia.PlatformServices
                 MediaFile file = new MediaFile()
                 {
                     Name = fileName,
-                    Size = fileSize,
-                    ByteCount = byteCount,
                     ContentType = contentType,
-                    DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName)
+                    DownloadUrl = blobClient.GetDownloadUrl(containerName, fileName),
+                    ByteCount = byteCount,
+                    Size = fileSize
                 };
                 if (file.Name.EndsWith(Constant.FileExtension.StreamingManifest, StringComparison.OrdinalIgnoreCase))
                 {
@@ -101,14 +101,6 @@ namespace AzureSkyMedia.PlatformServices
                 files.Add(file);
             }
             return files.ToArray();
-        }
-
-        public static string GetAssetFileUrl(MediaClient mediaClient, Asset asset)
-        {
-            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
-            MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
-            string fileName = mediaAsset.Files[0].Name;
-            return blobClient.GetDownloadUrl(asset.Container, fileName);
         }
     }
 }

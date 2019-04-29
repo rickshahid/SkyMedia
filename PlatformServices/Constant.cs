@@ -38,7 +38,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct FileExtension
         {
-            public const string WorkflowManifest = ".json";
             public const string StreamingManifest = ".ism";
         }
 
@@ -93,17 +92,12 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
-            public const string MediaEventGridStorageBlobCreatedUrl = "Media.EventGrid.StorageBlobCreatedUrl";
-            public const string MediaEventGridJobOutputProgressUrl = "Media.EventGrid.JobOutputProgressUrl";
-            public const string MediaEventGridJobStateFinalUrl = "Media.EventGrid.JobStateFinalUrl";
-            public const string MediaEventGridLiveEventUrl = "Media.EventGrid.LiveEventUrl";
-
-            public const string MediaIndexerApiUrl = "Media.Indexer.ApiUrl";
-
-            public const string MediaClipperVersion = "Media.Clipper.Version";
-
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
+
+            public const string EventGridJobOutputProgressUrl = "EventGrid.JobOutputProgressUrl";
+            public const string EventGridJobStateFinalUrl = "EventGrid.JobStateFinalUrl";
+            public const string EventGridLiveEventUrl = "EventGrid.LiveEventUrl";
 
             public const string AccountEndpointPrefix = "AccountEndpoint=";
             public const string AccountNamePrefix = "AccountName=";
@@ -114,6 +108,8 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AzureDatabaseReadOnly = "Database.ReadOnly";
             public const string AzureDatabaseReadWrite = "Database.ReadWrite";
+
+            public const string AzureVideoIndexerApiUrl = "VideoIndexer.ApiUrl";
 
             public const string TwilioAccountId = "Twilio.Account.Id";
             public const string TwilioAccountToken = "Twilio.Account.Token";
@@ -158,13 +154,12 @@ namespace AzureSkyMedia.PlatformServices
 
         public struct Storage
         {
-            public const string AccountResourceId = "/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.storage/storageAccounts/{2}";
-
             public struct Blob
             {
-                public const string WorkflowContainers = "/blobServices/default/containers/";
-                public const string WorkflowContainerName = "ams";
-                public const string WorkflowManifestFile = WorkflowContainerName + "/WorkflowManifest.json";
+                public const string WorkflowContainersPath = "/blobServices/default/containers/";
+                public const string WorkflowContainerName = "azure-media-services";
+                public const string WorkflowManifestPath = WorkflowContainerName + "/" + WorkflowManifestFile;
+                public const string WorkflowManifestFile = "WorkflowManifest.json";
             }
         }
 
@@ -236,44 +231,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public struct OutputAssetNameSuffix
                 {
-                    public const string MultipleBitrate = "MBR";
-                    public const string SingleBitrate = "SBR";
-
+                    public const string MediaServices = "AMS";
+                    public const string StandardEncoder = "MES";
                     public const string VideoAnalyzer = "VAI";
                     public const string AudioAnalyzer = "AAI";
                 }
-            }
-
-            public struct EventGrid
-            {
-                public const string StorageBlobCreatedSubscriptionName = "Storage-Blob-Created";
-                public static string[] StorageBlobCreatedSubscriptionEvents = new string[] {
-                    "Microsoft.Storage.BlobCreated"
-                };
-
-                public const string JobOutputProgressSubscriptionName = "Media-Job-Output-Progress";
-                public static string[] JobOutputProgressSubscriptionEvents = new string[] {
-                    "Microsoft.Media.JobOutputProgress"
-                };
-
-                public const string JobStateFinalSubscriptionName = "Media-Job-State-Final";
-                public static string[] JobStateFinalSubscriptionEvents = new string[] {
-                    "Microsoft.Media.JobFinished",
-                    "Microsoft.Media.JobCanceled",
-                    "Microsoft.Media.JobErrored"
-                };
-
-                public const string LiveEventSubscriptionName = "Media-Live-Event";
-                public static string[] LiveEventSubscriptionEvents = new string[] {
-                    "Microsoft.Media.LiveEventConnectionRejected",
-                    "Microsoft.Media.LiveEventEncoderConnected",
-                    "Microsoft.Media.LiveEventEncoderDisconnected",
-                    "Microsoft.Media.LiveEventIncomingDataChunkDropped",
-                    "Microsoft.Media.LiveEventIncomingStreamReceived",
-                    "Microsoft.Media.LiveEventIncomingStreamsOutOfSync",
-                    "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync",
-                    "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
-                };
             }
 
             public struct Stream
@@ -301,6 +263,33 @@ namespace AzureSkyMedia.PlatformServices
                 public const int OutputArchiveWindowMinutes = 60;
                 public const string OutputNameSuffix = "-Output";
             }
+        }
+
+        public struct EventGrid
+        {
+            public const string JobOutputProgressSubscriptionName = "Media-Job-Output-Progress";
+            public static string[] JobOutputProgressSubscriptionEvents = new string[] {
+                    "Microsoft.Media.JobOutputProgress"
+                };
+
+            public const string JobStateFinalSubscriptionName = "Media-Job-State-Final";
+            public static string[] JobStateFinalSubscriptionEvents = new string[] {
+                    "Microsoft.Media.JobFinished",
+                    "Microsoft.Media.JobCanceled",
+                    "Microsoft.Media.JobErrored"
+                };
+
+            public const string LiveEventSubscriptionName = "Media-Live-Event";
+            public static string[] LiveEventSubscriptionEvents = new string[] {
+                    "Microsoft.Media.LiveEventConnectionRejected",
+                    "Microsoft.Media.LiveEventEncoderConnected",
+                    "Microsoft.Media.LiveEventEncoderDisconnected",
+                    "Microsoft.Media.LiveEventIncomingDataChunkDropped",
+                    "Microsoft.Media.LiveEventIncomingStreamReceived",
+                    "Microsoft.Media.LiveEventIncomingStreamsOutOfSync",
+                    "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync",
+                    "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+                };
         }
 
         public struct Message

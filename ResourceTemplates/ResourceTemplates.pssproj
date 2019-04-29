@@ -26,12 +26,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="Deployment.Cosmos.ps1" />
     <None Include="Deployment.Global.ps1" />
     <None Include="Deployment.Media.ps1" />
     <None Include="Deployment.Regional.ps1" />
+    <None Include="Deployment.Regional-EventGrid.psm1" />
+    <None Include="Deployment.Regional-TrafficManager.psm1" />
     <None Include="Template.Global.json" />
     <None Include="Template.Regional.json" />
     <None Include="Template.Media.json" />

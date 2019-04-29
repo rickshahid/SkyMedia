@@ -14,7 +14,7 @@ namespace AzureSkyMedia.PlatformServices
         private string GetAccessToken(string insightId)
         {
             string accessToken;
-            string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
+            string settingKey = Constant.AppSettingKey.AzureVideoIndexerApiUrl;
             string requestUrl = AppSetting.GetValue(settingKey);
             requestUrl = string.Concat(requestUrl, "auth/", MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId);
             requestUrl = string.Concat(requestUrl, "/videos/", insightId, "/accessToken?allowEdit=true");
@@ -28,7 +28,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private string GetRequestUrl(string parentPath, string insightId, string childPath)
         {
-            string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
+            string settingKey = Constant.AppSettingKey.AzureVideoIndexerApiUrl;
             string requestUrl = AppSetting.GetValue(settingKey);
             requestUrl = string.Concat(requestUrl, MediaAccount.VideoIndexerRegion, "/accounts/", _indexerAccountId);
             if (!string.IsNullOrEmpty(parentPath))
@@ -55,14 +55,14 @@ namespace AzureSkyMedia.PlatformServices
             return requestUrl;
         }
 
-        private string AddRequestParameters(string requestUrl, Priority jobPriority, bool indexingOnly, bool audioOnly, bool videoOnly)
+        private string AddRequestParameters(string requestUrl, Priority jobPriority, bool indexOnly, bool audioOnly, bool videoOnly)
         {
-            string settingKey = Constant.AppSettingKey.MediaEventGridJobStateFinalUrl;
+            string settingKey = Constant.AppSettingKey.EventGridJobStateFinalUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
             requestUrl = string.Concat(requestUrl, "&streamingPreset=");
-            requestUrl = string.Concat(requestUrl, indexingOnly ? "NoStreaming" : "AdaptiveBitrate");
+            requestUrl = string.Concat(requestUrl, indexOnly ? "NoStreaming" : "AdaptiveBitrate");
             if (audioOnly)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
@@ -82,7 +82,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public void IndexerSetAccount()
         {
-            string settingKey = Constant.AppSettingKey.MediaIndexerApiUrl;
+            string settingKey = Constant.AppSettingKey.AzureVideoIndexerApiUrl;
             string requestUrl = AppSetting.GetValue(settingKey);
             requestUrl = string.Concat(requestUrl, "auth/", MediaAccount.VideoIndexerRegion, "/accounts?generateAccessTokens=true&allowEdit=true");
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
@@ -101,15 +101,12 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string IndexerUploadVideo(string inputFileUrl, string inputAssetName, Priority jobPriority, bool indexingOnly, bool audioOnly, bool videoOnly)
+        public string IndexerUploadVideo(string inputFileUrl, Asset inputAsset, Priority jobPriority, bool indexOnly, bool audioOnly, bool videoOnly)
         {
             string insightId;
             string requestUrl = GetRequestUrl("/videos", null, null);
-            string settingKey = Constant.AppSettingKey.MediaEventGridJobStateFinalUrl;
-            string callbackUrl = AppSetting.GetValue(settingKey);
-            if (!string.IsNullOrEmpty(inputAssetName))
+            if (inputAsset != null)
             {
-                Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(inputAsset.Name));
                 requestUrl = string.Concat(requestUrl, "&assetId=", inputAsset.AssetId);
             }
@@ -120,7 +117,7 @@ namespace AzureSkyMedia.PlatformServices
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(videoName));
                 requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(inputFileUrl));
             }
-            requestUrl = AddRequestParameters(requestUrl, jobPriority, indexingOnly, audioOnly, videoOnly);
+            requestUrl = AddRequestParameters(requestUrl, jobPriority, indexOnly, audioOnly, videoOnly);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Post, requestUrl);
@@ -153,6 +150,48 @@ namespace AzureSkyMedia.PlatformServices
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);
                 HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
             }
+        }
+
+        public JObject IndexerGetProjects(int? pageSize, int? skipCount)
+        {
+            JObject insights;
+            string requestUrl = GetRequestUrl("/projects", null, null);
+            if (pageSize.HasValue)
+            {
+                requestUrl = string.Concat(requestUrl, "&pageSize=", pageSize.Value);
+            }
+            if (skipCount.HasValue)
+            {
+                requestUrl = string.Concat(requestUrl, "&skip=", skipCount.Value);
+            }
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            {
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                insights = webClient.GetResponse<JObject>(webRequest);
+            }
+            return insights;
+        }
+
+        public JArray IndexerGetProjects()
+        {
+            bool lastPage;
+            JObject insights = null;
+            JArray allInsights = new JArray();
+            //do
+            //{
+            //    int skipCount = 0;
+            //    if (insights != null)
+            //    {
+            //        skipCount = (int)insights["nextPage"]["skip"];
+            //    }
+            //    insights = IndexerGetProjects(null, skipCount);
+            //    lastPage = (bool)insights["nextPage"]["done"];
+            //    foreach (JToken insight in insights["results"])
+            //    {
+            //        allInsights.Add(insight);
+            //    }
+            //} while (!lastPage);
+            return allInsights;
         }
 
         public JObject IndexerGetInsights(int? pageSize, int? skipCount)

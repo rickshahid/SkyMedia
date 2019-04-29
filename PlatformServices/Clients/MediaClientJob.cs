@@ -11,40 +11,41 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private string GetOutputAssetNameSuffix(Preset transformPreset, MediaJobOutputMode jobOutputMode)
+        private string GetOutputAssetNameSuffix(MediaJobOutputMode jobOutputMode, IList<TransformOutput> transformOutputs, int i)
         {
             string outputAssetNameSuffix = null;
-            if (transformPreset is BuiltInStandardEncoderPreset standardEncoderPreset &&
-               (standardEncoderPreset.PresetName.ToString().Contains("Single") ||
-                standardEncoderPreset.PresetName.ToString().Contains("Audio")))
+            if (jobOutputMode == MediaJobOutputMode.SingleAsset && transformOutputs.Count > 1)
             {
-                outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.SingleBitrate;
+                outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.MediaServices;
             }
-            switch (jobOutputMode)
+            else
             {
-                case MediaJobOutputMode.InputAsset:
-                    outputAssetNameSuffix = null;
-                    break;
-                case MediaJobOutputMode.OutputAsset:
-                    outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.MultipleBitrate;
-                    break;
-                case MediaJobOutputMode.OutputAssets:
-                    if (transformPreset is VideoAnalyzerPreset)
-                    {
-                        outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.VideoAnalyzer;
-                    }
-                    else if (transformPreset is AudioAnalyzerPreset)
-                    {
-                        outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AudioAnalyzer;
-                    }
-                    break;
+                Preset transformPreset = transformOutputs[i].Preset;
+                if (transformPreset is VideoAnalyzerPreset)
+                {
+                    outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.VideoAnalyzer;
+                }
+                else if (transformPreset is AudioAnalyzerPreset)
+                {
+                    outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AudioAnalyzer;
+                }
+                else if (transformPreset is StandardEncoderPreset)
+                {
+                    outputAssetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.StandardEncoder;
+                }
+                else if (transformPreset is BuiltInStandardEncoderPreset builtInStandardEncoderPreset)
+                {
+                    outputAssetNameSuffix = builtInStandardEncoderPreset.PresetName;
+                }
             }
             return outputAssetNameSuffix;
         }
 
-        private string GetOutputAssetName(TransformOutput transformOutput, MediaJob mediaJob, out string outputAssetStorage)
+
+
+
+        private string GetOutputAssetName(MediaJob mediaJob, IList<TransformOutput> transformOutputs, int i)
         {
-            outputAssetStorage = this.StorageAccount;
             string outputAssetName = mediaJob.InputAssetName;
             if (!string.IsNullOrEmpty(mediaJob.InputFileUrl) && string.IsNullOrEmpty(outputAssetName))
             {
@@ -54,9 +55,11 @@ namespace AzureSkyMedia.PlatformServices
             else if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
             {
                 Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
-                outputAssetStorage = inputAsset.StorageAccountName;
             }
-            string outputAssetNameSuffix = GetOutputAssetNameSuffix(transformOutput.Preset, mediaJob.OutputAssetMode);
+
+
+
+            string outputAssetNameSuffix = GetOutputAssetNameSuffix(mediaJob.OutputAssetMode, transformOutputs, i);
             if (!string.IsNullOrEmpty(outputAssetNameSuffix))
             {
                 outputAssetName = string.Concat(outputAssetName, " (", outputAssetNameSuffix, ")");
@@ -91,7 +94,7 @@ namespace AzureSkyMedia.PlatformServices
             for (int i = 0; i < transform.Outputs.Count; i++)
             {
                 TransformOutput transformOutput = transform.Outputs[i];
-                string outputAssetName = GetOutputAssetName(transformOutput, mediaJob, out string outputAssetStorage);
+                string outputAssetName = GetOutputAssetName(mediaJob, transform.Outputs, i);
                 string outputAssetDescription = null;
                 if (!string.IsNullOrEmpty(mediaJob.InputAssetName))
                 {
@@ -103,7 +106,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     outputAssetAlternateId = insightId;
                 }
-                CreateAsset(outputAssetStorage, outputAssetName, outputAssetDescription, outputAssetAlternateId);
+                CreateAsset(mediaJob.OutputAssetStorage, outputAssetName, outputAssetDescription, outputAssetAlternateId);
                 JobOutputAsset outputAsset = new JobOutputAsset(outputAssetName);
                 outputAssets.Add(outputAsset);
             }
@@ -128,14 +131,11 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
-                             string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
+                             string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string outputAssetStorage,
+                             string streamingPolicyName)
         {
             string insightId = null;
             EventGridClient.SetMediaSubscription(this.MediaAccount);
-            if (transformName.Contains("Indexer"))
-            {
-                insightId = IndexerUploadVideo(inputFileUrl, inputAssetName, jobPriority, false, false, false);
-            }
             MediaJob mediaJob = new MediaJob()
             {
                 Name = jobName,
@@ -143,7 +143,8 @@ namespace AzureSkyMedia.PlatformServices
                 Priority = jobPriority,
                 InputFileUrl = inputFileUrl,
                 InputAssetName = inputAssetName,
-                OutputAssetMode = outputAssetMode
+                OutputAssetMode = outputAssetMode,
+                OutputAssetStorage = outputAssetStorage
             };
             mediaJob.Data = new JObject
             {
@@ -154,7 +155,12 @@ namespace AzureSkyMedia.PlatformServices
             {
                 mediaJob.Data.Add(jobData);
             }
-            return CreateJob(transformName, insightId, mediaJob);
+            Job job = CreateJob(transformName, insightId, mediaJob);
+            if (!string.IsNullOrEmpty(insightId))
+            {
+                job.CorrelationData.Add("insightId", insightId);
+            }
+            return job;
         }
 
         public Job UpdateJob(string transformName, string jobName, string jobDescription, Priority jobPriority)

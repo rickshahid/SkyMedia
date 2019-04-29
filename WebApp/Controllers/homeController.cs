@@ -107,7 +107,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
                 if (Request.HasFormContentType)
                 {
-                    RedirectToActionResult redirectAction = Startup.OnSignIn(this, authToken);
+                    RedirectToActionResult redirectAction = Startup.OnSignIn(this);
                     if (redirectAction != null)
                     {
                         return redirectAction;
@@ -131,6 +131,13 @@ namespace AzureSkyMedia.WebApp.Controllers
 
                     using (MediaClient mediaClient = new MediaClient(authToken))
                     {
+                        //string subscriptionId = mediaClient.MediaAccount.SubscriptionId;
+                        //string directoryTenantId = mediaClient.MediaAccount.DirectoryTenantId;
+                        //string storageAccountName = "skymediauswest";
+                        //string servicePrincipalId = "6941cd80-507d-4054-8969-e11b10b27c59"; //Azure DevOps (Azure.Sky.Media-US.West)
+                        //string servicePrincipalKey = "6e+4*-7QFHdHyARJfc/jUZOQxQvjGdb6";
+                        //EventGridClient.SetStorageSubscription(subscriptionId, directoryTenantId, storageAccountName, servicePrincipalId, servicePrincipalKey);
+
                         if (!IsStreamingEnabled(mediaClient))
                         {
                             userMessage = string.Format(Constant.Message.StreamingEndpointNotStarted, mediaClient.MediaAccount.Name);
