@@ -20,12 +20,17 @@ namespace AzureSkyMedia.PlatformServices
         public MediaClient(string authToken)
         {
             User currentUser = new User(authToken);
+            UserAccount = new UserAccount()
+            {
+                MobilePhoneNumber = currentUser.MobilePhoneNumber
+            };
             MediaAccount = currentUser.MediaAccount;
             BindContext();
         }
 
-        public MediaClient(MediaAccount mediaAccount)
+        public MediaClient(UserAccount userAccount, MediaAccount mediaAccount)
         {
+            UserAccount = userAccount;
             MediaAccount = mediaAccount;
             BindContext();
         }
@@ -43,6 +48,8 @@ namespace AzureSkyMedia.PlatformServices
                 IndexerSetAccount();
             }
         }
+
+        public UserAccount UserAccount { get; }
 
         public MediaAccount MediaAccount { get; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media;
@@ -38,11 +39,8 @@ namespace AzureSkyMedia.PlatformServices
                     outputAssetNameSuffix = builtInStandardEncoderPreset.PresetName;
                 }
             }
-            return outputAssetNameSuffix;
+            return Constant.TextFormatter.FormatValue(outputAssetNameSuffix);
         }
-
-
-
 
         private string GetOutputAssetName(MediaJob mediaJob, IList<TransformOutput> transformOutputs, int i)
         {
@@ -56,9 +54,6 @@ namespace AzureSkyMedia.PlatformServices
             {
                 Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, mediaJob.InputAssetName);
             }
-
-
-
             string outputAssetNameSuffix = GetOutputAssetNameSuffix(mediaJob.OutputAssetMode, transformOutputs, i);
             if (!string.IsNullOrEmpty(outputAssetNameSuffix))
             {
@@ -130,12 +125,12 @@ namespace AzureSkyMedia.PlatformServices
             return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
         }
 
-        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
-                             string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string outputAssetStorage,
-                             string streamingPolicyName)
+        public async Task<Job> CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string jobData,
+                                         string inputFileUrl, string inputAssetName, MediaJobOutputMode outputAssetMode, string outputAssetStorage,
+                                         string streamingPolicyName)
         {
             string insightId = null;
-            EventGridClient.SetMediaSubscription(this.MediaAccount);
+            await EventGridClient.SetMediaSubscription(this.MediaAccount);
             MediaJob mediaJob = new MediaJob()
             {
                 Name = jobName,

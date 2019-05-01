@@ -1,18 +1,11 @@
 ﻿namespace AzureSkyMedia.PlatformServices
 {
-    //internal class MediaJobPublish
-    //{
-    //    public string StreamingPolicyName { get; set; }
+    internal class MediaPublishNotification
+    {
+        public string PhoneNumber { get; set; }
 
-    //    public ContentProtection ContentProtection { get; set; }
+        public string StatusMessage { get; set; }
 
-    //    public UserNotification UserNotification { get; set; }
-    //}
-
-    //internal class UserNotification
-    //{
-    //    public string MobilePhoneNumber { get; set; }
-
-    //    public string JobOutputMessage { get; set; }
-    //}
+        public string StreamingUrl { get; set; }
+    }
 }

@@ -6,6 +6,8 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class MediaWorkflowManifest
     {
+        public UserAccount UserAccount { get; set; }
+
         public MediaAccount[] MediaAccounts { get; set; }
 
         public string InputFileName { get; set; }

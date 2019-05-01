@@ -1,11 +1,11 @@
-﻿using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.Queue;
+﻿using System.Threading.Tasks;
 
-using Newtonsoft.Json;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Queue;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal partial class StorageQueueClient
+    internal class StorageQueueClient
     {
         private CloudQueueClient _queueClient;
 
@@ -15,42 +15,31 @@ namespace AzureSkyMedia.PlatformServices
             _queueClient = storageAccount.CreateCloudQueueClient();
         }
 
-        private CloudQueue GetQueue(string queueName)
+        private async Task<CloudQueue> GetQueue(string queueName)
         {
             CloudQueue queue = _queueClient.GetQueueReference(queueName);
-            queue.CreateIfNotExistsAsync().Wait();
+            await queue.CreateIfNotExistsAsync();
             return queue;
         }
 
-        public T GetMessage<T>(string queueName, out string messageId, out string popReceipt)
+        public async Task<CloudQueueMessage> GetMessage(string queueName)
         {
-            T message = default(T);
-            messageId = string.Empty;
-            popReceipt = string.Empty;
-            CloudQueue queue = GetQueue(queueName);
-            CloudQueueMessage queueMessage = queue.GetMessageAsync().Result;
-            if (queueMessage != null)
-            {
-                messageId = queueMessage.Id;
-                popReceipt = queueMessage.PopReceipt;
-                message = JsonConvert.DeserializeObject<T>(queueMessage.AsString);
-            }
-            return message;
+            CloudQueue queue = await GetQueue(queueName);
+            return await queue.GetMessageAsync();
         }
 
-        public string AddMessage(string queueName, object messageData)
+        public async Task<CloudQueueMessage> AddMessage(string queueName, string messageContent)
         {
-            CloudQueue queue = GetQueue(queueName);
-            string messageJson = JsonConvert.SerializeObject(messageData);
-            CloudQueueMessage queueMessage = new CloudQueueMessage(messageJson);
-            queue.AddMessageAsync(queueMessage).Wait();
-            return queueMessage.AsString;
+            CloudQueue queue = await GetQueue(queueName);
+            CloudQueueMessage queueMessage = new CloudQueueMessage(messageContent);
+            await queue.AddMessageAsync(queueMessage);
+            return queueMessage;
         }
 
-        public void DeleteMessage(string queueName, string messageId, string popReceipt)
+        public async Task DeleteMessage(string queueName, CloudQueueMessage queueMessage)
         {
-            CloudQueue queue = GetQueue(queueName);
-            queue.DeleteMessageAsync(messageId, popReceipt).Wait();
+            CloudQueue queue = await GetQueue(queueName);
+            await queue.DeleteMessageAsync(queueMessage);
         }
     }
 }

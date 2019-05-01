@@ -20,10 +20,10 @@ namespace AzureSkyMedia.PlatformServices
             return string.Concat("//", defaultEndpoint.HostName, relativePath);
         }
 
-        public string GetPlayerUrl(StreamingLocator locator)
+        public string GetPlayerUrl(StreamingLocator streamingLocator)
         {
             string playerUrl = string.Empty;
-            ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, locator.Name);
+            ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocator.Name);
             foreach (StreamingPath streamingPath in paths.StreamingPaths)
             {
                 if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count == 1)
@@ -39,6 +39,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 playerUrl = GetDefaultUrl(playerUrl);
             }
+            playerUrl = string.Concat(playerUrl, Constant.Media.Stream.DefaultFormat);
             return playerUrl;
         }
 

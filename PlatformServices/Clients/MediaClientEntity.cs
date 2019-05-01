@@ -17,7 +17,9 @@ namespace AzureSkyMedia.PlatformServices
             Dictionary<string, string> correlationData = new Dictionary<string, string>();
             if (addAccount)
             {
+                string userAccount = JsonConvert.SerializeObject(this.UserAccount);
                 string mediaAccount = JsonConvert.SerializeObject(this.MediaAccount);
+                correlationData.Add("userAccount", userAccount);
                 correlationData.Add("mediaAccount", mediaAccount);
             }
             if (jsonData != null)

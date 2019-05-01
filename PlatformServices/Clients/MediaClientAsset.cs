@@ -81,8 +81,8 @@ namespace AzureSkyMedia.PlatformServices
         {
             assetStreamable = false;
             List<MediaFile> files = new List<MediaFile>();
-            CloudBlob[] blobs = blobClient.ListBlobContainer(containerName, directoryPath);
-            foreach (CloudBlob blob in blobs)
+            CloudBlockBlob[] blobs = blobClient.ListBlobContainer(containerName, directoryPath);
+            foreach (CloudBlockBlob blob in blobs)
             {
                 string fileName = blob.Name;
                 string fileSize = blobClient.GetBlobSize(containerName, directoryPath, fileName, out long byteCount, out string contentType);

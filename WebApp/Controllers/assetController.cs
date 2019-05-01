@@ -51,7 +51,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         {
                             MediaJobOutputMode outputAssetMode = MediaJobOutputMode.MultipleAssets;
                             PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
-                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputFileUrl, inputAsset.Name, outputAssetMode, null, streamingPolicy);
+                            job = await mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputFileUrl, inputAsset.Name, outputAssetMode, null, streamingPolicy);
                         }
                         string insightId = null;
                         bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
@@ -100,8 +100,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                     {
                         Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, entityName);
                         string streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
-                        StreamingLocator locator = mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
-                        message = mediaClient.GetPlayerUrl(locator);
+                        StreamingLocator streamingLocator = mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
+                        message = mediaClient.GetPlayerUrl(streamingLocator);
                     }
                 }
                 return Json(message);

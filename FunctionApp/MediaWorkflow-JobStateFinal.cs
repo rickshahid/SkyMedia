@@ -1,14 +1,14 @@
 using System;
-using System.IO;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.EventGrid.Models;
-using Microsoft.Azure.Management.Media.Models;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+
+using Twilio.Types;
+using Twilio.Rest.Api.V2010.Account;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -17,41 +17,36 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaWorkflowJobStateFinal
     {
         [FunctionName("MediaWorkflow-JobStateFinal")]
-        public static void Run([EventGridTrigger] EventGridEvent eventTrigger, ILogger logger)
+        [return: TwilioSms(AccountSidSetting = "Twilio.AccountId", AuthTokenSetting = "Twilio.AccountToken", From = "%Twilio.FromNumber%")]
+        public static CreateMessageOptions Run([EventGridTrigger] EventGridEvent eventTrigger, ILogger logger)
         {
+            CreateMessageOptions twilioMessage = null;
             try
             {
                 logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));
-                switch (eventTrigger.EventType)
+                MediaPublishNotification publishNotification = MediaClient.PublishJobOutput(eventTrigger);
+                if (!string.IsNullOrEmpty(publishNotification.StreamingUrl))
                 {
-                    case "Microsoft.Media.JobFinished":
-                        JObject eventData = JObject.FromObject(eventTrigger.Data);
-                        JObject jobData = (JObject)eventData["correlationData"];
-                        if (jobData.ContainsKey("mediaAccount"))
+                    logger.LogInformation(publishNotification.StreamingUrl);
+                }
+                if (!string.IsNullOrEmpty(publishNotification.StatusMessage))
+                {
+                    logger.LogInformation(publishNotification.StatusMessage);
+                    if (!string.IsNullOrEmpty(publishNotification.PhoneNumber))
+                    {
+                        PhoneNumber twilioPhoneNumber = new PhoneNumber(publishNotification.PhoneNumber);
+                        twilioMessage = new CreateMessageOptions(twilioPhoneNumber)
                         {
-                            string mediaAccountJson = jobData["mediaAccount"].ToString();
-                            MediaAccount mediaAccount = JsonConvert.DeserializeObject<MediaAccount>(mediaAccountJson);
-                            string transformName = eventTrigger.Subject.Split("/")[1];
-                            string jobName = Path.GetFileName(eventTrigger.Subject);
-                            StreamingLocator streamingLocator = MediaClient.PublishJobOutput(mediaAccount, transformName, jobName);
-                            if (streamingLocator != null)
-                            {
-                                logger.LogInformation(JsonConvert.SerializeObject(streamingLocator, Formatting.Indented));
-                            }
-                        }
-                        break;
-
-                    case "Microsoft.Media.JobCanceled":
-                        break;
-
-                    case "Microsoft.Media.JobErrored":
-                        break;
+                            Body = publishNotification.StatusMessage
+                        };
+                    }
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex.ToString());
             }
+            return twilioMessage;
         }
     }
 }

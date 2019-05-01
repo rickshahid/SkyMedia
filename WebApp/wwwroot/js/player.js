@@ -79,9 +79,6 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
     }
 }
 function SetPlayerSource(mediaPlayer, sourceUrl, textTracks, protectionInfo) {
-    if (sourceUrl.indexOf("/manifest") > -1) {
-        sourceUrl = sourceUrl + "(format=mpd-time-cmaf)";
-    }
     if (protectionInfo != null && protectionInfo.length > 0) {
         if (window.location.href.indexOf("token=0") > -1) {
             for (var i = 0; i < protectionInfo.length; i++) {

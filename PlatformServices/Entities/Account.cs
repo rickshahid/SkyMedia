@@ -2,6 +2,11 @@
 
 namespace AzureSkyMedia.PlatformServices
 {
+    public class UserAccount
+    {
+        public string MobilePhoneNumber { get; set; }
+    }
+
     public class MediaAccount
     {
         public string Name { get; set; }

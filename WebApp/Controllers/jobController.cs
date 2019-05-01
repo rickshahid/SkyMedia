@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Rest;
@@ -50,8 +51,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData,
-                                 string inputAssetName, string inputFileUrl, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
+        public async Task<JsonResult> Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData,
+                                             string inputAssetName, string inputFileUrl, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     if (!string.IsNullOrEmpty(transformName))
                     {
-                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, null, streamingPolicyName);
+                        job = await mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, null, streamingPolicyName);
                     }
                     bool indexerEnabled = mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset);
                     bool indexOnly = false;

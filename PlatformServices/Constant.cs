@@ -240,6 +240,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Stream
             {
+                public const string DefaultFormat = "(format=mpd-time-cmaf)";
                 public const string DefaultEndpoint = "default";
                 public const string ManifestExtension = ".ism";
                 public const string InsightExtension = ".json";
@@ -295,10 +296,12 @@ namespace AzureSkyMedia.PlatformServices
         public struct Message
         {
             public const string UserPasswordForgotten = "AADB2C90118";
-            public const string AssetUnpublished = "The '{0}' asset has been unpublished.";
-            public const string JobOutputUnpublished = "The '{0}' job output assets have been unpublished.";
+            public const string WorkflowInputNotComplete = "Workflow Input Not Complete: Missing '{0}'";
             public const string StreamingEndpointNotStarted = "Your media account ({0}) does not have a streaming endpoint started.";
             public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
+            public const string JobCreated = "New Job Created: {0}";
+            public const string JobOutputUnpublished = "The '{0}' job output assets have been unpublished.";
+            public const string AssetUnpublished = "The '{0}' asset has been unpublished.";
         }
     }
 }

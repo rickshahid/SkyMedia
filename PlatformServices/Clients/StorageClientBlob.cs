@@ -31,9 +31,9 @@ namespace AzureSkyMedia.PlatformServices
             return container;
         }
 
-        public CloudBlob[] ListBlobContainer(string containerName, string directoryPath)
+        public CloudBlockBlob[] ListBlobContainer(string containerName, string directoryPath)
         {
-            List<CloudBlob> blobs = new List<CloudBlob>();
+            List<CloudBlockBlob> blobs = new List<CloudBlockBlob>();
             BlobContinuationToken continuationToken = null;
             CloudBlobContainer blobContainer = GetBlobContainer(containerName);
             do
@@ -50,8 +50,10 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 foreach (IListBlobItem blobItem in resultSegment.Results)
                 {
-                    CloudBlob blob = (CloudBlob)blobItem;
-                    blobs.Add(blob);
+                    if (blobItem is CloudBlockBlob blob)
+                    {
+                        blobs.Add(blob);
+                    }
                 }
                 continuationToken = resultSegment.ContinuationToken;
             } while (continuationToken != null);

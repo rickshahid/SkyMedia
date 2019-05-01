@@ -10,10 +10,9 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaWorkflowJobOutputProgress
     {
         [FunctionName("MediaWorkflow-JobOutputProgress")]
-        public static void Run([EventGridTrigger]EventGridEvent eventTrigger, ILogger logger)
+        public static void Run([EventGridTrigger] EventGridEvent eventTrigger, ILogger logger)
         {
             logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));
-
         }
     }
 }

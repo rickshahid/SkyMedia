@@ -228,7 +228,26 @@
       "metadata": {
         "description": "Name of the Application Insights resource."
       }
+    },
+    "twilioAccountId": {
+      "type": "string",
+      "metadata": {
+        "description": "Twilio account identifier for SMS integration."
+      }
+    },
+    "twilioAccountToken": {
+      "type": "string",
+      "metadata": {
+        "description": "Twilio account token for SMS integration."
+      }
+    },
+    "twilioFromNumber": {
+      "type": "string",
+      "metadata": {
+        "description": "Twilio phone number for SMS integration."
+      }
     }
+
   },
   "variables": {
     "storageApiVersion": "2019-04-01",
@@ -585,48 +604,50 @@
             {
               "name": "Storage.SharedAccessMinutes",
               "value": "60"
-            }
-          ],
-          "connectionStrings": [
+            },
             {
-              "type": "Custom",
               "name": "Storage",
-              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadOnly",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadWrite",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.Regions",
-              "connectionString": "[parameters('databaseServiceRegions')]"
+              "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobOutputProgressUrl",
-              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobStateFinalUrl",
-              "connectionString": "[parameters('functionJobStateFinalUrl')]"
+              "value": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.LiveEventUrl",
-              "connectionString": "[parameters('functionLiveEventUrl')]"
+              "value": "[parameters('functionLiveEventUrl')]"
             },
             {
-              "type": "Custom",
               "name": "VideoIndexer.ApiUrl",
-              "connectionString": "https://api.videoindexer.ai/"
+              "value": "https://api.videoindexer.ai/"
+            },
+            {
+              "name": "Twilio.AccountId",
+              "value": "[parameters('twilioAccountId')]"
+            },
+            {
+              "name": "Twilio.AccountToken",
+              "value": "[parameters('twilioAccountToken')]"
+            },
+            {
+              "name": "Twilio.FromNumber",
+              "value": "[parameters('twilioFromNumber')]"
             }
           ]
         }
@@ -707,48 +728,50 @@
             {
               "name": "Storage.SharedAccessMinutes",
               "value": "60"
-            }
-          ],
-          "connectionStrings": [
+            },
             {
-              "type": "Custom",
               "name": "Storage",
-              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadOnly",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadWrite",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.Regions",
-              "connectionString": "[parameters('databaseServiceRegions')]"
+              "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobOutputProgressUrl",
-              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobStateFinalUrl",
-              "connectionString": "[parameters('functionJobStateFinalUrl')]"
+              "value": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.LiveEventUrl",
-              "connectionString": "[parameters('functionLiveEventUrl')]"
+              "value": "[parameters('functionLiveEventUrl')]"
             },
             {
-              "type": "Custom",
               "name": "VideoIndexer.ApiUrl",
-              "connectionString": "https://api.videoindexer.ai/"
+              "value": "https://api.videoindexer.ai/"
+            },
+            {
+              "name": "Twilio.AccountId",
+              "value": "[parameters('twilioAccountId')]"
+            },
+            {
+              "name": "Twilio.AccountToken",
+              "value": "[parameters('twilioAccountToken')]"
+            },
+            {
+              "name": "Twilio.FromNumber",
+              "value": "[parameters('twilioFromNumber')]"
             }
           ]
         }
@@ -759,6 +782,14 @@
     "storageConnection": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
+    "databaseConnectionReadOnly": {
+      "type": "string",
+      "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+    },
+    "databaseConnectionReadWrite": {
+      "type": "string",
+      "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
     },
     "searchConnectionReadOnly": {
       "type": "string",
