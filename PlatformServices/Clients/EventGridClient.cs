@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 using Microsoft.Rest;
 using Microsoft.Rest.Azure.Authentication;
 using Microsoft.Azure.Management.EventGrid;
@@ -25,9 +23,9 @@ namespace AzureSkyMedia.PlatformServices
             eventGridClient.EventSubscriptions.CreateOrUpdate(eventScope, eventSubscription.Name, eventSubscription);
         }
 
-        public static async Task SetMediaSubscription(MediaAccount mediaAccount)
+        public static void SetMediaSubscription(MediaAccount mediaAccount)
         {
-            ServiceClientCredentials clientCredentials = await ApplicationTokenProvider.LoginSilentAsync(mediaAccount.DirectoryTenantId, mediaAccount.ServicePrincipalId, mediaAccount.ServicePrincipalKey);
+            ServiceClientCredentials clientCredentials = ApplicationTokenProvider.LoginSilentAsync(mediaAccount.DirectoryTenantId, mediaAccount.ServicePrincipalId, mediaAccount.ServicePrincipalKey).Result;
             EventGridManagementClient eventGridClient = new EventGridManagementClient(clientCredentials)
             {
                 SubscriptionId = mediaAccount.SubscriptionId

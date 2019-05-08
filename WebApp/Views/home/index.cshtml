@@ -15,8 +15,8 @@
     string storageCdnUrl = ViewData["storageCdnUrl"].ToString();
 
     string userId = ViewData["userId"] as string;
-    string userMessage = ViewData["userMessage"] as string;
     string accountName = ViewData["accountName"] as string;
+    string accountMessage = ViewData["accountMessage"] as string;
 }
 
 @section head {
@@ -38,8 +38,8 @@
             CreateStreamTuner();
             SetPlayerEvents(_mediaPlayer, "@storageCdnUrl", false, true);
             SetMediaStream(false, false);
-            if ("@userMessage" != "") {
-                DisplayMessage("User Message", "@userMessage");
+            if ("@accountMessage" != "") {
+                DisplayMessage("Account Message", "@accountMessage");
             }
         })
     </script>

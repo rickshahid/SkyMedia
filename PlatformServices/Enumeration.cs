@@ -27,6 +27,7 @@ namespace AzureSkyMedia.PlatformServices
         ThumbnailSprite,
         VideoAnalyzer,
         AudioAnalyzer,
+        FaceDetector,
         VideoIndexer,
         AudioIndexer
     }
@@ -34,20 +35,14 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaJobInputMode
     {
+        Container,
         InputFile,
         AssetFile,
         Asset
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaJobOutputMode
-    {
-        MultipleAssets,
-        SingleAsset
-    }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaProtection
+    public enum MediaContentProtection
     {
         AES,
         PlayReady,
@@ -58,9 +53,9 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaInsightModel
     {
-        Brand,
+        Language,
         Person,
-        Language
+        Brand
     }
 
     [JsonConverter(typeof(StringEnumConverter))]

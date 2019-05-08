@@ -4,7 +4,7 @@
   "libraries": [
     {
       "provider": "cdnjs",
-      "library": "jquery@3.3.1",
+      "library": "jquery@3.4.1",
       "destination": "wwwroot/lib/jquery/"
     },
     {

@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 
 namespace AzureSkyMedia.FunctionApp
 {
-    public static class MediaLive
+    public static class MediaLiveEvent
     {
-        [FunctionName("MediaLive")]
+        [FunctionName("MediaLiveEvent")]
         public static void Run([EventGridTrigger] EventGridEvent eventTrigger, ILogger logger)
         {
             logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));

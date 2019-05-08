@@ -55,21 +55,23 @@ namespace AzureSkyMedia.PlatformServices
             return requestUrl;
         }
 
-        private string AddRequestParameters(string requestUrl, Priority jobPriority, bool indexOnly, bool audioOnly, bool videoOnly)
+        private string AddRequestParameters(string requestUrl, Priority jobPriority, bool audioOnly, bool videoOnly, bool reindexOnly)
         {
             string settingKey = Constant.AppSettingKey.EventGridJobStateFinalUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
-            requestUrl = string.Concat(requestUrl, "&streamingPreset=");
-            requestUrl = string.Concat(requestUrl, indexOnly ? "NoStreaming" : "AdaptiveBitrate");
-            if (audioOnly)
+            if (!reindexOnly)
             {
-                requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
-            }
-            else if (videoOnly)
-            {
-                requestUrl = string.Concat(requestUrl, "&indexingPreset=VideoOnly");
+                requestUrl = string.Concat(requestUrl, "&streamingPreset=AdaptiveBitrate");
+                if (audioOnly)
+                {
+                    requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
+                }
+                else if (videoOnly)
+                {
+                    requestUrl = string.Concat(requestUrl, "&indexingPreset=VideoOnly");
+                }
             }
             requestUrl = string.Concat(requestUrl, "&sendSuccessEmail=true");
             return requestUrl;
@@ -92,7 +94,7 @@ namespace AzureSkyMedia.PlatformServices
                 foreach (JToken indexerAccount in indexerAccounts)
                 {
                     string accountId = indexerAccount["id"].ToString();
-                    if (string.Equals(accountId, MediaAccount.VideoIndexerId, StringComparison.OrdinalIgnoreCase))
+                    if (accountId.Equals(MediaAccount.VideoIndexerId, StringComparison.OrdinalIgnoreCase))
                     {
                         _indexerAccountId = accountId;
                         _indexerAccountToken = indexerAccount["accessToken"].ToString();
@@ -101,7 +103,7 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
-        public string IndexerUploadVideo(string inputFileUrl, Asset inputAsset, Priority jobPriority, bool indexOnly, bool audioOnly, bool videoOnly)
+        public string IndexerUploadVideo(string inputFileUrl, Asset inputAsset, Priority jobPriority, bool audioOnly, bool videoOnly)
         {
             string insightId;
             string requestUrl = GetRequestUrl("/videos", null, null);
@@ -117,7 +119,7 @@ namespace AzureSkyMedia.PlatformServices
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(videoName));
                 requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(inputFileUrl));
             }
-            requestUrl = AddRequestParameters(requestUrl, jobPriority, indexOnly, audioOnly, videoOnly);
+            requestUrl = AddRequestParameters(requestUrl, jobPriority, audioOnly, videoOnly, false);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Post, requestUrl);
@@ -134,7 +136,7 @@ namespace AzureSkyMedia.PlatformServices
             bool audioOnly = indexingPreset == "AudioOnly";
             bool videoOnly = indexingPreset == "VideoOnly";
             string requestUrl = GetRequestUrl("/videos/", insightId, "/reindex");
-            requestUrl = AddRequestParameters(requestUrl, jobPriority, true, audioOnly, videoOnly);
+            requestUrl = AddRequestParameters(requestUrl, jobPriority, audioOnly, videoOnly, true);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Put, requestUrl);
@@ -174,8 +176,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public JArray IndexerGetProjects()
         {
-            bool lastPage;
-            JObject insights = null;
+            //bool lastPage;
+            //JObject insights = null;
             JArray allInsights = new JArray();
             //do
             //{

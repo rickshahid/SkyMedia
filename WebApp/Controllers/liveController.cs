@@ -78,7 +78,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     liveOutput = mediaClient.CreateLiveOutput(eventName, eventOutputName, eventOutputDescription, null, outputAssetName, archiveWindowMinutes);
-                    mediaClient.CreateLocator(outputAssetName, outputAssetName, streamingPolicyName, null);
+                    mediaClient.GetStreamingLocator(outputAssetName, streamingPolicyName, null);
                 }
                 return Json(liveOutput);
             }

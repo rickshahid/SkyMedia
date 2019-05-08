@@ -15,7 +15,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const char Connection = ';';
             public const char Application = ',';
-            public const char Manifest = '.';
+
+            public const string TransformPresetName = ", ";
+            public const string JobOutputLabel = "Preset";
+            public const string AssetName = " - ";
         }
 
         public struct TextFormatter
@@ -34,11 +37,6 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 return value;
             }
-        }
-
-        public struct FileExtension
-        {
-            public const string StreamingManifest = ".ism";
         }
 
         public struct AppSettingKey
@@ -158,6 +156,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 public const string WorkflowContainersPath = "/blobServices/default/containers/";
                 public const string WorkflowContainerName = "azure-media-services";
+                public const string WorkflowContainerFiles = "*";
                 public const string WorkflowManifestPath = WorkflowContainerName + "/" + WorkflowManifestFile;
                 public const string WorkflowManifestFile = "WorkflowManifest.json";
             }
@@ -167,14 +166,15 @@ namespace AzureSkyMedia.PlatformServices
         {
             public struct Collection
             {
-                public const string MediaContentInsight = "Media Content Insight";
+                public const string MediaAssets = "Assets";
+                public const string MediaInsight = "Insights";
             }
 
-            public struct Script
-            {
-                public const string IsTimecodeFragment = "isTimecodeFragment.js";
-                public const string GetTimecodeFragment = "getTimecodeFragment.js";
-            }
+            //public struct Script
+            //{
+            //    public const string IsTimecodeFragment = "isTimecodeFragment.js";
+            //    public const string GetTimecodeFragment = "getTimecodeFragment.js";
+            //}
 
             public struct Document
             {
@@ -205,52 +205,63 @@ namespace AzureSkyMedia.PlatformServices
                 public const string IngestManifest = "application/json";
             }
 
-            public struct ContentKey
+            public struct ContentKeyPolicy
             {
-                public const string PolicyAES = "Content Key Policy AES";
-                public const string PolicyCENC = "Content Key Policy DRM (CENC)";
-                public const string PolicyDRM = "Content Key Policy DRM";
+                public const string Aes = "Envelope Encryption (AES)";
+                public const string Drm = "Multiple DRM Encryption";
+                public const string DrmCenc = "Multiple DRM Encryption (CENC)";
             }
 
             public struct Asset
             {
-                public const string NameDelimiter = " - ";
                 public const string SingleBitrate = "SBR";
                 public const string ContainerPrefix = "asset-";
             }
 
-            public struct Transform
-            {
-                public struct Preset
-                {
-                    public const string NameDelimiter = ", ";
-                }
-            }
-
             public struct Job
             {
+                public struct EventType
+                {
+                    public const string Errored = "Microsoft.Media.JobErrored";
+                    public const string Finished = "Microsoft.Media.JobFinished";
+                    public const string Canceled = "Microsoft.Media.JobCanceled";
+                }
+
                 public struct OutputAssetNameSuffix
                 {
-                    public const string MediaServices = "AMS";
                     public const string StandardEncoder = "MES";
                     public const string VideoAnalyzer = "VAI";
                     public const string AudioAnalyzer = "AAI";
+                    public const string FaceDetector = "FAI";
+                }
+
+                public struct CorrelationData
+                {
+                    public const string UserAccount = "UserAccount";
+                    public const string MediaAccount = "MediaAccount";
+                    public const string OutputPublish = "OutputPublish";
                 }
             }
 
             public struct Stream
             {
+                public const string DefaultScheme = "https";
                 public const string DefaultFormat = "(format=mpd-time-cmaf)";
-                public const string DefaultEndpoint = "default";
+                public const string DefaultEndpointName = "default";
                 public const string ManifestExtension = ".ism";
-                public const string InsightExtension = ".json";
+                public const string ManifestSuffix = "/manifest";
             }
 
             public struct Track
             {
-                public const string CaptionsType = "captions";
-                public const string CaptionsLabel = "Captions On";
-                public const string TranscriptFile = "transcript.vtt";
+                public struct AudioTranscript
+                {
+                    public const string SubtitlesType = "subtitles";
+                    public const string SubtitlesLabel = "On";
+                    public const string CaptionsType = "captions";
+                    public const string CaptionsLabel = "Captions On";
+                    public const string FileName = "transcript.vtt";
+                }
             }
 
             public struct Thumbnail
@@ -270,38 +281,47 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string JobOutputProgressSubscriptionName = "Media-Job-Output-Progress";
             public static string[] JobOutputProgressSubscriptionEvents = new string[] {
-                    "Microsoft.Media.JobOutputProgress"
-                };
+                "Microsoft.Media.JobOutputProgress"
+            };
 
             public const string JobStateFinalSubscriptionName = "Media-Job-State-Final";
             public static string[] JobStateFinalSubscriptionEvents = new string[] {
-                    "Microsoft.Media.JobFinished",
-                    "Microsoft.Media.JobCanceled",
-                    "Microsoft.Media.JobErrored"
-                };
+                Media.Job.EventType.Errored,
+                Media.Job.EventType.Finished,
+                Media.Job.EventType.Canceled
+            };
 
             public const string LiveEventSubscriptionName = "Media-Live-Event";
             public static string[] LiveEventSubscriptionEvents = new string[] {
-                    "Microsoft.Media.LiveEventConnectionRejected",
-                    "Microsoft.Media.LiveEventEncoderConnected",
-                    "Microsoft.Media.LiveEventEncoderDisconnected",
-                    "Microsoft.Media.LiveEventIncomingDataChunkDropped",
-                    "Microsoft.Media.LiveEventIncomingStreamReceived",
-                    "Microsoft.Media.LiveEventIncomingStreamsOutOfSync",
-                    "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync",
-                    "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
-                };
+                "Microsoft.Media.LiveEventConnectionRejected",
+                "Microsoft.Media.LiveEventEncoderConnected",
+                "Microsoft.Media.LiveEventEncoderDisconnected",
+                "Microsoft.Media.LiveEventIncomingDataChunkDropped",
+                "Microsoft.Media.LiveEventIncomingStreamReceived",
+                "Microsoft.Media.LiveEventIncomingStreamsOutOfSync",
+                "Microsoft.Media.LiveEventIncomingVideoStreamsOutOfSync",
+                "Microsoft.Media.LiveEventTrackDiscontinuityDetected"
+            };
+        }
+
+        public struct TimerSchedule
+        {
+            public const string Daily = "0 0 0 * * *";
+            public const string Weekly = "0 0 0 * * 1";
+            public const string Monthly = "0 0 0 1 * *";
         }
 
         public struct Message
         {
+            public const string NewLine = "\n\n";
             public const string UserPasswordForgotten = "AADB2C90118";
             public const string WorkflowInputNotComplete = "Workflow Input Not Complete: Missing '{0}'";
-            public const string StreamingEndpointNotStarted = "Your media account ({0}) does not have a streaming endpoint started.";
-            public const string StorageAccountReadPermission = " (Your AMS Service Principal does not have storage account read permission)";
-            public const string JobCreated = "New Job Created: {0}";
-            public const string JobOutputUnpublished = "The '{0}' job output assets have been unpublished.";
+            public const string StorageAccountReadPermission = " (Your media account service principal does not have storage account reader access)";
+            public const string JobPublishNotification = "Transform: {0}" + NewLine + "Job: {1}" + NewLine + "Event: {2}";
+            public const string JobUnpublishNotification = "The '{0}' job output assets have been unpublished.";
             public const string AssetUnpublished = "The '{0}' asset has been unpublished.";
+            public const string JobCreated = "New Job Created: {0}";
+            public const string InsightCreated = "New Insight Created: {0}";
         }
     }
 }

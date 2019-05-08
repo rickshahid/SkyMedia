@@ -1,27 +1,32 @@
-using System;
+using System.IO;
 using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media.Models;
+
+using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Track
     {
-        public static TextTrack[] GetTextTracks(string tracks)
+        private static string GetSourceUrl(string streamingUrl, string fileName)
+        {
+            string manifestSuffix = string.Concat(Constant.Media.Stream.ManifestSuffix, Constant.Media.Stream.DefaultFormat);
+            string manifestUrl = streamingUrl.Replace(manifestSuffix, string.Empty);
+            string manifestFile = Path.GetFileName(manifestUrl);
+            return manifestUrl.Replace(manifestFile, fileName);
+        }
+
+        public static TextTrack[] GetTextTracks(string sourceUrl, string sourceTracks)
         {
             List<TextTrack> textTracks = new List<TextTrack>();
-            if (!string.IsNullOrEmpty(tracks))
+            if (!string.IsNullOrEmpty(sourceTracks))
             {
-                string[] tracksInfo = tracks.Split(Constant.TextDelimiter.Connection);
-                foreach (string trackInfo in tracksInfo)
+                JArray sourceTextTracks = JArray.Parse(sourceTracks);
+                foreach (JToken sourceTextTrack in sourceTextTracks)
                 {
-                    string[] track = trackInfo.Split(Constant.TextDelimiter.Application);
-                    TextTrack textTrack = new TextTrack()
-                    {
-                        Type = track[0],
-                        Label = track[1],
-                        SourceUrl = track[2]
-                    };
+                    TextTrack textTrack = sourceTextTrack.ToObject<TextTrack>();
+                    textTrack.SourceUrl = GetSourceUrl(sourceUrl, textTrack.SourceUrl);
                     textTracks.Add(textTrack);
                 }
             }
@@ -30,32 +35,57 @@ namespace AzureSkyMedia.PlatformServices
 
         public static TextTrack[] GetTextTracks(MediaClient mediaClient, Asset asset)
         {
-            string captionsUrl = null;
             List<TextTrack> textTracks = new List<TextTrack>();
-            MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
-            foreach (MediaFile assetFile in mediaAsset.Files)
+            using (DatabaseClient databaseClient = new DatabaseClient(false))
             {
-                if (string.IsNullOrEmpty(captionsUrl))
+                string collectionId = Constant.Database.Collection.MediaAssets;
+                MediaAssetLink assetLink = databaseClient.GetDocument<MediaAssetLink>(collectionId, asset.Name);
+                if (assetLink != null)
                 {
-                    if (string.Equals(assetFile.Name, Constant.Media.Track.TranscriptFile, StringComparison.OrdinalIgnoreCase))
+                    string trackType = null;
+                    string trackLabel = null;
+                    string trackSourceUrl = null;
+                    if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.VideoIndexer))
                     {
-                        captionsUrl = mediaClient.GetDownloadUrl(asset, assetFile.Name);
+                        trackType = Constant.Media.Track.AudioTranscript.CaptionsType;
+                        trackLabel = Constant.Media.Track.AudioTranscript.CaptionsLabel;
+                        string insightId = assetLink.JobOutputs[MediaTransformPreset.VideoIndexer];
+                        trackSourceUrl = mediaClient.IndexerGetCaptionsUrl(insightId);
                     }
-                    else if (!string.IsNullOrEmpty(asset.AlternateId))
+                    else if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.AudioIndexer))
                     {
-                        captionsUrl = mediaClient.IndexerGetCaptionsUrl(asset.AlternateId);
+                        trackType = Constant.Media.Track.AudioTranscript.CaptionsType;
+                        trackLabel = Constant.Media.Track.AudioTranscript.CaptionsLabel;
+                        string insightId = assetLink.JobOutputs[MediaTransformPreset.AudioIndexer];
+                        trackSourceUrl = mediaClient.IndexerGetCaptionsUrl(insightId);
+                    }
+                    else if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.VideoAnalyzer))
+                    {
+                        trackType = Constant.Media.Track.AudioTranscript.SubtitlesType;
+                        trackLabel = Constant.Media.Track.AudioTranscript.SubtitlesLabel;
+                        string assetName = assetLink.JobOutputs[MediaTransformPreset.VideoAnalyzer];
+                        string fileName = Constant.Media.Track.AudioTranscript.FileName;
+                        trackSourceUrl = mediaClient.GetDownloadUrl(assetName, fileName);
+                    }
+                    else if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.AudioAnalyzer))
+                    {
+                        trackType = Constant.Media.Track.AudioTranscript.SubtitlesType;
+                        trackLabel = Constant.Media.Track.AudioTranscript.SubtitlesLabel;
+                        string assetName = assetLink.JobOutputs[MediaTransformPreset.AudioAnalyzer];
+                        string fileName = Constant.Media.Track.AudioTranscript.FileName;
+                        trackSourceUrl = mediaClient.GetDownloadUrl(assetName, fileName);
+                    }
+                    if (!string.IsNullOrEmpty(trackSourceUrl))
+                    {
+                        TextTrack textTrack = new TextTrack()
+                        {
+                            Type = trackType,
+                            Label = trackLabel,
+                            SourceUrl = trackSourceUrl
+                        };
+                        textTracks.Add(textTrack);
                     }
                 }
-            }
-            if (!string.IsNullOrEmpty(captionsUrl))
-            {
-                TextTrack textTrack = new TextTrack()
-                {
-                    Type = Constant.Media.Track.CaptionsType,
-                    Label = Constant.Media.Track.CaptionsLabel,
-                    SourceUrl = captionsUrl
-                };
-                textTracks.Add(textTrack);
             }
             return textTracks.ToArray();
         }

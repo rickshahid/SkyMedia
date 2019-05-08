@@ -49,11 +49,11 @@ function CreateJob() {
                     jobName: $("#name").val(),
                     jobDescription: $("#description").val(),
                     jobPriority: $("#jobPriority:checked").val(),
-                    jobData: _jsonEditor.getText(),
-                    inputAssetName: inputAssetName,
                     inputFileUrl: inputFileUrl,
-                    outputAssetMode: $("#outputAssetMode:checked").val(),
-                    streamingPolicyName: $("#streamingPolicies").val()
+                    inputAssetName: inputAssetName,
+                    inputAssetStorageTier: null,
+                    streamingPolicyName: $("#streamingPolicies").val(),
+                    contentProtection: null
                 },
                 function (job) {
                     SetCursor(false);

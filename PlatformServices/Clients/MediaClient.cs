@@ -20,19 +20,24 @@ namespace AzureSkyMedia.PlatformServices
         public MediaClient(string authToken)
         {
             User currentUser = new User(authToken);
+            MediaAccount = currentUser.MediaAccount;
             UserAccount = new UserAccount()
             {
                 MobilePhoneNumber = currentUser.MobilePhoneNumber
             };
-            MediaAccount = currentUser.MediaAccount;
             BindContext();
         }
 
-        public MediaClient(UserAccount userAccount, MediaAccount mediaAccount)
+        public MediaClient(MediaAccount mediaAccount, UserAccount userAccount)
         {
-            UserAccount = userAccount;
             MediaAccount = mediaAccount;
+            UserAccount = userAccount;
             BindContext();
+        }
+
+        public MediaClient(MediaWorkflowManifest workflowManifest) :
+            this(workflowManifest.MediaAccounts[0], workflowManifest.UserAccount)
+        {
         }
 
         private void BindContext()
@@ -48,8 +53,6 @@ namespace AzureSkyMedia.PlatformServices
                 IndexerSetAccount();
             }
         }
-
-        public UserAccount UserAccount { get; }
 
         public MediaAccount MediaAccount { get; }
 
@@ -71,6 +74,8 @@ namespace AzureSkyMedia.PlatformServices
                 return Path.GetFileName(primaryStorage.Id);
             }
         }
+
+        public UserAccount UserAccount { get; }
 
         public void Dispose()
         {

@@ -56,7 +56,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 VanityUrl = true,
                 Description = eventDescription,
-                Tags = GetCorrelationData(eventTags, false),
+                //Tags = GetCorrelationData(eventTags, false),
                 Input = eventInput,
                 Encoding = eventEncoding,
                 Preview = eventPreview,
@@ -87,7 +87,7 @@ namespace AzureSkyMedia.PlatformServices
             LiveEvent liveEvent = new LiveEvent()
             {
                 Description = eventDescription,
-                Tags = GetCorrelationData(eventTags, false),
+                //Tags = GetCorrelationData(eventTags, false),
                 CrossSiteAccessPolicies = crossSiteAccessPolicies,
                 Location = mediaService.Location
             };

@@ -15,7 +15,6 @@
             LoadGrid(gridId, rows);
             CreateTipTop("jobCreate", "Create Job");
             CreateTipTop("jobUpdate", "Update Job");
-            CreateJsonEditor("jobData", "Media Job Data", null);
        })
     </script>
 }
@@ -33,9 +32,6 @@
     <tr>
         <td>
             @Html.TextBox("name", null, new { @class = "mediaEntityName", placeholder = "[Media Job Name]" })
-        </td>
-        <td rowspan="3">
-            <div id="jobData" class="jsonData"></div>
         </td>
     </tr>
     <tr>
@@ -84,22 +80,6 @@
                     </td>
                     <td>
                         @Html.TextBox("inputFileUrl", null, new { @class = "mediaEntityName", placeholder = "https://" })
-                    </td>
-                </tr>
-                <tr>
-                    <td class="inputLabel">
-                        Output Asset Mode
-                    </td>
-                    <td>
-                        <input id="outputAssetMode" name="outputAssetMode" type="radio" value="MultipleAssets" checked>
-                        <span class="inputLabel">
-                            Multiple Assets
-                        </span>
-                        &nbsp;
-                        <input id="outputAssetMode" name="outputAssetMode" type="radio" value="SingleAsset">
-                        <span class="inputLabel">
-                            Single Asset
-                        </span>
                     </td>
                 </tr>
             </table>

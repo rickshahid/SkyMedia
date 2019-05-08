@@ -57,32 +57,6 @@ namespace AzureSkyMedia.PlatformServices
             return _cosmos.CreateDocumentQuery(collectionUri);
         }
 
-        private Uri CreateCollection(Uri databaseUri, string collectionId)
-        {
-            DocumentCollection documentCollection = new DocumentCollection() { Id = collectionId };
-            _cosmos.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection).Wait();
-            return UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
-        }
-
-        ////public void Initialize(string scriptDirectory)
-        ////{
-        ////    string scriptFile = Path.Combine(collectionDirectory, Constant.Database.Script.IsTimecodeFragment);
-        ////    UserDefinedFunction function = new UserDefinedFunction()
-        ////    {
-        ////        Id = Path.GetFileNameWithoutExtension(Constant.Database.Script.IsTimecodeFragment),
-        ////        Body = File.ReadAllText(scriptFile)
-        ////    };
-        ////    _cosmos.CreateUserDefinedFunctionAsync(collectionUri, function);
-
-        ////    scriptFile = Path.Combine(collectionDirectory, Constant.Database.Script.GetTimecodeFragment);
-        ////    StoredProcedure procedure = new StoredProcedure()
-        ////    {
-        ////        Id = Path.GetFileNameWithoutExtension(Constant.Database.Script.GetTimecodeFragment),
-        ////        Body = File.ReadAllText(scriptFile)
-        ////    };
-        ////    _cosmos.CreateStoredProcedureAsync(collectionUri, procedure);
-        ////}
-
         public T[] GetDocuments<T>(string collectionId)
         {
             List<T> documents = new List<T>();
@@ -130,7 +104,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public JObject ExecuteProcedure(string collectionId, string procedureId, params dynamic[] procedureParameters)
         {
-            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId);
             Uri procedureUri = UriFactory.CreateStoredProcedureUri(_databaseId, collectionId, procedureId);
             Task<StoredProcedureResponse<JValue>> procedureTask = _cosmos.ExecuteStoredProcedureAsync<JValue>(procedureUri, procedureParameters);
             StoredProcedureResponse<JValue> procedureResult = procedureTask.Result;

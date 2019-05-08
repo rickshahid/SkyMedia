@@ -129,6 +129,21 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        public bool ContainsFile(string containerName, string directoryPath, string fileName, string fileExtension)
+        {
+            bool containsFile = false;
+            CloudBlockBlob[] blobs = ListBlobContainer(containerName, directoryPath);
+            foreach (CloudBlockBlob blob in blobs)
+            {
+                if ((!string.IsNullOrEmpty(fileName) && blob.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(fileExtension) && blob.Name.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase)))
+                {
+                    containsFile = true;
+                }
+            }
+            return containsFile;
+        }
+
         public static string MapByteCount(long byteCount)
         {
             string mappedCount;

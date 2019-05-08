@@ -28,7 +28,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public async Task<JsonResult> Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
                                                bool contentAwareEncoding, bool adaptiveStreaming, bool thumbnailImages, bool thumbnailSprite,
-                                               bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+                                               bool videoAnalyzer, bool audioAnalyzer, bool faceDetector, bool videoIndexer, bool audioIndexer)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    Transform transform = mediaClient.GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
+                    Transform transform = mediaClient.GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
                     inputAssets = await CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                     StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
                     foreach (Asset inputAsset in inputAssets)
@@ -49,18 +49,19 @@ namespace AzureSkyMedia.WebApp.Controllers
                         string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName);
                         if (transform != null)
                         {
-                            MediaJobOutputMode outputAssetMode = MediaJobOutputMode.MultipleAssets;
-                            PredefinedStreamingPolicy streamingPolicy = PredefinedStreamingPolicy.ClearStreamingOnly;
-                            job = await mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputFileUrl, inputAsset.Name, outputAssetMode, null, streamingPolicy);
+                            MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
+                            {
+                                StreamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly
+                            };
+                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, inputFileUrl, inputAsset.Name, null, outputAssetPublish);
                         }
                         string insightId = null;
                         bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
-                        bool indexOnly = false;
-                        bool audioOnly = !videoIndexer && audioIndexer;
-                        bool videoOnly = false;
                         if (indexerEnabled)
                         {
-                            insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, indexOnly, audioOnly, videoOnly);
+                            bool audioOnly = !videoIndexer && audioIndexer;
+                            bool videoOnly = videoIndexer && !audioIndexer;
+                            insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, audioOnly, videoOnly);
                         }
                         if (job != null)
                         {
@@ -93,15 +94,15 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     if (unpublish)
                     {
-                        mediaClient.DeleteLocators(entityName);
+                        mediaClient.DeleteStreamingLocators(entityName);
                         message = string.Format(Constant.Message.AssetUnpublished, entityName);
                     }
                     else
                     {
                         Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, entityName);
                         string streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
-                        StreamingLocator streamingLocator = mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
-                        message = mediaClient.GetPlayerUrl(streamingLocator);
+                        StreamingLocator streamingLocator = mediaClient.GetStreamingLocator(asset.Name, streamingPolicyName, null);
+                        message = mediaClient.GetLocatorUrl(streamingLocator, null);
                     }
                 }
                 return Json(message);
@@ -130,7 +131,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         string containerName = Constant.Storage.Blob.WorkflowContainerName;
                         string directoryPath = assetType;
                         string assetName = MediaClient.GetAssetName(sourceBlobClient, containerName, directoryPath, out MediaFile[] sourceFiles);
-                        assetName = string.Concat(i.ToString(), Constant.Media.Asset.NameDelimiter, assetName);
+                        assetName = string.Concat(i.ToString(), Constant.TextDelimiter.AssetName, assetName);
                         Asset asset = mediaClient.CreateAsset(mediaClient.StorageAccount, assetName);
                         foreach (MediaFile sourceFile in sourceFiles)
                         {
@@ -144,7 +145,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         {
                             Task.WaitAll(uploadTasks.ToArray());
                             string streamingPolicyName = assetType == Constant.Media.Asset.SingleBitrate ? PredefinedStreamingPolicy.DownloadOnly : PredefinedStreamingPolicy.ClearStreamingOnly;
-                            mediaClient.CreateLocator(asset.Name, asset.Name, streamingPolicyName, null);
+                            mediaClient.GetStreamingLocator(asset.Name, streamingPolicyName, null);
                         }
                     }
                 }

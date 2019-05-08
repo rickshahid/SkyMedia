@@ -1,20 +1,4 @@
-﻿function SetIntelligenceOptions(videoPreset) {
-    var audioPresetId;
-    switch (videoPreset.id) {
-        case "videoAnalyzer":
-            audioPresetId = "audioAnalyzer";
-            break;
-        case "videoIndexer":
-            audioPresetId = "audioIndexer";
-            break;
-        case "presetType2":
-            audioPresetId = "presetType3";
-            break;
-    }
-    $("#" + audioPresetId).prop("checked", false);
-    $("#" + audioPresetId).prop("disabled", videoPreset.checked);
-}
-function SetThumbnailSprite(thumbnailPreset) {
+﻿function SetThumbnailSprite(thumbnailPreset) {
     if (thumbnailPreset.checked) {
         $("#thumbnailSpriteRow").show();
     } else {

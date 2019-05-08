@@ -1,6 +1,5 @@
-﻿using Microsoft.Azure.Management.Media.Models;
-
-using Newtonsoft.Json.Linq;
+﻿using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.Management.Media.Models;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -12,42 +11,21 @@ namespace AzureSkyMedia.PlatformServices
 
         public Priority Priority { get; set; }
 
-        public JObject Data { get; set; }
-
         public string InputFileUrl { get; set; }
 
         public string InputAssetName { get; set; }
 
-        public MediaJobOutputMode OutputAssetMode { get; set; }
-
         public string OutputAssetStorage { get; set; }
+
+        public MediaJobOutputPublish OutputAssetPublish { get; set; }
     }
 
-    //internal class MediaJobAccount
-    //{
-    //    public MediaJobAccount(string mappingId)
-    //    {
-    //        this.Id = mappingId;
-    //        this.Created = DateTime.UtcNow;
-    //    }
+    public class MediaJobOutputPublish
+    {
+        public StandardBlobTier InputAssetStorageTier { get; set; }
 
-    //    [JsonProperty(PropertyName = "id")]
-    //    public string Id { get; }
+        public string StreamingPolicyName { get; set; }
 
-    //    public string InsightId { get; set; }
-
-    //    public string JobName { get; set; }
-
-    //    public Priority JobPriority { get; set; }
-
-    //    public string TransformName { get; set; }
-
-    //    public MediaAccount MediaAccount { get; set; }
-
-    //    public bool AudioOnly { get; set; }
-
-    //    public bool VideoOnly { get; set; }
-
-    //    public DateTime Created { get; }
-    //}
+        public ContentProtection ContentProtection { get; set; }
+    }
 }

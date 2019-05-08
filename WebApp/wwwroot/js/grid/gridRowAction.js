@@ -118,11 +118,12 @@ function PublishContent(entityType, entityName, parentName, unpublish) {
                 parentName: decodeURIComponent(parentName),
                 unpublish: unpublish
             },
-            function (message) {
+            function (notification) {
                 SetCursor(false);
                 var title = "Content " + action + " Message";
-                if (entityType != "Asset") {
-                    message = message.userNotification.jobOutputMessage;
+                var message = notification;
+                if (entityType == "Job") {
+                    message = notification.statusMessage;
                 }
                 DisplayMessage(title, message);
                 window.location = window.location.href;

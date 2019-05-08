@@ -94,7 +94,7 @@ namespace AzureSkyMedia.PlatformServices
                     ByteCount = byteCount,
                     Size = fileSize
                 };
-                if (file.Name.EndsWith(Constant.FileExtension.StreamingManifest, StringComparison.OrdinalIgnoreCase))
+                if (file.Name.EndsWith(Constant.Media.Stream.ManifestExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     assetStreamable = true;
                 }

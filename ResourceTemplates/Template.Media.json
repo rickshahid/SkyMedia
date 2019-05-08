@@ -131,53 +131,11 @@
           "properties": {
             "outputs": [
               {
-                "onError": "StopProcessingJob",
                 "relativePriority": "Normal",
+                "onError": "StopProcessingJob",
                 "preset": {
                   "@odata.type": "#Microsoft.Media.BuiltInStandardEncoderPreset",
                   "presetName": "AdaptiveStreaming"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "transforms",
-          "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "ThumbnailSprite",
-          "dependsOn": [
-            "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
-          ],
-          "properties": {
-            "outputs": [
-              {
-                "onError": "StopProcessingJob",
-                "relativePriority": "Normal",
-                "preset": {
-                  "@odata.type": "#Microsoft.Media.StandardEncoderPreset",
-                  "codecs": [
-                    {
-                      "@odata.type": "#Microsoft.Media.JpgImage",
-                      "stretchMode": "AutoSize",
-                      "start": "0%",
-                      "step": "1%",
-                      "range": "100%",
-                      "layers": [
-                        {
-                          "width": "10%",
-                          "height": "10%",
-                          "quality": 90
-                        }
-                      ]
-                      //"columns": 10
-                    }
-                  ],
-                  "formats": [
-                    {
-                      "@odata.type": "#Microsoft.Media.JpgFormat",
-                      "filenamePattern": "Thumbnail{Index}{Extension}"
-                    }
-                  ]
                 }
               }
             ]
@@ -193,8 +151,8 @@
           "properties": {
             "outputs": [
               {
-                "onError": "StopProcessingJob",
                 "relativePriority": "Normal",
+                "onError": "StopProcessingJob",
                 "preset": {
                   "@odata.type": "#Microsoft.Media.VideoAnalyzerPreset",
                   "insightsToExtract": "AllInsights"
@@ -206,56 +164,38 @@
         {
           "type": "transforms",
           "apiVersion": "[variables('mediaApiVersion')]",
-          "name": "AdaptiveStreaming, ThumbnailSprite, VideoAnalyzer",
+          "name": "AudioAnalyzer",
           "dependsOn": [
             "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
           ],
           "properties": {
             "outputs": [
               {
-                "onError": "StopProcessingJob",
                 "relativePriority": "Normal",
+                "onError": "StopProcessingJob",
                 "preset": {
-                  "@odata.type": "#Microsoft.Media.BuiltInStandardEncoderPreset",
-                  "presetName": "AdaptiveStreaming"
+                  "@odata.type": "#Microsoft.Media.AudioAnalyzerPreset",
+                  "audioLanguage": null
                 }
-              },
+              }
+            ]
+          }
+        },
+        {
+          "type": "transforms",
+          "apiVersion": "[variables('mediaApiVersion')]",
+          "name": "FaceDetector",
+          "dependsOn": [
+            "[resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName'))]"
+          ],
+          "properties": {
+            "outputs": [
               {
-                "onError": "StopProcessingJob",
                 "relativePriority": "Normal",
-                "preset": {
-                  "@odata.type": "#Microsoft.Media.StandardEncoderPreset",
-                  "codecs": [
-                    {
-                      "@odata.type": "#Microsoft.Media.JpgImage",
-                      "stretchMode": "AutoSize",
-                      "start": "0%",
-                      "step": "1%",
-                      "range": "100%",
-                      "layers": [
-                        {
-                          "width": "10%",
-                          "height": "10%",
-                          "quality": 90
-                        }
-                      ]
-                      //"columns": 10
-                    }
-                  ],
-                  "formats": [
-                    {
-                      "@odata.type": "#Microsoft.Media.JpgFormat",
-                      "filenamePattern": "Thumbnail{Index}{Extension}"
-                    }
-                  ]
-                }
-              },
-              {
                 "onError": "StopProcessingJob",
-                "relativePriority": "Normal",
                 "preset": {
-                  "@odata.type": "#Microsoft.Media.VideoAnalyzerPreset",
-                  "insightsToExtract": "AllInsights"
+                  "@odata.type": "#Microsoft.Media.FaceDetectorPreset",
+                  "resolution": "SourceResolution"
                 }
               }
             ]

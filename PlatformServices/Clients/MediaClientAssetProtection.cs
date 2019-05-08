@@ -7,10 +7,10 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public void CreateContentKeyPolicy(string policyName, ContentKeyPolicyConfiguration[] policyConfigurations)
+        public ContentKeyPolicy CreateContentKeyPolicy(string policyName, ContentKeyPolicyConfiguration[] policyConfigurations)
         {
-            ContentKeyPolicy keyPolicy = _media.ContentKeyPolicies.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, policyName);
-            if (keyPolicy == null)
+            ContentKeyPolicy contentKeyPolicy = _media.ContentKeyPolicies.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, policyName);
+            if (contentKeyPolicy == null)
             {
                 string settingKey = Constant.AppSettingKey.DirectoryClientId;
                 string clientId = AppSetting.GetValue(settingKey);
@@ -43,8 +43,9 @@ namespace AzureSkyMedia.PlatformServices
                     ContentKeyPolicyOption policyOption = new ContentKeyPolicyOption(policyConfiguration, policyRestriction);
                     policyOptions.Add(policyOption);
                 }
-                keyPolicy = _media.ContentKeyPolicies.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, policyName, policyOptions);
+                contentKeyPolicy = _media.ContentKeyPolicies.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, policyName, policyOptions);
             }
+            return contentKeyPolicy;
         }
 
         public StreamProtection[] GetProtectionInfo(string authToken, MediaClient mediaClient, MediaInsight mediaInsight, StreamingLocator locator)
@@ -55,7 +56,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 StreamProtection streamProtection = new StreamProtection()
                 {
-                    Type = MediaProtection.AES,
+                    Type = MediaContentProtection.AES,
                     AuthenticationToken = authToken
                 };
                 protectionInfo.Add(streamProtection);
@@ -69,7 +70,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         StreamProtection streamProtection = new StreamProtection()
                         {
-                            Type = MediaProtection.PlayReady,
+                            Type = MediaContentProtection.PlayReady,
                             AuthenticationToken = authToken
                         };
                         protectionInfo.Add(streamProtection);
@@ -78,7 +79,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         StreamProtection streamProtection = new StreamProtection()
                         {
-                            Type = MediaProtection.Widevine,
+                            Type = MediaContentProtection.Widevine,
                             AuthenticationToken = authToken
                         };
                         protectionInfo.Add(streamProtection);

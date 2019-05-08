@@ -58,15 +58,15 @@
 <table class="mediaUploadOptions">
     <tr>
         <td>
-            @Html.CheckBox("contentAwareEncoding", true)
+            @Html.CheckBox("adaptiveStreaming", true)
         </td>
         <td>
-            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/cae-experimental')">
-                Content-Aware Encoding
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
+                Adaptive Streaming
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("thumbnailImages", true)
+            @Html.CheckBox("thumbnailImages", false)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/customize-encoder-presets-how-to')">
@@ -74,15 +74,15 @@
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoAnalyzer", !indexerEnabled, new { onchange = "SetIntelligenceOptions(this)" })
+            @Html.CheckBox("videoAnalyzer", false)
         </td>
         <td>
-            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/intelligence-concept#videoanalyzerpreset')">
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/rest/api/media/transforms/createorupdate#videoanalyzerpreset')">
                 Video Analyzer
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("videoIndexer", indexerEnabled, new { onchange = "SetIntelligenceOptions(this)" })
+            @Html.CheckBox("videoIndexer", indexerEnabled)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/video-indexer/video-indexer-overview')">
@@ -92,11 +92,11 @@
     </tr>
     <tr>
         <td>
-            @Html.CheckBox("adaptiveStreaming", false)
+            @Html.CheckBox("contentAwareEncoding", false)
         </td>
         <td>
-            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
-                Adaptive Streaming
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/cae-experimental')">
+                Content-Aware Encoding
             </span>
         </td>
         <td class="mediaUploadOption">
@@ -111,18 +111,34 @@
             @Html.CheckBox("audioAnalyzer", false)
         </td>
         <td>
-            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/intelligence-concept#audioanalyzerpreset')">
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/rest/api/media/transforms/createorupdate#audioanalyzerpreset')">
                 Audio Analyzer
             </span>
         </td>
         <td class="mediaUploadOption">
-            @Html.CheckBox("audioIndexer", false)
+            @Html.CheckBox("audioIndexer", indexerEnabled)
         </td>
         <td>
             <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/video-indexer/video-indexer-overview')">
                 Audio Indexer
             </span>
         </td>
+    </tr>
+    <tr>
+        <td />
+        <td />
+        <td />
+        <td />
+        <td class="mediaUploadOption">
+            @Html.CheckBox("faceDetector", false)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/rest/api/media/transforms/createorupdate#facedetectorpreset')">
+                Face Detector
+            </span>
+        </td>
+        <td />
+        <td />
     </tr>
 </table>
 

@@ -1,4 +1,8 @@
-﻿using Microsoft.Azure.Management.Media.Models;
+﻿using System.Collections.Generic;
+
+using Microsoft.Azure.Management.Media.Models;
+
+using Newtonsoft.Json;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -11,7 +15,7 @@ namespace AzureSkyMedia.PlatformServices
             StreamingFilters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.StreamingFilterAsset, null, asset.Name);
             StreamingUrls = mediaClient.GetStreamingUrls(asset.Name);
             Streamable = assetStreamable;
-            Published = mediaClient.GetLocators(asset.Name).Length > 0;
+            Published = StreamingUrls.Length > 0;
         }
 
         public MediaFile[] Files { get; }
@@ -49,5 +53,20 @@ namespace AzureSkyMedia.PlatformServices
         public long ByteCount { get; set; }
 
         public string Size { get; set; }
+    }
+
+    internal class MediaAssetLink
+    {
+        public MediaAssetLink()
+        {
+            JobOutputs = new Dictionary<MediaTransformPreset, string>();
+        }
+
+        [JsonProperty(PropertyName = "id")]
+        public string AssetName { get; set; }
+
+        public MediaAccount MediaAccount { get; set; }
+
+        public Dictionary<MediaTransformPreset, string> JobOutputs { get; set; }
     }
 }

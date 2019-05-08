@@ -6,7 +6,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public void CreateContentKeyPolicyDRM(ContentProtection contentProtection)
+        public void CreateContentKeyPolicyDrm(string policyName, ContentProtection contentProtection)
         {
             ContentKeyPolicyPlayReadyLicenseType licenseType = ContentKeyPolicyPlayReadyLicenseType.NonPersistent;
             if (contentProtection != null && contentProtection.PersistentLicense)
@@ -33,9 +33,8 @@ namespace AzureSkyMedia.PlatformServices
             }
             ContentKeyPolicyWidevineConfiguration widevineConfiguration = new ContentKeyPolicyWidevineConfiguration()
             {
-                WidevineTemplate = JsonConvert.SerializeObject(widevineTemplate) 
+                WidevineTemplate = JsonConvert.SerializeObject(widevineTemplate)
             };
-            string policyName = Constant.Media.ContentKey.PolicyDRM;
             ContentKeyPolicyConfiguration[] policyConfigurations = new ContentKeyPolicyConfiguration[]
             {
                     playReadyConfiguration,

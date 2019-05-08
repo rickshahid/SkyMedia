@@ -12,7 +12,7 @@ namespace AzureSkyMedia.PlatformServices
             JwtSecurityToken securityToken = new JwtSecurityToken(authToken);
             foreach (Claim claim in securityToken.Claims)
             {
-                if (string.Equals(claim.Type, claimType, StringComparison.OrdinalIgnoreCase))
+                if (claim.Type.Equals(claimType, StringComparison.OrdinalIgnoreCase))
                 {
                     tokenClaim = claim;
                 }

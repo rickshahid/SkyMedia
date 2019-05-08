@@ -122,7 +122,7 @@ namespace AzureSkyMedia.PlatformServices
                 if (_storageAccount != null)
                 {
                     replication = _storageAccount.Sku.Name.ToString();
-                    replication = Constant.TextFormatter.FormatValue(replication);
+                    replication = replication.Replace("_", " ");
                 }
                 return replication;
             }

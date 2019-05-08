@@ -200,9 +200,9 @@
     },
     "databaseIdentifier": {
       "type": "string",
-      "defaultValue": "Insight",
+      "defaultValue": "Media",
       "metadata": {
-        "description": "Unique identifier of the insight database."
+        "description": "Unique identifier of the metadata database."
       }
     },
     "trafficManagerProfileName": {

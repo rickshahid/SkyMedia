@@ -5,44 +5,10 @@ using Microsoft.Rest.Azure.OData;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public IDictionary<string, string> GetCorrelationData(JObject jsonData, bool addAccount)
-        {
-            Dictionary<string, string> correlationData = new Dictionary<string, string>();
-            if (addAccount)
-            {
-                string userAccount = JsonConvert.SerializeObject(this.UserAccount);
-                string mediaAccount = JsonConvert.SerializeObject(this.MediaAccount);
-                correlationData.Add("userAccount", userAccount);
-                correlationData.Add("mediaAccount", mediaAccount);
-            }
-            if (jsonData != null)
-            {
-                foreach (KeyValuePair<string, JToken> property in jsonData)
-                {
-                    string propertyData = property.Value.ToString();
-                    correlationData.Add(property.Key, propertyData);
-                }
-            }
-            return correlationData;
-        }
-
-        public IDictionary<string, string> GetCorrelationData(string jsonData, bool addAccount)
-        {
-            IDictionary<string, string> correlationData = null;
-            if (!string.IsNullOrEmpty(jsonData))
-            {
-                correlationData = GetCorrelationData(JObject.Parse(jsonData), addAccount);
-            }
-            return correlationData;
-        }
-
         public int GetEntityCount<T>(MediaEntity entityType) where T : Resource
         {
             T[] entities = GetAllEntities<T>(entityType);
@@ -238,6 +204,11 @@ namespace AzureSkyMedia.PlatformServices
             {
                 case MediaEntity.Asset:
                     _media.Assets.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName);
+                    using (DatabaseClient databaseClient = new DatabaseClient(true))
+                    {
+                        string collectionId = Constant.Database.Collection.MediaAssets;
+                        databaseClient.DeleteDocument(collectionId, entityName);
+                    }
                     break;
                 case MediaEntity.Transform:
                     Job[] jobs = GetAllEntities<Job>(MediaEntity.TransformJob, null, entityName);

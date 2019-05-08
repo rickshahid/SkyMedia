@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,22 +13,6 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class HomeController : Controller
     {
-        private static bool IsStreamingEnabled(MediaClient mediaClient)
-        {
-            bool streamingEnabled = false;
-            IPage<StreamingEndpoint> streamingEndpoints = mediaClient.GetEntities<StreamingEndpoint>(MediaEntity.StreamingEndpoint);
-            foreach (StreamingEndpoint streamingEndpoint in streamingEndpoints)
-            {
-                if (streamingEndpoint.ResourceState == StreamingEndpointResourceState.Starting ||
-                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Running ||
-                    streamingEndpoint.ResourceState == StreamingEndpointResourceState.Scaling)
-                {
-                    streamingEnabled = true;
-                }
-            }
-            return streamingEnabled;
-        }
-
         internal static SelectListItem[] GetListItems(Dictionary<string, string> dictionary)
         {
             List<SelectListItem> listItems = new List<SelectListItem>();
@@ -82,7 +65,7 @@ namespace AzureSkyMedia.WebApp.Controllers
 
         public IActionResult Index()
         {
-            string userMessage = string.Empty;
+            string accountMessage = string.Empty;
             MediaStream[] mediaStreams = new MediaStream[] { };
 
             int streamNumber = 1;
@@ -125,37 +108,23 @@ namespace AzureSkyMedia.WebApp.Controllers
                         string searchAccountName = searchClient.AccountName;
                         if (!string.IsNullOrEmpty(searchAccountName))
                         {
-                            userMessage = searchAccountName;
+                            accountMessage = searchAccountName;
                         }
                     }
 
                     using (MediaClient mediaClient = new MediaClient(authToken))
                     {
-                        //string subscriptionId = mediaClient.MediaAccount.SubscriptionId;
-                        //string directoryTenantId = mediaClient.MediaAccount.DirectoryTenantId;
-                        //string storageAccountName = "skymediauswest";
-                        //string servicePrincipalId = "6941cd80-507d-4054-8969-e11b10b27c59"; //Azure DevOps (Azure.Sky.Media-US.West)
-                        //string servicePrincipalKey = "6e+4*-7QFHdHyARJfc/jUZOQxQvjGdb6";
-                        //EventGridClient.SetStorageSubscription(subscriptionId, directoryTenantId, storageAccountName, servicePrincipalId, servicePrincipalKey);
-
-                        if (!IsStreamingEnabled(mediaClient))
-                        {
-                            userMessage = string.Format(Constant.Message.StreamingEndpointNotStarted, mediaClient.MediaAccount.Name);
-                        }
-                        else
-                        {
-                            mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, streamTunerPageSize, out streamSkipCount, out streamTunerLastPage);
-                        }
+                        mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, streamTunerPageSize, out streamSkipCount, out streamTunerLastPage);
                     }
                 }
             }
             catch (ApiErrorException apiEx)
             {
-                userMessage = string.Concat(apiEx.Message, " (", apiEx.Response.Content, ")");
+                accountMessage = string.Concat(apiEx.Message, " (", apiEx.Response.Content, ")");
             }
             catch (Exception ex)
             {
-                userMessage = ex.Message;
+                accountMessage = ex.Message;
             }
 
             ViewData["mediaStreams"] = mediaStreams;
@@ -165,7 +134,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             ViewData["streamTunerPageSize"] = streamTunerPageSize;
             ViewData["streamTunerLastPage"] = streamTunerLastPage;
 
-            ViewData["userMessage"] = userMessage;
+            ViewData["accountMessage"] = accountMessage;
 
             return View();
         }

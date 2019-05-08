@@ -1,11 +1,11 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Rest;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Azure.Management.Media.Models;
+using Microsoft.Azure.Storage.Blob;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -51,8 +51,8 @@ namespace AzureSkyMedia.WebApp.Controllers
             return policies.ToArray();
         }
 
-        public async Task<JsonResult> Create(string transformName, string jobName, string jobDescription, string jobPriority, string jobData,
-                                             string inputAssetName, string inputFileUrl, MediaJobOutputMode outputAssetMode, string streamingPolicyName)
+        public JsonResult Create(string transformName, string jobName, string jobDescription, string jobPriority, string inputFileUrl,
+                                 string inputAssetName, StandardBlobTier inputAssetStorageTier, string streamingPolicyName, ContentProtection contentProtection)
         {
             try
             {
@@ -76,16 +76,21 @@ namespace AzureSkyMedia.WebApp.Controllers
                     }
                     if (!string.IsNullOrEmpty(transformName))
                     {
-                        job = await mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, jobData, inputFileUrl, inputAssetName, outputAssetMode, null, streamingPolicyName);
+                        MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
+                        {
+                            InputAssetStorageTier = inputAssetStorageTier,
+                            StreamingPolicyName = streamingPolicyName,
+                            ContentProtection = contentProtection,
+                        };
+                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputFileUrl, inputAssetName, null, outputAssetPublish);
                     }
                     bool indexerEnabled = mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset);
-                    bool indexOnly = false;
                     bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
                     bool videoOnly = false;
                     if (indexerEnabled)
                     {
                         Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
-                        string insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, indexOnly, audioOnly, videoOnly);
+                        string insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, audioOnly, videoOnly);
                     }
                 }
                 return Json(job);
@@ -144,56 +149,46 @@ namespace AzureSkyMedia.WebApp.Controllers
             }
         }
 
-        //public JsonResult Publish(string entityName, string parentName, string insightId, bool unpublish)
-        //{
-        //    try
-        //    {
-        //        MediaJobPublish jobPublish;
-        //        if (unpublish)
-        //        {
-        //            string authToken = HomeController.GetAuthToken(Request, Response);
-        //            using (MediaClient mediaClient = new MediaClient(authToken))
-        //            {
-        //                Job job = mediaClient.GetEntity<Job>(MediaEntity.TransformJob, entityName, parentName);
-        //                foreach (JobOutputAsset outputAsset in job.Outputs)
-        //                {
-        //                    mediaClient.DeleteLocators(outputAsset.AssetName);
-        //                }
-        //            }
-        //            jobPublish = new MediaJobPublish()
-        //            {
-        //                UserNotification = new UserNotification()
-        //                {
-        //                    JobOutputMessage = string.Format(Constant.Message.JobOutputUnpublished, entityName)
-        //                }
-        //            };
-        //        }
-        //        else
-        //        {
-        //            jobPublish = MediaClient.PublishJobOutput(entityName, insightId);
-        //        }
-        //        return Json(jobPublish);
-        //    }
-        //    catch (ValidationException ex)
-        //    {
-        //        Error error = new Error()
-        //        {
-        //            Type = HttpStatusCode.BadRequest,
-        //            Message = ex.Message
-        //        };
-        //        return new JsonResult(error)
-        //        {
-        //            StatusCode = (int)error.Type
-        //        };
-        //    }
-        //    catch (ApiErrorException ex)
-        //    {
-        //        return new JsonResult(ex.Response.Content)
-        //        {
-        //            StatusCode = (int)ex.Response.StatusCode
-        //        };
-        //    }
-        //}
+        public JsonResult Publish(string entityName, string parentName, bool unpublish)
+        {
+            try
+            {
+                MediaPublishNotification publishNotification;
+                string authToken = HomeController.GetAuthToken(Request, Response);
+                using (MediaClient mediaClient = new MediaClient(authToken))
+                {
+                    if (unpublish)
+                    {
+                        publishNotification = mediaClient.UnpublishJobOutput(parentName, entityName);
+                    }
+                    else
+                    {
+                        string eventType = Constant.Media.Job.EventType.Finished;
+                        publishNotification = mediaClient.PublishJobOutput(parentName, entityName, eventType);
+                    }
+                }
+                return Json(publishNotification);
+            }
+            catch (ValidationException ex)
+            {
+                Error error = new Error()
+                {
+                    Type = HttpStatusCode.BadRequest,
+                    Message = ex.Message
+                };
+                return new JsonResult(error)
+                {
+                    StatusCode = (int)error.Type
+                };
+            }
+            catch (ApiErrorException ex)
+            {
+                return new JsonResult(ex.Response.Content)
+                {
+                    StatusCode = (int)ex.Response.StatusCode
+                };
+            }
+        }
 
         public JsonResult Refresh(string[] transformNames, string[] jobNames)
         {

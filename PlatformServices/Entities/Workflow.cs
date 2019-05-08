@@ -16,7 +16,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaTransformPreset[] TransformPresets { get; set; }
 
-        public JObject EncodingProfile { get; set; }
+        public JObject TransformProfile { get; set; }
 
         public string JobName { get; set; }
 
@@ -24,8 +24,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaJobInputMode JobInputMode { get; set; }
 
-        public MediaJobOutputMode JobOutputMode { get; set; }
-
-        public string StreamingPolicyName { get; set; }
+        public MediaJobOutputPublish JobOutputPublish { get; set; }
     }
 }

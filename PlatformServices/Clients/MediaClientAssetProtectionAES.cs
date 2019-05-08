@@ -4,12 +4,11 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        public void CreateContentKeyPolicyAES()
+        public void CreateContentKeyPolicyAes(string policyName)
         {
-            string policyName = Constant.Media.ContentKey.PolicyAES;
             ContentKeyPolicyConfiguration[] policyConfigurations = new ContentKeyPolicyConfiguration[]
             {
-                    new ContentKeyPolicyClearKeyConfiguration()
+                new ContentKeyPolicyClearKeyConfiguration()
             };
             CreateContentKeyPolicy(policyName, policyConfigurations);
         }

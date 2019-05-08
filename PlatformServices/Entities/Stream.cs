@@ -4,7 +4,7 @@ namespace AzureSkyMedia.PlatformServices
 {
     public class StreamProtection
     {
-        public MediaProtection Type { get; set; }
+        public MediaContentProtection Type { get; set; }
 
         public string AuthenticationToken { get; set; }
 

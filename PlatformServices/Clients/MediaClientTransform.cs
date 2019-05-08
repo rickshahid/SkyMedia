@@ -32,7 +32,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     if (!string.IsNullOrEmpty(transformName))
                     {
-                        transformName = string.Concat(transformName, Constant.Media.Transform.Preset.NameDelimiter);
+                        transformName = string.Concat(transformName, Constant.TextDelimiter.TransformPresetName);
                     }
                     transformName = string.Concat(transformName, transformOutput.PresetName);
                 }
@@ -65,6 +65,9 @@ namespace AzureSkyMedia.PlatformServices
                     break;
                 case MediaTransformPreset.AudioAnalyzer:
                     transformPreset = new AudioAnalyzerPreset();
+                    break;
+                case MediaTransformPreset.FaceDetector:
+                    transformPreset = new FaceDetectorPreset();
                     break;
             }
             if (transformPreset == null)
@@ -108,7 +111,8 @@ namespace AzureSkyMedia.PlatformServices
             return transform;
         }
 
-        public Transform GetTransform(bool contentAwareEncoding, bool adaptiveStreaming, bool thumbnailImages, bool thumbnailSprite, bool videoAnalyzer, bool audioAnalyzer, bool videoIndexer, bool audioIndexer)
+        public Transform GetTransform(bool contentAwareEncoding, bool adaptiveStreaming, bool thumbnailImages, bool thumbnailSprite,
+                                      bool videoAnalyzer, bool audioAnalyzer, bool faceDetector, bool videoIndexer, bool audioIndexer)
         {
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
             if (contentAwareEncoding)
@@ -165,6 +169,15 @@ namespace AzureSkyMedia.PlatformServices
                 };
                 transformOutputs.Add(transformOutput);
             }
+            if (faceDetector)
+            {
+                MediaTransformOutput transformOutput = new MediaTransformOutput()
+                {
+                    PresetType = MediaTransformPreset.FaceDetector,
+                    PresetName = MediaTransformPreset.FaceDetector.ToString()
+                };
+                transformOutputs.Add(transformOutput);
+            }
             if (videoIndexer)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
@@ -194,9 +207,10 @@ namespace AzureSkyMedia.PlatformServices
             bool thumbnailSprite = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ThumbnailSprite);
             bool videoAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoAnalyzer);
             bool audioAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioAnalyzer);
+            bool faceDetector = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.FaceDetector);
             bool videoIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
             bool audioIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
-            return GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, videoIndexer, audioIndexer);
+            return GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
         }
     }
 }
