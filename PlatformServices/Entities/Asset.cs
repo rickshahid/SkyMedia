@@ -65,8 +65,10 @@ namespace AzureSkyMedia.PlatformServices
         [JsonProperty(PropertyName = "id")]
         public string AssetName { get; set; }
 
+        public Dictionary<MediaTransformPreset, string> JobOutputs { get; set; }
+
         public MediaAccount MediaAccount { get; set; }
 
-        public Dictionary<MediaTransformPreset, string> JobOutputs { get; set; }
+        public UserAccount UserAccount { get; set; }
     }
 }

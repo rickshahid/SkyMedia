@@ -25,10 +25,14 @@ namespace AzureSkyMedia.PlatformServices
         {
             List<T1> allEntities = new List<T1>();
             IPage<T2> parentEntities = GetEntities<T2>(parentType);
-            foreach (T2 parentEntity in parentEntities)
+            while (parentEntities != null)
             {
-                T1[] entities = GetAllEntities<T1>(entityType, null, parentEntity.Name);
-                allEntities.AddRange(entities);
+                foreach (T2 parentEntity in parentEntities)
+                {
+                    T1[] childEntities = GetAllEntities<T1>(entityType, null, parentEntity.Name);
+                    allEntities.AddRange(childEntities);
+                }
+                parentEntities = NextEntities(entityType, parentEntities);
             }
             return allEntities.ToArray();
         }

@@ -12,7 +12,7 @@
 
         public int SkipCount { get; set; }
 
-        public int ValueCount { get; set; }
+        public int ItemCount { get; set; }
 
         public bool LastPage { get; set; }
     }

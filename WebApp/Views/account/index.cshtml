@@ -4,20 +4,34 @@
 
 @section head {
     <script type="text/javascript">
-        function DisplayAccountEntity(inventoryHtml, entityCount) {
-            inventoryHtml = inventoryHtml + "<tr><td>";
+        function AddEntityCells(inventoryHtml, entityCount, className) {
+            if (className != null) {
+                inventoryHtml = inventoryHtml + "<td class='" + className + "'>";
+            } else {
+                inventoryHtml = inventoryHtml + "<td>";
+            }
             if (entityCount.length > 2) {
                 inventoryHtml = inventoryHtml + "<span class=\"siteLink\" onclick=\"window.location.href = '" + entityCount[2] + "'\">" + entityCount[0] + "</span>";
             } else {
-                inventoryHtml = inventoryHtml + entityCount[0]
+                inventoryHtml = inventoryHtml + entityCount[0];
             }
-            return inventoryHtml + "</td><td class='entityCount'>" + entityCount[1] + "</td></tr>";
+            return inventoryHtml + "</td><td class='entityCount'>" + entityCount[1] + "</td>";
+        }
+        function AddEntityRow(inventoryHtml, entityCounts, rowIndex) {
+            var entityIndex = rowIndex;
+            inventoryHtml = inventoryHtml + "<tr>";
+            inventoryHtml = AddEntityCells(inventoryHtml, entityCounts[entityIndex], null);
+            entityIndex = rowIndex + 12;
+            if (entityIndex < entityCounts.length) {
+                inventoryHtml = AddEntityCells(inventoryHtml, entityCounts[entityIndex], "indexerEntity");
+            }
+            return inventoryHtml + "</tr>";
         }
         function DisplayAccountInventory() {
             var inventoryHtml = "";
             var entityCounts = @Json.Serialize(ViewData["entityCounts"]);
-            for (var i = 0; i < entityCounts.length; i++) {
-                inventoryHtml = DisplayAccountEntity(inventoryHtml, entityCounts[i]);
+            for (var rowIndex = 0; rowIndex < 12; rowIndex++) {
+                inventoryHtml = AddEntityRow(inventoryHtml, entityCounts, rowIndex);
             }
             $("#accountInventory").html(inventoryHtml);
         }

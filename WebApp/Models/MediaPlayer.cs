@@ -2,6 +2,6 @@
 {
     public class MediaPlayer : ClientControl
     {
-        public string PlayerSkin { get; set; }
+        public string SkinName { get; set; }
     }
 }

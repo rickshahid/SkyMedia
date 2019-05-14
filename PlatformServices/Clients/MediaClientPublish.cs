@@ -33,7 +33,8 @@ namespace AzureSkyMedia.PlatformServices
             {
                 MediaAssetLink outputAssetLink = new MediaAssetLink()
                 {
-                    MediaAccount = this.MediaAccount
+                    MediaAccount = this.MediaAccount,
+                    UserAccount = this.UserAccount
                 };
                 Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
                 for (int i = 0; i < transform.Outputs.Count; i++)
@@ -46,8 +47,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     else
                     {
-                        string jobOutputPreset = jobOutput.Label.Split(Constant.TextDelimiter.JobOutputLabel.ToCharArray())[0];
-                        MediaTransformPreset transformPreset = (MediaTransformPreset)Enum.Parse(typeof(MediaTransformPreset), jobOutputPreset);
+                        MediaTransformPreset transformPreset = (MediaTransformPreset)Enum.Parse(typeof(MediaTransformPreset), jobOutput.Label);
                         outputAssetLink.JobOutputs.Add(transformPreset, jobOutput.AssetName);
                     }
                 }
@@ -65,15 +65,30 @@ namespace AzureSkyMedia.PlatformServices
             MediaPublishNotification publishNotification;
             JObject eventData = JObject.FromObject(eventTrigger.Data);
             JObject jobData = (JObject)eventData["correlationData"];
-            string mediaAccountData = jobData[Constant.Media.Job.CorrelationData.MediaAccount].ToString();
-            string userAccountData = jobData[Constant.Media.Job.CorrelationData.UserAccount].ToString();
-            MediaAccount mediaAccount = JsonConvert.DeserializeObject<MediaAccount>(mediaAccountData);
-            UserAccount userAccount = JsonConvert.DeserializeObject<UserAccount>(userAccountData);
-            using (MediaClient mediaClient = new MediaClient(mediaAccount, userAccount))
+            if (!jobData.HasValues)
             {
-                string transformName = eventTrigger.Subject.Split('/')[1];
-                string jobName = Path.GetFileName(eventTrigger.Subject);
-                publishNotification = mediaClient.PublishJobOutput(transformName, jobName, eventTrigger.EventType);
+                publishNotification = new MediaPublishNotification();
+                //if (eventTrigger.Subject.Contains("VIJob"))
+                //{
+                //    string insightId = eventTrigger.Subject.Split('/')[3].Split('-')[1];
+                //}
+                //else
+                //{
+
+                //}
+            }
+            else
+            {
+                string mediaAccountData = jobData[Constant.Media.Job.CorrelationData.MediaAccount].ToString();
+                string userAccountData = jobData[Constant.Media.Job.CorrelationData.UserAccount].ToString();
+                MediaAccount mediaAccount = JsonConvert.DeserializeObject<MediaAccount>(mediaAccountData);
+                UserAccount userAccount = JsonConvert.DeserializeObject<UserAccount>(userAccountData);
+                using (MediaClient mediaClient = new MediaClient(mediaAccount, userAccount))
+                {
+                    string transformName = eventTrigger.Subject.Split('/')[1];
+                    string jobName = Path.GetFileName(eventTrigger.Subject);
+                    publishNotification = mediaClient.PublishJobOutput(transformName, jobName, eventTrigger.EventType);
+                }
             }
             return publishNotification;
         }

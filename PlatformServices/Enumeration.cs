@@ -21,8 +21,8 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaTransformPreset
     {
-        ContentAwareEncoding,
         AdaptiveStreaming,
+        ContentAwareEncoding,
         ThumbnailImages,
         ThumbnailSprite,
         VideoAnalyzer,
@@ -36,9 +36,8 @@ namespace AzureSkyMedia.PlatformServices
     public enum MediaJobInputMode
     {
         Container,
-        InputFile,
-        AssetFile,
-        Asset
+        Asset,
+        File
     }
 
     [JsonConverter(typeof(StringEnumConverter))]
@@ -53,8 +52,8 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaInsightModel
     {
+        People,
         Language,
-        Person,
         Brand
     }
 

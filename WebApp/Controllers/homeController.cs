@@ -103,14 +103,14 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
                 else
                 {
-                    using (SearchClient searchClient = new SearchClient(authToken, false))
-                    {
-                        string searchAccountName = searchClient.AccountName;
-                        if (!string.IsNullOrEmpty(searchAccountName))
-                        {
-                            accountMessage = searchAccountName;
-                        }
-                    }
+                    //using (SearchClient searchClient = new SearchClient(authToken, false))
+                    //{
+                    //    string searchAccountName = searchClient.AccountName;
+                    //    if (!string.IsNullOrEmpty(searchAccountName))
+                    //    {
+                    //        accountMessage = searchAccountName;
+                    //    }
+                    //}
 
                     using (MediaClient mediaClient = new MediaClient(authToken))
                     {

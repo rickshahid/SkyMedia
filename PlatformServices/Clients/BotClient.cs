@@ -1,4 +1,4 @@
-//using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder;
 
 namespace AzureSkyMedia.PlatformServices
 {

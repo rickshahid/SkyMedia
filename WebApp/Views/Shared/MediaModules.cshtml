@@ -19,7 +19,7 @@
         <td>
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamLeft", ImageFile = "MediaStreamLeft.png", OnClick = "SetMediaStream(true, false)", AltText = "Stream Tuner Left" }' />
         </td>
-            <partial name="RangeSlider" model='new RangeSlider { SliderId = "streamTuner", SliderClass = "streamTuner", LabelId = "streamNumber", LabelClass = "streamNumber", SkipCount = Model.SkipCount, ValueCount = Model.ValueCount, LastPage = Model.LastPage }' />
+            <partial name="RangeSlider" model='new RangeSlider { SliderId = "streamTuner", SliderClass = "streamTuner", LabelId = "streamNumber", LabelClass = "streamNumber", SkipCount = Model.SkipCount, ItemCount = Model.ItemCount, LastPage = Model.LastPage }' />
         <td>
             <partial name="SiteButton" model='new SiteButton { ControlId = "mediaStreamRight", ImageFile = "MediaStreamRight.png", OnClick = "SetMediaStream(false, true)", AltText = "Stream Tuner Right" }' />
         </td>
@@ -39,7 +39,7 @@
         }
         </td>
         <td class="mediaModulesButton">
-            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEdit", ImageFile = "MediaEdit.png", RelativeUrl = "/edit", AltText = "Edit" }' />
+            <partial name="SiteButton" model='new SiteButton { ControlId = "mediaClip", ImageFile = "MediaClip.png", RelativeUrl = "/clip", AltText = "Clip" }' />
         </td>
     }
     </tr>

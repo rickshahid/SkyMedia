@@ -407,43 +407,34 @@
             {
               "name": "Directory.ClientSecret",
               "value": "[parameters('directoryClientSecret')]"
-            }
-          ],
-          "connectionStrings": [
+            },
             {
-              "type": "Custom",
               "name": "Storage",
-              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadOnly",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadWrite",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.Regions",
-              "connectionString": "[parameters('databaseServiceRegions')]"
+              "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobOutputProgressUrl",
-              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobStateFinalUrl",
-              "connectionString": "[parameters('functionJobStateFinalUrl')]"
+              "value": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.LiveEventUrl",
-              "connectionString": "[parameters('functionLiveEventUrl')]"
+              "value": "[parameters('functionLiveEventUrl')]"
             }
           ]
         },
@@ -498,43 +489,34 @@
             {
               "name": "Directory.ClientSecret",
               "value": "[parameters('directoryClientSecretStaging')]"
-            }
-          ],
-          "connectionStrings": [
+            },
             {
-              "type": "Custom",
               "name": "Storage",
-              "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadOnly",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryReadonlyMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.ReadWrite",
-              "connectionString": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
+              "value": "[concat('AccountEndpoint=https://', variables('databaseServiceName'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('globalResourceGroupName'), 'Microsoft.DocumentDB/databaseAccounts', variables('databaseServiceName')), variables('databaseApiVersion')).primaryMasterKey, ';DatabaseId=', parameters('databaseIdentifier'))]"
             },
             {
-              "type": "Custom",
               "name": "Database.Regions",
-              "connectionString": "[parameters('databaseServiceRegions')]"
+              "value": "[parameters('databaseServiceRegions')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobOutputProgressUrl",
-              "connectionString": "[parameters('functionJobOutputProgressUrl')]"
+              "value": "[parameters('functionJobOutputProgressUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.JobStateFinalUrl",
-              "connectionString": "[parameters('functionJobStateFinalUrl')]"
+              "value": "[parameters('functionJobStateFinalUrl')]"
             },
             {
-              "type": "Custom",
               "name": "EventGrid.LiveEventUrl",
-              "connectionString": "[parameters('functionLiveEventUrl')]"
+              "value": "[parameters('functionLiveEventUrl')]"
             }
           ]
         },

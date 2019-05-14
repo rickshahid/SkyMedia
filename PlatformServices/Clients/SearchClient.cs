@@ -11,13 +11,13 @@ namespace AzureSkyMedia.PlatformServices
 
         public SearchClient(string authToken, bool readWrite)
         {
-            string accountName = AuthToken.GetClaimValues(authToken, Constant.UserAttribute.SearchAccountName, true)[0];
-            if (!string.IsNullOrEmpty(accountName))
+            string[] accountNames = AuthToken.GetClaimValues(authToken, Constant.UserAttribute.SearchAccountName);
+            if (accountNames != null)
             {
                 string userAttribute = readWrite ? Constant.UserAttribute.SearchAccountKeyReadWrite : Constant.UserAttribute.SearchAccountKeyReadOnly;
                 string accountKey = AuthToken.GetClaimValue(authToken, userAttribute);
                 SearchCredentials credentials = new SearchCredentials(accountKey);
-                _search = new SearchServiceClient(accountName, credentials);
+                _search = new SearchServiceClient(accountNames[0], credentials);
             }
         }
 

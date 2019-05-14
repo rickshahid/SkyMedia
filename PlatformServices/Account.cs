@@ -61,8 +61,13 @@ namespace AzureSkyMedia.PlatformServices
             int streamingFiltersAsset = mediaClient.GetEntityCount<AssetFilter, Asset>(MediaEntity.StreamingFilterAsset, MediaEntity.Asset);
             int liveEvents = mediaClient.GetEntityCount<LiveEvent>(MediaEntity.LiveEvent);
             int liveEventOutputs = mediaClient.GetEntityCount<LiveOutput, LiveEvent>(MediaEntity.LiveEventOutput, MediaEntity.LiveEvent);
-            int indexerInsights = !mediaClient.IndexerEnabled() ? 0 : mediaClient.IndexerGetInsights().Count;
-            int indexerProjects = !mediaClient.IndexerEnabled() ? 0 : mediaClient.IndexerGetProjects().Count;
+
+            bool indexerEnabled = mediaClient.IndexerEnabled();
+            int indexerInsights = !indexerEnabled ? 0 : mediaClient.IndexerGetInsights().Count;
+            int indexerProjects = !indexerEnabled ? 0 : mediaClient.IndexerGetProjects().Count;
+            int indexerModelsPeople = !indexerEnabled ? 0 : mediaClient.IndexerGetModels(MediaInsightModel.People).Count;
+            int indexerModelsLanguage = !indexerEnabled ? 0 : mediaClient.IndexerGetModels(MediaInsightModel.Language).Count;
+            int indexerModelsBrand = !indexerEnabled ? 0 : mediaClient.IndexerGetModels(MediaInsightModel.Brand).Count;
 
             List<string[]> entityCounts = new List<string[]>
             {
@@ -79,7 +84,10 @@ namespace AzureSkyMedia.PlatformServices
                 new string[] { "Live Events", liveEvents.ToString(Constant.TextFormatter.NumericLong), "/account/liveEvents" },
                 new string[] { "Live Event Outputs", liveEventOutputs.ToString(Constant.TextFormatter.NumericLong), "/account/liveEventOutputs" },
                 new string[] { "Video Indexer Insights", indexerInsights.ToString(Constant.TextFormatter.NumericLong), "/insight" },
-                new string[] { "Video Indexer Projects", indexerProjects.ToString(Constant.TextFormatter.NumericLong), "/insight/projects" }
+                new string[] { "Video Indexer Projects", indexerProjects.ToString(Constant.TextFormatter.NumericLong), "/insight/projects" },
+                new string[] { "Video Indexer Models (People)", indexerModelsPeople.ToString(Constant.TextFormatter.NumericLong), "/insight/modelsPeople" },
+                new string[] { "Video Indexer Models (Language)", indexerModelsLanguage.ToString(Constant.TextFormatter.NumericLong), "/insight/modelsLanguage" },
+                new string[] { "Video Indexer Models (Brand)", indexerModelsBrand.ToString(Constant.TextFormatter.NumericLong), "/insight/modelsBrand" }
             };
 
             return entityCounts.ToArray();

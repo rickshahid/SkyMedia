@@ -1,8 +1,8 @@
 ﻿@model AzureSkyMedia.WebApp.Models.RangeSlider
 
 @{
-    int rangeStart = Model.ValueCount == 0 ? 0 : Model.SkipCount + 1;
-    int rangeEnd = Model.SkipCount + Model.ValueCount;
+    int rangeStart = Model.ItemCount == 0 ? 0 : Model.SkipCount + 1;
+    int rangeEnd = Model.SkipCount + Model.ItemCount;
 }
 
 <td class="@Model.LabelClass sliderRangeStart">

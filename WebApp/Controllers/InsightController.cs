@@ -14,65 +14,20 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class InsightController : Controller
     {
-        [HttpGet]
-        [Route("/customModels")]
-        public JsonResult GetCustomModels(MediaInsightModel modelType)
-        {
-            JArray models = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    switch (modelType)
-                    {
-                        case MediaInsightModel.Brand:
-                            models = mediaClient.IndexerGetBrands();
-                            break;
-                        case MediaInsightModel.Person:
-                            models = mediaClient.IndexerGetPersons();
-                            break;
-                        case MediaInsightModel.Language:
-                            models = mediaClient.IndexerGetLanguages();
-                            break;
-                    }
-                }
-            }
-            return Json(models);
-        }
-
-        [HttpGet]
-        [Route("/customSettings")]
-        public JsonResult GetCustomSettings(MediaInsightModel modelType)
-        {
-            JObject settings = null;
-            string authToken = HomeController.GetAuthToken(Request, Response);
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    switch (modelType)
-                    {
-                        case MediaInsightModel.Brand:
-                            settings = mediaClient.IndexerGetBrandSettings();
-                            break;
-                    }
-                }
-            }
-            return Json(settings);
-        }
-
         public JsonResult Data(string assetName, string fileName, string insightId)
         {
             try
             {
-                JContainer insight;
+                JContainer insights = null;
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     if (!string.IsNullOrEmpty(insightId))
                     {
-                        insight = mediaClient.IndexerGetInsight(insightId);
+                        if (mediaClient.IndexerInsightExists(insightId, out JObject insight))
+                        {
+                            insights = insight;
+                        }
                     }
                     else
                     {
@@ -85,16 +40,16 @@ namespace AzureSkyMedia.WebApp.Controllers
                             string fileData = fileReader.ReadToEnd().TrimStart();
                             if (fileData.StartsWith("["))
                             {
-                                insight = JArray.Parse(fileData);
+                                insights = JArray.Parse(fileData);
                             }
                             else
                             {
-                                insight = JObject.Parse(fileData);
+                                insights = JObject.Parse(fileData);
                             }
                         }
                     }
                 }
-                return Json(insight);
+                return Json(insights);
             }
             catch (ValidationException ex)
             {
@@ -192,8 +147,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     foreach (string insightId in insightIds)
                     {
-                        JObject insight = mediaClient.IndexerGetInsight(insightId);
-                        insights.Add(insight);
+                        if (mediaClient.IndexerInsightExists(insightId, out JObject insight))
+                        {
+                            insights.Add(insight);
+                        }
                     }
                 }
                 return Json(insights);
@@ -227,8 +184,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             {
                 if (!string.IsNullOrEmpty(insightId))
                 {
-                    JObject insight = mediaClient.IndexerGetInsight(insightId);
-                    if (insight != null)
+                    if (mediaClient.IndexerInsightExists(insightId, out JObject insight))
                     {
                         insights.Add(insight);
                     }
@@ -239,6 +195,26 @@ namespace AzureSkyMedia.WebApp.Controllers
                 }
             }
             ViewData["indexerInsights"] = insights;
+            return View();
+        }
+
+        public IActionResult Projects()
+        {
+            return View();
+        }
+
+        public IActionResult ModelsPeople()
+        {
+            return View();
+        }
+
+        public IActionResult ModelsLanguage()
+        {
+            return View();
+        }
+
+        public IActionResult ModelsBrand()
+        {
             return View();
         }
 

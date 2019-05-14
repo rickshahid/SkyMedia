@@ -1,0 +1,28 @@
+﻿@using AzureSkyMedia.WebApp.Models;
+
+@{
+    string gridId = "indexerModelsLanguage";
+}
+
+@section head {
+    <script type="text/javascript">
+        $(function () {
+            _childGridType = null;
+            _childPropertyName = null;
+            var gridId = "@gridId";
+            var rows = @Json.Serialize(ViewData[gridId]);
+            LoadGrid(gridId, rows);
+        })
+    </script>
+}
+
+@section title {
+    Video Indexer Models (Language)
+}
+
+<div class="grid">
+    <table id="@gridId"></table>
+    <div id="gridPager"></div>
+</div>
+
+<partial name="SiteButton" model='new SiteButton { ControlId = "underConstruction", ImageFile = "UnderConstruction.gif", AltText = "Under Construction" }' />

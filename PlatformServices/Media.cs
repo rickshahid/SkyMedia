@@ -31,16 +31,15 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaInsight GetMediaInsight(MediaClient mediaClient, Asset asset)
         {
             MediaInsight mediaInsight = new MediaInsight();
-            if (mediaClient.IndexerEnabled())
-            {
-                string insightId = asset.AlternateId;
-                if (!string.IsNullOrEmpty(insightId))
-                {
-                    JObject insight = mediaClient.IndexerGetInsight(insightId);
-                    mediaInsight.WidgetUrl = mediaClient.IndexerGetInsightUrl(insightId);
-                    mediaInsight.ViewToken = insight["videos"][0]["viewToken"].ToString();
-                }
-            }
+            //if (mediaClient.IndexerEnabled())
+            //{
+            //    string insightId = asset.AlternateId;
+            //    if (!string.IsNullOrEmpty(insightId) && mediaClient.IndexerInsightExists(insightId, out JObject insight))
+            //    {
+            //        mediaInsight.WidgetUrl = mediaClient.IndexerGetInsightUrl(insightId);
+            //        mediaInsight.ViewToken = insight["videos"][0]["viewToken"].ToString();
+            //    }
+            //}
             return mediaInsight;
         }
 

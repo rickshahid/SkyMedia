@@ -142,6 +142,11 @@ body {
     color: azure;
 }
 
+.indexerEntity {
+    margin-left: 10px;
+    display: block;
+}
+
 .assetCount {
     width: 60px;
 }

@@ -2,7 +2,7 @@
 
 namespace AzureSkyMedia.WebApp.Controllers
 {
-    public class EditController : Controller
+    public class ClipController : Controller
     {
         //private MediaJobInput[] GetJobInputs(JObject clip)
         //{

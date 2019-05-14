@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Web;
 using System.Collections.Generic;
 
 using Microsoft.Azure.Storage;
@@ -95,7 +94,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public string GetDownloadUrl(string containerName, string fileName)
         {
-            CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName);
             string settingKey = Constant.AppSettingKey.StorageSharedAccessMinutes;
             string sharedAccessMinutes = AppSetting.GetValue(settingKey);
             SharedAccessBlobPolicy accessPolicy = new SharedAccessBlobPolicy()
@@ -103,10 +101,13 @@ namespace AzureSkyMedia.PlatformServices
                 SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddMinutes(double.Parse(sharedAccessMinutes)),
                 Permissions = SharedAccessBlobPermissions.Read
             };
+            CloudBlockBlob blob = GetBlockBlob(containerName, null, fileName);
             string accessSignature = blob.GetSharedAccessSignature(accessPolicy);
-            fileName = HttpUtility.UrlPathEncode(fileName);
-            accessSignature = HttpUtility.UrlPathEncode(accessSignature);
-            return string.Concat(blob.Container.Uri.ToString(), "/", fileName, accessSignature);
+            UriBuilder uriBuilder = new UriBuilder(blob.Uri)
+            {
+                Query = accessSignature
+            };
+            return uriBuilder.ToString();
         }
 
         public void UploadBlock(Stream blockStream, string containerName, string fileName, int blockIndex, int blocksCount, string contentType)

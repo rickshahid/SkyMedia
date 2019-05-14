@@ -30,11 +30,15 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (MediaTransformOutput transformOutput in transformOutputs)
                 {
-                    if (!string.IsNullOrEmpty(transformName))
+                    if (transformOutput.PresetType != MediaTransformPreset.VideoIndexer &&
+                        transformOutput.PresetType != MediaTransformPreset.AudioIndexer)
                     {
-                        transformName = string.Concat(transformName, Constant.TextDelimiter.TransformPresetName);
+                        if (!string.IsNullOrEmpty(transformName))
+                        {
+                            transformName = string.Concat(transformName, Constant.TextDelimiter.TransformPresetName);
+                        }
+                        transformName = string.Concat(transformName, transformOutput.PresetName);
                     }
-                    transformName = string.Concat(transformName, transformOutput.PresetName);
                 }
             }
             return transformName;
@@ -45,9 +49,6 @@ namespace AzureSkyMedia.PlatformServices
             Preset transformPreset = null;
             switch (transformOutput.PresetType)
             {
-                case MediaTransformPreset.ContentAwareEncoding:
-                    transformPreset = new BuiltInStandardEncoderPreset(EncoderNamedPreset.ContentAwareEncodingExperimental);
-                    break;
                 case MediaTransformPreset.AdaptiveStreaming:
                     EncoderNamedPreset presetName = EncoderNamedPreset.AdaptiveStreaming;
                     if (!string.IsNullOrEmpty(transformOutput.PresetName))
@@ -55,6 +56,9 @@ namespace AzureSkyMedia.PlatformServices
                         presetName = transformOutput.PresetName;
                     }
                     transformPreset = new BuiltInStandardEncoderPreset(presetName);
+                    break;
+                case MediaTransformPreset.ContentAwareEncoding:
+                    transformPreset = new BuiltInStandardEncoderPreset(EncoderNamedPreset.ContentAwareEncodingExperimental);
                     break;
                 case MediaTransformPreset.ThumbnailImages:
                 case MediaTransformPreset.ThumbnailSprite:
@@ -111,25 +115,25 @@ namespace AzureSkyMedia.PlatformServices
             return transform;
         }
 
-        public Transform GetTransform(bool contentAwareEncoding, bool adaptiveStreaming, bool thumbnailImages, bool thumbnailSprite,
+        public Transform GetTransform(bool adaptiveStreaming, bool contentAwareEncoding, bool thumbnailImages, bool thumbnailSprite,
                                       bool videoAnalyzer, bool audioAnalyzer, bool faceDetector, bool videoIndexer, bool audioIndexer)
         {
             List<MediaTransformOutput> transformOutputs = new List<MediaTransformOutput>();
-            if (contentAwareEncoding)
-            {
-                MediaTransformOutput transformOutput = new MediaTransformOutput()
-                {
-                    PresetType = MediaTransformPreset.ContentAwareEncoding,
-                    PresetName = EncoderNamedPreset.ContentAwareEncodingExperimental.ToString()
-                };
-                transformOutputs.Add(transformOutput);
-            }
             if (adaptiveStreaming)
             {
                 MediaTransformOutput transformOutput = new MediaTransformOutput()
                 {
                     PresetType = MediaTransformPreset.AdaptiveStreaming,
                     PresetName = EncoderNamedPreset.AdaptiveStreaming.ToString()
+                };
+                transformOutputs.Add(transformOutput);
+            }
+            if (contentAwareEncoding)
+            {
+                MediaTransformOutput transformOutput = new MediaTransformOutput()
+                {
+                    PresetType = MediaTransformPreset.ContentAwareEncoding,
+                    PresetName = EncoderNamedPreset.ContentAwareEncodingExperimental.ToString()
                 };
                 transformOutputs.Add(transformOutput);
             }
@@ -201,8 +205,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public Transform GetTransform(MediaTransformPreset[] transformPresets)
         {
-            bool contentAwareEncoding = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ContentAwareEncoding);
             bool adaptiveStreaming = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AdaptiveStreaming);
+            bool contentAwareEncoding = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ContentAwareEncoding);
             bool thumbnailImages = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ThumbnailImages);
             bool thumbnailSprite = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.ThumbnailSprite);
             bool videoAnalyzer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoAnalyzer);
@@ -210,7 +214,7 @@ namespace AzureSkyMedia.PlatformServices
             bool faceDetector = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.FaceDetector);
             bool videoIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
             bool audioIndexer = transformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
-            return GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
+            return GetTransform(adaptiveStreaming, contentAwareEncoding, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
         }
     }
 }

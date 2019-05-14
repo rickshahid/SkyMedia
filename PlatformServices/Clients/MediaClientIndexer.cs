@@ -11,6 +11,29 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private JObject GetInsight(string insightId)
+        {
+            JObject insight;
+            string requestUrl = GetRequestUrl("/videos/", insightId, "/index");
+            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            {
+                int totalProgress = 0;
+                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
+                insight = webClient.GetResponse<JObject>(webRequest);
+                JArray videos = (JArray)insight["videos"];
+                foreach (JToken video in videos)
+                {
+                    string videoProcessing = video["processingProgress"].ToString().TrimEnd('%');
+                    if (int.TryParse(videoProcessing, out int videoProgress))
+                    {
+                        totalProgress += videoProgress;
+                    }
+                }
+                insight["processingProgress"] = totalProgress / videos.Count;
+            }
+            return insight;
+        }
+
         private string GetAccessToken(string insightId)
         {
             string accessToken;
@@ -103,6 +126,22 @@ namespace AzureSkyMedia.PlatformServices
             }
         }
 
+        public bool IndexerInsightExists(string insightId, out JObject insight)
+        {
+            insight = null;
+            bool insightExists;
+            try
+            {
+                insight = GetInsight(insightId);
+                insightExists = insight != null;
+            }
+            catch
+            {
+                insightExists = false;
+            }
+            return insightExists;
+        }
+
         public string IndexerUploadVideo(string inputFileUrl, Asset inputAsset, Priority jobPriority, bool audioOnly, bool videoOnly)
         {
             string insightId;
@@ -126,21 +165,34 @@ namespace AzureSkyMedia.PlatformServices
                 JObject insight = webClient.GetResponse<JObject>(webRequest);
                 insightId = insight["id"].ToString();
             }
+            using (DatabaseClient databaseClient = new DatabaseClient(true))
+            {
+                MediaInsightLink insightLink = new MediaInsightLink()
+                {
+                    InsightId = insightId,
+                    MediaAccount = this.MediaAccount,
+                    UserAccount = this.UserAccount
+                };
+                string collectionId = Constant.Database.Collection.MediaInsight;
+                databaseClient.UpsertDocument(collectionId, insightLink);
+            }
             return insightId;
         }
 
         public void IndexerReindexVideo(string insightId, Priority jobPriority)
         {
-            JObject insight = IndexerGetInsight(insightId);
-            string indexingPreset = insight["videos"][0]["indexingPreset"].ToString();
-            bool audioOnly = indexingPreset == "AudioOnly";
-            bool videoOnly = indexingPreset == "VideoOnly";
-            string requestUrl = GetRequestUrl("/videos/", insightId, "/reindex");
-            requestUrl = AddRequestParameters(requestUrl, jobPriority, audioOnly, videoOnly, true);
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+            if (IndexerInsightExists(insightId, out JObject insight))
             {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Put, requestUrl);
-                HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
+                string indexingPreset = insight["videos"][0]["indexingPreset"].ToString();
+                bool audioOnly = indexingPreset == "AudioOnly";
+                bool videoOnly = indexingPreset == "VideoOnly";
+                string requestUrl = GetRequestUrl("/videos/", insightId, "/reindex");
+                requestUrl = AddRequestParameters(requestUrl, jobPriority, audioOnly, videoOnly, true);
+                using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
+                {
+                    HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Put, requestUrl);
+                    HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
+                }
             }
         }
 
@@ -152,48 +204,11 @@ namespace AzureSkyMedia.PlatformServices
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Delete, requestUrl);
                 HttpResponseMessage webResponse = webClient.GetResponse<HttpResponseMessage>(webRequest);
             }
-        }
-
-        public JObject IndexerGetProjects(int? pageSize, int? skipCount)
-        {
-            JObject insights;
-            string requestUrl = GetRequestUrl("/projects", null, null);
-            if (pageSize.HasValue)
+            using (DatabaseClient databaseClient = new DatabaseClient(true))
             {
-                requestUrl = string.Concat(requestUrl, "&pageSize=", pageSize.Value);
+                string collectionId = Constant.Database.Collection.MediaInsight;
+                databaseClient.DeleteDocument(collectionId, insightId);
             }
-            if (skipCount.HasValue)
-            {
-                requestUrl = string.Concat(requestUrl, "&skip=", skipCount.Value);
-            }
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                insights = webClient.GetResponse<JObject>(webRequest);
-            }
-            return insights;
-        }
-
-        public JArray IndexerGetProjects()
-        {
-            //bool lastPage;
-            //JObject insights = null;
-            JArray allInsights = new JArray();
-            //do
-            //{
-            //    int skipCount = 0;
-            //    if (insights != null)
-            //    {
-            //        skipCount = (int)insights["nextPage"]["skip"];
-            //    }
-            //    insights = IndexerGetProjects(null, skipCount);
-            //    lastPage = (bool)insights["nextPage"]["done"];
-            //    foreach (JToken insight in insights["results"])
-            //    {
-            //        allInsights.Add(insight);
-            //    }
-            //} while (!lastPage);
-            return allInsights;
         }
 
         public JObject IndexerGetInsights(int? pageSize, int? skipCount)
@@ -238,29 +253,6 @@ namespace AzureSkyMedia.PlatformServices
             return allInsights;
         }
 
-        public JObject IndexerGetInsight(string insightId)
-        {
-            JObject index;
-            string requestUrl = GetRequestUrl("/videos/", insightId, "/index");
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                int totalProgress = 0;
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                index = webClient.GetResponse<JObject>(webRequest);
-                JArray videos = (JArray)index["videos"];
-                foreach (JToken video in videos)
-                {
-                    string videoProcessing = video["processingProgress"].ToString().TrimEnd('%');
-                    if (int.TryParse(videoProcessing, out int videoProgress))
-                    {
-                        totalProgress = totalProgress + videoProgress;
-                    }
-                }
-                index["processingProgress"] = totalProgress / videos.Count;
-            }
-            return index;
-        }
-
         public string IndexerGetInsightUrl(string insightId)
         {
             return GetRequestUrl("/videos/", insightId, "/insightsWidget");
@@ -269,67 +261,6 @@ namespace AzureSkyMedia.PlatformServices
         public string IndexerGetCaptionsUrl(string insightId)
         {
             return GetRequestUrl("/videos/", insightId, "/captions");
-        }
-
-        public JObject IndexerGetBrandSettings()
-        {
-            JObject brandSettings;
-            string requestUrl = GetRequestUrl("/customization/brandsModelSettings", null, null);
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                brandSettings = webClient.GetResponse<JObject>(webRequest);
-            }
-            return brandSettings;
-        }
-
-        public JArray IndexerGetBrands()
-        {
-            JArray brands;
-            string requestUrl = GetRequestUrl("/customization/brands", null, null);
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                brands = webClient.GetResponse<JArray>(webRequest);
-            }
-            return brands;
-        }
-
-        public JArray IndexerGetPersons()
-        {
-            JArray persons;
-            string requestUrl = GetRequestUrl("/customization/personModels", null, null);
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                persons = webClient.GetResponse<JArray>(webRequest);
-            }
-            return persons;
-        }
-
-        public JArray IndexerGetLanguages()
-        {
-            JArray languages;
-            string requestUrl = GetRequestUrl("/customization/language", null, null);
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                languages = webClient.GetResponse<JArray>(webRequest);
-            }
-            return languages;
-        }
-
-        public JObject IndexerSearch(string searchQuery)
-        {
-            JObject searchResults;
-            string requestUrl = GetRequestUrl("/videos/search", null, null);
-            requestUrl = string.Concat(requestUrl, "&query=", HttpUtility.UrlEncode(searchQuery));
-            using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
-            {
-                HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Get, requestUrl);
-                searchResults = webClient.GetResponse<JObject>(webRequest);
-            }
-            return searchResults;
         }
     }
 }

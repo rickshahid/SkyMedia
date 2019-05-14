@@ -52,7 +52,7 @@
 <table class="layout">
     <tr>
         <td>
-            <partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", PlayerSkin = ampSkin }' />
+            <partial name="MediaPlayer" model='new MediaPlayer { ContainerStyle = "mediaPlayer", ControlId = "videoPlayer", SkinName = ampSkin }' />
         </td>
         <td>
             <iframe id="indexerInsight" class="indexerInsight"></iframe>
@@ -60,7 +60,7 @@
     </tr>
 </table>
 
-<partial name="MediaModules" model='new RangeSlider { SkipCount = streamSkipCount, ValueCount = mediaStreams.Length, LastPage = streamTunerLastPage }' />
+<partial name="MediaModules" model='new RangeSlider { SkipCount = streamSkipCount, ItemCount = mediaStreams.Length, LastPage = streamTunerLastPage }' />
 
 <div id="streamName" class="streamName"></div>
 <div id="streamUrl" class="streamUrl"></div>

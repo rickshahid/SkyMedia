@@ -17,7 +17,6 @@ namespace AzureSkyMedia.PlatformServices
             public const char Application = ',';
 
             public const string TransformPresetName = ", ";
-            public const string JobOutputLabel = "Preset";
             public const string AssetName = " - ";
         }
 
@@ -229,7 +228,10 @@ namespace AzureSkyMedia.PlatformServices
 
                 public struct OutputAssetNameSuffix
                 {
-                    public const string StandardEncoder = "MES";
+                    public const string AdaptiveStreaming = "ABR";
+                    public const string ContentAwareEncoding = "CAE";
+                    public const string ThumbnailImages = "IMG";
+                    public const string ThumbnailSprite = "JPG";
                     public const string VideoAnalyzer = "VAI";
                     public const string AudioAnalyzer = "AAI";
                     public const string FaceDetector = "FAI";

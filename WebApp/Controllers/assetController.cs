@@ -27,7 +27,7 @@ namespace AzureSkyMedia.WebApp.Controllers
         }
 
         public async Task<JsonResult> Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                               bool contentAwareEncoding, bool adaptiveStreaming, bool thumbnailImages, bool thumbnailSprite,
+                                               bool adaptiveStreaming, bool contentAwareEncoding, bool thumbnailImages, bool thumbnailSprite,
                                                bool videoAnalyzer, bool audioAnalyzer, bool faceDetector, bool videoIndexer, bool audioIndexer)
         {
             try
@@ -37,23 +37,20 @@ namespace AzureSkyMedia.WebApp.Controllers
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
-                    Transform transform = mediaClient.GetTransform(contentAwareEncoding, adaptiveStreaming, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
+                    Transform transform = mediaClient.GetTransform(adaptiveStreaming, contentAwareEncoding, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
                     inputAssets = await CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                     StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
                     foreach (Asset inputAsset in inputAssets)
                     {
                         Job job = null;
                         Priority jobPriority = Priority.Normal;
-                        MediaAsset mediaAsset = new MediaAsset(mediaClient, inputAsset);
-                        string fileName = mediaAsset.Files[0].Name;
-                        string inputFileUrl = blobClient.GetDownloadUrl(inputAsset.Container, fileName);
                         if (transform != null)
                         {
                             MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
                             {
                                 StreamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly
                             };
-                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, inputFileUrl, inputAsset.Name, null, outputAssetPublish);
+                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputAsset.Name, null, outputAssetPublish);
                         }
                         string insightId = null;
                         bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
@@ -61,7 +58,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         {
                             bool audioOnly = !videoIndexer && audioIndexer;
                             bool videoOnly = videoIndexer && !audioIndexer;
-                            insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, audioOnly, videoOnly);
+                            insightId = mediaClient.IndexerUploadVideo(null, inputAsset, jobPriority, audioOnly, videoOnly);
                         }
                         if (job != null)
                         {

@@ -28,7 +28,7 @@ function InitializeApp(appName, userId) {
     CreateTipTop("streamTuner", "Stream Tuner", 0, -10);
     CreateTipTop("mediaLive", "Live");
     CreateTipTop("mediaInsight", "Insight");
-    CreateTipTop("mediaEdit", "Edit");
+    CreateTipTop("mediaClip", "Clip");
     CreateTipTop("mediaServicesCompliance", "Azure Media Services<br><br>Security Compliance");
     $(document).ajaxError(function (event, xhr, settings, error) {
         SetCursor(false);
