@@ -18,8 +18,6 @@ The following architecture overview diagram depicts the solution sample that is 
 
 ![](https://skymedia.azureedge.net/docs/02.03-SolutionArchitecture.png)
 
-To deploy this media solution sample within your Azure subscription, leverage the "Deploy to Azure" templates as follows
-
 <table>
   <tr>
     <td>
