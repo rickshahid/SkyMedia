@@ -18,7 +18,7 @@ The following architecture overview diagram depicts the solution sample that is 
 
 ![](https://skymedia.azureedge.net/docs/02.03-SolutionArchitecture.png)
 
-To deploy this media solution sample within your Azure subscription, leverage the "Deploy to Azure" templates as follows
+To deploy this media solution sample into your Azure subscription, leverage the "Deploy to Azure" template buttons below:
 
 <table>
   <tr>
@@ -28,9 +28,6 @@ To deploy this media solution sample within your Azure subscription, leverage th
     <td>
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceTemplates%2FTemplate.Global.json" title="Deploy Global Services" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"></a>
     </td>
-    <td>
-      <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceTemplates%2FTemplate.Global.json" title="Visualize Global Services" target="_blank"><img src="http://armviz.io/visualizebutton.png"></a>
-    </td>
   </tr>
   <tr>
     <td>
@@ -38,9 +35,6 @@ To deploy this media solution sample within your Azure subscription, leverage th
     </td>
     <td>
       <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceTemplates%2FTemplate.Regional.json" title="Deploy Regional Services" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"></a>
-    </td>
-    <td>
-      <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FRickShahid%2FSkyMedia%2Fmaster%2FResourceTemplates%2FTemplate.Regional.json" title="Visualize Regional Services" target="_blank"><img src="http://armviz.io/visualizebutton.png"></a>
     </td>
   </tr>
 </table>
