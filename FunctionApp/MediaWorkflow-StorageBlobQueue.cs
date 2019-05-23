@@ -17,8 +17,10 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static class MediaWorkflowStorageBlobQueue
     {
+        private static StringComparison _stringComparison = StringComparison.OrdinalIgnoreCase;
+
         [FunctionName("MediaWorkflow-StorageBlobQueue")]
-        public static async Task Run([QueueTrigger(Constant.Storage.Blob.WorkflowContainerName)] EventGridEvent queueMessage,
+        public async static Task Run([QueueTrigger(Constant.Storage.Blob.WorkflowContainerName)] EventGridEvent queueMessage,
                                      [Blob(Constant.Storage.Blob.WorkflowManifestPath, FileAccess.Read)] Stream manifestInput,
                                      [Blob("{data.url}", FileAccess.Read)] Stream workflowInput, ILogger logger)
         {
@@ -30,44 +32,59 @@ namespace AzureSkyMedia.FunctionApp
                     using (workflowInput)
                     using (MediaClient mediaClient = new MediaClient(workflowManifest))
                     {
-                        Asset inputAsset = null;
-                        string inputFileUrl = null;
+                        StorageBlobClient blobClient = new StorageBlobClient();
+                        string containerName = Constant.Storage.Blob.WorkflowContainerName;
                         string inputFileName = workflowManifest.InputFileName;
                         if (string.IsNullOrEmpty(inputFileName))
                         {
                             inputFileName = Path.GetFileName(queueMessage.Subject);
                         }
-                        string containerName = Constant.Storage.Blob.WorkflowContainerName;
-                        Transform transform = mediaClient.GetTransform(workflowManifest.TransformPresets);
-                        switch (workflowManifest.JobInputMode)
+                        if (inputFileName.Equals(Constant.Storage.Blob.WorkflowContainerFiles, _stringComparison))
                         {
-                            case MediaJobInputMode.Container:
-                                StorageBlobClient blobClient = new StorageBlobClient();
-                                CloudBlockBlob[] blobs = blobClient.ListBlobContainer(containerName, null);
-                                foreach (CloudBlockBlob blob in blobs)
+                            CloudBlockBlob[] blobs = blobClient.ListBlobContainer(containerName, null);
+                            foreach (CloudBlockBlob blob in blobs)
+                            {
+                                if (!blob.Name.Equals(Constant.Storage.Blob.WorkflowManifestFile, _stringComparison))
                                 {
-                                    if (!blob.Name.Equals(Constant.Storage.Blob.WorkflowManifestFile, StringComparison.OrdinalIgnoreCase))
+                                    if (workflowManifest.JobInputMode == MediaJobInputMode.Asset)
                                     {
-                                        inputFileUrl = blobClient.GetDownloadUrl(containerName, blob.Name);
+                                        string assetName = Path.GetFileNameWithoutExtension(blob.Name);
+                                        Asset inputAsset = await mediaClient.CreateAsset(workflowManifest.OutputAssetStorage, assetName, blob.Name, workflowInput);
+                                        logger.LogInformation(Constant.Message.AssetCreated, inputAsset.Name);
+                                        ProcessInput(mediaClient, workflowManifest, null, inputAsset, logger);
+                                    }
+                                    else
+                                    {
+                                        string inputFileUrl = blobClient.GetDownloadUrl(containerName, blob.Name);
                                         logger.LogInformation(inputFileUrl);
-                                        ProcessInput(mediaClient, workflowManifest, transform, inputFileUrl, inputAsset, logger);
+                                        ProcessInput(mediaClient, workflowManifest, inputFileUrl, null, logger);
                                     }
                                 }
-                                break;
-                            case MediaJobInputMode.Asset:
-                                inputAsset = await mediaClient.CreateAsset(workflowManifest.OutputAssetStorage, inputFileName, inputFileName, workflowInput);
-                                logger.LogInformation(inputAsset.Name);
-                                ProcessInput(mediaClient, workflowManifest, transform, inputFileUrl, inputAsset, logger);
-                                break;
-                            case MediaJobInputMode.File:
-                                blobClient = new StorageBlobClient();
-                                inputFileUrl = blobClient.GetDownloadUrl(containerName, inputFileName);
+                            }
+                        }
+                        else
+                        {
+                            if (workflowManifest.JobInputMode == MediaJobInputMode.Asset)
+                            {
+                                string assetName = Path.GetFileNameWithoutExtension(inputFileName);
+                                Asset inputAsset = await mediaClient.CreateAsset(workflowManifest.OutputAssetStorage, assetName, inputFileName, workflowInput);
+                                logger.LogInformation(Constant.Message.AssetCreated, inputAsset.Name);
+                                ProcessInput(mediaClient, workflowManifest, null, inputAsset, logger);
+                            }
+                            else
+                            {
+                                string inputFileUrl = blobClient.GetDownloadUrl(containerName, inputFileName);
                                 logger.LogInformation(inputFileUrl);
-                                ProcessInput(mediaClient, workflowManifest, transform, inputFileUrl, inputAsset, logger);
-                                break;
+                                ProcessInput(mediaClient, workflowManifest, inputFileUrl, null, logger);
+                            }
                         }
                     }
                 }
+            }
+            catch (ApiErrorException ex)
+            {
+                logger.LogError(ex.Response.Content);
+                logger.LogError(ex.ToString());
             }
             catch (Exception ex)
             {
@@ -94,11 +111,10 @@ namespace AzureSkyMedia.FunctionApp
                 workflowManifest = JsonConvert.DeserializeObject<MediaWorkflowManifest>(workflowManifestJson);
                 if (string.IsNullOrEmpty(workflowManifest.InputFileName))
                 {
-                    inputComplete = !queueMessage.Subject.EndsWith(Constant.Storage.Blob.WorkflowManifestFile, StringComparison.OrdinalIgnoreCase);
+                    inputComplete = !queueMessage.Subject.EndsWith(Constant.Storage.Blob.WorkflowManifestFile, _stringComparison);
                 }
                 else if (workflowManifest.InputFileName.Equals(Constant.Storage.Blob.WorkflowContainerFiles))
                 {
-                    workflowManifest.JobInputMode = MediaJobInputMode.Container;
                     inputComplete = true;
                 }
                 else
@@ -116,50 +132,29 @@ namespace AzureSkyMedia.FunctionApp
             return inputComplete;
         }
 
-        private static void ProcessInput(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, string inputFileUrl, Asset inputAsset, ILogger logger)
+        private static void ProcessInput(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, string inputFileUrl, Asset inputAsset, ILogger logger)
         {
-            if (transform != null)
-            {
-                CreateJob(mediaClient, workflowManifest, transform, inputFileUrl, inputAsset, logger);
-            }
-            CreateInsight(mediaClient, workflowManifest, inputFileUrl, inputAsset, logger);
-        }
-
-        private static void CreateJob(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, Transform transform, string inputFileUrl, Asset inputAsset, ILogger logger)
-        {
-            string inputAssetName = null;
-            string jobName = workflowManifest.JobName;
-            if (inputAsset != null)
-            {
-                inputAssetName = inputAsset.Name;
-            }
-            if (string.IsNullOrEmpty(jobName))
-            {
-                if (!string.IsNullOrEmpty(inputFileUrl))
-                {
-                    Uri inputFileUri = new Uri(inputFileUrl);
-                    jobName = Path.GetFileName(inputFileUri.LocalPath);
-                }
-                else
-                {
-                    jobName = inputAssetName;
-                }
-            }
-            Job job = mediaClient.CreateJob(transform.Name, jobName, null, workflowManifest.JobPriority, inputFileUrl, inputAssetName, workflowManifest.OutputAssetStorage, workflowManifest.JobOutputPublish);
-            logger.LogInformation(Constant.Message.JobCreated, job.Name);
-        }
-
-        private static void CreateInsight(MediaClient mediaClient, MediaWorkflowManifest workflowManifest, string inputFileUrl, Asset inputAsset, ILogger logger)
-        {
+            string insightId = null;
             bool videoIndexer = workflowManifest.TransformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
             bool audioIndexer = workflowManifest.TransformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
             bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
             if (indexerEnabled)
             {
-                bool audioOnly = !videoIndexer && audioIndexer;
-                bool videoOnly = videoIndexer && !audioIndexer;
-                string insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, workflowManifest.JobPriority, audioOnly, videoOnly);
+                insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, workflowManifest.JobPriority, videoIndexer, audioIndexer);
                 logger.LogInformation(Constant.Message.InsightCreated, insightId);
+            }
+            Transform transform = mediaClient.GetTransform(workflowManifest.TransformPresets);
+            if (transform != null)
+            {
+                MediaJobOutputInsight outputInsight = new MediaJobOutputInsight()
+                {
+                    Id = insightId,
+                    VideoIndexer = videoIndexer,
+                    AudioIndexer = audioIndexer
+                };
+                string inputAssetName = inputAsset == null ? null : inputAsset.Name;
+                Job job = mediaClient.CreateJob(transform.Name, workflowManifest.JobName, null, workflowManifest.JobPriority, inputFileUrl, inputAssetName, workflowManifest.OutputAssetStorage, workflowManifest.JobOutputPublish, outputInsight);
+                logger.LogInformation(Constant.Message.JobCreated, job.Name);
             }
         }
     }

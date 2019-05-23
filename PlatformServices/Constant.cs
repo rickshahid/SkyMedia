@@ -108,9 +108,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public const string AzureVideoIndexerApiUrl = "VideoIndexer.ApiUrl";
 
-            public const string TwilioAccountId = "Twilio.Account.Id";
-            public const string TwilioAccountToken = "Twilio.Account.Token";
-            public const string TwilioMessageFrom = "Twilio.Message.From";
+            public const string TwilioPhoneNumberTo = "Twilio.PhoneNumber.To";
         }
 
         public struct AuthIntegration
@@ -322,6 +320,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string JobPublishNotification = "Transform: {0}" + NewLine + "Job: {1}" + NewLine + "Event: {2}";
             public const string JobUnpublishNotification = "The '{0}' job output assets have been unpublished.";
             public const string AssetUnpublished = "The '{0}' asset has been unpublished.";
+            public const string AssetCreated = "New Asset Created: {0}";
             public const string JobCreated = "New Job Created: {0}";
             public const string InsightCreated = "New Insight Created: {0}";
         }

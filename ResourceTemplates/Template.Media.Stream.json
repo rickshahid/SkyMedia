@@ -213,6 +213,10 @@
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName2'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName2')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
     },
+    "storageConnection3": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageServiceName3'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageServiceName3')), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+    },
     "mediaAccountId": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Media/mediaServices', variables('mediaServiceName')), variables('mediaApiVersion')).mediaServiceId]"

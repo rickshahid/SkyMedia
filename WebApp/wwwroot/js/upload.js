@@ -3,6 +3,13 @@ function SetStorageTip() {
     var tipText = $("#storageAccount option:selected").text();
     CreateTipTop("storageAccount", tipText);
 }
+function SetEncodingPreset(radioButton, setState) {
+    if (setState) {
+        radioButton.tag = radioButton.checked;
+    } else {
+        radioButton.checked = !radioButton.tag;
+    }
+}
 function GetUploadTime() {
     var uploadTime = new Date() - _uploadStartTime;
     var elapsedSeconds = Math.floor(uploadTime / 1000);
@@ -33,8 +40,8 @@ function CreateWorkflow(files) {
             assetDescription: $("#assetDescription").val(),
             assetAlternateId: $("#assetAlternateId").val(),
             fileNames: GetFileNames(files),
-            adaptiveStreaming: $("#adaptiveStreaming").prop("checked"),
-            contentAwareEncoding: $("#contentAwareEncoding").prop("checked"),
+            adaptiveStreaming: $("input:radio[name='encodingPreset'][value='adaptiveStreaming']").prop("checked"),
+            contentAwareEncoding: $("input:radio[name='encodingPreset'][value='contentAwareEncoding']").prop("checked"),
             thumbnailImages: $("#thumbnailImages").prop("checked"),
             thumbnailSprite: $("#thumbnailSprite").prop("checked"),
             videoAnalyzer: $("#videoAnalyzer").prop("checked"),
@@ -42,31 +49,26 @@ function CreateWorkflow(files) {
             videoIndexer: $("#videoIndexer").prop("checked"),
             audioIndexer: $("#audioIndexer").prop("checked")
         },
-        function (entities) {
+        function (newEntities) {
             SetCursor(false);
             var message = "";
-            for (var i = 0; i < entities.length; i++) {
-                var entity = entities[i];
-                var entityType = entity["properties.state"] == null ? "Asset" : "Job";
-                var entityItemRef, insightId;
-                if (entityType == "Asset") {
-                    entityItemRef = "/asset?assetName=" + entity.name;
-                    insightId = entity["properties.alternateId"];
+            for (var i = 0; i < newEntities.length; i++) {
+                var newEntity = newEntities[i], newEntityRef;
+                if (newEntity.type == "Asset") {
+                    newEntityRef = "/asset?assetName=" + newEntity.name;
                 } else {
-                    var transformName = GetParentName(entity);
-                    entityItemRef = "/job?transformName=" + transformName + "&jobName=" + entity.name;
-                    insightId = entity["properties.correlationData"]["insightId"];
+                    var transformName = GetParentName(newEntity);
+                    newEntityRef = "/job?transformName=" + transformName + "&jobName=" + newEntity.name;
                 }
                 if (message != "") {
                     message = message + "<br><br>";
                 }
-                message = message + "<a class='siteLink' target='_blank' href='" + entityItemRef + "'>";
-                message = message + "Media " + entityType + " Name - " + entity.name + "</a>";
-                if (insightId != null) {
-                    var insightRef = "/insight?insightId=" + insightId;
-                    var insightType = $("#audioIndexer").prop("checked") ? "Audio" : "Video";
-                    message = message + "<br><br><a class='siteLink' target='_blank' href='" + insightRef + "'>";
-                    message = message + insightType + " Indexer Insight Id - " + insightId + "</a>";
+                message = message + "<a class='siteLink' target='_blank' href='" + newEntityRef + "'>";
+                message = message + "Media " + FormatValue(newEntity.type) + " Name - " + newEntity.name + "</a>";
+                if (newEntity.insightId != null) {
+                    newEntityRef = "/insight?insightId=" + newEntity.insightId;
+                    message = message + "<br><br><a class='siteLink' target='_blank' href='" + newEntityRef + "'>";
+                    message = message + " Video Indexer Insight Id - " + newEntity.insightId + "</a>";
                 }
             }
             $("#mediaEntitiesCreated").html(message);

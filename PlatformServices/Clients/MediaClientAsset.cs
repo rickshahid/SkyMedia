@@ -31,8 +31,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public async Task<Asset> CreateAsset(string storageAccount, string assetName, string fileName, Stream fileStream)
         {
-            StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
             Asset asset = CreateAsset(storageAccount, assetName);
+            StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
             CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
             await assetBlob.UploadFromStreamAsync(fileStream);
             return asset;

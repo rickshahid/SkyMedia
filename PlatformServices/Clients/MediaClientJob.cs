@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 
+using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -11,50 +12,6 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private MediaTransformPreset[] GetTransformPresets(string transformName)
-        {
-            List<MediaTransformPreset> transformPresets = new List<MediaTransformPreset>();
-            Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
-            foreach (TransformOutput transformOutput in transform.Outputs)
-            {
-                if (transformOutput.Preset is BuiltInStandardEncoderPreset builtInEncoderPreset)
-                {
-                    if (builtInEncoderPreset.PresetName == EncoderNamedPreset.ContentAwareEncodingExperimental)
-                    {
-                        transformPresets.Add(MediaTransformPreset.ContentAwareEncoding);
-                    }
-                    else
-                    {
-                        transformPresets.Add(MediaTransformPreset.AdaptiveStreaming);
-                    }
-                }
-                else if (transformOutput.Preset is StandardEncoderPreset standardEncoderPreset)
-                {
-                    if (false)
-                    {
-                        transformPresets.Add(MediaTransformPreset.ThumbnailSprite);
-                    }
-                    else
-                    {
-                        transformPresets.Add(MediaTransformPreset.ThumbnailImages);
-                    }
-                }
-                else if (transformOutput.Preset is VideoAnalyzerPreset)
-                {
-                    transformPresets.Add(MediaTransformPreset.VideoAnalyzer);
-                }
-                else if (transformOutput.Preset is AudioAnalyzerPreset)
-                {
-                    transformPresets.Add(MediaTransformPreset.AudioAnalyzer);
-                }
-                else if (transformOutput.Preset is FaceDetectorPreset)
-                {
-                    transformPresets.Add(MediaTransformPreset.FaceDetector);
-                }
-            }
-            return transformPresets.ToArray();
-        }
-
         private string GetOutputAssetNameSuffix(MediaTransformPreset transformPreset)
         {
             string outputAssetNameSuffix = null;
@@ -101,6 +58,53 @@ namespace AzureSkyMedia.PlatformServices
             return outputAssetName;
         }
 
+        private void SetOutputAssetLink(MediaTransformPreset[] transformPresets, JobOutputAsset[] jobOutputs, MediaJobOutputInsight outputInsight)
+        {
+            if (transformPresets.Length > 1 || !string.IsNullOrEmpty(outputInsight.Id))
+            {
+                string encodingOutputAssetName = null;
+                Dictionary<MediaTransformPreset, string> jobOutputAssets = new Dictionary<MediaTransformPreset, string>();
+                for (int i = 0; i < transformPresets.Length; i++)
+                {
+                    MediaTransformPreset transformPreset = transformPresets[i];
+                    if (transformPreset == MediaTransformPreset.AdaptiveStreaming || transformPreset == MediaTransformPreset.ContentAwareEncoding)
+                    {
+                        encodingOutputAssetName = jobOutputs[i].AssetName;
+                    }
+                    else
+                    {
+                        jobOutputAssets.Add(transformPreset, jobOutputs[i].AssetName);
+                    }
+                }
+                if (!string.IsNullOrEmpty(outputInsight.Id))
+                {
+                    if (outputInsight.VideoIndexer)
+                    {
+                        jobOutputAssets.Add(MediaTransformPreset.VideoIndexer, outputInsight.Id);
+                    }
+                    if (outputInsight.AudioIndexer)
+                    {
+                        jobOutputAssets.Add(MediaTransformPreset.AudioIndexer, outputInsight.Id);
+                    }
+                }
+                if (!string.IsNullOrEmpty(encodingOutputAssetName))
+                {
+                    MediaAssetLink assetLink = new MediaAssetLink()
+                    {
+                        AssetName = encodingOutputAssetName,
+                        JobOutputs = jobOutputAssets,
+                        MediaAccount = this.MediaAccount,
+                        UserAccount = this.UserAccount
+                    };
+                    using (DatabaseClient databaseClient = new DatabaseClient(true))
+                    {
+                        string collectionId = Constant.Database.Collection.MediaAssets;
+                        databaseClient.UpsertDocument(collectionId, assetLink);
+                    }
+                }
+            }
+        }
+
         private JobInput GetJobInput(MediaJob mediaJob)
         {
             JobInput jobInput;
@@ -121,55 +125,78 @@ namespace AzureSkyMedia.PlatformServices
             return jobInput;
         }
 
-        private IList<JobOutput> GetJobOutputs(MediaTransformPreset[] transformPresets, MediaJob mediaJob)
+        private JobOutputAsset[] GetJobOutputs(MediaTransformPreset[] transformPresets, MediaJob mediaJob)
         {
-            List<JobOutputAsset> jobOutputAssets = new List<JobOutputAsset>();
+            List<JobOutputAsset> jobOutputs = new List<JobOutputAsset>();
             foreach (MediaTransformPreset transformPreset in transformPresets)
             {
                 string outputAssetName = GetOutputAssetName(transformPreset, mediaJob);
                 CreateAsset(mediaJob.OutputAssetStorage, outputAssetName);
-                JobOutputAsset jobOutputAsset = new JobOutputAsset(outputAssetName)
-                {
-                    Label = transformPreset.ToString()
-                };
-                jobOutputAssets.Add(jobOutputAsset);
+                JobOutputAsset jobOutput = new JobOutputAsset(outputAssetName);
+                jobOutputs.Add(jobOutput);
             }
-            return jobOutputAssets.ToArray();
+            return jobOutputs.ToArray();
         }
 
-        private IDictionary<string, string> GetCorrelationData(MediaJobOutputPublish jobOutputPublish)
+        private IDictionary<string, string> GetJobPublish(MediaJobOutputPublish jobOutputPublish)
         {
-            Dictionary<string, string> correlationData = new Dictionary<string, string>();
-            string userAccount = JsonConvert.SerializeObject(this.UserAccount);
+            Dictionary<string, string> jobPublish = new Dictionary<string, string>();
+            string outputPublish = JsonConvert.SerializeObject(jobOutputPublish);
             string mediaAccount = JsonConvert.SerializeObject(this.MediaAccount);
-            correlationData.Add(Constant.Media.Job.CorrelationData.UserAccount, userAccount);
-            correlationData.Add(Constant.Media.Job.CorrelationData.MediaAccount, mediaAccount);
-            correlationData.Add(Constant.Media.Job.CorrelationData.OutputPublish, JsonConvert.SerializeObject(jobOutputPublish));
-            return correlationData;
+            string userAccount = JsonConvert.SerializeObject(this.UserAccount);
+            jobPublish.Add(Constant.Media.Job.CorrelationData.OutputPublish, outputPublish);
+            jobPublish.Add(Constant.Media.Job.CorrelationData.MediaAccount, mediaAccount);
+            jobPublish.Add(Constant.Media.Job.CorrelationData.UserAccount, userAccount);
+            return jobPublish;
         }
 
         private Job CreateJob(string transformName, MediaJob mediaJob)
         {
-            MediaTransformPreset[] transformPresets = GetTransformPresets(transformName);
-            if (string.IsNullOrEmpty(mediaJob.Name))
+            Job job = null;
+            try
             {
-                mediaJob.Name = Guid.NewGuid().ToString();
+                MediaTransformPreset[] transformPresets = GetTransformPresets(transformName);
+                JobInput jobInput = GetJobInput(mediaJob);
+                JobOutputAsset[] jobOutputs = GetJobOutputs(transformPresets, mediaJob);
+                IDictionary<string, string> jobPublish = GetJobPublish(mediaJob.OutputPublish);
+                job = new Job()
+                {
+                    Description = mediaJob.Description,
+                    Priority = mediaJob.Priority,
+                    Input = jobInput,
+                    Outputs = jobOutputs,
+                    CorrelationData = jobPublish
+                };
+                job = _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
+                SetOutputAssetLink(transformPresets, jobOutputs, mediaJob.OutputInsight);
             }
-            Job job = new Job()
+            catch (Exception ex)
             {
-                Description = mediaJob.Description,
-                Priority = mediaJob.Priority,
-                Input = GetJobInput(mediaJob),
-                Outputs = GetJobOutputs(transformPresets, mediaJob),
-                CorrelationData = GetCorrelationData(mediaJob.OutputAssetPublish),
-            };
-            return _media.Jobs.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, transformName, mediaJob.Name, job);
+                Dictionary<string, string> exProperties = new Dictionary<string, string>
+                {
+                    { "Media Account", JsonConvert.SerializeObject(MediaAccount) },
+                    { "Transform Name", transformName },
+                    { "Media Job", JsonConvert.SerializeObject(mediaJob) }
+                };
+                if (job != null)
+                {
+                    exProperties.Add("Job", JsonConvert.SerializeObject(job));
+                }
+                TelemetryClient telemetryClient = new TelemetryClient();
+                telemetryClient.TrackException(ex, exProperties);
+                throw;
+            }
+            return job;
         }
 
-        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string inputFileUrl,
-                             string inputAssetName, string outputAssetStorage, MediaJobOutputPublish outputAssetPublish)
+        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string inputFileUrl, string inputAssetName,
+                             string outputAssetStorage, MediaJobOutputPublish outputPublish, MediaJobOutputInsight outputInsight)
         {
             EventGridClient.SetMediaSubscription(this.MediaAccount);
+            if (string.IsNullOrEmpty(jobName))
+            {
+                jobName = Guid.NewGuid().ToString();
+            }
             MediaJob mediaJob = new MediaJob()
             {
                 Name = jobName,
@@ -178,10 +205,10 @@ namespace AzureSkyMedia.PlatformServices
                 InputFileUrl = inputFileUrl,
                 InputAssetName = inputAssetName,
                 OutputAssetStorage = outputAssetStorage,
-                OutputAssetPublish = outputAssetPublish
+                OutputPublish = outputPublish,
+                OutputInsight = outputInsight
             };
-            Job job = CreateJob(transformName, mediaJob);
-            return job;
+            return CreateJob(transformName, mediaJob);
         }
 
         public Job UpdateJob(string transformName, string jobName, string jobDescription, Priority jobPriority)

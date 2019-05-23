@@ -15,6 +15,7 @@
         $(function () {
             SetStorageTip();
             CreateUploader();
+            $("#encodingPreset").click();
             if (@indexerNotEnabled) {
                 $("#videoIndexer").prop("disabled", true);
                 $("#audioIndexer").prop("disabled", true);
@@ -58,7 +59,7 @@
 <table class="mediaUploadOptions">
     <tr>
         <td>
-            @Html.CheckBox("adaptiveStreaming", true)
+            @Html.RadioButton("encodingPreset", "adaptiveStreaming", false, new { onmousedown = "SetEncodingPreset(this, true)", onclick = "SetEncodingPreset(this, false)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/autogen-bitrate-ladder')">
@@ -92,7 +93,7 @@
     </tr>
     <tr>
         <td>
-            @Html.CheckBox("contentAwareEncoding", false)
+            @Html.RadioButton("encodingPreset", "contentAwareEncoding", false, new { onmousedown = "SetEncodingPreset(this, true)", onclick = "SetEncodingPreset(this, false)" })
         </td>
         <td>
             <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/cae-experimental')">

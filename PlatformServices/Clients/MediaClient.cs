@@ -7,6 +7,7 @@ using Microsoft.Rest;
 using Microsoft.Rest.Azure.Authentication;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -42,8 +43,9 @@ namespace AzureSkyMedia.PlatformServices
 
         private void BindContext()
         {
-            ServiceClientCredentials clientCredentials = ApplicationTokenProvider.LoginSilentAsync(MediaAccount.DirectoryTenantId, MediaAccount.ServicePrincipalId, MediaAccount.ServicePrincipalKey).Result;
-            _media = new AzureMediaServicesClient(clientCredentials)
+            ClientCredential clientCredential = new ClientCredential(MediaAccount.ServicePrincipalId, MediaAccount.ServicePrincipalKey);
+            ServiceClientCredentials serviceClient = ApplicationTokenProvider.LoginSilentAsync(MediaAccount.DirectoryTenantId, clientCredential, ActiveDirectoryServiceSettings.Azure).Result;
+            _media = new AzureMediaServicesClient(serviceClient)
             {
                 SubscriptionId = MediaAccount.SubscriptionId
             };

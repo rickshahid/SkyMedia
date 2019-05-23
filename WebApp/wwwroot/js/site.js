@@ -55,6 +55,16 @@ function InitializeApp(appName, userId) {
         cache: false
     });
 }
+function FormatValue(value) {
+    if (value == "StopProcessingJob") {
+        value = "StopJob";
+    }
+    for (var i = 0; i < _spacingPatterns.length; i++) {
+        var regEx = new RegExp(_spacingPatterns[i], "g");
+        value = value.replace(regEx, _spacingInserts[i]);
+    }
+    return value;
+}
 function SetCursor(busy) {
     if (busy) {
         $("body").css("cursor", "wait");

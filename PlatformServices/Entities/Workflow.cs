@@ -26,4 +26,15 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaJobOutputPublish JobOutputPublish { get; set; }
     }
+
+    public class MediaWorkflowEntity
+    {
+        public MediaEntity Type { get; set; }
+
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string InsightId { get; set; }
+    }
 }

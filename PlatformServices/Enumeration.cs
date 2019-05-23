@@ -3,7 +3,8 @@ using Newtonsoft.Json.Converters;
 
 namespace AzureSkyMedia.PlatformServices
 {
-    internal enum MediaEntity
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum MediaEntity
     {
         Asset,
         Transform,
@@ -35,7 +36,6 @@ namespace AzureSkyMedia.PlatformServices
     [JsonConverter(typeof(StringEnumConverter))]
     public enum MediaJobInputMode
     {
-        Container,
         Asset,
         File
     }

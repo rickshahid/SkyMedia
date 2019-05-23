@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.EventGrid.Models;
@@ -12,72 +11,26 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private void SetJobInputAssetArchive(JobInput jobInput, MediaJobOutputPublish jobOutputPublish)
+        private void SetJobInputAssetArchive(JobInput jobInput, StandardBlobTier inputAssetStorageTier)
         {
-            if (jobInput is JobInputAsset && jobOutputPublish.InputAssetStorageTier != StandardBlobTier.Unknown)
+            if (jobInput is JobInputAsset jobInputAsset && inputAssetStorageTier != StandardBlobTier.Unknown)
             {
-                JobInputAsset jobInputAsset = (JobInputAsset)jobInput;
                 Asset inputAsset = GetEntity<Asset>(MediaEntity.Asset, jobInputAsset.AssetName);
                 StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, inputAsset.StorageAccountName);
                 CloudBlockBlob[] blobs = blobClient.ListBlobContainer(inputAsset.Container, null);
                 foreach (CloudBlockBlob blob in blobs)
                 {
-                    blob.SetStandardBlobTierAsync(jobOutputPublish.InputAssetStorageTier);
+                    blob.SetStandardBlobTierAsync(inputAssetStorageTier);
                 }
             }
         }
 
-        private void SetJobOutputAssetLink(string transformName, Job job)
-        {
-            if (job.Outputs.Count > 1)
-            {
-                MediaAssetLink outputAssetLink = new MediaAssetLink()
-                {
-                    MediaAccount = this.MediaAccount,
-                    UserAccount = this.UserAccount
-                };
-                Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
-                for (int i = 0; i < transform.Outputs.Count; i++)
-                {
-                    TransformOutput transformOutput = transform.Outputs[i];
-                    JobOutputAsset jobOutput = (JobOutputAsset)job.Outputs[i];
-                    if (transformOutput.Preset is BuiltInStandardEncoderPreset || transformOutput.Preset is StandardEncoderPreset)
-                    {
-                        outputAssetLink.AssetName = jobOutput.AssetName;
-                    }
-                    else
-                    {
-                        MediaTransformPreset transformPreset = (MediaTransformPreset)Enum.Parse(typeof(MediaTransformPreset), jobOutput.Label);
-                        outputAssetLink.JobOutputs.Add(transformPreset, jobOutput.AssetName);
-                    }
-                }
-                if (!string.IsNullOrEmpty(outputAssetLink.AssetName))
-                {
-                    DatabaseClient databaseClient = new DatabaseClient(true);
-                    string collectionId = Constant.Database.Collection.MediaAssets;
-                    databaseClient.UpsertDocument(collectionId, outputAssetLink);
-                }
-            }
-        }
-        
         public static MediaPublishNotification PublishJobOutput(EventGridEvent eventTrigger)
         {
-            MediaPublishNotification publishNotification;
+            MediaPublishNotification publishNotification = new MediaPublishNotification();
             JObject eventData = JObject.FromObject(eventTrigger.Data);
             JObject jobData = (JObject)eventData["correlationData"];
-            if (!jobData.HasValues)
-            {
-                publishNotification = new MediaPublishNotification();
-                //if (eventTrigger.Subject.Contains("VIJob"))
-                //{
-                //    string insightId = eventTrigger.Subject.Split('/')[3].Split('-')[1];
-                //}
-                //else
-                //{
-
-                //}
-            }
-            else
+            if (jobData.HasValues)
             {
                 string mediaAccountData = jobData[Constant.Media.Job.CorrelationData.MediaAccount].ToString();
                 string userAccountData = jobData[Constant.Media.Job.CorrelationData.UserAccount].ToString();
@@ -132,8 +85,7 @@ namespace AzureSkyMedia.PlatformServices
                                 publishNotification.StatusMessage = string.Concat(publishNotification.StatusMessage, Constant.Message.NewLine, streamingUrl);
                             }
                         }
-                        SetJobInputAssetArchive(job.Input, jobOutputPublish);
-                        SetJobOutputAssetLink(transformName, job);
+                        SetJobInputAssetArchive(job.Input, jobOutputPublish.InputAssetStorageTier);
                         break;
                 }
             }
@@ -150,9 +102,9 @@ namespace AzureSkyMedia.PlatformServices
             Job job = GetEntity<Job>(MediaEntity.TransformJob, jobName, transformName);
             if (job != null)
             {
-                foreach (JobOutputAsset outputAsset in job.Outputs)
+                foreach (JobOutputAsset jobOutput in job.Outputs)
                 {
-                    DeleteStreamingLocators(outputAsset.AssetName);
+                    DeleteStreamingLocators(jobOutput.AssetName);
                 }
             }
             return publishNotification;

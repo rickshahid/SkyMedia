@@ -32,45 +32,55 @@ namespace AzureSkyMedia.WebApp.Controllers
         {
             try
             {
-                Asset[] inputAssets;
-                List<Job> jobs = new List<Job>();
+                List<MediaWorkflowEntity> newEntities = new List<MediaWorkflowEntity>();
                 string authToken = HomeController.GetAuthToken(Request, Response);
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     Transform transform = mediaClient.GetTransform(adaptiveStreaming, contentAwareEncoding, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
-                    inputAssets = await CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
+                    Asset[] inputAssets = await CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                     StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
                     foreach (Asset inputAsset in inputAssets)
                     {
                         Job job = null;
-                        Priority jobPriority = Priority.Normal;
-                        if (transform != null)
-                        {
-                            MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
-                            {
-                                StreamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly
-                            };
-                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputAsset.Name, null, outputAssetPublish);
-                        }
                         string insightId = null;
+                        Priority jobPriority = Priority.Normal;
+                        MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
+                        {
+                            StreamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly
+                        };
                         bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
                         if (indexerEnabled)
                         {
-                            bool audioOnly = !videoIndexer && audioIndexer;
-                            bool videoOnly = videoIndexer && !audioIndexer;
-                            insightId = mediaClient.IndexerUploadVideo(null, inputAsset, jobPriority, audioOnly, videoOnly);
+                            insightId = mediaClient.IndexerUploadVideo(null, inputAsset, jobPriority, videoIndexer, audioIndexer);
                         }
+                        if (transform != null)
+                        {
+                            MediaJobOutputInsight outputInsight = new MediaJobOutputInsight()
+                            {
+                                Id = insightId,
+                                VideoIndexer = videoIndexer,
+                                AudioIndexer = audioIndexer
+                            };
+                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputAsset.Name, null, outputAssetPublish, outputInsight);
+                        }
+                        MediaWorkflowEntity newEntity = new MediaWorkflowEntity();
                         if (job != null)
                         {
-                            jobs.Add(job);
+                            newEntity.Type = MediaEntity.TransformJob;
+                            newEntity.Id = job.Id;
+                            newEntity.Name = job.Name;
                         }
                         else
                         {
-                            inputAsset.AlternateId = insightId;
+                            newEntity.Type = MediaEntity.Asset;
+                            newEntity.Id = inputAsset.Id;
+                            newEntity.Name = inputAsset.Name;
                         }
+                        newEntity.InsightId = insightId;
+                        newEntities.Add(newEntity);
                     }
                 }
-                return jobs.Count > 0 ? Json(jobs.ToArray()) : Json(inputAssets);
+                return Json(newEntities.ToArray());
             }
             catch (ApiErrorException ex)
             {

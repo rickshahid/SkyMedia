@@ -17,7 +17,7 @@ namespace AzureSkyMedia.FunctionApp
     public static class MediaWorkflowJobStateFinal
     {
         [FunctionName("MediaWorkflow-JobStateFinal")]
-        [return: TwilioSms(AccountSidSetting = "Twilio.AccountId", AuthTokenSetting = "Twilio.AccountToken", From = "%Twilio.FromNumber%")]
+        [return: TwilioSms(AccountSidSetting = "Twilio.AccountId", AuthTokenSetting = "Twilio.AccountToken", From = "%Twilio.PhoneNumber.From%")]
         public static CreateMessageOptions Run([EventGridTrigger] EventGridEvent eventTrigger, ILogger logger)
         {
             CreateMessageOptions twilioMessage = null;

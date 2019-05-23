@@ -74,23 +74,28 @@ namespace AzureSkyMedia.WebApp.Controllers
                             audioAnalyzerPreset = true;
                         }
                     }
-                    if (!string.IsNullOrEmpty(transformName))
+                    MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
                     {
-                        MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
-                        {
-                            InputAssetStorageTier = inputAssetStorageTier,
-                            StreamingPolicyName = streamingPolicyName,
-                            ContentProtection = contentProtection,
-                        };
-                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputFileUrl, inputAssetName, null, outputAssetPublish);
-                    }
+                        InputAssetStorageTier = inputAssetStorageTier,
+                        StreamingPolicyName = streamingPolicyName,
+                        ContentProtection = contentProtection,
+                    };
+                    string insightId = null;
                     bool indexerEnabled = mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset);
-                    bool audioOnly = !videoAnalyzerPreset && audioAnalyzerPreset;
-                    bool videoOnly = false;
                     if (indexerEnabled)
                     {
                         Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
-                        string insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, audioOnly, videoOnly);
+                        insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, videoAnalyzerPreset, audioAnalyzerPreset);
+                    }
+                    if (!string.IsNullOrEmpty(transformName))
+                    {
+                        MediaJobOutputInsight outputInsight = new MediaJobOutputInsight()
+                        {
+                            Id = insightId,
+                            VideoIndexer = videoAnalyzerPreset,
+                            AudioIndexer = audioAnalyzerPreset
+                        };
+                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputFileUrl, inputAssetName, null, outputAssetPublish, outputInsight);
                     }
                 }
                 return Json(job);

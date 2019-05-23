@@ -32,9 +32,9 @@ namespace AzureSkyMedia.PlatformServices
                     DirectoryTenantId = directoryTenantId,
                     ServicePrincipalId = servicePrincipalIds[i],
                     ServicePrincipalKey = servicePrincipalKeys[i],
-                    VideoIndexerId = videoIndexerIds[i],
-                    VideoIndexerKey = videoIndexerKeys[i],
-                    VideoIndexerRegion = videoIndexerRegions[i],
+                    VideoIndexerId = videoIndexerIds == null || i >= videoIndexerIds.Length ? null : videoIndexerIds[i],
+                    VideoIndexerKey = videoIndexerKeys == null || i >= videoIndexerKeys.Length ? null : videoIndexerKeys[i],
+                    VideoIndexerRegion = videoIndexerRegions == null || i >= videoIndexerRegions.Length ? null : videoIndexerRegions[i],
                     StorageAccounts = GetStorageAccounts(i)
                 };
                 mediaAccounts.Add(mediaAccount);

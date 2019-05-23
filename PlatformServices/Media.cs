@@ -2,9 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
-
-using Newtonsoft.Json.Linq;
 
 namespace AzureSkyMedia.PlatformServices
 {
@@ -179,7 +178,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 foreach (StreamingLocator streamingLocator in streamingLocators)
                 {
-                    if (accountStreams.Count < streamTunerPageSize)
+                    if (accountStreams.Count < streamTunerPageSize && streamingLocator.StreamingPolicyName != PredefinedStreamingPolicy.DownloadOnly)
                     {
                         MediaStream[] mediaStreams = GetMediaStreams(authToken, mediaClient, streamingLocator);
                         if (mediaStreams != null)

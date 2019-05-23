@@ -17,7 +17,18 @@ namespace AzureSkyMedia.PlatformServices
 
         public string OutputAssetStorage { get; set; }
 
-        public MediaJobOutputPublish OutputAssetPublish { get; set; }
+        public MediaJobOutputInsight OutputInsight { get; set; }
+
+        public MediaJobOutputPublish OutputPublish { get; set; }
+    }
+
+    public class MediaJobOutputInsight
+    {
+        public string Id { get; set; }
+
+        public bool VideoIndexer { get; set; }
+
+        public bool AudioIndexer { get; set; }
     }
 
     public class MediaJobOutputPublish

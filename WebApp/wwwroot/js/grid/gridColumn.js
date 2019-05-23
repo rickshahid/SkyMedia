@@ -379,7 +379,7 @@ function GetChildColumns(gridType) {
                 {
                     formatter: FormatName,
                     label: "Transform Output Preset Name",
-                    name: "preset.presetName",
+                    name: "preset",
                     align: "center",
                     width: nameWidthEx
                 },
@@ -482,10 +482,14 @@ function GetChildColumns(gridType) {
 }
 function FormatName(value, grid, row) {
     if (row.preset != null) {
-        if (row.preset.hasOwnProperty("audioLanguage")) {
+        if (row.preset.presetName != null) {
+            value = row.preset.presetName;
+        } else if (row.preset.hasOwnProperty("audioLanguage")) {
             value = row.preset.insightsToExtract != null ? "Video Analyzer" : "Audio Analyzer";
         } else if (row.preset.hasOwnProperty("codecs")) {
             value = "Thumbnail Images";
+        } else {
+            value = "Face Detector";
         }
     }
     value = FormatValue(value);
@@ -523,16 +527,6 @@ function FormatName(value, grid, row) {
     }
     //value = value.replace("Microsoft.Media/mediaservices", "");
     //value = value.replace("Microsoft.Media", "");
-    return value;
-}
-function FormatValue(value) {
-    if (value == "StopProcessingJob") {
-        value = "StopJob";
-    }
-    for (var i = 0; i < _spacingPatterns.length; i++) {
-        var expression = new RegExp(_spacingPatterns[i], "g");
-        value = value.replace(expression, _spacingInserts[i]);
-    }
     return value;
 }
 function FormatStorage(value, grid, row) {

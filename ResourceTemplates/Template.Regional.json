@@ -241,13 +241,18 @@
         "description": "Twilio account token for SMS integration."
       }
     },
-    "twilioFromNumber": {
+    "twilioPhoneNumberFrom": {
       "type": "string",
       "metadata": {
-        "description": "Twilio phone number for SMS integration."
+        "description": "Phone number for sending system messages via Twilio."
+      }
+    },
+    "twilioPhoneNumberTo": {
+      "type": "string",
+      "metadata": {
+        "description": "Phone number for receiving system messages via Twilio."
       }
     }
-
   },
   "variables": {
     "storageApiVersion": "2019-04-01",
@@ -451,6 +456,14 @@
           "properties": {
             "appSettingNames": [
               "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "ApplicationInsightsAgent_EXTENSION_VERSION",
+              "XDT_MicrosoftApplicationInsights_BaseExtensions",
+              "XDT_MicrosoftApplicationInsights_Mode",
+              "InstrumentationEngine_EXTENSION_VERSION",
+              "SnapshotDebugger_EXTENSION_VERSION",
+              "DiagnosticServices_EXTENSION_VERSION",
+              "APPINSIGHTS_PROFILERFEATURE_VERSION",
+              "APPINSIGHTS_SNAPSHOTFEATURE_VERSION",
               "App.RegionName",
               "Directory.ClientId",
               "Directory.ClientSecret"
@@ -628,8 +641,12 @@
               "value": "[parameters('twilioAccountToken')]"
             },
             {
-              "name": "Twilio.FromNumber",
-              "value": "[parameters('twilioFromNumber')]"
+              "name": "Twilio.PhoneNumber.From",
+              "value": "[parameters('twilioPhoneNumberFrom')]"
+            },
+            {
+              "name": "Twilio.PhoneNumber.To",
+              "value": "[parameters('twilioPhoneNumberTo')]"
             }
           ]
         }
@@ -752,8 +769,12 @@
               "value": "[parameters('twilioAccountToken')]"
             },
             {
-              "name": "Twilio.FromNumber",
-              "value": "[parameters('twilioFromNumber')]"
+              "name": "Twilio.PhoneNumber.From",
+              "value": "[parameters('twilioPhoneNumberFrom')]"
+            },
+            {
+              "name": "Twilio.PhoneNumber.To",
+              "value": "[parameters('twilioPhoneNumberTo')]"
             }
           ]
         }

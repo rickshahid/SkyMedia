@@ -8,6 +8,50 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
+        private MediaTransformPreset[] GetTransformPresets(string transformName)
+        {
+            List<MediaTransformPreset> transformPresets = new List<MediaTransformPreset>();
+            Transform transform = GetEntity<Transform>(MediaEntity.Transform, transformName);
+            foreach (TransformOutput transformOutput in transform.Outputs)
+            {
+                if (transformOutput.Preset is BuiltInStandardEncoderPreset builtInEncoderPreset)
+                {
+                    if (builtInEncoderPreset.PresetName == EncoderNamedPreset.ContentAwareEncodingExperimental)
+                    {
+                        transformPresets.Add(MediaTransformPreset.ContentAwareEncoding);
+                    }
+                    else
+                    {
+                        transformPresets.Add(MediaTransformPreset.AdaptiveStreaming);
+                    }
+                }
+                else if (transformOutput.Preset is StandardEncoderPreset standardEncoderPreset)
+                {
+                    if (false)
+                    {
+                        transformPresets.Add(MediaTransformPreset.ThumbnailSprite);
+                    }
+                    else
+                    {
+                        transformPresets.Add(MediaTransformPreset.ThumbnailImages);
+                    }
+                }
+                else if (transformOutput.Preset is VideoAnalyzerPreset)
+                {
+                    transformPresets.Add(MediaTransformPreset.VideoAnalyzer);
+                }
+                else if (transformOutput.Preset is AudioAnalyzerPreset)
+                {
+                    transformPresets.Add(MediaTransformPreset.AudioAnalyzer);
+                }
+                else if (transformOutput.Preset is FaceDetectorPreset)
+                {
+                    transformPresets.Add(MediaTransformPreset.FaceDetector);
+                }
+            }
+            return transformPresets.ToArray();
+        }
+
         private StandardEncoderPreset GetThumbnailGeneration(Image thumbnailCodec)
         {
             StandardEncoderPreset customEncoding = new StandardEncoderPreset
@@ -65,7 +109,10 @@ namespace AzureSkyMedia.PlatformServices
                     transformPreset = GetThumbnailGeneration(thumbnailCodec);
                     break;
                 case MediaTransformPreset.VideoAnalyzer:
-                    transformPreset = new VideoAnalyzerPreset();
+                    transformPreset = new VideoAnalyzerPreset()
+                    {
+                        InsightsToExtract = InsightsType.VideoInsightsOnly
+                    };
                     break;
                 case MediaTransformPreset.AudioAnalyzer:
                     transformPreset = new AudioAnalyzerPreset();

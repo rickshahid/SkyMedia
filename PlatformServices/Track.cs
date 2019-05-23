@@ -45,27 +45,12 @@ namespace AzureSkyMedia.PlatformServices
                     string trackType = null;
                     string trackLabel = null;
                     string trackSourceUrl = null;
-                    if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.VideoIndexer))
-                    {
-                        trackType = Constant.Media.Track.AudioTranscript.CaptionsType;
-                        trackLabel = Constant.Media.Track.AudioTranscript.CaptionsLabel;
-                        string insightId = assetLink.JobOutputs[MediaTransformPreset.VideoIndexer];
-                        trackSourceUrl = mediaClient.IndexerGetCaptionsUrl(insightId);
-                    }
-                    else if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.AudioIndexer))
+                    if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.AudioIndexer))
                     {
                         trackType = Constant.Media.Track.AudioTranscript.CaptionsType;
                         trackLabel = Constant.Media.Track.AudioTranscript.CaptionsLabel;
                         string insightId = assetLink.JobOutputs[MediaTransformPreset.AudioIndexer];
                         trackSourceUrl = mediaClient.IndexerGetCaptionsUrl(insightId);
-                    }
-                    else if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.VideoAnalyzer))
-                    {
-                        trackType = Constant.Media.Track.AudioTranscript.SubtitlesType;
-                        trackLabel = Constant.Media.Track.AudioTranscript.SubtitlesLabel;
-                        string assetName = assetLink.JobOutputs[MediaTransformPreset.VideoAnalyzer];
-                        string fileName = Constant.Media.Track.AudioTranscript.FileName;
-                        trackSourceUrl = mediaClient.GetDownloadUrl(assetName, fileName);
                     }
                     else if (assetLink.JobOutputs.ContainsKey(MediaTransformPreset.AudioAnalyzer))
                     {
