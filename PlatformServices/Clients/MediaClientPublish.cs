@@ -81,7 +81,7 @@ namespace AzureSkyMedia.PlatformServices
                             if (blobClient.ContainsFile(outputAsset.Container, null, null, Constant.Media.Stream.ManifestExtension))
                             {
                                 StreamingLocator streamingLocator = GetStreamingLocator(jobOutput.AssetName, jobOutputPublish.StreamingPolicyName, jobOutputPublish.ContentProtection);
-                                string streamingUrl = GetLocatorUrl(streamingLocator, null);
+                                string streamingUrl = GetLocatorUrl(streamingLocator, null, true);
                                 publishNotification.StatusMessage = string.Concat(publishNotification.StatusMessage, Constant.Message.NewLine, streamingUrl);
                             }
                         }

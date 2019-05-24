@@ -26,27 +26,32 @@ namespace AzureSkyMedia.PlatformServices
 
         public Asset CreateAsset(string storageAccount, string assetName)
         {
-            return CreateAsset(storageAccount, assetName, string.Empty, string.Empty);
+            return CreateAsset(storageAccount, assetName, null, null);
         }
 
-        public async Task<Asset> CreateAsset(string storageAccount, string assetName, string fileName, Stream fileStream)
+        public async Task<Asset> CreateAsset(string storageAccount, string assetName, CloudBlockBlob sourceFile)
         {
+            if (string.IsNullOrEmpty(assetName))
+            {
+                assetName = Path.GetFileNameWithoutExtension(sourceFile.Name);
+            }
             Asset asset = CreateAsset(storageAccount, assetName);
             StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
-            CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
-            await assetBlob.UploadFromStreamAsync(fileStream);
+            CloudBlockBlob assetFile = blobClient.GetBlockBlob(asset.Container, null, sourceFile.Name);
+            await assetFile.UploadFromStreamAsync(sourceFile.OpenRead());
             return asset;
         }
 
-        public async Task<Asset> CreateAsset(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string sourceContainer, string fileName)
+        public async Task<Asset> CreateAsset(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string fileName)
         {
             if (string.IsNullOrEmpty(assetName))
             {
                 assetName = Path.GetFileNameWithoutExtension(fileName);
             }
             StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
-            Asset asset = CreateAsset(storageAccount, assetName, assetDescription, assetAlternateId);
+            string sourceContainer = Constant.Storage.Blob.WorkflowContainerName;
             string sourceUrl = blobClient.GetDownloadUrl(sourceContainer, fileName);
+            Asset asset = CreateAsset(storageAccount, assetName, assetDescription, assetAlternateId);
             CloudBlockBlob assetBlob = blobClient.GetBlockBlob(asset.Container, null, fileName);
             await assetBlob.StartCopyAsync(new Uri(sourceUrl));
             return asset;

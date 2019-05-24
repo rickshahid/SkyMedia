@@ -1,72 +1,54 @@
-using System;
 using System.Linq;
 using System.Collections.Generic;
 
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
+using Newtonsoft.Json.Linq;
+
 namespace AzureSkyMedia.PlatformServices
 {
     internal static class Media
     {
-        private static string[] GetThumbnailUrls(MediaClient mediaClient, StreamingLocator locator)
-        {
-            List<string> thumbnailUrls = new List<string>();
-            Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, locator.AssetName);
-            MediaAsset mediaAsset = new MediaAsset(mediaClient, asset);
-            StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
-            StringComparison stringComparison = StringComparison.OrdinalIgnoreCase;
-            foreach (MediaFile assetFile in mediaAsset.Files)
-            {
-                if (assetFile.Name.StartsWith(Constant.Media.Thumbnail.FileNamePrefix, stringComparison))
-                {
-                    string thumbnailUrl = blobClient.GetDownloadUrl(asset.Container, assetFile.Name);
-                    thumbnailUrls.Add(thumbnailUrl);
-                }
-            }
-            return thumbnailUrls.ToArray();
-        }
-
         private static MediaInsight GetMediaInsight(MediaClient mediaClient, Asset asset)
         {
             MediaInsight mediaInsight = new MediaInsight();
-            //if (mediaClient.IndexerEnabled())
-            //{
-            //    string insightId = asset.AlternateId;
-            //    if (!string.IsNullOrEmpty(insightId) && mediaClient.IndexerInsightExists(insightId, out JObject insight))
-            //    {
-            //        mediaInsight.WidgetUrl = mediaClient.IndexerGetInsightUrl(insightId);
-            //        mediaInsight.ViewToken = insight["videos"][0]["viewToken"].ToString();
-            //    }
-            //}
+            if (mediaClient.IndexerEnabled())
+            {
+                using (DatabaseClient databaseClient = new DatabaseClient(false))
+                {
+                    string collectionId = Constant.Database.Collection.MediaAssets;
+                    MediaAssetLink assetLink = databaseClient.GetDocument<MediaAssetLink>(collectionId, asset.Name);
+                    if (assetLink != null)
+                    {
+                        string insightId = assetLink.JobOutputs[MediaTransformPreset.VideoIndexer];
+                        if (string.IsNullOrEmpty(insightId))
+                        {
+                            insightId = assetLink.JobOutputs[MediaTransformPreset.AudioIndexer];
+                        }
+                        if (!string.IsNullOrEmpty(insightId) && mediaClient.IndexerInsightExists(insightId, out JObject insight))
+                        {
+                            mediaInsight.WidgetUrl = mediaClient.IndexerGetInsightUrl(insightId);
+                            mediaInsight.ViewToken = insight["videos"][0]["viewToken"].ToString();
+                        }
+                    }
+                }
+            }
             return mediaInsight;
         }
 
         private static MediaStream GetMediaStream(string authToken, MediaClient mediaClient, Asset asset, AssetFilter assetFilter,
                                                   StreamingLocator streamingLocator, string streamingUrl)
         {
-            string streamId = assetFilter != null ? assetFilter.Id : asset.AssetId.ToString();
-            string streamName = assetFilter != null ? assetFilter.Name : streamingLocator.Name;
-            MediaClipType streamType = assetFilter != null ? MediaClipType.Filter : MediaClipType.Asset;
-            if (streamType == MediaClipType.Filter)
-            {
-                streamingUrl = string.Concat(streamingUrl, "(filter=", assetFilter.Name, ")");
-            }
             MediaInsight mediaInsight = GetMediaInsight(mediaClient, asset);
             MediaStream mediaStream = new MediaStream()
             {
-                Id = streamId,
-                Name = streamName,
-                Type = streamType,
-                Description = asset.Description,
-                Source = new StreamSource()
-                {
-                    Url = streamingUrl,
-                    ProtectionInfo = mediaClient.GetProtectionInfo(authToken, mediaClient, mediaInsight, streamingLocator)
-                },
-                TextTracks = Track.GetTextTracks(mediaClient, asset),
-                ThumbnailUrls = GetThumbnailUrls(mediaClient, streamingLocator),
-                ContentInsight = mediaInsight
+                Name = assetFilter != null ? assetFilter.Name : streamingLocator.Name,
+                Url = streamingUrl,
+                Poster = mediaClient.GetLocatorUrl(streamingLocator, Constant.Media.Thumbnail.FileName, false),
+                Tracks = Track.GetMediaTracks(mediaClient, asset),
+                Insight = mediaInsight,
+                Protection = mediaClient.GetStreamProtection(authToken, mediaClient, mediaInsight, streamingLocator)
             };
             return mediaStream;
         }
@@ -74,7 +56,7 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaStream[] GetMediaStreams(string authToken, MediaClient mediaClient, StreamingLocator streamingLocator)
         {
             List<MediaStream> mediaStreams = new List<MediaStream>();
-            string streamingUrl = mediaClient.GetLocatorUrl(streamingLocator, null);
+            string streamingUrl = mediaClient.GetLocatorUrl(streamingLocator, null, true);
             if (!string.IsNullOrEmpty(streamingUrl))
             {
                 Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, streamingLocator.AssetName);
@@ -98,11 +80,8 @@ namespace AzureSkyMedia.PlatformServices
             MediaStream sampleStream = new MediaStream()
             {
                 Name = streamName,
-                Source = new StreamSource()
-                {
-                    Url = sourceUrl
-                },
-                TextTracks = Track.GetTextTracks(sourceUrl, textTracks)
+                Url = sourceUrl,
+                Tracks = Track.GetMediaTracks(sourceUrl, textTracks)
             };
             sampleStreams.Add(sampleStream);
         }

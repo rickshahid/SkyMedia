@@ -28,7 +28,11 @@
             }
             var mediaPlayer = GetMediaPlayer("videoPlayer", "@userId", "@accountName", true, false, @liveEventLowLatency, null);
             SetPlayerEvents(mediaPlayer, "@storageCdnUrl", @liveEventEncoding, false);
-            SetPlayerSource(mediaPlayer, liveEventUrl, null, null);
+            mediaPlayer.src(
+                [{
+                    src: liveEventUrl
+                }]
+            );
             $("#liveEventUrlType").show();
         }
         $(function () {

@@ -1,5 +1,17 @@
-﻿namespace AzureSkyMedia.PlatformServices
+﻿using Newtonsoft.Json;
+
+namespace AzureSkyMedia.PlatformServices
 {
+    public class MediaProtection
+    {
+        public MediaContentProtection Type { get; set; }
+
+        public string AuthenticationToken { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string CertificateUrl { get; set; }
+    }
+
     public class ContentProtection
     {
         public bool PersistentLicense { get; set; }

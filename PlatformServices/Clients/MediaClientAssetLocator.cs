@@ -50,7 +50,7 @@ namespace AzureSkyMedia.PlatformServices
                 string contentKeyPolicyName = null;
                 if (string.IsNullOrEmpty(streamingPolicyName))
                 {
-                    streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
+                    streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
                 }
                 else if (streamingPolicyName == PredefinedStreamingPolicy.ClearKey)
                 {
@@ -83,7 +83,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (AssetStreamingLocator assetStreamingLocator in streamingLocatorList.StreamingLocators)
             {
                 StreamingLocator streamingLocator = GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, assetStreamingLocator.Name);
-                string streamingUrl = GetLocatorUrl(streamingLocator, null);
+                string streamingUrl = GetLocatorUrl(streamingLocator, null, true);
                 if (!string.IsNullOrEmpty(streamingUrl))
                 {
                     streamingUrls.Add(streamingUrl);
@@ -92,34 +92,41 @@ namespace AzureSkyMedia.PlatformServices
             return streamingUrls.ToArray();
         }
 
-        public string GetLocatorUrl(StreamingLocator streamingLocator, string fileName)
+        public string GetLocatorUrl(StreamingLocator streamingLocator, string fileName, bool listPaths)
         {
             UriBuilder uriBuilder = new UriBuilder()
             {
                 Scheme = Constant.Media.Stream.DefaultScheme,
                 Host = GetStreamingHost(null)
             };
-            ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocator.Name);
-            if (!string.IsNullOrEmpty(fileName))
+            if (listPaths)
             {
-                foreach (string downloadPath in paths.DownloadPaths)
+                ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocator.Name);
+                if (!string.IsNullOrEmpty(fileName))
                 {
-                    if (downloadPath.Contains(fileName))
+                    foreach (string downloadPath in paths.DownloadPaths)
                     {
-                        uriBuilder.Path = downloadPath;
+                        if (downloadPath.Contains(fileName))
+                        {
+                            uriBuilder.Path = downloadPath;
+                        }
                     }
+                }
+                else
+                {
+                    foreach (StreamingPath streamingPath in paths.StreamingPaths)
+                    {
+                        if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count == 1)
+                        {
+                            uriBuilder.Path = streamingPath.Paths[0];
+                        }
+                    }
+                    uriBuilder.Path = string.Concat(uriBuilder.Path, Constant.Media.Stream.DefaultFormat);
                 }
             }
             else
             {
-                foreach (StreamingPath streamingPath in paths.StreamingPaths)
-                {
-                    if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count == 1)
-                    {
-                        uriBuilder.Path = streamingPath.Paths[0];
-                    }
-                }
-                uriBuilder.Path = string.Concat(uriBuilder.Path, Constant.Media.Stream.DefaultFormat);
+                uriBuilder.Path = string.Concat(streamingLocator.StreamingLocatorId, "/", fileName);
             }
             return uriBuilder.ToString();
         }
@@ -128,7 +135,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             string streamingPolicyName = PredefinedStreamingPolicy.DownloadOnly;
             StreamingLocator streamingLocator = GetStreamingLocator(assetName, streamingPolicyName, null);
-            return GetLocatorUrl(streamingLocator, fileName);
+            return GetLocatorUrl(streamingLocator, fileName, false);
         }
 
         public void DeleteStreamingLocators(string assetName)

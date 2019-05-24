@@ -17,25 +17,25 @@ namespace AzureSkyMedia.PlatformServices
             return manifestUrl.Replace(manifestFile, fileName);
         }
 
-        public static TextTrack[] GetTextTracks(string sourceUrl, string sourceTracks)
+        public static MediaTrack[] GetMediaTracks(string sourceUrl, string textTracks)
         {
-            List<TextTrack> textTracks = new List<TextTrack>();
-            if (!string.IsNullOrEmpty(sourceTracks))
+            List<MediaTrack> mediaTracks = new List<MediaTrack>();
+            if (!string.IsNullOrEmpty(textTracks))
             {
-                JArray sourceTextTracks = JArray.Parse(sourceTracks);
+                JArray sourceTextTracks = JArray.Parse(textTracks);
                 foreach (JToken sourceTextTrack in sourceTextTracks)
                 {
-                    TextTrack textTrack = sourceTextTrack.ToObject<TextTrack>();
-                    textTrack.SourceUrl = GetSourceUrl(sourceUrl, textTrack.SourceUrl);
-                    textTracks.Add(textTrack);
+                    MediaTrack mediaTrack = sourceTextTrack.ToObject<MediaTrack>();
+                    mediaTrack.SourceUrl = GetSourceUrl(sourceUrl, mediaTrack.SourceUrl);
+                    mediaTracks.Add(mediaTrack);
                 }
             }
-            return textTracks.ToArray();
+            return mediaTracks.ToArray();
         }
 
-        public static TextTrack[] GetTextTracks(MediaClient mediaClient, Asset asset)
+        public static MediaTrack[] GetMediaTracks(MediaClient mediaClient, Asset asset)
         {
-            List<TextTrack> textTracks = new List<TextTrack>();
+            List<MediaTrack> mediaTracks = new List<MediaTrack>();
             using (DatabaseClient databaseClient = new DatabaseClient(false))
             {
                 string collectionId = Constant.Database.Collection.MediaAssets;
@@ -62,17 +62,17 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     if (!string.IsNullOrEmpty(trackSourceUrl))
                     {
-                        TextTrack textTrack = new TextTrack()
+                        MediaTrack mediaTrack = new MediaTrack()
                         {
                             Type = trackType,
                             Label = trackLabel,
                             SourceUrl = trackSourceUrl
                         };
-                        textTracks.Add(textTrack);
+                        mediaTracks.Add(mediaTrack);
                     }
                 }
             }
-            return textTracks.ToArray();
+            return mediaTracks.ToArray();
         }
     }
 }

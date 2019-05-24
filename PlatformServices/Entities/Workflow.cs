@@ -10,6 +10,8 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaAccount[] MediaAccounts { get; set; }
 
+        public string AssetName { get; set; }
+
         public string InputFileName { get; set; }
 
         public string OutputAssetStorage { get; set; }

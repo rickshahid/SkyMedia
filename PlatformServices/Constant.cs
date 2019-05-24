@@ -266,6 +266,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Thumbnail
             {
+                public const string FileName = "Thumbnail000001.jpg";
                 public const string FileNamePrefix = "Thumbnail";
                 public const string FileNameSuffix = "{Index}{Extension}";
             }

@@ -45,14 +45,14 @@ function GetStreamTunerPageIndex() {
 }
 function GetStreamName(mediaStream, streamTuner) {
     var streamName = mediaStream.name;
-    if (mediaStream.source.protectionInfo != null && mediaStream.source.protectionInfo.length > 0) {
+    if (mediaStream.protection != null && mediaStream.protection.length > 0) {
         var lineBreak = streamTuner ? "<br><br>" : "<br>";
         streamName = streamName + lineBreak;
-        for (var i = 0; i < mediaStream.source.protectionInfo.length; i++) {
+        for (var i = 0; i < mediaStream.protection.length; i++) {
             if (i > 0) {
                 streamName = streamName + ", ";
             }
-            streamName = streamName + mediaStream.source.protectionInfo[i].type;
+            streamName = streamName + mediaStream.protection[i].type;
         }
     }
     return streamName;
@@ -103,6 +103,11 @@ function SetMediaStream(streamTunerLeft, streamTunerRight) {
             $("#streamUrl").html("");
             SetStreamNumber(_streamNumber);
             SetPlayerContent(_mediaPlayer, mediaStream);
+            if (mediaStream.poster != null) {
+                $("#playerPoster").show();
+            } else {
+                $("#playerPoster").hide();
+            }
         }
     }
 }
@@ -112,4 +117,11 @@ function GetMediaStream(streamNumber) {
     }
     var streamIndex = (streamNumber - 1) % _streamTunerPageSize;
     return _mediaStreams.length == 0 ? null : _mediaStreams[streamIndex];
+}
+function SetPlayerPoster(checkbox) {
+    var posterUrl = null;
+    if (checkbox.checked) {
+        posterUrl = _mediaStreams[_streamNumber - 1].poster;
+    }
+    _mediaPlayer.poster(posterUrl);
 }

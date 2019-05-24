@@ -48,8 +48,8 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
         _insightWidgetUrl = null;
         if (homePage) {
             var mediaStream = GetMediaStream(null);
-            if (mediaStream != null && mediaStream.contentInsight != null) {
-                _insightWidgetUrl = mediaStream.contentInsight.widgetUrl;
+            if (mediaStream != null && mediaStream.insight != null) {
+                _insightWidgetUrl = mediaStream.insight.widgetUrl;
             }
         }
         CreatePlayerControls(storageCdnUrl, liveEncoding);
@@ -68,36 +68,25 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
     });
 }
 function SetPlayerContent(mediaPlayer, mediaStream) {
-    var sourceUrl = mediaStream.source.src;
-    var textTracks = mediaStream.textTracks;
-    var protectionInfo = mediaStream.source.protectionInfo;
-    SetPlayerSource(mediaPlayer, sourceUrl, textTracks, protectionInfo);
-    if (window.location.href.indexOf("poster=0") == -1) {
-        if (mediaStream.thumbnails != null && mediaStream.thumbnails.length > 0) {
-            mediaPlayer.poster(mediaStream.thumbnails[0]);
-        }
-    }
-}
-function SetPlayerSource(mediaPlayer, sourceUrl, textTracks, protectionInfo) {
-    if (protectionInfo != null && protectionInfo.length > 0) {
+    if (mediaStream.protection != null && mediaStream.protection.length > 0) {
         if (window.location.href.indexOf("token=0") > -1) {
-            for (var i = 0; i < protectionInfo.length; i++) {
-                protectionInfo[i].authenticationToken = null;
+            for (var i = 0; i < mediaStream.protection.length; i++) {
+                mediaStream.protection[i].authenticationToken = null;
             }
         }
         mediaPlayer.src(
             [{
-                src: sourceUrl,
-                protectionInfo: protectionInfo
+                src: mediaStream.url,
+                protectionInfo: mediaStream.protection
             }],
-            textTracks
+            mediaStream.tracks
         );
     } else {
         mediaPlayer.src(
             [{
-                src: sourceUrl
+                src: mediaStream.url
             }],
-            textTracks
+            mediaStream.tracks
         );
     }
 }
@@ -112,13 +101,13 @@ function ClearPlayerControls(controlBar, childIds) {
 }
 function CreatePlayerControls(storageCdnUrl, liveEncoding) {
     var controlBar = $(".amp-controlbaricons-right")[0];
-    var buttonIds = ["signalButton", "insightButton"];
+    var buttonIds = ["insightButton", "signalButton"];
     ClearPlayerControls(controlBar, buttonIds);
+    if (_insightWidgetUrl != null) {
+        CreatePlayerControl(controlBar, storageCdnUrl, ToggleMediaInsight, "insightButton", "insightImage", "MediaInsightShow.png", "Media Insight<br><br>Toggle");
+    }
     if (liveEncoding) {
         CreatePlayerControl(controlBar, storageCdnUrl, InsertAdSignal, "signalButton", "signalImage", "MediaLiveSignal.png", "Insert<br><br>Ad Signal");
-    }
-    if (_insightWidgetUrl != null) {
-        CreatePlayerControl(controlBar, storageCdnUrl, ToggleMediaInsight, "insightButton", "insightImage", "MediaInsightShow.png", "Media<br><br>Insight");
     }
 }
 function CreatePlayerControl(controlBar, storageCdnUrl, onClick, buttonId, imageId, imageFile, tipText) {

@@ -56,11 +56,4 @@ namespace AzureSkyMedia.PlatformServices
         Language,
         Brand
     }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum MediaClipType
-    {
-        Filter,
-        Asset
-    }
 }

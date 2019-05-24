@@ -48,18 +48,17 @@ namespace AzureSkyMedia.PlatformServices
             return contentKeyPolicy;
         }
 
-        public StreamProtection[] GetProtectionInfo(string authToken, MediaClient mediaClient, MediaInsight mediaInsight, StreamingLocator locator)
+        public MediaProtection[] GetStreamProtection(string authToken, MediaClient mediaClient, MediaInsight mediaInsight, StreamingLocator locator)
         {
             authToken = !string.IsNullOrEmpty(mediaInsight.ViewToken) ? mediaInsight.ViewToken : string.Concat("Bearer=", authToken);
-            List<StreamProtection> protectionInfo = new List<StreamProtection>();
+            List<MediaProtection> streamProtection = new List<MediaProtection>();
             if (locator.StreamingPolicyName == PredefinedStreamingPolicy.ClearKey)
             {
-                StreamProtection streamProtection = new StreamProtection()
+                streamProtection.Add(new MediaProtection()
                 {
                     Type = MediaContentProtection.AES,
                     AuthenticationToken = authToken
-                };
-                protectionInfo.Add(streamProtection);
+                });
             }
             else if (locator.StreamingPolicyName == PredefinedStreamingPolicy.MultiDrmCencStreaming || locator.StreamingPolicyName == PredefinedStreamingPolicy.MultiDrmStreaming)
             {
@@ -68,25 +67,23 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     if (contentKeyPolicyOption.Configuration is ContentKeyPolicyPlayReadyConfiguration)
                     {
-                        StreamProtection streamProtection = new StreamProtection()
+                        streamProtection.Add(new MediaProtection()
                         {
                             Type = MediaContentProtection.PlayReady,
                             AuthenticationToken = authToken
-                        };
-                        protectionInfo.Add(streamProtection);
+                        });
                     }
                     else if (contentKeyPolicyOption.Configuration is ContentKeyPolicyWidevineConfiguration)
                     {
-                        StreamProtection streamProtection = new StreamProtection()
+                        streamProtection.Add(new MediaProtection()
                         {
                             Type = MediaContentProtection.Widevine,
                             AuthenticationToken = authToken
-                        };
-                        protectionInfo.Add(streamProtection);
+                        });
                     }
                 }
             }
-            return protectionInfo.Count == 0 ? null : protectionInfo.ToArray();
+            return streamProtection.ToArray();
         }
     }
 }
