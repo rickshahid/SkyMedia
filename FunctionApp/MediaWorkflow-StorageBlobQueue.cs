@@ -108,9 +108,7 @@ namespace AzureSkyMedia.FunctionApp
                 }
                 else
                 {
-                    StorageBlobClient blobClient = new StorageBlobClient();
-                    string containerName = Constant.Storage.Blob.WorkflowContainerName;
-                    CloudBlockBlob blob = blobClient.GetBlockBlob(containerName, null, workflowManifest.InputFileName);
+                    CloudBlockBlob blob = _blobClient.GetBlockBlob(_containerName, null, workflowManifest.InputFileName);
                     inputComplete = blob.Exists();
                     if (!inputComplete)
                     {
