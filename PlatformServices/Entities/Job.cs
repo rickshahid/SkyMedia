@@ -13,7 +13,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string InputFileUrl { get; set; }
 
-        public string InputAssetName { get; set; }
+        public Asset InputAsset { get; set; }
 
         public string OutputAssetStorage { get; set; }
 

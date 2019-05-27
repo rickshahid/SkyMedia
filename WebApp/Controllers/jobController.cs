@@ -81,10 +81,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                         ContentProtection = contentProtection,
                     };
                     string insightId = null;
+                    Asset inputAsset = string.IsNullOrEmpty(inputAssetName) ? null : mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                     bool indexerEnabled = mediaClient.IndexerEnabled() && (videoAnalyzerPreset || audioAnalyzerPreset);
                     if (indexerEnabled)
                     {
-                        Asset inputAsset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, inputAssetName);
                         insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, jobPriority, videoAnalyzerPreset, audioAnalyzerPreset);
                     }
                     if (!string.IsNullOrEmpty(transformName))
@@ -95,7 +95,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             VideoIndexer = videoAnalyzerPreset,
                             AudioIndexer = audioAnalyzerPreset
                         };
-                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputFileUrl, inputAssetName, null, outputAssetPublish, outputInsight);
+                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputFileUrl, inputAsset, null, outputAssetPublish, outputInsight);
                     }
                 }
                 return Json(job);

@@ -60,7 +60,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                                 VideoIndexer = videoIndexer,
                                 AudioIndexer = audioIndexer
                             };
-                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputAsset.Name, null, outputAssetPublish, outputInsight);
+                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputAsset, null, outputAssetPublish, outputInsight);
                         }
                         MediaWorkflowEntity newEntity = new MediaWorkflowEntity();
                         if (job != null)

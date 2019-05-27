@@ -44,7 +44,7 @@ namespace AzureSkyMedia.PlatformServices
 
         private string GetOutputAssetName(MediaTransformPreset transformPreset, MediaJob mediaJob)
         {
-            string outputAssetName = mediaJob.InputAssetName;
+            string outputAssetName = mediaJob.InputAsset == null ? null : mediaJob.InputAsset.Name;
             if (string.IsNullOrEmpty(outputAssetName) && !string.IsNullOrEmpty(mediaJob.InputFileUrl))
             {
                 Uri inputFileUri = new Uri(mediaJob.InputFileUrl);
@@ -119,7 +119,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 jobInput = new JobInputAsset()
                 {
-                    AssetName = mediaJob.InputAssetName
+                    AssetName = mediaJob.InputAsset.Name
                 };
             }
             return jobInput;
@@ -189,7 +189,7 @@ namespace AzureSkyMedia.PlatformServices
             return job;
         }
 
-        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string inputFileUrl, string inputAssetName,
+        public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string inputFileUrl, Asset inputAsset,
                              string outputAssetStorage, MediaJobOutputPublish outputPublish, MediaJobOutputInsight outputInsight)
         {
             EventGridClient.SetMediaSubscription(this.MediaAccount);
@@ -203,7 +203,7 @@ namespace AzureSkyMedia.PlatformServices
                 Description = jobDescription,
                 Priority = jobPriority,
                 InputFileUrl = inputFileUrl,
-                InputAssetName = inputAssetName,
+                InputAsset = inputAsset,
                 OutputAssetStorage = outputAssetStorage,
                 OutputPublish = outputPublish,
                 OutputInsight = outputInsight

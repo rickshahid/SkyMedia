@@ -324,6 +324,8 @@ namespace AzureSkyMedia.PlatformServices
             public const string AssetCreated = "New Asset Created: {0}";
             public const string JobCreated = "New Job Created: {0}";
             public const string InsightCreated = "New Insight Created: {0}";
+            public const string OrchestrationStarted = "Started Orchestration: {0}";
+            public const string OrchestrationReplaying = "Replaying Orchestration: {0}";
         }
     }
 }

@@ -29,7 +29,7 @@ namespace AzureSkyMedia.PlatformServices
             return CreateAsset(storageAccount, assetName, null, null);
         }
 
-        public async Task<Asset> CreateAsset(string storageAccount, string assetName, CloudBlockBlob sourceFile)
+        public Asset CreateAsset(string storageAccount, string assetName, CloudBlockBlob sourceFile)
         {
             if (string.IsNullOrEmpty(assetName))
             {
@@ -38,7 +38,9 @@ namespace AzureSkyMedia.PlatformServices
             Asset asset = CreateAsset(storageAccount, assetName);
             StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, storageAccount);
             CloudBlockBlob assetFile = blobClient.GetBlockBlob(asset.Container, null, sourceFile.Name);
-            await assetFile.UploadFromStreamAsync(sourceFile.OpenRead());
+            assetFile.UploadFromStream(sourceFile.OpenRead());
+            assetFile.Properties.ContentType = sourceFile.Properties.ContentType;
+            assetFile.SetProperties();
             return asset;
         }
 
