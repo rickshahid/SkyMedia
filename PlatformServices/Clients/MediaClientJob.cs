@@ -190,9 +190,12 @@ namespace AzureSkyMedia.PlatformServices
         }
 
         public Job CreateJob(string transformName, string jobName, string jobDescription, Priority jobPriority, string inputFileUrl, Asset inputAsset,
-                             string outputAssetStorage, MediaJobOutputPublish outputPublish, MediaJobOutputInsight outputInsight)
+                             string outputAssetStorage, MediaJobOutputPublish outputPublish, MediaJobOutputInsight outputInsight, bool setEventGrid)
         {
-            EventGridClient.SetMediaSubscription(this.MediaAccount);
+            if (setEventGrid)
+            {
+                EventGridClient.SetMediaSubscription(this.MediaAccount);
+            }
             if (string.IsNullOrEmpty(jobName))
             {
                 jobName = Guid.NewGuid().ToString();

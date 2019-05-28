@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.EventGrid.Models;
-using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 
@@ -15,18 +14,18 @@ namespace AzureSkyMedia.FunctionApp
 {
     public static partial class MediaWorkflow
     {
-        [FunctionName("MediaWorkflow-BlobStorage")]
+        [FunctionName("MediaWorkflow-Blob")]
         public static async Task Trigger([QueueTrigger(Constant.Storage.Blob.WorkflowContainerName)] EventGridEvent queueMessage,
-                                            [Blob(Constant.Storage.Blob.WorkflowManifestPath, FileAccess.Read)] Stream manifestInput,
-                                            [OrchestrationClient] DurableOrchestrationClient client, ILogger logger)
+                                         [Blob(Constant.Storage.Blob.WorkflowManifestPath, FileAccess.Read)] Stream manifestInput,
+                                         [OrchestrationClient] DurableOrchestrationClient client)
         {
-            _logger = logger;
-            _logger.LogInformation(JsonConvert.SerializeObject(queueMessage, Formatting.Indented));
             if (InputComplete(queueMessage, manifestInput, out MediaWorkflowManifest workflowManifest))
             {
+                MediaClient mediaClient = new MediaClient(workflowManifest);
+                EventGridClient.SetMediaSubscription(mediaClient.MediaAccount);
+
                 ValueTuple<EventGridEvent, MediaWorkflowManifest> workflowInput = (queueMessage, workflowManifest);
-                string orchestrationId = await client.StartNewAsync("MediaWorkflow", workflowInput);
-                _logger.LogInformation(Constant.Message.OrchestrationStarted, orchestrationId);
+                await client.StartNewAsync("MediaWorkflow", workflowInput);
             }
         }
 
@@ -34,18 +33,13 @@ namespace AzureSkyMedia.FunctionApp
         {
             workflowManifest = null;
             bool inputComplete = false;
-            if (manifestInput == null)
-            {
-                _logger.LogInformation(string.Format(Constant.Message.WorkflowInputNotComplete, Constant.Storage.Blob.WorkflowManifestFile));
-            }
-            else
+            if (manifestInput != null)
             {
                 string workflowManifestJson;
                 using (StreamReader manifestReader = new StreamReader(manifestInput))
                 {
                     workflowManifestJson = manifestReader.ReadToEnd();
                 }
-                _logger.LogInformation(workflowManifestJson);
                 workflowManifest = JsonConvert.DeserializeObject<MediaWorkflowManifest>(workflowManifestJson);
                 if (string.IsNullOrEmpty(workflowManifest.InputFileName))
                 {
@@ -59,10 +53,6 @@ namespace AzureSkyMedia.FunctionApp
                 {
                     CloudBlockBlob blob = _blobClient.GetBlockBlob(_containerName, null, workflowManifest.InputFileName);
                     inputComplete = blob.Exists();
-                    if (!inputComplete)
-                    {
-                        _logger.LogInformation(string.Format(Constant.Message.WorkflowInputNotComplete, workflowManifest.InputFileName));
-                    }
                 }
             }
             return inputComplete;

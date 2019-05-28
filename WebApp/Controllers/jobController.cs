@@ -95,7 +95,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                             VideoIndexer = videoAnalyzerPreset,
                             AudioIndexer = audioAnalyzerPreset
                         };
-                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputFileUrl, inputAsset, null, outputAssetPublish, outputInsight);
+                        job = mediaClient.CreateJob(transformName, jobName, jobDescription, jobPriority, inputFileUrl, inputAsset, null, outputAssetPublish, outputInsight, true);
                     }
                 }
                 return Json(job);

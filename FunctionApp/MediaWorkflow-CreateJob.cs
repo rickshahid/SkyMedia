@@ -3,7 +3,6 @@ using System.Linq;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.Management.Media.Models;
-using Microsoft.Extensions.Logging;
 
 using AzureSkyMedia.PlatformServices;
 
@@ -29,7 +28,6 @@ namespace AzureSkyMedia.FunctionApp
             if (indexerEnabled)
             {
                 insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, workflowManifest.JobPriority, videoIndexer, audioIndexer);
-                _logger.LogInformation(Constant.Message.InsightCreated, insightId);
             }
 
             Transform transform = mediaClient.GetTransform(workflowManifest.TransformPresets);
@@ -41,7 +39,7 @@ namespace AzureSkyMedia.FunctionApp
                     VideoIndexer = videoIndexer,
                     AudioIndexer = audioIndexer
                 };
-                job = mediaClient.CreateJob(transform.Name, workflowManifest.JobName, null, workflowManifest.JobPriority, inputFileUrl, inputAsset, workflowManifest.OutputAssetStorage, workflowManifest.JobOutputPublish, outputInsight);
+                job = mediaClient.CreateJob(transform.Name, workflowManifest.JobName, null, workflowManifest.JobPriority, inputFileUrl, inputAsset, workflowManifest.OutputAssetStorage, workflowManifest.JobOutputPublish, outputInsight, false);
             }
             return job;
         }

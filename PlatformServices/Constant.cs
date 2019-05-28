@@ -316,16 +316,16 @@ namespace AzureSkyMedia.PlatformServices
         {
             public const string NewLine = "\n\n";
             public const string UserPasswordForgotten = "AADB2C90118";
-            public const string WorkflowInputNotComplete = "Workflow Input Not Complete: Missing '{0}'";
             public const string StorageAccountReadPermission = " (Your media account service principal does not have storage account reader access)";
             public const string JobPublishNotification = "Transform: {0}" + NewLine + "Job: {1}" + NewLine + "Event: {2}";
             public const string JobUnpublishNotification = "The '{0}' job output assets have been unpublished.";
             public const string AssetUnpublished = "The '{0}' asset has been unpublished.";
-            public const string AssetCreated = "New Asset Created: {0}";
-            public const string JobCreated = "New Job Created: {0}";
-            public const string InsightCreated = "New Insight Created: {0}";
-            public const string OrchestrationStarted = "Started Orchestration: {0}";
-            public const string OrchestrationReplaying = "Replaying Orchestration: {0}";
+            //public const string WorkflowInputNotComplete = "Workflow Input Not Complete: Missing '{0}'";
+            //public const string AssetCreated = "New Asset Created: {0}";
+            //public const string JobCreated = "New Job Created: {0}";
+            //public const string InsightCreated = "New Insight Created: {0}";
+            //public const string OrchestrationStarted = "Started Orchestration: {0}";
+            //public const string OrchestrationReplaying = "Replaying Orchestration: {0}";
         }
     }
 }
