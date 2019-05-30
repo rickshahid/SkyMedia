@@ -1,5 +1,3 @@
-using System;
-
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.EventGrid.Models;
 using Microsoft.Azure.WebJobs.Extensions.EventGrid;
@@ -21,30 +19,19 @@ namespace AzureSkyMedia.FunctionApp
         public static CreateMessageOptions Run([EventGridTrigger] EventGridEvent eventTrigger, ILogger logger)
         {
             CreateMessageOptions twilioMessage = null;
-            try
+            logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));
+            MediaPublishNotification publishNotification = MediaClient.PublishJobOutput(eventTrigger);
+            if (!string.IsNullOrEmpty(publishNotification.StatusMessage))
             {
-                logger.LogInformation(JsonConvert.SerializeObject(eventTrigger, Formatting.Indented));
-                MediaPublishNotification publishNotification = MediaClient.PublishJobOutput(eventTrigger);
-                if (!string.IsNullOrEmpty(publishNotification.StreamingUrl))
+                logger.LogInformation(publishNotification.StatusMessage);
+                if (!string.IsNullOrEmpty(publishNotification.PhoneNumber))
                 {
-                    logger.LogInformation(publishNotification.StreamingUrl);
-                }
-                if (!string.IsNullOrEmpty(publishNotification.StatusMessage))
-                {
-                    logger.LogInformation(publishNotification.StatusMessage);
-                    if (!string.IsNullOrEmpty(publishNotification.PhoneNumber))
+                    PhoneNumber twilioPhoneNumber = new PhoneNumber(publishNotification.PhoneNumber);
+                    twilioMessage = new CreateMessageOptions(twilioPhoneNumber)
                     {
-                        PhoneNumber twilioPhoneNumber = new PhoneNumber(publishNotification.PhoneNumber);
-                        twilioMessage = new CreateMessageOptions(twilioPhoneNumber)
-                        {
-                            Body = publishNotification.StatusMessage
-                        };
-                    }
+                        Body = publishNotification.StatusMessage
+                    };
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.ToString());
             }
             return twilioMessage;
         }

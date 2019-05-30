@@ -5,9 +5,8 @@ namespace AzureSkyMedia.FunctionApp
     public static partial class MediaWorkflow
     {
         [FunctionName("MediaWorkflow-BlobUrl")]
-        public static string GetBlobUrl([ActivityTrigger] DurableActivityContext context)
+        public static string GetBlobUrl([ActivityTrigger] string fileName)
         {
-            string fileName = context.GetInput<string>();
             return _blobClient.GetDownloadUrl(_containerName, fileName);
         }
     }

@@ -47,8 +47,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         {
                             StreamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming
                         };
-                        bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
-                        if (indexerEnabled)
+                        if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
                         {
                             insightId = mediaClient.IndexerUploadVideo(null, inputAsset, jobPriority, videoIndexer, audioIndexer);
                         }

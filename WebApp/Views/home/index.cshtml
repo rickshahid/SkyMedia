@@ -60,11 +60,6 @@
     </tr>
 </table>
 
-<span id="playerPoster" class="inputLabel" style="display:none">
-    @Html.CheckBox("playerPoster", false, new { onclick = "SetPlayerPoster(this)" })
-    Set Player Poster
-</span>
-
 <partial name="MediaModules" model='new RangeSlider { SkipCount = streamSkipCount, ItemCount = mediaStreams.Length, LastPage = streamTunerLastPage }' />
 
 <div id="streamName" class="streamName"></div>

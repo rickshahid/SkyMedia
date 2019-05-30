@@ -69,7 +69,7 @@ function SetPlayerEvents(mediaPlayer, storageCdnUrl, liveEncoding, homePage) {
 }
 function SetPlayerContent(mediaPlayer, mediaStream) {
     if (mediaStream.protection != null && mediaStream.protection.length > 0) {
-        if (window.location.href.indexOf("token=0") > -1) {
+        if (window.location.href.indexOf("drop-token") > -1) {
             for (var i = 0; i < mediaStream.protection.length; i++) {
                 mediaStream.protection[i].authenticationToken = null;
             }
@@ -88,6 +88,9 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
             }],
             mediaStream.tracks
         );
+    }
+    if (mediaStream.poster != null && window.location.href.indexOf("drop-poster") == -1) {
+        _mediaPlayer.poster(mediaStream.poster);
     }
 }
 function ClearPlayerControls(controlBar, childIds) {

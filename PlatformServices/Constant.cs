@@ -89,6 +89,7 @@ namespace AzureSkyMedia.PlatformServices
             public const string MediaStream6SourceUrl = "Media.Stream6.SourceUrl";
             public const string MediaStream6TextTracks = "Media.Stream6.TextTracks";
 
+            public const string MediaPlayerDemoUrl = "Media.Player.DemoUrl";
             public const string MediaPlayerVersion = "Media.Player.Version";
             public const string MediaPlayerSkin = "Media.Player.Skin";
 

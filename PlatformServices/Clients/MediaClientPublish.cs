@@ -72,6 +72,8 @@ namespace AzureSkyMedia.PlatformServices
                         break;
 
                     case Constant.Media.Job.EventType.Finished:
+                        string settingKey = Constant.AppSettingKey.MediaPlayerDemoUrl;
+                        string mediaPlayerUrl = AppSetting.GetValue(settingKey);
                         string jobOutputPublishData = job.CorrelationData[Constant.Media.Job.CorrelationData.OutputPublish].ToString();
                         MediaJobOutputPublish jobOutputPublish = JsonConvert.DeserializeObject<MediaJobOutputPublish>(jobOutputPublishData);
                         foreach (JobOutputAsset jobOutput in job.Outputs)
@@ -81,8 +83,9 @@ namespace AzureSkyMedia.PlatformServices
                             if (blobClient.ContainsFile(outputAsset.Container, null, null, Constant.Media.Stream.ManifestExtension))
                             {
                                 StreamingLocator streamingLocator = GetStreamingLocator(jobOutput.AssetName, jobOutputPublish.StreamingPolicyName, jobOutputPublish.ContentProtection);
-                                string streamingUrl = GetLocatorUrl(streamingLocator, null, true);
-                                publishNotification.StatusMessage = string.Concat(publishNotification.StatusMessage, Constant.Message.NewLine, streamingUrl);
+                                string mediaStreamUrl = GetLocatorUrl(streamingLocator, null, true);
+                                mediaStreamUrl = string.Format(mediaPlayerUrl, mediaStreamUrl);
+                                publishNotification.StatusMessage = string.Concat(publishNotification.StatusMessage, Constant.Message.NewLine, mediaStreamUrl);
                             }
                         }
                         SetJobInputAssetArchive(job.Input, jobOutputPublish.InputAssetStorageTier);

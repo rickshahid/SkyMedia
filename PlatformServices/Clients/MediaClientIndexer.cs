@@ -78,20 +78,18 @@ namespace AzureSkyMedia.PlatformServices
             return requestUrl;
         }
 
-        private string AddRequestParameters(string requestUrl, Priority jobPriority, bool videoIndexing, bool audioIndexing)
+        private string AddRequestParameters(string requestUrl, Priority jobPriority, bool videoIndexer, bool audioIndexer)
         {
             string settingKey = Constant.AppSettingKey.EventGridJobStateFinalUrl;
             string callbackUrl = AppSetting.GetValue(settingKey);
-            bool videoIndexingOnly = videoIndexing && !audioIndexing;
-            bool audioIndexingOnly = !videoIndexing && audioIndexing;
             requestUrl = string.Concat(requestUrl, "&callbackUrl=", HttpUtility.UrlEncode(callbackUrl));
             requestUrl = string.Concat(requestUrl, "&priority=", jobPriority.ToString());
             requestUrl = string.Concat(requestUrl, "&streamingPreset=NoStreaming");
-            if (videoIndexingOnly)
+            if (videoIndexer && !audioIndexer)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=VideoOnly");
             }
-            else if (audioIndexingOnly)
+            else if (!videoIndexer && audioIndexer)
             {
                 requestUrl = string.Concat(requestUrl, "&indexingPreset=AudioOnly");
             }
@@ -141,7 +139,7 @@ namespace AzureSkyMedia.PlatformServices
             return insightExists;
         }
 
-        public string IndexerUploadVideo(string inputFileUrl, Asset inputAsset, Priority jobPriority, bool videoIndexing, bool audioIndexing)
+        public string IndexerUploadVideo(string inputFileUrl, Asset inputAsset, Priority jobPriority, bool videoIndexer, bool audioIndexer)
         {
             string insightId;
             string requestUrl = GetRequestUrl("/videos", null, null);
@@ -157,7 +155,7 @@ namespace AzureSkyMedia.PlatformServices
                 requestUrl = string.Concat(requestUrl, "&name=", HttpUtility.UrlEncode(videoName));
                 requestUrl = string.Concat(requestUrl, "&videoUrl=", HttpUtility.UrlEncode(inputFileUrl));
             }
-            requestUrl = AddRequestParameters(requestUrl, jobPriority, videoIndexing, audioIndexing);
+            requestUrl = AddRequestParameters(requestUrl, jobPriority, videoIndexer, audioIndexer);
             using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
             {
                 HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Post, requestUrl);
@@ -172,13 +170,13 @@ namespace AzureSkyMedia.PlatformServices
             if (IndexerInsightExists(insightId, out JObject insight))
             {
                 Priority jobPriority = Priority.Normal;
-                bool videoIndexing = true;
-                bool audioIndexing = true;
+                bool videoIndexer = true;
+                bool audioIndexer = true;
                 //string indexingPreset = insight["videos"][0]["indexingPreset"].ToString();
                 //bool indexingAudioOnly = indexingPreset == "AudioOnly";
                 //bool indexingVideoOnly = indexingPreset == "VideoOnly";
                 string requestUrl = GetRequestUrl("/videos/", insightId, "/reindex");
-                requestUrl = AddRequestParameters(requestUrl, jobPriority, videoIndexing, audioIndexing);
+                requestUrl = AddRequestParameters(requestUrl, jobPriority, videoIndexer, audioIndexer);
                 using (WebClient webClient = new WebClient(MediaAccount.VideoIndexerKey))
                 {
                     HttpRequestMessage webRequest = webClient.GetRequest(HttpMethod.Put, requestUrl);

@@ -633,6 +633,10 @@
               "value": "https://api.videoindexer.ai/"
             },
             {
+              "name": "Media.Player.DemoUrl",
+              "value": "https://ampdemo.azureedge.net/azuremediaplayer.html?url={0}"
+            },
+            {
               "name": "Twilio.AccountId",
               "value": "[parameters('twilioAccountId')]"
             },
@@ -759,6 +763,10 @@
             {
               "name": "VideoIndexer.ApiUrl",
               "value": "https://api.videoindexer.ai/"
+            },
+            {
+              "name": "Media.Player.DemoUrl",
+              "value": "https://ampdemo.azureedge.net/azuremediaplayer.html?url={0}"
             },
             {
               "name": "Twilio.AccountId",

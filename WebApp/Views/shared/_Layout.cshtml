@@ -76,7 +76,7 @@
                     <table class="accountContext">
                         <tr>
                             <td>
-                                <a id="mediaAccount" class="siteLink" href="/account">@ViewData["accountName"]</a>
+                                <span id="mediaAccount" class="siteLink" onclick="window.location.href = '/account'">@ViewData["accountName"]</span>
                             </td>
                             <td>
                                 @if (ViewData["indexerMessage"] != null)

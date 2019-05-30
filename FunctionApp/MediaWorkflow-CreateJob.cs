@@ -24,8 +24,7 @@ namespace AzureSkyMedia.FunctionApp
 
             bool videoIndexer = workflowManifest.TransformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.VideoIndexer);
             bool audioIndexer = workflowManifest.TransformPresets.Contains<MediaTransformPreset>(MediaTransformPreset.AudioIndexer);
-            bool indexerEnabled = mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer);
-            if (indexerEnabled)
+            if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
             {
                 insightId = mediaClient.IndexerUploadVideo(inputFileUrl, inputAsset, workflowManifest.JobPriority, videoIndexer, audioIndexer);
             }

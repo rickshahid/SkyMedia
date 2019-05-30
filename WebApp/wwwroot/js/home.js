@@ -103,11 +103,6 @@ function SetMediaStream(streamTunerLeft, streamTunerRight) {
             $("#streamUrl").html("");
             SetStreamNumber(_streamNumber);
             SetPlayerContent(_mediaPlayer, mediaStream);
-            if (mediaStream.poster != null) {
-                $("#playerPoster").show();
-            } else {
-                $("#playerPoster").hide();
-            }
         }
     }
 }
@@ -117,11 +112,4 @@ function GetMediaStream(streamNumber) {
     }
     var streamIndex = (streamNumber - 1) % _streamTunerPageSize;
     return _mediaStreams.length == 0 ? null : _mediaStreams[streamIndex];
-}
-function SetPlayerPoster(checkbox) {
-    var posterUrl = null;
-    if (checkbox.checked) {
-        posterUrl = _mediaStreams[_streamNumber - 1].poster;
-    }
-    _mediaPlayer.poster(posterUrl);
 }
