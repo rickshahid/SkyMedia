@@ -29,7 +29,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (T2 parentEntity in parentEntities)
                 {
-                    T1[] childEntities = GetAllEntities<T1>(entityType, null, parentEntity.Name);
+                    T1[] childEntities = GetAllEntities<T1>(entityType, parentEntity.Name);
                     allEntities.AddRange(childEntities);
                 }
                 parentEntities = NextEntities(entityType, parentEntities);
@@ -37,10 +37,10 @@ namespace AzureSkyMedia.PlatformServices
             return allEntities.ToArray();
         }
 
-        public T[] GetAllEntities<T>(MediaEntity entityType, string queryFilter = null, string parentName = null) where T : Resource
+        public T[] GetAllEntities<T>(MediaEntity entityType, string parentName = null, string queryFilter = null) where T : Resource
         {
             List<T> allEntities = new List<T>();
-            IPage<T> entities = GetEntities<T>(entityType, queryFilter, parentName);
+            IPage<T> entities = GetEntities<T>(entityType, parentName, queryFilter);
             while (entities != null)
             {
                 allEntities.AddRange(entities);
@@ -49,7 +49,7 @@ namespace AzureSkyMedia.PlatformServices
             return allEntities.ToArray();
         }
 
-        public IPage<T> GetEntities<T>(MediaEntity entityType, string queryFilter = null, string parentName = null) where T : Resource
+        public IPage<T> GetEntities<T>(MediaEntity entityType, string parentName = null, string queryFilter = null) where T : Resource
         {
             IPage<T> entities = null;
             switch (entityType)
@@ -215,7 +215,7 @@ namespace AzureSkyMedia.PlatformServices
                     }
                     break;
                 case MediaEntity.Transform:
-                    Job[] jobs = GetAllEntities<Job>(MediaEntity.TransformJob, null, entityName);
+                    Job[] jobs = GetAllEntities<Job>(MediaEntity.TransformJob, entityName);
                     foreach (Job job in jobs)
                     {
                         DeleteEntity(MediaEntity.TransformJob, job.Name, entityName);
@@ -247,7 +247,7 @@ namespace AzureSkyMedia.PlatformServices
                     LiveEvent liveEvent = GetEntity<LiveEvent>(MediaEntity.LiveEvent, entityName);
                     if (liveEvent != null)
                     {
-                        LiveOutput[] liveOutputs = GetAllEntities<LiveOutput>(MediaEntity.LiveEventOutput, null, entityName);
+                        LiveOutput[] liveOutputs = GetAllEntities<LiveOutput>(MediaEntity.LiveEventOutput, entityName);
                         foreach (LiveOutput liveOutput in liveOutputs)
                         {
                             _media.LiveOutputs.Delete(MediaAccount.ResourceGroupName, MediaAccount.Name, entityName, liveOutput.Name);

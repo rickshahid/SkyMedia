@@ -99,7 +99,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 {
                     if (unpublish)
                     {
-                        mediaClient.DeleteStreamingLocators(entityName);
+                        mediaClient.DeleteLocators(entityName);
                         message = string.Format(Constant.Message.AssetUnpublished, entityName);
                     }
                     else
@@ -107,7 +107,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                         Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, entityName);
                         string streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
                         StreamingLocator streamingLocator = mediaClient.GetStreamingLocator(asset.Name, streamingPolicyName, null);
-                        message = mediaClient.GetLocatorUrl(streamingLocator, null, true);
+                        message = mediaClient.GetStreamingUrl(streamingLocator, null, true);
                     }
                 }
                 return Json(message);
@@ -199,7 +199,7 @@ namespace AzureSkyMedia.WebApp.Controllers
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["mediaStreams"] = Media.GetAccountStreams(authToken, mediaClient);
+                ViewData["mediaStreams"] = Media.GetAccountStreams(authToken, mediaClient, 1, out int streamSkipCount, out int streamTunnerPageSize, out bool streamTunerLastPage);
             }
             return View();
         }

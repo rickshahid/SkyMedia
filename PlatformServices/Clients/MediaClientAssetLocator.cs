@@ -35,9 +35,13 @@ namespace AzureSkyMedia.PlatformServices
             return streamingHostName;
         }
 
-        public IEnumerable<StreamingLocator> GetStreamingLocators()
+        public StreamingLocator[] GetStreamingLocators(int skipCount)
         {
             StreamingLocator[] streamingLocators = GetEntities<StreamingLocator>(MediaEntity.StreamingLocator).ToArray();
+            if (skipCount > 0)
+            {
+                streamingLocators = streamingLocators.Skip(skipCount).ToArray();
+            }
             Array.Sort<StreamingLocator>(streamingLocators, SortStreamingLocators);
             return streamingLocators;
         }
@@ -83,7 +87,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (AssetStreamingLocator assetStreamingLocator in streamingLocatorList.StreamingLocators)
             {
                 StreamingLocator streamingLocator = GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, assetStreamingLocator.Name);
-                string streamingUrl = GetLocatorUrl(streamingLocator, null, true);
+                string streamingUrl = GetStreamingUrl(streamingLocator, null, true);
                 if (!string.IsNullOrEmpty(streamingUrl))
                 {
                     streamingUrls.Add(streamingUrl);
@@ -92,14 +96,14 @@ namespace AzureSkyMedia.PlatformServices
             return streamingUrls.ToArray();
         }
 
-        public string GetLocatorUrl(StreamingLocator streamingLocator, string fileName, bool listPaths)
+        public string GetStreamingUrl(StreamingLocator streamingLocator, string fileName, bool useListPaths)
         {
             UriBuilder uriBuilder = new UriBuilder()
             {
                 Scheme = Constant.Media.Stream.DefaultScheme,
                 Host = GetStreamingHost(null)
             };
-            if (listPaths)
+            if (useListPaths)
             {
                 ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocator.Name);
                 if (!string.IsNullOrEmpty(fileName))
@@ -135,10 +139,10 @@ namespace AzureSkyMedia.PlatformServices
         {
             string streamingPolicyName = PredefinedStreamingPolicy.DownloadOnly;
             StreamingLocator streamingLocator = GetStreamingLocator(assetName, streamingPolicyName, null);
-            return GetLocatorUrl(streamingLocator, fileName, false);
+            return GetStreamingUrl(streamingLocator, fileName, false);
         }
 
-        public void DeleteStreamingLocators(string assetName)
+        public void DeleteLocators(string assetName)
         {
             ListStreamingLocatorsResponse locatorList = _media.Assets.ListStreamingLocators(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);
             foreach (AssetStreamingLocator streamingLocator in locatorList.StreamingLocators)

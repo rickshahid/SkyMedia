@@ -65,6 +65,12 @@
 <div id="streamName" class="streamName"></div>
 <div id="streamUrl" class="streamUrl"></div>
 
+<div id="streamFilters" class="streamFilters" style="display:none">
+    <span class="inputLabel">Stream Filter</span>
+    &nbsp;
+    <select id="streamFilter" class="inputSelect" onchange="SetStreamFilter(this)"></select>
+</div>
+
 <div class="mediaServicesCompliance">
     <partial name="SiteButton" model='new SiteButton { ControlId = "mediaServicesCompliance", ImageFile = "MediaServicesCompliance.png", AbsoluteUrl = "https://www.microsoft.com/trustcenter/compliance/cdsa", AltText = "Media Services Compliance" }' />
 </div>

@@ -74,11 +74,8 @@ namespace AzureSkyMedia.WebApp.Controllers
                 streamNumber = int.Parse(Request.Query["stream"]);
             }
 
-            string settingKey = Constant.AppSettingKey.MediaStreamTunerPageSize;
-            string tunerPageSize = AppSetting.GetValue(settingKey);
-            int streamTunerPageSize = int.Parse(tunerPageSize);
-
             int streamSkipCount = 0;
+            int streamTunerPageSize = 0;
             bool streamTunerLastPage = true;
 
             try
@@ -114,7 +111,21 @@ namespace AzureSkyMedia.WebApp.Controllers
 
                     using (MediaClient mediaClient = new MediaClient(authToken))
                     {
-                        mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, streamTunerPageSize, out streamSkipCount, out streamTunerLastPage);
+                        //string assetName = "AI Show - Art Exploration (ABR)";
+                        
+                        //string filterName = "Bitrate";
+                        //int firstBitrate = 360000;
+
+                        //string filterName = "Subclip";
+                        //long startSeconds = 22;
+                        //long endSeconds = 55;
+
+                        //mediaClient.DeleteEntity(MediaEntity.StreamingFilterAccount, filterName);
+
+                        //mediaClient.CreateFilter(assetName, filterName, firstBitrate);
+                        //mediaClient.CreateFilter(assetName, filterName, startSeconds, endSeconds);
+
+                        mediaStreams = Media.GetAccountStreams(authToken, mediaClient, streamNumber, out streamSkipCount, out streamTunerPageSize, out streamTunerLastPage);
                     }
                 }
             }

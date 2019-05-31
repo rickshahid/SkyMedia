@@ -83,7 +83,7 @@ namespace AzureSkyMedia.PlatformServices
                             if (blobClient.ContainsFile(outputAsset.Container, null, null, Constant.Media.Stream.ManifestExtension))
                             {
                                 StreamingLocator streamingLocator = GetStreamingLocator(jobOutput.AssetName, jobOutputPublish.StreamingPolicyName, jobOutputPublish.ContentProtection);
-                                string mediaStreamUrl = GetLocatorUrl(streamingLocator, null, true);
+                                string mediaStreamUrl = GetStreamingUrl(streamingLocator, null, true);
                                 mediaStreamUrl = string.Format(mediaPlayerUrl, mediaStreamUrl);
                                 publishNotification.StatusMessage = string.Concat(publishNotification.StatusMessage, Constant.Message.NewLine, mediaStreamUrl);
                             }
@@ -107,7 +107,7 @@ namespace AzureSkyMedia.PlatformServices
             {
                 foreach (JobOutputAsset jobOutput in job.Outputs)
                 {
-                    DeleteStreamingLocators(jobOutput.AssetName);
+                    DeleteLocators(jobOutput.AssetName);
                 }
             }
             return publishNotification;

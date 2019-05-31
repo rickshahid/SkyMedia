@@ -27,7 +27,7 @@ namespace AzureSkyMedia.PlatformServices
                 }
                 else if (transformOutput.Preset is StandardEncoderPreset standardEncoderPreset)
                 {
-                    if (false)
+                    if (false) // TBD
                     {
                         transformPresets.Add(MediaTransformPreset.ThumbnailSprite);
                     }

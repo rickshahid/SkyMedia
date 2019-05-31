@@ -8,6 +8,8 @@
 
         public string Poster { get; set; }
 
+        public string[] Filters { get; set; }
+
         public MediaTrack[] Tracks { get; set; }
 
         public MediaInsight Insight { get; set; }

@@ -40,8 +40,11 @@ function GetStreamTunerMaxValue() {
     return maxValue;
 }
 function GetStreamTunerPageIndex() {
-    var streamNumber = _streamNumber - 1;
-    return Math.floor(streamNumber / _streamTunerPageSize);
+    var pageIndex = 0;
+    if (_streamTunerPageSize > 0) {
+        pageIndex = Math.floor(_streamNumber - 1 / _streamTunerPageSize);
+    }
+    return pageIndex;
 }
 function GetStreamName(mediaStream, streamTuner) {
     var streamName = mediaStream.name;
@@ -90,6 +93,15 @@ function SetStreamNumber(streamNumber) {
     }
     SetSliderValue("streamTuner", "streamNumber", streamNumber);
 }
+function SetStreamFilter(select) {
+    var mediaStream = GetMediaStream(null);
+    if (select.value != "") {
+        mediaStream = $.extend({}, mediaStream);
+        mediaStream.url = mediaStream.url.slice(0, -1) + ",filter=" + select.value + ")";
+    }
+    $("#streamUrl").html("");
+    SetPlayerContent(_mediaPlayer, mediaStream);
+}
 function SetMediaStream(streamTunerLeft, streamTunerRight) {
     if (_mediaStreams.length > 0) {
         var streamTunerPageChange = false;
@@ -103,6 +115,19 @@ function SetMediaStream(streamTunerLeft, streamTunerRight) {
             $("#streamUrl").html("");
             SetStreamNumber(_streamNumber);
             SetPlayerContent(_mediaPlayer, mediaStream);
+            if (mediaStream.filters != null) {
+                if (mediaStream.filters.length == 0) {
+                    $("#streamFilters").hide();
+                } else {
+                    $("#streamFilter").empty();
+                    $("#streamFilter").append("<option value=''></option>");
+                    for (var i = 0; i < mediaStream.filters.length; i++) {
+                        var optionValue = mediaStream.filters[i];
+                        $("#streamFilter").append("<option value='" + optionValue + "'>" + optionValue + "</option>");
+                    }
+                    $("#streamFilters").show();
+                }
+            }
         }
     }
 }
@@ -110,6 +135,9 @@ function GetMediaStream(streamNumber) {
     if (streamNumber == null) {
         streamNumber = _streamNumber;
     }
-    var streamIndex = (streamNumber - 1) % _streamTunerPageSize;
+    var streamIndex = streamNumber - 1;
+    if (_streamTunerPageSize > 0) {
+        streamIndex = streamIndex % _streamTunerPageSize;
+    }
     return _mediaStreams.length == 0 ? null : _mediaStreams[streamIndex];
 }

@@ -265,6 +265,11 @@ namespace AzureSkyMedia.PlatformServices
                 }
             }
 
+            public struct Filter
+            {
+                public const long Timescale = 1;
+            }
+
             public struct Thumbnail
             {
                 public const string FileName = "Thumbnail000001.jpg";

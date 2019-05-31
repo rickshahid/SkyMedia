@@ -48,9 +48,8 @@ namespace AzureSkyMedia.PlatformServices
             return contentKeyPolicy;
         }
 
-        public MediaProtection[] GetStreamProtection(string authToken, MediaClient mediaClient, MediaInsight mediaInsight, StreamingLocator locator)
+        public MediaProtection[] GetStreamProtection(string authToken, MediaClient mediaClient, StreamingLocator locator)
         {
-            authToken = !string.IsNullOrEmpty(mediaInsight.ViewToken) ? mediaInsight.ViewToken : string.Concat("Bearer=", authToken);
             List<MediaProtection> streamProtection = new List<MediaProtection>();
             if (locator.StreamingPolicyName == PredefinedStreamingPolicy.ClearKey)
             {

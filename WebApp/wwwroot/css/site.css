@@ -259,6 +259,7 @@ body {
 .streamName {
     font-size: xx-large;
     font-weight: bold;
+    margin-top: 20px;
 }
 
 .streamName.galleryView {
@@ -283,6 +284,11 @@ body {
 
 #mediaStreamRight {
     padding-right: 20px;
+}
+
+.streamFilters {
+    font-size: large;
+    margin-top: 30px;
 }
 
 .mediaServicesCompliance {

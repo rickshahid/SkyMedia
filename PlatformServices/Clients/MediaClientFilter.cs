@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -5,91 +7,116 @@ namespace AzureSkyMedia.PlatformServices
 {
     internal partial class MediaClient
     {
-        private string GetAssetName(string assetId)
+        private FilterTrackSelection[] GetTrackSelections(Dictionary<FilterTrackPropertyType, string> trackFilters)
         {
-            string queryFilter = string.Concat("properties/assetId eq ", assetId);
-            Asset[] assets = GetAllEntities<Asset>(MediaEntity.Asset, queryFilter);
-            return assets.Length != 1 ? null : assets[0].Name;
-        }
-
-        private FilterTrackSelection[] GetTrackSelections(FilterTrackPropertyType trackType, string trackValue)
-        {
-            FilterTrackPropertyCondition trackCondition = new FilterTrackPropertyCondition()
+            List<FilterTrackPropertyCondition> trackConditions = new List<FilterTrackPropertyCondition>();
+            foreach (KeyValuePair<FilterTrackPropertyType, string> trackFilter in trackFilters)
             {
-                Property = trackType,
-                Operation = FilterTrackPropertyCompareOperation.Equal,
-                Value = trackValue
-            };
+                FilterTrackPropertyCondition trackCondition = new FilterTrackPropertyCondition()
+                {
+                    Property = trackFilter.Key,
+                    Operation = FilterTrackPropertyCompareOperation.Equal,
+                    Value = trackFilter.Value
+                };
+                trackConditions.Add(trackCondition);
+            }
             FilterTrackSelection trackSelection = new FilterTrackSelection()
             {
-                TrackSelections = new FilterTrackPropertyCondition[] { trackCondition }
+                TrackSelections = trackConditions.ToArray()
             };
             return new FilterTrackSelection[] { trackSelection };
         }
 
-        public AccountFilter CreateFilter(string filterName, long timescale, long startTimestamp, long endTimestamp)
+        public AccountFilter CreateFilter(string filterName, int firstBitrate)
+        {
+            AccountFilter accountFilter = new AccountFilter()
+            {
+                FirstQuality = new FirstQuality(firstBitrate)
+            };
+            return _media.AccountFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, filterName, accountFilter);
+        }
+
+        public AccountFilter CreateFilter(string filterName, long startSeconds, long endSeconds)
         {
             AccountFilter accountFilter = new AccountFilter()
             {
                 PresentationTimeRange = new PresentationTimeRange()
                 {
-                    Timescale = timescale,
-                    StartTimestamp = startTimestamp,
-                    EndTimestamp = endTimestamp
+                    Timescale = Constant.Media.Filter.Timescale,
+                    StartTimestamp = startSeconds,
+                    EndTimestamp = endSeconds
                 }
             };
             return _media.AccountFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, filterName, accountFilter);
         }
 
-        public AccountFilter CreateFilter(string filterName, int bitrate)
+        public AccountFilter CreateFilter(string filterName, Dictionary<FilterTrackPropertyType, string> trackFilters)
         {
             AccountFilter accountFilter = new AccountFilter()
             {
-                FirstQuality = new FirstQuality(bitrate)
+                Tracks = GetTrackSelections(trackFilters)
             };
             return _media.AccountFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, filterName, accountFilter);
         }
 
-        public AccountFilter CreateFilter(string filterName, FilterTrackPropertyType trackType, string trackValue)
+        public AccountFilter CreateFilter(string filterName, long? dvrWindowSeconds, long? liveBackoffSeconds, bool? forceEndTimestamp)
         {
             AccountFilter accountFilter = new AccountFilter()
             {
-                Tracks = GetTrackSelections(trackType, trackValue)
+                PresentationTimeRange = new PresentationTimeRange()
+                {
+                    Timescale = Constant.Media.Filter.Timescale,
+                    PresentationWindowDuration = dvrWindowSeconds,
+                    LiveBackoffDuration = liveBackoffSeconds,
+                    ForceEndTimestamp = forceEndTimestamp
+                }
             };
             return _media.AccountFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, filterName, accountFilter);
         }
 
-        public AssetFilter CreateFilter(string assetId, string filterName, long timescale, long startTimestamp, long endTimestamp)
+        public AssetFilter CreateFilter(string assetName, string filterName, int firstBitrate)
         {
-            string assetName = GetAssetName(assetId);
+            AssetFilter assetFilter = new AssetFilter()
+            {
+                FirstQuality = new FirstQuality(firstBitrate)
+            };
+            return _media.AssetFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, filterName, assetFilter);
+        }
+
+        public AssetFilter CreateFilter(string assetName, string filterName, long startSeconds, long endSeconds)
+        {
             AssetFilter assetFilter = new AssetFilter()
             {
                 PresentationTimeRange = new PresentationTimeRange()
                 {
-                    Timescale = timescale,
-                    StartTimestamp = startTimestamp,
-                    EndTimestamp = endTimestamp
+                    Timescale = Constant.Media.Filter.Timescale,
+                    StartTimestamp = startSeconds,
+                    EndTimestamp = endSeconds
                 }
             };
             return _media.AssetFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, filterName, assetFilter);
         }
 
-        public AssetFilter CreateFilter(string assetId, string filterName, int bitrate)
+        public AssetFilter CreateFilter(string assetName, string filterName, Dictionary<FilterTrackPropertyType, string> trackFilters)
         {
-            string assetName = GetAssetName(assetId);
             AssetFilter assetFilter = new AssetFilter()
             {
-                FirstQuality = new FirstQuality(bitrate)
+                Tracks = GetTrackSelections(trackFilters)
             };
             return _media.AssetFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, filterName, assetFilter);
         }
 
-        public AssetFilter CreateFilter(string assetId, string filterName, FilterTrackPropertyType trackType, string trackValue)
+        public AssetFilter CreateFilter(string assetName, string filterName, long? dvrWindowSeconds, long? liveBackoffSeconds, bool? forceEndTimestamp)
         {
-            string assetName = GetAssetName(assetId);
             AssetFilter assetFilter = new AssetFilter()
             {
-                Tracks = GetTrackSelections(trackType, trackValue)
+                PresentationTimeRange = new PresentationTimeRange()
+                {
+                    Timescale = Constant.Media.Filter.Timescale,
+                    PresentationWindowDuration = dvrWindowSeconds,
+                    LiveBackoffDuration = liveBackoffSeconds,
+                    ForceEndTimestamp = forceEndTimestamp
+                }
             };
             return _media.AssetFilters.CreateOrUpdate(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, filterName, assetFilter);
         }

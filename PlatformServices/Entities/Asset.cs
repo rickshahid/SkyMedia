@@ -12,7 +12,7 @@ namespace AzureSkyMedia.PlatformServices
         {
             StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, asset.StorageAccountName);
             Files = MediaClient.GetAssetFiles(blobClient, asset.Container, null, out bool assetStreamable);
-            StreamingFilters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.StreamingFilterAsset, null, asset.Name);
+            StreamingFilters = mediaClient.GetAllEntities<AssetFilter>(MediaEntity.StreamingFilterAsset, asset.Name);
             StreamingUrls = mediaClient.GetStreamingUrls(asset.Name);
             Streamable = assetStreamable;
             Published = StreamingUrls.Length > 0;

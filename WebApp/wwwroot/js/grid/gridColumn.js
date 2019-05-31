@@ -187,7 +187,7 @@ function GetParentColumns(gridId) {
                 }
             ];
             break;
-        case "filtersAccount":
+        case "streamingFiltersAccount":
             columns = [
                 {
                     formatter: FormatName,
@@ -195,10 +195,31 @@ function GetParentColumns(gridId) {
                     name: "name",
                     align: "center",
                     width: nameWidth
+                },
+                {
+                    formatter: FormatQuality,
+                    label: "1st Quality (bps)",
+                    name: "properties.firstQuality",
+                    align: "center",
+                    width: typeWidth
+                },
+                {
+                    formatter: FormatTrackSelection,
+                    label: "Track Selection",
+                    name: "properties.tracks",
+                    align: "center",
+                    width: typeWidth
+                },
+                {
+                    formatter: FormatTimeRange,
+                    label: "Presentation Range",
+                    name: "properties.presentationTimeRange",
+                    align: "center",
+                    width: typeWidthEx
                 }
             ];
             break;
-        case "filtersAsset":
+        case "streamingFiltersAsset":
             columns = [
                 {
                     formatter: FormatName,
@@ -206,6 +227,27 @@ function GetParentColumns(gridId) {
                     name: "name",
                     align: "center",
                     width: nameWidth
+                },
+                {
+                    formatter: FormatQuality,
+                    label: "1st Quality (bps)",
+                    name: "properties.firstQuality",
+                    align: "center",
+                    width: typeWidth
+                },
+                {
+                    formatter: FormatTrackSelection,
+                    label: "Track Selection",
+                    name: "properties.tracks",
+                    align: "center",
+                    width: typeWidth
+                },
+                {
+                    formatter: FormatTimeRange,
+                    label: "Presentation Range",
+                    name: "properties.presentationTimeRange",
+                    align: "center",
+                    width: typeWidthEx
                 }
             ];
             break;
@@ -296,6 +338,8 @@ function GetParentColumns(gridId) {
             break;
     }
     if (gridId != "storageAccounts" &&
+        gridId != "streamingFiltersAccount" &&
+        gridId != "streamingFiltersAsset" &&
         gridId != "indexerInsights") {
         var created = {
             formatter: FormatDateTime,
@@ -309,6 +353,8 @@ function GetParentColumns(gridId) {
     if (gridId != "storageAccounts" &&
         gridId != "streamingPolicies" &&
         gridId != "streamingLocators" &&
+        gridId != "streamingFiltersAccount" &&
+        gridId != "streamingFiltersAsset" &&
         gridId != "indexerInsights") {
         var modified = {
             formatter: FormatDateTime,
@@ -548,6 +594,15 @@ function FormatProgress(value, grid, row) {
         value = value + "%";
     }
     return value;
+}
+function FormatQuality(value, grid, row) {
+    return value == null ? "" : value.bitrate;
+}
+function FormatTrackSelection(value, grid, row) {
+    return value == null ? 0 : value.length;
+}
+function FormatTimeRange(value, grid, row) {
+    return value == null ? "" : "";
 }
 function FormatDateTime(value, grid, row) {
     if (value == null) {

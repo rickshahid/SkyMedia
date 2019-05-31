@@ -118,22 +118,22 @@ namespace AzureSkyMedia.WebApp.Controllers
             return View();
         }
 
-        public IActionResult FiltersAccount()
+        public IActionResult StreamingFiltersAccount()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["filtersAccount"] = mediaClient.GetAllEntities<AccountFilter>(MediaEntity.StreamingFilterAccount);
+                ViewData["streamingFiltersAccount"] = mediaClient.GetAllEntities<AccountFilter>(MediaEntity.StreamingFilterAccount);
             }
             return View();
         }
 
-        public IActionResult FiltersAsset()
+        public IActionResult StreamingFiltersAsset()
         {
             string authToken = HomeController.GetAuthToken(Request, Response);
             using (MediaClient mediaClient = new MediaClient(authToken))
             {
-                ViewData["filtersAsset"] = mediaClient.GetAllEntities<AssetFilter, Asset>(MediaEntity.StreamingFilterAsset, MediaEntity.Asset);
+                ViewData["streamingFiltersAsset"] = mediaClient.GetAllEntities<AssetFilter, Asset>(MediaEntity.StreamingFilterAsset, MediaEntity.Asset);
             }
             return View();
         }
