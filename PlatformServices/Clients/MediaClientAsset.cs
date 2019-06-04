@@ -59,6 +59,17 @@ namespace AzureSkyMedia.PlatformServices
             return asset;
         }
 
+        public async Task<Asset[]> CreateAssets(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames)
+        {
+            List<Asset> assets = new List<Asset>();
+            foreach (string fileName in fileNames)
+            {
+                Asset asset = await CreateAsset(storageAccount, assetName, assetDescription, assetAlternateId, fileName);
+                assets.Add(asset);
+            }
+            return assets.ToArray();
+        }
+
         public static string GetAssetName(StorageBlobClient blobClient, string containerName, string directoryPath, out MediaFile[] assetFiles)
         {
             string assetName = null;
