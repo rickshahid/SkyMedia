@@ -16,7 +16,7 @@ namespace AzureSkyMedia.PlatformServices
             public const char Connection = ';';
             public const char Application = ',';
 
-            public const string TransformPresetName = ", ";
+            public const string TransformName = ", ";
             public const string AssetName = " - ";
         }
 
@@ -115,15 +115,14 @@ namespace AzureSkyMedia.PlatformServices
         public struct AuthIntegration
         {
             public const string TokenKey = "id_token";
-            public const string AuthScheme = "Bearer";
+            public const string AuthScheme = "Bearer ";
             public const string AuthHeader = "Authorization";
             public const string ApiManagementKey = "ocp-apim-subscription-key";
         }
 
         public struct UserAttribute
         {
-            public const string EMail = "email";
-            public const string EMails = "emails";
+            public const string Id = "emails";
             public const string MobilePhoneNumber = "extension_MobilePhoneNumber";
 
             public const string MediaAccountName = "extension_MediaAccountName";
@@ -142,17 +141,12 @@ namespace AzureSkyMedia.PlatformServices
             public const string StorageAccount2Key = "extension_StorageAccount2Key";
             public const string StorageAccount3Name = "extension_StorageAccount3Name";
             public const string StorageAccount3Key = "extension_StorageAccount3Key";
-
-            public const string SearchAccountName = "extension_SearchAccountName";
-            public const string SearchAccountKeyReadOnly = "extension_SearchAccountKeyReadOnly";
-            public const string SearchAccountKeyReadWrite = "extension_SearchAccountKeyReadWrite";
         }
 
         public struct Storage
         {
             public struct Blob
             {
-                public const string WorkflowContainersPath = "/blobServices/default/containers/";
                 public const string WorkflowContainerName = "azure-media-services";
                 public const string WorkflowContainerFiles = "*";
                 public const string WorkflowManifestPath = WorkflowContainerName + "/" + WorkflowManifestFile;
@@ -168,12 +162,6 @@ namespace AzureSkyMedia.PlatformServices
                 public const string MediaInsight = "Insights";
             }
 
-            //public struct Script
-            //{
-            //    public const string IsTimecodeFragment = "isTimecodeFragment.js";
-            //    public const string GetTimecodeFragment = "getTimecodeFragment.js";
-            //}
-
             public struct Document
             {
                 public const string SystemPropertyPrefix = "_";
@@ -185,24 +173,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string PredefinedPrefix = "Predefined_";
             public const string AccountResourceId = "/subscriptions/{0}/resourceGroups/{1}/providers/microsoft.media/mediaServices/{2}";
 
-            public struct Channel9
-            {
-                public const int DefaultIngestVideoCount = 8;
-                //public const string NamespacePrefix = "media";
-                //public const string NamespaceUrl = "http://search.yahoo.com/mrss/";
-                //public const string XPathQuery = "media:group/media:content[@type='video/mp4']";
-                //public const string UrlHttp = "http://video.ch9.ms/";
-                //public const string UrlHttps = "https://sec.ch9.ms/";
-                //public const string Http = "http://";
-                //public const string Https = "https://";
-            }
-
-            public struct ContentType
-            {
-                public const string IngestContent = "video/mp4";
-                public const string IngestManifest = "application/json";
-            }
-
             public struct ContentKeyPolicy
             {
                 public const string Aes = "Envelope Encryption (AES)";
@@ -212,7 +182,6 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Asset
             {
-                public const string SingleBitrate = "SBR";
                 public const string ContainerPrefix = "asset-";
             }
 
@@ -272,6 +241,7 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct Thumbnail
             {
+                public const string Download = "DLD";
                 public const string FileName = "Thumbnail000001.jpg";
                 public const string FileNamePrefix = "Thumbnail";
                 public const string FileNameSuffix = "{Index}{Extension}";
@@ -279,8 +249,11 @@ namespace AzureSkyMedia.PlatformServices
 
             public struct LiveEvent
             {
-                public const int OutputArchiveWindowMinutes = 60;
-                public const string OutputNameSuffix = "-Output";
+                public struct Output
+                {
+                    public const string NameSuffix = "-Output";
+                    public const int DefaultArchiveMinutes = 60;
+                }
             }
         }
 
@@ -326,12 +299,6 @@ namespace AzureSkyMedia.PlatformServices
             public const string JobPublishNotification = "Transform: {0}" + NewLine + "Job: {1}" + NewLine + "Event: {2}";
             public const string JobUnpublishNotification = "The '{0}' job output assets have been unpublished.";
             public const string AssetUnpublished = "The '{0}' asset has been unpublished.";
-            //public const string WorkflowInputNotComplete = "Workflow Input Not Complete: Missing '{0}'";
-            //public const string AssetCreated = "New Asset Created: {0}";
-            //public const string JobCreated = "New Job Created: {0}";
-            //public const string InsightCreated = "New Insight Created: {0}";
-            //public const string OrchestrationStarted = "Started Orchestration: {0}";
-            //public const string OrchestrationReplaying = "Replaying Orchestration: {0}";
         }
     }
 }

@@ -78,7 +78,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     liveOutput = mediaClient.CreateLiveOutput(eventName, eventOutputName, eventOutputDescription, null, outputAssetName, archiveWindowMinutes);
-                    mediaClient.GetStreamingLocator(outputAssetName, streamingPolicyName, null);
+                    mediaClient.GetStreamingLocator(outputAssetName, outputAssetName, streamingPolicyName, null);
                 }
                 return Json(liveOutput);
             }
@@ -148,10 +148,10 @@ namespace AzureSkyMedia.WebApp.Controllers
                     MediaLiveEvent mediaLiveEvent = new MediaLiveEvent(mediaClient, liveEvent);
                     if (mediaLiveEvent.Outputs.Length == 0)
                     {
-                        string eventOutputName = string.Concat(eventName, Constant.Media.LiveEvent.OutputNameSuffix);
+                        string eventOutputName = string.Concat(eventName, Constant.Media.LiveEvent.Output.NameSuffix);
                         string eventOutputAssetName = Guid.NewGuid().ToString();
                         string streamingPolicyName = PredefinedStreamingPolicy.ClearStreamingOnly;
-                        int archiveWindowMinutes = Constant.Media.LiveEvent.OutputArchiveWindowMinutes;
+                        int archiveWindowMinutes = Constant.Media.LiveEvent.Output.DefaultArchiveMinutes;
                         CreateOutput(eventName, eventOutputName, null, eventOutputAssetName, streamingPolicyName, archiveWindowMinutes);
                     }
                     mediaClient.StartLiveEvent(eventName);

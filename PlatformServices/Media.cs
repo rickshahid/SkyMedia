@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
 using Newtonsoft.Json.Linq;
@@ -56,17 +57,17 @@ namespace AzureSkyMedia.PlatformServices
         private static MediaStream GetMediaStream(string authToken, MediaClient mediaClient, StreamingLocator streamingLocator)
         {
             MediaStream mediaStream = null;
-            string streamingUrl = mediaClient.GetStreamingUrl(streamingLocator, null, true);
+            string streamingUrl = mediaClient.GetStreamingUrl(streamingLocator, null);
             if (!string.IsNullOrEmpty(streamingUrl))
             {
                 Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, streamingLocator.AssetName);
                 MediaInsight mediaInsight = GetMediaInsight(mediaClient, asset);
-                authToken = !string.IsNullOrEmpty(mediaInsight.ViewToken) ? mediaInsight.ViewToken : string.Concat("Bearer=", authToken);
+                authToken = !string.IsNullOrEmpty(mediaInsight.ViewToken) ? mediaInsight.ViewToken : string.Concat(Constant.AuthIntegration.AuthScheme, authToken);
                 mediaStream = new MediaStream()
                 {
                     Name = string.IsNullOrEmpty(streamingLocator.Name) ? asset.Name : streamingLocator.Name,
                     Url = streamingUrl,
-                    Poster = mediaClient.GetStreamingUrl(streamingLocator, Constant.Media.Thumbnail.FileName, false),
+                    Poster = mediaClient.GetDownloadUrl(asset.Name, Constant.Media.Thumbnail.FileName),
                     Tracks = Track.GetMediaTracks(mediaClient, asset),
                     Insight = mediaInsight,
                     Protection = mediaClient.GetStreamProtection(authToken, mediaClient, streamingLocator)
@@ -134,10 +135,13 @@ namespace AzureSkyMedia.PlatformServices
             StreamingLocator[] streamingLocators = mediaClient.GetStreamingLocators(streamSkipCount);
             foreach (StreamingLocator streamingLocator in streamingLocators)
             {
-                MediaStream mediaStream = GetMediaStream(authToken, mediaClient, streamingLocator);
-                if (mediaStream != null && accountStreams.Count < streamTunerPageSize)
+                if (streamingLocator.StreamingPolicyName != PredefinedStreamingPolicy.DownloadOnly)
                 {
-                    accountStreams.Add(mediaStream);
+                    MediaStream mediaStream = GetMediaStream(authToken, mediaClient, streamingLocator);
+                    if (mediaStream != null && accountStreams.Count < streamTunerPageSize)
+                    {
+                        accountStreams.Add(mediaStream);
+                    }
                 }
             }
             if (streamingLocators.Length > streamTunerPageSize)

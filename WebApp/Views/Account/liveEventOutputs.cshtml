@@ -15,7 +15,7 @@
             var rows = @Json.Serialize(ViewData[gridId]);
             LoadGrid(gridId, rows);
             CreateTipTop("liveEventOutputCreate", "Create Live Event Output");
-            SetArchiveWindow(@Constant.Media.LiveEvent.OutputArchiveWindowMinutes);
+            SetArchiveWindow(@Constant.Media.LiveEvent.Output.DefaultArchiveMinutes);
         })
     </script>
 }

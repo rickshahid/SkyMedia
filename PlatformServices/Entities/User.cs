@@ -44,15 +44,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public string Id
         {
-            get
-            {
-                string userId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.EMails);
-                if (string.IsNullOrEmpty(userId))
-                {
-                    userId = AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.EMail);
-                }
-                return userId;
-            }
+            get { return AuthToken.GetClaimValue(_authToken, Constant.UserAttribute.Id); }
         }
 
         public string MobilePhoneNumber

@@ -55,7 +55,7 @@
     "appServicePlanName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the App Service Plan for the web application."
+        "description": "Name of the (Web / Function) App Service Plan."
       }
     },
     "appServicePlanTier": {
@@ -72,11 +72,17 @@
         "description": "Size of each compute node in the App Service Plan."
       }
     },
-    "appServicePlanNodeCount": {
+    "appServicePlanNodeCountMin": {
       "type": "int",
       "minValue": 1,
       "metadata": {
-        "description": "Number of compute nodes in the App Service Plan."
+        "description": "Minimum number of compute nodes in the App Service Plan."
+      }
+    },
+    "appServicePlanNodeCountMax": {
+      "type": "int",
+      "metadata": {
+        "description": "Maximum number of compute nodes in the App Service Plan."
       }
     },
     "appServiceCertificateName": {
@@ -327,7 +333,11 @@
       "sku": {
         "tier": "[parameters('appServicePlanTier')]",
         "name": "[parameters('appServicePlanNodeSize')]",
-        "capacity": "[parameters('appServicePlanNodeCount')]"
+        "capacity": "[parameters('appServicePlanNodeCountMin')]"
+      },
+      "properties": {
+        "numberOfWorkers": "[parameters('appServicePlanNodeCountMin')]",
+        "maximumElasticWorkerCount": "[parameters('appServicePlanNodeCountMax')]"
       }
     },
     {

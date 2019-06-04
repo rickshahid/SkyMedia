@@ -16,7 +16,7 @@
     <link type="text/css" rel="stylesheet" href="~/css/gallery.css" />
     <script type="text/javascript" src="//amp.azure.net/libs/amp/@ampVersion/azuremediaplayer.min.js"></script>
     <script type="text/javascript">
-        var _maxStreams = @Constant.Media.Channel9.DefaultIngestVideoCount, _degreesDelta = 360 / _maxStreams, _currentsDegrees = 0, _currentIndex = 0;
+        var _maxStreams = 8, _degreesDelta = 360 / _maxStreams, _currentsDegrees = 0, _currentIndex = 0;
         function SetStreamName() {
             var streamName = "";
             if (_currentIndex < _mediaStreams.length) {

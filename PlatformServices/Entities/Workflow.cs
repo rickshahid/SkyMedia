@@ -18,8 +18,6 @@ namespace AzureSkyMedia.PlatformServices
 
         public MediaTransformPreset[] TransformPresets { get; set; }
 
-        public JObject TransformProfile { get; set; }
-
         public string JobName { get; set; }
 
         public Priority JobPriority { get; set; }

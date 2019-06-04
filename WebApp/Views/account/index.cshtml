@@ -42,41 +42,8 @@
                 $("#authToken").show();
             }
         }
-        function CreateAccountAssets() {
-            var title = "Create Media Account Assets";
-            var message = "Are you sure you want to create assets in your media account?";
-            message = message + "<br><br><input id='assetType' name='assetType' type='radio' value='SBR' checked>&nbsp;Single Bitrate</input>";
-            message = message + "&nbsp;&nbsp;&nbsp;<input id='assetType' name='assetType' type='radio' value='MBR'>&nbsp;Multiple Bitrates</input>";
-            message = message + "&nbsp;&nbsp;&nbsp;<input id='assetPublish' type='checkbox' />&nbsp;Publish Assets";
-            message = message + "<br><br>Asset Count&nbsp;&nbsp;<input id='assetCount' class='assetCount' value='1000' />";
-            var buttons = {
-                OK: function () {
-                    SetCursor(true);
-                    $.post("/asset/create",
-                        {
-                            assetCount: $("#assetCount").val(),
-                            assetType: $("#assetType:checked").val(),
-                            assetPublish: $("#assetPublish").prop("checked")
-                        },
-                        function () {
-                            SetCursor(false);
-                            window.location = window.location.href;
-                        }
-                    );
-                    $(this).dialog("close");
-                },
-                Cancel: function () {
-                    $(this).dialog("close");
-                }
-            };
-            DisplayMessage(title, message, buttons);
-            $("#assetCount").spinner({
-                min: 1,
-                max: 99999
-            });
-        }
-        function DeleteAccountEntities() {
-            var title = "Delete Media Account Entities";
+        function ClearAccount() {
+            var title = "Clear Media Account";
             var message = "Which set of entities do you want to delete from your media account?";
             var buttons = {
                 "All Entities": function () {
@@ -108,8 +75,7 @@
         $(function () {
             DisplayAccountInventory();
             CreateTipTop("userAuthToken", "User Auth Token");
-            CreateTipTop("mediaEntitiesCreate", "Media Account<br><br>Create Assets");
-            CreateTipTop("mediaEntitiesDelete", "Media Account<br><br>Delete Entities");
+            CreateTipTop("mediaAccountClear", "Media Account Clear");
             CreateTipTop("authToken", "Azure Active Directory (B2C)<br><br>JSON Web Token (JWT)");
         })
     </script>
@@ -125,8 +91,7 @@
     <partial name="SiteButton" model='new SiteButton { ControlId = "userAuthToken", ImageFile = "UserAuthToken.png", OnClick = "ToggleAuthToken()", AltText = "Toggle User Auth Token" }' />
     @if (Debugger.IsAttached)
     {
-        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesCreate", ImageFile = "MediaEntityCreate.png", OnClick = "CreateAccountAssets()", AltText = "Create Account Assets" }' />
-        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaEntitiesDelete", ImageFile = "MediaEntitiesDelete.png", OnClick = "DeleteAccountEntities()", AltText = "Delete Account Entities" }' />
+        <partial name="SiteButton" model='new SiteButton { ControlId = "mediaAccountClear", ImageFile = "MediaAccountClear.png", OnClick = "ClearAccount()", AltText = "Clear Account" }' />
     }
 </div>
 

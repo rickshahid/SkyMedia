@@ -42,6 +42,7 @@ function CreateWorkflow(files) {
             fileNames: GetFileNames(files),
             adaptiveStreaming: $("input:radio[name='encodingPreset'][value='adaptiveStreaming']").prop("checked"),
             contentAwareEncoding: $("input:radio[name='encodingPreset'][value='contentAwareEncoding']").prop("checked"),
+            contentProtection: $("#contentProtection").prop("checked"),
             thumbnailImages: $("#thumbnailImages").prop("checked"),
             thumbnailSprite: $("#thumbnailSprite").prop("checked"),
             videoAnalyzer: $("#videoAnalyzer").prop("checked"),

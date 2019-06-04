@@ -126,10 +126,16 @@
         </td>
     </tr>
     <tr>
-        <td />
-        <td />
-        <td />
-        <td />
+        <td>
+            @Html.CheckBox("contentProtection", false)
+        </td>
+        <td>
+            <span class="siteLink" onclick="window.open('https://docs.microsoft.com/azure/media-services/latest/content-protection-overview')">
+                Content Protection (AES)
+            </span>
+        </td>
+        <td></td>
+        <td></td>
         <td class="mediaUploadOption">
             @Html.CheckBox("faceDetector", false)
         </td>
@@ -138,8 +144,8 @@
                 Face Detector
             </span>
         </td>
-        <td />
-        <td />
+        <td></td>
+        <td></td>
     </tr>
 </table>
 

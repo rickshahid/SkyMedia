@@ -25,7 +25,7 @@ namespace AzureSkyMedia.PlatformServices
 
         public WebClient(JwtSecurityToken authToken) : this()
         {
-            string authHeader = string.Concat(Constant.AuthIntegration.AuthScheme, " ", authToken.EncodedPayload);
+            string authHeader = string.Concat(Constant.AuthIntegration.AuthScheme, authToken.EncodedPayload);
             _httpClient.DefaultRequestHeaders.Add(Constant.AuthIntegration.AuthHeader, authHeader);
         }
 

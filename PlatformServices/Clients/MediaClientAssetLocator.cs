@@ -46,9 +46,9 @@ namespace AzureSkyMedia.PlatformServices
             return streamingLocators;
         }
 
-        public StreamingLocator GetStreamingLocator(string assetName, string streamingPolicyName, ContentProtection contentProtection)
+        public StreamingLocator GetStreamingLocator(string locatorName, string assetName, string streamingPolicyName, ContentProtection contentProtection)
         {
-            StreamingLocator streamingLocator = _media.StreamingLocators.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName);
+            StreamingLocator streamingLocator = _media.StreamingLocators.Get(MediaAccount.ResourceGroupName, MediaAccount.Name, locatorName);
             if (streamingLocator == null)
             {
                 string contentKeyPolicyName = null;
@@ -75,7 +75,7 @@ namespace AzureSkyMedia.PlatformServices
                 {
                     DefaultContentKeyPolicyName = contentKeyPolicyName
                 };
-                streamingLocator = _media.StreamingLocators.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, assetName, streamingLocator);
+                streamingLocator = _media.StreamingLocators.Create(MediaAccount.ResourceGroupName, MediaAccount.Name, locatorName, streamingLocator);
             }
             return streamingLocator;
         }
@@ -87,7 +87,7 @@ namespace AzureSkyMedia.PlatformServices
             foreach (AssetStreamingLocator assetStreamingLocator in streamingLocatorList.StreamingLocators)
             {
                 StreamingLocator streamingLocator = GetEntity<StreamingLocator>(MediaEntity.StreamingLocator, assetStreamingLocator.Name);
-                string streamingUrl = GetStreamingUrl(streamingLocator, null, true);
+                string streamingUrl = GetStreamingUrl(streamingLocator, null);
                 if (!string.IsNullOrEmpty(streamingUrl))
                 {
                     streamingUrls.Add(streamingUrl);
@@ -96,50 +96,49 @@ namespace AzureSkyMedia.PlatformServices
             return streamingUrls.ToArray();
         }
 
-        public string GetStreamingUrl(StreamingLocator streamingLocator, string fileName, bool useListPaths)
+        public string GetStreamingUrl(StreamingLocator streamingLocator, string fileName)
         {
             UriBuilder uriBuilder = new UriBuilder()
             {
                 Scheme = Constant.Media.Stream.DefaultScheme,
                 Host = GetStreamingHost(null)
             };
-            if (useListPaths)
+            ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocator.Name);
+            if (!string.IsNullOrEmpty(fileName))
             {
-                ListPathsResponse paths = _media.StreamingLocators.ListPaths(MediaAccount.ResourceGroupName, MediaAccount.Name, streamingLocator.Name);
-                if (!string.IsNullOrEmpty(fileName))
+                foreach (string downloadPath in paths.DownloadPaths)
                 {
-                    foreach (string downloadPath in paths.DownloadPaths)
+                    if (downloadPath.Contains(fileName))
                     {
-                        if (downloadPath.Contains(fileName))
-                        {
-                            uriBuilder.Path = downloadPath;
-                        }
+                        uriBuilder.Path = downloadPath;
                     }
-                }
-                else
-                {
-                    foreach (StreamingPath streamingPath in paths.StreamingPaths)
-                    {
-                        if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count == 1)
-                        {
-                            uriBuilder.Path = streamingPath.Paths[0];
-                        }
-                    }
-                    uriBuilder.Path = string.Concat(uriBuilder.Path, Constant.Media.Stream.DefaultFormat);
                 }
             }
             else
             {
-                uriBuilder.Path = string.Concat(streamingLocator.StreamingLocatorId, "/", fileName);
+                foreach (StreamingPath streamingPath in paths.StreamingPaths)
+                {
+                    if (streamingPath.StreamingProtocol == StreamingPolicyStreamingProtocol.SmoothStreaming && streamingPath.Paths.Count == 1)
+                    {
+                        uriBuilder.Path = streamingPath.Paths[0];
+                    }
+                }
+                uriBuilder.Path = string.Concat(uriBuilder.Path, Constant.Media.Stream.DefaultFormat);
             }
             return uriBuilder.ToString();
         }
 
         public string GetDownloadUrl(string assetName, string fileName)
         {
+            string assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.AdaptiveStreaming;
+            if (assetName.Contains(Constant.Media.Job.OutputAssetNameSuffix.ContentAwareEncoding))
+            {
+                assetNameSuffix = Constant.Media.Job.OutputAssetNameSuffix.ContentAwareEncoding;
+            }
+            string locatorName = assetName.Replace(assetNameSuffix, Constant.Media.Thumbnail.Download);
             string streamingPolicyName = PredefinedStreamingPolicy.DownloadOnly;
-            StreamingLocator streamingLocator = GetStreamingLocator(assetName, streamingPolicyName, null);
-            return GetStreamingUrl(streamingLocator, fileName, false);
+            StreamingLocator streamingLocator = GetStreamingLocator(locatorName, assetName, streamingPolicyName, null);
+            return GetStreamingUrl(streamingLocator, fileName);
         }
 
         public void DeleteLocators(string assetName)

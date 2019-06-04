@@ -1,10 +1,8 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Microsoft.Rest.Azure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Storage.Blob;
 using Microsoft.Azure.Management.Media;
 using Microsoft.Azure.Management.Media.Models;
 
@@ -14,19 +12,8 @@ namespace AzureSkyMedia.WebApp.Controllers
 {
     public class AssetController : Controller
     {
-        private async Task<Asset[]> CreateInputAssets(MediaClient mediaClient, string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames)
-        {
-            List<Asset> inputAssets = new List<Asset>();
-            foreach (string fileName in fileNames)
-            {
-                Asset inputAsset = await mediaClient.CreateAsset(storageAccount, assetName, assetDescription, assetAlternateId, fileName);
-                inputAssets.Add(inputAsset);
-            }
-            return inputAssets.ToArray();
-        }
-
         public async Task<JsonResult> Workflow(string storageAccount, string assetName, string assetDescription, string assetAlternateId, string[] fileNames,
-                                               bool adaptiveStreaming, bool contentAwareEncoding, bool thumbnailImages, bool thumbnailSprite,
+                                               bool adaptiveStreaming, bool contentAwareEncoding, bool contentProtection, bool thumbnailImages, bool thumbnailSprite,
                                                bool videoAnalyzer, bool audioAnalyzer, bool faceDetector, bool videoIndexer, bool audioIndexer)
         {
             try
@@ -36,16 +23,15 @@ namespace AzureSkyMedia.WebApp.Controllers
                 using (MediaClient mediaClient = new MediaClient(authToken))
                 {
                     Transform transform = mediaClient.GetTransform(adaptiveStreaming, contentAwareEncoding, thumbnailImages, thumbnailSprite, videoAnalyzer, audioAnalyzer, faceDetector, videoIndexer, audioIndexer);
-                    Asset[] inputAssets = await CreateInputAssets(mediaClient, storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
-                    StorageBlobClient blobClient = new StorageBlobClient(mediaClient.MediaAccount, storageAccount);
+                    Asset[] inputAssets = await mediaClient.CreateAssets(storageAccount, assetName, assetDescription, assetAlternateId, fileNames);
                     foreach (Asset inputAsset in inputAssets)
                     {
                         Job job = null;
                         string insightId = null;
                         Priority jobPriority = Priority.Normal;
-                        MediaJobOutputPublish outputAssetPublish = new MediaJobOutputPublish()
+                        MediaJobOutputPublish outputPublish = new MediaJobOutputPublish()
                         {
-                            StreamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming
+                            StreamingPolicyName = contentProtection ? PredefinedStreamingPolicy.ClearKey : PredefinedStreamingPolicy.DownloadAndClearStreaming
                         };
                         if (mediaClient.IndexerEnabled() && (videoIndexer || audioIndexer))
                         {
@@ -59,7 +45,7 @@ namespace AzureSkyMedia.WebApp.Controllers
                                 VideoIndexer = videoIndexer,
                                 AudioIndexer = audioIndexer
                             };
-                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputAsset, null, outputAssetPublish, outputInsight, true);
+                            job = mediaClient.CreateJob(transform.Name, null, null, jobPriority, null, inputAsset, null, outputPublish, outputInsight, true);
                         }
                         MediaWorkflowEntity newEntity = new MediaWorkflowEntity();
                         if (job != null)
@@ -106,55 +92,11 @@ namespace AzureSkyMedia.WebApp.Controllers
                     {
                         Asset asset = mediaClient.GetEntity<Asset>(MediaEntity.Asset, entityName);
                         string streamingPolicyName = PredefinedStreamingPolicy.DownloadAndClearStreaming;
-                        StreamingLocator streamingLocator = mediaClient.GetStreamingLocator(asset.Name, streamingPolicyName, null);
-                        message = mediaClient.GetStreamingUrl(streamingLocator, null, true);
+                        StreamingLocator streamingLocator = mediaClient.GetStreamingLocator(asset.Name, asset.Name, streamingPolicyName, null);
+                        message = mediaClient.GetStreamingUrl(streamingLocator, null);
                     }
                 }
                 return Json(message);
-            }
-            catch (ApiErrorException ex)
-            {
-                return new JsonResult(ex.Response.Content)
-                {
-                    StatusCode = (int)ex.Response.StatusCode
-                };
-            }
-        }
-
-        public JsonResult Create(int assetCount, string assetType, bool assetPublish)
-        {
-            try
-            {
-                string authToken = HomeController.GetAuthToken(Request, Response);
-                using (MediaClient mediaClient = new MediaClient(authToken))
-                {
-                    StorageBlobClient sourceBlobClient = new StorageBlobClient();
-                    StorageBlobClient assetBlobClient = new StorageBlobClient(mediaClient.MediaAccount, mediaClient.StorageAccount);
-                    for (int i = 1; i <= assetCount; i++)
-                    {
-                        List<Task> uploadTasks = new List<Task>();
-                        string containerName = Constant.Storage.Blob.WorkflowContainerName;
-                        string directoryPath = assetType;
-                        string assetName = MediaClient.GetAssetName(sourceBlobClient, containerName, directoryPath, out MediaFile[] sourceFiles);
-                        assetName = string.Concat(i.ToString(), Constant.TextDelimiter.AssetName, assetName);
-                        Asset asset = mediaClient.CreateAsset(mediaClient.StorageAccount, assetName);
-                        foreach (MediaFile sourceFile in sourceFiles)
-                        {
-                            CloudBlockBlob sourceBlob = sourceBlobClient.GetBlockBlob(containerName, directoryPath, sourceFile.Name);
-                            CloudBlockBlob assetBlob = assetBlobClient.GetBlockBlob(asset.Container, null, sourceFile.Name);
-                            Stream sourceStream = sourceBlob.OpenReadAsync().Result;
-                            Task uploadTask = assetBlob.UploadFromStreamAsync(sourceStream);
-                            uploadTasks.Add(uploadTask);
-                        }
-                        if (assetPublish)
-                        {
-                            Task.WaitAll(uploadTasks.ToArray());
-                            string streamingPolicyName = assetType == Constant.Media.Asset.SingleBitrate ? PredefinedStreamingPolicy.DownloadOnly : PredefinedStreamingPolicy.DownloadAndClearStreaming;
-                            mediaClient.GetStreamingLocator(asset.Name, streamingPolicyName, null);
-                        }
-                    }
-                }
-                return Json(assetCount);
             }
             catch (ApiErrorException ex)
             {

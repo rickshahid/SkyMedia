@@ -79,7 +79,7 @@ namespace AzureSkyMedia.PlatformServices
                     {
                         if (!string.IsNullOrEmpty(transformName))
                         {
-                            transformName = string.Concat(transformName, Constant.TextDelimiter.TransformPresetName);
+                            transformName = string.Concat(transformName, Constant.TextDelimiter.TransformName);
                         }
                         transformName = string.Concat(transformName, transformOutput.PresetName);
                     }

@@ -89,7 +89,7 @@ function SetPlayerContent(mediaPlayer, mediaStream) {
             mediaStream.tracks
         );
     }
-    if (mediaStream.poster != null && window.location.href.indexOf("drop-poster") == -1) {
+    if (_mediaPlayer != null && mediaStream.poster != null && window.location.href.indexOf("drop-poster") == -1) {
         _mediaPlayer.poster(mediaStream.poster);
     }
 }

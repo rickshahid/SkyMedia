@@ -74,16 +74,16 @@ namespace AzureSkyMedia.PlatformServices
                     case Constant.Media.Job.EventType.Finished:
                         string settingKey = Constant.AppSettingKey.MediaPlayerDemoUrl;
                         string mediaPlayerUrl = AppSetting.GetValue(settingKey);
-                        string jobOutputPublishData = job.CorrelationData[Constant.Media.Job.CorrelationData.OutputPublish].ToString();
-                        MediaJobOutputPublish jobOutputPublish = JsonConvert.DeserializeObject<MediaJobOutputPublish>(jobOutputPublishData);
+                        string outputPublishData = job.CorrelationData[Constant.Media.Job.CorrelationData.OutputPublish].ToString();
+                        MediaJobOutputPublish jobOutputPublish = JsonConvert.DeserializeObject<MediaJobOutputPublish>(outputPublishData);
                         foreach (JobOutputAsset jobOutput in job.Outputs)
                         {
                             Asset outputAsset = GetEntity<Asset>(MediaEntity.Asset, jobOutput.AssetName);
                             StorageBlobClient blobClient = new StorageBlobClient(this.MediaAccount, outputAsset.StorageAccountName);
                             if (blobClient.ContainsFile(outputAsset.Container, null, null, Constant.Media.Stream.ManifestExtension))
                             {
-                                StreamingLocator streamingLocator = GetStreamingLocator(jobOutput.AssetName, jobOutputPublish.StreamingPolicyName, jobOutputPublish.ContentProtection);
-                                string mediaStreamUrl = GetStreamingUrl(streamingLocator, null, true);
+                                StreamingLocator streamingLocator = GetStreamingLocator(jobOutput.AssetName, jobOutput.AssetName, jobOutputPublish.StreamingPolicyName, jobOutputPublish.ContentProtection);
+                                string mediaStreamUrl = GetStreamingUrl(streamingLocator, null);
                                 mediaStreamUrl = string.Format(mediaPlayerUrl, mediaStreamUrl);
                                 publishNotification.StatusMessage = string.Concat(publishNotification.StatusMessage, Constant.Message.NewLine, mediaStreamUrl);
                             }
