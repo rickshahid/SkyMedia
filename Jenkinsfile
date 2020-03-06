@@ -3,7 +3,9 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-        sh 'terraform init'
+        sh '''pwd
+ls
+terraform init'''
       }
     }
 
