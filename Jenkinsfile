@@ -12,7 +12,8 @@ terraform init'''
 
     stage('Plan') {
       steps {
-        sh '''terraform plan
+        sh '''cd terraform/examples/vfxt/3-filers/
+terraform plan
 '''
       }
     }
