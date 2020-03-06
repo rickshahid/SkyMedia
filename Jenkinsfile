@@ -3,14 +3,14 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-        echo 'Init'
         sh 'terraform init'
       }
     }
 
     stage('Plan') {
       steps {
-        echo 'Plan'
+        sh '''terraform plan
+'''
       }
     }
 
