@@ -27,7 +27,7 @@ terraform plan
 
     stage('Review') {
       steps {
-        input 'Approve or Reject?'
+        input 'Terraform Execution Plan Review'
       }
     }
 
