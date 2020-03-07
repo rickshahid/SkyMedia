@@ -18,8 +18,7 @@ terraform init
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform plan
-
+terraform plan -out plan.tf
 '''
         input 'Terraform Plan Review'
       }
