@@ -9,7 +9,8 @@ curl --output terraform-provider-avere --location --url $TERRAFORM_PROVIDER_AVER
 
 chmod 755 terraform-provider-avere
 
-terraform init'''
+terraform init
+'''
       }
     }
 
@@ -36,7 +37,8 @@ terraform plan
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform apply'''
+terraform apply
+'''
       }
     }
 
