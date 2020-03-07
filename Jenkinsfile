@@ -3,7 +3,9 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-        sh '''curl --output terraform-provider-avere --location --url $TERRAFORM_PROVIDER_AVERE_URL
+        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
+
+curl --output terraform-provider-avere --location --url $TERRAFORM_PROVIDER_AVERE_URL
 
 chmod 755 terraform-provider-avere
 
