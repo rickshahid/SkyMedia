@@ -3,9 +3,9 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-        sh '''cd terraform/examples/vfxt/3-filers/
+        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-curl --output terraform-provider-avere --location --url https://github.com/Azure/Avere/releases/download/tfprovider_v0.4.2/terraform-provider-avere
+curl --output terraform-provider-avere --location --url $TERRAFORM_PROVIDER_AVERE_URL
 
 chmod 755 terraform-provider-avere
 
@@ -15,11 +15,11 @@ terraform init'''
 
     stage('Plan') {
       steps {
-        sh '''az login --service-principal --tenant $TENANT_ID --username $CLIENT_ID --password $CLIENT_SECRET
+        sh '''az login --service-principal --tenant $AZURE_TENANT_ID --username $AZURE_CLIENT_ID --password $AZURE_CLIENT_SECRET
 
-az account set --subscription $SUBSCRIPTION_ID
+az account set --subscription $AZURE_SUBSCRIPTION_ID
 
-cd terraform/examples/vfxt/3-filers/
+cd $TERRAFORM_CONFIG_DIRECTORY
 
 terraform plan
 '''
@@ -34,7 +34,7 @@ terraform plan
 
     stage('Apply') {
       steps {
-        sh '''cd terraform/examples/vfxt/3-filers/
+        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
 terraform apply'''
       }
