@@ -18,13 +18,9 @@ terraform init
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform plan
-'''
-      }
-    }
+terraform plan &> tfplan.txt
 
-    stage('Review') {
-      steps {
+'''
         input 'Terraform Plan Review'
       }
     }
