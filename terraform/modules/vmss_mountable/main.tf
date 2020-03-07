@@ -27,6 +27,8 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   resource_group_name = azurerm_resource_group.vmss.name
   location            = azurerm_resource_group.vmss.location
   upgrade_policy_mode = "Manual"
+  priority            = var.vmss_priority
+  eviction_policy     = var.vmss_priority == "Spot" ? "Delete" : null
 
   dynamic "os_profile" {
     for_each = (var.ssh_key_data == null || var.ssh_key_data == "") && var.admin_password != null && var.admin_password != "" ? [var.admin_password] : [null] 
@@ -99,7 +101,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
     # 4. unmount the nfs server the bootstrap directory 
     settings = <<SETTINGS
     {
-        "commandToExecute": "(apt-get update || (sleep 10 && apt-get update) || (sleep 10 && apt-get update)) && (apt-get install -y nfs-common || (sleep 10 && apt-get install -y nfs-common) || (sleep 10 && apt-get install -y nfs-common))  && mkdir -p ${local.bootstrap_path} && r=5 && for i in $(seq 1 $r); do mount -o 'hard,nointr,proto=tcp,mountproto=tcp,retry=30' ${var.nfs_export_addresses[0]}:${var.nfs_export_path} ${local.bootstrap_path} && break || [ $i == $r ] && break 0 || sleep 1; done && ${local.env_vars} /bin/bash ${local.bootstrap_path}${var.bootstrap_script_path} 2>&1 | tee -a /var/log/bootstrap.log && umount ${local.bootstrap_path} && rmdir ${local.bootstrap_path}"
+        "commandToExecute": "set -x && ((apt-get update && apt-get install -y nfs-common) || (sleep 10 && apt-get update && apt-get install -y nfs-common) || (sleep 10 && apt-get update && apt-get install -y nfs-common)) && mkdir -p ${local.bootstrap_path} && r=5 && for i in $(seq 1 $r); do mount -o 'hard,nointr,proto=tcp,mountproto=tcp,retry=30' ${var.nfs_export_addresses[0]}:${var.nfs_export_path} ${local.bootstrap_path} && break || [ $i == $r ] && break 0 || sleep 1; done && ${local.env_vars} /bin/bash ${local.bootstrap_path}${var.bootstrap_script_path} 2>&1 | tee -a /var/log/bootstrap.log && umount ${local.bootstrap_path} && rmdir ${local.bootstrap_path}"
     }
 SETTINGS
   }
@@ -109,6 +111,9 @@ SETTINGS
 Commenting out for now as this needs discussion with Terraform team.  By decoupling the extension with the VMSS,
 it is mandatory to set the VMSS to auto-upgrade.
 
+This is covered by the following two bugs: https://github.com/terraform-providers/terraform-provider-azurerm/issues/5976
+and https://github.com/terraform-providers/terraform-provider-azurerm/issues/5860.
+
 resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   name                = local.vm_name
   resource_group_name = azurerm_resource_group.vmss.name
@@ -116,6 +121,15 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   sku                 = var.vm_size
   instances           = var.vm_count
   admin_username      = var.admin_username
+  upgrade_mode        = "Automatic" // automatic is necesary to run the custom script extension
+  health_probe_id     = ""
+  priority            = var.vmss_priority
+  eviction_policy     = var.vmss_priority == "Spot" ? "Delete" : null
+
+  automatic_os_upgrade_policy {
+    disable_automatic_rollback = true
+    enable_automatic_os_upgrade = false
+  }
 
   dynamic "admin_ssh_key" {
       for_each = var.ssh_key_data == null || var.ssh_key_data == "" ? [] : [var.ssh_key_data]
@@ -135,6 +149,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   os_disk {
     storage_account_type = "Standard_LRS"
     caching              = "ReadWrite"
+
+    dynamic "diff_disk_settings" {
+      for_each = var.use_ephemeral_os_disk == true ? [var.use_ephemeral_os_disk] : []
+      content {
+          option = "Local"
+      }
+    }
   }
 
   network_interface {
