@@ -28,7 +28,7 @@ terraform plan -out plan.tf
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform apply
+terraform apply plan.tf
 '''
       }
     }
