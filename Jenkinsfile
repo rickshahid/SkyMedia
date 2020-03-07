@@ -12,7 +12,8 @@ terraform init'''
 
     stage('Plan') {
       steps {
-        sh '''cd terraform/examples/vfxt/3-filers/
+        sh '''az login
+cd terraform/examples/vfxt/3-filers/
 terraform plan
 '''
       }
