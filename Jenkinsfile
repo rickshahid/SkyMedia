@@ -27,7 +27,7 @@ terraform plan
 
     stage('Review') {
       steps {
-        echo 'Review'
+        input 'Approve or Reject?'
       }
     }
 
