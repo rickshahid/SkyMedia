@@ -27,7 +27,7 @@ terraform plan
 
     stage('Review') {
       steps {
-        input 'Terraform Execution Plan Review'
+        input 'Terraform Plan Review'
       }
     }
 
