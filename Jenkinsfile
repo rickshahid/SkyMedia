@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Init') {
       steps {
-        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
+        sh '''cd ${env.TERRAFORM_CONFIG_DIRECTORY}
 
 curl --output terraform-provider-avere --location --url $TERRAFORM_PROVIDER_AVERE_URL
 
