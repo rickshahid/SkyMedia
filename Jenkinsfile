@@ -16,7 +16,7 @@ terraform init
 
     stage('Plan') {
       steps {
-        sh '''az login --service-principal --tenant $AZURE_TENANT_ID --username $AZURE_CLIENT_ID --password $AZURE_CLIENT_SECRET --allow-no-subscriptions
+        sh '''az login --service-principal --tenant $AZURE_TENANT_ID --username $AZURE_CLIENT_ID --password $AZURE_CLIENT_SECRET
 
 az account set --subscription $AZURE_SUBSCRIPTION_ID
 
