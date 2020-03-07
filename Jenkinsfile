@@ -12,7 +12,7 @@ terraform init'''
 
     stage('Plan') {
       steps {
-        sh '''az login
+        sh '''az login --service-principal --tenant $TENANT_ID --username $CLIENT_ID --password $CLIENT_SECRET
 cd terraform/examples/vfxt/3-filers/
 terraform plan
 '''
