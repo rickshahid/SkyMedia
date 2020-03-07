@@ -16,7 +16,7 @@ terraform init
 
     stage('Plan') {
       steps {
-        sh '''az account set --subscription $AZURE_SUBSCRIPTION_ID
+        sh '''az account set --subscription $ARM_SUBSCRIPTION_ID
 
 cd $TERRAFORM_CONFIG_DIRECTORY
 
