@@ -2,7 +2,7 @@ pipeline {
   agent any
   stages {
     stage('Init') {
-      when { branch "PR*" }
+      when { branch "PR-*" }
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
@@ -11,7 +11,7 @@ terraform init
       }
     }
     stage('Plan') {
-      when { branch "PR*" }
+      when { branch "PR-*" }
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
@@ -21,7 +21,7 @@ terraform plan -out plan.tf
       }
     }
     stage('Apply') {
-      when { branch "PR*" }
+      when { branch "PR-*" }
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
