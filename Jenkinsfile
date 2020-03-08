@@ -1,31 +1,38 @@
 pipeline {
   agent any
   stages {
-    if (env.BRANCH_NAME.contains('PR')) {
-      stage('Init') {
-        steps {
-          sh '''cd $TERRAFORM_CONFIG_DIRECTORY
-
-  terraform init
-  '''
-        }
+    stage('Init') {
+      when {
+        expression { env.BRANCH.NAME.contains('PR') }
       }
-      stage('Plan') {
-        steps {
-          sh '''cd $TERRAFORM_CONFIG_DIRECTORY
+      steps {
+        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-  terraform plan -out plan.tf
-  '''
-          input 'Terraform Plan Approved?'
-        }
+terraform init
+'''
       }
-      stage('Apply') {
-        steps {
-          sh '''cd $TERRAFORM_CONFIG_DIRECTORY
+    }
+    stage('Plan') {
+      when {
+        expression { env.BRANCH.NAME.contains('PR') }
+      }
+      steps {
+        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-  terraform apply plan.tf
-  '''
-        }
+terraform plan -out plan.tf
+'''
+        input 'Terraform Plan Approved?'
+      }
+    }
+    stage('Apply') {
+      when {
+        expression { env.BRANCH.NAME.contains('PR') }
+      }
+      steps {
+        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
+
+terraform apply plan.tf
+'''
       }
     }
   }
