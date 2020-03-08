@@ -41,7 +41,16 @@ locals {
     // if you use SSH key, ensure you have ~/.ssh/id_rsa with permission 600
     // populated where you are running terraform
     vm_ssh_key_data = null //"ssh-rsa AAAAB3...."
-   
+
+    // jumpbox variable
+    jumpbox_add_public_ip = true
+    
+    // vmss details
+    vmss_resource_group_name = "vmss_rg"
+    unique_name = "uniquename"
+    vm_count = 2
+    vmss_size = "Standard_DS2_v2"
+    mount_target = "/data"
 }
 
 provider "azurerm" {
@@ -119,6 +128,7 @@ module "nasfiler1" {
 
 // load the Storage Target Template, with the necessary variables
 locals {
+    nfs_export_path = "/nfs1data"
     storage_target_1_template = templatefile("${path.module}/../storage_target.json",
     {
         uniquename              = local.cache_name,
@@ -126,7 +136,7 @@ locals {
         location                = local.location,
         nfsaddress              = module.nasfiler1.primary_ip,
         usagemodel              = local.usage_model,
-        namespacepath_j1        = "/nfs1data",
+        namespacepath_j1        = local.nfs_export_path,
         nfsexport_j1            = module.nasfiler1.core_filer_export,
         targetpath_j1           = ""
     })
@@ -144,96 +154,56 @@ resource "azurerm_template_deployment" "storage_target1" {
   ]
 }
 
-// the ephemeral filer
-module "nasfiler2" {
-    source = "../../../modules/nfs_filer"
-    resource_group_name = azurerm_resource_group.nfsfiler.name
-    location = azurerm_resource_group.nfsfiler.location
+module "jumpbox" {
+    source = "../../../modules/jumpbox"
+    resource_group_name = azurerm_resource_group.hpc_cache_rg.name
+    location = local.location
     admin_username = local.vm_admin_username
     admin_password = local.vm_admin_password
     ssh_key_data = local.vm_ssh_key_data
-    vm_size = "Standard_D2s_v3"
-    unique_name = "nasfiler2"
+    add_public_ip = local.jumpbox_add_public_ip
 
     // network details
     virtual_network_resource_group = local.network_resource_group_name
     virtual_network_name = module.network.vnet_name
-    virtual_network_subnet_name = module.network.cloud_filers_subnet_name
-}
-
-// load the Storage Target Template, with the necessary variables
-locals {
-    storage_target_2_template = templatefile("${path.module}/../storage_target.json",
-    {
-        uniquename              = local.cache_name,
-        uniquestoragetargetname = "storage_target_2",
-        location                = local.location,
-        nfsaddress              = module.nasfiler2.primary_ip,
-        usagemodel              = local.usage_model,
-        namespacepath_j1        = "/nfs2data",
-        nfsexport_j1            = module.nasfiler2.core_filer_export,
-        targetpath_j1           = ""
-    })
-}
-
-resource "azurerm_template_deployment" "storage_target2" {
-  name                = "storage_target_2"
-  resource_group_name = azurerm_resource_group.hpc_cache_rg.name
-  deployment_mode     = "Incremental"
-  template_body       = local.storage_target_2_template
-
-  depends_on = [
-    azurerm_template_deployment.storage_target1, // add after storage target1
-    module.nasfiler2
-  ]
-}
-
-// the ephemeral filer
-module "nasfiler3" {
-    source = "../../../modules/nfs_filer"
-    resource_group_name = azurerm_resource_group.nfsfiler.name
-    location = azurerm_resource_group.nfsfiler.location
-    admin_username = local.vm_admin_username
-    admin_password = local.vm_admin_password
-    ssh_key_data = local.vm_ssh_key_data
-    vm_size = "Standard_D2s_v3"
-    unique_name = "nasfiler3"
-
-    // network details
-    virtual_network_resource_group = local.network_resource_group_name
-    virtual_network_name = module.network.vnet_name
-    virtual_network_subnet_name = module.network.cloud_filers_subnet_name
-}
-
-// load the Storage Target Template, with the necessary variables
-locals {
-    storage_target_3_template = templatefile("${path.module}/../storage_target.json",
-    {
-        uniquename              = local.cache_name,
-        uniquestoragetargetname = "storage_target_3",
-        location                = local.location,
-        nfsaddress              = module.nasfiler3.primary_ip,
-        usagemodel              = local.usage_model,
-        namespacepath_j1        = "/nfs3data",
-        nfsexport_j1            = module.nasfiler3.core_filer_export,
-        targetpath_j1           = ""
-    })
-}
-
-resource "azurerm_template_deployment" "storage_target3" {
-  name                = "storage_target_3"
-  resource_group_name = azurerm_resource_group.hpc_cache_rg.name
-  deployment_mode     = "Incremental"
-  template_body       = local.storage_target_3_template
-
-  depends_on = [
-    azurerm_template_deployment.storage_target2, // add after storage target2
-    module.nasfiler3
-  ]
+    virtual_network_subnet_name = module.network.render_clients1_subnet_name
 }
 
 locals {
   mount_addresses = split(",", replace(trim(azurerm_template_deployment.storage_cache.outputs["mountAddresses"],"]["),"\"",""))
+}
+
+// the vmss config module to install the round robin mount
+module "vmss_configure" {
+    source = "../../../modules/vmss_config"
+
+    node_address = module.jumpbox.jumpbox_address
+    admin_username = module.jumpbox.jumpbox_username
+    admin_password = local.vm_ssh_key_data != null && local.vm_ssh_key_data != "" ? "" : local.vm_admin_password
+    ssh_key_data = local.vm_ssh_key_data
+    nfs_address = local.mount_addresses[0]
+    nfs_export_path = azurerm_template_deployment.storage_target1.outputs["namespacePath"]
+}
+
+// the VMSS module
+module "vmss" {
+    source = "../../../modules/vmss_mountable"
+
+    resource_group_name = local.vmss_resource_group_name
+    location = local.location
+    admin_username =local.vm_admin_username
+    admin_password = local.vm_admin_password
+    ssh_key_data = local.vm_ssh_key_data
+    unique_name = local.unique_name
+    vm_count = local.vm_count
+    vm_size = local.vmss_size
+    virtual_network_resource_group = local.network_resource_group_name
+    virtual_network_name = module.network.vnet_name
+    virtual_network_subnet_name = module.network.render_clients1_subnet_name
+    mount_target = local.mount_target
+    nfs_export_addresses = local.mount_addresses
+    nfs_export_path = local.nfs_export_path
+    bootstrap_script_path = module.vmss_configure.bootstrap_script_path
 }
 
 output "mount_addresses" {
