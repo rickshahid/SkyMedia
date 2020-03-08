@@ -1,9 +1,7 @@
 pipeline {
   agent any
   stages {
-
     if (env.BRANCH_NAME.contains('PR') {
-
       stage('Init') {
         steps {
           sh '''cd $TERRAFORM_CONFIG_DIRECTORY
@@ -12,7 +10,6 @@ pipeline {
   '''
         }
       }
-
       stage('Plan') {
         steps {
           sh '''cd $TERRAFORM_CONFIG_DIRECTORY
@@ -22,7 +19,6 @@ pipeline {
           input 'Terraform Plan Approved?'
         }
       }
-
       stage('Apply') {
         steps {
           sh '''cd $TERRAFORM_CONFIG_DIRECTORY
