@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Init') {
       when {
-        branch 'PR-*'
+        branch 'PR-**'
       }
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
