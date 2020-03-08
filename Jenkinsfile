@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    if (env.BRANCH_NAME.contains('PR') {
+    if (env.BRANCH_NAME.contains('PR')) {
       stage('Init') {
         steps {
           sh '''cd $TERRAFORM_CONFIG_DIRECTORY
