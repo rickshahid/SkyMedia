@@ -2,9 +2,7 @@ pipeline {
   agent any
   stages {
     stage('Init') {
-      when {
-        expression { env.BRANCH.NAME.contains('PR') }
-      }
+      when { branch "PR*" }
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
@@ -13,9 +11,7 @@ terraform init
       }
     }
     stage('Plan') {
-      when {
-        expression { env.BRANCH.NAME.contains('PR') }
-      }
+      when { branch "PR*" }
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
@@ -25,9 +21,7 @@ terraform plan -out plan.tf
       }
     }
     stage('Apply') {
-      when {
-        expression { env.BRANCH.NAME.contains('PR') }
-      }
+      when { branch "PR*" }
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
