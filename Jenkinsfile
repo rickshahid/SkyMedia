@@ -16,7 +16,7 @@ terraform init
 
 terraform plan -out plan.tf
 '''
-        input 'Terraform Plan Review'
+        input 'Terraform Plan Approved?'
       }
     }
 
