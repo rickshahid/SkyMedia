@@ -6,7 +6,7 @@ pipeline {
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform init
+terraform init -input=false
 '''
       }
     }
@@ -15,7 +15,7 @@ terraform init
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform plan -out plan.tf
+terraform plan -input=false -out=plan.tf
 '''
         input 'Terraform Plan Approved?'
       }
@@ -25,7 +25,7 @@ terraform plan -out plan.tf
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform apply plan.tf
+terraform apply -input=false plan.tf
 '''
       }
     }
