@@ -1,6 +1,6 @@
 terraform {
   backend "azurerm" {
-    resource_group_bane  = "Azure.Media.Studio0-Storage"
+    resource_group_name  = "Azure.Media.Studio0-Storage"
     storage_account_name = "mediastudio"
     container_name       = "terraform"
     key                  = "tfstate"
