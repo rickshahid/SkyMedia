@@ -19,7 +19,7 @@ terraform init -input=false -backend-config=backend.tf
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform plan -input=false -out=plan.tf
+terraform plan -input=false -out=tfplan
 '''
         input 'Terraform Plan Approved?'
       }
@@ -31,7 +31,7 @@ terraform plan -input=false -out=plan.tf
       steps {
         sh '''cd $TERRAFORM_CONFIG_DIRECTORY
 
-terraform apply -input=false plan.tf
+terraform apply -input=false tfplan
 '''
       }
     }
