@@ -1,0 +1,16 @@
+pipeline {
+  agent any
+  stages {
+    stage('Apply') {
+      when {
+        branch 'PR-*'
+      }
+      steps {
+        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
+
+terraform apply -input=false tfplan
+'''
+      }
+    }
+  }
+}
