@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('Init') {
+    stage('Plan') {
       steps {
         sh '''#!/bin/bash -xe
 for filePath in $(git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_PR_SHA)
@@ -14,12 +14,6 @@ do
 done
 cd $TERRAFORM_DIRECTORY
 terraform init -input=false -backend-config=backend.tf
-'''
-      }
-    }
-    stage('Plan') {
-      steps {
-        sh '''#!/bin/bash -xe
 terraform plan -input=false -out=tfplan
 '''
       }
