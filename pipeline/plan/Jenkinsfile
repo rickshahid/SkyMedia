@@ -9,6 +9,7 @@ for filePath in $(git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_PR_SHA)
 do
   if [ ${filePath: -3} == ".tf" ]
   then
+    echo 'a'
     TERRAFORM_DIRECTORY=$(dirname "${filePath}")
     break
   fi
