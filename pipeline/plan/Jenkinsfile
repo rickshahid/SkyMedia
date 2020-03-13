@@ -4,27 +4,22 @@ pipeline {
     stage('Init') {
       steps {
         sh '''#!/bin/bash -xe
-        cd $TERRAFORM_CONFIG_DIRECTORY
-        
 for filePath in $(git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_PR_SHA)
 do
   if [ ${filePath: -3} == ".tf" ]
   then
-    echo 'a'
     TERRAFORM_DIRECTORY=$(dirname "${filePath}")
     break
   fi
 done
-echo 'x'
-echo $TERRAFORM_DIRECTORY
+cd $TERRAFORM_DIRECTORY
 terraform init -input=false -backend-config=backend.tf
 '''
       }
     }
     stage('Plan') {
       steps {
-        sh '''cd $TERRAFORM_CONFIG_DIRECTORY
-
+        sh '''#!/bin/bash -xe
 terraform plan -input=false -out=tfplan
 '''
       }
