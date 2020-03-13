@@ -142,7 +142,7 @@
           },
           {
             "tenantId": "[subscription().tenantId]",
-            "objectId": "ed47c2a1-bd23-4341-b39c-f4fd69138dd3", // Microsoft.Azure.CertificateRegistration
+            "objectId": "ed47c2a1-bd23-4341-b39c-f4fd69138dd3",
             "permissions": {
               "secrets": [
                 "Get",
@@ -153,7 +153,7 @@
           },
           {
             "tenantId": "[subscription().tenantId]",
-            "objectId": "f8daea97-62e7-4026-becf-13c2ea98e8b4", // Microsoft.Azure.WebSites
+            "objectId": "f8daea97-62e7-4026-becf-13c2ea98e8b4",
             "permissions": {
               "secrets": [
                 "Get"
