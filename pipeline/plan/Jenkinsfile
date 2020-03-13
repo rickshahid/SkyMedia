@@ -8,6 +8,7 @@ pipeline {
 for filePath in $(git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_PR_SHA); 
 do
   if [[ $filePath == *.tf ]]
+  then
     TERRAFORM_DIRECTORY=$(dirname "${filePath}")
   fi
 done
