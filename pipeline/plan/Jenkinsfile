@@ -14,7 +14,7 @@ do
   fi
 done
 
-if [ ${terraformDirectory+x} ]
+if [ -v terraformDirectory ]
 then
   cd $terraformDirectory
   terraform init -input=false -backend-config=backend.tf
