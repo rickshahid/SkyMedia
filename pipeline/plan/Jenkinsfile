@@ -16,9 +16,9 @@ done
 
 if [ -v terraformDirectory ]
 then
-  cp backend.tf $terraformDirectory
+  cp $TF_BACKEND_CONFIG $terraformDirectory
   cd $terraformDirectory
-  terraform init -input=false -backend-config=backend.tf
+  terraform init -input=false -backend-config=$TF_BACKEND_CONFIG
   terraform plan -input=false -out=tfplan
 fi
 '''
