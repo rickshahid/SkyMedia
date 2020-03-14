@@ -25,4 +25,9 @@ fi
       }
     }
   }
+  post {
+    success {
+      archiveArtifacts '*'
+    }
+  }
 }
