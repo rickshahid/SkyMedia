@@ -17,7 +17,7 @@ done
 if [ -v terraformDirectory ]
 then
   cd $terraformDirectory
-  terraform init -input=false -backend-config=/backend.tf
+  terraform init -input=false -backend-config=backend.tf
   terraform plan -input=false -out=tfplan
 fi
 '''
