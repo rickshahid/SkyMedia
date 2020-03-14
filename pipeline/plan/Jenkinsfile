@@ -4,7 +4,7 @@ pipeline {
     stage('Plan') {
       steps {
         sh '''#!/bin/bash -xe
-pwd
+
 for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
 do
   if [ ${changedFile: -3} == ".tf" ]
@@ -16,8 +16,9 @@ done
 
 if [ -v terraformDirectory ]
 then
+  cp backend.tf $terraformDirectory
   cd $terraformDirectory
-  terraform init -input=false -backend-config="path=/backend.tf"
+  terraform init -input=false -backend-config=backend.tf
   terraform plan -input=false -out=tfplan
 fi
 '''
