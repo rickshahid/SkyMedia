@@ -4,6 +4,7 @@ pipeline {
     stage('Plan') {
       steps {
         sh '''#!/bin/bash -xe
+
 for filePath in $(git diff --name-only $GIT_PREVIOUS_COMMIT $GIT_PR_SHA)
 do
   if [ ${filePath: -3} == ".tf" ]
@@ -12,9 +13,13 @@ do
     break
   fi
 done
-cd $terraformDirectory
-terraform init -input=false -backend-config=backend.tf
-terraform plan -input=false -out=tfplan
+
+if [ ${terraformDirectory+x} ]
+then
+  cd $terraformDirectory
+  terraform init -input=false -backend-config=backend.tf
+  terraform plan -input=false -out=tfplan
+fi
 '''
       }
     }
