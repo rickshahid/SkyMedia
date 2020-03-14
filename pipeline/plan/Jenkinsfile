@@ -27,7 +27,7 @@ fi
   }
   post {
     success {
-      archiveArtifacts '**/*'
+      archiveArtifacts '/**/*'
     }
   }
 }
