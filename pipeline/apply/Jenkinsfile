@@ -3,10 +3,7 @@ pipeline {
   stages {
     stage('Apply') {
       steps {
-        step([
-          $class: 'CopyArtifact',
-          projectName: "Plan"
-        ])
+        copyArtifacts 'Plan'
         sh '''#!/bin/bash -xe
 terraform apply -input=false tfplan
 '''
