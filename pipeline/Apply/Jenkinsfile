@@ -5,7 +5,21 @@ pipeline {
       steps {
         copyArtifacts 'Plan'
         sh '''#!/bin/bash -xe
-terraform apply -input=false tfplan
+
+for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
+do
+  if [ ${changedFile: -3} == ".tf" ]
+  then
+    terraformDirectory=$(dirname $changedFile)
+    break
+  fi
+done
+
+if [ -v terraformDirectory ]
+then
+  cd $terraformDirectory
+  terraform apply -input=false tfplan
+fi
 '''
       }
     }
