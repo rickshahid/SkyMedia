@@ -1,0 +1,13 @@
+pipeline {
+  agent any
+  stages {
+    stage('Apply') {
+      steps {
+        copyArtifacts 'Plan'
+        sh '''#!/bin/bash -xe
+terraform apply -input=false tfplan
+'''
+      }
+    }
+  }
+}
