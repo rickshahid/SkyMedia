@@ -71,3 +71,15 @@ variable "nfs_export_path" {
 variable "bootstrap_script_path" {
   description = "The script path on the NFS share to execute during deployment."
 }
+
+variable "overprovision" {
+  description = "specifies to use overprovisioning, by default is false"
+  default = "false"
+}
+
+// depends on technique described here: https://discuss.hashicorp.com/t/tips-howto-implement-module-depends-on-emulation/2305/2
+variable "vmss_depends_on" {
+  description = "used to establish dependency between objects"
+  type = any
+  default = null
+}

@@ -4,25 +4,17 @@ This is a basic setup to generate small and medium sized workloads to test the p
 
 ## Deployment Instructions
 
-To run the example, execute the following instructions.  This assumes use of Azure Cloud Shell, but you can use in your own environment, ensure you install the vfxt provider as described in the [build provider instructions](../../../providers/terraform-provider-avere#build-the-terraform-provider-binary).  However, if you are installing into your own environment, you will need to follow the [instructions to setup terraform for the Azure environment](https://docs.microsoft.com/en-us/azure/terraform/terraform-install-configure).
+To run the example, execute the following instructions.  This assumes use of Azure Cloud Shell.  If you are installing into your own environment, you will need to follow the [instructions to setup terraform for the Azure environment](https://docs.microsoft.com/en-us/azure/terraform/terraform-install-configure).
 
 Before starting, download the latest vdbench from https://www.oracle.com/technetwork/server-storage/vdbench-downloads-1901681.html.  To download you will need to create an account with Oracle and accept the license.  Upload to a storage account or something similar where you can create a personal downloadable URL.
 
 1. browse to https://shell.azure.com
 
-2. Specify your subscription by running this command with your subscription ID:  ```az account set --subscription YOUR_SUBSCRIPTION_ID```.  You will need to run this everytime after restarting your shell, otherwise it may default you to the wrong subscription, and you will see an error similar to `azurerm_public_ip.vm is empty tuple`.
+2. Specify your subscription by running this command with your subscription ID:  ```az account set --subscription YOUR_SUBSCRIPTION_ID```.  You will need to run this every time after restarting your shell, otherwise it may default you to the wrong subscription, and you will see an error similar to `azurerm_public_ip.vm is empty tuple`.
 
-3. double check your Avere vFXT pre-requistes, including running `az vm image accept-terms --urn microsoft-avere:vfxt:avere-vfxt-controller:latest`: https://docs.microsoft.com/en-us/azure/avere-vfxt/avere-vfxt-prereqs
+3. double check your [HPC Cache pre-requistes](https://docs.microsoft.com/en-us/azure/hpc-cache/hpc-cache-prereqs)
 
-4. If not already installed, run the following commands to install the Avere vFXT provider for Azure:
-```bash
-mkdir -p ~/.terraform.d/plugins
-# install the vfxt released binary from https://github.com/Azure/Avere
-wget -O ~/.terraform.d/plugins/terraform-provider-avere https://github.com/Azure/Avere/releases/download/tfprovider_v0.4.2/terraform-provider-avere
-chmod 755 ~/.terraform.d/plugins/terraform-provider-avere
-```
-
-5. get the terraform examples
+4. get the terraform examples
 ```bash
 mkdir tf
 cd tf
@@ -33,26 +25,32 @@ echo "src/terraform/*" >> .git/info/sparse-checkout
 git pull origin master
 ```
 
-6. `cd src/terraform/examples/vfxt/vdbench`
+6. `cd src/terraform/examples/HPC\ Cache/vdbench`
 
 7. `code main.tf` to edit the local variables section at the top of the file, to customize to your preferences
 
 8. execute `terraform init` in the directory of `main.tf`.
 
-9. execute `terraform apply -auto-approve` to build the vfxt cluster
+9. execute `terraform apply -auto-approve` to build the HPC Cache cluster with a 12 node VMSS configured to run VDBench.
 
 ## Using vdbench
 
-1. After deployment is complete, find the IP of one of the VDBench clients from the [portal](https://portal.azure.com) or https://resources.azure.com, and login from the controller and run the following commands to set your private SSH secret:
+1. After deployment is complete, login to the jumpbox as specified by the `jumpbox_username` and `jumpbox_address` terraform output variables, and create the [ssh key](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys) to be used by vdbench on the jumpbox:
 
    ```bash
    touch ~/.ssh/id_rsa
    chmod 600 ~/.ssh/id_rsa
    vi ~/.ssh/id_rsa
    ```
-    
-2. During installation, `copy_dirsa.sh` was installed to `~/.` on the vdbench client machine, to enable easy copying of your private key to all vdbench clients.  Run `~/copy_idrsa.sh` to copy your private key to all vdbench clients, and to add all clients to the "known hosts" list. (**Note** if your ssh key requires a passphrase, some extra steps are needed to make this work. Consider creating a key that does not require a passphrase for ease of use.)
+2. run `az login` and execute the command from the `vmss_addresses_command` terraform output variable to get one ip address of a VMSS node, and run the following commands to copy the `id_rsa` file, and login to the node, replace USERNAME with the jumpbox username and IP_ADDRESS with ip address of a VMSS node:
 
+   ```bash
+   scp ~/.ssh/id_rsa USERNAME@IP_ADDRESS:.ssh/.
+   ssh USERNAME@IP_ADDRESS
+   vi ~/.ssh/id_rsa
+   ```
+
+3. During installation, `copy_dirsa.sh` was installed to `~/.` on the vdbench client machine, to enable easy copying of your private key to all vdbench clients.  Run `~/copy_idrsa.sh` to copy your private key to all vdbench clients, and to add all clients to the "known hosts" list. (**Note** if your ssh key requires a passphrase, some extra steps are needed to make this work. Consider creating a key that does not require a passphrase for ease of use.)
 
 ### Memory test 
 
@@ -63,9 +61,9 @@ git pull origin master
    ./run_vdbench.sh inmem.conf uniquestring1
    ```
 
-2. Browse to the Azure HPC Cache resource in the portal or log in to Avere vFXT cluster GUI (Avere Control Panel - instructions [here](https://docs.microsoft.com/azure/avere-vfxt/avere-vfxt-cluster-gui)) to watch the performance metrics. You will see a similar performance chart to the following:
+2. Browse to the Azure HPC Cache resource in the portal to watch the performance metrics. You will see a similar performance chart to the following:
 
-   <img src="../../../../../docs/images/vdbench_inmem.png">
+   <img src="../../../../../docs/images/vdbench_inmem_hpc_cache.png">
 
 ### On-disk test
 
@@ -76,6 +74,6 @@ git pull origin master
    ./run_vdbench.sh ondisk.conf uniquestring2
    ```
 
-2. Log in to the Avere Control Panel ([instructions](https://docs.microsoft.com/azure/avere-vfxt/avere-vfxt-cluster-gui)) to watch the performance metrics. You will see a performance chart similar to the following one:
+2. Browse to the Azure HPC Cache resource in the portal to watch the performance metrics. You will see a performance chart similar to the following one:
 
-   <img src="../../../../../docs/images/vdbench_ondisk.png">
+   <img src="../../../../../docs/images/vdbench_ondisk_hpc_cache.png">

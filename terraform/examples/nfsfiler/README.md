@@ -7,6 +7,7 @@ The following table shows the performance characteristics of various Azure SKUs:
 | Azure SKU | Ephemeral Disk Type | Capacity (TiB) | Storage Throughput (GB/s) | IOPs |
 | --- | --- | --- | --- | --- |
 | Standard_D2s_v3 (good for POC) | ssd | 0.04 TiB | 0.04 Read GB/s, 0.02 Write GB/s  | 3000 |
+| Standard_D32_v3 (good for POC) | ssd | 0.78 TiB | 0.73 Read GB/s, 0.37 Write GB/s  | 48000 |
 | Standard_L4s | ssd | 0.56 TiB | 0.20 GB/s | 20000 |
 | Standard_L8s | ssd | 1.15 TiB | 0.39 GB/s | 40000 |
 | Standard_L16s | ssd | 2.33 TiB | 0.78 GB/s | 80000 |
@@ -25,7 +26,7 @@ To run the example, execute the following instructions.  This assumes use of Azu
 
 1. browse to https://shell.azure.com
 
-2. Specify your subscription by running this command with your subscription ID:  ```az account set --subscription YOUR_SUBSCRIPTION_ID```.  You will need to run this everytime after restarting your shell, otherwise it may default you to the wrong subscription, and you will see an error similar to `azurerm_public_ip.vm is empty tuple`.
+2. Specify your subscription by running this command with your subscription ID:  ```az account set --subscription YOUR_SUBSCRIPTION_ID```.  You will need to run this every time after restarting your shell, otherwise it may default you to the wrong subscription, and you will see an error similar to `azurerm_public_ip.vm is empty tuple`.
 
 3. As a pre-requisite ensure you have a network and the ability to ssh to a private ip address.  If not deploy the [jumpbox example](../jumpbox/).
 

@@ -22,16 +22,23 @@ locals {
     controller_add_public_ip = true
     vfxt_cluster_name = "vfxt"
     vfxt_cluster_password = "VFXT_PASSWORD"
+    // vfxt cache polies
+    //  "Clients Bypassing the Cluster"
+    //  "Read Caching"
+    //  "Read and Write Caching"
+    //  "Full Caching"
+    //  "Transitioning Clients Before or After a Migration"
+    cache_policy = "Clients Bypassing the Cluster"
 }
 
 provider "azurerm" {
-    version = "~>2.0.0"
+    version = "~>2.1.0"
     features {}
 }
 
 // the render network
 module "network" {
-    source = "../../../modules/render_network"
+    source = "github.com/Azure/Avere/src/terraform/modules/render_network"
     resource_group_name = local.network_resource_group_name
     location = local.location
 }
@@ -43,7 +50,7 @@ resource "azurerm_resource_group" "nfsfiler" {
 
 // the ephemeral filer
 module "nasfiler1" {
-    source = "../../../modules/nfs_filer"
+    source = "github.com/Azure/Avere/src/terraform/modules/nfs_filer"
     resource_group_name = azurerm_resource_group.nfsfiler.name
     location = azurerm_resource_group.nfsfiler.location
     admin_username = local.vm_admin_username
@@ -60,7 +67,7 @@ module "nasfiler1" {
 
 // the vfxt controller
 module "vfxtcontroller" {
-    source = "../../../modules/controller"
+    source = "github.com/Azure/Avere/src/terraform/modules/controller"
     resource_group_name = local.vfxt_resource_group_name
     location = local.location
     admin_username = local.vm_admin_username
@@ -97,7 +104,7 @@ resource "avere_vfxt" "vfxt" {
     core_filer {
         name = "nfs1"
         fqdn_or_primary_ip = module.nasfiler1.primary_ip
-        cache_policy = "Clients Bypassing the Cluster"
+        cache_policy = local.cache_policy
         junction {
             namespace_path = "/nfs1data"
             core_filer_export = module.nasfiler1.core_filer_export

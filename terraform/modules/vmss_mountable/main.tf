@@ -1,6 +1,6 @@
 // customize the simple VM by editing the following local variables
 locals {
-    vm_name = "vm-${var.unique_name}"
+    vm_name = "${var.unique_name}"
 }
 
 data "azurerm_subnet" "vnet" {
@@ -29,6 +29,7 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
   upgrade_policy_mode = "Manual"
   priority            = var.vmss_priority
   eviction_policy     = var.vmss_priority == "Spot" ? "Delete" : null
+  overprovision       = var.overprovision
 
   dynamic "os_profile" {
     for_each = (var.ssh_key_data == null || var.ssh_key_data == "") && var.admin_password != null && var.admin_password != "" ? [var.admin_password] : [null] 
@@ -89,6 +90,8 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
     }
   }
 
+  // per the following article, wait for the bootstrap file to appear: https://github.com/hashicorp/terraform/issues/18303.
+  // the solution is to either put a while loop in the below, or alternatively wait for https://www.terraform.io/docs/providers/external/data_source.html 
   extension {
     name                 = "${var.unique_name}-cse"
     publisher            = "Microsoft.Azure.Extensions"
@@ -101,10 +104,12 @@ resource "azurerm_virtual_machine_scale_set" "vmss" {
     # 4. unmount the nfs server the bootstrap directory 
     settings = <<SETTINGS
     {
-        "commandToExecute": "set -x && ((apt-get update && apt-get install -y nfs-common) || (sleep 10 && apt-get update && apt-get install -y nfs-common) || (sleep 10 && apt-get update && apt-get install -y nfs-common)) && mkdir -p ${local.bootstrap_path} && r=5 && for i in $(seq 1 $r); do mount -o 'hard,nointr,proto=tcp,mountproto=tcp,retry=30' ${var.nfs_export_addresses[0]}:${var.nfs_export_path} ${local.bootstrap_path} && break || [ $i == $r ] && break 0 || sleep 1; done && ${local.env_vars} /bin/bash ${local.bootstrap_path}${var.bootstrap_script_path} 2>&1 | tee -a /var/log/bootstrap.log && umount ${local.bootstrap_path} && rmdir ${local.bootstrap_path}"
+        "commandToExecute": "set -x && ((apt-get update && apt-get install -y nfs-common) || (sleep 10 && apt-get update && apt-get install -y nfs-common) || (sleep 10 && apt-get update && apt-get install -y nfs-common)) && mkdir -p ${local.bootstrap_path} && r=5 && for i in $(seq 1 $r); do mount -o 'hard,nointr,proto=tcp,mountproto=tcp,retry=30' ${var.nfs_export_addresses[0]}:${var.nfs_export_path} ${local.bootstrap_path} && break || [ $i == $r ] && break 0 || sleep 1; done && while [ ! -f ${local.bootstrap_path}${var.bootstrap_script_path} ]; do sleep 10; done && ${local.env_vars} /bin/bash ${local.bootstrap_path}${var.bootstrap_script_path} 2>&1 | tee -a /var/log/bootstrap.log && umount ${local.bootstrap_path} && rmdir ${local.bootstrap_path}"
     }
 SETTINGS
   }
+
+  depends_on = [var.vmss_depends_on]
 }
 
 /*
