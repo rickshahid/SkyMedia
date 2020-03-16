@@ -28,8 +28,7 @@ fi
   }
   post {
     success {
-      def tfConfigDirectory = readFile('tfConfigDirectory').trim()
-      dir(tfConfigDirectory) {
+      dir(readFile('tfConfigDirectory').trim()) {
         archiveArtifacts '*'
       }
     }
