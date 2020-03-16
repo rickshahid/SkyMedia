@@ -30,6 +30,7 @@ fi
     success {
       dir(readFile('tfConfigDirectory').trim()) {
         archiveArtifacts '*'
+        archiveArtifacts '.terraform'
       }
     }
   }
