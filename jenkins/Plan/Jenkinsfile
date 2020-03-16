@@ -16,7 +16,7 @@ done
 
 if [ -v tfConfigDirectory ]
 then
-  TF_CONFIG_DIRECTORY="$tfConfigDirectory"
+  export TF_CONFIG_DIRECTORY="$tfConfigDirectory"
   cp $TF_BACKEND_CONFIG $tfConfigDirectory
   cd $tfConfigDirectory
   terraform init -input=false -backend-config=$TF_BACKEND_CONFIG
