@@ -16,7 +16,7 @@ done
 
 if [ -v tfConfigDirectory ]
 then
-  export TF_CONFIG_DIRECTORY="$tfConfigDirectory"
+  echo "$tfConfigDirectory" > tfConfig.d
   cp $TF_BACKEND_CONFIG $tfConfigDirectory
   cd $tfConfigDirectory
   terraform init -input=false -backend-config=$TF_BACKEND_CONFIG
@@ -28,7 +28,7 @@ fi
   }
   post {
     success {
-      dir("$TF_CONFIG_DIRECTORY") {
+      dir(readFile('tfConfig.d').trim()) {
         archiveArtifacts '**/*'
       }
     }
