@@ -29,8 +29,7 @@ fi
   post {
     success {
       dir(readFile('tfConfigDirectory').trim()) {
-        archiveArtifacts '.terraform/*'
-        archiveArtifacts '*'
+        archiveArtifacts '**/*'
       }
     }
   }
