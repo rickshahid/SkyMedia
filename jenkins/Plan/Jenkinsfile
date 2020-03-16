@@ -27,9 +27,7 @@ fi
   }
   post {
     success {
-      dir($terraformDirectory) {
-        archiveArtifacts '**'
-      }
+      archiveArtifacts 'terraform/examples/vfxt/3-filers/*'
     }
   }
 }
