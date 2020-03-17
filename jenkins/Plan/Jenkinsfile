@@ -8,8 +8,7 @@ for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
 do
   if [ ${changedFile: -3} == ".tf" ]
   then
-    tfFilePath=$(dirname $changedFile)
-    echo "$tfFilePath" > tfFilePath
+    echo "$(dirname $changedFile)" > tfFilePath
     break
   fi
 done
@@ -24,6 +23,7 @@ done
       }
       steps {
         sh '''#!/bin/bash -xe
+tfFilePath=$(cat tfFilePath)
 cp $TF_BACKEND_CONFIG $tfFilePath
 cd $tfFilePath
 terraform init -input=false -backend-config=$TF_BACKEND_CONFIG
