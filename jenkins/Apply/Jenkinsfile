@@ -1,12 +1,12 @@
 pipeline {
   agent any
   stages {
-    stage('Artifact') {
+    stage('Terraform Plan') {
       steps {
         copyArtifacts projectName: 'Plan', optional: true
       }
     }
-    stage('Apply') {
+    stage('Terraform Apply') {
       when {
         expression {
           fileExists('tfPlan')
