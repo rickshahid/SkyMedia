@@ -4,7 +4,7 @@ pipeline {
     stage('Apply') {
       when {
         expression {
-          fileExists('tfConfig.d')
+          fileExists('tfFilePath')
         }
       }      
       steps {
