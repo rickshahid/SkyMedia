@@ -1,9 +1,18 @@
 pipeline {
   agent any
   stages {
-    stage('Apply') {
+    stage('Artifact') {
       steps {
         copyArtifacts projectName: 'Plan', optional: true
+      }
+    }
+    stage('Apply') {
+      when {
+        expression {
+          fileExists('tfPlan')
+        }
+      }      
+      steps {
         sh '''#!/bin/bash -xe
 terraform apply -input=false tfPlan
 '''
