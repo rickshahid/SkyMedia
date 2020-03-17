@@ -25,14 +25,14 @@ fi
 '''
       }
     }
-  }
-  post {
-    success {
+    stage('Artifact') {
       when {
         fileExists('tfConfig.d')
       }
-      dir(readFile('tfConfig.d').trim()) {
-        archiveArtifacts '**/*'
+      steps {
+        dir(readFile('tfConfig.d').trim()) {
+          archiveArtifacts '**/*'
+        }
       }
     }
   }
