@@ -29,7 +29,7 @@ cd $tfFilePath
 terraform init -input=false -backend-config=$TF_BACKEND_CONFIG
 terraform plan -input=false -out=tfPlan
 '''
-        dir(readFile('tfFilePath').trim()) {
+        dir(readFile('tfFilePath')) {
           archiveArtifacts artifacts: '**/*'
         }
       }
