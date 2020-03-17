@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('Trigger Filter') {
+    stage('Validate Context') {
       steps {
         sh '''#!/bin/bash -xe
 for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
