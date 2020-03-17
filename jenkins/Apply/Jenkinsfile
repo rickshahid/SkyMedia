@@ -2,6 +2,11 @@ pipeline {
   agent any
   stages {
     stage('Apply') {
+      when {
+        expression {
+          fileExists('tfConfig.d')
+        }
+      }      
       steps {
         copyArtifacts 'Plan'
         sh '''#!/bin/bash -xe
