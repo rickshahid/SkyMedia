@@ -28,6 +28,9 @@ fi
   }
   post {
     success {
+      when {
+        fileExists('tfConfig.d')
+      }
       dir(readFile('tfConfig.d').trim()) {
         archiveArtifacts '**/*'
       }
