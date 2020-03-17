@@ -8,7 +8,8 @@ for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
 do
   if [ ${changedFile: -3} == ".tf" ]
   then
-    echo "$(dirname $changedFile)" > tfFilePath
+    tfFilePath=$(dirname $changedFile)
+    echo "$tfFilePath" > tfFilePath
     break
   fi
 done
