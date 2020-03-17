@@ -33,7 +33,7 @@ fi
       }
       steps {
         dir(readFile('tfFilePath').trim()) {
-          archiveArtifacts '**/*'
+          archiveArtifacts artifacts: '**/*'
         }
       }
     }
