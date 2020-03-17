@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('Terraform Plan') {
+    stage('Validate Context') {
       steps {
         copyArtifacts projectName: 'Plan', optional: true
       }
