@@ -10,7 +10,7 @@ pipeline {
       steps {
         copyArtifacts 'Plan'
         sh '''#!/bin/bash -xe
-terraform apply -input=false tfplan
+terraform apply -input=false tfPlan
 '''
       }
     }
