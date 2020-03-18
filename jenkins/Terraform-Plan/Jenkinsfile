@@ -5,6 +5,7 @@ pipeline {
     string(name: 'ARM_SUBSCRIPTION_ID', description: 'Azure subscription identifier.')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure managed service identity (MSI) authorization.')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestration context.')
+    string(name: 'TF_BACKEND_CONFIG_FILE', description: 'Terraform backend-persisted state configuration file path.')
   }
   triggers {
     GenericTrigger(
