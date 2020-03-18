@@ -1,5 +1,17 @@
 pipeline {
   agent any
+  triggers {
+    GenericTrigger(
+     genericVariables: [
+      [key: 'LABEL', value: '$.pull_request.head.label'],
+      [key: 'ACTION', value: '$.action'],
+      [key: 'GIT_PR_SHA', value: '$.pull_request.head.sha']
+     ],
+     causeString: '$LABEL',
+     regexpFilterText: '$ACTION',
+     regexpFilterExpression: 'opened'
+    )
+  }
   stages {
     stage('Validate Context') {
       steps {
