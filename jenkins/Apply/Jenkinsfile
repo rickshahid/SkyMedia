@@ -1,5 +1,16 @@
 pipeline {
   agent any
+  triggers {
+    GenericTrigger(
+      genericVariables: [
+        [key: 'LABEL', value: '$.pull_request.head.label'],
+        [key: 'MERGED', value: '$.pull_request.merged']
+      ],
+      causeString: '$LABEL',
+      regexpFilterText: '$MERGED',
+      regexpFilterExpression: 'true'
+    )
+  }
   stages {
     stage('Validate Context') {
       steps {
