@@ -1,0 +1,33 @@
+pipeline {
+  agent any
+  triggers {
+    GenericTrigger(
+      genericVariables: [
+        [key: 'LABEL', value: '$.pull_request.head.label'],
+        [key: 'MERGED', value: '$.pull_request.merged']
+      ],
+      causeString: '$LABEL',
+      regexpFilterText: '$MERGED',
+      regexpFilterExpression: 'true'
+    )
+  }
+  stages {
+    stage('Validate Context') {
+      steps {
+        copyArtifacts projectName: 'Plan', optional: true
+      }
+    }
+    stage('Terraform Apply') {
+      when {
+        expression {
+          fileExists('tfPlan')
+        }
+      }      
+      steps {
+        sh '''#!/bin/bash -xe
+terraform apply -input=false tfPlan
+'''
+      }
+    }
+  }
+}
