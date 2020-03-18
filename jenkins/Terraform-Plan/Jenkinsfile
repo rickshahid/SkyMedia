@@ -1,5 +1,11 @@
 pipeline {
   agent any
+  parameters {
+    string(name: 'ARM_TENANT_ID', description: 'Azure Active Directory tenant identifier.')
+    string(name: 'ARM_SUBSCRIPTION_ID', description: 'Azure subscription identifier.')
+    booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure managed service identity (MSI) authorization.')
+    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestarted context.')
+  }
   triggers {
     GenericTrigger(
       genericVariables: [
