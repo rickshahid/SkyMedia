@@ -57,4 +57,10 @@ terraform plan -input=false -out=tfPlan
       }
     }
   }
+  checkout([
+    $class: 'GitSCM',
+    extensions: [
+      [$class: 'CleanBeforeCheckout']
+    ]
+  ])
 }
