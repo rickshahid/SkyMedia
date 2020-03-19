@@ -43,8 +43,9 @@ done
       steps {
         sh '''#!/bin/bash -xe
 tfFilePath=$(cat tfFilePath)
+cp $TF_BACKEND_CONFIG_FILE $tfFilePath
 cd $tfFilePath
-terraform init -input=false -backend-config='/var/lib/jenkins/workspace/Terraform-Plan/backend.tf'
+terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
 terraform plan -input=false -out=tfPlan
 '''
         dir(readFile('tfFilePath').trim()) {
