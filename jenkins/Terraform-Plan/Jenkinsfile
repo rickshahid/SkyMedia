@@ -26,16 +26,16 @@ pipeline {
     stage('Validate Context') {
       steps {
         sh '''#!/bin/bash -xe
-rm --force tfFilePath
-for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
-do
-  if [ ${changedFile: -3} == ".tf" ]
-  then
-    echo -n "$(dirname $changedFile)" > tfFilePath
-    break
-  fi
-done
-'''
+          rm --force tfFilePath
+          for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
+          do
+            if [ ${changedFile: -3} == ".tf" ]
+            then
+              echo -n "$(dirname $changedFile)" > tfFilePath
+              break
+            fi
+          done
+        '''
       }
     }
     stage('Terraform Plan') {
@@ -46,12 +46,12 @@ done
       }
       steps {
         sh '''#!/bin/bash -xe
-tfFilePath=$(cat tfFilePath)
-cp $TF_BACKEND_CONFIG_FILE $tfFilePath
-cd $tfFilePath
-terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
-terraform plan -input=false -out=tfPlan
-'''
+          tfFilePath=$(cat tfFilePath)
+          cp $TF_BACKEND_CONFIG_FILE $tfFilePath
+          cd $tfFilePath
+          terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
+          terraform plan -input=false -out=tfPlan
+        '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
         }
