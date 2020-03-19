@@ -17,7 +17,7 @@ pipeline {
       ],
       causeString: '$LABEL',
       regexpFilterText: '$MERGED',
-      regexpFilterExpression: true
+      regexpFilterExpression: 'true'
     )
   }
   stages {
