@@ -47,10 +47,8 @@ pipeline {
       steps {
         sh '''#!/bin/bash -xe
           tfFilePath=$(cat tfFilePath)
-          cp $TF_BACKEND_CONFIG_FILE $tfFilePath
-          cd $tfFilePath
-          terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
-          terraform plan -input=false -out=tfPlan
+          terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE $tfFilePath
+          terraform plan -input=false -out=tfPlan $tfFilePath
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
