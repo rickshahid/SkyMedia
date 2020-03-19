@@ -7,6 +7,9 @@ pipeline {
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestration context.')
     string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
   }
+  options {
+    disableConcurrentBuilds()
+  }
   triggers {
     GenericTrigger(
       genericVariables: [
