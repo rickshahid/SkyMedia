@@ -5,7 +5,10 @@ pipeline {
     string(name: 'ARM_SUBSCRIPTION_ID', description: 'Azure subscription identifier.')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure managed service identity (MSI) authorization.')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestration context.')
-  }  
+  }
+  options {
+    disableConcurrentBuilds()
+  }
   triggers {
     GenericTrigger(
       genericVariables: [
@@ -28,7 +31,7 @@ pipeline {
         expression {
           fileExists('tfPlan')
         }
-      }      
+      }
       steps {
         sh '''#!/bin/bash -xe
 terraform apply -input=false tfPlan
