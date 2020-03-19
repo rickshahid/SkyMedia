@@ -1,11 +1,11 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'ARM_TENANT_ID', description: 'Azure Active Directory tenant identifier.')
-    string(name: 'ARM_SUBSCRIPTION_ID', description: 'Azure subscription identifier.')
+    string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47', description: 'Azure Active Directory tenant identifier.')
+    string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3', description: 'Azure subscription identifier.')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure managed service identity (MSI) authorization.')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestration context.')
-    string(name: 'TF_BACKEND_CONFIG_FILE', description: 'Terraform backend-persisted state configuration file path.')
+    string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: '/backend.tf', description: 'Terraform backend-persisted state configuration file path.')
   }
   triggers {
     GenericTrigger(
@@ -43,9 +43,8 @@ done
       steps {
         sh '''#!/bin/bash -xe
 tfFilePath=$(cat tfFilePath)
-cp $TF_BACKEND_CONFIG $tfFilePath
 cd $tfFilePath
-terraform init -input=false -backend-config=$TF_BACKEND_CONFIG
+terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
 terraform plan -input=false -out=tfPlan
 '''
         dir(readFile('tfFilePath').trim()) {
