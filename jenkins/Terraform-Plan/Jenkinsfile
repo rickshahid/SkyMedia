@@ -5,7 +5,7 @@ pipeline {
     string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3', description: 'Azure subscription identifier.')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure managed service identity (MSI) authorization.')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestration context.')
-    string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: '/backend.tf', description: 'Terraform backend configuration file.')
+    string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
   }
   options {
     disableConcurrentBuilds()
@@ -47,8 +47,10 @@ pipeline {
       steps {
         sh '''#!/bin/bash -xe
           tfFilePath=$(cat tfFilePath)
-          terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE $tfFilePath
-          terraform plan -input=false -out=tfPlan $tfFilePath
+          cp $TF_BACKEND_CONFIG_FILE $tfFilePath
+          cd $tfFilePath
+          terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
+          terraform plan -input=false -out=tfPlan
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
