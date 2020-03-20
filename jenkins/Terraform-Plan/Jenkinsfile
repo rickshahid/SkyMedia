@@ -26,6 +26,7 @@ pipeline {
     stage('Validate Context') {
       steps {
         sh '''#!/bin/bash -xe
+          rm -f tfFilePath
           for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
           do
             if [ ${changedFile: -3} == ".tf" ]
