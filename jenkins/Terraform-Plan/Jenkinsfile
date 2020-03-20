@@ -8,7 +8,6 @@ pipeline {
     string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
   }
   options {
-    skipDefaultCheckout()
     disableConcurrentBuilds()
   }
   triggers {
@@ -26,8 +25,6 @@ pipeline {
   stages {
     stage('Validate Context') {
       steps {
-        deleteDir()
-        checkout scm
         sh '''#!/bin/bash -xe
           for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
           do
