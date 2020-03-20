@@ -21,7 +21,7 @@ pipeline {
     )
   }
   stages {
-    stage('Validate Context') {
+    stage('Pipeline Context') {
       steps {
         copyArtifacts projectName: 'Terraform-Plan', optional: true
       }
