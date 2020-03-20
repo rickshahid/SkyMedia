@@ -15,7 +15,8 @@ pipeline {
       genericVariables: [
         [key: 'LABEL', value: '$.pull_request.head.label'],
         [key: 'ACTION', value: '$.action'],
-        [key: 'GIT_PR_SHA', value: '$.pull_request.head.sha']
+        [key: 'PULL_REQUEST_ID', value: '$.pull_request.head.sha']
+        [key: 'BRANCH_NAME', value: '$.pull_request.head.ref']
       ],
       causeString: '$LABEL',
       regexpFilterText: '$ACTION',
@@ -27,7 +28,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash -xe
           rm -f tfFilePath
-          for changedFile in $(git diff --name-only $GIT_COMMIT $GIT_PR_SHA)
+          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_ID)
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
@@ -53,7 +54,7 @@ pipeline {
           terraform plan -input=false -out=tfPlan
           git add tfPlan
           git commit -m "Add Terraform plan file"
-          git push
+          git push origin HEAD:$BRANCH_NAME
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
