@@ -13,13 +13,13 @@ pipeline {
   triggers {
     GenericTrigger(
       genericVariables: [
-        [key: 'LABEL', value: '$.pull_request.head.label'],
-        [key: 'ACTION', value: '$.action'],
-        [key: 'PULL_REQUEST_ID', value: '$.pull_request.head.sha']
+        [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label'],
+        [key: 'PULL_REQUEST_ACTION', value: '$.action'],
+        [key: 'PULL_REQUEST_ID', value: '$.pull_request.head.sha'],
         [key: 'BRANCH_NAME', value: '$.pull_request.head.ref']
       ],
-      causeString: '$LABEL',
-      regexpFilterText: '$ACTION',
+      causeString: '$PULL_REQUEST_LABEL',
+      regexpFilterText: '$PULL_REQUEST_ACTION',
       regexpFilterExpression: 'opened'
     )
   }
