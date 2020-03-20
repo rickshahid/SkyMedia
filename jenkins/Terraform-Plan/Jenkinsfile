@@ -54,7 +54,7 @@ pipeline {
           terraform plan -input=false -out=tfPlan
           git add tfPlan
           git commit -m "Add Terraform plan file"
-          git push HEAD:$BRANCH_NAME
+          git push HEAD:$BRANCH_NAME HEAD:$BRANCH_NAME
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
