@@ -12,11 +12,11 @@ pipeline {
   triggers {
     GenericTrigger(
       genericVariables: [
-        [key: 'LABEL', value: '$.pull_request.head.label'],
-        [key: 'MERGED', value: '$.pull_request.merged']
+        [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label'],
+        [key: 'PULL_REQUEST_MERGED', value: '$.pull_request.merged']
       ],
-      causeString: '$LABEL',
-      regexpFilterText: '$MERGED',
+      causeString: '$PULL_REQUEST_LABEL',
+      regexpFilterText: '$PULL_REQUEST_MERGED',
       regexpFilterExpression: 'true'
     )
   }
