@@ -23,7 +23,7 @@ pipeline {
     )
   }
   stages {
-    stage('Validate Context') {
+    stage('Pipeline Context') {
       steps {
         sh '''#!/bin/bash -xe
           rm -f tfFilePath
