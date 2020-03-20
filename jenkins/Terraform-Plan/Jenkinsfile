@@ -51,6 +51,9 @@ pipeline {
           cd $tfFilePath
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
           terraform plan -input=false -out=tfPlan
+          git add tfPlan
+          git commit -m "Add Terraform plan file"
+          git push
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
