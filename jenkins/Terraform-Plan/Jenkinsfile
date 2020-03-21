@@ -52,7 +52,7 @@ pipeline {
           cd $tfFilePath
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
           terraform plan -input=false -out=tfPlan
-          git pull
+          git pull https://user:$GIT_PAT@github.com/RickShahid/SkyMedia $BRANCH_NAME
           git push https://user:$GIT_PAT@github.com/RickShahid/SkyMedia $BRANCH_NAME
         '''
         dir(readFile('tfFilePath').trim()) {
