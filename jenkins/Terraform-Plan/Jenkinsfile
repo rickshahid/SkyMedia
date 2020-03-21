@@ -52,7 +52,7 @@ pipeline {
           cd $tfFilePath
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
           terraform plan -input=false -out=tfPlan
-          git merge
+          git merge $BRANCH_NAME
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
