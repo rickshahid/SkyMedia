@@ -53,7 +53,7 @@ pipeline {
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
           terraform plan -input=false -out=tfPlan
           
-          git clone git@github.com/RickShahid/SkyMedia
+          git clone https://github.com/RickShahid/SkyMedia.git
           git checkout $BRANCH_NAME
           git add tfPlan
           git commit -m "Add Terraform plan file"
