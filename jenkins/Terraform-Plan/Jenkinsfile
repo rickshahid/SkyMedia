@@ -49,6 +49,7 @@ pipeline {
         sh '''#!/bin/bash -xe
           git checkout -f $PR_BRANCH
           git fetch $GITHUB_REPOSITORY $PR_BRANCH
+          git reset $GITHUB_REPOSITORY/$PR_BRANCH
         '''
       }
     }
