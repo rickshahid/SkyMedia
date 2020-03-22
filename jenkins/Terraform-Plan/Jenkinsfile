@@ -47,7 +47,7 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -xe
-          git clean
+          git clean -f
           git checkout $PR_BRANCH
           git fetch --all
           git reset --hard HEAD
