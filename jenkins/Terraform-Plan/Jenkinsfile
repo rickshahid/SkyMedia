@@ -48,6 +48,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash -xe
           git clean -f -e tfFilePath
+          git checkout $PR_BRANCH
         '''
       }
     }
