@@ -53,6 +53,7 @@ pipeline {
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE
           terraform plan -input=false -out=tfPlan
           git checkout -f $BRANCH_NAME
+          git pull $GITHUB_REPOSITORY $BRANCH_NAME
           git add tfPlan
           git commit -m "Add Terraform plan file"
           git push $GITHUB_REPOSITORY HEAD:$BRANCH_NAME
