@@ -13,13 +13,13 @@ pipeline {
   triggers {
     GenericTrigger(
       genericVariables: [
-        [key: 'PULL_REQUEST_ACTION', value: '$.action'],
-        [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
-        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
-        [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label']
+        [key: 'PR_ACTION', value: '$.action'],
+        [key: 'PR_COMMIT', value: '$.pull_request.head.sha'],
+        [key: 'PR_BRANCH', value: '$.pull_request.head.ref'],
+        [key: 'PR_LABEL', value: '$.pull_request.head.label']
       ],
-      causeString: '$PULL_REQUEST_LABEL',
-      regexpFilterText: '$PULL_REQUEST_ACTION',
+      causeString: '$PR_LABEL',
+      regexpFilterText: '$PR_ACTION',
       regexpFilterExpression: 'opened'
     )
   }
@@ -28,7 +28,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash -xe
           rm -f tfFilePath
-          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
+          for changedFile in $(git diff --name-only $GIT_COMMIT $PR_COMMIT)
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
@@ -47,8 +47,8 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -xe
-          git checkout -f $PULL_REQUEST_BRANCH
-          git pull $GITHUB_REPOSITORY $PULL_REQUEST_BRANCH
+          git checkout -f $PR_BRANCH
+          git pull $GITHUB_REPOSITORY $PR_BRANCH
         '''
       }
     }
@@ -66,7 +66,7 @@ pipeline {
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE &> tfInit.txt
           git add tfInit.txt
           git commit -m "Add Terraform init output file"
-          git push $GITHUB_REPOSITORY HEAD:$PULL_REQUEST_BRANCH
+          git push $GITHUB_REPOSITORY HEAD:$PR_BRANCH
         '''
       }
     }
@@ -83,7 +83,7 @@ pipeline {
           terraform plan -input=false -out=tfPlan &> tfPlan.txt
           git add tfPlan.txt
           git commit -m "Add Terraform plan output file"
-          git push $GITHUB_REPOSITORY HEAD:$PULL_REQUEST_BRANCH
+          git push $GITHUB_REPOSITORY HEAD:$PR_BRANCH
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
