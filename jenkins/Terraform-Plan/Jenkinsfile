@@ -49,6 +49,8 @@ pipeline {
         sh '''#!/bin/bash -xe
           git clean -f -e tfFilePath
           git checkout $PR_BRANCH
+          git fetch $GITHUB_REPOSITORY $PR_BRANCH
+          get reset --hard
         '''
       }
     }
