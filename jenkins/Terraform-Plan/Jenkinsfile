@@ -13,10 +13,10 @@ pipeline {
   triggers {
     GenericTrigger(
       genericVariables: [
-        [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label'],
         [key: 'PULL_REQUEST_ACTION', value: '$.action'],
         [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
-        [key: 'BRANCH_NAME', value: '$.pull_request.head.ref']
+        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
+        [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label']
       ],
       causeString: '$PULL_REQUEST_LABEL',
       regexpFilterText: '$PULL_REQUEST_ACTION',
@@ -47,8 +47,8 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -xe
-          git checkout -f $BRANCH_NAME
-          git pull $GITHUB_REPOSITORY $BRANCH_NAME
+          git checkout -f $PULL_REQUEST_BRANCH
+          git pull $GITHUB_REPOSITORY $PULL_REQUEST_BRANCH
         '''
       }
     }
@@ -66,7 +66,7 @@ pipeline {
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE &> tfInit.txt
           git add tfInit.txt
           git commit -m "Add Terraform init output file"
-          git push $GITHUB_REPOSITORY HEAD:$BRANCH_NAME
+          git push $GITHUB_REPOSITORY HEAD:$PULL_REQUEST_BRANCH
         '''
       }
     }
@@ -83,7 +83,7 @@ pipeline {
           terraform plan -input=false -out=tfPlan &> tfPlan.txt
           git add tfPlan.txt
           git commit -m "Add Terraform plan output file"
-          git push $GITHUB_REPOSITORY HEAD:$BRANCH_NAME
+          git push $GITHUB_REPOSITORY HEAD:$PULL_REQUEST_BRANCH
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
