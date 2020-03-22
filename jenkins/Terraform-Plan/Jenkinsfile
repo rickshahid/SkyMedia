@@ -15,7 +15,7 @@ pipeline {
       genericVariables: [
         [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label'],
         [key: 'PULL_REQUEST_ACTION', value: '$.action'],
-        [key: 'PULL_REQUEST_ID', value: '$.pull_request.head.sha'],
+        [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
         [key: 'BRANCH_NAME', value: '$.pull_request.head.ref']
       ],
       causeString: '$PULL_REQUEST_LABEL',
@@ -28,7 +28,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash -xe
           rm -f tfFilePath
-          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_ID)
+          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
