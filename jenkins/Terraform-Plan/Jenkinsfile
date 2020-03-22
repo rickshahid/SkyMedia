@@ -47,8 +47,6 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -xe
-          git clean -f
-          git checkout -f $PR_BRANCH
         '''
       }
     }
