@@ -95,7 +95,6 @@ pipeline {
     success {
       sh '''#!/bin/bash -xe
         git clean -f -f -d
-        git pull
       '''
     }
   }
