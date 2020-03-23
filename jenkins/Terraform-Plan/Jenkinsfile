@@ -47,7 +47,6 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -xe
-          git clean -f -d -e tfFilePath
           git checkout $PR_BRANCH
           #git pull $GITHUB_REPOSITORY $PR_BRANCH
         '''
@@ -95,7 +94,7 @@ pipeline {
   post {
     success {
       sh '''#!/bin/bash -xe
-        git clean -f -d
+        git clean -f -f -d
         git pull
       '''
     }
