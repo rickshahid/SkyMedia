@@ -91,13 +91,13 @@ pipeline {
         }
       }
     }
-    post {
-      success {
-        sh '''#!/bin/bash -xe
-          git clean -f -d
-          git pull
-        '''
-      }
+  }
+  post {
+    success {
+      sh '''#!/bin/bash -xe
+        git clean -f -d
+        git pull
+      '''
     }
   }
 }
