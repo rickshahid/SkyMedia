@@ -1,0 +1,640 @@
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+module.vfxtcontroller.data.azurerm_subscription.primary: Refreshing state...
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # avere_vfxt.vfxt will be created
+  + resource "avere_vfxt" "vfxt" {
+      + azure_network_name           = "rendervnet"
+      + azure_network_resource_group = "network_resource_group"
+      + azure_resource_group         = "vfxt_resource_group"
+      + azure_subnet_name            = "cloud_cache"
+      + controller_address           = (known after apply)
+      + controller_admin_password    = (sensitive value)
+      + controller_admin_username    = "azureuser"
+      + global_custom_settings       = [
+          + "cluster.CtcBackEndTimeout KO 110000000",
+          + "cluster.HaBackEndTimeout II 120000000",
+          + "cluster.NfsBackEndTimeout VO 100000000",
+          + "cluster.NfsFrontEndCwnd EK 1",
+          + "cluster.ctcConnMult CE 25",
+          + "vcm.alwaysForwardReadSize DL 134217728",
+          + "vcm.disableReadAhead AB 1",
+          + "vcm.vcm_waWriteBlocksValid GN 0",
+        ]
+      + id                           = (known after apply)
+      + location                     = "eastus"
+      + node_names                   = (known after apply)
+      + platform                     = "azure"
+      + vfxt_admin_password          = (sensitive value)
+      + vfxt_cluster_name            = "vfxt"
+      + vfxt_management_ip           = (known after apply)
+      + vfxt_node_count              = 3
+      + vserver_ip_addresses         = (known after apply)
+      + vserver_settings             = [
+          + "NfsFrontEndSobuf OG 1048576",
+          + "rwsize IZ 524288",
+        ]
+
+      + core_filer {
+          + cache_policy       = "Clients Bypassing the Cluster"
+          + custom_settings    = [
+              + "always_forward OZ 1",
+              + "autoWanOptimize YF 2",
+              + "nfsConnMult YW 4",
+            ]
+          + fqdn_or_primary_ip = (known after apply)
+          + name               = "nfs2"
+
+          + junction {
+              + core_filer_export = "/data"
+              + namespace_path    = "/nfs2data"
+            }
+        }
+      + core_filer {
+          + cache_policy       = "Clients Bypassing the Cluster"
+          + custom_settings    = [
+              + "autoWanOptimize YF 2",
+              + "client_rt_preferred FE 524288",
+              + "client_wt_preferred NO 524288",
+              + "nfsConnMult YW 20",
+            ]
+          + fqdn_or_primary_ip = (known after apply)
+          + name               = "nfs3"
+
+          + junction {
+              + core_filer_export = "/data"
+              + namespace_path    = "/nfs3data"
+            }
+        }
+      + core_filer {
+          + cache_policy       = "Clients Bypassing the Cluster"
+          + custom_settings    = [
+              + "autoWanOptimize YF 2",
+              + "nfsConnMult YW 5",
+            ]
+          + fqdn_or_primary_ip = (known after apply)
+          + name               = "nfs1"
+
+          + junction {
+              + core_filer_export = "/data"
+              + namespace_path    = "/nfs1data"
+            }
+        }
+    }
+
+  # azurerm_resource_group.nfsfiler will be created
+  + resource "azurerm_resource_group" "nfsfiler" {
+      + id       = (known after apply)
+      + location = "eastus"
+      + name     = "filer_resource_group"
+    }
+
+  # module.nasfiler1.data.azurerm_resource_group.nfsfiler will be read during apply
+  # (config refers to values not yet known)
+ <= data "azurerm_resource_group" "nfsfiler"  {
+      + id       = (known after apply)
+      + location = (known after apply)
+      + name     = "filer_resource_group"
+      + tags     = (known after apply)
+
+      + timeouts {
+          + read = (known after apply)
+        }
+    }
+
+  # module.nasfiler1.data.azurerm_subnet.vnet will be read during apply
+  # (config refers to values not yet known)
+ <= data "azurerm_subnet" "vnet"  {
+      + address_prefix                                 = (known after apply)
+      + enforce_private_link_endpoint_network_policies = (known after apply)
+      + enforce_private_link_service_network_policies  = (known after apply)
+      + id                                             = (known after apply)
+      + name                                           = "cloud_filers"
+      + network_security_group_id                      = (known after apply)
+      + resource_group_name                            = "network_resource_group"
+      + route_table_id                                 = (known after apply)
+      + service_endpoints                              = (known after apply)
+      + virtual_network_name                           = "rendervnet"
+
+      + timeouts {
+          + read = (known after apply)
+        }
+    }
+
+  # module.nasfiler1.azurerm_linux_virtual_machine.nfsfiler will be created
+  + resource "azurerm_linux_virtual_machine" "nfsfiler" {
+      + admin_password                  = (sensitive value)
+      + admin_username                  = "azureuser"
+      + allow_extension_operations      = true
+      + computer_name                   = "nasfiler1"
+      + custom_data                     = "I2Nsb3VkLWNvbmZpZwojCndyaXRlX2ZpbGVzOgogLSAgZW5jb2Rpbmc6IGd6aXAKICAgIG93bmVyOiByb290OnJvb3QKICAgIGNvbnRlbnQ6ICEhYmluYXJ5IHwKICAgICAgICAgICAgSDRzSUFBQUFBQUFBLzd4WGJXL2JPQkwrcmw4eEp3dHRFa1JXMHUxdEQ4bTYyMktUWW92YmE0SWtCZTVRZHcxYUhGbUVKVkxsVUU1OFNmNzdnU0wxNHNTYnpTM3VOaDlhbVp3WlBqUFB2SkNqdnlSeklaTTVveHppbXlBWXdZcHB3ZVlGRXBpY0dTaHJNakJISUxUL1pVcGp6aVFQUm5ENnovT3ppNnZaK2Z1cm55Y0paNGIxYTJmblZ4L1BQbDFPd3IwZGZiMVBhNW51U3pYVFNwa1pmYXNaNWJ0aE1BcEdrTEtpUUE2RldDS1lYTkJSTUFLZ21xdkh4djhMMHpCT2hDVERpa0ptTktZOEdGbTNER3JOTXFYTDNzRWpNTmtNNVdyV3JRU0JkZFBHSWF0bGFvU1NzSzdMbVRlM3N3dTNBUUNBUnFNRjBpUTZQSVpySnN5TUNzUnFFcjA2QmlOS1ZMV1pSTjhkQStVaU0vRGl4WU9QeGtTbU5BZ1FFcUlkd205d0NKRTN1bnNNWERVaTltOWRsK0JQaDNnTjBlMjcrMjd2QzBRL1FvemY0QURncTdVKzE4aVdjSGNIMDA1R1pGWk1OR0x0Q2ZEMUdFeU9zaE95ZjVqbUNzS01pUUo1dUxGalZKM21rS2pLRE1QcUpEZE4zQWdEaDkwU0ZvUWIrMDJRSU9vRDF1MW1vdm5rU2pvTkJ5WlZaVldnYWZFMGk2YzNtTllHK2NQQVRNUG8zVFMwbmxvQzZEZ0l0a1JQWmhUWFJoUVUzQThJVHBYTXhHSldDRm5mZEF3UFdJZFhCM0I0QUlkL08zamFBRlk1bHFoWk1aT3JFcjJkaS9jZlQwNCtYdjU5a25CY0pTVS9hRmJ0eXVWa0o5b3BDSm9OcTdFbjkzWjN1KzJmemo1L3VwcEV0Nk5HOXN1N3I0NzNtdU9LOGRLZWFiUXFJSTdKcUNyR0cwempielhXdy9pdGtVSzRnNUpiaFRoT05US0RFTFdRSUk0TFhHRXhPWUE0MWt6d21PTktwRGF0T3dBUTNmNysrVXliaHdES0pSY2E0Z29TTkduU0lIRHJIZ3RIdzRUVlhxR2VLMEpySjJVUzNnNFUzTDlqRzkxR2R3U0ZXdGpFQmFkTm9MTG1aNmxxYWNBb3VMdzZPZnQ4OVp5REdwbVVHVWdxcmV4NVpKZ0ovREdNODhZdTNwalhrSWtDYVUwR3ZRUExqTWJOUnZ5aEQyWGd1d0xqOFBuenh4UDRjRG03K3RmNUtmd0FQK3pNaTZYZ0VOY0RTNzNpSGJ0ZVdrdmhsd2w4RGVIbGJhV0ZOQkI5RjBJWS9mWCs1WjNSRUhNSXAyRzQyek1iSTRUMm5NazBqRzd0eC8wMG5KcG8wRE9uSnZJWXBrWXFabXRpWHlvdWRQZUpxMzJwTEd2N1VsRXQrTDVVdHFTbjVoQmVoZkRXRTVHUllYUG5lQlBrNFJsUDF3QVI5eVd3MEZnMWtKTlNtaW1GQTh1Vzd5YjlhMXRtYjErNDV1RjYxbzh3Z2ZBZ2ZOU3NSczJrQUVGUU1za1d5R0crYnVpU2VBMXBvV29PUWdwUHBsUEFtMHBwNHpodEFRSVh0T3hrVHM5L1B2M0g2Y1g3WDJhV0ZUZDJHcng5SzZ6YkNEd1c3V1FJT2NRQ1FqcUticmZJM2R2bFBvRDNSNHZ3WVpnSG9kNFFEZHFPQ2s4SFFoVWNOVnd6dGtENXY0cEJvcEZVclZNTUIvWkt0Y0lIMXJvNjdJc3l6UldoYkJsS2F6S3FSRDB3YzQyUU1pbVZBZTcwYUYzT1ZTRlNLSVJjd2h4VFZoT0NNTlpQSzBaMVpSMXgzc3FNVnEvL0ZJWjhSUHR1NU9CcmJOcGZHM0RydkkrQ1QwakttZTZub0N2LzFCUVBGUU0vQlo4c0tjdVdyNm11djI0VVpGZHRNaU9wNW9xdkhmaUtFVjN6UDFKc2FhNnVaVy91cURmODZPQ05jZS8xdkpKYWFGVnZ3ZXJIZnBxWGlzT2JOMjgySlpxOWdpQStITXpJNTJEZU5vNjNRTnpTc1FZMFBGRXh3QWlvd2xSa3dxWGhCdXdIL05VYVp6S2o3bUl4QXBUMnF1a3lKQ01nMUhicUJwdjU0WVhzaGNNS29BWmRwWE1oZVR1azdOai9IUnVOeUc5YjZQREJwdytYcmJmMld1cG1YL096WWlidjB5cjhkYk02ZkcwNFdmb2orZVV1S3B0V2JhV3p3ZzdUdFllQmZBd1hhR290aFZ5TXgrUHdNWnZkWEp6S0I5YWc3NlQrN1hEZnp6Y1B2ZVhkUjZhdXVMMHBHUVcyOTN6L0dreHU0WkJkV2FDQlVwR0JDclY5VFREWnh0MTFscGVVL0RyZXV6ai82ZE9IeXhOM2lSdnZSY25Hd3Zldms4VkxCNERXNUhoSVpPWmdkUHd5bjN4UEVXeGx0akE4YkNNbEU3TEx2djVlcGlyVEg5ZVFGUDhid21FbS94WmJLRmYyQ1RWOG9yWE5tV01tSlBKOXFBcGtoUDUzUHphZTlaUVlQQ05hU2g3aDgwdytFNktYL24ramJGOHRsazc0eFQ0bm5NM2hBMk9MNUduWFhFNEVMVGRVTm52L1VKZlExRlZUdUpjTjlVTTEzM0o2ZXAySzk0WDU1dVRlVnFFenV0M2xWc2ptazAyajREOEFBQUQvL3dFQUFQLy9DVklHdUMwUUFBQT0KICAgIHBhdGg6IC9vcHQvaW5zdGFsbG5mcy5zaAogICAgcGVybWlzc2lvbnM6ICcwNjQ0JwoKcnVuY21kOgogLSBFWFBPUlRfUEFUSD0vZGF0YSBFWFBPUlRfT1BUSU9OUz0iKihydyxzeW5jLG5vX3Jvb3Rfc3F1YXNoKSIgL2Jpbi9iYXNoIC9vcHQvaW5zdGFsbG5mcy5zaCAyPiYxIHwgdGVlIC1hIC92YXIvbG9nL2luc3RhbGxuZnMubG9n"
+      + disable_password_authentication = false
+      + id                              = (known after apply)
+      + location                        = (known after apply)
+      + max_bid_price                   = -1
+      + name                            = "nasfiler1-vm"
+      + network_interface_ids           = (known after apply)
+      + priority                        = "Regular"
+      + private_ip_address              = (known after apply)
+      + private_ip_addresses            = (known after apply)
+      + provision_vm_agent              = true
+      + public_ip_address               = (known after apply)
+      + public_ip_addresses             = (known after apply)
+      + resource_group_name             = "filer_resource_group"
+      + size                            = "Standard_D2s_v3"
+      + virtual_machine_id              = (known after apply)
+
+      + os_disk {
+          + caching                   = "ReadWrite"
+          + disk_size_gb              = (known after apply)
+          + name                      = "nasfiler1-osdisk"
+          + storage_account_type      = "Premium_LRS"
+          + write_accelerator_enabled = false
+        }
+
+      + source_image_reference {
+          + offer     = "CentOS"
+          + publisher = "OpenLogic"
+          + sku       = "7-CI"
+          + version   = "latest"
+        }
+    }
+
+  # module.nasfiler1.azurerm_network_interface.nfsfiler will be created
+  + resource "azurerm_network_interface" "nfsfiler" {
+      + applied_dns_servers           = (known after apply)
+      + dns_servers                   = (known after apply)
+      + enable_accelerated_networking = false
+      + enable_ip_forwarding          = false
+      + id                            = (known after apply)
+      + internal_dns_name_label       = (known after apply)
+      + location                      = (known after apply)
+      + mac_address                   = (known after apply)
+      + name                          = "nasfiler1-nic"
+      + private_ip_address            = (known after apply)
+      + private_ip_addresses          = (known after apply)
+      + resource_group_name           = "filer_resource_group"
+      + virtual_machine_id            = (known after apply)
+
+      + ip_configuration {
+          + name                          = "nasfiler1-ipconfig"
+          + primary                       = (known after apply)
+          + private_ip_address            = (known after apply)
+          + private_ip_address_allocation = "dynamic"
+          + private_ip_address_version    = "IPv4"
+          + subnet_id                     = (known after apply)
+        }
+    }
+
+  # module.nasfiler2.data.azurerm_resource_group.nfsfiler will be read during apply
+  # (config refers to values not yet known)
+ <= data "azurerm_resource_group" "nfsfiler"  {
+      + id       = (known after apply)
+      + location = (known after apply)
+      + name     = "filer_resource_group"
+      + tags     = (known after apply)
+
+      + timeouts {
+          + read = (known after apply)
+        }
+    }
+
+  # module.nasfiler2.data.azurerm_subnet.vnet will be read during apply
+  # (config refers to values not yet known)
+ <= data "azurerm_subnet" "vnet"  {
+      + address_prefix                                 = (known after apply)
+      + enforce_private_link_endpoint_network_policies = (known after apply)
+      + enforce_private_link_service_network_policies  = (known after apply)
+      + id                                             = (known after apply)
+      + name                                           = "cloud_filers"
+      + network_security_group_id                      = (known after apply)
+      + resource_group_name                            = "network_resource_group"
+      + route_table_id                                 = (known after apply)
+      + service_endpoints                              = (known after apply)
+      + virtual_network_name                           = "rendervnet"
+
+      + timeouts {
+          + read = (known after apply)
+        }
+    }
+
+  # module.nasfiler2.azurerm_linux_virtual_machine.nfsfiler will be created
+  + resource "azurerm_linux_virtual_machine" "nfsfiler" {
+      + admin_password                  = (sensitive value)
+      + admin_username                  = "azureuser"
+      + allow_extension_operations      = true
+      + computer_name                   = "nasfiler2"
+      + custom_data                     = "I2Nsb3VkLWNvbmZpZwojCndyaXRlX2ZpbGVzOgogLSAgZW5jb2Rpbmc6IGd6aXAKICAgIG93bmVyOiByb290OnJvb3QKICAgIGNvbnRlbnQ6ICEhYmluYXJ5IHwKICAgICAgICAgICAgSDRzSUFBQUFBQUFBLzd4WGJXL2JPQkwrcmw4eEp3dHRFa1JXMHUxdEQ4bTYyMktUWW92YmE0SWtCZTVRZHcxYUhGbUVKVkxsVUU1OFNmNzdnU0wxNHNTYnpTM3VOaDlhbVp3WlBqUFB2SkNqdnlSeklaTTVveHppbXlBWXdZcHB3ZVlGRXBpY0dTaHJNakJISUxUL1pVcGp6aVFQUm5ENnovT3ppNnZaK2Z1cm55Y0paNGIxYTJmblZ4L1BQbDFPd3IwZGZiMVBhNW51U3pYVFNwa1pmYXNaNWJ0aE1BcEdrTEtpUUE2RldDS1lYTkJSTUFLZ21xdkh4djhMMHpCT2hDVERpa0ptTktZOEdGbTNER3JOTXFYTDNzRWpNTmtNNVdyV3JRU0JkZFBHSWF0bGFvU1NzSzdMbVRlM3N3dTNBUUNBUnFNRjBpUTZQSVpySnN5TUNzUnFFcjA2QmlOS1ZMV1pSTjhkQStVaU0vRGl4WU9QeGtTbU5BZ1FFcUlkd205d0NKRTN1bnNNWERVaTltOWRsK0JQaDNnTjBlMjcrMjd2QzBRL1FvemY0QURncTdVKzE4aVdjSGNIMDA1R1pGWk1OR0x0Q2ZEMUdFeU9zaE95ZjVqbUNzS01pUUo1dUxGalZKM21rS2pLRE1QcUpEZE4zQWdEaDkwU0ZvUWIrMDJRSU9vRDF1MW1vdm5rU2pvTkJ5WlZaVldnYWZFMGk2YzNtTllHK2NQQVRNUG8zVFMwbmxvQzZEZ0l0a1JQWmhUWFJoUVUzQThJVHBYTXhHSldDRm5mZEF3UFdJZFhCM0I0QUlkL08zamFBRlk1bHFoWk1aT3JFcjJkaS9jZlQwNCtYdjU5a25CY0pTVS9hRmJ0eXVWa0o5b3BDSm9OcTdFbjkzWjN1KzJmemo1L3VwcEV0Nk5HOXN1N3I0NzNtdU9LOGRLZWFiUXFJSTdKcUNyR0cwempielhXdy9pdGtVSzRnNUpiaFRoT05US0RFTFdRSUk0TFhHRXhPWUE0MWt6d21PTktwRGF0T3dBUTNmNysrVXliaHdES0pSY2E0Z29TTkduU0lIRHJIZ3RIdzRUVlhxR2VLMEpySjJVUzNnNFUzTDlqRzkxR2R3U0ZXdGpFQmFkTm9MTG1aNmxxYWNBb3VMdzZPZnQ4OVp5REdwbVVHVWdxcmV4NVpKZ0ovREdNODhZdTNwalhrSWtDYVUwR3ZRUExqTWJOUnZ5aEQyWGd1d0xqOFBuenh4UDRjRG03K3RmNUtmd0FQK3pNaTZYZ0VOY0RTNzNpSGJ0ZVdrdmhsd2w4RGVIbGJhV0ZOQkI5RjBJWS9mWCs1WjNSRUhNSXAyRzQyek1iSTRUMm5NazBqRzd0eC8wMG5KcG8wRE9uSnZJWXBrWXFabXRpWHlvdWRQZUpxMzJwTEd2N1VsRXQrTDVVdHFTbjVoQmVoZkRXRTVHUllYUG5lQlBrNFJsUDF3QVI5eVd3MEZnMWtKTlNtaW1GQTh1Vzd5YjlhMXRtYjErNDV1RjYxbzh3Z2ZBZ2ZOU3NSczJrQUVGUU1za1d5R0crYnVpU2VBMXBvV29PUWdwUHBsUEFtMHBwNHpodEFRSVh0T3hrVHM5L1B2M0g2Y1g3WDJhV0ZUZDJHcng5SzZ6YkNEd1c3V1FJT2NRQ1FqcUticmZJM2R2bFBvRDNSNHZ3WVpnSG9kNFFEZHFPQ2s4SFFoVWNOVnd6dGtENXY0cEJvcEZVclZNTUIvWkt0Y0lIMXJvNjdJc3l6UldoYkJsS2F6S3FSRDB3YzQyUU1pbVZBZTcwYUYzT1ZTRlNLSVJjd2h4VFZoT0NNTlpQSzBaMVpSMXgzc3FNVnEvL0ZJWjhSUHR1NU9CcmJOcGZHM0RydkkrQ1QwakttZTZub0N2LzFCUVBGUU0vQlo4c0tjdVdyNm11djI0VVpGZHRNaU9wNW9xdkhmaUtFVjN6UDFKc2FhNnVaVy91cURmODZPQ05jZS8xdkpKYWFGVnZ3ZXJIZnBxWGlzT2JOMjgySlpxOWdpQStITXpJNTJEZU5vNjNRTnpTc1FZMFBGRXh3QWlvd2xSa3dxWGhCdXdIL05VYVp6S2o3bUl4QXBUMnF1a3lKQ01nMUhicUJwdjU0WVhzaGNNS29BWmRwWE1oZVR1azdOai9IUnVOeUc5YjZQREJwdytYcmJmMld1cG1YL096WWlidjB5cjhkYk02ZkcwNFdmb2orZVV1S3B0V2JhV3p3ZzdUdFllQmZBd1hhR290aFZ5TXgrUHdNWnZkWEp6S0I5YWc3NlQrN1hEZnp6Y1B2ZVhkUjZhdXVMMHBHUVcyOTN6L0dreHU0WkJkV2FDQlVwR0JDclY5VFREWnh0MTFscGVVL0RyZXV6ai82ZE9IeXhOM2lSdnZSY25Hd3Zldms4VkxCNERXNUhoSVpPWmdkUHd5bjN4UEVXeGx0akE4YkNNbEU3TEx2djVlcGlyVEg5ZVFGUDhid21FbS94WmJLRmYyQ1RWOG9yWE5tV01tSlBKOXFBcGtoUDUzUHphZTlaUVlQQ05hU2g3aDgwdytFNktYL24ramJGOHRsazc0eFQ0bm5NM2hBMk9MNUduWFhFNEVMVGRVTm52L1VKZlExRlZUdUpjTjlVTTEzM0o2ZXAySzk0WDU1dVRlVnFFenV0M2xWc2ptazAyajREOEFBQUQvL3dFQUFQLy9DVklHdUMwUUFBQT0KICAgIHBhdGg6IC9vcHQvaW5zdGFsbG5mcy5zaAogICAgcGVybWlzc2lvbnM6ICcwNjQ0JwoKcnVuY21kOgogLSBFWFBPUlRfUEFUSD0vZGF0YSBFWFBPUlRfT1BUSU9OUz0iKihydyxzeW5jLG5vX3Jvb3Rfc3F1YXNoKSIgL2Jpbi9iYXNoIC9vcHQvaW5zdGFsbG5mcy5zaCAyPiYxIHwgdGVlIC1hIC92YXIvbG9nL2luc3RhbGxuZnMubG9n"
+      + disable_password_authentication = false
+      + id                              = (known after apply)
+      + location                        = (known after apply)
+      + max_bid_price                   = -1
+      + name                            = "nasfiler2-vm"
+      + network_interface_ids           = (known after apply)
+      + priority                        = "Regular"
+      + private_ip_address              = (known after apply)
+      + private_ip_addresses            = (known after apply)
+      + provision_vm_agent              = true
+      + public_ip_address               = (known after apply)
+      + public_ip_addresses             = (known after apply)
+      + resource_group_name             = "filer_resource_group"
+      + size                            = "Standard_D2s_v3"
+      + virtual_machine_id              = (known after apply)
+
+      + os_disk {
+          + caching                   = "ReadWrite"
+          + disk_size_gb              = (known after apply)
+          + name                      = "nasfiler2-osdisk"
+          + storage_account_type      = "Premium_LRS"
+          + write_accelerator_enabled = false
+        }
+
+      + source_image_reference {
+          + offer     = "CentOS"
+          + publisher = "OpenLogic"
+          + sku       = "7-CI"
+          + version   = "latest"
+        }
+    }
+
+  # module.nasfiler2.azurerm_network_interface.nfsfiler will be created
+  + resource "azurerm_network_interface" "nfsfiler" {
+      + applied_dns_servers           = (known after apply)
+      + dns_servers                   = (known after apply)
+      + enable_accelerated_networking = false
+      + enable_ip_forwarding          = false
+      + id                            = (known after apply)
+      + internal_dns_name_label       = (known after apply)
+      + location                      = (known after apply)
+      + mac_address                   = (known after apply)
+      + name                          = "nasfiler2-nic"
+      + private_ip_address            = (known after apply)
+      + private_ip_addresses          = (known after apply)
+      + resource_group_name           = "filer_resource_group"
+      + virtual_machine_id            = (known after apply)
+
+      + ip_configuration {
+          + name                          = "nasfiler2-ipconfig"
+          + primary                       = (known after apply)
+          + private_ip_address            = (known after apply)
+          + private_ip_address_allocation = "dynamic"
+          + private_ip_address_version    = "IPv4"
+          + subnet_id                     = (known after apply)
+        }
+    }
+
+  # module.nasfiler3.data.azurerm_resource_group.nfsfiler will be read during apply
+  # (config refers to values not yet known)
+ <= data "azurerm_resource_group" "nfsfiler"  {
+      + id       = (known after apply)
+      + location = (known after apply)
+      + name     = "filer_resource_group"
+      + tags     = (known after apply)
+
+      + timeouts {
+          + read = (known after apply)
+        }
+    }
+
+  # module.nasfiler3.data.azurerm_subnet.vnet will be read during apply
+  # (config refers to values not yet known)
+ <= data "azurerm_subnet" "vnet"  {
+      + address_prefix                                 = (known after apply)
+      + enforce_private_link_endpoint_network_policies = (known after apply)
+      + enforce_private_link_service_network_policies  = (known after apply)
+      + id                                             = (known after apply)
+      + name                                           = "cloud_filers"
+      + network_security_group_id                      = (known after apply)
+      + resource_group_name                            = "network_resource_group"
+      + route_table_id                                 = (known after apply)
+      + service_endpoints                              = (known after apply)
+      + virtual_network_name                           = "rendervnet"
+
+      + timeouts {
+          + read = (known after apply)
+        }
+    }
+
+  # module.nasfiler3.azurerm_linux_virtual_machine.nfsfiler will be created
+  + resource "azurerm_linux_virtual_machine" "nfsfiler" {
+      + admin_password                  = (sensitive value)
+      + admin_username                  = "azureuser"
+      + allow_extension_operations      = true
+      + computer_name                   = "nasfiler3"
+      + custom_data                     = "I2Nsb3VkLWNvbmZpZwojCndyaXRlX2ZpbGVzOgogLSAgZW5jb2Rpbmc6IGd6aXAKICAgIG93bmVyOiByb290OnJvb3QKICAgIGNvbnRlbnQ6ICEhYmluYXJ5IHwKICAgICAgICAgICAgSDRzSUFBQUFBQUFBLzd4WGJXL2JPQkwrcmw4eEp3dHRFa1JXMHUxdEQ4bTYyMktUWW92YmE0SWtCZTVRZHcxYUhGbUVKVkxsVUU1OFNmNzdnU0wxNHNTYnpTM3VOaDlhbVp3WlBqUFB2SkNqdnlSeklaTTVveHppbXlBWXdZcHB3ZVlGRXBpY0dTaHJNakJISUxUL1pVcGp6aVFQUm5ENnovT3ppNnZaK2Z1cm55Y0paNGIxYTJmblZ4L1BQbDFPd3IwZGZiMVBhNW51U3pYVFNwa1pmYXNaNWJ0aE1BcEdrTEtpUUE2RldDS1lYTkJSTUFLZ21xdkh4djhMMHpCT2hDVERpa0ptTktZOEdGbTNER3JOTXFYTDNzRWpNTmtNNVdyV3JRU0JkZFBHSWF0bGFvU1NzSzdMbVRlM3N3dTNBUUNBUnFNRjBpUTZQSVpySnN5TUNzUnFFcjA2QmlOS1ZMV1pSTjhkQStVaU0vRGl4WU9QeGtTbU5BZ1FFcUlkd205d0NKRTN1bnNNWERVaTltOWRsK0JQaDNnTjBlMjcrMjd2QzBRL1FvemY0QURncTdVKzE4aVdjSGNIMDA1R1pGWk1OR0x0Q2ZEMUdFeU9zaE95ZjVqbUNzS01pUUo1dUxGalZKM21rS2pLRE1QcUpEZE4zQWdEaDkwU0ZvUWIrMDJRSU9vRDF1MW1vdm5rU2pvTkJ5WlZaVldnYWZFMGk2YzNtTllHK2NQQVRNUG8zVFMwbmxvQzZEZ0l0a1JQWmhUWFJoUVUzQThJVHBYTXhHSldDRm5mZEF3UFdJZFhCM0I0QUlkL08zamFBRlk1bHFoWk1aT3JFcjJkaS9jZlQwNCtYdjU5a25CY0pTVS9hRmJ0eXVWa0o5b3BDSm9OcTdFbjkzWjN1KzJmemo1L3VwcEV0Nk5HOXN1N3I0NzNtdU9LOGRLZWFiUXFJSTdKcUNyR0cwempielhXdy9pdGtVSzRnNUpiaFRoT05US0RFTFdRSUk0TFhHRXhPWUE0MWt6d21PTktwRGF0T3dBUTNmNysrVXliaHdES0pSY2E0Z29TTkduU0lIRHJIZ3RIdzRUVlhxR2VLMEpySjJVUzNnNFUzTDlqRzkxR2R3U0ZXdGpFQmFkTm9MTG1aNmxxYWNBb3VMdzZPZnQ4OVp5REdwbVVHVWdxcmV4NVpKZ0ovREdNODhZdTNwalhrSWtDYVUwR3ZRUExqTWJOUnZ5aEQyWGd1d0xqOFBuenh4UDRjRG03K3RmNUtmd0FQK3pNaTZYZ0VOY0RTNzNpSGJ0ZVdrdmhsd2w4RGVIbGJhV0ZOQkI5RjBJWS9mWCs1WjNSRUhNSXAyRzQyek1iSTRUMm5NazBqRzd0eC8wMG5KcG8wRE9uSnZJWXBrWXFabXRpWHlvdWRQZUpxMzJwTEd2N1VsRXQrTDVVdHFTbjVoQmVoZkRXRTVHUllYUG5lQlBrNFJsUDF3QVI5eVd3MEZnMWtKTlNtaW1GQTh1Vzd5YjlhMXRtYjErNDV1RjYxbzh3Z2ZBZ2ZOU3NSczJrQUVGUU1za1d5R0crYnVpU2VBMXBvV29PUWdwUHBsUEFtMHBwNHpodEFRSVh0T3hrVHM5L1B2M0g2Y1g3WDJhV0ZUZDJHcng5SzZ6YkNEd1c3V1FJT2NRQ1FqcUticmZJM2R2bFBvRDNSNHZ3WVpnSG9kNFFEZHFPQ2s4SFFoVWNOVnd6dGtENXY0cEJvcEZVclZNTUIvWkt0Y0lIMXJvNjdJc3l6UldoYkJsS2F6S3FSRDB3YzQyUU1pbVZBZTcwYUYzT1ZTRlNLSVJjd2h4VFZoT0NNTlpQSzBaMVpSMXgzc3FNVnEvL0ZJWjhSUHR1NU9CcmJOcGZHM0RydkkrQ1QwakttZTZub0N2LzFCUVBGUU0vQlo4c0tjdVdyNm11djI0VVpGZHRNaU9wNW9xdkhmaUtFVjN6UDFKc2FhNnVaVy91cURmODZPQ05jZS8xdkpKYWFGVnZ3ZXJIZnBxWGlzT2JOMjgySlpxOWdpQStITXpJNTJEZU5vNjNRTnpTc1FZMFBGRXh3QWlvd2xSa3dxWGhCdXdIL05VYVp6S2o3bUl4QXBUMnF1a3lKQ01nMUhicUJwdjU0WVhzaGNNS29BWmRwWE1oZVR1azdOai9IUnVOeUc5YjZQREJwdytYcmJmMld1cG1YL096WWlidjB5cjhkYk02ZkcwNFdmb2orZVV1S3B0V2JhV3p3ZzdUdFllQmZBd1hhR290aFZ5TXgrUHdNWnZkWEp6S0I5YWc3NlQrN1hEZnp6Y1B2ZVhkUjZhdXVMMHBHUVcyOTN6L0dreHU0WkJkV2FDQlVwR0JDclY5VFREWnh0MTFscGVVL0RyZXV6ai82ZE9IeXhOM2lSdnZSY25Hd3Zldms4VkxCNERXNUhoSVpPWmdkUHd5bjN4UEVXeGx0akE4YkNNbEU3TEx2djVlcGlyVEg5ZVFGUDhid21FbS94WmJLRmYyQ1RWOG9yWE5tV01tSlBKOXFBcGtoUDUzUHphZTlaUVlQQ05hU2g3aDgwdytFNktYL24ramJGOHRsazc0eFQ0bm5NM2hBMk9MNUduWFhFNEVMVGRVTm52L1VKZlExRlZUdUpjTjlVTTEzM0o2ZXAySzk0WDU1dVRlVnFFenV0M2xWc2ptazAyajREOEFBQUQvL3dFQUFQLy9DVklHdUMwUUFBQT0KICAgIHBhdGg6IC9vcHQvaW5zdGFsbG5mcy5zaAogICAgcGVybWlzc2lvbnM6ICcwNjQ0JwoKcnVuY21kOgogLSBFWFBPUlRfUEFUSD0vZGF0YSBFWFBPUlRfT1BUSU9OUz0iKihydyxzeW5jLG5vX3Jvb3Rfc3F1YXNoKSIgL2Jpbi9iYXNoIC9vcHQvaW5zdGFsbG5mcy5zaCAyPiYxIHwgdGVlIC1hIC92YXIvbG9nL2luc3RhbGxuZnMubG9n"
+      + disable_password_authentication = false
+      + id                              = (known after apply)
+      + location                        = (known after apply)
+      + max_bid_price                   = -1
+      + name                            = "nasfiler3-vm"
+      + network_interface_ids           = (known after apply)
+      + priority                        = "Regular"
+      + private_ip_address              = (known after apply)
+      + private_ip_addresses            = (known after apply)
+      + provision_vm_agent              = true
+      + public_ip_address               = (known after apply)
+      + public_ip_addresses             = (known after apply)
+      + resource_group_name             = "filer_resource_group"
+      + size                            = "Standard_D2s_v3"
+      + virtual_machine_id              = (known after apply)
+
+      + os_disk {
+          + caching                   = "ReadWrite"
+          + disk_size_gb              = (known after apply)
+          + name                      = "nasfiler3-osdisk"
+          + storage_account_type      = "Premium_LRS"
+          + write_accelerator_enabled = false
+        }
+
+      + source_image_reference {
+          + offer     = "CentOS"
+          + publisher = "OpenLogic"
+          + sku       = "7-CI"
+          + version   = "latest"
+        }
+    }
+
+  # module.nasfiler3.azurerm_network_interface.nfsfiler will be created
+  + resource "azurerm_network_interface" "nfsfiler" {
+      + applied_dns_servers           = (known after apply)
+      + dns_servers                   = (known after apply)
+      + enable_accelerated_networking = false
+      + enable_ip_forwarding          = false
+      + id                            = (known after apply)
+      + internal_dns_name_label       = (known after apply)
+      + location                      = (known after apply)
+      + mac_address                   = (known after apply)
+      + name                          = "nasfiler3-nic"
+      + private_ip_address            = (known after apply)
+      + private_ip_addresses          = (known after apply)
+      + resource_group_name           = "filer_resource_group"
+      + virtual_machine_id            = (known after apply)
+
+      + ip_configuration {
+          + name                          = "nasfiler3-ipconfig"
+          + primary                       = (known after apply)
+          + private_ip_address            = (known after apply)
+          + private_ip_address_allocation = "dynamic"
+          + private_ip_address_version    = "IPv4"
+          + subnet_id                     = (known after apply)
+        }
+    }
+
+  # module.network.azurerm_network_security_group.no_internet_nsg will be created
+  + resource "azurerm_network_security_group" "no_internet_nsg" {
+      + id                  = (known after apply)
+      + location            = "eastus"
+      + name                = "no_internet_nsg"
+      + resource_group_name = "network_resource_group"
+      + security_rule       = [
+          + {
+              + access                                     = "Deny"
+              + description                                = ""
+              + destination_address_prefix                 = "*"
+              + destination_address_prefixes               = []
+              + destination_application_security_group_ids = []
+              + destination_port_range                     = "*"
+              + destination_port_ranges                    = []
+              + direction                                  = "Inbound"
+              + name                                       = "nointernet"
+              + priority                                   = 4000
+              + protocol                                   = "*"
+              + source_address_prefix                      = "Internet"
+              + source_address_prefixes                    = []
+              + source_application_security_group_ids      = []
+              + source_port_range                          = "*"
+              + source_port_ranges                         = []
+            },
+        ]
+    }
+
+  # module.network.azurerm_network_security_group.ssh_nsg will be created
+  + resource "azurerm_network_security_group" "ssh_nsg" {
+      + id                  = (known after apply)
+      + location            = "eastus"
+      + name                = "ssh_nsg"
+      + resource_group_name = "network_resource_group"
+      + security_rule       = [
+          + {
+              + access                                     = "Allow"
+              + description                                = ""
+              + destination_address_prefix                 = "*"
+              + destination_address_prefixes               = []
+              + destination_application_security_group_ids = []
+              + destination_port_range                     = "22"
+              + destination_port_ranges                    = []
+              + direction                                  = "Inbound"
+              + name                                       = "SSH"
+              + priority                                   = 1001
+              + protocol                                   = "Tcp"
+              + source_address_prefix                      = "*"
+              + source_address_prefixes                    = []
+              + source_application_security_group_ids      = []
+              + source_port_range                          = "*"
+              + source_port_ranges                         = []
+            },
+        ]
+    }
+
+  # module.network.azurerm_resource_group.render_rg will be created
+  + resource "azurerm_resource_group" "render_rg" {
+      + id       = (known after apply)
+      + location = "eastus"
+      + name     = "network_resource_group"
+    }
+
+  # module.network.azurerm_virtual_network.vnet will be created
+  + resource "azurerm_virtual_network" "vnet" {
+      + address_space       = [
+          + "10.0.0.0/16",
+        ]
+      + id                  = (known after apply)
+      + location            = "eastus"
+      + name                = "rendervnet"
+      + resource_group_name = "network_resource_group"
+
+      + subnet {
+          + address_prefix = "10.0.1.0/24"
+          + id             = (known after apply)
+          + name           = "cloud_cache"
+          + security_group = (known after apply)
+        }
+      + subnet {
+          + address_prefix = "10.0.2.0/24"
+          + id             = (known after apply)
+          + name           = "cloud_filers"
+          + security_group = (known after apply)
+        }
+      + subnet {
+          + address_prefix = "10.0.3.0/24"
+          + id             = (known after apply)
+          + name           = "jumpbox"
+          + security_group = (known after apply)
+        }
+      + subnet {
+          + address_prefix = "10.0.4.0/23"
+          + id             = (known after apply)
+          + name           = "render_clients1"
+          + security_group = (known after apply)
+        }
+      + subnet {
+          + address_prefix = "10.0.6.0/23"
+          + id             = (known after apply)
+          + name           = "render_clients2"
+          + security_group = (known after apply)
+        }
+    }
+
+  # module.vfxtcontroller.data.azurerm_subnet.vnet will be read during apply
+  # (config refers to values not yet known)
+ <= data "azurerm_subnet" "vnet"  {
+      + address_prefix                                 = (known after apply)
+      + enforce_private_link_endpoint_network_policies = (known after apply)
+      + enforce_private_link_service_network_policies  = (known after apply)
+      + id                                             = (known after apply)
+      + name                                           = "jumpbox"
+      + network_security_group_id                      = (known after apply)
+      + resource_group_name                            = "network_resource_group"
+      + route_table_id                                 = (known after apply)
+      + service_endpoints                              = (known after apply)
+      + virtual_network_name                           = "rendervnet"
+
+      + timeouts {
+          + read = (known after apply)
+        }
+    }
+
+  # module.vfxtcontroller.azurerm_linux_virtual_machine.vm will be created
+  + resource "azurerm_linux_virtual_machine" "vm" {
+      + admin_password                  = (sensitive value)
+      + admin_username                  = "azureuser"
+      + allow_extension_operations      = true
+      + computer_name                   = "controller"
+      + custom_data                     = "I2Nsb3VkLWNvbmZpZwojCndyaXRlX2ZpbGVzOgogLSAgZW5jb2Rpbmc6IGd6aXAKICAgIG93bmVyOiByb290OnJvb3QKICAgIGNvbnRlbnQ6ICEhYmluYXJ5IHwKICAgICAgICAgICAgSDRzSUFBQUFBQUFBLytTOVhYUGp1TEV3Zk85ZjBTdVhpOVNFcHUxSlRqYkhPZHFVMStOSmZPSzFYWlpuazVSblNnV1JrSVExQlRBQWFGdHZLdi85TFRRQUV2eVE3Sm5OYy9IVTQ0c1ppUVFhUUtPLzBRM3RmM2RVS1hrMFoveUk4aWNvTjNvbCtONitrdG1SRnFKUVJ5L3JRcFpaV203MjJMb1VVZ05SMm44VXluOVNtL29qbFpJTC8yVk9GUDM5Ny95M0pkV2lySHRieUFXYit3ZUZXQzRaWC9xdlpTa1pyMXNya1QzUyt0dEs2ekxvK1lzU2ZHOGh4UnB5b3FsbWF3cnVqZjllZzFIRjNsNU9GMjZsTTZXS1dWVXVKY25wakVvcFpEdyszUU1BdUxpNysybjZaNWpBYURUNnZIZUxyZUdIQ2J4UHYwLy9Hd2pQNGFha2ZEcTlNZytmVHRMajlHUUprdjZ6WXBMbUtkd1dsQ2dLRGpSc1JDV2hKTmtqV1ZLVjd1MmRLUkFMK1BsMzZmZnBiOU9UQk02ZXFLUTNVMWdSQlpLdXhSUE5RVlVsVG5raEpJaEttNVhrOEpmNys5c3BLS28xNDB1Vjd0MWZUYzNvNzRHcGV2UUVpQUlpS2VnVmhaOUVUaVVIMHk1ajVZcEtWVEZORmVSVVpaTE5hUTRyS3FsWjh6dkVxam85T25wbWp5eGRpLytQRlFWSmhWd2VUV2xXU2FZM1IxTXFuNmljVFZsT1ovZFgwMVl2MzJISjlLcWFwMHdjS1d4OXFGaE9EM1doanBRcURqUEJGMng1dUtTY1NxS0ZQTnJidTE4MWsxY1dWUVlIbWhxeTBuUU5NVXRwaXF1Wml4ZlRJSklVWk1VNTQwdlFwcmZnWTlBQ1Z1U0o3cDNkdzlYRjJmUWVPeXhFVVlobjArNkpTc1VFVjhDNDBxUW9hRzRYM2RsYWZOYmYycjI5ajBMQ1drZ0tqQytFWEJQTkJFOUFVWXRtM0VDNG1jTHYwdS9oanRyZHZ4WUcwMFRYYURvOU9pcllYQks1U1lucFlOZW4wa3lzai9ZbExianBzRGNhalpBRWtmN2hoeC9VUnFWSzUxVEt4SkhsMXRlajgwcEt5bld6eUhyZHA5dUJqc0JoNFJRTzFBZ09JRFp2WGNkVWxRWFQ4ZmpoK01zWUlXaTVzU3hpL2tSSnVlRWgxeGdtaHNQU205dUw2K24wYXZienhkMzA4dVlhVzlPWGpKWWF6clNXYkY1cGVtRzRiUmVnMFNkTzVnVTErNXBUVGVXYWNRcXgyeTZtUUFzQm9zakhPOWZsZHJKZVdHZVl4QzdKZEtJdlRNZUhKK085dlhxQit3WStsWjVFYWdxU2hDa0toSGNXZzV4cWx2K3YyN3ViKzV2em15dkRJMDhucy9kSkJ5R3p5K3VQTi85MlkyUXJtajBDZlNrTGxqRmRiQkNNR3pLVUFaN1ZzZHZNWWJvN0VyNWtDNGdIdGdGSGhmK0IrQ1E1VGs2Uzc4ZmpVOWdIb3NGUXE2NkpIZ20rM3BmdGNuSnZ4NDd1NkxXM2o2dlJrbVNQaGkveHVZTG5GZVZPYU5NY1VKWVRMdlNLU2pDQ3F0UjdDSDZxcGVrMGdXdkI2ZDdlL3I1VEk1Q1JvbENnVjBSRFJqaVFET2RHSUtOU3N3WExpS2F3WUFWTlVIWWJsaVZ5V2EwTnI4U2xVQXpabVpNMUhSdWd6MFlvWWl2S001SFRIRFI5MFVabW8xQmhCUVcxRWxXUncxTHMzZDJlejg0djd1NW5IeSt2TG1abmQwWnIvQXZSRUpuUlU1TG41M2YzMFNrY0o3QVB4M3JWRE0wNEFpeVkwcDBPWno5V1BDOW9kQXBSU2RlUjZmbElOMkJtYVBFWHJpQm5tZDc3OTk1ZVZoQ2w0RW9zNzJnbVpFN2xYNGdCSW1PbldsUDMzZWs0b3dkbk04YVpuczFpUll2RnVPSEhUbyswM1c2djdyL0M5L2cwQVluREJsQ1doWmlUQW9LdHExOFpJclh0MDRJK0dka0hrd2tZT1BaN0FBWDFjV3YzWGNjMVZZb3NxZFhvTTBWMVZjNVFIYzJNdVJDdkVzT3pjNkdvQThZVy9rRURmSlVxcW1jNW5WZExIRGMrc1RKaGxXYUNjNXJwMkg4M01FMWo4NzhvZFd4TmtuUnF1Ty84Tm5FbVNucC9manU3dnZsd2NYWDJqd1JPeHBiSmM2WlFtRjJUWlVHQkZFc2htVjZ0a1JnVk5mK3NTVkdnRnFSS0syRHJOYzBaMGJUWXZENzY5T2I4cnhmMzlRU21ON08vWGx6Y25sMWQvbnlSbkl4ckVXUElKcWZFREdqMHN2cjZaUm13bDlmM1AxOGxjUEpmQm5BcHhad0NmYUp5QXlmL0JZcG1ndWZmQ1BqOCtqNkJQemg4VmFXUiszOEFvalZkbDFvWjJqaDVmMXlQNEVqOVhJaEhSczhxdmZyN1QxZDN0K2Yza25CbFpFaGNXNWZwbEN4by9kd1JRaFJGVFlQNnBSVWZaanNVR2xxUUlmZzBpcUpoZmttZ1VuVG1iY3pKY1FLNW1Ca1duaUhHMWVSZVZqUWdaS1J1UjRFd2dZK2tVTFRGRUZ6b0RvZ3hrZ2dxNUJWOThkcnhCemgrZVgvOC9mRi9IeDkzK0dSLzMrdU94bEpkU2tvMGxaWU1GSXFPOHpQSVZvUnhCZk9OV1JlcEN2M0hta3FaTnJOeHhFanoxZ0NaZm5HNlo1WWgzRm5GbjZoa0MwYnpXU2E0RVpTT1pmemZscjFJZCtFeS9KS0FnenZKOUVzRG1oWWhILzhuQmhxM2QycG05eCtkZ1ByTlB0eFRoZmd4ZUt4NFRtV3hNVkpwVGJNVjRVeXRqWEhpSEpRVXlTaXVGTTJOcks5MzV2Y0JPTE5EYzdvUWtvNFRFTExWOWR5S0lMUGxmU0RmajFPNFJBVVNRQ3NNeDhnRUNKU0dWcFEyK2lGcndEQUZTZ3RwUWZsVityZHBEYWhsNUtFa3A1cG9MUjBHbzZCVDFONXNDM05GRkVyaVlPUUpHRzVvZG0rM1BmZ0tLTXM2TlZlU3NxUThkL3RsNTJnL0I5ekJGbzZmbmRCdE5uaG8xSHJyb3o5Q2xQNGlHSS9qOEUwQ1NzdllEVExlUlpRZGVFRzNadjVMcXNQSkI3T1dWRmVTdDRBMDNZeW9tcTJFMG01YkdoUWxZQjRIY0tJb21sSm4rZnhGS0gwS0swcU1jV3VRUVYrMEpPNkJhb2pBK0M5V0pqS2t0OFE2VzdtZ2lrY2FTS1lyVWhRYnE4QzZnQk9ZVnhxZW13My9wVklhbmduWFJyTFhYYXdFYnpwWjY0d3B0UEJYMUdpWWtrb29DNUlaVjZDR2xndGdPdDBMMTdmM21oaDRGVjBocld3bmtIMllVb1ZpMkcycTRTbXFFN3NvcHR2aXNtR3VzdEoybFhGa1Z4MGxyVkVDZW5DaTE4M1R6QzF4bHBaTS9NdlpYT1NiMnNLWkhBOXNOb0ZNck11Q2F1bzdJWDRkVFJFb2lUUkNSVkpWQ3E0YVJkZENRWi8vT3VpUVZNdE5QWURnR1VWZUk5bUs1cUhvV1JFRlM4RXBaS0pvNnhSam1UQkRaUEd4TVpuYThHRklIQTJ4aDJKOFdkQ1p4OTFic0RidUFYVml5ZGttNkp3QVVVQ0hoMmNMWUVabTB4VERYbUQwdDFrR2Zrc3Z6bSt1cis4dXBzWTJDNTZjL1hoemQzL3hvWDUyZTNsN01iRG1lb25HMjl3MlQ2OHNmaVQ1VkJOZHFTdkc2U25zWjRVeE1jakNxUDFuYWloVGV3eHNYY2dyVTRBTEhKSUp2a1BZcmNEWjhHdnlTQU1sRWJmNXkvenR0TmY3RWhTWnQ5N2JMUnU3clI4eS9hckw1ZTAybGFKeVJwYVU2M2kxclEzYUlSeEJiUitXU21sOFJ0emZ0Vm9tWHJEQ0JGYnBrbXBKeTJMVE1aSFl3bmVEN3lidy92aTR2eGwyRXhyWmRpdUZGcGtvVUhFaWZ1RTNOVmEyYnVYd1gzZktYOW5kTGZBcmU0MDdVdFhGQVExREt5T2NySjFqZkdQamVGc1pxVHJDMVR5Yk9VMDJxVFhZa2pwSnErSm9TdldoRTdjOWxMZjY5ekcrMVJKNGVIRlJzZWlQMGZqaCtBc0tzQmZEK1MySVh3YklxTEgrM2FkV2swRTVaM2dEYVFmNUNkMnFOcjI5YmtrRllEQndFajV2V1Jpb0VXWmVJY1JJcnd0VzBIaHMvYlZBUjNYRTdiZXJxa3VsS2d5bi9mMm5xOE83Mi9OQWxiVE4yTFpGM05KV2I1UTd1MlhPZHV2My93SUoxTmxUdTRHTnlIRWJPcThXQ3lvWlgxclh0TXNRdFNXZ1VKa1lyM3RRRnIyQmxHR0lwNVVONERUc0RMRUx4ekZwckZES2M1b2JwOTlTc2hxRG9pV1JlUFF4M3hoclprMzZZcVlyQnVwVjFISWdqaFRWaDltUUdJQTNpWUptR0NQR1c0MjlLRWhnQURMOEdqR2l2dlFCaHR6YVlWYi9ZZHoxc1JxZDhkSDQrZTNWdGMwTDE2Tlc5VjNMOTZ3b29PTDBwYVNaMlJNWHZDMG9lYUl0TDVOMyt1SFdFNzZrWUNqTGVFL0MyQ1ZaUVlsRVE3NkhNTFJnT2xyU3pyWHhkbk9tTWlKeklIelRrSHhPTkxGbUxpcE0yck5hYk9TeFJ5SWp4MXFIQmVWTHZSb2xjRHp1bUdWMUwwbEpIc3p0LzRScTdyQmkwaHBjQ2Y3VmNMNUNyNDl0UkhWSjlkOXhUZWNGTXpMSHhnMW5sV1FKZUMvWXkzUjB5SGZGdjZJb3VuTitCNitEOWdnWG5sY3NXL216RGdYRStFbGNzd3pQMk9DSkVjOFBYdUliVWpKOHVEMzgxNWxISjZibWc4RmQ3dzdocHUxZ2d2Zk5BQW5USUFBbW9ZZUpqMXFvMFg0V0UvelU0S2hsM05hTWJEcjZlT2F0WkZ4L3hPUEZXTXgvb1psMzRlL08vZ1lUT01aWjdzTzFBTVkxbGFXazJoMUVTdkxzTFNaa0FLVmxsZWxLT292cDl1cnM4aG9tY09JZ1RBdTJYT2xpWTQ4MFY5V2E4RU5EMUJqK2k1VlkwOTRJeHAwMy9zMjZ5cHgydXIyN3VMLy9CMHpndllONk5nak9IcGRpai8rZDNwaFovTmJoZTk4K0VKVXVLKzNPNVEwR1ptVkJHRGRNMmdUdW1jSXpUWjZob01Qd1N4aFp0Y2Qrb3RMcHMyU2F4dEdCK3N3ak9ERDBiMmRMaXdFb0ZXZkc4RzBGWEFwQjhsaHRWTVBmb3NqeEhNZ2VQcGl4bGxTN3FLbC9FWWdEbkV5L3dhalNpOE0vak1iYkp5MnBTdTJCVXh4aDQyajhLdFJnYmp2V3liamVqYTM4TGRoYUZJSzhBbWZ4RmpoeklZci93T1laMXlBQVk3U25OTnBUVXRVeDM3WVBzQU44enJJUS9KcThGSlFiTG15TitEZzRZdDE0VFY1aSt5V0Jndkw0TWRqUnhWb3JiY1RKNk9EZzhDQTNFaTA2T0ZEUlp6NkNBd2ZpRFdQMVZ1ZmdIa0Q4aUdyajRmSEwySzh6ZE5qN2FQblRuLzRFOFJNcEtncWZEWTRpUFBMY2xCUU8xTmhpTEZaYUltYytISitlL1A1TGdxL3h3WGdjc3JDa3FpcDBiTDlZRVlDVGFUaTY5YzZZbW9IMFMrL08vdllORkxJVEpNckFBR2hYMUx3VkRFcTluWk9UYUNVRzVxRE5aVXJ0ZjVhNm5sbXVWNU9UOThkdkhkZUl5bGRRWWhEeWl4STh6YXQxcWV5bURPeTdQOXZGUTg4NGV2ZnVIWHppajF3OGM1ZEc0U1p3Q29qbEJNSnBqYmZqRDNjL0UvekpxRm9pbHpNdDR1eEp6eGhQd1B5dnhkZ25WcFNiZ25GOTZrK2NKcExtZE1FNHpRK2ZpR1RtMGFHaHE3MytkRWZuZG9CVElISUp1R2d0TEkyYUx5TTdWREFrd2pDZlJhVkQvOWZvZjJ4aEVCMFprVVFKanhvc05WM2NJdEpDUEZNWmo3RzlscFgzSkhEckhDakc0U0ZpWEJ0dndDalFKWlhSbHlHWWhnNHMyRDRRQXg5RjdlQnM4TTNPdnRiTEd1eU1wdzg3dXRxRXZjR3U5cFhUVDNZSVQzTzdJUHF6dFVHWS9tV3F0Q3pOaDVwZW9vTTVIT1J3OEE4NHVEdzkrT21nSEVDMkFVK2tKSnNBdG1FOG9uUmFNRTBsS1diMGlSUnhzT3BXakIvRHRZM1U3NnNVNkFjLzQraEhranNxeDBNQUxjQk9ZanlFNzIwYlZHWDZQemZyanFaNjQ2eHJFM0huekVQQjBRUDZRZkRQa1FZak8yQWxuZzFVeC8vbVkwTWNuZzIzc2JKVkZzQ1VaZWlSNnlZcTNUS1czVE1yYUNwRmx0U25hMXE1NVE3MTRlSHcwSm5xSk0vbEYxaFR2Ukk1UEJDNVZGK2lzRVByQzBDcm4xM3pxYmY2emRwSVVhUzlMaXRhbENIcVRSZEV4b29wY0NrcXc1M2N2TUpPK056b2V2Y3VKZ1VqeXFhV1liWmdhbC84cGVrLzdnRmZpN3dxcUFwbmhHRlVVaFRnMy9VQm15WS8yYmNESUhHb0xTRGR1eTBnN2R2dElPMk1oa0VpSnV6N25kQmRvLzRnWEJSaXlYaHJjeDVaQ2ZhcDJkQStDYkIxV2RERFVvcVhqZXRTS1FxbzZMem5hdDIrVzJ3U20vYU1xbWEwL2pRcVJXV0hSdXdNaUFKOEZ6dTcvaFJHSkY4elB1ckRLSWxTejBMbUFRenNXajhQWUF4MWwySmQ2dFlVM0NPRDBoYWtYbDlTTW9XNVp3K1lJL2NGVG9HNjdNd1Z4UmNLem00dll6V3VrOU9Ddkx3ZU9CODVES1l5cDk1TjdyT0sxbVdyeXlsbUQxSTgvTEtKZjcwKy82d1kxVzE4NC9renB1K1JUS3NFMXA4anNoNmdGN2ttUlFkTDVxMTdZU1dWcW5FOWhHZXE5YVlEd1R3NnRJMGNoRjQvWTdoMVNNUyt4UmMyR3REclpOeit3VTdtaFpPYUdBK0lWY1cwZDhlQmNEQXF4cGdyTm1nd1FMR2w4WU5uajNTanlkeEJKbnBseEtCN3BnWFlSdkRNOUFyNFFxWDIrMS94L1RhSUpWMDNjM1VRdTFtYVIzUE1mZ3lHaUJtSDI0dWZuR2s2eE9lSEdOdzVERUdkUW03UFpKOUl3WXl0QWRQcFZXc3dVdW1Wa0V4dklENC9HL3VjS016RFVqU3JaRWVpdEw1Y0xocDlZZGpEOUtsS0l3cHl6REZDWXJQT2xFc2NwZnlKU2NFeFo5UGJ1V0JEVjdQcHhkM1BGM2RHdnk5RXhmTjArN2dYTDhRSUtIWGFRWUxqdUVhSHBmTTBTL05HSDd5OXZSV3FYOXNlTXJaNGE2ZSt6dm1HanQ4OGJLQkRUZWQwU2ZVNUZpYThlY21yYis3N1pML2pDdDdZcFQwT3JEY3pCMlJtUk8rYjU0eFNmRTJNWDhLTjZRaGM1RFNWMUxsNzY4M01QUGc2bUcweGNXUVkra2lMSS9lOUt4TytlZXFCN0tqSHlNak1pb2swa3hxNm1kTzRIUG84eTRodDlLdUdVbXpKYVc1anlPN1lyVDNvM2YxMmZqMHJpanBWMnhibU9CdVo1dWk2R3NIZ0QxU01Oa05uZGdmL24vbTBieCtiR1ZsTGZvU1o3M01La3BhU0tzb053RW94dmdRQy82eUUrZXFTQjQzRGtBQjk2WXFRMGIvZ2M2VEUyaExCNXdoTy9YZVVZNThqK1BmbzlZbXBabWJvR1gzRnhMRDk0TXdlNE9RNGdmZkhDZnoyT0RHelFnKzBudGVYSGZPNjRjVUdyRlVYeE1YeGpBakhzNXZpemg5b1QvU2l0NEdsREtISGdWOW1MbjVuODBNdkYxN1JHQS9MeWZ5UGY3K1BWRS92TEFncmFJN25NUnByRFhBRzlNbDRmMUFLcFpoUkRmYWt4NGY3emxMNGg2aDhiY2lScjlkd0ZVV1FzeHgxRUtkTG9Sa3FOOENxRUV3cVpjc1ZsWTJiMXh6Vk9RcDBRZ2x1dUo5MTQvYTlNOU4vZW84SU01OStpN1BOeldabWVEU2JWOVFtOWRreU1WaUpJc2pVZUFjM3Zuek5RR0RjYXRZbUM5N2kzNFdDY29ocHVremg3dngzQ1h5NG1EcmY5TWNVN3UyOGVyajB1aGQ1Rk9ZYklIQWV2RDVycWZoNlZqYXZVWUdXbFhMSHkxaDZWb2lNRkxBbTJZcjVSSW56WnV4Y1VEdmFpandaQkx0Qk8xTnFpa3dVTFJhSHRsRTljcmdHUC9tbVhvdnhjQjQ0TzV1eGEvdC9RQ0t3dzl2Y1NLUnRuSVZ3dllwTkFNL3RKbzdXblAvTksyc0xyNFRTMW54M3BTZ2hZcDN4dENZNlc0RmVHZk43eVo2Q21IVFFCNWpHWTl2NjNmWE4vY1ZwTFc4ODJpeXN5MXQwc0tsU2R1QmcwSFpzMjljVzVpSlRxYlZVc1NEeHZhK2pPMUtxU0ZkNlhld0hNQTd4cUxVdU5ya0lVRVlLU1VtK2dWeHdhNStSdVhoeSs3VVJGUktpRWNhU1VaNmhnQXJpLy95UThVTzlvb2RybGhzTlE3UW0yU09lUnlOakNveUttQlZsUlpWVGlFdVdQWUlaeWRVTytoak5jUXJ4SGZJMm5JM2hVMWdrNnJtYThQeW9xUU56MjBrOHg5clpreWFYcno0ODVmVFphTE9BdFhodUNBWFBvMzF1NzBrei9vOWp1S2RHNTNneUtRdzdZTFREbUxEdEFxb1dpNTIxV2NsZ0Q2azFoZk9WTUxTQ0MxKzB5ekNiM1NVcG5HUDlBQkF6YVI5bGFRbEo1MG9HODBxQ09SaDhoY1JTU3JxZ1V0SjhCL3VuOE1uNkU4aWNGbFRtd2xWaElyMlJrWDVFdmFJY1NLYlpFMHFiSUZsaEhxd2hISFBLbGxpYmV1Y1NtZUx6NmQwWUQ3S1JYUnlLMTRTVEpUVUtNeHoyejU4dWs2WXNpT0hNa0RMT3oyenN3OEpPNFN6UGo0TEYrRXpmVm1hdHo2UnlRdDZQN0dlaWlEL25YWkNNdW5XOWI0ampmR3gwbXRsWkp3cWMxUE15OC93c2dWdzg4MllTZG9Db0VmNDlZYzM5ZXF5QU05NmVNOHJyUGtiWVJrdXEwYnBTcThqUTcxS1NOWm9SdVlDMVVLNFdqOWw0MEVaVWlVdjBDTFRXdTNmd3EvL2V2WHZYQW5pSjVZWG9VbExKRmh0TCszVlJvRUdWcEJsbFR6UzNzbzdhTkhiREMxakEwUVU0MzNnUy95T1czU2g0cWdwT3BTOTlKVnZsRHViUTlHZG9wckEyU3NPd0x4N2sreFNxb0VKRmk5NzhIK25Hak40SG1Ba3BhYWEvKzQvaDhGZi8xUUIvMjVEcWg1cFUrM0xlMk5SSUxrUW4zWFhYTS9PYUVNT3dmRWdkaHZ0WnQvWktveVJLaGVXTmp1TnEvOExxQml6WXNiWHZoYXVtY0hXa2M4TlhpOHJvN245V3BNQnlxaHBZTG96WFpvcy9jZUlmcnFjZ3FSTEZrNW1Qd0Zwa3JFQTNvcktSSzRHaWRkejF1d1pqRjJOVWk0YW45RXFLWjhoSUZWcUV6NHpuaVEyV2RwaTRucGV0KzhwY2dvZ1JXbXZ5YUJXWk1RYmVUTXB0VGZLTUNDbWxlR0plSzlwbVZOcElFNWJNWXZTMFVsUWlWbERMdWVobERjMVhUSm4yTnNvQ3lsWnVwUERKeFdmaW5QQWxsYUpTNHkxUnBCcWMyOEpPZlg3dEJ3UUhGZFpsOEVHbldlMzh4U3B4a2UzRWVJVCtMQnlQU2pjbEhoby9mTmtiT0NtSlBqS08yU2RJZythRFVRUEUrREVvQU8xSml6c09zQUJhT2F4RUZ3YTRTbHZ4ajZtSEVmdWV2bjA3RzhMMFR2RDh6enBkdGlZeDhnRXZkSm9pZzJqVHNIME0xVm1HRFpzMzVxQ3ZiM2VISGZXaVZDZVZzb1VoZjc3NUJkNWhTZ1Zpc203ZXIwbm9INW5aQlEyYzljSFFJZGVuSnQ4Um5kcmdkS2FlOEtuYkFreUdNT0RIblFYb1ltWnQzNEVNYlBQU09wTEhyZWNZcWRYRk1HYTNycXkxVThPWnJBYm9CS0xFSjZJU1hmUXpUVXVoWnJiaG1wUnhRZGJ6bk1ETEtieWtCbllaanhNRHA4NStqY2E3UUxoUER5ZW5Yd1piRFMwZit2UnpicGl6UmY0ZThXNkF3ZHhlUXlUK1BVd21EZEVNWTZldVJzS0UxZmc0YVRyc0tOT3hKN1V3UWNaK1lQMWxoZzIxQ0hDeW8rM1d1cWNhMk01c2k1MWQ5K0VuTDB4czlvUmpLMk1GUEZQeWFJMXRudlhUdXR0UUNOOW9oR0kwaWFWeEQycG56MWR5RnJiOWVXcjV6UVJPZGpidUM0Slh3TDNmMm5oM1ZuUVBKRkhEcFRENzhBR3pucDBWUGFmYXVnSFd2U2J1TGdpQ2xRLzBUNE1nMktLZThROFRMemkyVDZlUkxLN1h6cFplUURuQzdBclJwZ2xUS01UNjQ2N1YwZ2lXYzlUZ1JqUXRHTThIbEZiNm1kLzZJSmN6cTA3NzFQS3EvSU5mSVFQaHJYTFFyK3MzRTRnK2MzRHlKbjZyVURRaWJ5Q052Nk5rMW1xNVhlUFZpTWNXWFdMc2xDZDZpZmxNSk1jVUhXTnlOeHV5cExwbk81eldhM0syQ1ExaytTQzhNNldxTllaSGlnS01kN0dtbWtvYngvT3hYeCtpL1J3Rnl2d05pbnpJL1Bta2htd2VuSGZMb3JLd0hZeU1GSVVSaktGWjFSS29Ualhnc1BCZHJSY2NrRmZ5YVE2VWk5b3JPTWliK0g0TGoyMkE3U3llOWp2NEFZNTNXazR1VlFibHJGaXZqUUZXTUk1M3dDaWZtb0pmT3BiVDF5bXpWNVZZcmJ6cXFXOXJaYk9JdmxJLzFWdm1rdkRqVmhiUUd5bmYzalNFZEdydlpjb2EzUGw5Y3FRVDFNcTR3L0xEazczQWtHOG1aRTE2OURwY3N2OGtPbm4vZlhxY0hxY25VVmhZc2RLNi9MbFZGYkhYMmxYR3NkQnJFbUdlUjlSL2EvVEhKR3E5eU1VTTMyRkJSZmpDbm1yTU1GZWxQeG9wbVpvWVNSMCtESk01SjczODJNNm8zV0tPNE8zNGRKQlZmWUdlTVN0OENwaEZtR05MTEN5M2grWWNIa0lrUW9ReEllTmJoMG1UV08vQXFUMHRzMzZma0swUVJ0dFB4NnVrbm1ra0tXaFNQTHFaMUtEM3VranQzY1RTWG5mN3RvbXVBQWszb00xUGxXUkd1Ymg3MzBKRXZNRkQrblIzNmFWeUpWbW5HSENnQUFVemtlSlcwNzc5RTh4STRaU09iRWo5U0piWis3VGMvTWRteUJZMWNnZGtEQmI5TlBWd1BYZG8ySERyZGh2ZC91VjJlakdkWG42WWNNSHBxSWVpYnZXU0xWc0tvU1FocjNacmw3NVY1TFJWcmMrQ2FwMjMxWnJMSW51WEdCckVaR2REcnV4WHNObGtka3NhT1JPQ1ZsMTA5L3lMYWt1aTd4QTg4MWZ1Ykc4a1dhZUNqN2JpRUZhZVZnbVV2YUxGbjBsUnVYdjErdmN2RE9BOWhOZ1UvWjMyQXREQkNhMDloTzJyZ2kwam1EOGZOam84Vktxd1NTQTJMR1NOMVR6SGkrUXdzOHFlTkRQQnV5cTUyZUxPa3BVcTB1bjA2dit0Ulc5anJhOWM4ZEJ5K21QYUVtZGo2MFdxeWpLcVZNZmpmS1YyWlF0NHo2cUJPT21VbWRSTmpFcHUzdGtreXJQYlM4eTNNTUxacmE5K0VRMjBYVlE4ZTVXVGU4M3JHNXlTenJBOTF2dktMZWw0ZTRFLzBSNm43VmNNYnhBU1ZJa0dheHRUNGRpTUwwUTh1akRBamR5cjd5bURzMXZVU2FQRWRHNFBOUmhKYWVibjNRUlNEcGl6WFF1SEZEanVnWW9QMUhod29WSGlQTXIyQ09PQkdKbVZpTzNkaXQ5MStnMUZ0UWFKTGZ5emhOZGE3K3Y3dTIyUE1TL0pxSzVRZ0x4bGoyR3JiZTFzYW1OaUc2STBDMDFjYnVtc0pIcGxMVmNvNlRyODJqT3ZuUnZqSXJMT2RUbTJ1K2kyRlIvNTBHUElQZmhneXlXVlEvZU5PdFQ3c1NZUTliSmVNVFllck9KMGwvNTF3UXN6djI2bHZhMGVxSlMyUjBQKzZOWWwxdGtoRXlOOE1abDNYZXFOdTEyaEcwYW9mYWxSVUhyYVl3YzBqMzBhM3dTdjQ0MkRWU1F3a3ZOUjU1NGJkelhxTmd1Z0FlanE1YnNYdnBRdUNXVmVpTG5oZUthVnUrakxIZHJVRjV6V0Y2UTJuYm5ROUJRc21vaFMxWnFxNWpBVElUNHp2RkVUajg3Y2M4cHpuNUxRQXhtaXlpM3QxMHJHMW1aMXRCVWM5TlNWdmErZ3BqSlArUFpnelpJYzQ5QzdicmFaQnA2TzRkYjV2bWJmUm1NelcvTmt3WXJPcE0xVHZOcDJVamZvWG01ZzBaMExIbW5uaGEyWU9zWG11eW1nQXpDSWZ1UXZNT212NDhHdThVdklIVUZZaitVdjNUcm1ldHNZVjFScTI4UXZLZlNFQmlDMTY4Zk5YejVVaE9Xa1NSc2QrUVBMWDc0NG5KbXhlak42T1A3aXF1M3k0WWpXbGZGQStCS3E4dFhEdTc3K0RvL3JmbzJIMHRYWFEvRy9GbFdHSWJVM0hHKyt3UzVDaENtemV3SHc3eVp3ZUpKQWRNbHhrRHE0NVVKc2UvditxZ043UHhzNi9OalJaVjRwSVBaTzVQMEJ6QStvYnovcFdtMmJqWE1LZSt4MWxtcHBnZFlPMlpkV2M5ZXJhRVg3dGlyckJndmZzSkZibGZMUVJySUZqRnBIdGlPOEFsVExtSFlZWWRCV1FxOTR3SmFNK2duNUEvZmcyTjVOTUxiNzNtS3dHU04rMS9Ub1E2dHFaVzgvcEZWWlVobjNHK0pSN1dEUmZJQ1Z1R3IwK2RxRGN2ZnV1amZmVFdDOTR4eGhZRy9pRDh4bUZLNHA0YjZZL2s5SWJ1dnQ1M0p6U2NuZzVWNDdqcDVheDAwdGJ1MFFmalFlNUllSitYUGNBSGNYMDA5WDkxUEFoOE84NFEzWjBKU1QxQmx6aUlHWlV3QU9ZMXZzSzljMWZHd3pyZkdLTGpmSnVCdGx4QVhXMk9nRTUwd2p2Si9GdDE1U2ZZWFA0bkhRSUZWVVgrRmQzNzdkaDRzZlAvM1pIeHNJcmtSQkF5aFRMU2xaKzd2VXgyRXJBOHFHVDNWd3pYcnpaSFFRdXdyUXNScU5lMTNiczdpOC9ualRtaWZKY3orcTYxU2ozZDd2RHBPaDI5N0hyVGI5Y1M3dTdtN3V0ZzNrdTdVMzJBMi9aN2ZJbUZSK2QxMHN0LzRMTE55d3ZMWHpDdVVJREw0cXhCS24yN3dLOFlOTkFtbnFtalFCM05ZVkN2aXVGK1AydzdpSWxoL0dCZVNEdDRhMTZyZnVEbkFmTks1blY0ZkZ3MUJ3ZDFaWWVqTzgzc0RLN3I3cUJLTER3V3Jqc0Eyd1E4RWRYaHBRWGFMVUtuRnkyZjQrVDJyL3d5dkhpVncrR2NjcEdZMlNoNWJraVZhMEtLTUVJbDhyWmo2NlFpNmpGTndSU2Z2R3FjZ2VmQ1FRK1Z3dC9PS3FackZmVUh0cnZ1TUpSaGVLTHhSTmJDejdNUGlPZFovMUJ5ck5SMG1lY1Vnc3dqU2ZmbEdDOTJZVzFqSGhySm82SUR0anJKWHRkaHRLR01OMXVFQlo5S1ZscFRrTS94bi9hK0o4VXU3VTh6YTJKWVBRcTZ0RUNReVFsb09OOTdSaEJUcTFoYjFhZ0NwcHhoWWJYN3BHK01iK3lJVlBkTFNIaXE1N3dZeXJiYTBwUERaVFVCSlovd0NHUFJBRHF6NGpDOUVtZ0xVY1dUVE43YzhaeGI3VnVFVjUzbkEvVHFCdWtVQVVlZldDdjMxVWFrT2dCcnpwMGpwOUVhVzliN2VHM3N2OGFnNTRleWVzMEFRSUhxSmVZV0NVZUVPK2JhME1uMDUwTjZTek1jZHRYeVNZdG1lZkhWN044V3RHVmcrbTQ4T3ZnT2w3YklWcEdib0xzcjRRamNqbDFxNkdBcnNkQSttN3UzTmRrajRJQUFYMEt3QXMzKzdxM2dySmRQdDc0ZFIxRnJjZEh2WVFGMHEwTHZwQ2pkRzVILytyQmpGaXNyZmRSdVVnYm9KMGxLMFF2QXp0NDhrcTQwWUxvNjIwRlU1TElIZUFoV3E3KzJzQUhUQldqcjgrbWIrZDNWMWZYdjk1eHpDN0VlZlZ4T3NqZlR5N1A3djY1bkdNRGhvUEhUWDR1NTY2bDEvdG9HZFVZMjhIWnUrcjJnb1BsZUhib2YzdjFQMmUxeENzbGhMdEFnM3RuTjBzTzZoVSsvdzNkRWIveXN4S3V1NnQxUnRTdStkVUsvUXVDemQxb2EzbkE0Sy9xemNHTlAwbmJtOEp6ZDBCbTNmb1JkbTVOSGpIa01GNVZDRGxlaWw3elc4eXRoeklsbUIwTDFQM2Y5ejJrRnFPQlg3b1ozajBSbDFBMUxyd0FNMEdvVkozTmNJVzlkSTBlT2gwL3pLSTBuYmFtSVZTMzhSd29PenZpM1htc1QxTnBidUkvY3NGY05HNnpRRi9Bb0xibjFmZ0l1aHB6YTc2U29nNkN3VmIycUFxb3J3QmZ1OSsvUUt2TTNRL2Nsai9DcWU5RTV1TG5QWU1ScmZtNjNyMDF0QUdTbDJNVXVmY0JCZmtiR083dmQ1bWpPcnVUZExGTitYU3RNeXovNEdUblVid3RhaVQ3dDBsRzlHYjdXRmw1WGlkdXRWSi9HaU1rU1NnLzZSZVZOSlMxSGk0cUxwWDZiYXlxbG9IeDUyR2I3dVp0bjIvVnp2cXZROS9vN0FVaG9UQTNURUhjNUk5dW50MEMvWklpdzNHbmR5SmlOMFpHeUxFeWw5anFmTU5aRVJSbHloVmNkZk4vWXFtZVI4TVdGVFpJMFpoYmMyKzJ3akIzUlJTODdlRklFZFh3ZWpwcUxkSGFzQXA3VjRUMW9yWXRzOElEMVJ3UW9oSHYwTkhpVTJiYmpyTTF0UEhwa3Y3ekRINDNMMEs4ZlcwZ1paV2VHUEExeUhCRlRCaEtMeUo5bzYySlEreEJjendSSFkyZzhrRVJyUFptakErbTQxYzFNYi80cVVONVl6L2Z3QUFBUC8vQVFBQS8vL2haNnBSQ0hnQUFBPT0KICAgIHBhdGg6IC91c3IvbG9jYWwvYmluL2F2ZXJlY21kCiAgICBwZXJtaXNzaW9uczogJzA3NTUnCg=="
+      + disable_password_authentication = false
+      + id                              = (known after apply)
+      + location                        = "eastus"
+      + max_bid_price                   = -1
+      + name                            = "controller-vm"
+      + network_interface_ids           = (known after apply)
+      + priority                        = "Regular"
+      + private_ip_address              = (known after apply)
+      + private_ip_addresses            = (known after apply)
+      + provision_vm_agent              = true
+      + public_ip_address               = (known after apply)
+      + public_ip_addresses             = (known after apply)
+      + resource_group_name             = "vfxt_resource_group"
+      + size                            = "Standard_A1_v2"
+      + virtual_machine_id              = (known after apply)
+
+      + identity {
+          + principal_id = (known after apply)
+          + type         = "SystemAssigned"
+        }
+
+      + os_disk {
+          + caching                   = "ReadWrite"
+          + disk_size_gb              = (known after apply)
+          + name                      = "controller-osdisk"
+          + storage_account_type      = "Standard_LRS"
+          + write_accelerator_enabled = false
+        }
+
+      + plan {
+          + name      = "avere-vfxt-controller"
+          + product   = "vfxt"
+          + publisher = "microsoft-avere"
+        }
+
+      + source_image_reference {
+          + offer     = "vfxt"
+          + publisher = "microsoft-avere"
+          + sku       = "avere-vfxt-controller"
+          + version   = "latest"
+        }
+    }
+
+  # module.vfxtcontroller.azurerm_network_interface.vm will be created
+  + resource "azurerm_network_interface" "vm" {
+      + applied_dns_servers           = (known after apply)
+      + dns_servers                   = (known after apply)
+      + enable_accelerated_networking = false
+      + enable_ip_forwarding          = false
+      + id                            = (known after apply)
+      + internal_dns_name_label       = (known after apply)
+      + location                      = "eastus"
+      + mac_address                   = (known after apply)
+      + name                          = "controller-nic"
+      + private_ip_address            = (known after apply)
+      + private_ip_addresses          = (known after apply)
+      + resource_group_name           = "vfxt_resource_group"
+      + virtual_machine_id            = (known after apply)
+
+      + ip_configuration {
+          + name                          = "controller-ipconfig"
+          + primary                       = (known after apply)
+          + private_ip_address            = (known after apply)
+          + private_ip_address_allocation = "dynamic"
+          + private_ip_address_version    = "IPv4"
+          + public_ip_address_id          = (known after apply)
+          + subnet_id                     = (known after apply)
+        }
+    }
+
+  # module.vfxtcontroller.azurerm_public_ip.vm[0] will be created
+  + resource "azurerm_public_ip" "vm" {
+      + allocation_method       = "Static"
+      + fqdn                    = (known after apply)
+      + id                      = (known after apply)
+      + idle_timeout_in_minutes = 4
+      + ip_address              = (known after apply)
+      + ip_version              = "IPv4"
+      + location                = "eastus"
+      + name                    = "controller-publicip"
+      + resource_group_name     = "vfxt_resource_group"
+      + sku                     = "Basic"
+    }
+
+  # module.vfxtcontroller.azurerm_resource_group.vm will be created
+  + resource "azurerm_resource_group" "vm" {
+      + id       = (known after apply)
+      + location = "eastus"
+      + name     = "vfxt_resource_group"
+    }
+
+  # module.vfxtcontroller.azurerm_role_assignment.create_vfxt_cluster will be created
+  + resource "azurerm_role_assignment" "create_vfxt_cluster" {
+      + id                               = (known after apply)
+      + name                             = (known after apply)
+      + principal_id                     = (known after apply)
+      + principal_type                   = (known after apply)
+      + role_definition_id               = (known after apply)
+      + role_definition_name             = "Avere Contributor"
+      + scope                            = "/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
+      + skip_service_principal_aad_check = true
+    }
+
+  # module.vfxtcontroller.azurerm_role_assignment.user_access_admin will be created
+  + resource "azurerm_role_assignment" "user_access_admin" {
+      + id                               = (known after apply)
+      + name                             = (known after apply)
+      + principal_id                     = (known after apply)
+      + principal_type                   = (known after apply)
+      + role_definition_id               = (known after apply)
+      + role_definition_name             = "User Access Administrator"
+      + scope                            = "/subscriptions/3d07cfbc-17aa-41b4-baa1-488fef85a1d3"
+      + skip_service_principal_aad_check = true
+    }
+
+Plan: 18 to add, 0 to change, 0 to destroy.
