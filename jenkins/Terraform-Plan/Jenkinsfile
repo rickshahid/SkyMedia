@@ -67,7 +67,7 @@ pipeline {
           terraform init -input=false -backend-config=$TF_BACKEND_CONFIG_FILE -no-color &> tfInit.txt
           git add tfInit.txt
           git commit -m "Add Terraform init output file (tfInit.txt)"
-          git push $GITHUB_REPOSITORY HEAD:$PR_BRANCH
+          git push $GITHUB_REPOSITORY $PR_BRANCH
         '''
       }
     }
@@ -84,7 +84,7 @@ pipeline {
           terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
           git add tfPlan.txt
           git commit -m "Add Terraform plan output file (tfPlan.txt)"
-          git push $GITHUB_REPOSITORY HEAD:$PR_BRANCH
+          git push $GITHUB_REPOSITORY $PR_BRANCH
         '''
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
