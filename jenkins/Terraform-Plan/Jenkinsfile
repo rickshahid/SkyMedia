@@ -47,7 +47,7 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -xe
-          git clean -f -e tfFilePath
+          git clean -f -d -e tfFilePath
           git checkout $PR_BRANCH
           #git pull $GITHUB_REPOSITORY $PR_BRANCH
         '''
@@ -89,6 +89,14 @@ pipeline {
         dir(readFile('tfFilePath').trim()) {
           archiveArtifacts artifacts: '**/*'
         }
+      }
+    }
+    post {
+      success {
+        sh '''#!/bin/bash -xe
+          git clean -f -d
+          git pull
+        '''
       }
     }
   }
