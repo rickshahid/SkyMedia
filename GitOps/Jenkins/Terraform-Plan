@@ -12,7 +12,7 @@ pipeline {
   stages {
     stage('Build Artifacts') {
       steps {
-        archiveArtifacts artifacts: 'params.BuildArchive_ArtifactFiles', allowEmptyArchive: params.BuildArchive_AllowEmpty
+        archiveArtifacts artifacts: 'tfplan', allowEmptyArchive: params.BuildArchive_AllowEmpty
       }
     }
   }
