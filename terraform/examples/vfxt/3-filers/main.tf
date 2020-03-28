@@ -1,4 +1,4 @@
-// customize the simple VM by editing the following local variables.
+// customize the simple VM by editing the following local variables
 locals {
     // the region of the deployment
     location = "eastus"
@@ -32,7 +32,7 @@ locals {
 }
 
 provider "azurerm" {
-    version = "~>2.1.0"
+    version = "~>2.3.0"
     features {}
 }
 

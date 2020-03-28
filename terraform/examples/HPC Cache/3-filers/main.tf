@@ -6,7 +6,7 @@ locals {
     // network details
     network_resource_group_name = "network_resource_group"
     
-    // vfxt details
+    // hpc cache details
     hpc_cache_resource_group_name = "hpc_cache_resource_group"
 
     // HPC Cache Throughput SKU - 3 allowed values for throughput (GB/s) of the cache
@@ -45,7 +45,7 @@ locals {
 }
 
 provider "azurerm" {
-    version = "~>2.1.0"
+    version = "~>2.3.0"
     features {}
 }
 
@@ -66,33 +66,13 @@ resource "azurerm_resource_group" "hpc_cache_rg" {
   depends_on = [module.network]
 }
 
-data "azurerm_subnet" "vnet" {
-  name                 = module.network.cloud_cache_subnet_name
-  virtual_network_name = module.network.vnet_name
-  resource_group_name  = local.network_resource_group_name
-}
-
-// load the HPC Cache Template, with the necessary variables
-locals {
-    arm_template = templatefile("${path.module}/../hpc_cache.json",
-    {
-        uniquename   = local.cache_name,
-        location     = local.location,
-        hpccsku      = local.cache_throughput,
-        subnetid     = data.azurerm_subnet.vnet.id,
-        hpccachesize = local.cache_size
-    })
-}
-
-// HPC cache is currently deployed using azurerm_template_deployment as described in
-// https://www.terraform.io/docs/providers/azurerm/r/template_deployment.html. 
-// The only way to destroy a template deployment is to destroy the associated
-// RG, so keep each template unique to its RG. 
-resource "azurerm_template_deployment" "storage_cache" {
-  name                = "hpc_cache"
+resource "azurerm_hpc_cache" "hpc_cache" {
+  name                = local.cache_name
   resource_group_name = azurerm_resource_group.hpc_cache_rg.name
-  deployment_mode     = "Incremental"
-  template_body       = local.arm_template
+  location            = azurerm_resource_group.hpc_cache_rg.location
+  cache_size_in_gb    = local.cache_size
+  subnet_id           = module.network.cloud_filers_subnet_id
+  sku_name            = "Standard_2G"
 }
 
 resource "azurerm_resource_group" "nfsfiler" {
@@ -139,7 +119,7 @@ resource "azurerm_template_deployment" "storage_target1" {
   template_body       = local.storage_target_1_template
 
   depends_on = [
-    azurerm_template_deployment.storage_cache, // add after cache created
+    azurerm_hpc_cache.hpc_cache, // add after cache created
     module.nasfiler1
   ]
 }
@@ -167,7 +147,7 @@ locals {
     {
         uniquename              = local.cache_name,
         uniquestoragetargetname = "storage_target_2",
-        location                = local.location,
+        location                = azurerm_resource_group.hpc_cache_rg.location,
         nfsaddress              = module.nasfiler2.primary_ip,
         usagemodel              = local.usage_model,
         namespacepath_j1        = "/nfs2data",
@@ -211,7 +191,7 @@ locals {
     {
         uniquename              = local.cache_name,
         uniquestoragetargetname = "storage_target_3",
-        location                = local.location,
+        location                = azurerm_resource_group.hpc_cache_rg.location,
         nfsaddress              = module.nasfiler3.primary_ip,
         usagemodel              = local.usage_model,
         namespacepath_j1        = "/nfs3data",
@@ -232,12 +212,8 @@ resource "azurerm_template_deployment" "storage_target3" {
   ]
 }
 
-locals {
-  mount_addresses = split(",", replace(trim(azurerm_template_deployment.storage_cache.outputs["mountAddresses"],"]["),"\"",""))
-}
-
 output "mount_addresses" {
-  value = local.mount_addresses
+  value = azurerm_hpc_cache.hpc_cache.mount_addresses
 }
 
 output "export_namespace_1" {
