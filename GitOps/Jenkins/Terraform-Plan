@@ -7,7 +7,7 @@ pipeline {
   }
   options {
     disableConcurrentBuilds()
-    copyArtifactPermission(params.BuildArchive_CopyPermission)
+    copyArtifactPermission('params.BuildArchive_CopyPermission')
   }
   stages {
     stage('Build Artifacts') {
