@@ -5,9 +5,10 @@ pipeline {
     string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47', description: 'Azure Active Directory tenant identifier.')
     string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3', description: 'Azure subscription identifier.')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure Managed Service Identity (MSI) access control.')
-    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestration context.')
-    string(name: 'TF_BACKEND_CONFIG', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
-    string(name: 'TF_BUILD_OUTPUTS', defaultValue: '.terraform tfplan', description: 'Terraform build output files.')
+    booleanParam(name: 'ALLOW_EMPTY_ARCHIVE', defaultValue: true)
+    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
+    string(name: 'TF_BACKEND_CONFIG', defaultValue: 'backend.tf')
+    string(name: 'TF_BUILD_OUTPUTS', defaultValue: '.terraform tfplan')
   }
   options {
     disableConcurrentBuilds()
@@ -15,7 +16,7 @@ pipeline {
   stages {
     stage('Terraform Plan') {
       steps {
-        archiveArtifacts artifacts: '${TF_BUILD_OUTPUTS}', allowEmptyArchive: true
+        archiveArtifacts artifacts: '${TF_BUILD_OUTPUTS}', allowEmptyArchive: ${ALLOW_EMPTY_ARCHIVE}
       }
     }
   }
