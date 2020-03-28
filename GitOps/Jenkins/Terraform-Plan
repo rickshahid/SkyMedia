@@ -2,7 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'BuildArchive_CopyPermission', defaultValue: 'Terraform-Apply')
-    string(name: 'BuildArchive_ArtifactFileSet', defaultValue: '.terraform tfplan')
+    string(name: 'BuildArchive_ArtifactFiles', defaultValue: '.terraform tfplan')
     booleanParam(name: 'BuildArchive_AllowEmpty', defaultValue: true)
   }
   options {
