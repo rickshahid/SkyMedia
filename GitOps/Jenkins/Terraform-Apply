@@ -6,6 +6,17 @@ pipeline {
   options {
     disableConcurrentBuilds()
   }
+  triggers {
+    GenericTrigger(
+      genericVariables: [
+        [key: 'PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
+        [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label']
+      ],
+      causeString: '$PULL_REQUEST_LABEL',
+      regexpFilterText: '$PULL_REQUEST_MERGED',
+      regexpFilterExpression: 'true'
+    )
+  }  
   stages {
     stage('Build Artifacts') {
       steps {
