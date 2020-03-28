@@ -14,7 +14,7 @@ pipeline {
   stages {
     stage('Terraform Plan') {
       steps {
-        archiveArtifacts artifacts: '**/*'
+        archiveArtifacts artifacts: '*'
       }
     }
   }
