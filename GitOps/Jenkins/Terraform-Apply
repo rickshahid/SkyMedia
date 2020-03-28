@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Build Artifacts') {
       steps {
-        copyArtifacts projectName: 'Terraform-Plan'
+        copyArtifacts projectName: 'params.BuildArchive_ProjectName'
       }
     }
   }
