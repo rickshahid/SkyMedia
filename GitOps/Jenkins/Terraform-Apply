@@ -20,7 +20,7 @@ pipeline {
   stages {
     stage('Build Artifacts') {
       steps {
-        copyArtifacts projectName: 'params.BuildArchiveProjectName'
+        copyArtifacts projectName: params.BuildArchiveProjectName
       }
     }
     stage('Terraform Apply') {
