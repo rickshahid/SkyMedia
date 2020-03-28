@@ -2,6 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'GitHub_ApiUrl', defaultValue: 'https://api.github.com/', description: 'GitHub REST v3 API host url prefix.')
+    booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure Managed Service Identity (MSI) access control.')
     string(name: 'Terraform_BackendConfig', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
   }
   options {
