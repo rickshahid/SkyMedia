@@ -15,7 +15,7 @@ pipeline {
   stages {
     stage('Terraform Plan') {
       steps {
-        archiveArtifacts artifacts: '${TF_BUILD_OUTPUTS}'
+        archiveArtifacts artifacts: '${TF_BUILD_OUTPUTS}', allowEmptyArchive: true
       }
     }
   }
