@@ -1,6 +1,7 @@
 pipeline {
   agent any
   parameters {
+    string(name: 'GitHub_ApiUrl', defaultValue: 'https://api.github.com/', description: 'GitHub REST v3 API host url prefix.')
   }
   options {
     disableConcurrentBuilds()
