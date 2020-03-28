@@ -36,20 +36,6 @@ pipeline {
         '''
       }
     }
-    stage('Terraform Init') {
-      when {
-        expression {
-          fileExists('tfFilePath')
-        }
-      }
-      steps {
-        sh '''#!/bin/bash -xe
-          tfFilePath=$(cat tfFilePath)
-          cd $tfFilePath
-          terraform init -input=false -backend-config=params.Terraform_BackendConfig -no-color &> tfInit.txt
-        '''
-      }
-    }
     stage('Terraform Plan') {
       when {
         expression {
@@ -60,6 +46,7 @@ pipeline {
         sh '''#!/bin/bash -xe
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
+          terraform init -input=false -backend-config=params.Terraform_BackendConfig -no-color &> tfInit.txt
           terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
         '''
       }
