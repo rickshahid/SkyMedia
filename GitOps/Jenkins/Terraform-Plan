@@ -21,7 +21,7 @@ pipeline {
     )
   }
   stages {
-    stage('GitHub Pull Request') {
+    stage('GitHub Event') {
       steps {
         sh '''#!/bin/bash -xe
           #rm -f tfFilePath
