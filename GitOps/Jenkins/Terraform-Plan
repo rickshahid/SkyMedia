@@ -24,7 +24,7 @@ pipeline {
     stage('GitHub Event') {
       steps {
         sh '''#!/bin/bash -xe
-          #rm -f tfFilePath
+          rm -f tfFilePath
           #for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
           #do
           #  if [ ${changedFile: -3} == ".tf" ]
@@ -33,6 +33,7 @@ pipeline {
           #    break
           #  fi
           #done
+          echo -n 'terraform/examples/vfxt/vmss' > tfFilePath
         '''
       }
     }
