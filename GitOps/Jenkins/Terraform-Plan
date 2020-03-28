@@ -1,16 +1,75 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'BuildArchive_ArtifactFiles', defaultValue: '.terraform tfplan')
-    booleanParam(name: 'BuildArchive_AllowEmpty', defaultValue: false)
   }
   options {
     disableConcurrentBuilds()
   }
+  triggers {
+    GenericTrigger(
+      genericVariables: [
+        [key: 'PULL_REQUEST_ACTION', value: '$.action'],
+        [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
+        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
+        [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label']
+      ],
+      causeString: '$PULL_REQUEST_LABEL',
+      regexpFilterText: '$PULL_REQUEST_ACTION',
+      regexpFilterExpression: 'opened'
+    )
+  }
   stages {
-    stage('Build Artifacts') {
+    stage('GitHub Pull Request') {
       steps {
-        archiveArtifacts artifacts: 'params.BuildArchive_ArtifactFiles', allowEmptyArchive: params.BuildArchive_AllowEmpty
+        sh '''#!/bin/bash -xe
+          rm -f tfFilePath
+          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
+          do
+            if [ ${changedFile: -3} == ".tf" ]
+            then
+              echo -n "$(dirname $changedFile)" > tfFilePath
+              break
+            fi
+          done
+        '''
+      }
+    }  
+    stage('Terraform Init') {
+      when {
+        expression {
+          fileExists('tfFilePath')
+        }
+      }
+      steps {
+        sh '''#!/bin/bash -xe
+          tfFilePath=$(cat tfFilePath)
+          cd $tfFilePath
+          terraform init -input=false -no-color &> tfInit.txt
+        '''
+      }
+    }
+    stage('Terraform Plan') {
+      when {
+        expression {
+          fileExists('tfFilePath')
+        }
+      }
+      steps {
+        sh '''#!/bin/bash -xe
+          tfFilePath=$(cat tfFilePath)
+          cd $tfFilePath
+          terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
+        '''
+      }
+    }
+    stage('Build Artifacts') {
+      when {
+        expression {
+          fileExists('tfPlan')
+        }
+      }
+      steps {
+        archiveArtifacts artifacts: 'tfPlan'
       }
     }
   }
