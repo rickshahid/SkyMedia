@@ -55,7 +55,9 @@ pipeline {
     stage('Build Artifacts') {
       when {
         expression {
-          fileExists('tfPlan')
+          dir(readFile('tfFilePath')) {
+            fileExists('tfPlan')
+          }
         }
       }
       steps {
