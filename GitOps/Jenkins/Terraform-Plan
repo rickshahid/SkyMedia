@@ -44,9 +44,8 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -xe
-          #tfFilePath=$(cat tfFilePath)
-          #cd $tfFilePath
-          cd terraform/examples/vfxt/vmss
+          tfFilePath=$(cat tfFilePath)
+          cd $tfFilePath
           terraform init -input=false -backend-config=params.Terraform_BackendConfig -no-color &> tfInit.txt
         '''
       }
