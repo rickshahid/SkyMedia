@@ -1,7 +1,7 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'BuildArchive-ProjectName', defaultValue: 'Terraform-Plan')
+    string(name: 'BuildArchive_ProjectName', defaultValue: 'Terraform-Plan')
   }
   options {
     disableConcurrentBuilds()
@@ -20,7 +20,7 @@ pipeline {
   stages {
     stage('Build Artifacts') {
       steps {
-        copyArtifacts projectName: params.BuildArchive-ProjectName
+        copyArtifacts projectName: params.BuildArchive_ProjectName
       }
     }
     stage('Terraform Apply') {
