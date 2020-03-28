@@ -1,0 +1,21 @@
+pipeline {
+  agent any
+  parameters {
+    string(name: 'GITHUB_API_URL', defaultValue: 'https://api.github.com/', description: 'GitHub REST v3 API host url prefix.')
+    string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47', description: 'Azure Active Directory tenant identifier.')
+    string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3', description: 'Azure subscription identifier.')
+    booleanParam(name: 'ARM_USE_MSI', defaultValue: true, description: 'Azure Managed Service Identity (MSI) access control.')
+    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true, description: 'Terraform designator for orchestration context.')
+    string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
+  }
+  options {
+    disableConcurrentBuilds()
+  }
+  stages {
+    stage('Terraform Plan') {
+      steps {
+        archiveArtifacts artifacts: '**/*'
+      }
+    }
+  }
+}
