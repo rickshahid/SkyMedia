@@ -61,7 +61,9 @@ pipeline {
         }
       }
       steps {
-        archiveArtifacts artifacts: 'tfPlan'
+        dir(readFile('tfFilePath')) {
+          archiveArtifacts artifacts: 'tfPlan'
+        }
       }
     }
   }
