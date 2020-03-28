@@ -45,8 +45,7 @@ pipeline {
         sh '''#!/bin/bash -xe
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
-          #terraform init -input=false -backend-config=params.Terraform_BackendConfig -no-color &> tfInit.txt
-          terraform init -input=false -no-color &> tfInit.txt
+          terraform init -input=false -backend-config="$Terraform_BackendConfig" -no-color &> tfInit.txt
           terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
         '''
       }
