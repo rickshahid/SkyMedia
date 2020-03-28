@@ -2,6 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'GitHub_ApiUrl', defaultValue: 'https://api.github.com/', description: 'GitHub REST v3 API host url prefix.')
+    string(name: 'Terraform_BackendConfig', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
   }
   options {
     disableConcurrentBuilds()
@@ -46,6 +47,7 @@ pipeline {
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
           terraform init -input=false -no-color &> tfInit.txt
+          terraform init -input=false -backend-config=params.Terraform_BackendConfig -no-color &> tfInit.txt
         '''
       }
     }
