@@ -23,7 +23,7 @@ pipeline {
     stage('GitHub Event') {
       steps {
         sh '''#!/bin/bash -xe
-          git clean -f -f -d
+          git clean -df
           for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
           do
             if [ ${changedFile: -3} == ".tf" ]
@@ -53,9 +53,8 @@ pipeline {
     stage('Build Artifacts') {
       when {
         expression {
-          dir(readFile('tfFilePath')) {
-            fileExists('tfPlan')
-          }
+          def tfFilePath = readFile('tfFilePath')
+          return fileExists(tfFilePath)
         }
       }
       steps {
