@@ -2,12 +2,10 @@ pipeline {
   agent any
   parameters {
     string(name: 'BuildArchive_ArtifactFiles', defaultValue: '.terraform tfplan')
-    string(name: 'BuildArchive_CopyPermission', defaultValue: 'Terraform-Apply')
     booleanParam(name: 'BuildArchive_AllowEmpty', defaultValue: false)
   }
   options {
     disableConcurrentBuilds()
-    copyArtifactPermission('*')
   }
   stages {
     stage('Build Artifacts') {
