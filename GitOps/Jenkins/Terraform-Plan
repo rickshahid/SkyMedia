@@ -34,7 +34,7 @@ pipeline {
             fi
           done
         '''
-        httpRequest url: "https://api.github.com/repos/RickShahid/SkyMedia", customHeaders: [[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]
+        httpRequest url: "https://api.github.com/repos/RickShahid/SkyMedia/commits/1cfeff3a721f26b137924c6251bf86704d16e588/check-runs", httpMode: 'GET', customHeaders: [[name: 'Accept', value: 'application/vnd.github.antiope-preview+json'], [name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]
       }
     }
     stage('Terraform Plan') {
