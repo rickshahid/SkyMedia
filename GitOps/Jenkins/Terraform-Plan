@@ -68,16 +68,6 @@ pipeline {
       }
     }
     stage('GitHub Check') {
-      when {
-        expression {
-          fileExists('tfFilePath')
-        }
-        expression {
-          dir(readFile('tfFilePath')) {
-            fileExists('tfPlan')
-          }
-        }
-      }
       steps {
         echo 'GitHub Check'
       }
