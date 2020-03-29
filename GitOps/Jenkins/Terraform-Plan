@@ -23,7 +23,7 @@ pipeline {
     stage('GitHub Event') {
       steps {
         sh '''#!/bin/bash -xe
-          git clean -df
+          git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
           do
             if [ ${changedFile: -3} == ".tf" ]
