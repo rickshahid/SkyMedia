@@ -44,7 +44,7 @@ pipeline {
         }
       }
       steps {
-        httpRequest url: "$PULL_REQUEST_REPOS_URL/check-runs", httpMode: 'post', acceptType: 'application/vnd.github.antiope-preview+json'
+        httpRequest url: "$PULL_REQUEST_REPOS_URL/check-runs", httpMode: 'POST', acceptType: 'application/vnd.github.antiope-preview+json'
         sh '''#!/bin/bash -ex
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
