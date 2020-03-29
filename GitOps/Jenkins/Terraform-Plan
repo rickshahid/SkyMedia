@@ -63,7 +63,7 @@ pipeline {
       }
       steps {
         dir(readFile('tfFilePath')) {
-          archiveArtifacts artifacts: '.terraform'
+          archiveArtifacts artifacts: '**'
         }
       }
     }
