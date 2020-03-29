@@ -53,8 +53,12 @@ pipeline {
     stage('Build Artifacts') {
       when {
         expression {
-          def tfFilePath = readFile('tfFilePath')
-          return fileExists(tfFilePath)
+          fileExists('tfFilePath')
+        }
+        expression {
+          dir(readFile('tfFilePath')) {
+            fileExists('tfPath')
+          }
         }
       }
       steps {
