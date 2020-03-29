@@ -37,9 +37,7 @@ pipeline {
     }
     stage('Terraform Plan') {
       when {
-        expression {
-          fileExists('tfFilePath')
-        }
+        fileExists('tfFilePath')
       }
       steps {
         sh '''#!/bin/bash -ex
