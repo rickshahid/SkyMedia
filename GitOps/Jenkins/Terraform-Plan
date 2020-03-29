@@ -79,11 +79,7 @@ pipeline {
         }
       }
       steps {
-        def apiUrl = 'https://api.github.com/users/octocat/orgs'
-        def acceptHeader = 'application/vnd.github.v3+json'
-        def httpResponse = httpRequest url: apiUrl
-        println("Status: " + httpResponse.status)
-        println("Content: " + httpResponse.content)
+        echo 'GitHub Check'
       }
     }
   }
