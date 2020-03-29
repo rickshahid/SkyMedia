@@ -13,6 +13,7 @@ pipeline {
         [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
         [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
         [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label']
+        [key: 'PULL_REQUEST_REPOS_URL', value: '$.pull_request.head.repos.url']
       ],
       causeString: '$PULL_REQUEST_LABEL',
       regexpFilterText: '$PULL_REQUEST_ACTION',
@@ -45,6 +46,7 @@ pipeline {
         sh '''#!/bin/bash -ex
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
+          httpRequest url: "$PULL_REQUEST_REPOS_URL/check-runs", httpMode: 'post', acceptType: 'application/vnd.github.antiope-preview+json'
           terraform init -input=false -backend-config="$TERRAFORM_BACKEND_CONFIG" -no-color &> tfInit.txt
           terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
         '''
@@ -65,13 +67,6 @@ pipeline {
         dir(readFile('tfFilePath')) {
           archiveArtifacts artifacts: '**'
         }
-      }
-    }
-    stage('GitHub Check') {
-      steps {
-        httpResponse = httpRequest "$GITHUB_API_URL/users/RickShahid/repos"
-        echo 'Status: ' + httpResponse.status
-        echo 'Content: ' + httpResponse.content
       }
     }
   }
