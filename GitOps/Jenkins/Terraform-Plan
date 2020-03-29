@@ -1,7 +1,7 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'Terraform_BackendConfig', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
+    string(name: 'TERRAFORM_BACKEND_CONFIG', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
   }
   options {
     disableConcurrentBuilds()
@@ -45,7 +45,7 @@ pipeline {
         sh '''#!/bin/bash -ex
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
-          terraform init -input=false -backend-config="$Terraform_BackendConfig" -no-color &> tfInit.txt
+          terraform init -input=false -backend-config="$TERRAFORM_BACKEND_CONFIG" -no-color &> tfInit.txt
           terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
         '''
       }
