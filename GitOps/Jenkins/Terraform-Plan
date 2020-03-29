@@ -69,7 +69,9 @@ pipeline {
     }
     stage('GitHub Check') {
       steps {
-        httpRequest "$GITHUB_API_URL/users/RickShahid/repos"
+        httpResponse = httpRequest "$GITHUB_API_URL/users/RickShahid/repos"
+        echo 'Status: ' + httpResponse.status
+        echo 'Content: ' + httpResponse.content
       }
     }
   }
