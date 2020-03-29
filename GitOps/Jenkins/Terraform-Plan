@@ -34,7 +34,10 @@ pipeline {
             fi
           done
         '''
-        httpRequest url: "https://api.github.com/repos/RickShahid/SkyMedia/check-runs", acceptType: 'application/vnd.github.antiope-preview+json'
+        httpRequest url: "https://api.github.com/repos/RickShahid/SkyMedia/check-runs"
+                    customHeaders: [
+                      [name: 'Accept', value: 'application/vnd.github.antiope-preview+json']
+                    ]
       }
     }
     stage('Terraform Plan') {
@@ -44,7 +47,7 @@ pipeline {
         }
       }
       steps {
-        httpRequest url: "$PULL_REQUEST_REPOS_URL/check-runs", httpMode: 'POST', acceptType: 'application/vnd.github.antiope-preview+json'
+        httpRequest url: "$PULL_REQUEST_REPOS_URL/check-runs", httpMode: 'POST', acceptType: 'APPLICATION/JSON'
         sh '''#!/bin/bash -ex
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
