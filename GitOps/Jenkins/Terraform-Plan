@@ -1,7 +1,7 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'TERRAFORM_BACKEND_CONFIG', defaultValue: 'backend.tf', description: 'Terraform backend configuration file.')
+    string(name: 'TERRAFORM_BACKEND_CONFIG', defaultValue: 'backend.tf')
   }
   options {
     disableConcurrentBuilds()
