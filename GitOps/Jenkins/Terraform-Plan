@@ -20,9 +20,9 @@ pipeline {
     )
   }
   stages {
-    stage('GitHub Event') {
+    stage('GitHub Pull Request') {
       steps {
-        sh '''#!/bin/bash -xe
+        sh '''#!/bin/bash -ex
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
           do
@@ -42,7 +42,7 @@ pipeline {
         }
       }
       steps {
-        sh '''#!/bin/bash -xe
+        sh '''#!/bin/bash -ex
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
           terraform init -input=false -backend-config="$Terraform_BackendConfig" -no-color &> tfInit.txt
@@ -65,6 +65,23 @@ pipeline {
         dir(readFile('tfFilePath')) {
           archiveArtifacts artifacts: '**'
         }
+      }
+    }
+    stage('GitHub Check') {
+      when {
+        expression {
+          fileExists('tfFilePath')
+        }
+        expression {
+          dir(readFile('tfFilePath')) {
+            fileExists('tfPlan')
+          }
+        }
+      }
+      steps {
+        def httpResponse = httpRequest 'https://api.github.com/users/octocat/orgs'
+        println("Status: " + httpResponse.status)
+        println("Content: " + httpResponse.content)
       }
     }
   }
