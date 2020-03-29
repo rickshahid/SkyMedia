@@ -69,7 +69,7 @@ pipeline {
     }
     stage('GitHub Check') {
       steps {
-        echo 'GitHub Check'
+        httpRequest 'https://api.github.com/users/octocat/orgs'
       }
     }
   }
