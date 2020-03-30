@@ -13,11 +13,13 @@ pipeline {
       ],
       genericVariables: [
         [key: 'PULL_REQUEST_ACTION', value: '$.action'],
+        [key: 'PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
         [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
-        [key: 'GITHUB_REPOSITORY_URL', value: '$.pull_request.head.repo.url']   
+        [key: 'GITHUB_REPOSITORY_URL', value: '$.pull_request.head.repo.url']
+        [key: 'GITHUB_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
       ],
-      causeString: 'Pull Request $PULL_REQUEST_ACTION on Branch $PULL_REQUEST_BRANCH',
+      causeString: 'Pull Request $PULL_REQUEST_NUMBER $PULL_REQUEST_ACTION on $PULL_REQUEST_BRANCH branch in $GITHUB_REPOSITORY_NAME repository',
       regexpFilterText: '$x_github_event',
       regexpFilterExpression: 'pull_request'
     )
