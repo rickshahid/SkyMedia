@@ -33,7 +33,6 @@ pipeline {
             fi
           done
         '''
-        httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: 'application/vnd.github.antiope-preview+json'],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]
       }
     }
     stage('Terraform Plan') {
