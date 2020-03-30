@@ -12,8 +12,8 @@ pipeline {
        [key: 'x-github-event']
       ],
       genericVariables: [
-        [key: 'PULL_REQUEST_ACTION', value: '$.action']
-        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref']
+        [key: 'PULL_REQUEST_ACTION', value: '$.action'],
+        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
         [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_REPOSITORY_URL', value: '$.pull_request.head.repo.url']   
       ],
