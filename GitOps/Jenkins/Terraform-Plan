@@ -12,7 +12,7 @@ pipeline {
         [key: 'CHECK_SUITE_STATUS', value: '$.check_suite.status'],
         [key: 'CHECK_SUITE_COMMIT', value: '$.check_suite.head_sha'],
         [key: 'CHECK_SUITE_BRANCH', value: '$.check_suite.head_branch'],
-        [key: 'CHECK_SUITE_REPOSITORY_URL', value: '$.repository.url']
+        [key: 'GITHUB_REPOSITORY_URL', value: '$.repository.url']
       ],
       causeString: '$CHECK_SUITE_BRANCH',
       regexpFilterText: '$CHECK_SUITE_STATUS',
@@ -22,7 +22,7 @@ pipeline {
   stages {
     stage('GitHub Pull Request') {
       steps {
-        httpRequest url: "${CHECK_SUITE_REPOSITORY_URL}/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: 'application/vnd.github.antiope-preview+json'],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]
+        httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: 'application/vnd.github.antiope-preview+json'],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]
       
         sh '''#!/bin/bash -ex
           git clean -dff
