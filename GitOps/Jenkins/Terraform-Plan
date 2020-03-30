@@ -8,6 +8,9 @@ pipeline {
   }
   triggers {
     GenericTrigger(
+      genericHeaderVariables: [
+       [key: 'X-GitHub-Event', regexpFilter: '']
+      ],
       genericVariables: [
         [key: 'CHECK_SUITE_STATUS', value: '$.check_suite.status'],
         [key: 'CHECK_SUITE_COMMIT', value: '$.check_suite.head_sha'],
