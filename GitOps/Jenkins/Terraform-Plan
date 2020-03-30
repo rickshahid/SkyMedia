@@ -9,25 +9,25 @@ pipeline {
   triggers {
     GenericTrigger(
       genericHeaderVariables: [
-       [key: 'X-GitHub-Event', regexpFilter: '']
+       [key: 'x-github-event']
       ],
       genericVariables: [
-        [key: 'CHECK_SUITE_STATUS', value: '$.check_suite.status'],
-        [key: 'CHECK_SUITE_COMMIT', value: '$.check_suite.head_sha'],
-        [key: 'CHECK_SUITE_BRANCH', value: '$.check_suite.head_branch'],
-        [key: 'GITHUB_REPOSITORY_URL', value: '$.repository.url']
+        [key: 'PULL_REQUEST_ACTION', value: '$.action']
+        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref']
+        [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
+        [key: 'GITHUB_REPOSITORY_URL', value: '$.pull_request.head.repo.url']   
       ],
-      causeString: '$CHECK_SUITE_BRANCH',
-      regexpFilterText: '$CHECK_SUITE_STATUS',
-      regexpFilterExpression: 'queued'
+      causeString: 'Pull Request $PULL_REQUEST_ACTION on Branch $PULL_REQUEST_BRANCH',
+      regexpFilterText: '$x_github_event',
+      regexpFilterExpression: 'pull_request'
     )
   }
   stages {
-    stage('GitHub Pull Request') {
+    stage('GitHub Commit Analyze') {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
-          for changedFile in $(git diff --name-only $GIT_COMMIT $CHECK_SUITE_COMMIT)
+          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
@@ -36,6 +36,16 @@ pipeline {
             fi
           done
         '''
+      }
+    }
+    stage('GitHub Check Run') {
+      when {
+        expression {
+          fileExists('tfFilePath')
+        }
+      }
+      steps {
+        httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]      
       }
     }
     stage('Terraform Plan') {
