@@ -38,7 +38,7 @@ pipeline {
         '''
       }
     }
-    stage('GitHub Check Run') {
+    stage('GitHub Check Run Create') {
       when {
         expression {
           fileExists('tfFilePath')
