@@ -12,9 +12,9 @@ pipeline {
         [key: 'PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
         [key: 'PULL_REQUEST_LABEL', value: '$.pull_request.head.label']
       ],
-      causeString: '$PULL_REQUEST_LABEL',
-      regexpFilterText: '$PULL_REQUEST_MERGED',
-      regexpFilterExpression: 'true'
+      causeString: 'Pull Request $pull_request_number $pull_request_action on $pull_request_branch branch in $pull_request_repository_name repository',
+      regexpFilterText: '$x_github_event.$event_action.$pull_request_merged',
+      regexpFilterExpression: 'pull_request.closed.true'
     )
   }  
   stages {
