@@ -9,19 +9,19 @@ pipeline {
   triggers {
     GenericTrigger(
       genericHeaderVariables: [
-       [key: 'x-github-event']
+        [key: 'x-github-event']
       ],
       genericVariables: [
-        [key: 'PULL_REQUEST_ACTION', value: '$.action'],
-        [key: 'PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
-        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
-        [key: 'PULL_REQUEST_COMMIT', value: '$.pull_request.head.sha'],
-        [key: 'GITHUB_REPOSITORY_URL', value: '$.pull_request.head.repo.url'],
-        [key: 'GITHUB_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
+        [key: 'event_action', value: '$.action'],
+        [key: 'pull_request_number', value: '$.pull_request.number'],
+        [key: 'pull_request_branch', value: '$.pull_request.head.ref'],
+        [key: 'pull_request_commit', value: '$.pull_request.head.sha'],
+        [key: 'pull_request_repository_url', value: '$.pull_request.head.repo.url'],
+        [key: 'pull_request_repository_name', value: '$.pull_request.head.repo.name']
       ],
-      causeString: 'Pull Request $PULL_REQUEST_NUMBER $PULL_REQUEST_ACTION on $PULL_REQUEST_BRANCH branch in $GITHUB_REPOSITORY_NAME repository',
-      regexpFilterText: '$x_github_event',
-      regexpFilterExpression: 'pull_request'
+      causeString: 'Pull Request $pull_request_number $pull_request_action on $pull_request_branch branch in $pull_request_repository_name repository',
+      regexpFilterText: '$x_github_event.$event_action',
+      regexpFilterExpression: 'pull_request.opened|reopened|synchronize'
     )
   }
   stages {
@@ -29,7 +29,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
-          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_COMMIT)
+          for changedFile in $(git diff --name-only $GIT_COMMIT $pull_request_commit)
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
@@ -47,7 +47,7 @@ pipeline {
         }
       }
       steps {
-        httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]      
+        httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]      
       }
     }
     stage('Terraform Plan') {
