@@ -14,8 +14,8 @@ pipeline {
       genericVariables: [
         [key: 'event_action', value: '$.action'],
         [key: 'pull_request_number', value: '$.pull_request.number'],
-        [key: 'pull_request_branch', value: '$.pull_request.head.ref'],
         [key: 'pull_request_commit', value: '$.pull_request.head.sha'],
+        [key: 'pull_request_branch', value: '$.pull_request.head.ref'],
         [key: 'pull_request_repository_url', value: '$.pull_request.head.repo.url'],
         [key: 'pull_request_repository_name', value: '$.pull_request.head.repo.name']
       ],
