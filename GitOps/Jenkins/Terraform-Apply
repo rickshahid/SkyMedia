@@ -22,7 +22,7 @@ pipeline {
     )
   }  
   stages {
-    stage('Build Artifacts') {
+    stage('Build Artifacts Storage') {
       steps {
         copyArtifacts projectName: params.BuildArchive_ProjectName
       }
