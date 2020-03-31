@@ -50,7 +50,7 @@ pipeline {
         httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]      
       }
     }
-    stage('Terraform Plan') {
+    stage('Terraform Init & Plan') {
       when {
         expression {
           fileExists('tfFilePath')
@@ -65,7 +65,7 @@ pipeline {
         '''
       }
     }
-    stage('Build Artifacts') {
+    stage('Build Artifacts Storage') {
       when {
         expression {
           fileExists('tfFilePath')
