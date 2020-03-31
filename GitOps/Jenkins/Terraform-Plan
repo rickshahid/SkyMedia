@@ -25,12 +25,13 @@ pipeline {
     )
   }
   stages {
-    stage('GitHub Commit Analyze') {
+    stage('GitHub Changed Files') {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $pull_request_commit)
           do
+            echo $changedFile
             if [ ${changedFile: -3} == ".tf" ]
             then
               echo -n "$(dirname $changedFile)" > tfFilePath
@@ -40,7 +41,7 @@ pipeline {
         '''
       }
     }
-    stage('GitHub Check Run Create') {
+    stage('GitHub Check Run') {
       when {
         expression {
           fileExists('tfFilePath')
