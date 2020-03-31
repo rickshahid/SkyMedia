@@ -16,7 +16,7 @@ pipeline {
         [key: 'pull_request_repository_url', value: '$.pull_request.head.repo.url'],
         [key: 'pull_request_repository_name', value: '$.pull_request.head.repo.name']
       ],
-      causeString: 'Pull Request $pull_request_id $pull_request_action on $pull_request_branch branch in $pull_request_repository_name repository',
+      causeString: 'Pull Request $pull_request_id $event_action on $pull_request_branch branch in $pull_request_repository_name repository',
       regexpFilterExpression: '(pull_request).(closed).(true)',
       regexpFilterText: '$x_github_event.$event_action.$pull_request_merged'
     )
