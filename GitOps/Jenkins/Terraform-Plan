@@ -13,13 +13,13 @@ pipeline {
       ],
       genericVariables: [
         [key: 'event_action', value: '$.action'],
-        [key: 'pull_request_number', value: '$.pull_request.number'],
-        [key: 'pull_request_commit', value: '$.pull_request.head.sha'],
+        [key: 'pull_request_id', value: '$.pull_request.number'],
+        [key: 'pull_request_hash', value: '$.pull_request.head.sha'],
         [key: 'pull_request_branch', value: '$.pull_request.head.ref'],
         [key: 'pull_request_repository_url', value: '$.pull_request.head.repo.url'],
         [key: 'pull_request_repository_name', value: '$.pull_request.head.repo.name']
       ],
-      causeString: 'Pull Request $pull_request_number $pull_request_action on $pull_request_branch branch in $pull_request_repository_name repository',
+      causeString: 'Pull Request $pull_request_id $pull_request_action on $pull_request_branch branch in $pull_request_repository_name repository',
       regexpFilterText: '$x_github_event.$event_action',
       regexpFilterExpression: 'pull_request.opened|reopened|synchronize'
     )
@@ -31,7 +31,6 @@ pipeline {
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $pull_request_commit)
           do
-            echo $changedFile
             if [ ${changedFile: -3} == ".tf" ]
             then
               echo -n "$(dirname $changedFile)" > tfFilePath
