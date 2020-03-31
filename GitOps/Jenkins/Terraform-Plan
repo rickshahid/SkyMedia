@@ -20,8 +20,8 @@ pipeline {
         [key: 'pull_request_repository_name', value: '$.pull_request.head.repo.name']
       ],
       causeString: 'Pull Request $pull_request_id $pull_request_action on $pull_request_branch branch in $pull_request_repository_name repository',
-      regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)'
-      regexpFilterText: '$x_github_event.$event_action',
+      regexpFilterExpression: '(pull_request)(opened|reopened|synchronize)'
+      regexpFilterText: '$x_github_event$event_action',
     )
   }
   stages {
