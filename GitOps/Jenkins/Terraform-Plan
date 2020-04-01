@@ -47,7 +47,8 @@ pipeline {
         }
       }
       steps {
-        httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]      
+        //httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]      
+        httpRequest url: "https://api.github.com/user", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]]      
       }
     }
     stage('Terraform Init & Plan') {
