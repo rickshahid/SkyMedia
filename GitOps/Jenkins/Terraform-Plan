@@ -38,8 +38,7 @@ pipeline {
             fi
           done
         '''
-        //httpRequest url: "https://api.github.com/repos/RickShahid/SkyMedia/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]], requestBody: '{"name":"Terraform Plan", "head_sha":"fa122bd93c3bc9a33dd3749fd1c11c4d281abe19", "status":"in_progress"}'
-        httpRequest url: "https://api.github.com/repos/RickShahid/SkyMedia/check-runs", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]], requestBody: '{"name":"Terraform Plan", "head_sha":"fa122bd93c3bc9a33dd3749fd1c11c4d281abe19", "status":"in_progress"}'
+        httpRequest url: "https://api.github.com/repos/RickShahid/SkyMedia/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]], requestBody: '{"name":"Terraform Plan","head_sha":"fa122bd93c3bc9a33dd3749fd1c11c4d281abe19"}'
       }
     }
     stage('GitHub Check Run') {
