@@ -6,6 +6,7 @@ pipeline {
     string(name: 'ARM_USE_MSI', defaultValue: 'true')
     string(name: 'TF_IN_AUTOMATION', defaultValue: 'true')
     string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tfBackendConfig.txt')
+    string(name: 'GITHUB_APP_ID', defaultValue: '59022')
   }
   options {
     disableConcurrentBuilds()
@@ -52,7 +53,7 @@ pipeline {
         }
       }
       steps {
-        withCredentials([file(credentialsId: 'gitHubAppKey', variable: 'GITHUB_APP_KEY')]) {
+        withCredentials([string(credentialsId: 'gitHubAppKey', variable: 'GITHUB_APP_KEY')]) {
           sh '''#!/bin/bash -ex
             tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
             cd $(cat tfFileDirectory.txt)
@@ -60,7 +61,8 @@ pipeline {
             echo 'backend "azurerm" {}' >> backend.tf
             echo '}' >> backend.tf
             terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
-            pyjwt --key=$GITHUB_APP_KEY encode
+            gitHubAppToken=$(pyjwt --key=$GITHUB_APP_KEY encode iss=$GITHUB_APP_ID)
+            echo $gitHubAppToken
             #terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
           '''
         }
