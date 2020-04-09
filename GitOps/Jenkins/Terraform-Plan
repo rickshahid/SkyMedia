@@ -59,7 +59,7 @@ pipeline {
           echo 'backend "azurerm" {}' >> backend.tf
           echo '}' >> backend.tf
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
-          terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
+          #terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
         '''
       }
     }
