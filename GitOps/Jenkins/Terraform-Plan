@@ -5,7 +5,7 @@ pipeline {
     string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3')
     string(name: 'ARM_USE_MSI', defaultValue: true)
     string(name: 'TF_IN_AUTOMATION', defaultValue: true)
-    string(name: 'TF_BACKEND_CONFIG', defaultValue: '/backend.config')
+    string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tf_backend.config')
   }
   options {
     disableConcurrentBuilds()
@@ -65,7 +65,7 @@ pipeline {
         sh '''#!/bin/bash -ex
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
-          terraform init -input=false -backend-config="$TF_BACKEND_CONFIG" -no-color &> tfInit.txt
+          terraform init -input=false -backend-config="$TF_BACKEND_CONFIG" -backend-config="key=$tfFilePath" -no-color &> tfInit.txt
           terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
         '''
       }
