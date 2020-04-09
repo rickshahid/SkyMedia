@@ -52,7 +52,7 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -ex
-          tfFileDirectory=$(dirname | cat tfFilePath.txt)
+          tfFileDirectory=$(dirname $(cat tfFilePath.txt))
           tfStateFile=$(sed 's|/|-|g' tfFilePath.txt)
           cd $tfFileDirectory
           echo 'terraform {' > backend.tf
