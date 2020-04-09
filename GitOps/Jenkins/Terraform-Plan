@@ -5,7 +5,7 @@ pipeline {
     string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3')
     string(name: 'ARM_USE_MSI', defaultValue: 'true')
     string(name: 'TF_IN_AUTOMATION', defaultValue: 'true')
-    string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tf_backend.config')
+    string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tfBackendConfig.txt')
   }
   options {
     disableConcurrentBuilds()
@@ -37,7 +37,7 @@ pipeline {
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
-              echo -n "$changedFile" > tfFilePath
+              echo -n "$changedFile" > tfFilePath.txt
               break
             fi
           done
@@ -47,7 +47,7 @@ pipeline {
     stage('Terraform Init & Plan') {
       when {
         expression {
-          fileExists('tfFilePath')
+          fileExists('tfFilePath.txt')
         }
       }
       steps {
@@ -66,16 +66,16 @@ pipeline {
     stage('Build Artifacts Storage') {
       when {
         expression {
-          fileExists('tfFilePath')
+          fileExists('tfFilePath.txt')
         }
         expression {
-          dir(readFile('tfFilePath')) {
+          dir(readFile('tfFilePath.txt')) {
             fileExists('tfPlan')
           }
         }
       }
       steps {
-        dir(readFile('tfFilePath')) {
+        dir(readFile('tfFilePath.txt')) {
           archiveArtifacts artifacts: '**'
         }
       }
