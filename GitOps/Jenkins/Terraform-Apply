@@ -30,12 +30,12 @@ pipeline {
     stage('Terraform Apply') {
       when {
         expression {
-          fileExists('tfPlan')
+          fileExists('tfPlan.bin')
         }
       }
       steps {
         sh '''#!/bin/bash -xe
-          #terraform apply -input=false tfPlan
+          #terraform apply -input=false tfPlan.bin
         '''
       }
     }
