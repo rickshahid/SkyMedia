@@ -37,6 +37,7 @@ pipeline {
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
+              echo -n "$(dirname $changedFile)" > tfFileDirectory.txt
               echo -n "$changedFile" > tfFilePath.txt
               break
             fi
@@ -52,9 +53,8 @@ pipeline {
       }
       steps {
         sh '''#!/bin/bash -ex
-          tfFileDirectory=$(dirname $(cat tfFilePath.txt))
-          tfStateFile=$(sed 's|/|-|g' tfFilePath.txt)
-          cd $tfFileDirectory
+          tfStateFile="$(sed 's|/|-|g' tfFilePath.txt).state"
+          cd $(cat tfFileDirectory.txt)
           echo 'terraform {' > backend.tf
           echo 'backend "azurerm" {}' >> backend.tf
           echo '}' >> backend.tf
@@ -69,13 +69,13 @@ pipeline {
           fileExists('tfFilePath.txt')
         }
         expression {
-          dir(readFile('tfFilePath.txt')) {
+          dir(readFile('tfFileDirectory.txt')) {
             fileExists('tfPlan.bin')
           }
         }
       }
       steps {
-        dir(readFile('tfFilePath.txt')) {
+        dir(readFile('tfFileDirectory.txt')) {
           archiveArtifacts artifacts: '**'
         }
       }
