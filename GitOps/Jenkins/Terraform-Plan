@@ -54,7 +54,7 @@ pipeline {
         sh '''#!/bin/bash -ex
           tfFilePath=$(cat tfFilePath)
           cd $tfFilePath
-          echo "terraform { backend 'azurerm' {} }" > backend.tf
+          echo "terraform { backend \"azurerm\" {} }" > backend.tf
           terraform init -input=false -backend-config="$TF_BACKEND_CONFIG" -backend-config="key=$tfFilePath" -no-color &> tfInit.txt
           terraform plan -input=false -out=tfPlan -no-color &> tfPlan.txt
         '''
