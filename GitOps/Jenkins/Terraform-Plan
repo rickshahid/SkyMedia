@@ -29,7 +29,7 @@ pipeline {
     )
   }
   stages {
-    stage('GitHub Changed Files') {
+    stage('GitHub Pull Request') {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
