@@ -52,7 +52,7 @@ pipeline {
         }
       }
       steps {
-        withCredentials([string(credentialsId: 'gitHubAppKey', variable: 'GITHUB_APP_KEY')]) {
+        withCredentials([file(credentialsId: 'gitHubAppKey', variable: 'GITHUB_APP_KEY')]) {
           sh '''#!/bin/bash -ex
             tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
             cd $(cat tfFileDirectory.txt)
