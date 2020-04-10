@@ -6,7 +6,6 @@ pipeline {
     string(name: 'ARM_USE_MSI', defaultValue: 'true')
     string(name: 'TF_IN_AUTOMATION', defaultValue: 'true')
     string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tfBackendConfig.txt')
-    string(name: 'GITHUB_APP_ID', defaultValue: '59022')
   }
   options {
     disableConcurrentBuilds()
