@@ -7,8 +7,8 @@ pipeline {
     string(name: 'TF_IN_AUTOMATION', defaultValue: 'true')
     string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tfBackendConfig.txt')
     string(name: 'GITHUB_APP_CREDENTIAL_ID', defaultValue: 'GitHubAppKey')
-    string(name: 'GITHUB_HEADER_ACCEPT_1', defaultValue: 'application/vnd.github.machine-man-preview+json')
-    string(name: 'GITHUB_HEADER_ACCEPT_2', defaultValue: 'application/vnd.github.antiope-preview+json')
+    string(name: 'GITHUB_HEADER_ACCEPT_AUTH', defaultValue: 'application/vnd.github.machine-man-preview+json')
+    string(name: 'GITHUB_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
   }
   options {
     disableConcurrentBuilds()
@@ -68,7 +68,7 @@ pipeline {
           echo '}' >> backend.tf
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
         '''
-        httpRequest url: "https://api.github.com/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+        httpRequest url: "https://api.github.com/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
         sh '''#!/bin/bash -ex
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
