@@ -67,7 +67,7 @@ pipeline {
           echo '}' >> backend.tf
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
         '''
-        httpRequest url: "https://api.github.com/app/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+        httpRequest url: "https://api.github.com/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
         sh '''#!/bin/bash -ex
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
