@@ -25,7 +25,7 @@ pipeline {
         [key: 'PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
         [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
         [key: 'PULL_REQUEST_REPOSITORY_URL', value: '$.pull_request.head.repo.url'],
-        [key: 'PULL_REQUEST_REPOSITORY_HOST', value: '$.pull_request.head.repo.url', regexpFilter: '/repos*'],
+        [key: 'PULL_REQUEST_REPOSITORY_HOST', value: '$.pull_request.head.repo.url', regexpFilter: '(/repos)(.*)'],
         [key: 'PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
       ],
       causeString: 'Pull Request $PULL_REQUEST_ID $EVENT_ACTION on $PULL_REQUEST_BRANCH branch in $PULL_REQUEST_REPOSITORY_NAME repository',
