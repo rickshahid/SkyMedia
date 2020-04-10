@@ -25,6 +25,7 @@ pipeline {
         [key: 'PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
         [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
         [key: 'PULL_REQUEST_REPOSITORY_URL', value: '$.pull_request.head.repo.url'],
+        [key: 'PULL_REQUEST_REPOSITORY_HOST', value: '$.pull_request.head.repo.url'], filter: '/repos*'],
         [key: 'PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
       ],
       causeString: 'Pull Request $PULL_REQUEST_ID $EVENT_ACTION on $PULL_REQUEST_BRANCH branch in $PULL_REQUEST_REPOSITORY_NAME repository',
@@ -68,7 +69,7 @@ pipeline {
           echo '}' >> backend.tf
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
         '''
-        httpRequest url: "$GITHUB_APP_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+        httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
         sh '''#!/bin/bash -ex
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
