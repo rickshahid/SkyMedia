@@ -2,14 +2,14 @@
 locals {
     // the region of the deployment
     location = "eastus"
-    vm_admin_username = "azureuser"
-    // use either SSH Key data or admin password, if ssh_key_data is specified
+    vm_admin_username = "azureuser"zz
+    // use either SSH Key data or admin password, if ssh_key_data is specifiedzzz
     // then admin_password is ignored
     vm_admin_password = "ReplacePassword$"
     // if you use SSH key, ensure you have ~/.ssh/id_rsa with permission 600
-    // populated where you are running terraform
+    // populated where you are running terraformzzzz
     vm_ssh_key_data = null //"ssh-rsa AAAAB3...."
-
+z
     // network details
     network_resource_group_name = "network_resource_group"
     
