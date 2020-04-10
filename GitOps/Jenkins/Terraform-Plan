@@ -66,7 +66,7 @@ pipeline {
           echo '}' >> backend.tf
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
         '''
-        httpRequest url: "$pull_request_repository_url/app", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+        httpRequest url: "https://api.github.com/app", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
         sh '''#!/bin/bash -ex
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
         '''
