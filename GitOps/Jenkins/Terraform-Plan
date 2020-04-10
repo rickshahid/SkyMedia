@@ -2,6 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'GITHUB_APP_CREDENTIAL_ID', defaultValue: 'GitHubAppKey')
+    integer(name: 'GITHUB_APP_TOKEN_SECONDS', defaultValue: 180)
     string(name: 'GITHUB_HEADER_ACCEPT_AUTH', defaultValue: 'application/vnd.github.machine-man-preview+json')
     string(name: 'GITHUB_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
     string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tfBackendConfig.txt')
@@ -58,7 +59,7 @@ pipeline {
       }
       environment {
         GITHUB_APP_KEY = credentials("$GITHUB_APP_CREDENTIAL_ID")
-        GITHUB_APP_TOKEN = sh(script: "python3 $WORKSPACE/GetWebToken.py $GITHUB_APP_KEY_USR $GITHUB_APP_KEY 180 'RS256'", returnStdout: true)
+        GITHUB_APP_TOKEN = sh(script: "python3 $WORKSPACE/GetWebToken.py $GITHUB_APP_KEY_USR $GITHUB_APP_KEY $GITHUB_APP_TOKEN_SECONDS 'RS256'", returnStdout: true)
       }
       steps {
         sh '''#!/bin/bash -ex
