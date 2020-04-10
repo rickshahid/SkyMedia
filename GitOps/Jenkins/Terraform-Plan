@@ -55,7 +55,9 @@ pipeline {
       }
       environment {
         GITHUB_APP_KEY = credentials('gitHubApp')
-        GITHUB_APP_TOKEN = sh("python3 $WORKSPACE/getAppToken.py $GITHUB_APP_KEY_USR $GITHUB_APP_KEY 180 'RS256'")
+        GITHUB_APP_TOKEN = sh '''#!/bin/bash -ex
+          python3 $WORKSPACE/getAppToken.py $GITHUB_APP_KEY_USR $GITHUB_APP_KEY 180 'RS256'
+        '''
       }
       steps {
         sh '''#!/bin/bash -ex
