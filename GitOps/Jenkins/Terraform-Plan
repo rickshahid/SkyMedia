@@ -51,12 +51,12 @@ pipeline {
           fileExists('tfFilePath.txt')
         }
       }
-      steps {
-        environment {
-          withCredentials([sshUserPrivateKey(credentialsId: 'gitHubApp', usernameVariable: 'GITHUB_APP_ID', keyFileVariable: 'GITHUB_APP_KEY_FILE')]) {
-            GITHUB_APP_TOKEN = sh("python3 $WORKSPACE/getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY_FILE 180 'RS256'")
-          }
+      environment {
+        withCredentials([sshUserPrivateKey(credentialsId: 'gitHubApp', usernameVariable: 'GITHUB_APP_ID', keyFileVariable: 'GITHUB_APP_KEY_FILE')]) {
+          GITHUB_APP_TOKEN = sh("python3 $WORKSPACE/getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY_FILE 180 'RS256'")
         }
+      }
+      steps {
         sh '''#!/bin/bash -ex
           tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
           cd $(cat tfFileDirectory.txt)
