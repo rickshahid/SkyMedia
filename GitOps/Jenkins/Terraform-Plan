@@ -6,7 +6,8 @@ pipeline {
     string(name: 'ARM_USE_MSI', defaultValue: 'true')
     string(name: 'TF_IN_AUTOMATION', defaultValue: 'true')
     string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tfBackendConfig.txt')
-    string(name: 'GITHUB_ACCEPT_HEADER', defaultValue: 'application/vnd.github.antiope-preview+json')
+    string(name: 'GITHUB_ACCEPT_HEADER_1', defaultValue: 'application/vnd.github.machine-man-preview+json')
+    string(name: 'GITHUB_ACCEPT_HEADER_2', defaultValue: 'application/vnd.github.antiope-preview+json')
   }
   options {
     disableConcurrentBuilds()
@@ -65,7 +66,7 @@ pipeline {
           echo '}' >> backend.tf
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
         '''
-        httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$pull_request_hash", "status":"in_progress"}'
+        httpRequest url: "$pull_request_repository_url/app", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
         sh '''#!/bin/bash -ex
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
         '''
