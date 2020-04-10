@@ -15,5 +15,5 @@ appTokenPayload = {
 }
 
 appKey = open(appKeyFile, 'r').read()
-appToken = jwt.encode(appTokenPayload, appKey, algorithm=appTokenEncryption)
-print(appToken.decode())
+appToken = jwt.encode(appTokenPayload, appKey, appTokenEncryption)
+print(appToken.decode(), end='')
