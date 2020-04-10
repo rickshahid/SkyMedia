@@ -11,7 +11,7 @@ timeEpochSeconds = int(time.time())
 appTokenPayload = {
   'iss': appId,
   'iat': timeEpochSeconds,
-  'exp': timeEpochSeconds + appTokenSeconds
+  'exp': timeEpochSeconds + int(appTokenSeconds)
 }
 
 appToken = jwt.encode(appTokenPayload, appKey, algorithm=appTokenEncryption)
