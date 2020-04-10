@@ -52,20 +52,23 @@ pipeline {
         }
       }
       steps {
-        withCredentials([sshUserPrivateKey(credentialsId: 'gitHubApp', usernameVariable: 'GITHUB_APP_ID', keyFileVariable: 'GITHUB_APP_KEY_FILE')]) {
-          sh '''#!/bin/bash -ex
-            tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
-            cd $(cat tfFileDirectory.txt)
-            echo 'terraform {' > backend.tf
-            echo 'backend "azurerm" {}' >> backend.tf
-            echo '}' >> backend.tf
-            terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
-            gitHubAppToken=$(python3 $WORKSPACE/getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY_FILE 180 'RS256')
-            echo $gitHubAppToken
-            httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "Bearer $gitHubAppToken"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$pull_request_hash", "status":"in_progress"}'
-            #terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
-          '''
+        environment {
+          withCredentials([sshUserPrivateKey(credentialsId: 'gitHubApp', usernameVariable: 'GITHUB_APP_ID', keyFileVariable: 'GITHUB_APP_KEY_FILE')]) {
+            GITHUB_APP_TOKEN = sh("python3 $WORKSPACE/getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY_FILE 180 'RS256'")
+          }
         }
+        sh '''#!/bin/bash -ex
+          tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
+          cd $(cat tfFileDirectory.txt)
+          echo 'terraform {' > backend.tf
+          echo 'backend "azurerm" {}' >> backend.tf
+          echo '}' >> backend.tf
+          terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
+        '''
+        httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$pull_request_hash", "status":"in_progress"}'
+        sh '''#!/bin/bash -ex
+          #terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
+        '''
       }
     }
     stage('Build Artifacts Storage') {
