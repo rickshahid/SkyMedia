@@ -18,16 +18,17 @@ pipeline {
         [key: 'x-github-event']
       ],
       genericVariables: [
-        [key: 'event_action', value: '$.action'],
-        [key: 'pull_request_id', value: '$.pull_request.number'],
-        [key: 'pull_request_hash', value: '$.pull_request.head.sha'],
-        [key: 'pull_request_branch', value: '$.pull_request.head.ref'],
-        [key: 'pull_request_repository_url', value: '$.pull_request.head.repo.url'],
-        [key: 'pull_request_repository_name', value: '$.pull_request.head.repo.name']
+        [key: 'EVENT_ACTION', value: '$.action'],
+        [key: 'APP_INSTALLATION_ID', value: '$.installation.id'],
+        [key: 'PULL_REQUEST_ID', value: '$.pull_request.number'],
+        [key: 'PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
+        [key: 'PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
+        [key: 'PULL_REQUEST_REPOSITORY_URL', value: '$.pull_request.head.repo.url'],
+        [key: 'PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
       ],
-      causeString: 'Pull Request $pull_request_id $event_action on $pull_request_branch branch in $pull_request_repository_name repository',
+      causeString: 'Pull Request $PULL_REQUEST_ID $EVENT_ACTION on $PULL_REQUEST_BRANCH branch in $PULL_REQUEST_REPOSITORY_NAME repository',
       regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)',
-      regexpFilterText: '$x_github_event.$event_action'
+      regexpFilterText: '$x_github_event.$EVENT_ACTION'
     )
   }
   stages {
@@ -35,7 +36,7 @@ pipeline {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
-          for changedFile in $(git diff --name-only $GIT_COMMIT $pull_request_hash)
+          for changedFile in $(git diff --name-only $GIT_COMMIT $PULL_REQUEST_HASH)
           do
             if [ ${changedFile: -3} == ".tf" ]
             then
@@ -66,7 +67,8 @@ pipeline {
           echo '}' >> backend.tf
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
         '''
-        httpRequest url: "https://api.github.com/app", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+        httpRequest url: "https://api.github.com/app/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_1"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+        #httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER_2"],[name: 'Authorization', value: "$GITHUB_AUTH_HEADER"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$pull_request_hash", "status":"in_progress"}'
         sh '''#!/bin/bash -ex
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
