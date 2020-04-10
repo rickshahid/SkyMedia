@@ -4,7 +4,7 @@ locals {
     location = "eastus"
     vm_admin_username = "azureuser"
     // use either SSH Key data or admin password, if ssh_key_data is specified
-    // then admin_password is ignored
+    // then admin_password is ignoredsss
     vm_admin_password = "ReplacePassword$"
     // if you use SSH key, ensure you have ~/.ssh/id_rsa with permission 600
     // populated where you are running terraform
