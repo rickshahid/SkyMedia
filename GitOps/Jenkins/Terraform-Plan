@@ -53,7 +53,7 @@ pipeline {
         }
       }
       steps {
-        withCredentials([string(credentialsId: 'gitHubAppKey', variable: 'GITHUB_APP_KEY')]) {
+        withCredentials([sshUserPrivateKey(credentialsId: 'gitHubApp', usernameVariable: 'GITHUB_APP_ID', keyFileVariable: 'GITHUB_APP_KEY')]) {
           sh '''#!/bin/bash -ex
             tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
             cd $(cat tfFileDirectory.txt)
@@ -61,7 +61,7 @@ pipeline {
             echo 'backend "azurerm" {}' >> backend.tf
             echo '}' >> backend.tf
             terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
-            gitHubAppToken=$(pyjwt --key="$GITHUB_APP_KEY" encode iss=$GITHUB_APP_ID)
+            gitHubAppToken=$(python3 getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY 180 'RS256')
             echo $gitHubAppToken
             #terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
           '''
