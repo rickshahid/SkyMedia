@@ -14,5 +14,6 @@ appTokenPayload = {
   'exp': timeEpochSeconds + int(appTokenSeconds)
 }
 
-appToken = jwt.encode(appTokenPayload, appKey, algorithm=appTokenEncryption)
+appKeyBytes = appKey.encode()
+appToken = jwt.encode(appTokenPayload, appKeyBytes, algorithm=appTokenEncryption)
 print(appToken.decode())
