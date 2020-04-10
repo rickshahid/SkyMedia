@@ -3,7 +3,7 @@ import jwt
 import time
 
 appId = sys.argv[1]
-appKey = sys.argv[2]
+appKeyFile = sys.argv[2]
 appTokenSeconds = sys.argv[3]
 appTokenEncryption = sys.argv[4]
 
@@ -14,6 +14,7 @@ appTokenPayload = {
   'exp': timeEpochSeconds + int(appTokenSeconds)
 }
 
+appKey = open(appKeyFile, 'r').read()
 appKeyBytes = appKey.encode()
 appToken = jwt.encode(appTokenPayload, appKeyBytes, algorithm=appTokenEncryption)
 print(appToken.decode())
