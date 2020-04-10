@@ -62,6 +62,7 @@ pipeline {
             terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
             gitHubAppToken=$(python3 $WORKSPACE/getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY_FILE 180 'RS256')
             echo $gitHubAppToken
+            httpRequest url: "$pull_request_repository_url/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_ACCEPT_HEADER"],[name: 'Authorization', value: "Bearer $gitHubAppToken"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$pull_request_hash", "status":"in_progress"}'
             #terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
           '''
         }
