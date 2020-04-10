@@ -89,7 +89,7 @@ pipeline {
       }
       steps {
         dir(readFile('tfFileDirectory.txt')) {
-          #archiveArtifacts artifacts: '**'
+          //archiveArtifacts artifacts: '**'
         }
       }
     }
