@@ -59,7 +59,6 @@ pipeline {
             echo 'terraform {' > backend.tf
             echo 'backend "azurerm" {}' >> backend.tf
             echo '}' >> backend.tf
-            echo $GITHUB_APP_KEY_FILE
             terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color
             gitHubAppToken=$(python3 $WORKSPACE/getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY_FILE 180 'RS256')
             echo $gitHubAppToken
