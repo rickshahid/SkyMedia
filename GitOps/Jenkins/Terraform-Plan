@@ -52,9 +52,8 @@ pipeline {
         }
       }
       environment {
-        withCredentials([sshUserPrivateKey(credentialsId: 'gitHubApp', usernameVariable: 'GITHUB_APP_ID', keyFileVariable: 'GITHUB_APP_KEY_FILE')]) {
-          GITHUB_APP_TOKEN = sh("python3 $WORKSPACE/getAppToken.py $GITHUB_APP_ID $GITHUB_APP_KEY_FILE 180 'RS256'")
-        }
+        GITHUB_APP_KEY = credentials('gitHubApp')
+        GITHUB_APP_TOKEN = sh("python3 $WORKSPACE/getAppToken.py $GITHUB_APP_KEY_USR $GITHUB_APP_KEY 180 'RS256'")
       }
       steps {
         sh '''#!/bin/bash -ex
