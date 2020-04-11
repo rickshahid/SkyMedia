@@ -36,11 +36,11 @@ pipeline {
     )
   }
   environment {
-    GITHUB_PULL_REQUEST_HASH = sh(script: "if [ \"$x_github_event\" == 'check_run' ] ; then echo -n \"1$GITHUB_CHECK_RUN_HASH\" ; else echo -n \"2$GITHUB_PULL_REQUEST_HASH\" ; fi", returnStdout: true)
-    GITHUB_PULL_REQUEST_BRANCH = sh(script: "if [ \"$x_github_event\" == 'check_run' ] ; then echo -n \"3$GITHUB_CHECK_RUN_BRANCH\" ; else echo -n \"4$GITHUB_PULL_REQUEST_BRANCH\" ; fi", returnStdout: true)
-    GITHUB_PULL_REQUEST_REPOSITORY_URL = sh(script: "if [ \"$x_github_event\" == 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_URL\" ; fi", returnStdout: true)
-    GITHUB_PULL_REQUEST_REPOSITORY_HOST = sh(script: "if [ \"$x_github_event\" == 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_HOST\" ; fi", returnStdout: true)
-    GITHUB_PULL_REQUEST_REPOSITORY_NAME = sh(script: "if [ \"$x_github_event\" == 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_HASH = sh(script: "if [[ $x_github_event == 'check_run' ]] ; then echo -n \"1$GITHUB_CHECK_RUN_HASH\" ; else echo -n \"2$GITHUB_PULL_REQUEST_HASH\" ; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_BRANCH = sh(script: "if [[ $x_github_event == 'check_run' ]] ; then echo -n \"3$GITHUB_CHECK_RUN_BRANCH\" ; else echo -n \"4$GITHUB_PULL_REQUEST_BRANCH\" ; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_REPOSITORY_URL = sh(script: "if [[ $x_github_event == 'check_run' ]] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_URL\" ; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_REPOSITORY_HOST = sh(script: "if [[ $x_github_event == 'check_run' ]] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_HOST\" ; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_REPOSITORY_NAME = sh(script: "if [[ $x_github_event == 'check_run' ]] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
   }
   stages {
     stage('GitHub Update Request') {
