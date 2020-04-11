@@ -66,7 +66,7 @@ pipeline {
         }
       }
     }
-    stage('Terraform Init) {
+    stage('Terraform Init') {
       when {
         expression {
           fileExists('appInstallationToken.txt')
@@ -94,7 +94,7 @@ pipeline {
         }
       }
     }
-    stage('Terraform Plan) {
+    stage('Terraform Plan') {
       when {
         expression {
           fileExists('appInstallationToken.txt')
