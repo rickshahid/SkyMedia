@@ -44,7 +44,6 @@ pipeline {
   stages {
     stage('GitHub Request Analyze') {
       steps {
-        scr
         sh '''#!/bin/bash -ex
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $GITHUB_REQUEST_HASH)
