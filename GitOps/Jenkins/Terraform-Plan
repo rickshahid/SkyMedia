@@ -37,14 +37,19 @@ pipeline {
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION'
     )
   }
+  environment {
+    GITHUB_REQUEST_ID = sh(script: 'if ["$GITHUB_PULL_REQUEST_ID" == ""] then echo -n "$GITHUB_CHECK_RUN_ID" else echo -n "$GITHUB_PULL_REQUEST_ID" fi', returnStdout: true)
+    GITHUB_REQUEST_HASH = sh(script: 'if ["$GITHUB_PULL_REQUEST_HASH" == ""] then echo -n "$GITHUB_CHECK_RUN_HASH" else echo -n "$GITHUB_PULL_REQUEST_HASH" fi', returnStdout: true)
+  }
   stages {
     stage('GitHub Request Analyze') {
       steps {
+        scr
         sh '''#!/bin/bash -ex
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $GITHUB_REQUEST_HASH)
           do
-            if [ ${changedFile: -3} == ".tf" ]
+            if [${changedFile: -3} == ".tf"]
             then
               echo -n "$(dirname $changedFile)" > tfFileDirectory.txt
               echo -n "$changedFile" > tfFilePath.txt
