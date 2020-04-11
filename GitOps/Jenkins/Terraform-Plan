@@ -93,7 +93,8 @@ pipeline {
           def tfFileDirectory = readFile file: 'tfFileDirectory.txt'
           dir(tfFileDirectory) {
             def tfOutputInit = readFile file: 'tfOutputInit.txt'
-            tfOutputInit = tfOutputInit.replaceAll('"', "'")
+            //tfOutputInit = tfOutputInit.replaceAll('"', "'")
+            tfOutputInit = tfOutputInit.replaceAll('"', '\"')
             tfOutputInit = tfOutputInit.replaceAll('\n', '<br>')
             httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$appCheckRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"conclusion\":\"success\", \"output\":{\"title\":\"Terraform Init\", \"summary\":\"$tfOutputInit\"}}"
           }
