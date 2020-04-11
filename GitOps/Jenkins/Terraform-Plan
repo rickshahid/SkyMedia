@@ -40,10 +40,10 @@ pipeline {
   environment {
     GITHUB_REQUEST_ID = sh(script: "if [ \"$GITHUB_PULL_REQUEST_ID\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_ID\" ; else echo -n \"$GITHUB_PULL_REQUEST_ID\" ; fi", returnStdout: true)
     GITHUB_REQUEST_HASH = sh(script: "if [ \"$GITHUB_PULL_REQUEST_HASH\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_HASH\" ; else echo -n \"$GITHUB_PULL_REQUEST_HASH\" ; fi", returnStdout: true)
-    GITHUB_REQUEST_BRANCH = sh(script: "if [ \"$GITHUB_PULL_REQUEST_BRANCH\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_BRANCH\" ; else echo -n \"$GITHUB_PULL_REQUEST_BRANCH\" ; fi', returnStdout: true)
-    GITHUB_REQUEST_REPOSITORY_URL = sh(script: "if [ \"$GITHUB_REQUEST_REPOSITORY_URL\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_URL\" ; fi', returnStdout: true)
-    GITHUB_REQUEST_REPOSITORY_HOST = sh(script: "if [ \"$GITHUB_REQUEST_REPOSITORY_HOST\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_HOST\" ; fi', returnStdout: true)
-    GITHUB_REQUEST_REPOSITORY_NAME = sh(script: "if [ \"$GITHUB_REQUEST_REPOSITORY_NAME\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_NAME\" ; fi', returnStdout: true)
+    GITHUB_REQUEST_BRANCH = sh(script: "if [ \"$GITHUB_PULL_REQUEST_BRANCH\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_BRANCH\" ; else echo -n \"$GITHUB_PULL_REQUEST_BRANCH\" ; fi", returnStdout: true)
+    GITHUB_REQUEST_REPOSITORY_URL = sh(script: "if [ \"$GITHUB_REQUEST_REPOSITORY_URL\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_URL\" ; fi", returnStdout: true)
+    GITHUB_REQUEST_REPOSITORY_HOST = sh(script: "if [ \"$GITHUB_REQUEST_REPOSITORY_HOST\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_HOST\" ; fi", returnStdout: true)
+    GITHUB_REQUEST_REPOSITORY_NAME = sh(script: "if [ \"$GITHUB_REQUEST_REPOSITORY_NAME\" == \"\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
   }
   stages {
     stage('GitHub Request Analyze') {
