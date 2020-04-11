@@ -105,7 +105,6 @@ pipeline {
           }
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
-            tfFilePath = tfFilePath.replaceAll('/', '-')
             def checkRunName = 'Terraform Init'
             def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
             httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
@@ -148,7 +147,6 @@ pipeline {
           }
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
-            tfFilePath = tfFilePath.replaceAll('/', '-')
             def checkRunName = 'Terraform Plan'
             def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
             httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
