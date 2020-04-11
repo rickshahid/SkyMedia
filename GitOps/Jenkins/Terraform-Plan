@@ -96,7 +96,7 @@ pipeline {
               tfOutputInit = tfOutputInit.replaceAll('\n', '<br>')
               checkRunOutputSummary = tfOutputInit
             }
-            checkRunOutputConclusion = 'success'
+            checkRunConclusion = 'success'
           }
           catch (err) {
             checkRunOutputSummary = err
@@ -140,7 +140,7 @@ pipeline {
               tfOutputPlan = tfOutputPlan.replaceAll('\n', '<br>')
               checkRunOutputSummary = tfOutputPlan
             }
-            checkRunOutputConclusion = 'success'
+            checkRunConclusion = 'success'
           }
           catch (err) {
             checkRunOutputSummary = err
