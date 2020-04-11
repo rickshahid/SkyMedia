@@ -32,7 +32,7 @@ pipeline {
         [key: 'GITHUB_CHECK_RUN_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)'],
         [key: 'GITHUB_CHECK_RUN_REPOSITORY_NAME', value: '$.repository.name']
       ],
-      causeString: 'Pull Request $GITHUB_PULL_REQUEST_ID $GITHUB_EVENT_ACTION on $GITHUB_REQUEST_BRANCH branch in $GITHUB_REQUEST_REPOSITORY_NAME repository',
+      causeString: 'GitHub $x_github_event $GITHUB_EVENT_ACTION on app installation $GITHUB_APP_INSTALLATION_ID',
       regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)|(check_run).(rerequested)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION'
     )
