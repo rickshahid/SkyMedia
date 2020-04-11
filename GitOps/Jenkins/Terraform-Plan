@@ -138,7 +138,7 @@ pipeline {
           def checkRunConclusion
           def checkRunOutputSummary
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          httpResponse = httpRequest url: "$GITHUB_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
+          httpResponse = httpRequest url: "$GITHUB_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_REQUEST_HASH\", \"status\":\"in_progress\"}"
           jsonResponse = readJSON text: httpResponse.content
           def checkRunId = jsonResponse.id
           try {
