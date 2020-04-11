@@ -77,7 +77,7 @@ pipeline {
           def appInstallationToken = readFile('appInstallationToken.txt')
           httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
           jsonResponse = readJSON text: httpResponse.content
-          writeFile file: 'appCheckRunId.txt', text: jsonResponse.id
+          writeFile file: 'appCheckRunId.txt', text: jsonResponse.id.toString()
         }
         sh '''#!/bin/bash -ex
           tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
