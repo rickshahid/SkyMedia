@@ -2,13 +2,11 @@ pipeline {
   agent any
   parameters {
     string(name: 'GITHUB_APP_CREDENTIAL_ID', defaultValue: 'GitHubAppKey')
-    string(name: 'GITHUB_APP_TOKEN_SECONDS', defaultValue: '180')
-    string(name: 'GITHUB_HEADER_ACCEPT_AUTH', defaultValue: 'application/vnd.github.machine-man-preview+json')
-    string(name: 'GITHUB_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
-    string(name: 'TF_BACKEND_CONFIG', defaultValue: '/tfBackendConfig.txt')
+    string(name: 'GITHUB_APP_TOKEN_SECONDS', defaultValue: '300')
+    string(name: 'GITHUB_API_HEADER_ACCEPT_AUTH', defaultValue: 'application/vnd.github.machine-man-preview+json')
+    string(name: 'GITHUB_API_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
+    string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: '/tfBackendConfig.txt')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
-    string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47')
-    string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true)
   }
   options {
@@ -63,7 +61,7 @@ pipeline {
       }
       steps {
         script {
-          def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+          def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonResponse = readJSON text: httpResponse.content
           writeFile 'appInstallationToken.txt' jsonResponse.token
         }
