@@ -76,15 +76,15 @@ pipeline {
           def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonResponse = readJSON text: httpResponse.content
           INSTALLATION_ACCESS_TOKEN = jsonResponse.token
-          echo ${INSTALLATION_ACCESS_TOKEN}
-          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token ${INSTALLATION_ACCESS_TOKEN}"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"in_progress"}'
+          echo $INSTALLATION_ACCESS_TOKEN
+          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $INSTALLATION_ACCESS_TOKEN"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"in_progress"}'
         }
         sh '''#!/bin/bash -ex
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
         '''
-        echo ${INSTALLATION_ACCESS_TOKEN}
-        //httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token ${INSTALLATION_ACCESS_TOKEN}"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"completed"}
+        echo $INSTALLATION_ACCESS_TOKEN
+        //httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $INSTALLATION_ACCESS_TOKEN"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"completed"}
       }
     }
     stage('Build Artifacts Storage') {
