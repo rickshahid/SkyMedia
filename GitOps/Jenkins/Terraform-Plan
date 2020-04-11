@@ -46,7 +46,7 @@ pipeline {
     GITHUB_REQUEST_REPOSITORY_NAME = sh(script: "if [ -n \"$GITHUB_REQUEST_REPOSITORY_NAME\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
   }
   stages {
-    stage('GitHub Request Analyze') {
+    stage('GitHub Update Request') {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
