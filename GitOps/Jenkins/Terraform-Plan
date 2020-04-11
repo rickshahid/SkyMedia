@@ -73,7 +73,7 @@ pipeline {
         script {
           def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonResponse = readJSON text: httpResponse.content
-          $installationToken = jsonResponse.token
+          def installationToken = jsonResponse.token
           echo $installationToken
           httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $installationToken"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"in_progress"}'
         }
@@ -81,7 +81,7 @@ pipeline {
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
         '''
-        echo $installationToken
+        //echo $installationToken
         //httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $installationToken"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"completed"}
       }
     }
