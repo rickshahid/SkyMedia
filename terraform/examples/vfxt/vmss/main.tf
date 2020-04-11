@@ -15,7 +15,7 @@ locals {
     
     // nfs filer details
     filer_resource_group_name = "filer_resource_group"
-    nfs_export_path = "/nfs1data"
+    nfs_export_path = "/nfs1data"ddd
     
     // vfxt details
     vfxt_resource_group_name = "vfxt_resource_group"
