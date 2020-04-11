@@ -27,7 +27,7 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
       ],
       causeString: 'Pull Request $GITHUB_PULL_REQUEST_ID $GITHUB_EVENT_ACTION on $GITHUB_PULL_REQUEST_BRANCH branch in $GITHUB_PULL_REQUEST_REPOSITORY_NAME repository',
-      regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)',
+      regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)|(check_run).(rerequested)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION'
     )
   }
