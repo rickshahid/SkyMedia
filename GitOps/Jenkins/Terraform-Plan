@@ -24,7 +24,7 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
         [key: 'GITHUB_PULL_REQUEST_REPOSITORY_URL', value: '$.pull_request.head.repo.url'],
         [key: 'GITHUB_PULL_REQUEST_REPOSITORY_HOST', value: '$.pull_request.head.repo.url', regexpFilter: '(/repos)(.*)'],
-        [key: 'GITHUB_PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
+        [key: 'GITHUB_PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name'],
         [key: 'GITHUB_CHECK_RUN_ID', value: '$.check_run.pull_requests[0].number'],
         [key: 'GITHUB_CHECK_RUN_HASH', value: '$.check_run.head_sha'],
         [key: 'GITHUB_CHECK_RUN_BRANCH', value: '$.check_run.head_branch'],
