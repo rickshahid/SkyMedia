@@ -85,7 +85,7 @@ pipeline {
           echo 'terraform {' > backend.tf
           echo 'backend "azurerm" {}' >> backend.tf
           echo '}' >> backend.tf
-          terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" &> tfOutputInit.txt
+          terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfOutputInit.txt
         '''
         script {
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
