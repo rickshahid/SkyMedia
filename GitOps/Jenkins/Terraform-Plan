@@ -74,8 +74,8 @@ pipeline {
       }
       steps {
         script {
-          def checkRunSummary = ''
-          def checkRunConclusion = ''
+          def checkRunSummary
+          def checkRunConclusion
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
           httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
           jsonResponse = readJSON text: httpResponse.content
@@ -100,7 +100,7 @@ pipeline {
             checkRunConclusion = 'success'
           }
           catch (err) {
-            checkRunSummary = $err
+            checkRunSummary = err
             checkRunConclusion = 'failure'
             currentBuild.result = 'FAILED'
           }
