@@ -51,7 +51,7 @@ pipeline {
         '''
       }
     }
-    stage('Terraform Init & Plan') {
+    stage('GitHub App Token') {
       when {
         expression {
           fileExists('tfFilePath.txt')
@@ -60,56 +60,12 @@ pipeline {
       environment {
         GITHUB_APP_KEY = credentials("$GITHUB_APP_CREDENTIAL_ID")
         GITHUB_APP_TOKEN = sh(script: "python3 $WORKSPACE/GetWebToken.py $GITHUB_APP_KEY_USR $GITHUB_APP_KEY $GITHUB_APP_TOKEN_SECONDS 'RS256'", returnStdout: true)
-        GITHUB_APP_INSTALLATION_TOKEN = ''
-        GITHUB_APP_CHECK_RUN_ID = ''
       }
       steps {
         script {
           def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonResponse = readJSON text: httpResponse.content
-          GITHUB_APP_INSTALLATION_TOKEN = jsonResponse.token
-          httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
-          jsonResponse = readJSON text: httpResponse.content
-          GITHUB_APP_CHECK_RUN_ID = jsonResponse.id
-        }
-        sh '''#!/bin/bash -ex
-          tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
-          cd $(cat tfFileDirectory.txt)
-          echo 'terraform {' > backend.tf
-          echo 'backend "azurerm" {}' >> backend.tf
-          echo '}' >> backend.tf
-          terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color &> tfInit.txt
-        '''
-        script {
-          dir(readFile('tfFileDirectory.txt')) {
-            TF_INIT = readFile('tfInit.txt')
-          }
-          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Init\", \"status\":\"completed\", \"conclusion\":\"success\", \"output\":{\"title\":\"Init\", \"summary\":\"$TF_INIT\"}}"
-          def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Plan\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
-          jsonResponse = readJSON text: httpResponse.content
-          GITHUB_APP_CHECK_RUN_ID = jsonResponse.id
-        }
-        sh '''#!/bin/bash -ex
-          cd $(cat tfFileDirectory.txt)
-          terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
-        '''
-        httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Plan\", \"status\":\"completed\", \"conclusion\":\"success\"}"
-      }
-    }
-    stage('Build Artifacts Storage') {
-      when {
-        expression {
-          fileExists('tfFileDirectory.txt')
-        }
-        expression {
-          dir(readFile('tfFileDirectory.txt')) {
-            fileExists('tfPlan.bin')
-          }
-        }
-      }
-      steps {
-        dir(readFile('tfFileDirectory.txt')) {
-          //archiveArtifacts artifacts: '**'
+          echo -n jsonResponse.token > gitHubAppInstallationToken.txt
         }
       }
     }
