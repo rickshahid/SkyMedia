@@ -74,7 +74,7 @@ pipeline {
       }
       steps {
         script {
-          def appInstallationToken = readFile('appInstallationToken.txt')
+          def appInstallationToken = readFile file: 'appInstallationToken.txt'
           httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
           jsonResponse = readJSON text: httpResponse.content
           writeFile file: 'appCheckRunId.txt', text: jsonResponse.id.toString()
@@ -88,10 +88,11 @@ pipeline {
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfInit.txt
         '''
         script {
-          def appInstallationToken = readFile('appInstallationToken.txt')
-          def appCheckRunId = readFile('appCheckRunId.txt')
-          dir(readFile('tfFileDirectory.txt')) {
-            def tfInit = readFile('tfInit.txt')
+          def appInstallationToken = readFile file: 'appInstallationToken.txt'
+          def appCheckRunId = readFile file: 'appCheckRunId.txt'
+          def tfFileDirectory = readFile file: 'tfFileDirectory.txt'
+          dir(tfFileDirectory) {
+            def tfInit = readFile file: 'tfInit.txt', encoding: 'Base64'
             httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$appCheckRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"status\":\"completed\", \"conclusion\":\"success\", \"output\":{\"title\":\"Init\", \"summary\":\"$tfInit\"}}"
           }
         }
