@@ -73,7 +73,7 @@ pipeline {
         script {
           def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonParser = new groovy.json.JsonSlurper()
-          $installationAccessToken = jsonParser.parseText(httpResonse.content).token
+          $installationAccessToken = jsonParser.parseText(httpResponse.content).token
           echo $installationAccessToken
         }
         sh '''#!/bin/bash -ex
