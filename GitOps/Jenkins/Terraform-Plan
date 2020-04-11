@@ -19,12 +19,18 @@ pipeline {
       genericVariables: [
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
-        [key: 'GITHUB_REQUEST_ID', value: '$.pull_request.number', defaultValue: '$.check_run.pull_requests[0].number'],
-        [key: 'GITHUB_REQUEST_HASH', value: '$.pull_request.head.sha', defaultValue: '$.check_run.head_sha'],
-        [key: 'GITHUB_REQUEST_BRANCH', value: '$.pull_request.head.ref', defaultValue: '$.check_run.head_branch'],
-        [key: 'GITHUB_REQUEST_REPOSITORY_URL', value: '$.pull_request.head.repo.url', defaultValue: '$.repository.url'],
-        [key: 'GITHUB_REQUEST_REPOSITORY_HOST', value: '$.pull_request.head.repo.url', defaultValue: '$.repository.url', regexpFilter: '(/repos)(.*)'],
-        [key: 'GITHUB_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name', defaultValue: '$.repository.name']
+        [key: 'GITHUB_PULL_REQUEST_ID', value: '$.pull_request.number'],
+        [key: 'GITHUB_PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
+        [key: 'GITHUB_PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
+        [key: 'GITHUB_PULL_REQUEST_REPOSITORY_URL', value: '$.pull_request.head.repo.url'],
+        [key: 'GITHUB_PULL_REQUEST_REPOSITORY_HOST', value: '$.pull_request.head.repo.url', regexpFilter: '(/repos)(.*)'],
+        [key: 'GITHUB_PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name']
+        [key: 'GITHUB_CHECK_RUN_ID', value: '$.check_run.pull_requests[0].number'],
+        [key: 'GITHUB_CHECK_RUN_HASH', value: '$.check_run.head_sha'],
+        [key: 'GITHUB_CHECK_RUN_BRANCH', value: '$.check_run.head_branch'],
+        [key: 'GITHUB_CHECK_RUN_REPOSITORY_URL', value: '$.repository.url'],
+        [key: 'GITHUB_CHECK_RUN_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)'],
+        [key: 'GITHUB_CHECK_RUN_REPOSITORY_NAME', value: '$.repository.name']
       ],
       causeString: 'Pull Request $GITHUB_REQUEST_ID $GITHUB_EVENT_ACTION on $GITHUB_REQUEST_BRANCH branch in $GITHUB_REQUEST_REPOSITORY_NAME repository',
       regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)|(check_run).(rerequested)',
@@ -32,7 +38,7 @@ pipeline {
     )
   }
   stages {
-    stage('GitHub Pull Request') {
+    stage('GitHub Request Analyze') {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
