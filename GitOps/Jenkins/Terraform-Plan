@@ -81,7 +81,6 @@ pipeline {
           jsonResponse = readJSON text: httpResponse.content
           def checkRunId = jsonResponse.id
           try {
-            error message: 'Catch Me!'
             sh '''#!/bin/bash -ex
               tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
               cd $(cat tfFileDirectory.txt)
