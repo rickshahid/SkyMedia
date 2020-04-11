@@ -32,7 +32,7 @@ pipeline {
         [key: 'GITHUB_CHECK_RUN_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)'],
         [key: 'GITHUB_CHECK_RUN_REPOSITORY_NAME', value: '$.repository.name']
       ],
-      causeString: 'Pull Request $GITHUB_CHECK_RUN_ID $GITHUB_EVENT_ACTION on $GITHUB_REQUEST_BRANCH branch in $GITHUB_REQUEST_REPOSITORY_NAME repository',
+      causeString: 'Pull Request $GITHUB_PULL_REQUEST_ID $GITHUB_EVENT_ACTION on $GITHUB_REQUEST_BRANCH branch in $GITHUB_REQUEST_REPOSITORY_NAME repository',
       regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)|(check_run).(rerequested)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION'
     )
@@ -40,12 +40,12 @@ pipeline {
   stages {
     stage('GitHub Request Analyze') {
       environment {
-        GITHUB_REQUEST_ID = sh(script: "if [ -z \"$GITHUB_PULL_REQUEST_ID\" ] ; then echo -n \"$GITHUB_CHECK_RUN_ID\" ; else echo -n \"$GITHUB_PULL_REQUEST_ID\" ; fi", returnStdout: true)
-        GITHUB_REQUEST_HASH = sh(script: "if [ -z \"$GITHUB_PULL_REQUEST_HASH\" ] ; then echo -n \"$GITHUB_CHECK_RUN_HASH\" ; else echo -n \"$GITHUB_PULL_REQUEST_HASH\" ; fi", returnStdout: true)
-        GITHUB_REQUEST_BRANCH = sh(script: "if [ -z \"$GITHUB_PULL_REQUEST_BRANCH\" ] ; then echo -n \"$GITHUB_CHECK_RUN_BRANCH\" ; else echo -n \"$GITHUB_PULL_REQUEST_BRANCH\" ; fi", returnStdout: true)
-        GITHUB_REQUEST_REPOSITORY_URL = sh(script: "if [ -z \"$GITHUB_REQUEST_REPOSITORY_URL\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_URL\" ; fi", returnStdout: true)
-        GITHUB_REQUEST_REPOSITORY_HOST = sh(script: "if [ -z \"$GITHUB_REQUEST_REPOSITORY_HOST\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_HOST\" ; fi", returnStdout: true)
-        GITHUB_REQUEST_REPOSITORY_NAME = sh(script: "if [ -z \"$GITHUB_REQUEST_REPOSITORY_NAME\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
+        GITHUB_REQUEST_ID = sh(script: "if [ -n \"$GITHUB_PULL_REQUEST_ID\" ] ; then echo -n \"$GITHUB_CHECK_RUN_ID\" ; else echo -n \"$GITHUB_PULL_REQUEST_ID\" ; fi", returnStdout: true)
+        GITHUB_REQUEST_HASH = sh(script: "if [ -n \"$GITHUB_PULL_REQUEST_HASH\" ] ; then echo -n \"$GITHUB_CHECK_RUN_HASH\" ; else echo -n \"$GITHUB_PULL_REQUEST_HASH\" ; fi", returnStdout: true)
+        GITHUB_REQUEST_BRANCH = sh(script: "if [ -n \"$GITHUB_PULL_REQUEST_BRANCH\" ] ; then echo -n \"$GITHUB_CHECK_RUN_BRANCH\" ; else echo -n \"$GITHUB_PULL_REQUEST_BRANCH\" ; fi", returnStdout: true)
+        GITHUB_REQUEST_REPOSITORY_URL = sh(script: "if [ -n \"$GITHUB_REQUEST_REPOSITORY_URL\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_URL\" ; fi", returnStdout: true)
+        GITHUB_REQUEST_REPOSITORY_HOST = sh(script: "if [ -n \"$GITHUB_REQUEST_REPOSITORY_HOST\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_HOST\" ; fi", returnStdout: true)
+        GITHUB_REQUEST_REPOSITORY_NAME = sh(script: "if [ -n \"$GITHUB_REQUEST_REPOSITORY_NAME\" ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
       }
       steps {
         sh '''#!/bin/bash -ex
