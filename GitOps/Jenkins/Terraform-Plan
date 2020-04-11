@@ -66,5 +66,45 @@ pipeline {
         }
       }
     }
+    stage('Terraform Init) {
+      when {
+        expression {
+          fileExists('appInstallationToken.txt')
+        }
+      }
+      steps {
+        script {
+          httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
+          jsonResponse = readJSON text: httpResponse.content
+          def checkRunId = jsonResponse.id
+        }
+        sh '''#!/bin/bash -ex
+          tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
+          cd $(cat tfFileDirectory.txt)
+          echo 'terraform {' > backend.tf
+          echo 'backend "azurerm" {}' >> backend.tf
+          echo '}' >> backend.tf
+          terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfInit.txt
+        '''
+        script {
+          dir(readFile('tfFileDirectory.txt')) {
+            def tfInit = readFile('tfInit.txt')
+          }
+          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Init\", \"status\":\"completed\", \"conclusion\":\"success\", \"output\":{\"title\":\"Init\", \"summary\":\"$tfInit\"}}"
+        }
+      }
+    }
+    stage('Terraform Plan) {
+      when {
+        expression {
+          fileExists('appInstallationToken.txt')
+        }
+        expression {
+          fileExists('tfInit.txt')
+        }
+      }
+      steps {
+      }
+    }
   }
 }
