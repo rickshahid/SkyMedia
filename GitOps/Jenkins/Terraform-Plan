@@ -88,11 +88,10 @@ pipeline {
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfInit.txt
         '''
         script {
-          def appInstallationToken = readFile('appInstallationToken.txt')
           dir(readFile('tfFileDirectory.txt')) {
             def tfInit = readFile('tfInit.txt')
           }
-          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"status\":\"completed\", \"conclusion\":\"success\", \"output\":{\"title\":\"Init\", \"summary\":\"$tfInit\"}}"
+          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"status\":\"completed\", \"conclusion\":\"success\", \"output\":{\"title\":\"Init\", \"summary\":\"$tfInit\"}}"
         }
       }
     }
