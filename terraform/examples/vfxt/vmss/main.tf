@@ -1,7 +1,7 @@
 // customize the simple VM by editing the following local variablesx
 locals {
     // the region of the deployment
-    location = "eastus"
+    location = "eastus"ssss
     vm_admin_username = "azureuser"
     // use either SSH Key data or admin password, if ssh_key_data is specified
     // then admin_password is ignored
