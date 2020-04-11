@@ -94,17 +94,20 @@ pipeline {
               def tfOutputInit = readFile file: 'tfOutputInit.txt'
               tfOutputInit = tfOutputInit.replaceAll('"', "'")
               tfOutputInit = tfOutputInit.replaceAll('\n', '<br>')
-              checkRunSummary = tfOutputInit
+              checkRunOutputSummary = tfOutputInit
             }
-            checkRunConclusion = 'success'
+            checkRunOutputConclusion = 'success'
           }
           catch (err) {
-            checkRunSummary = err
-            checkRunConclusion = 'failure'
+            checkRunOutputSummary = err
+            checkRunOutputConclusion = 'failure'
             currentBuild.result = 'FAILED'
           }
           finally {
-            httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"Terraform Init\", \"summary\":\"$checkRunSummary\"}}"
+            def tfFilePath = readFile file: 'tfFilePath.txt'
+            def checkRunName = 'Terraform Init'
+            def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
+            httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
           }
         }
       }
@@ -133,17 +136,20 @@ pipeline {
               def tfOutputPlan = readFile file: 'tfOutputPlan.txt'
               tfOutputPlan = tfOutputPlan.replaceAll('"', "'")
               tfOutputPlan = tfOutputPlan.replaceAll('\n', '<br>')
-              checkRunSummary = tfOutputPlan
+              checkRunOutputSummary = tfOutputPlan
             }
-            checkRunConclusion = 'success'
+            checkRunOutputConclusion = 'success'
           }
           catch (err) {
-            checkRunSummary = err
-            checkRunConclusion = 'failure'
+            checkRunOutputSummary = err
+            checkRunOutputConclusion = 'failure'
             currentBuild.result = 'FAILED'
           }
           finally {
-            httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Plan\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"Terraform Plan\", \"summary\":\"$checkRunSummary\"}}"
+            def tfFilePath = readFile file: 'tfFilePath.txt'
+            def checkRunName = 'Terraform Plan'
+            def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
+            httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
           }
         }
       }
