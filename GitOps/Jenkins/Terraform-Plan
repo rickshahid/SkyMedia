@@ -85,16 +85,16 @@ pipeline {
           echo 'terraform {' > backend.tf
           echo 'backend "azurerm" {}' >> backend.tf
           echo '}' >> backend.tf
-          terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfInit.txt
+          terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfOutputInit.txt
         '''
         script {
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
           def appCheckRunId = readFile file: 'appCheckRunId.txt'
           def tfFileDirectory = readFile file: 'tfFileDirectory.txt'
           dir(tfFileDirectory) {
-            def tfInit = readFile file: 'tfInit.txt'
-            tfInit = tfInit.replaceAll('"', "'")
-            httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$appCheckRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"conclusion\":\"success\", \"output\":{\"title\":\"Terraform Init\", \"summary\":\"$tfInit\"}}"
+            def tfOutputInit = readFile file: 'tfOutputInit.txt'
+            tfOutputInit = tfInit.replaceAll('"', "'")
+            httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$appCheckRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"conclusion\":\"success\", \"output\":{\"title\":\"Terraform Init\", \"summary\":\"$tfOutputInit\"}}"
           }
         }
       }
