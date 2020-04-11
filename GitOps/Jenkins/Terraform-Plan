@@ -109,5 +109,44 @@ pipeline {
         }
       }
     }
+    stage('Terraform Plan') {
+      when {
+        expression {
+          fileExists('appInstallationToken.txt')
+        }
+      }
+      steps {
+        script {
+          def checkRunSummary
+          def checkRunConclusion
+          def appInstallationToken = readFile file: 'appInstallationToken.txt'
+          httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
+          jsonResponse = readJSON text: httpResponse.content
+          def checkRunId = jsonResponse.id
+          try {
+            sh '''#!/bin/bash -ex
+              cd $(cat tfFileDirectory.txt)
+              terraform plan -input=false -out=tfPlan.bin -no-color &> tfOutputPlan.txt
+            '''
+            def tfFileDirectory = readFile file: 'tfFileDirectory.txt'
+            dir(tfFileDirectory) {
+              def tfOutputPlan = readFile file: 'tfOutputPlan.txt'
+              tfOutputPlan = tfOutputPlan.replaceAll('"', "'")
+              tfOutputPlan = tfOutputPlan.replaceAll('\n', '<br>')
+              checkRunSummary = tfOutputPlan
+            }
+            checkRunConclusion = 'success'
+          }
+          catch (err) {
+            checkRunSummary = err
+            checkRunConclusion = 'failure'
+            currentBuild.result = 'FAILED'
+          }
+          finally {
+            httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Plan\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"Terraform Plan\", \"summary\":\"$checkRunSummary\"}}"
+          }
+        }
+      }
+    }
   }
 }
