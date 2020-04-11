@@ -154,5 +154,22 @@ pipeline {
         }
       }
     }
+    stage('Build Artifacts Storage') {
+      when {
+        expression {
+          fileExists('tfFileDirectory.txt')
+        }
+        expression {
+          dir(readFile('tfFileDirectory.txt')) {
+            fileExists('tfPlan.bin')
+          }
+        }
+      }
+      steps {
+        dir(readFile('tfFileDirectory.txt')) {
+          //archiveArtifacts artifacts: '**'
+        }
+      }
+    }
   }
 }
