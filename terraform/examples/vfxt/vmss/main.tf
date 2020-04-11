@@ -143,7 +143,7 @@ module "vmss" {
     ssh_key_data = local.vm_ssh_key_data
     unique_name = local.unique_name
     vm_count = local.vm_count
-    vm_size = local.vmss_size
+    vm_size = local.vmss_size2222
     virtual_network_resource_group = local.network_resource_group_name
     virtual_network_name = module.network.vnet_name
     virtual_network_subnet_name = module.network.render_clients1_subnet_name
