@@ -94,17 +94,5 @@ pipeline {
         }
       }
     }
-    stage('Terraform Plan') {
-      when {
-        expression {
-          fileExists('appInstallationToken.txt')
-        }
-        expression {
-          fileExists('tfInit.txt')
-        }
-      }
-      steps {
-      }
-    }
   }
 }
