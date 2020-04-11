@@ -1,4 +1,3 @@
-def installationAccessToken = ''
 pipeline {
   agent any
   parameters {
@@ -61,6 +60,7 @@ pipeline {
       environment {
         GITHUB_APP_KEY = credentials("$GITHUB_APP_CREDENTIAL_ID")
         GITHUB_APP_TOKEN = sh(script: "python3 $WORKSPACE/GetWebToken.py $GITHUB_APP_KEY_USR $GITHUB_APP_KEY $GITHUB_APP_TOKEN_SECONDS 'RS256'", returnStdout: true)
+        GITHUB_APP_INSTALLATION_TOKEN = ''
       }
       steps {
         sh '''#!/bin/bash -ex
@@ -74,16 +74,16 @@ pipeline {
         script {
           def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonResponse = readJSON text: httpResponse.content
-          installationAccessToken = jsonResponse.token
-          echo "$installationAccessToken"
-          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $installationAccessToken"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"in_progress"}'
+          GITHUB_APP_INSTALLATION_TOKEN = jsonResponse.token
+          echo "$GITHUB_APP_INSTALLATION_TOKEN"
+          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"in_progress"}'
         }
         sh '''#!/bin/bash -ex
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
         '''
-        echo "$installationAccessToken"
-        //httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $installationAccessToken"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"completed"}
+        echo "$GITHUB_APP_INSTALLATION_TOKEN"
+        //httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: '{"name":"Terraform Plan", "head_sha":"$PULL_REQUEST_HASH", "status":"completed"}
       }
     }
     stage('Build Artifacts Storage') {
