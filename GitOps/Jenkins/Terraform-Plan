@@ -67,9 +67,7 @@ pipeline {
           def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonResponse = readJSON text: httpResponse.content
           GITHUB_APP_INSTALLATION_TOKEN = jsonResponse.token
-          echo "$GITHUB_APP_INSTALLATION_TOKEN"
-          echo "$PULL_REQUEST_HASH"
-          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: '{"name":"Terraform Init","head_sha":"$PULL_REQUEST_HASH"}'
+          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\"}"
         }
         sh '''#!/bin/bash -ex
           tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
