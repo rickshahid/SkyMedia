@@ -98,11 +98,13 @@ pipeline {
               checkRunSummary = tfOutputInit
             }
             checkRunConclusion = 'success'
-          } catch (err) {
+          }
+          catch (err) {
             checkRunSummary = $err
             checkRunConclusion = 'failure'
             currentBuild.result = 'FAILED'
-          } finally {
+          }
+          finally {
             httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"Terraform Init\", \"summary\":\"$checkRunSummary\"}}"
           }
         }
