@@ -99,7 +99,7 @@ pipeline {
             }
             checkRunConclusion = 'success'
           } catch (err) {
-            checkRunSummary = err
+            checkRunSummary = $err
             checkRunConclusion = 'failure'
             currentBuild.result = 'FAILED'
           } finally {
