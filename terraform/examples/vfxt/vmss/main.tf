@@ -9,7 +9,7 @@ locals {
     // if you use SSH key, ensure you have ~/.ssh/id_rsa with permission 600
     // populated where you are running terraform
     vm_ssh_key_data = null //"ssh-rsa AAAAB3...."
-
+ddd
     // network details
     network_resource_group_name = "network_resource_group"
     
