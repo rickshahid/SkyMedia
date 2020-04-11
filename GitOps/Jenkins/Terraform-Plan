@@ -81,7 +81,7 @@ pipeline {
           terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG" -backend-config="key=$tfStateFile" -no-color &> tfInit.txt
         '''
         script {
-          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"completed\"}"
+          httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Init\", \"status\":\"completed\", \"conclusion\":\"success\"}"
           def httpResponse = httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Plan\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
           jsonResponse = readJSON text: httpResponse.content
           GITHUB_APP_CHECK_RUN_ID = jsonResponse.id
@@ -90,7 +90,7 @@ pipeline {
           cd $(cat tfFileDirectory.txt)
           terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
         '''
-        httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Plan\", \"head_sha\":\"$PULL_REQUEST_HASH\", \"status\":\"completed\"}"
+        httpRequest url: "$PULL_REQUEST_REPOSITORY_URL/check-runs/$GITHUB_APP_CHECK_RUN_ID", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_HEADER_ACCEPT_CHECK"],[name: 'Authorization', value: "token $GITHUB_APP_INSTALLATION_TOKEN"]], requestBody: "{\"name\":\"Terraform Plan\", \"status\":\"completed\", \"conclusion\":\"success\"}"
       }
     }
     stage('Build Artifacts Storage') {
