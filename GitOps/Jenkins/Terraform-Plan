@@ -60,7 +60,7 @@ pipeline {
       }
       steps {
         script {
-          def httpResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_HOST/installations/$APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
+          def httpResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"],[name: 'Authorization', value: "Bearer $GITHUB_APP_TOKEN"]]
           def jsonResponse = readJSON text: httpResponse.content
           writeFile file: 'appInstallationToken.txt', text: jsonResponse.token
         }
