@@ -100,7 +100,7 @@ pipeline {
           }
           catch (err) {
             checkRunOutputSummary = err
-            checkRunOutputConclusion = 'failure'
+            checkRunConclusion = 'failure'
             currentBuild.result = 'FAILED'
           }
           finally {
@@ -144,7 +144,7 @@ pipeline {
           }
           catch (err) {
             checkRunOutputSummary = err
-            checkRunOutputConclusion = 'failure'
+            checkRunConclusion = 'failure'
             currentBuild.result = 'FAILED'
           }
           finally {
