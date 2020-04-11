@@ -48,7 +48,7 @@ pipeline {
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $GITHUB_REQUEST_HASH)
           do
-            if [${changedFile: -3} == ".tf"]
+            if [ ${changedFile: -3} == ".tf" ]
             then
               echo -n "$(dirname $changedFile)" > tfFileDirectory.txt
               echo -n "$changedFile" > tfFilePath.txt
