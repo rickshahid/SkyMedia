@@ -82,9 +82,9 @@ pipeline {
           def checkRunConclusion
           def checkRunOutputSummary
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          httpResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
-          jsonResponse = readJSON text: httpResponse.content
-          def checkRunId = jsonResponse.id
+          def appCheckRunResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
+          def appCheckRun = readJSON text: appCheckRunResponse.content
+          def appCheckRunId = appCheckRun.id
           try {
             sh '''#!/bin/bash -ex
               tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
@@ -92,7 +92,7 @@ pipeline {
               echo 'terraform {' > backend.tf
               echo 'backend "azurerm" {}' >> backend.tf
               echo '}' >> backend.tf
-              terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfOutputInit.txt
+              terraform init -input=false -backend-config="$TF_BACKEND_CONFIG_FILE" -backend-config="key=$tfStateFile" -no-color &> tfOutputInit.txt
             '''
             def tfFileDirectory = readFile file: 'tfFileDirectory.txt'
             dir(tfFileDirectory) {
@@ -112,7 +112,7 @@ pipeline {
             def tfFilePath = readFile file: 'tfFilePath.txt'
             def checkRunName = 'Terraform Init'
             def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
-            httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs/$checkRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
+            httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs/$appCheckRunId", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
           }
         }
       }
