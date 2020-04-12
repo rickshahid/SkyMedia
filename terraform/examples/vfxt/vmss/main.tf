@@ -8,7 +8,7 @@ locals {
     vm_admin_password = "ReplacePassword$"
     // if you use SSH key, ensure you have ~/.ssh/id_rsa with permission 600
     // populated where you are running terraform
-    vm_ssh_key_data = null //"ssh-rsa AAAAB3...."
+    vm_ssh_key_data = null //"ssh-rsa AAAAB3...."fd
 
     // network details
     network_resource_group_name = "network_resource_group"
