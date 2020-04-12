@@ -32,9 +32,9 @@ pipeline {
     )
   }
   environment {
-    GITHUB_PULL_REQUEST_HASH = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_HASH\" ; else echo -n \"$GITHUB_PULL_REQUEST_HASH\" ; fi", returnStdout: true)
-    GITHUB_PULL_REQUEST_REPOSITORY_URL = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_URL\" ; fi", returnStdout: true)
-    GITHUB_PULL_REQUEST_REPOSITORY_HOST = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_HOST\" ; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_HASH = sh(script: "if [ $x_github_event = 'check_run' ]; then echo -n \"$GITHUB_CHECK_RUN_HASH\"; else echo -n \"$GITHUB_PULL_REQUEST_HASH\"; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_REPOSITORY_URL = sh(script: "if [ $x_github_event = 'check_run' ]; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\"; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_URL\"; fi", returnStdout: true)
+    GITHUB_PULL_REQUEST_REPOSITORY_HOST = sh(script: "if [ $x_github_event = 'check_run' ]; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\"; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_HOST\"; fi", returnStdout: true)
   }
   stages {
     stage('GitHub Pull Request') {
