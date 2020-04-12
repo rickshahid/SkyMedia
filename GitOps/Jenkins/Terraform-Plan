@@ -22,11 +22,9 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_PULL_REQUEST_REPOSITORY_URL', value: '$.pull_request.head.repo.url'],
         [key: 'GITHUB_PULL_REQUEST_REPOSITORY_HOST', value: '$.pull_request.head.repo.url', regexpFilter: '(/repos)(.*)'],
-        [key: 'GITHUB_PULL_REQUEST_REPOSITORY_NAME', value: '$.pull_request.head.repo.name'],
         [key: 'GITHUB_CHECK_RUN_HASH', value: '$.check_run.head_sha'],
         [key: 'GITHUB_CHECK_RUN_REPOSITORY_URL', value: '$.repository.url'],
-        [key: 'GITHUB_CHECK_RUN_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)'],
-        [key: 'GITHUB_CHECK_RUN_REPOSITORY_NAME', value: '$.repository.name']
+        [key: 'GITHUB_CHECK_RUN_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)']
       ],
       causeString: 'GitHub $x_github_event $GITHUB_EVENT_ACTION on app installation $GITHUB_APP_INSTALLATION_ID',
       regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)|(check_run).(rerequested)',
@@ -37,7 +35,6 @@ pipeline {
     GITHUB_PULL_REQUEST_HASH = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_HASH\" ; else echo -n \"$GITHUB_PULL_REQUEST_HASH\" ; fi", returnStdout: true)
     GITHUB_PULL_REQUEST_REPOSITORY_URL = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_URL\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_URL\" ; fi", returnStdout: true)
     GITHUB_PULL_REQUEST_REPOSITORY_HOST = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_HOST\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_HOST\" ; fi", returnStdout: true)
-    GITHUB_PULL_REQUEST_REPOSITORY_NAME = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
   }
   stages {
     stage('GitHub Pull Request') {
