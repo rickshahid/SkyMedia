@@ -43,7 +43,7 @@ pipeline {
     GITHUB_PULL_REQUEST_REPOSITORY_NAME = sh(script: "if [ $x_github_event = 'check_run' ] ; then echo -n \"$GITHUB_CHECK_RUN_REPOSITORY_NAME\" ; else echo -n \"$GITHUB_PULL_REQUEST_REPOSITORY_NAME\" ; fi", returnStdout: true)
   }
   stages {
-    stage('GitHub Update Request') {
+    stage('GitHub Pull Request') {
       steps {
         sh '''#!/bin/bash -ex
           git clean -dff
