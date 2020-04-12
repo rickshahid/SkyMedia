@@ -3,7 +3,7 @@ locals {
     // the region of the deployment
     location = "eastus"
     vm_admin_username = "azureuser"
-    // use either SSH Key data or admin password, if ssh_key_data is specified
+    // use either SSH Key data or admin password, if ddddssh_key_data is specified
     // then admin_password is ignored
     vm_admin_password = "ReplacePassword$"
     // if you use SSH key, ensure you have ~/.ssh/id_rsa with permission 600
