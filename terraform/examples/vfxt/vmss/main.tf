@@ -7,7 +7,7 @@ locals {
     // then admin_password is ignored
     vm_admin_password = "ReplacePassword$"
     // if you use SSH key, ensure you have ~/.ssh/id_rsa with permission 600
-    // populated where you are running terraform
+    // populated where you are running terraform222
     vm_ssh_key_data = null //"ssh-rsa AAAAB3...."
 
     // network details
