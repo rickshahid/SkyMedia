@@ -104,10 +104,11 @@ pipeline {
             }
             checkRunConclusion = 'success'
           }
-          catch (err) {
-            checkRunOutputSummary = err
+          catch (error) {
+            checkRunOutputSummary = error
             checkRunConclusion = 'failure'
             currentBuild.result = 'FAILURE'
+            throw error
           }
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
@@ -146,10 +147,11 @@ pipeline {
             }
             checkRunConclusion = 'success'
           }
-          catch (err) {
-            checkRunOutputSummary = err
+          catch (error) {
+            checkRunOutputSummary = error
             checkRunConclusion = 'failure'
             currentBuild.result = 'FAILURE'
+            throw error
           }
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
