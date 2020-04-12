@@ -128,9 +128,9 @@ pipeline {
           def checkRunConclusion
           def checkRunOutputSummary
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          httpResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
-          jsonResponse = readJSON text: httpResponse.content
-          def checkRunId = jsonResponse.id
+          def checkRunResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
+          def checkRun = readJSON text: checkRunResponse.content
+          def checkRunId = checkRun.id
           try {
             sh '''#!/bin/bash -ex
               cd $(cat tfFileDirectory.txt)
