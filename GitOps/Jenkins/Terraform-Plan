@@ -107,7 +107,7 @@ pipeline {
           catch (exception) {
             checkRunOutputSummary = exception
             checkRunConclusion = 'failure'
-            throw
+            throw exception
           }
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
@@ -149,7 +149,7 @@ pipeline {
           catch (exception) {
             checkRunOutputSummary = exception
             checkRunConclusion = 'failure'
-            throw
+            throw exception
           }
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
