@@ -86,7 +86,7 @@ pipeline {
           def checkRun = readJSON text: checkRunResponse.content
           def checkRunId = checkRun.id
           try {
-            def exitStatus = sh returnStatus: true, script: '''#!/bin/bash -ex
+            sh script: '''#!/bin/bash -ex
               tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
               cd $(cat tfFileDirectory.txt)
               echo 'terraform {' > backend.tf
@@ -132,7 +132,7 @@ pipeline {
           def checkRun = readJSON text: checkRunResponse.content
           def checkRunId = checkRun.id
           try {
-            def exitStatus = sh returnStatus: true, script: '''#!/bin/bash -ex
+            sh script: '''#!/bin/bash -ex
               cd $(cat tfFileDirectory.txt)
               terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
             '''
@@ -172,7 +172,7 @@ pipeline {
       }
       steps {
         dir(readFile('tfFileDirectory.txt')) {
-          //archiveArtifacts artifacts: '**'
+          archiveArtifacts artifacts: '**'
         }
       }
     }
