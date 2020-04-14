@@ -27,7 +27,7 @@ pipeline {
   stages {
     stage('Build Artifacts Storage') {
       steps {
-        copyArtifacts projectName: $BUILD_ARTIFACTS_PROJECT_NAME, selector: specific($BUILD_NUMBER)
+        copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific($BUILD_NUMBER)
       }
     }
     stage('Terraform Apply') {
