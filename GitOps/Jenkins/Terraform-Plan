@@ -38,9 +38,14 @@ pipeline {
   }
   stages {
     stage('GitHub Pull Request') {
+      when {
+        expression {
+          $GITHUB_PULL_REQUEST_HASH
+        }
+      }    
       steps {
         script {
-          currentBuild.name = $GITHUB_PULL_REQUEST_HASH
+          currentBuild.tags.hash = $GITHUB_PULL_REQUEST_HASH
         }
         sh script: '''#!/bin/bash -ex
           git clean -dff
