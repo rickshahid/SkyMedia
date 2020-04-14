@@ -1,7 +1,7 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'BUILD_ID')
+    string(name: 'BUILD_NUMBER')
     string(name: 'BUILD_ARTIFACTS_PROJECT_NAME', defaultValue: 'Terraform-Plan')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
   }
@@ -26,7 +26,7 @@ pipeline {
   stages {
     stage('Build Artifacts Storage') {
       steps {
-        copyArtifacts projectName: $BUILD_ARTIFACTS_PROJECT_NAME, specific: $BUILD_ID
+        copyArtifacts projectName: $BUILD_ARTIFACTS_PROJECT_NAME, selector: specific($BUILD_NUMBER)
       }
     }
     stage('Terraform Apply') {
