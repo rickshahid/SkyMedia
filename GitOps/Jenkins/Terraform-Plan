@@ -40,7 +40,7 @@ pipeline {
     stage('GitHub Pull Request') {
       when {
         expression {
-          "$GITHUB_PULL_REQUEST_HASH" != ""
+          end.GITHUB_PULL_REQUEST_HASH != null
         }
       }    
       steps {
