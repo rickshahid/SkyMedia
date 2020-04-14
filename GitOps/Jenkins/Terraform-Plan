@@ -39,10 +39,8 @@ pipeline {
   stages {
     stage('GitHub Pull Request') {
       when {
-        expression {
-          end.GITHUB_PULL_REQUEST_HASH != null
-        }
-      }    
+        changeRequest()
+      }
       steps {
         script {
           currentBuild.name = $GITHUB_PULL_REQUEST_HASH
