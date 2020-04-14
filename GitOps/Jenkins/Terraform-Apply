@@ -1,30 +1,32 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'BuildArchive_ProjectName', defaultValue: 'Terraform-Plan')
+    string(name: 'BUILD_ID')
+    string(name: 'BUILD_ARTIFACTS_PROJECT_NAME', defaultValue: 'Terraform-Plan')
+    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
   }
   options {
     disableConcurrentBuilds()
   }
   triggers {
     GenericTrigger(
-      genericVariables: [
-        [key: 'event_action', value: '$.action'],
-        [key: 'pull_request_id', value: '$.pull_request.number'],
-        [key: 'pull_request_merged', value: '$.pull_request.merged'],
-        [key: 'pull_request_branch', value: '$.pull_request.head.ref'],
-        [key: 'pull_request_repository_url', value: '$.pull_request.head.repo.url'],
-        [key: 'pull_request_repository_name', value: '$.pull_request.head.repo.name']
+      genericHeaderVariables: [
+        [key: 'x-github-event']
       ],
-      causeString: 'Pull Request $pull_request_id $event_action on $pull_request_branch branch in $pull_request_repository_name repository',
+      genericVariables: [
+        [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
+        [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id']
+        [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
+      ],
+      causeString: 'GitHub $x_github_event $GITHUB_EVENT_ACTION on app installation $GITHUB_APP_INSTALLATION_ID',
       regexpFilterExpression: '(pull_request).(closed).(true)',
-      regexpFilterText: '$x_github_event.$event_action.$pull_request_merged'
+      regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION.$GITHUB_PULL_REQUEST_MERGED'
     )
-  }  
+  }
   stages {
     stage('Build Artifacts Storage') {
       steps {
-        copyArtifacts projectName: params.BuildArchive_ProjectName
+        copyArtifacts projectName: $BUILD_ARTIFACTS_PROJECT_NAME, specific: $BUILD_ID
       }
     }
     stage('Terraform Apply') {
@@ -34,7 +36,7 @@ pipeline {
         }
       }
       steps {
-        sh '''#!/bin/bash -xe
+        sh script: '''#!/bin/bash -xe
           #terraform apply -input=false tfPlan.bin
         '''
       }
