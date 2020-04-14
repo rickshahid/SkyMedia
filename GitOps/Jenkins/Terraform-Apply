@@ -1,7 +1,6 @@
 pipeline {
   agent any
   parameters {
-    buildSelector(name: 'BUILD_ARTIFACTS_SELECTOR')
     string(name: 'BUILD_ARTIFACTS_PROJECT_NAME', defaultValue: 'Terraform-Plan')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
   }
@@ -16,6 +15,7 @@ pipeline {
       genericVariables: [
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
+        [key: 'GITHUB_PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged']
       ],
