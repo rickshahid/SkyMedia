@@ -16,9 +16,10 @@ pipeline {
       genericVariables: [
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
+        [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged']
       ],
-      causeString: 'GitHub $x_github_event $GITHUB_EVENT_ACTION on app installation $GITHUB_APP_INSTALLATION_ID',
+      causeString: 'GitHub $x_github_event $GITHUB_PULL_REQUEST_NUMBER $GITHUB_EVENT_ACTION (merged: $GITHUB_PULL_REQUEST_MERGED) on app installation $GITHUB_APP_INSTALLATION_ID',
       regexpFilterExpression: '(pull_request).(closed).(true)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION.$GITHUB_PULL_REQUEST_MERGED'
     )
