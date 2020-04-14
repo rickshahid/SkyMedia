@@ -17,6 +17,7 @@ pipeline {
         [key: 'x-github-event']
       ],
       genericVariables: [
+        [key: 'BUILD_NUMBER', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
         [key: 'GITHUB_PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
