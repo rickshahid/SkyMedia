@@ -183,4 +183,11 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      sh script: '''#!/bin/bash -ex
+        git clean -dff
+      '''
+    }
+  }
 }
