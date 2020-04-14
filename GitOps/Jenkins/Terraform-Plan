@@ -45,7 +45,7 @@ pipeline {
       }    
       steps {
         script {
-          currentBuild.tags.hash = $GITHUB_PULL_REQUEST_HASH
+          currentBuild.name = $GITHUB_PULL_REQUEST_HASH
         }
         sh script: '''#!/bin/bash -ex
           git clean -dff
