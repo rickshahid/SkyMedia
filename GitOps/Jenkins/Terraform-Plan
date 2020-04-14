@@ -17,7 +17,6 @@ pipeline {
         [key: 'x-github-event']
       ],
       genericVariables: [
-        [key: 'BUILD_NUMBER', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
         [key: 'GITHUB_PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
@@ -40,6 +39,7 @@ pipeline {
   stages {
     stage('GitHub Pull Request') {
       steps {
+        currentBuild.name = $GITHUB_PULL_REQUEST_HASH
         sh script: '''#!/bin/bash -ex
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $GITHUB_PULL_REQUEST_HASH)
