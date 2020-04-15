@@ -46,11 +46,11 @@ pipeline {
       }
       steps {
         script {
-          def shellExitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
+          def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
             terraform apply -input=false -no-color "$BUILD_ARTIFACTS_PLAN_NAME" &> tfApply.txt
           '''
           def tfApply = readFile file: 'tfApply.txt'
-          if (shellExitCode != 0) {
+          if (exitCode != 0) {
             error message: tfApply
           }
         }
