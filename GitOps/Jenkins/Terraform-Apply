@@ -39,6 +39,7 @@ pipeline {
         sh script: '''#!/bin/bash -ex
           git clean -dff
         '''
+        echo "$GITHUB_PULL_REQUEST_NUMBER"
         copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific("$GITHUB_PULL_REQUEST_NUMBER")
       }
     }
