@@ -1,8 +1,8 @@
-# Avere vFXT with 1 Filer
+# Avere vFXT with an Azure Netapp Volume
 
-This examples configures a render network, controller, and vfxt with 1 filer as shown in the diagram below:
+This examples configures a render network, controller, and vfxt with an Azure Netapp volume as shown in the diagram below:
 
-![The architecture](../../../../../docs/images/terraform/1filer.png)
+![The architecture](../../../../../docs/images/terraform/netappfiler.png)
 
 ## Deployment Instructions
 
@@ -14,7 +14,9 @@ To run the example, execute the following instructions.  This assumes use of Azu
 
 3. double check your Avere vFXT prerequisites, including running `az vm image accept-terms --urn microsoft-avere:vfxt:avere-vfxt-controller:latest`: https://docs.microsoft.com/en-us/azure/avere-vfxt/avere-vfxt-prereqs
 
-4. If not already installed, run the following commands to install the Avere vFXT provider for Azure:
+4. Ensure you have requested your subscription has been onboarded to Azure Netapp File and registered your subscription as described here: https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-register.
+
+5. If not already installed, run the following commands to install the Avere vFXT provider for Azure:
 ```bash
 mkdir -p ~/.terraform.d/plugins
 # install the vfxt released binary from https://github.com/Azure/Avere
@@ -22,7 +24,7 @@ wget -O ~/.terraform.d/plugins/terraform-provider-avere https://github.com/Azure
 chmod 755 ~/.terraform.d/plugins/terraform-provider-avere
 ```
 
-5. get the terraform examples
+6. get the terraform examples
 ```bash
 mkdir tf
 cd tf
@@ -33,13 +35,13 @@ echo "src/terraform/*" >> .git/info/sparse-checkout
 git pull origin master
 ```
 
-6. `cd src/terraform/examples/vfxt/1-filer`
+7. `cd src/terraform/examples/vfxt/netapp`
 
-7. `code main.tf` to edit the local variables section at the top of the file, to customize to your preferences.  If you are using an [ssk key](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys), ensure that ~/.ssh/id_rsa is populated.
+8. `code main.tf` to edit the local variables section at the top of the file, to customize to your preferences.  If you are using an [ssk key](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys), ensure that ~/.ssh/id_rsa is populated.
 
-8. execute `terraform init` in the directory of `main.tf`.
+9. execute `terraform init` in the directory of `main.tf`.
 
-9. execute `terraform apply -auto-approve` to build the vfxt cluster
+10. execute `terraform apply -auto-approve` to build the vfxt cluster
 
 Once installed you will be able to login and use the vFXT cluster according to the vFXT documentation: https://docs.microsoft.com/en-us/azure/avere-vfxt/avere-vfxt-cluster-gui.
 

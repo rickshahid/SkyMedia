@@ -11,26 +11,30 @@ locals {
     vm_ssh_key_data = null //"ssh-rsa AAAAB3...."
 
     // network details
-    network_resource_group_name = "network_resource_group"
-    
-    // nfs filer details
-    filer_resource_group_name = "filer_resource_group"
+    virtual_network_resource_group = "network_resource_group"
+    virtual_network_name = "rendervnet"
+    controller_network_subnet_name = "jumpbox"
+    vfxt_network_subnet_name = "cloud_cache"
     
     // vfxt details
     vfxt_resource_group_name = "vfxt_resource_group"
-    // if you are running a locked down network, set controller_add_public_ip to false
+    // if you are running a locked down network, set controller_add_public_ip to false, but ensure
+    // you have access to the subnet
     controller_add_public_ip = true
     vfxt_cluster_name = "vfxt"
-    vfxt_cluster_password = "VFXT_PASSWORD"
+    vfxt_cluster_password = "ReplacePassword$"
     // vfxt cache polies
     //  "Clients Bypassing the Cluster"
     //  "Read Caching"
     //  "Read and Write Caching"
     //  "Full Caching"
     //  "Transitioning Clients Before or After a Migration"
-    //  "Isolated Cloud Workstation"
-    //  "Collaborating Cloud Workstation"
-    cache_policy = "Collaborating Cloud Workstation"
+    cache_policy = "Clients Bypassing the Cluster"
+
+    // the proxy used by vfxt.py for cluster stand-up and scale-up / scale-down
+    proxy_uri = null
+    // the proxy used by the running vfxt cluster
+    cluster_proxy_uri = null
 }
 
 provider "azurerm" {
@@ -38,38 +42,10 @@ provider "azurerm" {
     features {}
 }
 
-// the render network
-module "network" {
-    source = "github.com/Azure/Avere/src/terraform/modules/render_network"
-    resource_group_name = local.network_resource_group_name
-    location = local.location
-}
-
-resource "azurerm_resource_group" "nfsfiler" {
-  name     = local.filer_resource_group_name
-  location = local.location
-}
-
-// the ephemeral filer
-module "nasfiler1" {
-    source = "github.com/Azure/Avere/src/terraform/modules/nfs_filer"
-    resource_group_name = azurerm_resource_group.nfsfiler.name
-    location = azurerm_resource_group.nfsfiler.location
-    admin_username = local.vm_admin_username
-    admin_password = local.vm_admin_password
-    ssh_key_data = local.vm_ssh_key_data
-    vm_size = "Standard_D2s_v3"
-    unique_name = "nasfiler1"
-
-    // network details
-    virtual_network_resource_group = local.network_resource_group_name
-    virtual_network_name = module.network.vnet_name
-    virtual_network_subnet_name = module.network.cloud_filers_subnet_name
-}
-
 // the vfxt controller
 module "vfxtcontroller" {
     source = "github.com/Azure/Avere/src/terraform/modules/controller"
+    create_resource_group = false
     resource_group_name = local.vfxt_resource_group_name
     location = local.location
     admin_username = local.vm_admin_username
@@ -78,12 +54,11 @@ module "vfxtcontroller" {
     add_public_ip = local.controller_add_public_ip
 
     // network details
-    virtual_network_resource_group = local.network_resource_group_name
-    virtual_network_name = module.network.vnet_name
-    virtual_network_subnet_name = module.network.jumpbox_subnet_name
+    virtual_network_resource_group = local.virtual_network_resource_group
+    virtual_network_name = local.virtual_network_name
+    virtual_network_subnet_name = local.controller_network_subnet_name
 }
 
-// the vfxt
 resource "avere_vfxt" "vfxt" {
     controller_address = module.vfxtcontroller.controller_address
     controller_admin_username = module.vfxtcontroller.controller_username
@@ -93,32 +68,81 @@ resource "avere_vfxt" "vfxt" {
     // otherwise during destroy, it tries to destroy the controller at the same time as vfxt cluster
     // to work around, add the explicit dependency
     depends_on = [module.vfxtcontroller]
+
+    proxy_uri = local.proxy_uri
+    cluster_proxy_uri = local.cluster_proxy_uri
     
     location = local.location
     azure_resource_group = local.vfxt_resource_group_name
-    azure_network_resource_group = local.network_resource_group_name
-    azure_network_name = module.network.vnet_name
-    azure_subnet_name = module.network.cloud_cache_subnet_name
+    azure_network_resource_group = local.virtual_network_resource_group
+    azure_network_name = local.virtual_network_name
+    azure_subnet_name = local.vfxt_network_subnet_name
     vfxt_cluster_name = local.vfxt_cluster_name
     vfxt_admin_password = local.vfxt_cluster_password
     vfxt_node_count = 3
+    global_custom_settings = [
+        "cluster.CtcBackEndTimeout KO 110000000",
+        "cluster.HaBackEndTimeout II 120000000",
+        "cluster.NfsBackEndTimeout VO 100000000",
+        "cluster.NfsFrontEndCwnd EK 1",
+        "cluster.ctcConnMult CE 25",
+        "vcm.alwaysForwardReadSize DL 134217728",
+        "vcm.disableReadAhead AB 1",
+        "vcm.vcm_waWriteBlocksValid GN 0",
+    ]
 
+    vserver_settings = [
+        "NfsFrontEndSobuf OG 1048576",
+        "rwsize IZ 524288",
+    ]
+
+/*
     core_filer {
         name = "nfs1"
         fqdn_or_primary_ip = module.nasfiler1.primary_ip
         cache_policy = local.cache_policy
+        custom_settings = [
+            "autoWanOptimize YF 2",
+            "nfsConnMult YW 5",
+        ]
         junction {
             namespace_path = "/nfs1data"
             core_filer_export = module.nasfiler1.core_filer_export
         }
-        /* add additional junctions by adding another junction block shown below
-        junction {
-            namespace_path = "/nfsdata2"
-            core_filer_export = "/data2"
-        }
-        */
     }
-} 
+
+    core_filer {
+        name = "nfs2"
+        fqdn_or_primary_ip = module.nasfiler2.primary_ip
+        cache_policy = local.cache_policy
+        custom_settings = [
+            "always_forward OZ 1",
+            "autoWanOptimize YF 2",
+            "nfsConnMult YW 4",
+        ]
+        junction {
+            namespace_path = "/nfs2data"
+            core_filer_export = module.nasfiler2.core_filer_export
+        }
+    }
+
+    core_filer {
+        name = "nfs3"
+        fqdn_or_primary_ip = module.nasfiler3.primary_ip
+        cache_policy = local.cache_policy
+        custom_settings = [
+            "autoWanOptimize YF 2",
+            "client_rt_preferred FE 524288",
+            "client_wt_preferred NO 524288",
+            "nfsConnMult YW 20",
+        ]
+        junction {
+            namespace_path = "/nfs3data"
+            core_filer_export = module.nasfiler3.core_filer_export
+        }
+    }
+*/
+}
 
 output "controller_username" {
   value = module.vfxtcontroller.controller_username

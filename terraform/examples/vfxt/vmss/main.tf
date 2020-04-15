@@ -1,6 +1,6 @@
 // customize the simple VM by editing the following local variables
 locals {
-    // the region of the deploymentsss
+    // the region of the deployment
     location = "eastus"
     vm_admin_username = "azureuser"
     // use either SSH Key data or admin password, if ssh_key_data is specified
@@ -40,7 +40,7 @@ locals {
 }
 
 provider "azurerm" {
-    version = "~>2.3.0"
+    version = "~>2.4.0"
     features {}
 }
 

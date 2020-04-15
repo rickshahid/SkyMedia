@@ -1,8 +1,12 @@
-# Avere vFXT with 1 Filer
+# Avere vFXT in a Proxy Environment
 
-This examples configures a render network, controller, and vfxt with 1 filer as shown in the diagram below:
+This example shows how to configure the vfxt in a secured locked down internet environment where access to outside resources is via a proxy.  The following tutorial video walks you through this full example:
 
-![The architecture](../../../../../docs/images/terraform/1filer.png)
+[![Tutorial Video](proxyyoutube.png)](https://youtu.be/lxDDwu44OHM)
+
+It configures a render network, controller, and vfxt with 1 filer and an Azure Blob Storage cloud core filer as shown in the diagram below:
+
+![The architecture](../../../../../docs/images/terraform/proxy.png)
 
 ## Deployment Instructions
 
@@ -33,7 +37,7 @@ echo "src/terraform/*" >> .git/info/sparse-checkout
 git pull origin master
 ```
 
-6. `cd src/terraform/examples/vfxt/1-filer`
+6. `cd src/terraform/examples/vfxt/proxy`
 
 7. `code main.tf` to edit the local variables section at the top of the file, to customize to your preferences.  If you are using an [ssk key](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys), ensure that ~/.ssh/id_rsa is populated.
 
