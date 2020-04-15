@@ -39,7 +39,9 @@ pipeline {
   stages {
     stage('GitHub Pull Request') {
       when {
-        env.GITHUB_PULL_REQUEST_HASH != ""
+        expression {
+          env.GITHUB_PULL_REQUEST_HASH != ""
+        }
       }
       steps {
         script {
