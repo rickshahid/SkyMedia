@@ -25,7 +25,7 @@ pipeline {
     )
   }
   stages {
-    stage('Build Artifacts Storage') {
+    stage('Build Artifacts') {
       when {
         expression {
           env.GITHUB_PULL_REQUEST_HASH != null
