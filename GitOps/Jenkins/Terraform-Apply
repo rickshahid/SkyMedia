@@ -20,7 +20,8 @@ pipeline {
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
-        [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged']
+        [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
+        [key: 'GITHUB_PULL_REQUEST_COMMIT_HASH', value: '$.pull_request.head.sha']
       ],
       causeString: '$x_github_event $GITHUB_PULL_REQUEST_NUMBER $GITHUB_EVENT_ACTION (merged: $GITHUB_PULL_REQUEST_MERGED) on app installation $GITHUB_APP_INSTALLATION_ID',
       regexpFilterExpression: '(pull_request).(closed).(true)',
@@ -51,7 +52,10 @@ pipeline {
           '''
           def tfApply = readFile file: 'tfApply.txt'
           if (exitCode != 0) {
-            error message: tfApply
+            sh script: '''#!/bin/bash -xe
+              git revert -m 1 "$GITHUB_PULL_REQUEST_COMMIT_HASH"
+              git push -u origin master
+            '''
           }
         }
       }
