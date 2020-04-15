@@ -2,6 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'BUILD_ARTIFACTS_PROJECT_NAME', defaultValue: 'Terraform-Plan')
+    string(name: 'BUILD_ARTIFACTS_PLAN_NAME', defaultValue: 'tfPlan.bin')
     string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47')
     string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true)
@@ -41,13 +42,13 @@ pipeline {
     stage('Terraform Apply') {
       when {
         expression {
-          fileExists('tfPlan.bin')
+          fileExists("$BUILD_ARTIFACTS_PLAN_NAME")
         }
       }
       steps {
         script {
           def shellExitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
-            terraform apply -input=false -no-color tfPlan.bin &> tfApply.txt
+            terraform apply -input=false -no-color "$BUILD_ARTIFACTS_PLAN_NAME" &> tfApply.txt
           '''
           def tfApply = readFile file: 'tfApply.txt'
           if (shellExitCode != 0) {
