@@ -186,7 +186,7 @@ pipeline {
     }
   }
   post {
-    always {
+    success {
       sh script: '''#!/bin/bash -ex
         git clean -dff
       '''
