@@ -7,7 +7,7 @@ pipeline {
     string(name: 'GITHUB_API_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
     string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: '/TerraformBackend.config')
     string(name: 'TF_APPLY_PIPELINE_NAME', defaultValue: 'Terraform-Apply')
-    string(name: 'TF_PLAN_NAME', defaultValue: 'tfPlan.bin')
+    string(name: 'TF_PLAN_FILE_NAME', defaultValue: 'tfPlan.bin')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
     string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47')
     string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3')
@@ -154,7 +154,7 @@ pipeline {
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               cd $(cat tfFileDirectory.txt)
-              terraform plan -input=false -out="$TF_PLAN_NAME" -no-color &> tfPlan.txt
+              terraform plan -input=false -out="$TF_PLAN_FILE_NAME" -no-color &> tfPlan.txt
             '''
             def tfFileDirectory = readFile file: 'tfFileDirectory.txt'
             dir(tfFileDirectory) {
@@ -191,7 +191,7 @@ pipeline {
         }
         expression {
           dir(readFile('tfFileDirectory.txt')) {
-            fileExists("$TF_PLAN_NAME")
+            fileExists("$TF_PLAN_FILE_NAME")
           }
         }
       }
