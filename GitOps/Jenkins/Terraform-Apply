@@ -26,6 +26,11 @@ pipeline {
   }
   stages {
     stage('Build Artifacts Storage') {
+      when {
+        expression {
+          env.GITHUB_PULL_REQUEST_HASH.length() == 40
+        }
+      }
       steps {
         copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific("$GITHUB_PULL_REQUEST_HASH")
       }
