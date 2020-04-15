@@ -159,7 +159,7 @@ pipeline {
         }
       }
     }
-    stage('Build Artifacts Storage') {
+    stage('Build Artifacts') {
       when {
         expression {
           fileExists('tfFileDirectory.txt')
