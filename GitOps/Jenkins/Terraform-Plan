@@ -110,7 +110,7 @@ pipeline {
               checkRunOutputSummary = tfInit
             }
             if (shellExitCode != 0) {
-              error
+              error message: 'Terraform Init shell script error'
             }
             checkRunConclusion = 'success'
           }
