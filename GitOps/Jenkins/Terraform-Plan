@@ -160,6 +160,7 @@ pipeline {
             } else {
               checkRunConclusion = 'success'
             }
+          }
           catch (exception) {
             checkRunOutputSummary = exception
             checkRunConclusion = 'failure'
