@@ -1,5 +1,5 @@
-// customize the simple VM by editing the following local variablesxxxx
-locals {x
+// customize the simple VM by editing the following local variablesxxxxddd
+locals {
     // the region of the deploymentsss
     location = "eastus"
     vm_admin_username = "azureuser"
