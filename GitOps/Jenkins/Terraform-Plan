@@ -111,8 +111,10 @@ pipeline {
             }
             if (shellExitCode != 0) {
               currentBuild.result = 'FAILURE'
+              checkRunConclusion = 'failure'
+            } else {
+              checkRunConclusion = 'success'
             }
-            checkRunConclusion = 'success'
           }
           catch (exception) {
             checkRunOutputSummary = exception
