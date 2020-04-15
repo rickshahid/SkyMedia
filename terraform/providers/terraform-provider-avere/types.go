@@ -25,8 +25,12 @@ type AvereVfxt struct {
 	AvereAdminPassword string
 	NodeCount          int
 
+	NtpServers *[]string
+
 	ProxyUri        string
 	ClusterProxyUri string
+
+	ImageId string
 
 	ManagementIP       string
 	VServerIPAddresses *[]string

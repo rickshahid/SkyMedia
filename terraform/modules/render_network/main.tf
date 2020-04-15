@@ -27,10 +27,11 @@ resource "azurerm_network_security_group" "no_internet_nsg" {
     location            = var.location
     resource_group_name = azurerm_resource_group.render_rg.name
     
+    // block all inbound from lb, etc
     security_rule {
-        name                       = "nointernet"
+        name                       = "nointernetinbound"
         priority                   = 4000
-        direction                  = "Outbound"
+        direction                  = "Inbound"
         access                     = "Deny"
         protocol                   = "*"
         source_port_range          = "*"

@@ -9,7 +9,8 @@ data "azurerm_subscription" "primary" {}
 locals {
   # send the script file to custom data, adding env vars
   script_file_b64 = base64gzip(replace(file("${path.module}/averecmd.txt"),"\r",""))
-  cloud_init_file = templatefile("${path.module}/cloud-init.tpl", { averecmd = local.script_file_b64 })
+  msazure_patch1_file_b64 = base64gzip(replace(file("${path.module}/msazure.py.patch1"),"\r",""))
+  cloud_init_file = templatefile("${path.module}/cloud-init.tpl", { averecmd = local.script_file_b64, msazure_patch1 = local.msazure_patch1_file_b64 })
   # the roles assigned to the controller managed identity principal
   # the contributor role is required to create Avere clusters
   avere_create_cluster_role = "Avere Contributor"
@@ -21,12 +22,20 @@ locals {
 resource "azurerm_resource_group" "vm" {
   name     = var.resource_group_name
   location = var.location
+
+  count = var.create_resource_group ? 1 : 0
+}
+
+data "azurerm_resource_group" "vm" {
+  name = var.resource_group_name
+
+  count = var.create_resource_group ? 0 : 1
 }
 
 resource "azurerm_public_ip" "vm" {
     name                         = "${var.unique_name}-publicip"
-    location                     = var.location
-    resource_group_name          = azurerm_resource_group.vm.name
+    location                     = var.create_resource_group ? azurerm_resource_group.vm[0].location : data.azurerm_resource_group.vm[0].location
+    resource_group_name          = var.create_resource_group ? azurerm_resource_group.vm[0].name : data.azurerm_resource_group.vm[0].name
     allocation_method            = "Static"
 
     count = var.add_public_ip ? 1 : 0
@@ -34,8 +43,8 @@ resource "azurerm_public_ip" "vm" {
 
 resource "azurerm_network_interface" "vm" {
   name                = "${var.unique_name}-nic"
-  resource_group_name = azurerm_resource_group.vm.name
-  location            = azurerm_resource_group.vm.location
+  resource_group_name = var.create_resource_group ? azurerm_resource_group.vm[0].name : data.azurerm_resource_group.vm[0].name
+  location            = var.create_resource_group ? azurerm_resource_group.vm[0].location : data.azurerm_resource_group.vm[0].location
 
   ip_configuration {
     name                          = "${var.unique_name}-ipconfig"
@@ -47,8 +56,8 @@ resource "azurerm_network_interface" "vm" {
 
 resource "azurerm_linux_virtual_machine" "vm" {
   name = "${var.unique_name}-vm"
-  location = azurerm_resource_group.vm.location
-  resource_group_name = azurerm_resource_group.vm.name
+  location = var.create_resource_group ? azurerm_resource_group.vm[0].location : data.azurerm_resource_group.vm[0].location
+  resource_group_name = var.create_resource_group ? azurerm_resource_group.vm[0].name : data.azurerm_resource_group.vm[0].name
   network_interface_ids = [azurerm_network_interface.vm.id]
   computer_name  = var.unique_name
   custom_data = base64encode(local.cloud_init_file)
