@@ -194,7 +194,7 @@ pipeline {
       }
       steps {
         dir(readFile('tfFileDirectory.txt')) {
-          archiveArtifacts artifacts: '**'
+          archiveArtifacts artifacts: '**', onlyIfSuccessful: true
         }
       }
     }
@@ -202,7 +202,7 @@ pipeline {
   post {
     always {
       sh script: '''#!/bin/bash -ex
-        #git clean -dff
+        git clean -dff
       '''
     }
   }
