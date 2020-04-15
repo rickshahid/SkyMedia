@@ -31,7 +31,13 @@ pipeline {
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION'
     )
   }
-
+  environment {
+    when {
+      expression {
+        env.x_github_event == 'check_run'
+      }
+    }
+  }
   stages {
     stage('GitHub Pull Request') {
       when {
