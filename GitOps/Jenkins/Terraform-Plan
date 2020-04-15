@@ -94,7 +94,7 @@ pipeline {
           def checkRun = readJSON text: checkRunResponse.content
           def checkRunId = checkRun.id
           try {
-            sh returnStatus: true, script: '''#!/bin/bash -ex
+            def shellExitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
               cd $(cat tfFileDirectory.txt)
               echo 'terraform {' > backend.tf
@@ -108,6 +108,9 @@ pipeline {
               tfInit = tfInit.replaceAll('"', "'")
               tfInit = tfInit.replaceAll('\n', '<br>')
               checkRunOutputSummary = tfInit
+            }
+            if ($shellExitCode != 0) {
+              error
             }
             checkRunConclusion = 'success'
           }
