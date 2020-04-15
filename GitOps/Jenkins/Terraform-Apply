@@ -44,7 +44,7 @@ pipeline {
       steps {
         script {
           def shellExitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
-            terraform apply -input=false -no-color tfPlan.bin &> tfApply.txt
+            terraform apply -input=false tfPlan.bin &> tfApply.txt
           '''
           def tfApply = readFile file: 'tfApply.txt'
           tfApply = tfApply.replaceAll('"', "'")
