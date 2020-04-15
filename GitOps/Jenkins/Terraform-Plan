@@ -94,7 +94,7 @@ pipeline {
           def checkRun = readJSON text: checkRunResponse.content
           def checkRunId = checkRun.id
           try {
-            sh script: '''#!/bin/bash -ex
+            sh returnStatus: true, script: '''#!/bin/bash -ex
               tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
               cd $(cat tfFileDirectory.txt)
               echo 'terraform {' > backend.tf
