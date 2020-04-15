@@ -43,7 +43,7 @@ pipeline {
       }
       steps {
         script {
-          def shellExitCode sh returnStatus: true, script: '''#!/bin/bash -xe
+          def shellExitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
             terraform apply -input=false tfPlan.bin >& tfApply.txt
           '''
           if (shellExitCode != 0) {
