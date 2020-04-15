@@ -1,12 +1,12 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'BUILD_ARTIFACTS_PROJECT_NAME', defaultValue: 'Terraform-Plan')
-    string(name: 'BUILD_ARTIFACTS_PLAN_NAME', defaultValue: 'tfPlan.bin')
+    string(name: 'TF_PLAN_PIPELINE_NAME', defaultValue: 'Terraform-Plan')
+    string(name: 'TF_PLAN_NAME', defaultValue: 'tfPlan.bin')
+    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
     string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47')
     string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3')
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true)
-    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
   }
   options {
     disableConcurrentBuilds()
@@ -40,19 +40,19 @@ pipeline {
           git clean -dff
         '''
         echo "$GITHUB_PULL_REQUEST_NUMBER"
-        copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific("$GITHUB_PULL_REQUEST_NUMBER")
+        copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific("$GITHUB_PULL_REQUEST_NUMBER")
       }
     }
     stage('Terraform Apply') {
       when {
         expression {
-          fileExists("$BUILD_ARTIFACTS_PLAN_NAME")
+          fileExists("$TF_PLAN_NAME")
         }
       }
       steps {
         script {
           def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
-            #terraform apply -input=false -no-color "$BUILD_ARTIFACTS_PLAN_NAME" &> tfApply.txt
+            #terraform apply -input=false -no-color "$TF_PLAN_NAME" &> tfApply.txt
             echo "Houston, we have a problem!" > tfApply.txt
           '''
           exitCode = 1
