@@ -47,8 +47,6 @@ pipeline {
             terraform apply -input=false -no-color tfPlan.bin &> tfApply.txt
           '''
           def tfApply = readFile file: 'tfApply.txt'
-          //tfApply = tfApply.replaceAll('"', "'")
-          //tfApply = tfApply.replaceAll('\n', '<br>')
           if (shellExitCode != 0) {
             error message: tfApply
           }
