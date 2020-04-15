@@ -99,7 +99,7 @@ pipeline {
           def checkRunResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
           try {
             def checkRun = readJSON text: checkRunResponse.content
-            def shellExitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
+            def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
               cd $(cat tfFileDirectory.txt)
               echo 'terraform {' > backend.tf
@@ -114,7 +114,7 @@ pipeline {
               tfInit = tfInit.replaceAll('\n', '<br>')
               checkRunOutputSummary = tfInit
             }
-            if (shellExitCode != 0) {
+            if (exitCode != 0) {
               checkRunConclusion = 'failure'
               currentBuild.result = 'FAILURE'
             } else {
@@ -149,7 +149,7 @@ pipeline {
           def checkRunResponse = httpRequest url: "$GITHUB_PULL_REQUEST_REPOSITORY_URL/check-runs", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HASH\", \"status\":\"in_progress\"}"
           try {
             def checkRun = readJSON text: checkRunResponse.content
-            def shellExitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
+            def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               cd $(cat tfFileDirectory.txt)
               terraform plan -input=false -out=tfPlan.bin -no-color &> tfPlan.txt
             '''
@@ -160,7 +160,7 @@ pipeline {
               tfPlan = tfPlan.replaceAll('\n', '<br>')
               checkRunOutputSummary = tfPlan
             }
-            if (shellExitCode != 0) {
+            if (exitCode != 0) {
               checkRunConclusion = 'failure'
               currentBuild.result = 'FAILURE'
             } else {
