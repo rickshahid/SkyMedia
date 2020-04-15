@@ -19,7 +19,6 @@ pipeline {
       genericVariables: [
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
-        [key: 'GITHUB_PULL_REQUEST_HASH', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged']
       ],
@@ -32,11 +31,11 @@ pipeline {
     stage('Build Artifacts') {
       when {
         expression {
-          env.GITHUB_PULL_REQUEST_HASH != null
+          env.GITHUB_PULL_REQUEST_NUMBER.isInteger()
         }
       }
       steps {
-        copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific("$GITHUB_PULL_REQUEST_HASH")
+        copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific("$GITHUB_PULL_REQUEST_NUMBER")
       }
     }
     stage('Terraform Apply') {
