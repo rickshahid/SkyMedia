@@ -36,6 +36,9 @@ pipeline {
         }
       }
       steps {
+        sh script: '''#!/bin/bash -ex
+          git clean -dff
+        '''
         copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific("$GITHUB_PULL_REQUEST_NUMBER")
       }
     }
@@ -55,7 +58,7 @@ pipeline {
           def tfApply = readFile file: 'tfApply.txt'
           if (exitCode != 0) {
             sh script: '''#!/bin/bash -xe
-              git revert -m 1 "$GITHUB_PULL_REQUEST_COMMIT_HASH"
+              #git revert -m 1 "$GITHUB_PULL_REQUEST_COMMIT_HASH"
               #git push -u origin master
             '''
           }
