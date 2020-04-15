@@ -1,4 +1,4 @@
-// customize the simple VM by editing the following local variablesxxx1d
+// customize the simple VM by editing the following local variablesxxx1ddd
 locals {
     // the region of the deployment
     location = "eastus"
