@@ -38,7 +38,7 @@ pipeline {
     stage('GitHub Pull Request') {
       when {
         expression {
-          env.GITHUB_PULL_REQUEST_HASH.toString().length == 40
+          length(env.GITHUB_PULL_REQUEST_HASH) == 40
         }
       }
       steps {
