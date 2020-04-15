@@ -27,7 +27,7 @@ pipeline {
   stages {
     stage('Build Artifacts Storage') {
       steps {
-        copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: buildParameter("$BUILD_ARTIFACTS_SELECTOR")
+        copyArtifacts projectName: "$BUILD_ARTIFACTS_PROJECT_NAME", selector: specific("$GITHUB_PULL_REQUEST_HASH")
       }
     }
     stage('Terraform Apply') {
