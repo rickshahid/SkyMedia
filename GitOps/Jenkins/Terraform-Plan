@@ -61,7 +61,7 @@ pipeline {
         }
       }
     }
-    stage('GitHub Pull Request (Read)') {
+    stage('GitHub Pull Request') {
       when {
         expression {
           fileExists('appInstallationToken.txt')
@@ -69,43 +69,37 @@ pipeline {
       }
       steps {
         script {
+          def tfFileChanged = false
+          def appInstallationToken = readFile file: 'appInstallationToken.txt'
           def pullRequestFilesResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER/files", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
           def pullRequestFiles = readJSON text: pullRequestFilesResponse.content
           for (def pullRequestFile in pullRequestFiles) {
             if (pullRequestFile.endsWith('.tf')) {
+              writeFile file: 'tfFilePath.txt', text: pullRequestFile.fileName
               writeFile file: 'tfFileName.txt', text: pullRequestFile.fileName
+              tfFileChanged = true
               break
             }
           }
-        }
-      }
-    }
-    stage('GitHub Pull Request (Write)') {
-      when {
-        expression {
-          fileExists('appInstallationToken.txt')
-        }
-      }
-      steps {
-        script {
-          def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
-          def pullRequest = readJSON text: pullRequestResponse.content
-          def pullRequestTitle = pullRequest.title
-          def buildNumberSuffix = " (Build "
-          def buildNumberIndex = pullRequestTitle.indexOf(buildNumberSuffix)
-          if (buildNumberIndex > -1) {
-            pullRequestTitle = pullRequestTitle.substring(0, buildNumberIndex)
+          if (tfFileChanged) {
+            def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
+            def pullRequest = readJSON text: pullRequestResponse.content
+            def pullRequestTitle = pullRequest.title
+            def buildNumberSuffix = " (Build "
+            def buildNumberIndex = pullRequestTitle.indexOf(buildNumberSuffix)
+            if (buildNumberIndex > -1) {
+              pullRequestTitle = pullRequestTitle.substring(0, buildNumberIndex)
+            }
+            pullRequestTitle += "$buildNumberSuffix$currentBuild.number)"
+            httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"$pullRequestTitle\"}"
           }
-          pullRequestTitle += "$buildNumberSuffix$currentBuild.number)"
-          httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"$pullRequestTitle\"}"
         }
       }
     }
     stage('Terraform Init') {
       when {
         expression {
-          fileExists('appInstallationToken.txt')
+          fileExists('tfFileName.txt')
         }
       }
       steps {
@@ -155,7 +149,7 @@ pipeline {
     stage('Terraform Plan') {
       when {
         expression {
-          fileExists('appInstallationToken.txt')
+          fileExists('tfFileName.txt')
         }
       }
       steps {
