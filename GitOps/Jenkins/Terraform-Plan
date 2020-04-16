@@ -114,7 +114,6 @@ pipeline {
             if (exitCode != 0) {
               checkRunConclusion = 'failure'
               currentStage.result = 'FAILURE'
-              currentBuild.result = 'FAILURE'
             } else {
               checkRunConclusion = 'success'
             }
@@ -161,7 +160,6 @@ pipeline {
             if (exitCode != 0) {
               checkRunConclusion = 'failure'
               currentStage.result = 'FAILURE'
-              currentBuild.result = 'FAILURE'
             } else {
               checkRunConclusion = 'success'
             }
