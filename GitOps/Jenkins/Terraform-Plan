@@ -50,9 +50,6 @@ pipeline {
         }
       }
       steps {
-        script {
-          currentBuild.displayName = "$GITHUB_PULL_REQUEST_NUMBER"
-        }
         sh script: '''#!/bin/bash -ex
           git clean -dff
           for changedFile in $(git diff --name-only $GIT_COMMIT $GITHUB_PULL_REQUEST_COMMIT_HASH)
