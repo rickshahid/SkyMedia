@@ -26,6 +26,7 @@ pipeline {
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
+        [key: 'GITHUB_PULL_REQUEST_BRANCH', value: '$.pull_request.head.ref'],
         [key: 'GITHUB_PULL_REQUEST_COMMIT_HASH', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_CHECK_RUN_NUMBER', value: '$.check_run.pull_requests[0].number'],
         [key: 'GITHUB_CHECK_RUN_COMMIT_HASH', value: '$.check_run.head_sha'],
@@ -95,15 +96,12 @@ pipeline {
           def pullRequest = readJSON text: pullRequestResponse.content
           def pullRequestTitle = pullRequest.title
           def buildNumberSuffix = " (Build #"
-          echo pullRequestTitle
           def buildNumberIndex = pullRequestTitle.indexOf(buildNumberSuffix)
           if (buildNumberIndex > -1) {
             pullRequestTitle = pullRequestTitle.substring(0, buildNumberIndex)
           }
-          echo pullRequestTitle
           pullRequestTitle += "$buildNumberSuffix$currentBuild.number)"
-          echo pullRequestTitle
-          httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"base\":\"RickShahid-patch-1\"}"
+          httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"base\":\"$GITHUB_PULL_REQUEST_BRANCH\"}"
         }
       }
     }
