@@ -14,7 +14,7 @@ pipeline {
     booleanParam(name: 'ARM_USE_MSI', defaultValue: true)
   }
   options {
-    copyArtifactPermission "$TF_APPLY_PIPELINE_NAME"
+    copyArtifactPermission params.TF_APPLY_PIPELINE_NAME
     disableConcurrentBuilds()
   }
   triggers {
