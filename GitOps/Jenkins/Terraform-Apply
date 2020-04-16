@@ -19,6 +19,7 @@ pipeline {
       genericVariables: [
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
+        [key: 'GITHUB_PULL_REQUEST_TITLE', value: '$.pull_request.title'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
         [key: 'GITHUB_PULL_REQUEST_COMMIT_HASH', value: '$.pull_request.head.sha']
@@ -32,15 +33,18 @@ pipeline {
     stage('Build Artifacts') {
       when {
         expression {
-          env.GITHUB_PULL_REQUEST_NUMBER != null
+          GITHUB_PULL_REQUEST_NUMBER != null
         }
       }
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
         '''
-        echo "$GITHUB_PULL_REQUEST_NUMBER"
-        copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific("$GITHUB_PULL_REQUEST_NUMBER")
+        def buildNumberStart = "$GITHUB_PULL_REQUEST_TITLE".indexOf(' (Build ')
+        def buildNumberEnd = "$GITHUB_PULL_REQUEST_TITLE".indexOf(')', buildNumberStart)
+        def buildNumber = "$GITHUB_PULL_REQUEST_TITLE".substring(buildNumberStart, buildNumberEnd)
+        echo buildNumber
+        copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(buildNumber)
       }
     }
     stage('Terraform Apply') {
