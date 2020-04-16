@@ -94,7 +94,7 @@ pipeline {
           def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Authorization', value: "token $appInstallationAccess.token"]]
           def pullRequest = readJSON text: pullRequestResponse.content
           echo pullRequest.title
-          //httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "token $appInstallationAccess.token"]], requestBody: "{\"title\":\"test123\", \"base\":\"RickShahid-patch-1\"}"
+          //httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"test123\", \"base\":\"RickShahid-patch-1\"}"
         }
       }
     }
