@@ -93,8 +93,17 @@ pipeline {
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
           def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
           def pullRequest = readJSON text: pullRequestResponse.content
-          echo pullRequest.title
-          //httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"test123\", \"base\":\"RickShahid-patch-1\"}"
+          def pullRequestTitle = pullRequest.title
+          def buildNumberSuffix = " (Build #"
+          echo pullRequestTitle
+          def buildNumberIndex = pullRequestTitle.indexOf(buildNumberSuffix)
+          if (buildNumberIndex > -1) {
+            pullRequestTitle = pullRequestTitle.substring(0, buildNumberIndex)
+          }
+          echo pullRequestTitle
+          pullRequestTitle += "$buildNumberSuffix$currentBuild.number)"
+          echo pullRequestTitle
+          httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"base\":\"RickShahid-patch-1\"}"
         }
       }
     }
