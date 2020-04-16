@@ -43,7 +43,7 @@ pipeline {
     GITHUB_PULL_REQUEST_COMMIT_HASH = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_COMMIT_HASH" : "$GITHUB_PULL_REQUEST_COMMIT_HASH"}"
   }
   stages {
-    stage('GitHub Pull Request Read') {
+    stage('GitHub Pull Request (Read)') {
       when {
         expression {
           GITHUB_PULL_REQUEST_NUMBER.isInteger()
@@ -64,7 +64,7 @@ pipeline {
         '''
       }
     }
-    stage('GitHub App Token') {
+    stage('GitHub App Token Auth') {
       when {
         expression {
           fileExists('tfFilePath.txt')
@@ -82,7 +82,7 @@ pipeline {
         }
       }
     }
-    stage('GitHub Pull Request Write') {
+    stage('GitHub Pull Request (Write)') {
       when {
         expression {
           fileExists('appInstallationToken.txt')
