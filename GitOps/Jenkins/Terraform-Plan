@@ -43,31 +43,10 @@ pipeline {
     GITHUB_PULL_REQUEST_COMMIT_HASH = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_COMMIT_HASH" : "$GITHUB_PULL_REQUEST_COMMIT_HASH"}"
   }
   stages {
-    stage('GitHub Pull Request (Read)') {
-      when {
-        expression {
-          GITHUB_PULL_REQUEST_NUMBER.isInteger()
-        }
-      }
-      steps {
-        sh script: '''#!/bin/bash -ex
-          git clean -dff
-          for changedFile in $(git diff --name-only $GIT_COMMIT $GITHUB_PULL_REQUEST_COMMIT_HASH)
-          do
-            if [ ${changedFile: -3} = ".tf" ]
-            then
-              echo -n "$(dirname $changedFile)" > tfFileDirectory.txt
-              echo -n "$changedFile" > tfFilePath.txt
-              break
-            fi
-          done
-        '''
-      }
-    }
     stage('GitHub App Token Auth') {
       when {
         expression {
-          fileExists('tfFilePath.txt')
+          GITHUB_PULL_REQUEST_NUMBER.isInteger()
         }
       }
       environment {
@@ -75,11 +54,47 @@ pipeline {
         GITHUB_APP_WEB_TOKEN = sh(script: "python3 $WORKSPACE/GetWebToken.py $GITHUB_APP_KEY_FILE_USR $GITHUB_APP_KEY_FILE $GITHUB_APP_TOKEN_SECONDS 'RS256'", returnStdout: true)
       }
       steps {
+        sh script: '''#!/bin/bash -ex
+          git clean -dff
+        '''
         script {
           def appInstallationAccessResponse = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $GITHUB_APP_WEB_TOKEN"]]
           def appInstallationAccess = readJSON text: appInstallationAccessResponse.content
           writeFile file: 'appInstallationToken.txt', text: appInstallationAccess.token
         }
+      }
+    }
+    stage('GitHub Pull Request (Read)') {
+      when {
+        expression {
+          fileExists('appInstallationToken.txt')
+        }
+      }
+      steps {
+        script {
+          def pullRequestCommitsResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER/commits", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
+          def pullRequestCommits = readJSON text: pullRequestCommitsResponse.content
+          for (def pullRequestCommit in pullRequestCommits) {
+            for (def commitChangedFile in $(git diff --name-only $GIT_COMMIT $pullRequestCommit.sha)) {
+
+            }
+          }
+        }
+        sh script: '''#!/bin/bash -ex
+          git clean -dff
+          for commit in $()
+          do
+            for changedFile in $(git diff --name-only $GIT_COMMIT $GITHUB_PULL_REQUEST_COMMIT_HASH)
+            do
+              if [ ${changedFile: -3} = ".tf" ]
+              then
+                echo -n "$(dirname $changedFile)" > tfFileDirectory.txt
+                echo -n "$changedFile" > tfFilePath.txt
+                break
+              fi
+            done
+          done
+        '''
       }
     }
     stage('GitHub Pull Request (Write)') {
