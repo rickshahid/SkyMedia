@@ -113,7 +113,7 @@ pipeline {
             }
             if (exitCode != 0) {
               checkRunConclusion = 'failure'
-              currentStage.result = 'FAILURE'
+              error message: checkRunOutputSummary
             } else {
               checkRunConclusion = 'success'
             }
@@ -159,7 +159,7 @@ pipeline {
             }
             if (exitCode != 0) {
               checkRunConclusion = 'failure'
-              currentStage.result = 'FAILURE'
+              error message: checkRunOutputSummary
             } else {
               checkRunConclusion = 'success'
             }
