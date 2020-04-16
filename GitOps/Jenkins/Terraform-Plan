@@ -91,7 +91,7 @@ pipeline {
       steps {
         script {
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
+          def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
           def pullRequest = readJSON text: pullRequestResponse.content
           def pullRequestTitle = pullRequest.title
           def buildNumberSuffix = " (Build #"
@@ -103,7 +103,7 @@ pipeline {
           echo pullRequestTitle
           pullRequestTitle += "$buildNumberSuffix$currentBuild.number)"
           echo pullRequestTitle
-          httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"base\":\"RickShahid-patch-1\"}"
+          httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"base\":\"RickShahid-patch-1\"}"
         }
       }
     }
