@@ -95,7 +95,7 @@ pipeline {
           def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
           def pullRequest = readJSON text: pullRequestResponse.content
           def pullRequestTitle = pullRequest.title
-          def buildNumberSuffix = " (Build #"
+          def buildNumberSuffix = " (Build "
           def buildNumberIndex = pullRequestTitle.indexOf(buildNumberSuffix)
           if (buildNumberIndex > -1) {
             pullRequestTitle = pullRequestTitle.substring(0, buildNumberIndex)
