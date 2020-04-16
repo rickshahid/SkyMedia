@@ -72,7 +72,7 @@ pipeline {
           def pullRequestFilesResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER/files", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
           def pullRequestFiles = readJSON text: pullRequestFilesResponse.content
           for (def pullRequestFile in pullRequestFiles) {
-            if (pullRequestFile.endsWith('.tf') {
+            if (pullRequestFile.endsWith('.tf')) {
               writeFile file: 'tfFileName.txt', text: pullRequestFile.fileName
               break
             }
