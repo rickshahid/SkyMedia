@@ -33,7 +33,7 @@ pipeline {
         [key: 'GITHUB_REPOSITORY_NAME', value: '$.repository.full_name'],
         [key: 'GITHUB_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)']
       ],
-      causeString: '$x_github_event $GITHUB_EVENT_ACTION on repository $GITHUB_REPOSITORY_NAME',
+      causeString: '$x_github_event $GITHUB_EVENT_ACTION in repository $GITHUB_REPOSITORY_NAME',
       regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)|(check_run).(rerequested)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION'
     )
