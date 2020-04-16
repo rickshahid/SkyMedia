@@ -79,6 +79,7 @@ pipeline {
           def appInstallationAccessResponse = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $GITHUB_APP_WEB_TOKEN"]]
           def appInstallationAccess = readJSON text: appInstallationAccessResponse.content
           writeFile file: 'appInstallationToken.txt', text: appInstallationAccess.token
+          httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "Bearer $GITHUB_APP_WEB_TOKEN"]], requestBody: "{\"title\":\"test123\"}"
         }
       }
     }
@@ -126,8 +127,7 @@ pipeline {
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
             def checkRunName = "Terraform Init"
-            //def checkRunName = "Terraform Init (Build $currentBuild.number)"
-            def checkRunOutputTitle = "Terraform Init ($tfFilePath)"
+            def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
             httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs/$checkRun.id", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
           }
         }
@@ -173,8 +173,7 @@ pipeline {
           finally {
             def tfFilePath = readFile file: 'tfFilePath.txt'
             def checkRunName = "Terraform Plan"
-            //def checkRunName = "Terraform Plan (Build $currentBuild.number)"
-            def checkRunOutputTitle = "Terraform Plan ($tfFilePath)"
+            def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
             httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs/$checkRun.id", httpMode: 'PATCH', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
           }
         }
