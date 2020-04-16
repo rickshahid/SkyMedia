@@ -79,6 +79,7 @@ pipeline {
           def appInstallationAccessResponse = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $GITHUB_APP_WEB_TOKEN"]]
           def appInstallationAccess = readJSON text: appInstallationAccessResponse.content
           writeFile file: 'appInstallationToken.txt', text: appInstallationAccess.token
+          echo appInstallationAccess.token
           httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "Bearer $GITHUB_APP_WEB_TOKEN"]], requestBody: "{\"title\":\"test123\", \"base\":\"RickShahid-patch-1\"}"
         }
       }
