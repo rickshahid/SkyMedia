@@ -43,7 +43,7 @@ pipeline {
     GITHUB_PULL_REQUEST_COMMIT_HASH = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_COMMIT_HASH" : "$GITHUB_PULL_REQUEST_COMMIT_HASH"}"
   }
   stages {
-    stage('GitHub Pull Request') {
+    stage('GitHub Pull Request Read') {
       when {
         expression {
           GITHUB_PULL_REQUEST_NUMBER.isInteger()
@@ -82,7 +82,7 @@ pipeline {
         }
       }
     }
-    stage('GitHub Pull Request Link') {
+    stage('GitHub Pull Request Write') {
       when {
         expression {
           fileExists('appInstallationToken.txt')
@@ -91,7 +91,7 @@ pipeline {
       steps {
         script {
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Authorization', value: "token $appInstallationAccess.token"]]
+          def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
           def pullRequest = readJSON text: pullRequestResponse.content
           echo pullRequest.title
           //httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"title\":\"test123\", \"base\":\"RickShahid-patch-1\"}"
