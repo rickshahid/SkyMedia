@@ -78,7 +78,9 @@ pipeline {
               def tfFileName = pullRequestFile.filename
               def tfContentsDirectory = '/contents'
               def tfFileDirectoryIndexStart = pullRequestFile.contents_url.indexOf(tfContentsDirectory) + tfContentsDirectory.length()
+              echo tfFileDirectoryIndexStart
               def tfFileDirectoryIndexEnd = pullRequestFile.contents_url.indexOf(tfFileName)
+              echo tfFileDirectoryIndexEnd
               def tfFileDirectory = pullRequestFile.contents_url.substring(tfFileDirectoryIndexStart, tfFileDirectoryIndexEnd)
               echo tfFileDirectory
               //writeFile file: 'tfFileDirectory.txt', text: tfFileDirectory
