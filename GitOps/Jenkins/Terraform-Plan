@@ -102,7 +102,7 @@ pipeline {
     stage('Terraform Init') {
       when {
         expression {
-          fileExists('tfFileName.txt')
+          fileExists('tfFilePath.txt')
         }
       }
       steps {
@@ -152,7 +152,7 @@ pipeline {
     stage('Terraform Plan') {
       when {
         expression {
-          fileExists('tfFileName.txt')
+          fileExists('tfFilePath.txt')
         }
       }
       steps {
