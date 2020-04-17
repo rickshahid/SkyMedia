@@ -48,7 +48,8 @@ pipeline {
       steps {
         script {
           def pullRequestTitle = "$GITHUB_PULL_REQUEST_TITLE"
-          def buildNumberIndexStart = pullRequestTitle.indexOf(' Build ')
+          def buildNumberDelimiter = ' Build '
+          def buildNumberIndexStart = pullRequestTitle.indexOf(buildNumberDelimiter) + buildNumberDelimiter.length()
           def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
           def tfPlanBuildNumber = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
           echo buildNumberIndexStart.toString()
@@ -96,8 +97,7 @@ pipeline {
           def checkRunOutputSummary
           def checkRunName = 'Terraform Apply'
           def checkRunStatus = 'in_progress'
-          def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          def checkRunCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"$checkRunName\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"$checkRunStatus\"}"
+          def checkRunCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"$checkRunStatus\"}"
           def checkRun = readJSON text: checkRunCreate.content
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
