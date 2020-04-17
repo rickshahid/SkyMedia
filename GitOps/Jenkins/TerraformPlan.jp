@@ -41,7 +41,7 @@ pipeline {
     )
   }
   environment {
-    GITHUB_APP_AUTH_TOKEN = null
+    GITHUB_APP_AUTH_TOKEN = "X"
     GITHUB_PULL_REQUEST_NUMBER = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_NUMBER" : "$GITHUB_PULL_REQUEST_NUMBER"}"
     GITHUB_PULL_REQUEST_HEAD_HASH = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_HEAD_HASH" : "$GITHUB_PULL_REQUEST_HEAD_HASH"}"
   }
@@ -71,7 +71,9 @@ pipeline {
     }
     stage('GitHub App Pull Request') {
       when {
+        not {
           environment name: 'GITHUB_APP_AUTH_TOKEN', value: null
+        }
       }
       steps {
         script {
