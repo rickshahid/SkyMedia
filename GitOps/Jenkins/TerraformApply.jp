@@ -1,0 +1,62 @@
+pipeline {
+  agent any
+  parameters {
+    string(name: 'TF_PLAN_PIPELINE_NAME', defaultValue: 'Terraform Plan')
+    string(name: 'TF_PLAN_FILE_NAME', defaultValue: 'tfPlan.bin')
+    booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
+    string(name: 'ARM_TENANT_ID', defaultValue: '72f988bf-86f1-41af-91ab-2d7cd011db47')
+    string(name: 'ARM_SUBSCRIPTION_ID', defaultValue: '3d07cfbc-17aa-41b4-baa1-488fef85a1d3')
+    booleanParam(name: 'ARM_USE_MSI', defaultValue: true)
+  }
+  options {
+    disableConcurrentBuilds()
+  }
+  triggers {
+    GenericTrigger(
+      genericHeaderVariables: [
+        [key: 'x-github-event']
+      ],
+      genericVariables: [
+        [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
+        [key: 'GITHUB_REPOSITORY_NAME', value: '$.repository.full_name'],
+        [key: 'GITHUB_PULL_REQUEST_TITLE', value: '$.pull_request.title'],
+        [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
+        [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged']
+      ],
+      causeString: '$x_github_event $GITHUB_PULL_REQUEST_TITLE $GITHUB_EVENT_ACTION (merged: $GITHUB_PULL_REQUEST_MERGED) in repository $GITHUB_REPOSITORY_NAME',
+      regexpFilterExpression: '(pull_request).(closed).(true)',
+      regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION.$GITHUB_PULL_REQUEST_MERGED'
+    )
+  }
+  stages {
+    stage('Build Artifacts') {
+      when {
+        expression {
+          GITHUB_PULL_REQUEST_NUMBER != null
+        }
+      }
+      steps {
+        def tfPlanBuildNumber = 
+        copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(tfPlanBuildNumber)
+      }
+    }
+    stage('Terraform Apply') {
+      when {
+        expression {
+          fileExists($TF_PLAN_FILE_NAME)
+        }
+      }
+      steps {
+        script {
+          def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
+            terraform apply -input=false -no-color "$TF_PLAN_FILE_NAME" &> tfApply.txt
+          '''
+          def tfApply = readFile file: 'tfApply.txt'
+          if (exitCode != 0) {
+            error message: tfApply
+          }
+        }
+      }
+    }
+  }
+}
