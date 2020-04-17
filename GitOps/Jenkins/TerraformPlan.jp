@@ -100,6 +100,7 @@ pipeline {
               pullRequestTitle = pullRequestTitle.substring(0, buildNumberIndex)
             }
             pullRequestTitle += "$buildNumberSuffix $currentBuild.number)"
+            echo pullRequestTitle
             httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\"}"
           }
         }
