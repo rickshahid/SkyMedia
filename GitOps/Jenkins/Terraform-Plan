@@ -75,13 +75,8 @@ pipeline {
           def pullRequestFiles = readJSON text: pullRequestFilesResponse.content
           for (def pullRequestFile in pullRequestFiles) {
             if (pullRequestFile.filename.endsWith('.tf')) {
-              def tfFileName = pullRequestFile.filename
-              echo tfFileName
-              def tfFileDirectoryIndexStart = pullRequestFile.contents_url.indexOf('/contents/')
-              echo tfFileDirectoryIndexStart.toString()
-              def tfFileDirectoryIndexEnd = pullRequestFile.contents_url.indexOf(tfFileName)
-              echo tfFileDirectoryIndexEnd.toString()
-              def tfFileDirectory = pullRequestFile.contents_url.substring(tfFileDirectoryIndexStart, tfFileDirectoryIndexEnd)
+              Path tfFilePath = Paths.get(pullRequestFile.filename)
+              def tfFileDirectory = tfFilePath.getParent()
               echo tfFileDirectory
               //writeFile file: 'tfFileDirectory.txt', text: tfFileDirectory
               //writeFile file: 'tfFileName.txt', text: tfFileName
