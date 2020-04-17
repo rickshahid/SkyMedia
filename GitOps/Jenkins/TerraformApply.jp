@@ -51,6 +51,8 @@ pipeline {
           def buildNumberIndexStart = pullRequestTitle.indexOf(' Build ')
           def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
           def tfPlanBuildNumber = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
+          echo buildNumberIndexStart
+          echo buildNumberIndexEnd
           echo tfPlanBuildNumber
         }
         copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(tfPlanBuildNumber)
