@@ -49,7 +49,7 @@ pipeline {
         script {
           def pullRequestTitle = "$GITHUB_PULL_REQUEST_TITLE"
           def buildNumberIndexStart = pullRequestTitle.indexOf(' Build ')
-          def buildNumberIndexEnd = pullRequestTitle.indexOf(buildNumberIndexStart, ')')
+          def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
           def tfPlanBuildNumber = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
           echo tfPlanBuildNumber
         }
