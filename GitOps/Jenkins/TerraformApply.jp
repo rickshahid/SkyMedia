@@ -32,7 +32,7 @@ pipeline {
     stage('Build Artifacts') {
       when {
         expression {
-          GITHUB_PULL_REQUEST_NUMBER != null
+          "$GITHUB_PULL_REQUEST_NUMBER".isInteger()
         }
       }
       steps {
