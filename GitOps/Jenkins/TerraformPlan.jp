@@ -48,7 +48,7 @@ pipeline {
     stage('GitHub App Auth Token') {
       when {
         expression {
-          GITHUB_PULL_REQUEST_NUMBER.isInteger()
+          env.GITHUB_PULL_REQUEST_NUMBER.isInteger()
         }
       }
       environment {
