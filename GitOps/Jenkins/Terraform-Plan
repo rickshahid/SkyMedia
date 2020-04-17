@@ -26,7 +26,9 @@ pipeline {
         [key: 'GITHUB_EVENT_ACTION', value: '$.action'],
         [key: 'GITHUB_APP_INSTALLATION_ID', value: '$.installation.id'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
+        [key: 'GITHUB_PULL_REQUEST_HEAD_HASH', value: '$.pull_request.head.sha'],
         [key: 'GITHUB_CHECK_RUN_NUMBER', value: '$.check_run.pull_requests[0].number'],
+        [key: 'GITHUB_CHECK_RUN_HEAD_HASH', value: '$.check_run.head_sha'],
         [key: 'GITHUB_REPOSITORY_URL', value: '$.repository.url'],
         [key: 'GITHUB_REPOSITORY_NAME', value: '$.repository.full_name'],
         [key: 'GITHUB_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)']
@@ -38,6 +40,7 @@ pipeline {
   }
   environment {
     GITHUB_PULL_REQUEST_NUMBER = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_NUMBER" : "$GITHUB_PULL_REQUEST_NUMBER"}"
+    GITHUB_PULL_REQUEST_HEAD_HASH = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_HEAD_HASH" : "$GITHUB_PULL_REQUEST_HEAD_HASH"}"
   }
   stages {
     stage('GitHub App Auth Token') {
@@ -110,7 +113,7 @@ pipeline {
           def checkRunConclusion
           def checkRunOutputSummary
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          def checkRunResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_COMMIT_HASH\", \"status\":\"in_progress\"}"
+          def checkRunResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"in_progress\"}"
           def checkRun = readJSON text: checkRunResponse.content
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
@@ -160,7 +163,7 @@ pipeline {
           def checkRunConclusion
           def checkRunOutputSummary
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
-          def checkRunResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_COMMIT_HASH\", \"status\":\"in_progress\"}"
+          def checkRunResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $appInstallationToken"]], requestBody: "{\"name\":\"Terraform Init\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"in_progress\"}"
           def checkRun = readJSON text: checkRunResponse.content
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
