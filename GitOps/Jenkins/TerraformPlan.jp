@@ -93,7 +93,7 @@ pipeline {
           if (tfFileFound) {
             def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]]
             def pullRequest = readJSON text: pullRequestResponse.content
-            echo pullRequestTitle
+            echo pullRequest.title
             def pullRequestTitle = pullRequest.title.replaceAll('"', '\"')
             echo pullRequestTitle
             def buildNumberSuffix = " ($currentBuild.projectName Build"
