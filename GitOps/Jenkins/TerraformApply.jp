@@ -52,11 +52,8 @@ pipeline {
           def buildNumberIndexStart = pullRequestTitle.indexOf(buildNumberDelimiter) + buildNumberDelimiter.length()
           def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
           def tfPlanBuildNumber = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
-          echo buildNumberIndexStart.toString()
-          echo buildNumberIndexEnd.toString()
-          echo tfPlanBuildNumber
+          copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(tfPlanBuildNumber)
         }
-        copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(tfPlanBuildNumber)
       }
     }
     stage('GitHub App Auth Token') {
