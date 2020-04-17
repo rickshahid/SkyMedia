@@ -40,7 +40,7 @@ pipeline {
     GITHUB_PULL_REQUEST_NUMBER = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_NUMBER" : "$GITHUB_PULL_REQUEST_NUMBER"}"
   }
   stages {
-    stage('GitHub App Token Auth') {
+    stage('GitHub App Auth') {
       when {
         expression {
           GITHUB_PULL_REQUEST_NUMBER.isInteger()
@@ -75,9 +75,13 @@ pipeline {
           def pullRequestFiles = readJSON text: pullRequestFilesResponse.content
           for (def pullRequestFile in pullRequestFiles) {
             if (pullRequestFile.endsWith('.tf')) {
-              writeFile file: 'tfFilePath.txt', text: pullRequestFile.fileName
-              writeFile file: 'tfFileName.txt', text: pullRequestFile.fileName
-              tfFileChanged = true
+              def tfFilePath = ""
+              echo pullRequestFile.blob_url
+              echo pullRequestFile.raw_url
+              echo pullRequestFile.contents_url
+              //writeFile file: 'tfFilePath.txt', text: tfFilePath
+              //writeFile file: 'tfFileName.txt', text: pullRequestFile.fileName
+              //tfFileChanged = true
               break
             }
           }
