@@ -66,9 +66,6 @@ pipeline {
         GITHUB_APP_KEY_FILE = credentials("$GITHUB_APP_CREDENTIAL_ID")
       }
       steps {
-        sh script: '''#!/bin/bash -ex
-          git clean -dff
-        '''
         script {
           def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
             python3 "$WORKSPACE$GITHUB_APP_TOKEN_PYTHON_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_TOKEN_SECONDS" 'RS256'
