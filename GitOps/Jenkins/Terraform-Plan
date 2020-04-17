@@ -78,15 +78,13 @@ pipeline {
               def tfFilePath = pullRequestFile.filename
               def tfLastSlashIndex = tfFilePath.lastIndexOf('/')
               def tfFileDirectory = tfFilePath.substring(0, tfLastSlashIndex)
-              echo tfFileDirectory
-              echo tfFilePath
-              //writeFile file: 'tfFileDirectory.txt', text: tfFileDirectory
-              //writeFile file: 'tfFilePath.txt', text: tfFilePath
-              //tfFileChanged = true
+              writeFile file: 'tfFileDirectory.txt', text: tfFileDirectory
+              writeFile file: 'tfFilePath.txt', text: tfFilePath
+              tfFileFound = true
               break
             }
           }
-          if (tfFileChanged) {
+          if (tfFileFound) {
             def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', acceptType: 'APPLICATION_JSON', customHeaders: [[name: 'Authorization', value: "token $appInstallationToken"]]
             def pullRequest = readJSON text: pullRequestResponse.content
             def pullRequestTitle = pullRequest.title
