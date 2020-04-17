@@ -31,8 +31,8 @@ pipeline {
   stages {
     stage('Build Artifacts') {
       when {
-        expression {
-          env.GITHUB_PULL_REQUEST_NUMBER != null
+        not {
+          environment name: 'GITHUB_PULL_REQUEST_NUMBER', value: null
         }
       }
       steps {
