@@ -83,8 +83,8 @@ pipeline {
           for (def pullRequestFile in pullRequestFiles) {
             if (pullRequestFile.filename.endsWith('.tf')) {
               def tfFilePath = pullRequestFile.filename
-              def tfLastSlashIndex = tfFilePath.lastIndexOf('/')
-              def tfFileDirectory = tfFilePath.substring(0, tfLastSlashIndex)
+              def tfFileDirectoryIndex = tfFilePath.lastIndexOf('/')
+              def tfFileDirectory = tfFilePath.substring(0, tfFileDirectoryIndex)
               writeFile file: 'tfFileDirectory.txt', text: tfFileDirectory
               writeFile file: 'tfFilePath.txt', text: tfFilePath
               tfFileFound = true
