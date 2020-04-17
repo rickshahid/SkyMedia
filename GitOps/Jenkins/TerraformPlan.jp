@@ -71,9 +71,7 @@ pipeline {
     }
     stage('GitHub App Pull Request') {
       when {
-        not {
           environment name: 'GITHUB_APP_AUTH_TOKEN', value: null
-        }
       }
       steps {
         script {
