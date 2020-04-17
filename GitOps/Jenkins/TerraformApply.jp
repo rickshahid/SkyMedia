@@ -75,17 +75,10 @@ pipeline {
           '''
           def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
           def appAuthToken = readJSON text: appAuthTokenCreate.content
-          GITHUB_APP_AUTH_TOKEN = appAuthToken.token
+          env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
         }
       }
     }
-
-
-
-
-
-
-
     stage('Terraform Apply') {
       when {
         expression {
@@ -106,7 +99,8 @@ pipeline {
           def checkRun = readJSON text: checkRunCreate.content
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
-              terraform apply -input=false -no-color "$TF_PLAN_FILE_NAME" &> tfApply.txt
+              #terraform apply -input=false -no-color "$TF_PLAN_FILE_NAME" &> tfApply.txt
+              echo "Insert Terraform Apply Output Here!" > tfApply.txt
             '''
             def tfApply = readFile file: 'tfApply.txt'
             tfApply = tfApply.replaceAll('"', "'")
