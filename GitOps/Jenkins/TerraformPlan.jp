@@ -41,7 +41,7 @@ pipeline {
     )
   }
   environment {
-    GITHUB_APP_AUTH_TOKEN = "X"
+    //GITHUB_APP_AUTH_TOKEN = null
     GITHUB_PULL_REQUEST_NUMBER = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_NUMBER" : "$GITHUB_PULL_REQUEST_NUMBER"}"
     GITHUB_PULL_REQUEST_HEAD_HASH = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_HEAD_HASH" : "$GITHUB_PULL_REQUEST_HEAD_HASH"}"
   }
@@ -65,7 +65,7 @@ pipeline {
           '''
           def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
           def appAuthToken = readJSON text: appAccessTokenCreate.content
-          env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
+          //env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
         }
       }
     }
