@@ -23,9 +23,9 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged']
       ],
-      causeString: '$x_github_event $GITHUB_PULL_REQUEST_TITLE $GITHUB_EVENT_ACTION (merged: $GITHUB_PULL_REQUEST_MERGED) in repository $GITHUB_REPOSITORY_NAME',
       regexpFilterExpression: '(pull_request).(closed).(true)',
-      regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION.$GITHUB_PULL_REQUEST_MERGED'
+      regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION.$GITHUB_PULL_REQUEST_MERGED',
+      causeString: '$x_github_event $GITHUB_PULL_REQUEST_TITLE $GITHUB_EVENT_ACTION (merged: $GITHUB_PULL_REQUEST_MERGED) in repository $GITHUB_REPOSITORY_NAME'
     )
   }
   stages {
@@ -36,7 +36,10 @@ pipeline {
         }
       }
       steps {
-        def tfPlanBuildNumber = 
+        def pullRequestTitle = "$GITHUB_PULL_REQUEST_TITLE"
+        def buildNumberIndexStart = pullRequestTitle.indexOf(' Build ')
+        def buildNumberIndexEnd = pullRequestTitle.indexOf(buildNumberIndexStart, ')')
+        def tfPlanBuildNumber = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
         copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(tfPlanBuildNumber)
       }
     }
