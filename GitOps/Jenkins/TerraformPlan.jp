@@ -63,7 +63,7 @@ pipeline {
             python3 "$WORKSPACE$GITHUB_APP_TOKEN_PYTHON_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_TOKEN_SECONDS" 'RS256'
           '''
           def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
-          def appAuthToken = readJSON text: appAccessTokenCreate.content
+          def appAuthToken = readJSON text: appAuthTokenCreate.content
           GITHUB_APP_AUTH_TOKEN = appAuthToken.token
         }
       }
