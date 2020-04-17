@@ -82,7 +82,7 @@ pipeline {
               def tfFileDirectory = tfFilePath.getParent()
               echo tfFileDirectory
               //writeFile file: 'tfFileDirectory.txt', text: tfFileDirectory
-              //writeFile file: 'tfFileName.txt', text: tfFileName
+              //writeFile file: 'tfFilePath.txt', text: tfFileName
               //tfFileChanged = true
               break
             }
