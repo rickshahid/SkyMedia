@@ -76,7 +76,7 @@ pipeline {
       }
       steps {
         script {
-          def tfFileChanged = false
+          def tfFileFound = false
           def appInstallationToken = readFile file: 'appInstallationToken.txt'
           def pullRequestFilesResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER/files", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $appInstallationToken"]]
           def pullRequestFiles = readJSON text: pullRequestFilesResponse.content
