@@ -2,6 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'GITHUB_APP_CREDENTIAL_ID', defaultValue: 'GitHubAppKey')
+    string(name: 'GITHUB_APP_TOKEN_PYTHON_FILE', defaultValue: '/GetWebToken.py')
     string(name: 'GITHUB_APP_TOKEN_SECONDS', defaultValue: '300')
     string(name: 'GITHUB_API_HEADER_ACCEPT', defaultValue: 'application/vnd.github.v3+json')
     string(name: 'GITHUB_API_HEADER_ACCEPT_AUTH', defaultValue: 'application/vnd.github.machine-man-preview+json')
@@ -52,14 +53,16 @@ pipeline {
       }
       environment {
         GITHUB_APP_KEY_FILE = credentials("$GITHUB_APP_CREDENTIAL_ID")
-        GITHUB_APP_WEB_TOKEN = sh(script: "python3 '\"$WORKSPACE\"GetWebToken.py' $GITHUB_APP_KEY_FILE_USR $GITHUB_APP_KEY_FILE $GITHUB_APP_TOKEN_SECONDS 'RS256'", returnStdout: true)
       }
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
         '''
         script {
-          def appInstallationAccessResponse = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $GITHUB_APP_WEB_TOKEN"]]
+          def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
+            python3 "$WORKSPACE$GITHUB_APP_TOKEN_PYTHON_FILE $GITHUB_APP_KEY_FILE_USR $GITHUB_APP_KEY_FILE $GITHUB_APP_TOKEN_SECONDS 'RS256'"
+          '''
+          def appInstallationAccessResponse = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
           def appInstallationAccess = readJSON text: appInstallationAccessResponse.content
           writeFile file: 'appInstallationToken.txt', text: appInstallationAccess.token
         }
