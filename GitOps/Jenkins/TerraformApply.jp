@@ -115,8 +115,8 @@ pipeline {
             checkRunOutputSummary = tfApply
             if (exitCode != 0) {
               checkRunConclusion = 'failure'
-              error message: checkRunOutputSummary
               httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"state\":\"open\"}"
+              error message: checkRunOutputSummary
             } else {
               checkRunConclusion = 'success'
             }
