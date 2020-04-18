@@ -39,6 +39,13 @@ pipeline {
     )
   }
   stages {
+    stage('Clean Workspace') {
+      steps {
+        sh script: '''#!/bin/bash -ex
+          git clean -dff
+        '''        
+      }
+    }
     stage('Build Artifacts') {
       when {
         not {
@@ -46,9 +53,6 @@ pipeline {
         }
       }
       steps {
-        sh script: '''#!/bin/bash -ex
-          git clean -dff
-        '''        
         script {
           def pullRequestTitle = "$GITHUB_PULL_REQUEST_TITLE"
           def buildNumberPrefix = ' Build '
