@@ -48,11 +48,14 @@ pipeline {
       steps {
         script {
           def pullRequestTitle = "$GITHUB_PULL_REQUEST_TITLE"
-          def buildNumberDelimiter = ' Build '
-          def buildNumberIndexStart = pullRequestTitle.indexOf(buildNumberDelimiter) + buildNumberDelimiter.length()
-          def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
-          def tfPlanBuildNumber = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
-          copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(tfPlanBuildNumber)
+          def buildNumberPrefix = ' Build '
+          def buildNumberIndexStart = pullRequestTitle.indexOf(buildNumberPrefix)
+          if (buildNumberIndexStart > 1) {
+            buildNumberIndexStart += buildNumberPrefix.length()
+            def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
+            def tfPlanBuildNumber = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
+            copyArtifacts projectName: "$TF_PLAN_PIPELINE_NAME", selector: specific(tfPlanBuildNumber)
+          }
         }
       }
     }
