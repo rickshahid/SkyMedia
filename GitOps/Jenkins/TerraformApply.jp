@@ -48,7 +48,7 @@ pipeline {
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
-        '''
+        '''        
         script {
           def pullRequestTitle = "$GITHUB_PULL_REQUEST_TITLE"
           def buildNumberPrefix = ' Build '
@@ -85,12 +85,12 @@ pipeline {
     stage('Terraform Apply') {
       when {
         expression {
-          fileExists("$TF_PLAN_FILE_NAME")
+          fileExists("$TF_PLAN_FILE_NAME") && fileExists("tfFilePath.txt")
+        }
+        not {
+          environment name: 'GITHUB_APP_AUTH_TOKEN', value: null
         }
       }
-      environment {
-        GITHUB_APP_KEY_FILE = credentials("$GITHUB_APP_CREDENTIAL_ID")
-      }      
       steps {
         script {
           def checkRunConclusion
@@ -121,7 +121,8 @@ pipeline {
             throw exception
           }
           finally {
-            def checkRunOutputTitle = "$checkRunName"
+            def tfFilePath = readFile file: 'tfFilePath.txt'
+            def checkRunOutputTitle = "$checkRunName ($tfFilePath)"
             httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs/$checkRun.id", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
           }
         }
