@@ -1,4 +1,4 @@
-// customize the simple VM by editing the following local variables HPC2
+// customize the simple VM by editing the following local variables HPC22
 locals {
     // the region of the deployment
     location = "eastus"
