@@ -94,15 +94,15 @@ pipeline {
             def pullRequestGet = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]]
             def pullRequest = readJSON text: pullRequestGet.content
             def pullRequestTitle = pullRequest.title.replaceAll('"', "'")
-            def buildNumberDelimiter = ' Build '
-            def buildNumberIndexStart = pullRequestTitle.indexOf(buildNumberDelimiter)
+            def buildNumberPrefix = ' Build '
+            def buildNumberIndexStart = pullRequestTitle.indexOf(buildNumberPrefix)
             if (buildNumberIndexStart > -1) {
-              buildNumberIndexStart += buildNumberDelimiter.length()
+              buildNumberIndexStart += buildNumberPrefix.length()
               def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
               def buildNumberOld = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
               pullRequestTitle = pullRequestTitle.replace(buildNumberOld, "$currentBuild.number")
             } else {
-              def buildNumberSuffix = " ($currentBuild.projectName" + buildNumberDelimiter + "$currentBuild.number)"
+              def buildNumberSuffix = " ($currentBuild.projectName" + buildNumberPrefix + "$currentBuild.number)"
               pullRequestTitle += buildNumberSuffix
             }
             httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\"}"
