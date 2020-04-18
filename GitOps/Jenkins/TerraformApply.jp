@@ -105,8 +105,7 @@ pipeline {
           tfApply = tfApply.replaceAll('"', "'")
           tfApply = tfApply.replaceAll('\n', '<br>')
 
-          sh script: '''
-            #!/bin/bash -xe
+          sh script: '''#!/bin/bash -xe
             git config user.name
             git config user.name 'RickShahid'
             git config user.name
