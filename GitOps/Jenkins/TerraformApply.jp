@@ -106,7 +106,7 @@ pipeline {
 
           sh script: '''#!/bin/bash -xe
             git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-            git remote add origin https://RickShahid:"$GITHUB_APP_AUTH_TOKEN"@github.com/RickShahid/SkyMedia.git
+            git remote set-url origin https://RickShahid:"$GITHUB_APP_AUTH_TOKEN"@github.com/RickShahid/SkyMedia.git
             git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
           '''
 
