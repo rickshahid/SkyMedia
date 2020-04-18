@@ -42,8 +42,7 @@ pipeline {
   stages {
     stage('Clean Local Workspace') {
       steps {
-        sh script: '''
-          #!/bin/bash -ex
+        sh script: '''#!/bin/bash -ex
           git clean -dff
         '''
       }
@@ -79,8 +78,7 @@ pipeline {
       }
       steps {
         script {
-          def appWebToken = sh returnStdout: true, script: '''
-            #!/bin/bash -ex
+          def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
             python3 "$WORKSPACE$GITHUB_APP_AUTH_TOKEN_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_AUTH_TOKEN_SECONDS" 'RS256'
           '''
           def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
@@ -97,8 +95,7 @@ pipeline {
       }
       steps {
         script {
-          def exitCode = sh returnStatus: true, script: '''
-            #!/bin/bash -xe
+          def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
             #terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
             echo "Insert Terraform Apply Output Here!" > tfApply.txt
           '''
