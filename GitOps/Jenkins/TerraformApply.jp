@@ -108,6 +108,7 @@ pipeline {
               #terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
               echo "Insert Terraform Apply Output Here!" > tfApply.txt
             '''
+            exitCode = 1
             def tfApply = readFile file: 'tfApply.txt'
             tfApply = tfApply.replaceAll('"', "'")
             tfApply = tfApply.replaceAll('\n', '<br>')
@@ -115,6 +116,7 @@ pipeline {
             if (exitCode != 0) {
               checkRunConclusion = 'failure'
               error message: checkRunOutputSummary
+              httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"state\":\"open\"}"
             } else {
               checkRunConclusion = 'success'
             }
