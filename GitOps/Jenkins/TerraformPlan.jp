@@ -47,8 +47,7 @@ pipeline {
   stages {
     stage('Clean Local Workspace') {
       steps {
-        sh script: '''
-          #!/bin/bash -ex
+        sh script: '''#!/bin/bash -ex
           git clean -dff
         '''
       }
@@ -64,8 +63,7 @@ pipeline {
       }
       steps {
         script {
-          def appWebToken = sh returnStdout: true, script: '''
-            #!/bin/bash -ex
+          def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
             python3 "$WORKSPACE$GITHUB_APP_AUTH_TOKEN_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_AUTH_TOKEN_SECONDS" 'RS256'
           '''
           def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
@@ -112,8 +110,7 @@ pipeline {
           def checkRunCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"$checkRunStatus\"}"
           def checkRun = readJSON text: checkRunCreate.content
           try {
-            def exitCode = sh returnStatus: true, script: '''
-              #!/bin/bash -ex
+            def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               tfStateFile="$(sed 's|/|-|g' tfFilePath.txt)state"
               cd $(cat tfFileDirectory.txt)
               echo 'terraform {' > backend.tf
@@ -163,8 +160,7 @@ pipeline {
           def checkRunCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"$checkRunStatus\"}"
           def checkRun = readJSON text: checkRunCreate.content
           try {
-            def exitCode = sh returnStatus: true, script: '''
-              #!/bin/bash -ex
+            def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               cd $(cat tfFileDirectory.txt)
               terraform plan -input=false -out="$TF_PLAN_OUTPUT_FILE" -no-color &> tfPlan.txt
             '''
