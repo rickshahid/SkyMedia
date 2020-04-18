@@ -106,9 +106,6 @@ pipeline {
           tfApply = tfApply.replaceAll('\n', '<br>')
 
           sh script: '''#!/bin/bash -xe
-            git config user.name
-            git config user.name 'RickShahid'
-            git config user.name
             git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
             git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
           '''
