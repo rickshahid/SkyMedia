@@ -31,7 +31,8 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_TITLE', value: '$.pull_request.title'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
-        [key: 'GITHUB_PULL_REQUEST_HEAD_HASH', value: '$.pull_request.head.sha']
+        [key: 'GITHUB_PULL_REQUEST_HEAD_HASH', value: '$.pull_request.head.sha'],
+        [key: 'GITHUB_PULL_REQUEST_HEAD_BRANCH', value: '$.pull_request.head.ref']
       ],
       regexpFilterExpression: '(pull_request).(closed).(true)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION.$GITHUB_PULL_REQUEST_MERGED',
@@ -39,7 +40,7 @@ pipeline {
     )
   }
   stages {
-    stage('Workspace Clean') {
+    stage('Workspace Clean Source') {
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
@@ -88,48 +89,31 @@ pipeline {
     }
     stage('Terraform Apply') {
       when {
-        expression {
-          fileExists(params.TF_PLAN_OUTPUT_FILE)
-        }
         not {
           environment name: 'GITHUB_APP_AUTH_TOKEN', value: null
         }
       }
       steps {
         script {
-          def checkRunConclusion
-          def checkRunOutputSummary
-          def checkRunName = 'Terraform Apply'
-          def checkRunStatus = 'in_progress'
-          def checkRunCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"$checkRunStatus\"}"
-          def checkRun = readJSON text: checkRunCreate.content
-          try {
-            def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
-              #terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
-              echo "Insert Terraform Apply Output Here!" > tfApply.txt
-            '''
-            exitCode = 1
-            def tfApply = readFile file: 'tfApply.txt'
-            tfApply = tfApply.replaceAll('"', "'")
-            tfApply = tfApply.replaceAll('\n', '<br>')
-            checkRunOutputSummary = tfApply
-            if (exitCode != 0) {
-              checkRunConclusion = 'failure'
-              httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"state\":\"open\"}"
-              error message: checkRunOutputSummary
-            } else {
-              checkRunConclusion = 'success'
-            }
-          }
-          catch (exception) {
-            checkRunOutputSummary = exception
-            checkRunConclusion = 'failure'
-            throw exception
-          }
-          finally {
-            def checkRunOutputTitle = "$checkRunName"
-            httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs/$checkRun.id", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
-          }
+          def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
+            #terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
+            echo "Insert Terraform Apply Output Here!" > tfApply.txt
+          '''
+          exitCode = 1
+          def tfApply = readFile file: 'tfApply.txt'
+          tfApply = tfApply.replaceAll('"', "'")
+          tfApply = tfApply.replaceAll('\n', '<br>')
+
+          sh script: '''#!/bin/bash -xe
+            git revert -m 1 "$GITHUB_PULL_REQUEST_HEAD_HASH"
+            git push
+          '''
+
+          //def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
+          //def pullRequestBody = tfApply
+          //def pullRequestBranchRevert = ""
+          //def pullRequestBranchFailed = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+          //httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"body\":\"$pullRequestBody\", \"head\":\"$pullRequestBranchRevert\", \"base\":\"$pullRequestBranchFailed\"}"
         }
       }
     }
