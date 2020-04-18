@@ -106,8 +106,7 @@ pipeline {
 
           sh script: '''#!/bin/bash -xe
             git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-            #git push HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
-            git push HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH" HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+            git push origin "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
           '''
 
           //def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
