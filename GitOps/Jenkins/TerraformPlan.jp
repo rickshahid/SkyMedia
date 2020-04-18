@@ -215,11 +215,6 @@ pipeline {
         expression {
           fileExists('tfFileDirectory.txt')
         }
-        expression {
-          dir(readFile('tfFileDirectory.txt')) {
-            fileExists("$TF_PLAN_FILE_NAME")
-          }
-        }
       }
       steps {
         dir(readFile('tfFileDirectory.txt')) {
