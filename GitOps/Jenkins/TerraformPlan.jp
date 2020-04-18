@@ -93,15 +93,17 @@ pipeline {
           if (tfFileFound) {
             def pullRequestResponse = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'GET', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]]
             def pullRequest = readJSON text: pullRequestResponse.content
-            echo pullRequest.title
-            def pullRequestTitle = pullRequest.title.replaceAll('"', '\"')
-            echo pullRequestTitle
-            def buildNumberSuffix = " ($currentBuild.projectName Build"
-            def buildNumberIndex = pullRequestTitle.indexOf(buildNumberSuffix)
-            if (buildNumberIndex > -1) {
-              pullRequestTitle = pullRequestTitle.substring(0, buildNumberIndex)
+            def buildNumberDelimiter = ' Build '
+            def buildNumberIndexStart = pullRequestTitle.indexOf(buildNumberDelimiter)
+            if (buildNumberIndexStart > -1) {
+              buildNumberIndexStart += buildNumberDelimiter.length()
+              def buildNumberIndexEnd = pullRequestTitle.indexOf(')', buildNumberIndexStart)
+              def buildNumberOld = pullRequestTitle.substring(buildNumberIndexStart, buildNumberIndexEnd)
+              pullRequestTitle = pullRequestTitle.replace(buildNumberOld, "$currentBuild.number")
+            } else {
+              def buildNumberSuffix = " ($currentBuild.projectName" + buildNumberDelimiter + "$currentBuild.number)"
+              pullRequestTitle += buildNumberSuffix
             }
-            pullRequestTitle += "$buildNumberSuffix $currentBuild.number)"
             echo pullRequestTitle
             httpRequest url: "$GITHUB_REPOSITORY_URL/pulls/$GITHUB_PULL_REQUEST_NUMBER", httpMode: 'PATCH', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\"}"
           }
