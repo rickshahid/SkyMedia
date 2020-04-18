@@ -69,7 +69,7 @@ pipeline {
     stage('GitHub App Auth Token') {
       when {
         expression {
-          fileExists("$TF_PLAN_FILE_NAME")
+          fileExists(params.TF_PLAN_FILE_NAME)
         }
       }
       environment {
@@ -89,7 +89,7 @@ pipeline {
     stage('Terraform Apply') {
       when {
         expression {
-          fileExists("$TF_PLAN_FILE_NAME")
+          fileExists(params.TF_PLAN_FILE_NAME)
         }
         not {
           environment name: 'GITHUB_APP_AUTH_TOKEN', value: null
