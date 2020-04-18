@@ -45,7 +45,7 @@ pipeline {
     GITHUB_PULL_REQUEST_HEAD_HASH = "${x_github_event == 'check_run' ? "$GITHUB_CHECK_RUN_HEAD_HASH" : "$GITHUB_PULL_REQUEST_HEAD_HASH"}"
   }
   stages {
-    stage('Workspace Clean Source') {
+    stage('Clean Local Workspace') {
       steps {
         sh script: '''
           #!/bin/bash -ex
