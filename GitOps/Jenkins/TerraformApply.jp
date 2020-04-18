@@ -106,11 +106,6 @@ pipeline {
 
           sh script: '''#!/bin/bash -xe
             git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-            echo 'X'
-            git config user.name
-            echo 'Y'
-            git config user.name 'RickShahid'
-            echo 'Z'
             git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
           '''
 
