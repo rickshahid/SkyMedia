@@ -1,4 +1,4 @@
-// customize the simple VM by editing the following local variables Got GitOps!!!!xx
+// customize the simple VM by editing the following local variables Got GitOps!!!!xxxx
 locals {
     // the region of the deployment
     location = "eastus"
