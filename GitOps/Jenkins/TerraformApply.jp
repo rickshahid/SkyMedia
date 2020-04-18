@@ -39,11 +39,11 @@ pipeline {
     )
   }
   stages {
-    stage('Clean Workspace') {
+    stage('Workspace Clean') {
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
-        '''        
+        '''
       }
     }
     stage('Build Artifacts') {
