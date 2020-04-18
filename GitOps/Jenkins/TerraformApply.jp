@@ -107,7 +107,7 @@ pipeline {
           withCredentials([sshUserPrivateKey(credentialsId: "$GITHUB_APP_CREDENTIAL_ID", keyFileVariable: 'SSH_KEY')]) {
             sh script: '''#!/bin/bash -xe
               git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-              git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+              git push HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
             '''
           }
 
