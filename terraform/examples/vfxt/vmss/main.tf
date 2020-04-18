@@ -1,4 +1,4 @@
-// customize the simple VM by editing the following local variables GBB HPC!
+// customize the simple VM by editing the following local variables Got GitOps!
 locals {
     // the region of the deployment
     location = "eastus"
