@@ -1,4 +1,4 @@
-// customize the simple VM by editing the following local variables HPCX
+// customize the simple VM by editing the following local variables GBB HPC
 locals {
     // the region of the deployment
     location = "eastus"
