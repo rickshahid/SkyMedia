@@ -28,7 +28,7 @@ pipeline {
         [key: 'GITHUB_REPOSITORY_URL', value: '$.repository.url'],
         [key: 'GITHUB_REPOSITORY_NAME', value: '$.repository.full_name'],
         [key: 'GITHUB_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)'],
-        [key: 'GITHUB_REPOSITORY_GIT', value: '$.repository.clone_url', regexpFilter: '(https://)'],
+        [key: 'GITHUB_REPOSITORY_CLONE_URL', value: '$.repository.clone_url'],
         [key: 'GITHUB_PULL_REQUEST_TITLE', value: '$.pull_request.title'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
@@ -103,9 +103,10 @@ pipeline {
           '''
           exitCode = 1
           if (exitCode != 0) {
+            def gitRemoteOriginUrl = "$GITHUB_REPOSITORY_CLONE_URL".replace('://', '://"$GITHUB_APP_INSTALLATION_ID":"$GITHUB_APP_AUTH_TOKEN"')
             sh script: '''#!/bin/bash -xe
               git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-              git remote set-url origin https://"$GITHUB_APP_INSTALLATION_ID":"$GITHUB_APP_AUTH_TOKEN"@"$GITHUB_REPOSITORY_GIT"
+              git remote set-url origin "$gitRemoteOriginUrl"
               git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
             '''
             def tfApply = readFile file: 'tfApply.txt'
