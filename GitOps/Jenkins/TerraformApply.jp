@@ -28,7 +28,7 @@ pipeline {
         [key: 'GITHUB_REPOSITORY_URL', value: '$.repository.url'],
         [key: 'GITHUB_REPOSITORY_NAME', value: '$.repository.full_name'],
         [key: 'GITHUB_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)'],
-        [key: 'GITHUB_REPOSITORY_GIT', value: '$.repository.clone_url', regexpFilter: '(https:\/\/)'],
+        [key: 'GITHUB_REPOSITORY_GIT', value: '$.repository.clone_url', regexpFilter: '(https://)'],
         [key: 'GITHUB_PULL_REQUEST_TITLE', value: '$.pull_request.title'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
