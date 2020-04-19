@@ -89,7 +89,7 @@ pipeline {
               def tfFileDirectory = tfFilePath.substring(0, tfFileDirectoryIndex)
               env.TF_FILE_DIRECTORY = tfFileDirectory
               env.TF_FILE_PATH = tfFilePath
-              env.TF_FILE_STATE = tfFilePath.replaceAll('/', '-') + 'state'
+              env.TF_STATE_PATH = '/' + tfFilePath + 'state'
               break
             }
           }
@@ -116,7 +116,7 @@ pipeline {
               echo 'terraform {' > backend.tf
               echo 'backend "azurerm" {}' >> backend.tf
               echo '}' >> backend.tf
-              terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=/$TF_FILE_PATH" -no-color &> tfInit.txt
+              terraform init -input=false -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="path=$TF_STATE_PATH" -no-color &> tfInit.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfInit = readFile file: 'tfInit.txt'
