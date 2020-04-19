@@ -7,4 +7,3 @@ variable "ARM_USE_MSI" {
     description = "Enables Azure Managed Service Identity (MSI)"
     default = false
 }
-
