@@ -115,7 +115,7 @@ pipeline {
               echo 'terraform {' > backend.tf
               echo 'backend "azurerm" {}' >> backend.tf
               echo '}' >> backend.tf
-              terraform init -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$TF_FILE_STATE" -input=false -no-color &> tfInit.txt
+              terraform init -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$TF_FILE_STATE" -lock=true -input=false -no-color &> tfInit.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfInit = readFile file: 'tfInit.txt'
