@@ -5,5 +5,5 @@ variable "ARM_SUBSCRIPTION_ID" {
 
 variable "ARM_USE_MSI" {
  description = "Enables Azure Managed Service Identity (MSI)"
- type = string
+ default = false
 }
