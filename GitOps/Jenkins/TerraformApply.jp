@@ -28,6 +28,7 @@ pipeline {
         [key: 'GITHUB_REPOSITORY_URL', value: '$.repository.url'],
         [key: 'GITHUB_REPOSITORY_NAME', value: '$.repository.full_name'],
         [key: 'GITHUB_REPOSITORY_HOST', value: '$.repository.url', regexpFilter: '(/repos)(.*)'],
+        [key: 'GITHUB_REPOSITORY_GIT', value: '$.repository.clone_url', regexpFilter: '(https:\/\/)'],
         [key: 'GITHUB_PULL_REQUEST_TITLE', value: '$.pull_request.title'],
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
@@ -106,13 +107,13 @@ pipeline {
 
           sh script: '''#!/bin/bash -xe
             git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-            git remote set-url origin https://XXX:"$GITHUB_APP_AUTH_TOKEN"@github.com/RickShahid/SkyMedia.git
+            git remote set-url origin https://:"$GITHUB_APP_AUTH_TOKEN"@"$GITHUB_REPOSITORY_GIT"
             git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
           '''
 
-          def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
-          def pullRequestBranch = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
-          def pullRequestCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"head\":\"$pullRequestBranch\", \"base\":\"$pullRequestBranch\"}"
+          //def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
+          //def pullRequestBranch = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+          //def pullRequestCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"head\":\"$pullRequestBranch\", \"base\":\"$pullRequestBranch\"}"
 
           //def pullRequestBody = tfApply
           //Add failed check-run to new open PR
