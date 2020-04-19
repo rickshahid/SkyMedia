@@ -112,9 +112,10 @@ pipeline {
             git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
           '''
 
-          //def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
-          //def pullRequestBranch = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
-          //def pullRequestCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"head\":\"$pullRequestBranch\", \"base\":\"$pullRequestBranch\"}"
+          def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
+          def pullRequestBranchHead = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+          def pullRequestBranchBase = 'master'
+          def pullRequestCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"head\":\"$pullRequestBranchHead\", \"base\":\"$pullRequestBranchBase\"}"
 
           //def pullRequestBody = tfApply
           //Add failed check-run to new open PR
