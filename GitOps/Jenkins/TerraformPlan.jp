@@ -89,7 +89,7 @@ pipeline {
               def tfFileDirectory = tfFilePath.substring(0, tfFileDirectoryIndex)
               env.TF_FILE_DIRECTORY = tfFileDirectory
               env.TF_FILE_PATH = tfFilePath
-              env.TF_FILE_STATE = tfFilePath.replaceAll('/', '-') + 'state'
+              env.TF_STATE_FILE = tfFilePath.replaceAll('/', '-') + 'state'
               break
             }
           }
@@ -161,7 +161,7 @@ pipeline {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               cd "$TF_FILE_DIRECTORY"
               cp "$WORKSPACE$TF_PROVIDER_FILE" .
-              terraform plan -state="$TF_FILE_STATE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
+              terraform plan -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfPlan = readFile file: 'tfPlan.txt'
