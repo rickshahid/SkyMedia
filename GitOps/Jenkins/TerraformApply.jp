@@ -84,6 +84,7 @@ pipeline {
           '''
           def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
           def appAuthToken = readJSON text: appAuthTokenCreate.content
+          env.GITHUB_APP_AUTH_USER = appAuthToken.token
           env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
         }
       }
@@ -107,7 +108,7 @@ pipeline {
 
           sh script: '''#!/bin/bash -xe
             git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-            git remote set-url origin https://:"$GITHUB_APP_AUTH_TOKEN"@"$GITHUB_REPOSITORY_GIT"
+            git remote set-url origin https://"$GITHUB_APP_INSTALLATION_ID":"$GITHUB_APP_AUTH_TOKEN"@"$GITHUB_REPOSITORY_GIT"
             git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
           '''
 
