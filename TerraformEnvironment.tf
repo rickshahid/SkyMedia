@@ -1,4 +1,4 @@
-variable "ARM_TENANT_ID" {
+variable "xxARM_TENANT_ID" {
  description = "Azure Active Directory (AAD) tenant identifier"
  type = string
 }
