@@ -105,9 +105,7 @@ pipeline {
         script {
           def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
             #terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
-            echo "Insert Terraform Apply Output Here!" > tfApply.txt
           '''
-          exitCode = 1
           if (exitCode != 0) {
             sh script: '''#!/bin/bash -xe
               git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
