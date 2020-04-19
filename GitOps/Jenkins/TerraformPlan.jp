@@ -159,7 +159,7 @@ pipeline {
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               cd "$TF_FILE_DIRECTORY"
-              terraform plan -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$TF_FILE_STATE" -out="$TF_PLAN_OUTPUT_FILE" -input=false -no-color &> tfPlan.txt
+              terraform plan -out="$TF_PLAN_OUTPUT_FILE" -input=false -no-color &> tfPlan.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfPlan = readFile file: 'tfPlan.txt'
