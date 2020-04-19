@@ -101,24 +101,22 @@ pipeline {
             #terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
             echo "Insert Terraform Apply Output Here!" > tfApply.txt
           '''
-          
-          def tfApply = readFile file: 'tfApply.txt'
-          tfApply = tfApply.replaceAll('"', "'")
-          tfApply = tfApply.replaceAll('\n', '<br>')
-
-          sh script: '''#!/bin/bash -xe
-            git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
-            git remote set-url origin https://"$GITHUB_APP_INSTALLATION_ID":"$GITHUB_APP_AUTH_TOKEN"@"$GITHUB_REPOSITORY_GIT"
-            git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
-          '''
-
-          def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
-          def pullRequestBranchHead = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
-          def pullRequestBranchBase = 'master'
-          def pullRequestCreate = httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"head\":\"$pullRequestBranchHead\", \"base\":\"$pullRequestBranchBase\"}"
-
-          //def pullRequestBody = tfApply
-          //Add failed check-run to new open PR
+          exitCode = 1
+          if (exitCode != 0) {
+            sh script: '''#!/bin/bash -xe
+              git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
+              git remote set-url origin https://"$GITHUB_APP_INSTALLATION_ID":"$GITHUB_APP_AUTH_TOKEN"@"$GITHUB_REPOSITORY_GIT"
+              git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+            '''
+            def tfApply = readFile file: 'tfApply.txt'
+            tfApply = tfApply.replaceAll('"', "'")
+            tfApply = tfApply.replaceAll('\n', '<br>')
+            def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
+            def pullRequestBody = tfApply
+            def pullRequestBranchHead = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+            def pullRequestBranchBase = 'master'
+            httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"body\":\"$pullRequestBody\", \"head\":\"$pullRequestBranchHead\", \"base\":\"$pullRequestBranchBase\"}"
+          }
         }
       }
     }
