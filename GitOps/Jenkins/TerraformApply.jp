@@ -104,6 +104,7 @@ pipeline {
           if (exitCode != 0) {
             def gitRemoteOriginUrl = "$GITHUB_REPOSITORY_CLONE_URL"
             gitRemoteOriginUrl = gitRemoteOriginUrl.replace('://', '://"$GITHUB_APP_INSTALLATION_ID":"$GITHUB_APP_AUTH_TOKEN"')
+            echo gitRemoteOriginUrl
             sh script: '''#!/bin/bash -xe
               git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
               git remote set-url origin "$gitRemoteOriginUrl"
