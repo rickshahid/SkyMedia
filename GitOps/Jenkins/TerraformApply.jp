@@ -104,7 +104,7 @@ pipeline {
       steps {
         script {
           def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
-            #terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
+            terraform apply -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
           '''
           if (exitCode != 0) {
             sh script: '''#!/bin/bash -xe
