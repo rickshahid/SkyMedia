@@ -164,7 +164,8 @@ pipeline {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               cd "$TF_FILE_DIRECTORY"
               cp "$WORKSPACE$TF_ENVIRONMENT_VARIABLES_NAME_FILE" .
-              terraform plan -var-file="$WORKSPACE$TF_ENVIRONMENT_VARIABLES_VALUE_FILE" -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
+              #terraform plan -var-file="$WORKSPACE$TF_ENVIRONMENT_VARIABLES_VALUE_FILE" -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
+              terraform plan -var="ARM_SUBSCRIPTION_ID=3d07cfbc-17aa-41b4-baa1-488fef85a1d3" -var="ARM_USE_MSI=true" -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfPlan = readFile file: 'tfPlan.txt'
