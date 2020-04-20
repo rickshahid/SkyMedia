@@ -11,8 +11,7 @@ pipeline {
     string(name: 'GITHUB_API_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
 
     string(name: 'TF_ENVIRONMENT_BACKEND_CONFIG_FILE', defaultValue: '/AzureEnvironment.Development.Backend.config')
-    string(name: 'TF_ENVIRONMENT_VARIABLES_VALUE_FILE', defaultValue: '/AzureEnvironment.Development.Variables.tfvars')
-    string(name: 'TF_ENVIRONMENT_VARIABLES_NAME_FILE', defaultValue: '/AzureEnvironment.Variables.tf')
+    string(name: 'TF_ENVIRONMENT_VARIABLES_FILE', defaultValue: '/AzureEnvironment.Development.Variables.txt')
     
     string(name: 'TF_PLAN_OUTPUT_FILE', defaultValue: 'tfPlan.bin')
     string(name: 'TF_APPLY_PIPELINE_NAME', defaultValue: 'Terraform Apply')
@@ -162,10 +161,9 @@ pipeline {
           def checkRun = readJSON text: checkRunCreate.content
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
+              source "$WORKSPACE$TF_ENVIRONMENT_VARIABLES_FILE"
               cd "$TF_FILE_DIRECTORY"
-              cp "$WORKSPACE$TF_ENVIRONMENT_VARIABLES_NAME_FILE" .
-              #terraform plan -var-file="$WORKSPACE$TF_ENVIRONMENT_VARIABLES_VALUE_FILE" -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
-              terraform plan -var="ARM_SUBSCRIPTION_ID=3d07cfbc-17aa-41b4-baa1-488fef85a1d3" -var="ARM_USE_MSI=true" -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
+              terraform plan -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfPlan = readFile file: 'tfPlan.txt'
