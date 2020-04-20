@@ -159,12 +159,11 @@ pipeline {
           def checkRun = readJSON text: checkRunCreate.content
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
-              set -a
-              source "$WORKSPACE$TF_ENVIRONMENT_VARIABLES_CONFIG_FILE"
-              set +a
+              #set -a
+              #source "$WORKSPACE$TF_ENVIRONMENT_VARIABLES_CONFIG_FILE"
+              #set +a
               cd "$TF_FILE_DIRECTORY"
-              #terraform plan -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
-              terraform plan -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
+              terraform plan -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfPlan = readFile file: 'tfPlan.txt'
