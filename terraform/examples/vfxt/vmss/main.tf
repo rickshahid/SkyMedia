@@ -39,10 +39,10 @@ locals {
     cache_policy = "Clients Bypassing the Cluster"
 }
 
-provider "azurerm" {
-    version = "~>2.4.0"
-    features {}
-}
+//provider "azurerm" {
+//    version = "~>2.4.0"
+//    features {}
+//}
 
 // the render network
 module "network" {
