@@ -9,8 +9,11 @@ pipeline {
     string(name: 'GITHUB_API_HEADER_ACCEPT', defaultValue: 'application/vnd.github.v3+json')
     string(name: 'GITHUB_API_HEADER_ACCEPT_AUTH', defaultValue: 'application/vnd.github.machine-man-preview+json')
     string(name: 'GITHUB_API_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
-    string(name: 'TF_BACKEND_CONFIG_FILE', defaultValue: '/AzureEnvironment.DevelopmentBackend.config')
-    string(name: 'TF_PROVIDER_FILE', defaultValue: '/AzureEnvironment.DevelopmentProvider.tf')
+
+    string(name: 'TF_ENVIRONMENT_BACKEND_CONFIG_FILE', defaultValue: '/AzureEnvironment.Development.Backend.config')
+    string(name: 'TF_ENVIRONMENT_VARIABLES_VALUE_FILE', defaultValue: '/AzureEnvironment.Development.Variables.tfvars')
+    string(name: 'TF_ENVIRONMENT_VARIABLES_NAME_FILE', defaultValue: '/AzureEnvironment.Variables.tf')
+    
     string(name: 'TF_PLAN_OUTPUT_FILE', defaultValue: 'tfPlan.bin')
     string(name: 'TF_APPLY_PIPELINE_NAME', defaultValue: 'Terraform Apply')
     booleanParam(name: 'TF_IN_AUTOMATION', defaultValue: true)
@@ -116,7 +119,7 @@ pipeline {
               echo 'terraform {' > backend.tf
               echo 'backend "azurerm" {}' >> backend.tf
               echo '}' >> backend.tf
-              terraform init -backend-config="$WORKSPACE$TF_BACKEND_CONFIG_FILE" -backend-config="key=$TF_STATE_FILE" -lock=true -input=false -no-color &> tfInit.txt
+              terraform init -backend-config="$WORKSPACE$TF_ENVIRONMENT_BACKEND_CONFIG_FILE" -backend-config="key=$TF_STATE_FILE" -lock=true -input=false -no-color &> tfInit.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfInit = readFile file: 'tfInit.txt'
@@ -160,8 +163,8 @@ pipeline {
           try {
             def exitCode = sh returnStatus: true, script: '''#!/bin/bash -ex
               cd "$TF_FILE_DIRECTORY"
-              cp "$WORKSPACE$TF_PROVIDER_FILE" .
-              terraform plan -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
+              cp "$WORKSPACE$TF_ENVIRONMENT_VARIABLES_NAME_FILE" .
+              terraform plan -var-file="$WORKSPACE$TF_ENVIRONMENT_VARIABLES_VALUE_FILE" -state="$TF_STATE_FILE" -out="$TF_PLAN_OUTPUT_FILE" -lock=true -input=false -no-color &> tfPlan.txt
             '''
             dir(env.TF_FILE_DIRECTORY) {
               def tfPlan = readFile file: 'tfPlan.txt'
