@@ -1,4 +1,4 @@
-// customize the simple VM by editing the following local variables Got GitOps!
+// customize the simple VM by editing the following local variables
 locals {
     // the region of the deployment
     location = "eastus"
@@ -43,7 +43,7 @@ provider "azurerm" {
     version = "~>2.4.0"
     features {}
 }
-    
+
 // the render network
 module "network" {
     source = "github.com/Azure/Avere/src/terraform/modules/render_network"
