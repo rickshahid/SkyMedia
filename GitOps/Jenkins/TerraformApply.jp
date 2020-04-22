@@ -97,8 +97,8 @@ pipeline {
     }
     stage('Terraform Apply') {
       when {
-        not {
-          environment name: 'GITHUB_APP_AUTH_TOKEN', value: null
+        expression {
+          fileExists(params.TF_PLAN_OUTPUT_FILE)
         }
       }
       steps {
