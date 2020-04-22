@@ -41,11 +41,20 @@ pipeline {
     )
   }
   stages {
-    stage('Clean Local Workspace') {
+    stage('Set Local Workspace') {
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
         '''
+        script {
+          def gitRemoteAuthDelimiter = '://'
+          def gitRemoteAuthUsername = "$GITHUB_APP_INSTALLATION_ID"
+          def gitRemoteAuthPassword = appAuthToken.token
+          def gitRemoteOriginUrl = "$GITHUB_REPOSITORY_CLONE_URL"
+          gitRemoteOriginUrl = gitRemoteOriginUrl.replace(gitRemoteAuthDelimiter, gitRemoteAuthDelimiter + gitRemoteAuthPassword + '@')
+          gitRemoteOriginUrl = gitRemoteOriginUrl.replace(gitRemoteAuthDelimiter, gitRemoteAuthDelimiter + gitRemoteAuthUsername + ':')
+          env.GITHUB_REMOTE_ORIGIN_URL = gitRemoteOriginUrl
+        }
       }
     }
     stage('Build Artifacts') {
@@ -85,13 +94,6 @@ pipeline {
           def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
           def appAuthToken = readJSON text: appAuthTokenCreate.content
           env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
-          def gitRemoteAuthDelimiter = '://'
-          def gitRemoteAuthUsername = "$GITHUB_APP_INSTALLATION_ID"
-          def gitRemoteAuthPassword = appAuthToken.token
-          def gitRemoteOriginUrl = "$GITHUB_REPOSITORY_CLONE_URL"
-          gitRemoteOriginUrl = gitRemoteOriginUrl.replace(gitRemoteAuthDelimiter, gitRemoteAuthDelimiter + gitRemoteAuthPassword + '@')
-          gitRemoteOriginUrl = gitRemoteOriginUrl.replace(gitRemoteAuthDelimiter, gitRemoteAuthDelimiter + gitRemoteAuthUsername + ':')
-          env.GITHUB_REMOTE_ORIGIN_URL = gitRemoteOriginUrl
         }
       }
     }
