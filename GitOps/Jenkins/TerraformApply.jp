@@ -42,6 +42,11 @@ pipeline {
   }
   stages {
     stage('Set Local Workspace') {
+      when {
+        not {
+          environment name: 'GITHUB_APP_INSTALLATION_ID', value: null
+        }
+      }    
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
