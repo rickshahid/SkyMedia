@@ -49,3 +49,13 @@ variable "add_public_ip" {
   description = "specifies if the controller should have a publice ip"
   default = false
 }
+
+variable "image_id" {
+  description = "specifies a custom image id if not use marketplace"
+  default = null
+}
+
+variable "custom_image_resource_group" {
+  description = "specifies a custom image resource group"
+  default = null
+}
