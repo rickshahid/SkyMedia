@@ -33,7 +33,7 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
         [key: 'GITHUB_PULL_REQUEST_MERGE_HASH', value: '$.pull_request.merge_commit_sha'],
-        [key: 'GITHUB_PULL_REQUEST_REFERENCE_BASE', value: '$.pull_request.base.ref']
+        [key: 'GITHUB_PULL_REQUEST_REFERENCE_BASE', value: '$.pull_request.base.ref'],
         [key: 'GITHUB_PULL_REQUEST_REFERENCE_HEAD', value: '$.pull_request.head.ref']
       ],
       regexpFilterExpression: '(pull_request).(closed).(true)',
