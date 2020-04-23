@@ -125,15 +125,17 @@ pipeline {
   post {
     always {
       script {
-        def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
-          python3 "$WORKSPACE$GITHUB_APP_AUTH_TOKEN_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_AUTH_TOKEN_SECONDS" 'RS256'
-        '''
-        def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
-        def appAuthToken = readJSON text: appAuthTokenCreate.content
-        env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
-        if (env.TF_APPLY_OUTPUT != null) {
-          def commitCommentBody = env.TF_APPLY_OUTPUT
-          httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
+        if (env.GITHUB_REPOSITORY_HOST != null) {
+          def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
+            python3 "$WORKSPACE$GITHUB_APP_AUTH_TOKEN_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_AUTH_TOKEN_SECONDS" 'RS256'
+          '''
+          def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
+          def appAuthToken = readJSON text: appAuthTokenCreate.content
+          env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
+          if (env.TF_APPLY_OUTPUT != null) {
+            def commitCommentBody = env.TF_APPLY_OUTPUT
+            httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
+          }
         }
       }
     }
