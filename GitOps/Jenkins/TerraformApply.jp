@@ -117,12 +117,8 @@ pipeline {
             env.TF_APPLY_OUTPUT = tfApply
             error message: tfApply
           } else {
-            def checkRunConclusion = 'success'
-            def checkRunOutputSummary = tfApply
-            def checkRunName = 'Terraform Apply'
-            def checkRunStatus = 'completed'
-            def checkRunOutputTitle = checkRunName
-            httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"head_sha\":\"$GITHUB_PULL_REQUEST_MERGE_HASH\", \"status\":\"$checkRunStatus\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
+            def commitCommentBody = tfApply
+            httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
           }
         }
       }
