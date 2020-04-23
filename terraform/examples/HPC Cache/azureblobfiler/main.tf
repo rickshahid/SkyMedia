@@ -35,7 +35,7 @@ locals {
     // storage details
     storage_resource_group_name = "storage_resource_group"
     // create a globally unique name for the storage account
-    storage_account_name = ""
+    storage_account_name = "mediastudiox"
     avere_storage_container_name = "hpccache"
 
     // per the hpc cache documentation: https://docs.microsoft.com/en-us/azure/hpc-cache/hpc-cache-add-storage
