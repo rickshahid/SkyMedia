@@ -5,7 +5,7 @@ pipeline {
   parameters {
     string(name: 'GITHUB_APP_CREDENTIAL_ID', defaultValue: 'GitHubAppKey')
     string(name: 'GITHUB_APP_AUTH_TOKEN_FILE', defaultValue: '/GetGitHubWebToken.py')
-    string(name: 'GITHUB_APP_AUTH_TOKEN_SECONDS', defaultValue: '300')
+    string(name: 'GITHUB_APP_AUTH_TOKEN_SECONDS', defaultValue: '600')
     string(name: 'GITHUB_API_HEADER_ACCEPT', defaultValue: 'application/vnd.github.v3+json')
     string(name: 'GITHUB_API_HEADER_ACCEPT_AUTH', defaultValue: 'application/vnd.github.machine-man-preview+json')
     string(name: 'GITHUB_API_HEADER_ACCEPT_CHECK', defaultValue: 'application/vnd.github.antiope-preview+json')
