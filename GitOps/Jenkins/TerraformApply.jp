@@ -100,7 +100,7 @@ pipeline {
         expression {
           fileExists(params.TF_PLAN_OUTPUT_FILE)
         }
-      }
+      }      
       steps {
         script {
           def exitCode = sh returnStatus: true, script: '''#!/bin/bash -xe
@@ -110,12 +110,19 @@ pipeline {
             done < "$WORKSPACE$TF_ENVIRONMENT_VARIABLES_CONFIG_FILE"
             terraform apply -lock=true -input=false -no-color "$TF_PLAN_OUTPUT_FILE" &> tfApply.txt
           '''
+          def tfApply = readFile file: 'tfApply.txt'
+          tfApply = tfApply.replaceAll('"', "'")
+          tfApply = tfApply.replaceAll('\n', '<br>')
           if (exitCode != 0) {
-            def tfApply = readFile file: 'tfApply.txt'
-            tfApply = tfApply.replaceAll('"', "'")
-            tfApply = tfApply.replaceAll('\n', '<br>')
             env.TF_APPLY_OUTPUT = tfApply
             error message: tfApply
+          } else {
+            def checkRunConclusion = 'success'
+            def checkRunOutputSummary = tfApply
+            def checkRunName = 'Terraform Apply'
+            def checkRunStatus = 'completed'
+            def checkRunOutputTitle = checkRunName
+            httpRequest url: "$GITHUB_REPOSITORY_URL/check-runs", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_CHECK"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"name\":\"$checkRunName\", \"head_sha\":\"$GITHUB_PULL_REQUEST_HEAD_HASH\", \"status\":\"$checkRunStatus\", \"conclusion\":\"$checkRunConclusion\", \"output\":{\"title\":\"$checkRunOutputTitle\", \"summary\":\"$checkRunOutputSummary\"}}"
           }
         }
       }
