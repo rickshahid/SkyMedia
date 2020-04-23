@@ -33,8 +33,8 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
         [key: 'GITHUB_PULL_REQUEST_MERGE_HASH', value: '$.pull_request.merge_commit_sha'],
-        [key: 'GITHUB_PULL_REQUEST_BASE_BRANCH', value: '$.pull_request.base.ref']
-        [key: 'GITHUB_PULL_REQUEST_HEAD_BRANCH', value: '$.pull_request.head.ref']
+        [key: 'GITHUB_PULL_REQUEST_REFERENCE_BASE', value: '$.pull_request.base.ref']
+        [key: 'GITHUB_PULL_REQUEST_REFERENCE_HEAD', value: '$.pull_request.head.ref']
       ],
       regexpFilterExpression: '(pull_request).(closed).(true)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION.$GITHUB_PULL_REQUEST_MERGED',
@@ -127,14 +127,12 @@ pipeline {
       sh script: '''#!/bin/bash -xe
         git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
         git remote set-url origin "$GITHUB_REMOTE_ORIGIN_URL"
-        git push origin HEAD:"$GITHUB_PULL_REQUEST_HEAD_BRANCH"
+        git push origin HEAD:"$GITHUB_PULL_REQUEST_REFERENCE_HEAD"
       '''
       script {
         def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
-        def pullRequestBranchBase = "$GITHUB_PULL_REQUEST_BASE_BRANCH"
-        def pullRequestBranchHead = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
         def pullRequestBody = env.TF_APPLY_OUTPUT
-        httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"body\":\"$pullRequestBody\", \"head\":\"$pullRequestBranchHead\", \"base\":\"$pullRequestBranchBase\"}"
+        httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"base\":\"$GITHUB_PULL_REQUEST_REFERENCE_BASE\", \"head\":\"$GITHUB_PULL_REQUEST_REFERENCE_HEAD\", \"body\":\"$pullRequestBody\"}"
       }
     }
     always {
