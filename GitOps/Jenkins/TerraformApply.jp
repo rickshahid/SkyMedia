@@ -33,6 +33,7 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
         [key: 'GITHUB_PULL_REQUEST_MERGE_HASH', value: '$.pull_request.merge_commit_sha'],
+        [key: 'GITHUB_PULL_REQUEST_BASE_BRANCH', value: '$.pull_request.base.ref']
         [key: 'GITHUB_PULL_REQUEST_HEAD_BRANCH', value: '$.pull_request.head.ref']
       ],
       regexpFilterExpression: '(pull_request).(closed).(true)',
@@ -113,12 +114,9 @@ pipeline {
           def tfApply = readFile file: 'tfApply.txt'
           tfApply = tfApply.replaceAll('"', "'")
           tfApply = tfApply.replaceAll('\n', '<br>')
+          env.TF_APPLY_OUTPUT = tfApply
           if (exitCode != 0) {
-            env.TF_APPLY_OUTPUT = tfApply
             error message: tfApply
-          } else {
-            def commitCommentBody = tfApply
-            httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
           }
         }
       }
@@ -133,11 +131,20 @@ pipeline {
       '''
       script {
         def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
-        def pullRequestBody = env.TF_APPLY_OUTPUT
+        def pullRequestBranchBase = "$GITHUB_PULL_REQUEST_BASE_BRANCH"
         def pullRequestBranchHead = "$GITHUB_PULL_REQUEST_HEAD_BRANCH"
-        def pullRequestBranchBase = 'master'
+        def pullRequestBody = env.TF_APPLY_OUTPUT
         httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"body\":\"$pullRequestBody\", \"head\":\"$pullRequestBranchHead\", \"base\":\"$pullRequestBranchBase\"}"
       }
     }
+    always {
+      script {
+        if (env.TF_APPLY_OUTPUT != null) {
+          def commitCommentBody = env.TF_APPLY_OUTPUT
+          httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
+        }
+      }
+    }
+   }
   }
 }
