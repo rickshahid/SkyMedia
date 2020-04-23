@@ -123,7 +123,7 @@ pipeline {
     }
   }
   post {
-    success {
+    always {
       script {
         def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
           python3 "$WORKSPACE$GITHUB_APP_AUTH_TOKEN_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_AUTH_TOKEN_SECONDS" 'RS256'
