@@ -41,7 +41,7 @@ pipeline {
     )
   }
   stages {
-    stage('Clean Local Workspace') {
+    stage('Set Local Workspace') {
       steps {
         sh script: '''#!/bin/bash -ex
           git clean -dff
