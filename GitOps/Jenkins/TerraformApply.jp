@@ -41,6 +41,9 @@ pipeline {
       causeString: '$x_github_event $GITHUB_PULL_REQUEST_TITLE $GITHUB_EVENT_ACTION (merged: $GITHUB_PULL_REQUEST_MERGED) in repository $GITHUB_REPOSITORY_NAME'
     )
   }
+  environment {
+    GITHUB_APP_KEY_FILE = credentials("$GITHUB_APP_CREDENTIAL_ID")
+  }
   stages {
     stage('Local Workspace') {
       steps {
@@ -54,9 +57,6 @@ pipeline {
         not {
           environment name: 'GITHUB_PULL_REQUEST_NUMBER', value: null
         }
-      }
-      environment {
-        GITHUB_APP_KEY_FILE = credentials("$GITHUB_APP_CREDENTIAL_ID")
       }
       steps {
         script {
@@ -123,6 +123,20 @@ pipeline {
     }
   }
   post {
+    always {
+      script {
+        def appWebToken = sh returnStdout: true, script: '''#!/bin/bash -ex
+          python3 "$WORKSPACE$GITHUB_APP_AUTH_TOKEN_FILE" "$GITHUB_APP_KEY_FILE_USR" "$GITHUB_APP_KEY_FILE" "$GITHUB_APP_AUTH_TOKEN_SECONDS" 'RS256'
+        '''
+        def appAuthTokenCreate = httpRequest url: "$GITHUB_REPOSITORY_HOST/installations/$GITHUB_APP_INSTALLATION_ID/access_tokens", httpMode: 'POST', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT_AUTH"], [name: 'Authorization', value: "Bearer $appWebToken"]]
+        def appAuthToken = readJSON text: appAuthTokenCreate.content
+        env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
+        if (env.TF_APPLY_OUTPUT != null) {
+          def commitCommentBody = env.TF_APPLY_OUTPUT
+          httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
+        }
+      }
+    }
     failure {
       sh script: '''#!/bin/bash -xe
         git revert -m 1 "$GITHUB_PULL_REQUEST_MERGE_HASH"
@@ -133,14 +147,6 @@ pipeline {
         def pullRequestTitle = "Revert Pull Request $GITHUB_PULL_REQUEST_NUMBER"
         def pullRequestBody = env.TF_APPLY_OUTPUT
         httpRequest url: "$GITHUB_REPOSITORY_URL/pulls", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"title\":\"$pullRequestTitle\", \"base\":\"$GITHUB_PULL_REQUEST_REFERENCE_BASE\", \"head\":\"$GITHUB_PULL_REQUEST_REFERENCE_HEAD\", \"body\":\"$pullRequestBody\"}"
-      }
-    }
-    always {
-      script {
-        if (env.TF_APPLY_OUTPUT != null) {
-          def commitCommentBody = env.TF_APPLY_OUTPUT
-          httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
-        }
       }
     }
   }
