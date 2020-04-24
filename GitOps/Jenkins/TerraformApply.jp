@@ -34,6 +34,7 @@ pipeline {
         [key: 'GITHUB_PULL_REQUEST_NUMBER', value: '$.pull_request.number'],
         [key: 'GITHUB_PULL_REQUEST_MERGED', value: '$.pull_request.merged'],
         [key: 'GITHUB_PULL_REQUEST_MERGE_HASH', value: '$.pull_request.merge_commit_sha'],
+        [key: 'GITHUB_PULL_REQUEST_COMMENTS_URL', value: '$.pull_request.comments_url'],
         [key: 'GITHUB_PULL_REQUEST_REFERENCE_BASE', value: '$.pull_request.base.ref'],
         [key: 'GITHUB_PULL_REQUEST_REFERENCE_HEAD', value: '$.pull_request.head.ref']
       ],
@@ -135,8 +136,8 @@ pipeline {
           def appAuthToken = readJSON text: appAuthTokenCreate.content
           env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
           if (env.TF_APPLY_OUTPUT != null) {
-            def commitCommentBody = env.TF_APPLY_OUTPUT
-            httpRequest url: "$GITHUB_REPOSITORY_URL/commits/$GITHUB_PULL_REQUEST_MERGE_HASH/comments", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$commitCommentBody\"}}"
+            def pullRequestCommentBody = env.TF_APPLY_OUTPUT
+            httpRequest url: "$GITHUB_PULL_REQUEST_COMMENTS_URL", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$pullRequestCommentBody\"}}"
           }
         }
       }
