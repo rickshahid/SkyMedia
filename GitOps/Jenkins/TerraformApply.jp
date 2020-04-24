@@ -137,7 +137,7 @@ pipeline {
           env.GITHUB_APP_AUTH_TOKEN = appAuthToken.token
           if (env.TF_APPLY_OUTPUT != null) {
             def pullRequestCommentBody = env.TF_APPLY_OUTPUT
-            httpRequest url: "$GITHUB_PULL_REQUEST_COMMENTS_URL", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$pullRequestCommentBody\"}}"
+            httpRequest url: "$GITHUB_PULL_REQUEST_COMMENTS_URL", httpMode: 'POST', contentType: 'APPLICATION_JSON', customHeaders: [[name: 'Accept', value: "$GITHUB_API_HEADER_ACCEPT"], [name: 'Authorization', value: "token $GITHUB_APP_AUTH_TOKEN"]], requestBody: "{\"body\":\"$pullRequestCommentBody\"}"
           }
         }
       }
