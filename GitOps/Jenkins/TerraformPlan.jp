@@ -3,7 +3,8 @@
 pipeline {
   agent any
   parameters {
-    string(name: 'GITHUB_APP_CREDENTIAL_ID', defaultValue: 'GitHubAppKey')
+    string(name: 'GITHUB_APP_KEY_ID', defaultValue: 'GitHubAppKey')
+    string(name: 'GITHUB_APP_SECRET_ID', defaultValue: 'GitHubAppSecret')
     string(name: 'GITHUB_APP_AUTH_TOKEN_FILE', defaultValue: '/GetGitHubWebToken.py')
     string(name: 'GITHUB_APP_AUTH_TOKEN_SECONDS', defaultValue: '600')
     string(name: 'GITHUB_API_HEADER_ACCEPT', defaultValue: 'application/vnd.github.v3+json')
@@ -37,7 +38,8 @@ pipeline {
       ],
       regexpFilterExpression: '(pull_request).(opened|reopened|synchronize)|(check_run).(rerequested)',
       regexpFilterText: '$x_github_event.$GITHUB_EVENT_ACTION',
-      causeString: '$x_github_event $GITHUB_EVENT_ACTION in repository $GITHUB_REPOSITORY_NAME'
+      causeString: '$x_github_event $GITHUB_EVENT_ACTION in repository $GITHUB_REPOSITORY_NAME',
+      token: ''
     )
   }
   environment {
@@ -59,7 +61,7 @@ pipeline {
         }
       }
       environment {
-        GITHUB_APP_KEY_FILE = credentials("$GITHUB_APP_CREDENTIAL_ID")
+        GITHUB_APP_KEY_FILE = credentials("$GITHUB_APP_KEY_ID")
       }
       steps {
         script {
