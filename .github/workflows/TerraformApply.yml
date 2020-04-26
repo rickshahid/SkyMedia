@@ -1,12 +1,11 @@
 # TerraformApply.yml - GitHub Actions workflow for Terraform GitOps via GitHub App v3 Pull Requests
 
-name: TerraformApply
+name: Terraform Apply
 
 on:
   pull_request:
     types: closed
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   build:
