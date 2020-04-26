@@ -1,6 +1,6 @@
 # TerraformPlan.yml - GitHub Actions workflow for Terraform GitOps via GitHub App v3 Pull Requests & Check Runs
 
-name: Terraform-Plan
+name: TerraformPlan
 
 on:
   pull_request:
