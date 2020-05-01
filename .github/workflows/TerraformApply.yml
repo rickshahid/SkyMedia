@@ -1,6 +1,6 @@
 # TerraformApply.yml - GitHub Actions workflow for Terraform GitOps via GitHub App v3 Pull Requests
 
-name: Terraform Apply
+name: 'Terraform Apply'
 
 on:
   pull_request:
